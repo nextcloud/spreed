@@ -37,7 +37,7 @@
 						</template>
 						{{ t('spreed', 'Dismiss request for assistance') }}
 					</NcActionButton>
-					<NcActionButton @click="openSendMessageDialog">
+					<NcActionButton @click="isDialogOpened = true">
 						<template #icon>
 							<Send :size="16" />
 						</template>
@@ -48,7 +48,7 @@
 				<SendMessageDialog v-if="isDialogOpened"
 					:display-name="roomName"
 					:token="roomToken"
-					@close="closeSendMessageDialog" />
+					@close="isDialogOpened = false" />
 			</template>
 		</div>
 		<ul v-show="showParticipants">
@@ -195,13 +195,6 @@ export default {
 
 	methods: {
 		t,
-		openSendMessageDialog() {
-			this.isDialogOpened = true
-		},
-
-		closeSendMessageDialog() {
-			this.isDialogOpened = false
-		},
 
 		dismissRequestAssistance() {
 			this.breakoutRoomsStore.dismissRequestAssistance(this.roomToken)

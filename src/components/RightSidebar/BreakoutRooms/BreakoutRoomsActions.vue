@@ -38,7 +38,7 @@
 				:aria-label="sendMessageLabel"
 				type="secondary"
 				:wide="true"
-				@click="openSendMessageDialog">
+				@click="isSendMessageDialogOpened = true">
 				<template #icon>
 					<Send :size="18" />
 				</template>
@@ -69,7 +69,7 @@
 			<NcActions v-if="canModerate" class="right">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
 					:aria-label="sendMessageLabel"
-					@click="openSendMessageDialog">
+					@click="isSendMessageDialogOpened = true">
 					<template #icon>
 						<Send :size="20" />
 					</template>
@@ -103,10 +103,10 @@
 		</NcModal>
 
 		<!-- Send message dialog -->
-		<SendMessageDialog v-if="sendMessageDialogOpened"
+		<SendMessageDialog v-if="isSendMessageDialogOpened"
 			:token="mainToken"
 			:broadcast="true"
-			@close="closeSendMessageDialog" />
+			@close="isSendMessageDialogOpened = false" />
 	</div>
 </template>
 
@@ -181,14 +181,14 @@ export default {
 
 	setup() {
 		const showParticipantsEditor = ref(false)
-		const sendMessageDialogOpened = ref(false)
+		const isSendMessageDialogOpened = ref(false)
 		const dialogHeaderId = `breakout-rooms-actions-header-${useId()}`
 
 		return {
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			showParticipantsEditor,
-			sendMessageDialogOpened,
+			isSendMessageDialogOpened,
 			dialogHeaderId,
 		}
 	},
@@ -255,14 +255,6 @@ export default {
 
 		stopBreakoutRooms() {
 			this.breakoutRoomsStore.stopBreakoutRooms(this.mainToken)
-		},
-
-		openSendMessageDialog() {
-			this.sendMessageDialogOpened = true
-		},
-
-		closeSendMessageDialog() {
-			this.sendMessageDialogOpened = false
 		},
 
 		openParticipantsEditor() {
