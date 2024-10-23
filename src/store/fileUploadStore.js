@@ -240,13 +240,11 @@ const actions = {
 					+ getFileExtension(file.name)
 			}
 
-			// Get localurl for some image previews
-			let localUrl = ''
-			if (SHARED_ITEM.MEDIA_ALLOWED_PREVIEW.includes(file.type)) {
-				localUrl = URL.createObjectURL(file)
-			} else if (isVoiceMessage) {
-				localUrl = file.localUrl
-			}
+			// Get localUrl for allowed image previews and voice messages uploads
+			const localUrl = (isVoiceMessage || SHARED_ITEM.MEDIA_ALLOWED_PREVIEW.includes(file.type))
+				? URL.createObjectURL(file)
+				: undefined
+
 			// Create a unique index for each file
 			const date = new Date()
 			const index = 'temp_' + date.getTime() + Math.random()
