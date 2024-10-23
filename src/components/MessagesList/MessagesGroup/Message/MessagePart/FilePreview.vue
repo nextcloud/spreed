@@ -214,9 +214,6 @@ export default {
 		},
 
 		fallbackLocalUrl() {
-			if (!this.file.mimetype.startsWith('image/') && !this.file.mimetype.startsWith('video/')) {
-				return undefined
-			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
 		},
 

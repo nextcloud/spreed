@@ -74,9 +74,6 @@ describe('fileUploadStore', () => {
 		}
 
 		global.URL.createObjectURL = jest.fn().mockImplementation((file) => 'local-url:' + file.name)
-		global.OC.MimeType = {
-			getIconUrl: jest.fn().mockImplementation((type) => 'icon-url:' + type),
-		}
 
 		storeConfig = cloneDeep(fileUploadStore)
 		storeConfig.actions = Object.assign(storeConfig.actions, mockedActions)
@@ -127,7 +124,7 @@ describe('fileUploadStore', () => {
 					lastModified: Date.UTC(2021, 3, 25, 15, 30, 0),
 				},
 			]
-			const localUrls = ['local-url:pngimage.png', 'local-url:jpgimage.jpg', 'icon-url:text/plain']
+			const localUrls = ['local-url:pngimage.png', 'local-url:jpgimage.jpg', undefined]
 
 			await store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
