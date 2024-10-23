@@ -134,7 +134,9 @@ class ChatController extends AEnvironmentAwareController {
 			if ($actorDisplayName) {
 				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
-			return [Attendee::ACTOR_GUESTS, $this->participant->getAttendee()->getActorId()];
+			/** @var Attendee::ACTOR_GUESTS|Attendee::ACTOR_EMAILS $actorType */
+			$actorType = $this->participant->getAttendee()->getActorType();
+			return [$actorType, $this->participant->getAttendee()->getActorId()];
 		}
 
 		if ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {

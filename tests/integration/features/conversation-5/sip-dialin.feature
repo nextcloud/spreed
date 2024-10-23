@@ -27,36 +27,36 @@ Feature: conversation-2/sip-dialin
     # Guests don't get a PIN as they can not be recognized and are deleted on leave
     When user "guest" joins room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
-      | participantType | inCall   | actorType | actorId           | attendeePin |
-      | 4               | 0        | emails    | test@example.tld  | **PIN**     |
-      | 4               | 0        | guests    | "guest"           |             |
-      | 1               | 0        | users     | participant1      | **PIN**     |
-      | 3               | 0        | users     | participant2      | **PIN**     |
-      | 3               | 0        | users     | participant3      | **PIN**     |
+      | participantType | inCall   | actorType | actorId                  | attendeePin |
+      | 4               | 0        | emails    | SHA256(test@example.tld) | **PIN**     |
+      | 4               | 0        | guests    | "guest"                  |             |
+      | 1               | 0        | users     | participant1             | **PIN**     |
+      | 3               | 0        | users     | participant2             | **PIN**     |
+      | 3               | 0        | users     | participant3             | **PIN**     |
     When user "participant2" sets SIP state for room "room" to "disabled" with 403 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
-      | participantType | inCall   | actorType | actorId           | attendeePin |
-      | 4               | 0        | emails    | test@example.tld  | **PIN**     |
-      | 4               | 0        | guests    | "guest"           |             |
-      | 1               | 0        | users     | participant1      | **PIN**     |
-      | 3               | 0        | users     | participant2      | **PIN**     |
-      | 3               | 0        | users     | participant3      | **PIN**     |
+      | participantType | inCall   | actorType | actorId                  | attendeePin |
+      | 4               | 0        | emails    | SHA256(test@example.tld) | **PIN**     |
+      | 4               | 0        | guests    | "guest"                  |             |
+      | 1               | 0        | users     | participant1             | **PIN**     |
+      | 3               | 0        | users     | participant2             | **PIN**     |
+      | 3               | 0        | users     | participant3             | **PIN**     |
     When user "participant1" sets SIP state for room "room" to "disabled" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
-      | participantType | inCall   | actorType | actorId           | attendeePin |
-      | 4               | 0        | emails    | test@example.tld  |             |
-      | 4               | 0        | guests    | "guest"           |             |
-      | 1               | 0        | users     | participant1      |             |
-      | 3               | 0        | users     | participant2      |             |
-      | 3               | 0        | users     | participant3      |             |
+      | participantType | inCall   | actorType | actorId                  | attendeePin |
+      | 4               | 0        | emails    | SHA256(test@example.tld) |             |
+      | 4               | 0        | guests    | "guest"                  |             |
+      | 1               | 0        | users     | participant1             |             |
+      | 3               | 0        | users     | participant2             |             |
+      | 3               | 0        | users     | participant3             |             |
     When user "participant1" sets SIP state for room "room" to "no pin" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
-      | participantType | inCall   | actorType | actorId           | attendeePin |
-      | 4               | 0        | emails    | test@example.tld  | **PIN**     |
-      | 4               | 0        | guests    | "guest"           |             |
-      | 1               | 0        | users     | participant1      | **PIN**     |
-      | 3               | 0        | users     | participant2      | **PIN**     |
-      | 3               | 0        | users     | participant3      | **PIN**     |
+      | participantType | inCall   | actorType | actorId                  | attendeePin |
+      | 4               | 0        | emails    | SHA256(test@example.tld) | **PIN**     |
+      | 4               | 0        | guests    | "guest"                  |             |
+      | 1               | 0        | users     | participant1             | **PIN**     |
+      | 3               | 0        | users     | participant2             | **PIN**     |
+      | 3               | 0        | users     | participant3             | **PIN**     |
 
   Scenario: Non-SIP admin tries to enable SIP
     Given the following "spreed" app config is set

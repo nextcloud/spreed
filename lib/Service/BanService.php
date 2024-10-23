@@ -49,7 +49,7 @@ class BanService {
 			throw new \InvalidArgumentException('room');
 		}
 
-		if (!in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS, 'ip'], true)) {
+		if (!in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS, Attendee::ACTOR_EMAILS, 'ip'], true)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
@@ -81,7 +81,7 @@ class BanService {
 
 		/** @var ?string $displayname */
 		$displayname = null;
-		if (in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS], true)) {
+		if (in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_EMAILS, Attendee::ACTOR_GUESTS], true)) {
 			try {
 				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
 				$displayname = $bannedParticipant->getAttendee()->getDisplayName();
@@ -120,7 +120,7 @@ class BanService {
 				// No failure if the banned actor is not in the room yet/anymore
 			}
 		}
-		
+
 		return $this->banMapper->insert($ban);
 	}
 
@@ -156,14 +156,19 @@ class BanService {
 			$actorType = Attendee::ACTOR_USERS;
 			$actorId = $userId;
 		} else {
-			$actorType = Attendee::ACTOR_GUESTS;
-			$actorId = $this->talkSession->getGuestActorIdForRoom($room->getToken());
+			$actorId = $this->talkSession->getAuthedEmailActorIdForRoom($room->getToken());
+			if ($actorId !== null) {
+				$actorType = Attendee::ACTOR_EMAILS;
+			} else {
+				$actorId = $this->talkSession->getGuestActorIdForRoom($room->getToken());
+				$actorType = Attendee::ACTOR_GUESTS;
+			}
 		}
 
 		if ($actorId !== null) {
 			try {
 				$ban = $this->banMapper->findForBannedActorAndRoom($actorType, $actorId, $room->getId());
-				if ($actorType === Attendee::ACTOR_GUESTS) {
+				if (in_array($actorType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_EMAILS], true)) {
 					$this->copyBanForRemoteAddress($ban, $this->request->getRemoteAddress());
 				}
 				throw new ForbiddenException('actor');
@@ -174,7 +179,6 @@ class BanService {
 		if ($actorType !== Attendee::ACTOR_GUESTS) {
 			return;
 		}
-
 
 		$ipBans = $this->banMapper->findByRoomId($room->getId(), 'ip');
 

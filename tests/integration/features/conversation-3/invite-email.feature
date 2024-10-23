@@ -11,9 +11,9 @@ Feature: conversation/invite-email
     # Ref https://github.com/nextcloud/calendar/pull/5380
     When user "participant1" adds email "test@example.tld" to room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
-      | participantType | inCall   | actorType | actorId           |
-      | 4               | 0        | emails    | test@example.tld  |
-      | 1               | 0        | users     | participant1      |
+      | participantType | inCall   | actorType | actorId                  | invitedActorId    |
+      | 4               | 0        | emails    | SHA256(test@example.tld) | test@example.tld  |
+      | 1               | 0        | users     | participant1             | ABSENT            |
     # Reinvite all emails
     When user "participant1" resends invite for room "room" with 200 (v4)
     # Reinvite only one

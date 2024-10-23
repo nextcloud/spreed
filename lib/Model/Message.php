@@ -174,6 +174,7 @@ class Message {
 				Attendee::ACTOR_USERS,
 				Attendee::ACTOR_FEDERATED_USERS,
 				Attendee::ACTOR_GUESTS,
+				Attendee::ACTOR_EMAILS,
 				Attendee::ACTOR_BOTS,
 			], true);
 	}

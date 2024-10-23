@@ -806,12 +806,7 @@ class ParticipantService {
 		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
 	}
 
-	/**
-	 * @param Room $room
-	 * @param string $email
-	 * @return Participant
-	 */
-	public function inviteEmailAddress(Room $room, string $email): Participant {
+	public function inviteEmailAddress(Room $room, string $actorId, string $email): Participant {
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
 			$lastMessage = (int)$room->getLastMessage()->getId();
@@ -820,7 +815,12 @@ class ParticipantService {
 		$attendee = new Attendee();
 		$attendee->setRoomId($room->getId());
 		$attendee->setActorType(Attendee::ACTOR_EMAILS);
-		$attendee->setActorId($email);
+		$attendee->setActorId($actorId);
+		$attendee->setInvitedCloudId($email);
+		$attendee->setAccessToken($this->secureRandom->generate(
+			FederationManager::TOKEN_LENGTH,
+			ISecureRandom::CHAR_HUMAN_READABLE
+		));
 
 		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
 			&& $this->talkConfig->isSIPConfigured()) {
@@ -1724,13 +1724,8 @@ class ParticipantService {
 		}, $attendees);
 	}
 
-	public function getGuestCount(Room $room, ?\DateTime $maxLastJoined = null): int {
-		$maxLastJoinedTimestamp = null;
-		if ($maxLastJoined !== null) {
-			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
-		}
-
-		return $this->attendeeMapper->getActorsCountByType($room->getId(), Attendee::ACTOR_GUESTS, $maxLastJoinedTimestamp);
+	public function getActorsCountByType(Room $room, string $actorType, int $maxLastJoined): int {
+		return $this->attendeeMapper->getActorsCountByType($room->getId(), $actorType, $maxLastJoined);
 	}
 
 	/**

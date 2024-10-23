@@ -67,6 +67,8 @@ class SearchPlugin implements ISearchPlugin {
 		$groupIds = [];
 		/** @var array<string, string> $cloudIds */
 		$cloudIds = [];
+		/** @var array<string, string> $emailAttendees */
+		$emailAttendees = [];
 		/** @var list<Attendee> $guestAttendees */
 		$guestAttendees = [];
 
@@ -82,6 +84,8 @@ class SearchPlugin implements ISearchPlugin {
 				$attendee = $participant->getAttendee();
 				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 					$guestAttendees[] = $attendee;
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_EMAILS) {
+					$emailAttendees[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$userIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
@@ -95,6 +99,7 @@ class SearchPlugin implements ISearchPlugin {
 		$this->searchUsers($search, $userIds, $searchResult);
 		$this->searchGroups($search, $groupIds, $searchResult);
 		$this->searchGuests($search, $guestAttendees, $searchResult);
+		$this->searchEmails($search, $emailAttendees, $searchResult);
 		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
 
 		return false;
@@ -300,6 +305,53 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
+	/**
+	 * @param string $search
+	 * @param array<string, string> $attendees
+	 * @param ISearchResult $searchResult
+	 */
+	protected function searchEmails(string $search, array $attendees, ISearchResult $searchResult): void {
+		if (empty($attendees)) {
+			$type = new SearchResultType('emails');
+			$searchResult->addResultSet($type, [], []);
+			return;
+		}
+
+		$search = strtolower($search);
+		$currentSessionHash = null;
+		if (!$this->userId) {
+			// Best effort: Might not work on guests that reloaded but not worth too much performance impact atm.
+			$currentSessionHash = false; // FIXME sha1($this->talkSession->getSessionForRoom($this->room->getToken()));
+		}
+
+		$matches = $exactMatches = [];
+		foreach ($attendees as $actorId => $displayName) {
+			if ($currentSessionHash === $actorId) {
+				// Do not suggest the current guest
+				continue;
+			}
+
+			$displayName = $displayName ?: $this->l->t('Guest');
+			if ($search === '') {
+				$matches[] = $this->createEmailResult($actorId, $displayName);
+				continue;
+			}
+
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createEmailResult($actorId, $displayName);
+				continue;
+			}
+
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createEmailResult($actorId, $displayName);
+				continue;
+			}
+		}
+
+		$type = new SearchResultType('emails');
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
 	protected function createResult(string $type, string $uid, string $name): array {
 		if ($type === 'user' && $name === '') {
 			$name = $this->userManager->getDisplayName($uid) ?? $uid;
@@ -330,6 +382,16 @@ class SearchPlugin implements ISearchPlugin {
 			'value' => [
 				'shareType' => 'guest',
 				'shareWith' => 'guest/' . $actorId,
+			],
+		];
+	}
+
+	protected function createEmailResult(string $actorId, string $name): array {
+		return [
+			'label' => $name,
+			'value' => [
+				'shareType' => 'email',
+				'shareWith' => 'email/' . $actorId,
 			],
 		];
 	}

@@ -201,7 +201,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			}
 
 			$displayName = $message->getActorDisplayName();
-			if ($message->getActorType() === Attendee::ACTOR_GUESTS) {
+			if (in_array($message->getActorType(), [Attendee::ACTOR_GUESTS, Attendee::ACTOR_EMAILS], true)) {
 				if ($displayName === '') {
 					$displayName = $this->l->t('Guest');
 				} else {

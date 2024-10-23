@@ -13,6 +13,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -50,6 +51,7 @@ use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\Bruteforce\IThrottler;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class PageController extends Controller {
@@ -96,9 +98,9 @@ class PageController extends Controller {
 	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'talkRoomToken')]
-	public function showCall(string $token): Response {
+	public function showCall(string $token, string $email = '', string $access = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
-		return $this->index($token);
+		return $this->pageHandler($token, email: $email, accessToken: $access);
 	}
 
 	/**
@@ -113,7 +115,7 @@ class PageController extends Controller {
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
-		return $this->pageHandler($token, '', $password);
+		return $this->pageHandler($token, password: $password);
 	}
 
 	#[NoCSRFRequired]
@@ -152,11 +154,18 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	protected function pageHandler(string $token = '', string $callUser = '', string $password = ''): Response {
+	protected function pageHandler(
+		string $token = '',
+		string $callUser = '',
+		string $password = '',
+		string $email = '',
+		#[SensitiveParameter]
+		string $accessToken = '',
+	): Response {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			return $this->guestEnterRoom($token, $password);
+			return $this->guestEnterRoom($token, $password, $email, $accessToken);
 		}
 
 		$throttle = false;
@@ -332,12 +341,23 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @param string $token
-	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	protected function guestEnterRoom(string $token, string $password): Response {
+	protected function guestEnterRoom(
+		string $token,
+		string $password,
+		string $email,
+		#[SensitiveParameter]
+		string $accessToken,
+	): Response {
+		if ($email && $accessToken) {
+			return $this->invitedEmail(
+				$token,
+				$email,
+				$accessToken,
+			);
+		}
 		try {
 			$room = $this->manager->getRoomByToken($token);
 			if ($room->getType() !== Room::TYPE_PUBLIC) {
@@ -378,6 +398,63 @@ class PageController extends Controller {
 				$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 				return $response;
 			}
+		}
+
+		$this->publishInitialStateForGuest();
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
+
+		$response = new PublicTemplateResponse($this->appName, 'index', [
+			'id-app-content' => '#content-vue',
+			'id-app-navigation' => null,
+		]);
+
+		$response->setFooterVisible(false);
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('*');
+		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedWorkerSrcDomain('blob:');
+		$csp->addAllowedWorkerSrcDomain("'self'");
+		$csp->addAllowedChildSrcDomain('blob:');
+		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedScriptDomain('blob:');
+		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedConnectDomain('blob:');
+		$csp->addAllowedConnectDomain("'self'");
+		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+		$response->setContentSecurityPolicy($csp);
+		return $response;
+	}
+
+	/**
+	 * @return TemplateResponse|RedirectResponse
+	 * @throws HintException
+	 */
+	protected function invitedEmail(
+		string $token,
+		string $email,
+		#[SensitiveParameter]
+		string $accessToken,
+	): Response {
+		try {
+			$actorId = hash('sha256', $email);
+			$this->manager->getRoomByAccessToken(
+				$token,
+				Attendee::ACTOR_EMAILS,
+				$actorId,
+				$accessToken,
+			);
+			$this->talkSession->renewSessionId();
+			$this->talkSession->setAuthedEmailActorIdForRoom($token, $actorId);
+		} catch (RoomNotFoundException) {
+			$redirectUrl = $this->url->linkToRoute('spreed.Page.index');
+			if ($token) {
+				$redirectUrl = $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]);
+			}
+			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
+				'redirect_url' => $redirectUrl,
+			]));
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			return $response;
 		}
 
 		$this->publishInitialStateForGuest();
