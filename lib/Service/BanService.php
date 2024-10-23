@@ -176,7 +176,7 @@ class BanService {
 			}
 		}
 
-		if (!in_array($actorType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_EMAILS], true)) {
+		if ($actorType !== Attendee::ACTOR_GUESTS) {
 			return;
 		}
 
