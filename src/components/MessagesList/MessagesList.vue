@@ -1145,7 +1145,7 @@ export default {
 				return false // element not found
 			}
 
-			if (element.offsetParent === null) {
+			if (this.isChatVisible && element.offsetParent === null) {
 				console.debug('Message to focus is hidden, scrolling to its nearest visible parent', messageId)
 				element = element.closest('ul[style="display: none;"]').parentElement
 			}
@@ -1153,6 +1153,8 @@ export default {
 			console.debug('Scrolling to a focused message programmatically')
 			this.isFocusingMessage = true
 
+			// TODO: doesn't work if chat is hidden. Need to store
+			// delayed 'shouldScroll' and call after chat is visible
 			element.scrollIntoView({
 				behavior: smooth ? 'smooth' : 'auto',
 				block: 'center',
