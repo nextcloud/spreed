@@ -24,7 +24,7 @@ use OCP\AppFramework\Http\DataResponse;
  */
 class PollController {
 	public function __construct(
-		protected ProxyRequest  $proxy,
+		protected ProxyRequest $proxy,
 		protected UserConverter $userConverter,
 	) {
 	}
