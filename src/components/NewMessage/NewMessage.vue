@@ -211,7 +211,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.js'
-import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { searchPossibleMentions } from '../../services/mentionsService.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -925,54 +925,58 @@ export default {
 		},
 
 		async autoComplete(search, callback) {
-			const response = await searchPossibleMentions(this.token, search)
-			if (!response) {
-				// It was not possible to get the candidate mentions, so just keep the previous ones.
-				return
-			}
-
-			const possibleMentions = response.data.ocs.data
-
-			possibleMentions.forEach(possibleMention => {
-				// Set icon for candidate mentions that are not for users.
-				if (possibleMention.source === 'calls') {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, this.isDarkTheme)
-					possibleMention.subline = possibleMention?.details ? possibleMention.details : t('spreed', 'Everyone')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
-					possibleMention.icon = 'icon-group-forced-white'
-					possibleMention.subline = t('spreed', 'Group')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.subline = t('spreed', 'Guest')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = getUserProxyAvatarOcsUrl(this.token, possibleMention.id, this.isDarkTheme, 64)
-				} else {
-					// The avatar is automatically shown for users, but an icon
-					// is nevertheless required as fallback.
-					possibleMention.icon = 'icon-user-forced-white'
-					if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
-						// Prevent local users avatars in federated room to be overwritten
-						possibleMention.iconUrl = generateUrl('avatar/{userId}/64' + (this.isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
-					}
-					// Convert status properties to an object.
-					if (possibleMention.status) {
-						possibleMention.status = {
-							status: possibleMention.status,
-							icon: possibleMention.statusIcon,
-						}
-						possibleMention.subline = possibleMention.statusMessage
-					}
+			try {
+				const response = await searchPossibleMentions(this.token, search)
+				if (!response) {
+					// It was not possible to get the candidate mentions, so just keep the previous ones.
+					return
 				}
 
-				// Caching the user id data for each possible mention
-				// mentionId should be the default match since 'federation-v1'
-				possibleMention.id = possibleMention.mentionId ?? possibleMention.id
-				this.userData[possibleMention.id] = possibleMention
-			})
+				const possibleMentions = response.data.ocs.data
 
-			callback(possibleMentions)
+				possibleMentions.forEach(possibleMention => {
+					// Set icon for candidate mentions that are not for users.
+					if (possibleMention.source === 'calls') {
+						possibleMention.icon = 'icon-user-forced-white'
+						possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, this.isDarkTheme)
+						possibleMention.subline = possibleMention?.details ? possibleMention.details : t('spreed', 'Everyone')
+					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
+						possibleMention.icon = 'icon-group-forced-white'
+						possibleMention.subline = t('spreed', 'Group')
+					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
+						possibleMention.icon = 'icon-user-forced-white'
+						possibleMention.subline = t('spreed', 'Guest')
+					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
+						possibleMention.icon = 'icon-user-forced-white'
+						possibleMention.iconUrl = getUserProxyAvatarOcsUrl(this.token, possibleMention.id, this.isDarkTheme, 64)
+					} else {
+						// The avatar is automatically shown for users, but an icon
+						// is nevertheless required as fallback.
+						possibleMention.icon = 'icon-user-forced-white'
+						if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
+							// Prevent local users avatars in federated room to be overwritten
+							possibleMention.iconUrl = generateUrl('avatar/{userId}/64' + (this.isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
+						}
+						// Convert status properties to an object.
+						if (possibleMention.status) {
+							possibleMention.status = {
+								status: possibleMention.status,
+								icon: possibleMention.statusIcon,
+							}
+							possibleMention.subline = possibleMention.statusMessage
+						}
+					}
+
+					// Caching the user id data for each possible mention
+					// mentionId should be the default match since 'federation-v1'
+					possibleMention.id = possibleMention.mentionId ?? possibleMention.id
+					this.userData[possibleMention.id] = possibleMention
+				})
+
+				callback(possibleMentions)
+			} catch (error) {
+				console.debug('Error while searching possible mentions: ', error)
+			}
 		},
 
 		focusInput() {
