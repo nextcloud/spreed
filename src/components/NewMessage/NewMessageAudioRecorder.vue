@@ -54,6 +54,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
@@ -74,6 +75,13 @@ export default {
 	},
 
 	emits: ['recording', 'audio-file'],
+
+	setup() {
+		const encoderReady = useAudioEncoder()
+		return {
+			encoderReady,
+		}
+	},
 
 	data() {
 		return {
@@ -125,10 +133,6 @@ export default {
 			return t('spreed', 'Dismiss recording')
 		},
 
-		encoderReady() {
-			return this.$store.getters.encoderReady
-		},
-
 		canStartRecording() {
 			if (this.disabled) {
 				return false
@@ -139,14 +143,9 @@ export default {
 	},
 
 	watch: {
-
 		isRecording(newValue) {
 			console.debug('isRecording', newValue)
 		},
-	},
-
-	mounted() {
-		this.$store.dispatch('initializeAudioEncoder')
 	},
 
 	beforeDestroy() {
