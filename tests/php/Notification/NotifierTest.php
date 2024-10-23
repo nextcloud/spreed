@@ -921,22 +921,26 @@ class NotifierTest extends TestCase {
 		$comment->expects($this->any())
 			->method('getActorId')
 			->willReturn('random-hash');
+		$comment->expects($this->any())
+			->method('getActorType')
+			->willReturn(Attendee::ACTOR_GUESTS);
 		$this->commentsManager->expects($this->once())
 			->method('get')
 			->with('23')
 			->willReturn($comment);
 
 		if (is_string($guestName)) {
+			$participant2 = $this->createMock(Participant::class);
 			$this->participantService->method('getParticipantByActor')
 				->with($room, Attendee::ACTOR_GUESTS, 'random-hash')
-				->willReturn($participant);
+				->willReturn($participant2);
 
 			$attendee = Attendee::fromRow([
 				'actor_type' => 'guests',
 				'actor_id' => 'random-hash',
 				'display_name' => $guestName,
 			]);
-			$participant->method('getAttendee')
+			$participant2->method('getAttendee')
 				->willReturn($attendee);
 		} else {
 			$this->participantService->method('getParticipantByActor')
@@ -968,6 +972,9 @@ class NotifierTest extends TestCase {
 		$chatMessage->expects($this->any())
 			->method('getActorId')
 			->willReturn('random-hash');
+		$chatMessage->expects($this->any())
+			->method('getActorType')
+			->willReturn(Attendee::ACTOR_GUESTS);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')

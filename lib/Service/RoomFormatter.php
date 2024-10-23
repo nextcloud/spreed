@@ -336,6 +336,9 @@ class RoomFormatter {
 			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 		} else {
+			if ($attendee->getActorType() === Attendee::ACTOR_EMAILS) {
+				$roomData['invitedActorId'] = $attendee->getInvitedCloudId();
+			}
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
 
