@@ -217,7 +217,6 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.js'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
@@ -269,6 +268,15 @@ export default {
 		},
 
 		/**
+		 * If component is used in a dialog, submit should emit an event to parent
+		 * instead of posting the message
+		 */
+		dialog: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
 		 * Broadcast messages to all breakout rooms of a given conversation.
 		 */
 		broadcast: {
@@ -293,7 +301,7 @@ export default {
 		},
 	},
 
-	emits: ['sent', 'failure', 'upload'],
+	emits: ['submit', 'dismiss'],
 
 	expose: ['focusInput'],
 
@@ -303,7 +311,6 @@ export default {
 		const { autoComplete, userData } = useChatMentions(token)
 		const { createTemporaryMessage } = useTemporaryMessage()
 		return {
-			breakoutRoomsStore: useBreakoutRoomsStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			settingsStore: useSettingsStore(),
 			supportTypingStatus,
@@ -682,21 +689,7 @@ export default {
 			this.debouncedUpdateChatInput.clear()
 			this.chatExtrasStore.removeChatInput(this.token)
 
-			if (this.upload) {
-				// remove Quote component
-				this.chatExtrasStore.removeParentIdToReply(this.token)
-
-				if (this.$store.getters.getInitialisedUploads(this.currentUploadId).length) {
-					// If dialog contains files to upload, delegate sending
-					this.$emit('upload', { caption: this.text, options })
-					return
-				} else {
-					// Dismiss dialog, process as normal message sending otherwise
-					this.$emit('sent')
-				}
-			}
-
-			if (this.hasText) {
+			if (this.hasText || (this.dialog && this.upload)) {
 				const temporaryMessage = this.createTemporaryMessage({
 					message: this.text.trim(),
 					token: this.token,
@@ -707,8 +700,8 @@ export default {
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
-				this.broadcast
-					? await this.broadcastMessage(this.token, temporaryMessage.message)
+				this.dialog
+					? await this.submitMessage(this.token, temporaryMessage, options)
 					: await this.postMessage(this.token, temporaryMessage, options)
 				this.resetTypingIndicator()
 			}
@@ -718,20 +711,14 @@ export default {
 		async postMessage(token, temporaryMessage, options) {
 			try {
 				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
-				this.$emit('sent')
-			} catch {
-				this.$emit('failure')
+			} catch (e) {
+				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async broadcastMessage(token, message) {
-			try {
-				await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message })
-				this.$emit('sent')
-			} catch {
-				this.$emit('failure')
-			}
+		async submitMessage(token, temporaryMessage, options) {
+			this.$emit('submit', { token, temporaryMessage, options })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
@@ -759,7 +746,7 @@ export default {
 				// refocus input as the user might want to type further
 				this.focusInput()
 			} catch {
-				this.$emit('failure')
+				this.$emit('dismiss')
 				showError(t('spreed', 'The message could not be edited'))
 			}
 		},
