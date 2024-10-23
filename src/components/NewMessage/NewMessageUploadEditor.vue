@@ -57,7 +57,7 @@
 				<NcButton type="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton ref="submitButton" type="primary" @click="handleUpload({ caption: null, options: null})">
+				<NcButton ref="submitButton" type="primary" @click="handleLegacyUpload">
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>
@@ -66,12 +66,12 @@
 				role="region"
 				class="upload-editor__textfield"
 				upload
+				dialog
 				:token="token"
 				:container="modalContainerId"
 				:aria-label="t('spreed', 'Post message')"
-				@upload="handleUpload"
-				@sent="handleDismiss"
-				@failure="handleDismiss" />
+				@submit="handleUpload"
+				@dismiss="handleDismiss" />
 		</div>
 	</NcModal>
 </template>
@@ -190,8 +190,33 @@ export default {
 			this.$store.dispatch('discardUpload', this.currentUploadId)
 		},
 
-		handleUpload({ caption, options }) {
-			this.$store.dispatch('uploadFiles', { token: this.token, uploadId: this.currentUploadId, caption, options })
+		handleLegacyUpload() {
+			this.$store.dispatch('uploadFiles', {
+				token: this.token,
+				uploadId: this.currentUploadId,
+				caption: null,
+				options: null,
+			})
+		},
+
+		async handleUpload({ token, temporaryMessage, options }) {
+			if (this.files.length) {
+				// Create a share with optional caption
+				await this.$store.dispatch('uploadFiles', {
+					token,
+					uploadId: this.currentUploadId,
+					caption: temporaryMessage.message,
+					options,
+				})
+			} else {
+				// Proceed as a normal message
+				try {
+					await this.$store.dispatch('discardUpload', this.currentUploadId)
+					await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
+				} catch (e) {
+					console.error(e)
+				}
+			}
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,

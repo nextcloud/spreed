@@ -105,7 +105,9 @@
 		<!-- Send message dialog -->
 		<SendMessageDialog v-if="isSendMessageDialogOpened"
 			:token="mainToken"
+			:dialog-title="t('spreed', 'Send a message to all breakout rooms')"
 			:broadcast="true"
+			@submit="broadcastMessage"
 			@close="isSendMessageDialogOpened = false" />
 	</div>
 </template>
@@ -120,6 +122,7 @@ import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
+import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -276,6 +279,12 @@ export default {
 				token: this.mainToken,
 			})
 		},
+
+		async broadcastMessage({ token, temporaryMessage, options }) {
+			await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message: temporaryMessage.message })
+			showSuccess(t('spreed', 'The message was sent to all breakout rooms'))
+			this.isSendMessageDialogOpened = false
+		}
 	},
 }
 </script>

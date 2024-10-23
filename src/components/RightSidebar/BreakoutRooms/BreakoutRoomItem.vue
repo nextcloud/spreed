@@ -46,8 +46,9 @@
 				</NcActions>
 				<!-- Send message dialog -->
 				<SendMessageDialog v-if="isDialogOpened"
-					:display-name="roomName"
+					:dialog-title="dialogTitle"
 					:token="roomToken"
+					@submit="sentMessageToRoom"
 					@close="isDialogOpened = false" />
 			</template>
 		</div>
@@ -65,7 +66,7 @@ import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
+import { showSuccess, showWarning } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -143,6 +144,10 @@ export default {
 
 		roomName() {
 			return this.isParticipantsEditor ? this.name : this.breakoutRoom?.displayName
+		},
+
+		dialogTitle() {
+			return t('spreed', 'Send a message to "{roomName}"', { roomName: this.roomName })
 		},
 
 		roomToken() {
@@ -224,6 +229,16 @@ export default {
 
 		toggleParticipantsVisibility() {
 			this.showParticipants = !this.showParticipants
+		},
+
+		async sentMessageToRoom({ token, temporaryMessage, options }) {
+			try {
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
+				showSuccess(t('spreed', 'The message was sent to "{roomName}"', { roomName: this.roomName }))
+				this.isDialogOpened = false
+			} catch (e) {
+				console.error(e)
+			}
 		},
 	},
 }
