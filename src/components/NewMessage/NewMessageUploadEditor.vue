@@ -164,10 +164,7 @@ export default {
 		},
 
 		voiceMessageLocalURL() {
-			if (!this.firstFile?.file?.localURL) {
-				return ''
-			}
-			return this.firstFile.file.localURL
+			return this.$store.getters.getLocalUrl(this.firstFile.temporaryMessage.referenceId)
 		},
 	},
 

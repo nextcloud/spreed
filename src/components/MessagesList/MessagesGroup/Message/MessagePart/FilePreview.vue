@@ -225,6 +225,7 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
+					localUrl: this.fallbackLocalUrl,
 				}
 			}
 			return {
