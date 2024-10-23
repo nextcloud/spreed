@@ -1534,7 +1534,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string$apiVersion): void {
+	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($toRemove === 'stranger') {
 			$attendeeId = 123456789;
 		} else {
@@ -1559,7 +1559,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userRemovesAttendeeFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string$apiVersion): void {
+	public function userRemovesAttendeeFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($actorId === 'stranger') {
 			$attendeeId = 123456789;
 		} else {

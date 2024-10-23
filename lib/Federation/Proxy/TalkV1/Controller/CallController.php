@@ -26,7 +26,7 @@ use OCP\AppFramework\Http\DataResponse;
  */
 class CallController {
 	public function __construct(
-		protected ProxyRequest  $proxy,
+		protected ProxyRequest $proxy,
 		protected UserConverter $userConverter,
 	) {
 	}

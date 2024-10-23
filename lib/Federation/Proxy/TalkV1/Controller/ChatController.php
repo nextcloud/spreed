@@ -34,7 +34,7 @@ class ChatController {
 	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
-		protected ProxyRequest  $proxy,
+		protected ProxyRequest $proxy,
 		protected UserConverter $userConverter,
 		protected ParticipantService $participantService,
 		protected RoomFormatter $roomFormatter,
