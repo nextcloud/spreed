@@ -8,6 +8,7 @@
 		:class="{
 			'top-bar--sidebar': isSidebar,
 			'top-bar--in-call': isInCall,
+			'top-bar--authorised': getUserId,
 		}">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
@@ -382,6 +383,12 @@ export default {
 			margin-left: 0;
 		}
 	}
+
+	&--authorised {
+		.conversation-icon {
+			margin-left: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+		}
+	}
 }
 
 .top-bar__wrapper {
@@ -391,10 +398,6 @@ export default {
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
-}
-
-.conversation-icon {
-	margin-left: 48px;
 }
 
 .conversation-header {
