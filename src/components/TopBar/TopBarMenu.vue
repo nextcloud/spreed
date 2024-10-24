@@ -452,7 +452,7 @@ export default {
 		},
 
 		changeView() {
-			this.callViewStore.setCallViewMode({ isGrid: !this.isGrid, clearLast: false })
+			this.callViewStore.setCallViewMode({ token: this.token, isGrid: !this.isGrid, clearLast: false })
 			this.callViewStore.setSelectedVideoPeerId(null)
 		},
 

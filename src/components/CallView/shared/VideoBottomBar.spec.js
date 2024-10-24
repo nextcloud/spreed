@@ -527,7 +527,7 @@ describe('VideoBottomBar.vue', () => {
 
 				test('method is called after click', async () => {
 					callViewStore.setSelectedVideoPeerId(PEER_ID)
-					callViewStore.startPresentation()
+					callViewStore.startPresentation(TOKEN)
 					expect(callViewStore.selectedVideoPeerId).toBe(PEER_ID)
 					expect(callViewStore.presentationStarted).toBeTruthy()
 
