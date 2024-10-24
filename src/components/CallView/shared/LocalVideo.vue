@@ -339,7 +339,7 @@ export default {
 
 		handleStopFollowing() {
 			this.callViewStore.setSelectedVideoPeerId(null)
-			this.callViewStore.stopPresentation()
+			this.callViewStore.stopPresentation(this.token)
 		},
 
 		updateContainerAspectRatio([{ target }]) {

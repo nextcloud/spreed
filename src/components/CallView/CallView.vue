@@ -447,19 +447,19 @@ export default {
 		callParticipantModelsWithScreen(newValue, previousValue) {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
-				this.callViewStore.startPresentation()
+				this.callViewStore.startPresentation(this.token)
 			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.callViewStore.stopPresentation()
+				this.callViewStore.stopPresentation(this.token)
 			}
 		},
 		showLocalScreen(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
-				this.callViewStore.startPresentation()
+				this.callViewStore.startPresentation(this.token)
 			} else if (this.callParticipantModelsWithScreen.length === 0 && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.callViewStore.stopPresentation()
+				this.callViewStore.stopPresentation(this.token)
 			}
 		},
 		hasLocalVideo(newValue) {
@@ -681,12 +681,13 @@ export default {
 
 			if (this.callViewStore.presentationStarted) {
 				this.callViewStore.setCallViewMode({
+					token: this.token,
 					isGrid: false,
 					isStripeOpen: false,
 					clearLast: false,
 				})
 			} else {
-				this.callViewStore.startPresentation()
+				this.callViewStore.startPresentation(this.token)
 			}
 			this.callViewStore.setSelectedVideoPeerId(null)
 			this.screens.splice(index, 1)
@@ -718,7 +719,7 @@ export default {
 				return
 			}
 			this.callViewStore.setSelectedVideoPeerId(peerId)
-			this.callViewStore.startPresentation()
+			this.callViewStore.startPresentation(this.token)
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
@@ -727,7 +728,7 @@ export default {
 			}
 			// Deselect possible selected video
 			this.callViewStore.setSelectedVideoPeerId('local')
-			this.callViewStore.startPresentation()
+			this.callViewStore.startPresentation(this.token)
 		},
 
 		async fetchPeers() {
