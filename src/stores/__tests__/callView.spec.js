@@ -38,17 +38,25 @@ describe('callViewStore', () => {
 		function testDefaultGridState(type, state, browserStorageState = null) {
 			// Arrange
 			BrowserStorage.getItem.mockReturnValueOnce(browserStorageState)
+			const conversation = { token: TOKEN, type }
 			// using commit instead of dispatch because the action also processes participants
-			vuexStore.commit('addConversation', { token: TOKEN, type })
+			vuexStore.commit('addConversation', conversation)
 
 			// Act
-			callViewStore.handleJoinCall({ token: TOKEN })
+			callViewStore.handleJoinCall(conversation)
 
 			// Assert
 			expect(BrowserStorage.getItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY)
 			expect(callViewStore.isGrid).toBe(state)
 			expect(callViewStore.isStripeOpen).toBeTruthy()
 		}
+
+		it('does not proceed without conversation object', () => {
+			// Act
+			callViewStore.handleJoinCall()
+			// Assert
+			expect(BrowserStorage.getItem).not.toHaveBeenCalledWith(BROWSER_STORAGE_KEY)
+		})
 
 		it('restores grid state from BrowserStorage when joining call (true)', () => {
 			// Arrange

@@ -540,6 +540,10 @@ describe('participantsStore', () => {
 		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
 		beforeEach(async () => {
+			testStoreConfig.getters.conversation = () => jest.fn().mockReturnValue({
+				token: TOKEN,
+				type: 3,
+			})
 			store = new Vuex.Store(testStoreConfig)
 			store.dispatch('addParticipant', {
 				token: TOKEN,
@@ -875,6 +879,10 @@ describe('participantsStore', () => {
 			testStoreConfig.getters.getParticipantIdentifier = () => jest.fn().mockReturnValue({
 				attendeeId: 1,
 				sessionId: 'session-id-1',
+			})
+			testStoreConfig.getters.conversation = () => jest.fn().mockReturnValue({
+				token: TOKEN,
+				type: 3,
 			})
 			store = new Vuex.Store(testStoreConfig)
 
