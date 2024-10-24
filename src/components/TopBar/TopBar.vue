@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="top-bar" :class="{ 'in-call': isInCall }">
+	<div class="top-bar" :class="{ 'in-call': isInCall, 'top-bar--authorised': getUserId }">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -307,6 +307,10 @@ export default {
 		hasReactionSupport() {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
+
+		getUserId() {
+			return this.$store.getters.getUserId()
+		},
 	},
 
 	watch: {
@@ -461,10 +465,12 @@ export default {
 			color: var(--color-primary-element);
 		}
 	}
-}
 
-.conversation-icon {
-	margin-left: 48px;
+	&--authorised {
+		.conversation-icon {
+			margin-left: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+		}
+	}
 }
 
 .conversation-header {
