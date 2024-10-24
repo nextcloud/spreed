@@ -127,7 +127,9 @@ export default {
 		},
 
 		shareFromNextcloudLabel() {
-			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
+			return IS_DESKTOP
+				? t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
+				: t('spreed', 'Share from Files')
 		},
 	},
 
