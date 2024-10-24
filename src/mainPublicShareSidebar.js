@@ -43,18 +43,8 @@ Vue.use(Vuex)
 
 const pinia = createPinia()
 
-/**
- *
- */
-function adjustLayout() {
-	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
-}
-
-adjustLayout()
-
 // An "isOpen" boolean should be passed to the component, but as it is a
 // primitive it would not be reactive; it needs to be wrapped in an object and
-
 // that object passed to the component to get reactivity.
 const sidebarState = reactive({
 	isOpen: false,
