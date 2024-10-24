@@ -477,6 +477,8 @@ export default {
 
 			if (to.hash === '#direct-call') {
 				emit('talk:media-settings:show')
+			} else if (to.hash === '#settings') {
+				emit('show-conversation-settings', { token: this.token })
 			}
 		})
 
@@ -504,6 +506,8 @@ export default {
 
 		if (this.$route.hash === '#direct-call') {
 			emit('talk:media-settings:show')
+		} else if (this.$route.hash === '#settings') {
+			emit('show-conversation-settings', { token: this.token })
 		}
 
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
