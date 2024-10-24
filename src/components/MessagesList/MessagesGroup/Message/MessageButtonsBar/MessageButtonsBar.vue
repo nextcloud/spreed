@@ -106,13 +106,21 @@
 						</template>
 						{{ t('spreed', 'Mark as unread') }}
 					</NcActionButton>
-					<NcActionLink v-if="linkToFile"
-						:href="linkToFile">
-						<template #icon>
-							<File :size="20" />
-						</template>
-						{{ t('spreed', 'Go to file') }}
-					</NcActionLink>
+					<template v-if="isFileShare">
+						<NcActionSeparator />
+						<NcActionLink :href="messageFile.link">
+							<template #icon>
+								<File :size="20" />
+							</template>
+							{{ t('spreed', 'Go to file') }}
+						</NcActionLink>
+						<NcActionLink :href="linkToFileDownload" :download="messageFile.name">
+							<template #icon>
+								<IconDownload :size="20" />
+							</template>
+							{{ t('spreed', 'Download file') }}
+						</NcActionLink>
+					</template>
 					<NcActionButton v-if="canForwardMessage && !isInNoteToSelf"
 						close-after-click
 						@click="forwardToNote">
@@ -260,6 +268,7 @@ import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+import IconDownload from 'vue-material-design-icons/Download.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
@@ -271,6 +280,7 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
@@ -291,6 +301,7 @@ import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -317,6 +328,7 @@ export default {
 		ClockEditOutline,
 		ClockOutline,
 		ContentCopy,
+		IconDownload,
 		DeleteIcon,
 		EmoticonOutline,
 		EyeOffOutline,
@@ -438,13 +450,15 @@ export default {
 				&& this.$store.getters.isActorUser()
 		},
 
-		linkToFile() {
-			if (this.isFileShare) {
-				const firstFileKey = (Object.keys(this.message.messageParameters).find(key => key.startsWith('file')))
-				return this.message.messageParameters?.[firstFileKey]?.link
-			} else {
-				return ''
-			}
+		messageFile() {
+			const firstFileKey = (Object.keys(this.message.messageParameters).find(key => key.startsWith('file')))
+			return this.message.messageParameters[firstFileKey]
+		},
+
+		linkToFileDownload() {
+			return getCurrentUser()
+				? generateUserFileUrl(this.messageFile.path)
+				: generatePublicShareDownloadUrl(this.messageFile.link)
 		},
 
 		isCurrentGuest() {
