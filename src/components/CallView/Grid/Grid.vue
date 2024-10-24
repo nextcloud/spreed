@@ -558,7 +558,7 @@ export default {
 				return this.isStripe
 			},
 			set(value) {
-				this.callViewStore.setCallViewMode({ isGrid: !value, clearLast: false })
+				this.callViewStore.setCallViewMode({ token: this.token, isGrid: !value, clearLast: false })
 			},
 		},
 	},
@@ -853,7 +853,7 @@ export default {
 		},
 
 		handleClickStripeCollapse() {
-			this.callViewStore.setCallViewMode({ isStripeOpen: !this.stripeOpen, clearLast: false })
+			this.callViewStore.setCallViewMode({ token: this.token, isStripeOpen: !this.stripeOpen, clearLast: false })
 		},
 
 		handleMovement() {

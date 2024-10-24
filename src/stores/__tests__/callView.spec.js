@@ -38,17 +38,25 @@ describe('callViewStore', () => {
 		function testDefaultGridState(type, state, browserStorageState = null) {
 			// Arrange
 			BrowserStorage.getItem.mockReturnValueOnce(browserStorageState)
+			const conversation = { token: TOKEN, type }
 			// using commit instead of dispatch because the action also processes participants
-			vuexStore.commit('addConversation', { token: TOKEN, type })
+			vuexStore.commit('addConversation', conversation)
 
 			// Act
-			callViewStore.handleJoinCall({ token: TOKEN })
+			callViewStore.handleJoinCall(conversation)
 
 			// Assert
 			expect(BrowserStorage.getItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY)
 			expect(callViewStore.isGrid).toBe(state)
 			expect(callViewStore.isStripeOpen).toBeTruthy()
 		}
+
+		it('does not proceed without conversation object', () => {
+			// Act
+			callViewStore.handleJoinCall()
+			// Assert
+			expect(BrowserStorage.getItem).not.toHaveBeenCalledWith(BROWSER_STORAGE_KEY)
+		})
 
 		it('restores grid state from BrowserStorage when joining call (true)', () => {
 			// Arrange
@@ -72,9 +80,8 @@ describe('callViewStore', () => {
 		})
 
 		it('switching call view mode saves in local storage', () => {
-			vuexStore.dispatch('updateToken', TOKEN)
-
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: false,
 			})
@@ -83,6 +90,7 @@ describe('callViewStore', () => {
 			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, true)
 
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: false,
 				isStripeOpen: true,
 			})
@@ -93,19 +101,21 @@ describe('callViewStore', () => {
 
 		it('start presentation switches off grid view and restores when it ends', () => {
 			[{
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			}, {
+				token: TOKEN,
 				isGrid: false,
 				isStripeOpen: false,
 			}].forEach((testState) => {
 				callViewStore.setCallViewMode(testState)
 
-				callViewStore.startPresentation()
+				callViewStore.startPresentation(TOKEN)
 				expect(callViewStore.isGrid).toBeFalsy()
 				expect(callViewStore.isStripeOpen).toBeFalsy()
 
-				callViewStore.stopPresentation()
+				callViewStore.stopPresentation(TOKEN)
 				expect(callViewStore.isGrid).toEqual(testState.isGrid)
 				expect(callViewStore.isStripeOpen).toEqual(testState.isStripeOpen)
 			})
@@ -113,17 +123,19 @@ describe('callViewStore', () => {
 
 		it('switching modes during presentation does not resets it after it ends', () => {
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			})
-			callViewStore.startPresentation()
+			callViewStore.startPresentation(TOKEN)
 
 			// switch during presentation
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			})
-			callViewStore.stopPresentation()
+			callViewStore.stopPresentation(TOKEN)
 
 			// state kept, not restored
 			expect(callViewStore.isGrid).toBeTruthy()
@@ -132,26 +144,28 @@ describe('callViewStore', () => {
 
 		it('starting presentation twice does not mess up remembered state', () => {
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			})
 			expect(callViewStore.presentationStarted).toBeFalsy()
 
-			callViewStore.startPresentation()
+			callViewStore.startPresentation(TOKEN)
 			expect(callViewStore.presentationStarted).toBeTruthy()
 
 			// switch during presentation
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			})
-			callViewStore.startPresentation()
+			callViewStore.startPresentation(TOKEN)
 			// state kept
 			expect(callViewStore.presentationStarted).toBeTruthy()
 			expect(callViewStore.isGrid).toBeTruthy()
 			expect(callViewStore.isStripeOpen).toBeTruthy()
 
-			callViewStore.stopPresentation()
+			callViewStore.stopPresentation(TOKEN)
 			expect(callViewStore.presentationStarted).toBeFalsy()
 			// state kept, not restored
 			expect(callViewStore.isGrid).toBeTruthy()
@@ -160,24 +174,26 @@ describe('callViewStore', () => {
 
 		it('stopping presentation twice does not mess up remembered state', () => {
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: true,
 			})
 			expect(callViewStore.presentationStarted).toBeFalsy()
 
-			callViewStore.startPresentation()
+			callViewStore.startPresentation(TOKEN)
 			expect(callViewStore.presentationStarted).toBeTruthy()
 
-			callViewStore.stopPresentation()
+			callViewStore.stopPresentation(TOKEN)
 			expect(callViewStore.presentationStarted).toBeFalsy()
 			expect(callViewStore.isGrid).toBeTruthy()
 			expect(callViewStore.isStripeOpen).toBeTruthy()
 
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: false,
 				isStripeOpen: false,
 			})
-			callViewStore.stopPresentation()
+			callViewStore.stopPresentation(TOKEN)
 			expect(callViewStore.presentationStarted).toBeFalsy()
 			// state kept, not reset
 			expect(callViewStore.isGrid).toBeFalsy()
@@ -188,6 +204,7 @@ describe('callViewStore', () => {
 			expect(callViewStore.lastIsGrid).toEqual(null)
 			expect(callViewStore.lastIsStripeOpen).toEqual(null)
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				isGrid: true,
 				isStripeOpen: false,
 			})
@@ -195,6 +212,7 @@ describe('callViewStore', () => {
 			expect(callViewStore.lastIsStripeOpen).toBeTruthy()
 
 			callViewStore.setCallViewMode({
+				token: TOKEN,
 				clearLast: false,
 			})
 			expect(callViewStore.lastIsGrid).toBeFalsy()

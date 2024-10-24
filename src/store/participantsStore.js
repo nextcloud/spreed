@@ -845,7 +845,7 @@ const actions = {
 		}, 10000)
 
 		const callViewStore = useCallViewStore()
-		callViewStore.handleJoinCall({ token })
+		callViewStore.handleJoinCall(getters.conversation(token))
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {
