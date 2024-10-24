@@ -47,16 +47,13 @@ const pinia = createPinia()
  */
 function adjustLayout() {
 	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
-
-	const talkSidebarElement = document.createElement('div')
-	talkSidebarElement.setAttribute('id', 'talk-sidebar')
-	document.querySelector('#content').appendChild(talkSidebarElement)
 }
 
 adjustLayout()
 
 // An "isOpen" boolean should be passed to the component, but as it is a
 // primitive it would not be reactive; it needs to be wrapped in an object and
+
 // that object passed to the component to get reactivity.
 const sidebarState = reactive({
 	isOpen: false,
@@ -93,21 +90,27 @@ function addTalkSidebarTrigger() {
 addTalkSidebarTrigger()
 
 /**
- *
+ * Mount the Talk sidebar next to the main content.
  */
-function getShareToken() {
-	const shareTokenElement = document.getElementById('sharingToken')
-	return shareTokenElement.value
+function addTalkSidebar() {
+	// location.pathname is expected to be like /index.php/s/<shareToken>
+	const shareToken = window.location.pathname.split('/').pop()
+
+	const talkSidebarElement = document.createElement('div')
+	talkSidebarElement.setAttribute('id', 'talk-sidebar')
+	document.getElementById('content-vue').appendChild(talkSidebarElement)
+
+	const talkSidebarVm = new Vue({
+		store,
+		pinia,
+		id: 'talk-chat-tab',
+		propsData: {
+			shareToken,
+			state: sidebarState,
+		},
+		...PublicShareSidebar,
+	})
+	talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
 }
 
-const talkSidebarVm = new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	propsData: {
-		shareToken: getShareToken(),
-		state: sidebarState,
-	},
-	...PublicShareSidebar,
-})
-talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
+addTalkSidebar()
