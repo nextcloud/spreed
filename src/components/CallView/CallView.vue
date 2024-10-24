@@ -246,7 +246,7 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal)
+			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
 		},
 
 		callParticipantModelsWithScreen() {
