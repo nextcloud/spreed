@@ -69,21 +69,14 @@ if (window.innerWidth > 1111) {
 }
 
 /**
- *
+ * Mount the Talk sidebar toggle button to the header.
  */
 function addTalkSidebarTrigger() {
-	const talkSidebarTriggerElement = document.createElement('button')
+	const talkSidebarTriggerElement = document.createElement('div')
 	talkSidebarTriggerElement.setAttribute('id', 'talk-sidebar-trigger')
-
-	// The ".header-right" element may not exist in the public share page if
-	// there are no header actions.
-	if (!document.querySelector('.header-right')) {
-		const headerRightElement = document.createElement('div')
-		headerRightElement.setAttribute('class', 'header-right')
-		document.querySelector('#header').appendChild(headerRightElement)
-	}
-
-	document.querySelector('.header-right').appendChild(talkSidebarTriggerElement)
+	// The ".header-end" element should exist (/server/core/templates/layout.public.php)
+	const mountPoint = document.querySelector('.header-end') ?? document.getElementById('header')
+	mountPoint.appendChild(talkSidebarTriggerElement)
 
 	const talkSidebarTriggerVm = new Vue({
 		propsData: {

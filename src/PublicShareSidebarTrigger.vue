@@ -4,62 +4,42 @@
 -->
 
 <template>
-	<div class="button-wrapper">
-		<NcButton type="tertiary-on-primary"
-			:title="ariaLabel"
-			:aria-label="ariaLabel"
-			@click="$emit('click')">
-			<template #icon>
-				<MessageText fill-color="var(--color-background-plain-text)" :size="20" />
-			</template>
-		</NcButton>
-	</div>
+	<NcHeaderButton id="talk-sidebar-trigger"
+		:title="ariaLabel"
+		:aria-label="ariaLabel"
+		@click="emit('click')">
+		<template #icon>
+			<MessageText :size="20" />
+		</template>
+	</NcHeaderButton>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, UnwrapNestedRefs } from 'vue'
+
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcHeaderButton from '@nextcloud/vue/dist/Components/NcHeaderButton.js'
 
-export default {
-	name: 'PublicShareSidebarTrigger',
+const props = defineProps<{
+	sidebarState: UnwrapNestedRefs<{ isOpen: boolean }>
+}>()
 
-	components: {
-		MessageText,
-		NcButton,
-	},
+const emit = defineEmits<{
+	(event: 'click'): void
+}>()
 
-	props: {
-		sidebarState: {
-			type: Object,
-			required: true,
-		},
-	},
-
-	emits: ['click'],
-
-	computed: {
-		ariaLabel() {
-			return this.sidebarState.isOpen
-				? t('spreed', 'Close Talk sidebar')
-				: t('spreed', 'Open Talk sidebar')
-		},
-	},
-
-	methods: {
-		t,
-	},
-}
+const ariaLabel = computed(() => {
+	return props.sidebarState.isOpen
+		? t('spreed', 'Close Talk sidebar')
+		: t('spreed', 'Open Talk sidebar')
+})
 </script>
 
 <style scoped>
-.button-wrapper {
-	height: var(--header-height) !important;
-	width: var(--default-clickable-area) !important;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+#talk-sidebar-trigger {
+	margin-left: var(--default-grid-baseline);
 }
 </style>
