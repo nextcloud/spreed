@@ -20,7 +20,10 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar"
+		:class="{ 'top-bar--authorised': getUserId }"
+		:style="topBarStyle"
+		:data-theme-dark="isInCall">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -263,6 +266,10 @@ export default {
 				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
 			}
 		},
+
+		getUserId() {
+			return this.$store.getters.getUserId()
+		},
 	},
 
 	mounted() {
@@ -329,10 +336,12 @@ export default {
 		left: 0;
 		background-color: transparent;
 	}
-}
 
-.conversation-icon {
-	margin-left: 48px;
+	&--authorised {
+		.conversation-icon {
+			margin-left: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+		}
+	}
 }
 
 .conversation-header {
