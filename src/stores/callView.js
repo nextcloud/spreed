@@ -7,7 +7,6 @@ import { defineStore } from 'pinia'
 
 import { CONVERSATION } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
-import store from '../store/index.js'
 
 export const useCallViewStore = defineStore('callView', {
 	state: () => ({
@@ -44,13 +43,16 @@ export const useCallViewStore = defineStore('callView', {
 			this.selectedVideoPeerId = value
 		},
 
-		handleJoinCall({ token }) {
-			const gridPreference = BrowserStorage.getItem(`callprefs-${token}-isgrid`)
+		handleJoinCall(conversation) {
+			if (!conversation) {
+				return
+			}
+			const gridPreference = BrowserStorage.getItem(`callprefs-${conversation.token}-isgrid`)
 			const isGrid = gridPreference === null
 				// not defined yet, default to grid view for group/public calls, otherwise speaker view
-				? [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(store.getters.conversations[token].type)
+				? [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(conversation.type)
 				: gridPreference === 'true'
-			this.setCallViewMode({ isGrid, isStripeOpen: true })
+			this.setCallViewMode({ token: conversation.token, isGrid, isStripeOpen: true })
 		},
 
 		/**
@@ -58,11 +60,12 @@ export const useCallViewStore = defineStore('callView', {
 		 * If clearLast is false, also remembers it in separate properties.
 		 *
 		 * @param {object} data the wrapping object;
+		 * @param {string} data.token current conversation token;
 		 * @param {boolean|null} [data.isGrid=null] true for enabled grid mode, false for speaker view;
 		 * @param {boolean|null} [data.isStripeOpen=null] true for visible striped mode, false for speaker view;
 		 * @param {boolean} [data.clearLast=true] set false to not reset last temporary remembered state;
 		 */
-		setCallViewMode({ isGrid = null, isStripeOpen = null, clearLast = true }) {
+		setCallViewMode({ token, isGrid = null, isStripeOpen = null, clearLast = true }) {
 			if (clearLast) {
 				this.lastIsGrid = null
 				this.lastIsStripeOpen = null
@@ -70,7 +73,7 @@ export const useCallViewStore = defineStore('callView', {
 
 			if (isGrid !== null) {
 				this.lastIsGrid = this.isGrid
-				BrowserStorage.setItem(`callprefs-${store.getters.getToken()}-isgrid`, isGrid)
+				BrowserStorage.setItem(`callprefs-${token}-isgrid`, isGrid)
 				this.isGrid = isGrid
 			}
 
@@ -85,15 +88,16 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Switches off grid mode and closes the stripe.
 		 * Remembers the call view state for after the end of the presentation.
+		 * @param {string} token current conversation token.
 		 */
-		startPresentation() {
+		startPresentation(token) {
 			// don't start twice, this would prevent multiple screen shares to clear the last call view state
 			if (this.presentationStarted) {
 				return
 			}
 			this.presentationStarted = true
 
-			this.setCallViewMode({ isGrid: false, isStripeOpen: false, clearLast: false })
+			this.setCallViewMode({ token, isGrid: false, isStripeOpen: false, clearLast: false })
 		},
 
 		/**
@@ -101,8 +105,9 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Restores call view state from before starting the presentation,
 		 * given that the last state was not cleared manually.
+		 * @param {string} token current conversation token.
 		 */
-		stopPresentation() {
+		stopPresentation(token) {
 			if (!this.presentationStarted) {
 				return
 			}
@@ -110,7 +115,7 @@ export const useCallViewStore = defineStore('callView', {
 
 			if (!this.isGrid && !this.isStripeOpen) {
 				// User didn't pick grid view during presentation, restore previous state
-				this.setCallViewMode({ isGrid: this.lastIsGrid, isStripeOpen: this.lastIsStripeOpen, clearLast: false })
+				this.setCallViewMode({ token, isGrid: this.lastIsGrid, isStripeOpen: this.lastIsStripeOpen, clearLast: false })
 			}
 		},
 
