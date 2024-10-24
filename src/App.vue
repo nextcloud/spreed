@@ -786,6 +786,11 @@ export default {
 body .modal-wrapper * {
 	box-sizing: border-box;
 }
+
+// Overwrites styles from public.scss in public conversations
+body#body-public {
+	--footer-height: 0;
+}
 </style>
 
 <style lang="scss" scoped>
