@@ -24,6 +24,7 @@
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
+				:show-as-widget="showAsWidget"
 				:read-info="readInfo">
 				<!-- reactions buttons and popover with details -->
 				<Reactions v-if="Object.keys(message.reactions).length"
@@ -45,6 +46,7 @@
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
 				:is-forwarder-open.sync="isForwarderOpen"
+				:show-as-widget.sync="showAsWidget"
 				:can-react="canReact"
 				:message="message"
 				:previous-message-id="previousMessageId"
@@ -202,6 +204,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
+			showAsWidget: false,
 		}
 	},
 

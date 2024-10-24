@@ -187,7 +187,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-
+		showAsWidget: {
+			type: Boolean,
+			default: false,
+		},
 		readInfo: {
 			type: Object,
 			required: true,
@@ -199,6 +202,8 @@ export default {
 		const {
 			isEditable,
 			isFileShare,
+			isFileShareWithoutCaption,
+			linkToFileShare,
 		} = useMessageInfo(message)
 
 		return {
@@ -206,6 +211,8 @@ export default {
 			pollsStore: usePollsStore(),
 			isEditable,
 			isFileShare,
+			isFileShareWithoutCaption,
+			linkToFileShare,
 		}
 	},
 
@@ -223,12 +230,17 @@ export default {
 
 	computed: {
 		renderedMessage() {
-			if (this.isFileShare && this.message.message !== '{file}') {
-				// Add a new line after file to split content into different paragraphs
-				return '{file}' + '\n\n' + this.message.message
-			} else {
+			if (!this.isFileShare) {
 				return this.message.message
 			}
+
+			const caption = this.isFileShareWithoutCaption
+				? ''
+				: `\n\n${this.message.message}`
+
+			return (this.linkToFileShare && this.showAsWidget)
+				? this.linkToFileShare + caption
+				: '{file}' + caption
 		},
 
 		isSystemMessage() {
