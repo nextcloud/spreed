@@ -1493,7 +1493,7 @@ OC.L10N.register(
     "Call rejected" : "Appel rejeté",
     "{time} talking …" : "{time} en réunion …",
     "{time} talking time" : "{time} de reunion",
-    "Raised their hand" : "Lever la main",
+    "Raised their hand" : "A levé la main",
     "Joined with video" : "A rejoint avec vidéo",
     "Joined via phone" : "Connecté par téléphone",
     "Joined with audio" : "A rejoint avec audio",
