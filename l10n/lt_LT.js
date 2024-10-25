@@ -838,6 +838,7 @@ OC.L10N.register(
     "Open dialpad" : "Atverti numerio rinkiklį",
     "Select a region" : "Pasirinkti regioną",
     "Submit" : "Pateikti",
+    "Search …" : "Ieškoti…",
     "Message without mention" : "Rašyti be paminėjimo",
     "Mention myself" : "Paminėti save",
     "The conversation does not exist" : "Pokalbio nėra",

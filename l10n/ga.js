@@ -1284,6 +1284,7 @@ OC.L10N.register(
     "Copy formatted message" : "Cóipeáil teachtaireacht formáidithe",
     "Copy message link" : "Cóipeáil nasc na teachtaireachta",
     "Go to file" : "Téigh go dtí an comhad",
+    "Download file" : "Íoslódáil an comhad",
     "Forward message" : "Teachtaireacht ar aghaidh",
     "Translate" : "Aistrigh",
     "Set custom reminder" : "Socraigh meabhrúchán saincheaptha",
