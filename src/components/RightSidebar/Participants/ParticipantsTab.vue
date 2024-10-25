@@ -65,7 +65,7 @@ import { ref, toRefs } from 'vue'
 
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -311,6 +311,9 @@ export default {
 		async addParticipants(item) {
 			try {
 				await addParticipant(this.token, item.id, item.source)
+				if (item.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
+					showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: item.id }))
+				}
 				this.abortSearch()
 				this.cancelableGetParticipants()
 			} catch (exception) {

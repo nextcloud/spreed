@@ -227,39 +227,43 @@ describe('Participant.vue', () => {
 		/**
 		 * Check which status is currently rendered
 		 * @param {object} participant participant object
-		 * @param {string|null} status status which expected to be rendered
+		 * @param {string} [status] status which expected to be rendered
 		 */
 		async function checkUserSubnameRendered(participant, status) {
 			const wrapper = mountParticipant(participant)
 			await flushPromises()
+			const userSubname = wrapper.find('.participant__status')
 			if (status) {
-				expect(wrapper.find('.participant__status').exists()).toBeTruthy()
-				expect(wrapper.find('.participant__status').text()).toBe(status)
+				expect(userSubname.exists()).toBeTruthy()
+				expect(userSubname.text()).toBe(status)
 			} else {
-				expect(wrapper.find('.participant__status').exists()).toBeFalsy()
+				expect(userSubname.exists()).toBeFalsy()
 			}
 		}
 
-		test('renders user status', async () => {
-			await checkUserSubnameRendered(participant, '🌧️ rainy')
-		})
+		const testCases = [
+			['online', '', '', undefined],
+			['online', '🌧️', 'Rainy', '🌧️ Rainy'],
+			['dnd', '🌧️', 'Rainy', '🌧️ Rainy'],
+			['dnd', '🌧️', '', '🌧️ Do not disturb'],
+			['away', '🌧️', '', '🌧️ Away'],
+		]
 
-		test('does not render user status when not set', async () => {
-			participant.statusIcon = ''
-			participant.statusMessage = ''
-			await checkUserSubnameRendered(participant, null)
-		})
+		it.each(testCases)('renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
+			(status, statusIcon, statusMessage, result) => {
+				checkUserSubnameRendered({
+					...participant,
+					status,
+					statusIcon,
+					statusMessage,
+				}, result)
+			})
 
-		test('renders dnd status', async () => {
-			participant.statusMessage = ''
-			participant.status = 'dnd'
-			await checkUserSubnameRendered(participant, '🌧️ Do not disturb')
-		})
-
-		test('renders away status', async () => {
-			participant.statusMessage = ''
-			participant.status = 'away'
-			await checkUserSubnameRendered(participant, '🌧️ Away')
+		it('renders e-mail as status for e-mail guest', async () => {
+			participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
+			participant.participantType = PARTICIPANT.TYPE.GUEST
+			participant.invitedActorId = 'test@mail.com'
+			await checkUserSubnameRendered(participant, 'test@mail.com')
 		})
 	})
 
@@ -522,6 +526,7 @@ describe('Participant.vue', () => {
 			test('allows moderators to resend invitations for email participants', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
+				participant.invitedActorId = 'alice@mail.com'
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(true)
@@ -531,6 +536,7 @@ describe('Participant.vue', () => {
 				expect(resendInvitationsAction).toHaveBeenCalledWith(expect.anything(), {
 					token: 'current-token',
 					attendeeId: 'alice-attendee-id',
+					actorId: 'alice@mail.com',
 				})
 			})
 
