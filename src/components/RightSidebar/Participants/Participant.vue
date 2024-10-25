@@ -32,7 +32,7 @@
 				<span class="participant__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant__user-badge">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
-				<span v-if="isGuest" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
+				<span v-if="isGuestActor || isEmailActor" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
 				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant__user-badge">({{ t('spreed', 'in the lobby') }})</span>
 			</span>
 		</template>
@@ -454,7 +454,7 @@ export default {
 			if (this.isBridgeBotUser) {
 				text += ' (' + t('spreed', 'bot') + ')'
 			}
-			if (this.isGuest) {
+			if (this.isGuestActor || this.isEmailActor) {
 				text += ' (' + t('spreed', 'guest') + ')'
 			}
 			return text
@@ -547,7 +547,7 @@ export default {
 		computedName() {
 			const displayName = this.participant.displayName.trim()
 
-			if (displayName === '' && this.isGuest) {
+			if (displayName === '' && (this.isGuestActor || this.isEmailActor)) {
 				return t('spreed', 'Guest')
 			}
 
@@ -644,10 +644,6 @@ export default {
 		isOffline() {
 			return !this.sessionIds.length && (this.isUserActor || this.isFederatedActor || this.isGuestActor)
 				&& (hasTalkFeature(this.token, 'federation-v2') || !hasTalkFeature(this.token, 'federation-v1') || (!this.conversation.remoteServer && !this.isFederatedActor))
-		},
-
-		isGuest() {
-			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
 		},
 
 		isModerator() {
