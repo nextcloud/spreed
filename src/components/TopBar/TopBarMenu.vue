@@ -139,7 +139,7 @@
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
-			<NcActionLink v-if="isInCall && canModerate"
+			<NcActionLink v-if="isInCall && canDownloadCallParticipants"
 				:href="downloadCallParticipantsLink"
 				target="_blank">
 				<template #icon>
@@ -189,7 +189,7 @@ import {
 } from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.js'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
@@ -379,6 +379,10 @@ export default {
 
 		showCallLayoutSwitch() {
 			return !this.callViewStore.isEmptyCallView
+		},
+
+		canDownloadCallParticipants() {
+			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate
 		},
 
 		downloadCallParticipantsLink() {
