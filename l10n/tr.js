@@ -1284,6 +1284,7 @@ OC.L10N.register(
     "Copy formatted message" : "Biçimlendirilmiş iletiyi kopyala",
     "Copy message link" : "İleti bağlantısını kopyala",
     "Go to file" : "Dosyaya git",
+    "Download file" : "Dosyayı indir",
     "Forward message" : "İletiyi ilet",
     "Translate" : "Çevir",
     "Set custom reminder" : "Özel anımsatıcı ayarla",

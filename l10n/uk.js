@@ -925,6 +925,7 @@ OC.L10N.register(
     "Edit message" : "Редагувати повідомлення",
     "Copy message link" : "Скопіювати посилання на повідомлення",
     "Go to file" : "Перейти до файлу",
+    "Download file" : "Звантажити файл",
     "Translate" : "Перекласти",
     "Set custom reminder" : "Встановити власне нагадування",
     "React with {emoji}" : "Відреагувати з {emoji}",
