@@ -512,6 +512,10 @@ export default {
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
 			}
 
+			if (this.isEmailActor && this.participant?.invitedActorId) {
+				return this.participant.invitedActorId
+			}
+
 			return getStatusMessage(this.participant)
 		},
 
@@ -815,15 +819,11 @@ export default {
 		},
 
 		async resendInvitation() {
-			try {
-				await this.$store.dispatch('resendInvitations', {
-					token: this.token,
-					attendeeId: this.attendeeId,
-				})
-				showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: this.participant.actorId }))
-			} catch (error) {
-				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
-			}
+			await this.$store.dispatch('resendInvitations', {
+				token: this.token,
+				attendeeId: this.attendeeId,
+				actorId: this.participant.invitedActorId ?? this.participant.actorId,
+			})
 		},
 
 		async sendCallNotification() {

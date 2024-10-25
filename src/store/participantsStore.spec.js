@@ -693,7 +693,7 @@ describe('participantsStore', () => {
 			attendeeId: 1,
 		})
 
-		expect(resendInvitations).toHaveBeenCalledWith(TOKEN, { attendeeId: 1 })
+		expect(resendInvitations).toHaveBeenCalledWith(TOKEN, 1)
 	})
 
 	describe('joining conversation', () => {
