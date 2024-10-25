@@ -119,6 +119,7 @@ export const ATTENDEE = {
 		BRIDGED: 'bridged',
 		FEDERATED_USERS: 'federated_users',
 		PHONES: 'phones',
+		DELETED_USERS: 'deleted_users',
 		/* @internal Only use with server APIs (like /core/autocomplete/get) and never with Talk APIs */
 		REMOTES: 'remotes',
 	},
