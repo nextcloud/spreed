@@ -516,6 +516,7 @@ OC.L10N.register(
     "Group" : "קבוצה",
     "Share files to the conversation" : "שיתוף קבצים לדיון",
     "Create new poll" : "יצירת סקר חדש",
+    "Share from Files" : "שיתוף מקבצים",
     "New file" : "קובץ חדש",
     "Settings" : "הגדרות",
     "Create poll" : "יצירת סקר",

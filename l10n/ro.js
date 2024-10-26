@@ -675,6 +675,7 @@ OC.L10N.register(
     "Joining conversation …" : "Alăturare la conversație ...",
     "Group" : "Grup",
     "Upload from device" : "Încarcă din dispozitiv",
+    "Share from Files" : "Partajează din Fișiere",
     "New file" : "Fișier nou",
     "Blank" : "Gol",
     "Question" : "Întrebare",

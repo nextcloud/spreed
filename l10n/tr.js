@@ -1390,6 +1390,7 @@ OC.L10N.register(
     "Create new poll" : "Anket ekle",
     "Smart picker" : "Akıllı seçici",
     "Share from {nextcloud}" : "{nextcloud} üzerinden paylaş",
+    "Share from Files" : "Dosyalardan paylaş",
     "Record voice message" : "Ses iletisi kaydet",
     "End recording and send" : "Kaydı bitirip gönder",
     "Dismiss recording" : "Kaydı sil",

@@ -1210,6 +1210,7 @@ OC.L10N.register(
     "Create new poll" : "Új szavazás létrehozása",
     "Smart picker" : "Okos választó",
     "Share from {nextcloud}" : "Megosztás innen: {nextcloud}",
+    "Share from Files" : "Megosztás a Fájlokból",
     "Record voice message" : "Hangüzenet rögzítése",
     "End recording and send" : "Felvétel befejezése és küldés",
     "Dismiss recording" : "Felvétel elvetése",
