@@ -1202,6 +1202,7 @@ OC.L10N.register(
     "Create new poll" : "Sortu inkesta berria",
     "Smart picker" : "Hautatzaile adimenduna",
     "Share from {nextcloud}" : "Partekatu {nextcloud} bidez",
+    "Share from Files" : "Partekatu Fitxategiak-etik",
     "Record voice message" : "Grabatu ahots mezua",
     "End recording and send" : "Amaitu grabazioa eta bidali",
     "Dismiss recording" : "Baztertu grabazioa",

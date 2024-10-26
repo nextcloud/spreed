@@ -1389,6 +1389,7 @@ OC.L10N.register(
     "Create new poll" : "Crear unha enquisa nova",
     "Smart picker" : "Selector intelixente",
     "Share from {nextcloud}" : "Compartir dende {nextcloud}",
+    "Share from Files" : "Compartir dende «Ficheiros»",
     "Record voice message" : "Gravar mensaxe de voz",
     "End recording and send" : "Finalizar a gravación e enviar",
     "Dismiss recording" : "Rexeitar a gravación",

@@ -818,6 +818,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Διαμοιρασμός αρχείων στην συνομιλία",
     "Upload from device" : "Μεταφόρτωση από συσκευή",
     "Create new poll" : "Δημιουργία νέας ψηφοφορίας",
+    "Share from Files" : "Κοινή χρήση από Αρχεία",
     "Record voice message" : "Εγγραφή φωνητικού μηνύματος",
     "New file" : "Νέο αρχείο",
     "Blank" : "Κενό",

@@ -1389,6 +1389,7 @@ OC.L10N.register(
     "Create new poll" : "Направи ново гласање",
     "Smart picker" : "Паметни бирач",
     "Share from {nextcloud}" : "Дељење од {nextcloud}",
+    "Share from Files" : "Подели из Фајлова",
     "Record voice message" : "Сними гласовну поруку",
     "End recording and send" : "Заврши снимање и пошаљи",
     "Dismiss recording" : "Одбаци снимак",

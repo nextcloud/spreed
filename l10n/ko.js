@@ -1258,6 +1258,7 @@ OC.L10N.register(
     "Create new poll" : "새 투표 만들기",
     "Smart picker" : "스마트 피커",
     "Share from {nextcloud}" : "{nextcloud}에서 공유",
+    "Share from Files" : "파일에서 공유",
     "Record voice message" : "음성 메시지 녹음",
     "End recording and send" : "녹음 종료 및 보내기",
     "Dismiss recording" : "녹음 무시",
