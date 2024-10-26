@@ -10,7 +10,7 @@ import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getUpcomingEvents } from '../services/conversationsService.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
 

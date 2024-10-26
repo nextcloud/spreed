@@ -140,7 +140,7 @@ import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
-import { EventBus } from '../../../../../services/EventBus.js'
+import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 

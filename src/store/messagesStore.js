@@ -17,7 +17,7 @@ import {
 } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import {
 	deleteMessage,
 	editMessage,

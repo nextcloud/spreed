@@ -18,7 +18,7 @@ import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 
-import { EventBus } from '../../../../../services/EventBus.js'
+import { EventBus } from '../../../../../services/EventBus.ts'
 
 export default {
 	name: 'AudioPlayer',
