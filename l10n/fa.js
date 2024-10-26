@@ -1161,6 +1161,7 @@ OC.L10N.register(
     "Create new poll" : "نظرسنجی جدید ایجاد کنید",
     "Smart picker" : "Smart picker",
     "Share from {nextcloud}" : "Share from {nextcloud}",
+    "Share from Files" : "اشتراک‌گذاری از فایل‌ها",
     "Record voice message" : "ضبط پیام صوتی",
     "End recording and send" : "End recording and send",
     "Dismiss recording" : "Dismiss recording",

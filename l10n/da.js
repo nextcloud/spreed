@@ -481,6 +481,7 @@ OC.L10N.register(
     "Create new poll" : "Opret ny afstemning",
     "Smart picker" : "Smart Vælger",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
+    "Share from Files" : "Del fra Filer",
     "New file" : "Ny fil",
     "Blank" : "Tom",
     "Settings" : "Indstillinger",

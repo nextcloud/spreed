@@ -866,6 +866,7 @@ OC.L10N.register(
     "Group" : "Grupa",
     "Share files to the conversation" : "Dijeli datoteke u razgovor",
     "Create new poll" : "Stvori novu anketu",
+    "Share from Files" : "Dijeli iz datoteka",
     "Record voice message" : "Snimi glasovnu poruku",
     "End recording and send" : "Završi snimak i pošalji",
     "Dismiss recording" : "Odbaci snimak",

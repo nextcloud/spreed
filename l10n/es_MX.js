@@ -432,6 +432,7 @@ OC.L10N.register(
     "Upload from device" : "Cargar desde el dispositivo",
     "Create new poll" : "Crear nueva encuesta",
     "Smart picker" : "Selector inteligente",
+    "Share from Files" : "Compartir desde Archivos",
     "New file" : "Archivo nuevo",
     "Blank" : "Vacío",
     "Settings" : "Configuraciones ",

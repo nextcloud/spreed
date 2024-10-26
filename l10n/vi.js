@@ -557,6 +557,7 @@ OC.L10N.register(
     "Send message" : "Gửi thông điệp",
     "Group" : "Nhóm",
     "Share files to the conversation" : "Chia sẻ tệp với cuộc trò chuyện",
+    "Share from Files" : "Chia sẻ từ Thư mục",
     "New file" : "Tập tin mới",
     "Blank" : "‎Trống‎",
     "Settings" : "Thiết lập",

@@ -728,6 +728,7 @@ OC.L10N.register(
     "Send without notification" : "Siųsti be pranešimo",
     "Group" : "Grupė",
     "Create new poll" : "Sukurti naują apklausą",
+    "Share from Files" : "Bendrinti iš failų",
     "Microphone either not available or disabled in settings" : "Mikrofonas arba neprieinamas, arba išjungtas nustatymuose",
     "Create and share a new file" : "Sukurti ir bendrinti naują failą",
     "Name of the new file" : "Naujo failo pavadinimas",
