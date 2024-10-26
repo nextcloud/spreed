@@ -84,7 +84,7 @@ import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 
 export default {
 	name: 'SignalingServers',

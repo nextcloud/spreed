@@ -13,7 +13,7 @@ import { getUploader } from '@nextcloud/upload'
 
 import { SHARED_ITEM } from '../constants.js'
 import { getDavClient } from '../services/DavClient.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import {
 	getFileTemplates,
 	shareFile,

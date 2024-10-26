@@ -71,7 +71,7 @@ import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {

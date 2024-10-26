@@ -75,7 +75,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-import { EventBus } from '../../../services/EventBus.js'
+import { EventBus } from '../../../services/EventBus.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
 
 export default {

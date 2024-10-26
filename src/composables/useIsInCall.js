@@ -7,7 +7,7 @@
 import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
 import { useStore } from './useStore.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 import { useCallViewStore } from '../stores/callView.js'
 

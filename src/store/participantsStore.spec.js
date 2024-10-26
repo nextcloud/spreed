@@ -21,7 +21,7 @@ import {
 	leaveCall,
 } from '../services/callsService.js'
 import { fetchConversation } from '../services/conversationsService.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import {
 	promoteToModerator,
 	demoteFromModerator,

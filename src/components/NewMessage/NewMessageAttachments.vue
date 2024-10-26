@@ -75,7 +75,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
 
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 
 export default {
 	name: 'NewMessageAttachments',

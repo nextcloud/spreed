@@ -11,7 +11,7 @@ import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 import { CONVERSATION } from '../constants.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 
 /**
  * @param {import('vue').Ref} isActive whether the participants tab is active

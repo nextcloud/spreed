@@ -100,7 +100,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
-import { EventBus } from '../../../services/EventBus.js'
+import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'

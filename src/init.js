@@ -11,7 +11,7 @@ import { t } from '@nextcloud/l10n'
 
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'
-import { EventBus } from './services/EventBus.js'
+import { EventBus } from './services/EventBus.ts'
 import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 

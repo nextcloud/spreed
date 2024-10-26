@@ -98,7 +98,7 @@ import {
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../../services/EventBus.js'
+import { EventBus } from '../../../services/EventBus.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 

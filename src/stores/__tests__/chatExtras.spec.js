@@ -5,7 +5,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { getUserAbsence } from '../../services/participantsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useChatExtrasStore } from '../chatExtras.js'

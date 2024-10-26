@@ -18,7 +18,7 @@ import {
 	leaveCall,
 } from '../services/callsService.js'
 import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import {
 	promoteToModerator,
 	demoteFromModerator,

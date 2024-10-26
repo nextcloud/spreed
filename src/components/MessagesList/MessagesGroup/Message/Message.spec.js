@@ -25,7 +25,7 @@ import Quote from '../../../Quote.vue'
 
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import { EventBus } from '../../../../services/EventBus.js'
+import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507

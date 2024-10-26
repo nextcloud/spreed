@@ -94,7 +94,7 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { setSIPSettings } from '../../services/settingsService.js'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
