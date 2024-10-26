@@ -864,6 +864,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Cumpartzi archìvios in sa resonada",
     "Upload from device" : "Càrriga dae su dispositivu",
     "Create new poll" : "Crea unu sondàgiu nou",
+    "Share from Files" : "Cumpartzi dae Archìvios",
     "Record voice message" : "Registra messàgiu de boghe",
     "End recording and send" : "Agabba sa registratzione e imbia",
     "Dismiss recording" : "Iscarta sa registratzione",

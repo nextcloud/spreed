@@ -1252,6 +1252,7 @@ OC.L10N.register(
     "Create new poll" : "Create new poll",
     "Smart picker" : "Smart picker",
     "Share from {nextcloud}" : "Share from {nextcloud}",
+    "Share from Files" : "Share from Files",
     "Record voice message" : "Record voice message",
     "End recording and send" : "End recording and send",
     "Dismiss recording" : "Dismiss recording",

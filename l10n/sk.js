@@ -1317,6 +1317,7 @@ OC.L10N.register(
     "Create new poll" : "Vytvoriť novú anketu",
     "Smart picker" : "Inteligentný výber",
     "Share from {nextcloud}" : "Zdieľané z {nextcloud}u",
+    "Share from Files" : "Zdieľať zo Súborov",
     "Record voice message" : "Nahrať hlasovú správu",
     "End recording and send" : "Zastaviť nahrávanie a odoslať",
     "Dismiss recording" : "Zrušiť nahrávanie",

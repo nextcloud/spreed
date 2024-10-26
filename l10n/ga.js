@@ -1390,6 +1390,7 @@ OC.L10N.register(
     "Create new poll" : "Cruthaigh vótaíocht nua",
     "Smart picker" : "Roghnóir cliste",
     "Share from {nextcloud}" : "Roinn ó {nextcloud}",
+    "Share from Files" : "Comhroinn ó Chomhaid",
     "Record voice message" : "Taifead teachtaireacht gutha",
     "End recording and send" : "Cuir deireadh leis an taifeadadh agus seol",
     "Dismiss recording" : "Ruaig an taifeadadh",

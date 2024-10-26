@@ -1002,6 +1002,7 @@ OC.L10N.register(
     "Upload from device" : "Lähetä laitteelta",
     "Create new poll" : "Luo uusi kysely",
     "Share from {nextcloud}" : "Jaa lähteestä {nextcloud}",
+    "Share from Files" : "Jaa tiedostoista",
     "Record voice message" : "Äänitä ääniviesti",
     "End recording and send" : "Lopeta äänitys ja lähetä",
     "Dismiss recording" : "Hylkää äänitallenne",

@@ -758,6 +758,7 @@ OC.L10N.register(
     "Upload from device" : "Прикачи од уред",
     "Create new poll" : "Направи анкета",
     "Share from {nextcloud}" : "Сподели од {nextcloud}",
+    "Share from Files" : "Сподели од датотеките",
     "Record voice message" : "Сними гласовна порака",
     "End recording and send" : "Заврши снимање и испрати",
     "Dismiss recording" : "Отфрли снимање",

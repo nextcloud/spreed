@@ -1223,6 +1223,7 @@ OC.L10N.register(
     "Create new poll" : "Ustvari novo anketo",
     "Smart picker" : "Pametni izbirnik",
     "Share from {nextcloud}" : "Pošlji iz {nextcloud}",
+    "Share from Files" : "Poveži iz oblaka",
     "Record voice message" : "Posnemi glasovno sporočilo",
     "End recording and send" : "Končaj snemanje in pošlji",
     "Dismiss recording" : "Opusti posnetek",

@@ -959,6 +959,7 @@ OC.L10N.register(
     "Create new poll" : "Створити нове опитування",
     "Smart picker" : "Асистент розумного вибору",
     "Share from {nextcloud}" : "Поділіться з {nextcloud}",
+    "Share from Files" : "Відкрити Файли",
     "Record voice message" : "Записати голосове повідомлення",
     "Access to the microphone was denied" : "У доступі до мікрофону було відмовлено",
     "Microphone either not available or disabled in settings" : "Мікрофон або недоступний, або вимкнений у налаштуваннях",

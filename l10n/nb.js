@@ -1349,6 +1349,7 @@ OC.L10N.register(
     "Create new poll" : "Opprett ny avstemning",
     "Smart picker" : "Smartvelger",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
+    "Share from Files" : "Del fra Filer",
     "Record voice message" : "Ta opp talemelding",
     "End recording and send" : "Avslutt opptak og send",
     "Dismiss recording" : "Avvis opptak",
