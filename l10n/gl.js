@@ -1284,6 +1284,7 @@ OC.L10N.register(
     "Copy formatted message" : "Copiar a mensaxe formatada",
     "Copy message link" : "Copiar a ligazón da mensaxe",
     "Go to file" : "Ir ao ficheiro",
+    "Download file" : "Descargar ficheiro",
     "Forward message" : "Reenviar mensaxe",
     "Translate" : "Traducir",
     "Set custom reminder" : "Definir un lembrete personalizado",
