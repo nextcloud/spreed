@@ -1066,6 +1066,7 @@ OC.L10N.register(
     "Create new poll" : "Създаване на нова анкета",
     "Smart picker" : "Смарт /интелигентен/ инструмент за избор",
     "Share from {nextcloud}" : "Споделяне от {nextcloud}",
+    "Share from Files" : "Споделяне от файлове",
     "Record voice message" : "Запис на гласово съобщение",
     "End recording and send" : "Край на записа и изпращане",
     "Dismiss recording" : "Отхвърляне на записа",
