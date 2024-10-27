@@ -608,6 +608,7 @@ OC.L10N.register(
     "Send message" : "Kas ur gemenadenn",
     "Group" : "Stollad",
     "Share files to the conversation" : "Rannañ restroù d'an diviz",
+    "Share from Files" : "Rannañ diouzh Restroù",
     "New file" : "Restr nevez",
     "Settings" : "Arventennoù",
     "Send" : "Kas",
