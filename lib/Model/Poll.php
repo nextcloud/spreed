@@ -11,6 +11,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @psalm-method int<1, max> getId()
@@ -70,17 +71,17 @@ class Poll extends Entity {
 	protected int $maxVotes = self::MAX_VOTES_UNLIMITED;
 
 	public function __construct() {
-		$this->addType('roomId', 'int');
-		$this->addType('question', 'string');
-		$this->addType('options', 'string');
-		$this->addType('votes', 'string');
-		$this->addType('numVoters', 'int');
-		$this->addType('actorType', 'string');
-		$this->addType('actorId', 'string');
-		$this->addType('displayName', 'string');
-		$this->addType('status', 'int');
-		$this->addType('resultMode', 'int');
-		$this->addType('maxVotes', 'int');
+		$this->addType('roomId', Types::BIGINT);
+		$this->addType('question', Types::TEXT);
+		$this->addType('options', Types::TEXT);
+		$this->addType('votes', Types::TEXT);
+		$this->addType('numVoters', Types::BIGINT);
+		$this->addType('actorType', Types::STRING);
+		$this->addType('actorId', Types::STRING);
+		$this->addType('displayName', Types::STRING);
+		$this->addType('status', Types::SMALLINT);
+		$this->addType('resultMode', Types::SMALLINT);
+		$this->addType('maxVotes', Types::INTEGER);
 	}
 
 	/**

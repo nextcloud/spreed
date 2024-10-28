@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setToken(string $token)
@@ -27,10 +28,10 @@ class Consent extends Entity implements \JsonSerializable {
 	protected ?\DateTime $dateTime = null;
 
 	public function __construct() {
-		$this->addType('token', 'string');
-		$this->addType('actorType', 'string');
-		$this->addType('actorId', 'string');
-		$this->addType('dateTime', 'datetime');
+		$this->addType('token', Types::STRING);
+		$this->addType('actorType', Types::STRING);
+		$this->addType('actorId', Types::STRING);
+		$this->addType('dateTime', Types::DATETIME);
 	}
 
 	public function jsonSerialize(): array {

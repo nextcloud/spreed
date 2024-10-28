@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setBotId(int $botId)
@@ -24,9 +25,9 @@ class BotConversation extends Entity implements \JsonSerializable {
 	protected int $state = Bot::STATE_DISABLED;
 
 	public function __construct() {
-		$this->addType('bot_id', 'int');
-		$this->addType('token', 'string');
-		$this->addType('state', 'int');
+		$this->addType('bot_id', Types::BIGINT);
+		$this->addType('token', Types::STRING);
+		$this->addType('state', Types::SMALLINT);
 	}
 
 	public function jsonSerialize(): array {

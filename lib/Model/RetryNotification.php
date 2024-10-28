@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setRemoteServer(string $remoteServer)
@@ -38,12 +39,12 @@ class RetryNotification extends Entity {
 	protected string $notification = '';
 
 	public function __construct() {
-		$this->addType('remoteServer', 'string');
-		$this->addType('numAttempts', 'int');
-		$this->addType('nextRetry', 'datetime');
-		$this->addType('notificationType', 'string');
-		$this->addType('resourceType', 'string');
-		$this->addType('providerId', 'string');
-		$this->addType('notification', 'string');
+		$this->addType('remoteServer', Types::STRING);
+		$this->addType('numAttempts', Types::INTEGER);
+		$this->addType('nextRetry', Types::DATETIME);
+		$this->addType('notificationType', Types::STRING);
+		$this->addType('resourceType', Types::STRING);
+		$this->addType('providerId', Types::STRING);
+		$this->addType('notification', Types::TEXT);
 	}
 }
