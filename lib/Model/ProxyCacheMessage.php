@@ -11,6 +11,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setLocalToken(string $localToken)
@@ -66,20 +67,20 @@ class ProxyCacheMessage extends Entity implements \JsonSerializable {
 	protected ?string $metaData = null;
 
 	public function __construct() {
-		$this->addType('localToken', 'string');
-		$this->addType('remoteServerUrl', 'string');
-		$this->addType('remoteToken', 'string');
-		$this->addType('remoteMessageId', 'int');
-		$this->addType('actorType', 'string');
-		$this->addType('actorId', 'string');
-		$this->addType('actorDisplayName', 'string');
-		$this->addType('messageType', 'string');
-		$this->addType('systemMessage', 'string');
-		$this->addType('expirationDatetime', 'datetime');
-		$this->addType('message', 'string');
-		$this->addType('messageParameters', 'string');
-		$this->addType('creationDatetime', 'datetime');
-		$this->addType('metaData', 'string');
+		$this->addType('localToken', Types::STRING);
+		$this->addType('remoteServerUrl', Types::STRING);
+		$this->addType('remoteToken', Types::STRING);
+		$this->addType('remoteMessageId', Types::BIGINT);
+		$this->addType('actorType', Types::STRING);
+		$this->addType('actorId', Types::STRING);
+		$this->addType('actorDisplayName', Types::STRING);
+		$this->addType('messageType', Types::STRING);
+		$this->addType('systemMessage', Types::STRING);
+		$this->addType('expirationDatetime', Types::DATETIME);
+		$this->addType('message', Types::TEXT);
+		$this->addType('messageParameters', Types::TEXT);
+		$this->addType('creationDatetime', Types::DATETIME);
+		$this->addType('metaData', Types::TEXT);
 	}
 
 	public function getParsedMessageParameters(): array {

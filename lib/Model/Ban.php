@@ -10,6 +10,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @psalm-import-type TalkBan from ResponseDefinitions
@@ -49,16 +50,16 @@ class Ban extends Entity implements \JsonSerializable {
 	protected ?string $internalNote = null;
 
 	public function __construct() {
-		$this->addType('id', 'int');
-		$this->addType('moderatorActorType', 'string');
-		$this->addType('moderatorActorId', 'string');
-		$this->addType('moderatorDisplayname', 'string');
-		$this->addType('roomId', 'int');
-		$this->addType('bannedActorType', 'string');
-		$this->addType('bannedActorId', 'string');
-		$this->addType('bannedDisplayname', 'string');
-		$this->addType('bannedTime', 'datetime');
-		$this->addType('internalNote', 'string');
+		$this->addType('id', Types::BIGINT);
+		$this->addType('moderatorActorType', Types::STRING);
+		$this->addType('moderatorActorId', Types::STRING);
+		$this->addType('moderatorDisplayname', Types::STRING);
+		$this->addType('roomId', Types::BIGINT);
+		$this->addType('bannedActorType', Types::STRING);
+		$this->addType('bannedActorId', Types::STRING);
+		$this->addType('bannedDisplayname', Types::STRING);
+		$this->addType('bannedTime', Types::DATETIME);
+		$this->addType('internalNote', Types::TEXT);
 	}
 
 	/**

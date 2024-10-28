@@ -10,6 +10,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setName(string $name)
@@ -48,16 +49,16 @@ class BotServer extends Entity implements \JsonSerializable {
 	protected int $features = Bot::FEATURE_NONE;
 
 	public function __construct() {
-		$this->addType('name', 'string');
-		$this->addType('url', 'string');
-		$this->addType('url_hash', 'string');
-		$this->addType('description', 'string');
-		$this->addType('secret', 'string');
-		$this->addType('error_count', 'int');
-		$this->addType('last_error_date', 'datetime');
-		$this->addType('last_error_message', 'string');
-		$this->addType('state', 'int');
-		$this->addType('features', 'int');
+		$this->addType('name', Types::STRING);
+		$this->addType('url', Types::STRING);
+		$this->addType('url_hash', Types::STRING);
+		$this->addType('description', Types::STRING);
+		$this->addType('secret', Types::STRING);
+		$this->addType('error_count', Types::BIGINT);
+		$this->addType('last_error_date', Types::DATETIME);
+		$this->addType('last_error_message', Types::STRING);
+		$this->addType('state', Types::SMALLINT);
+		$this->addType('features', Types::INTEGER);
 	}
 
 	/**

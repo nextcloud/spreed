@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * A session is the "I'm online in this conversation" state of Talk, you get one
@@ -49,11 +50,11 @@ class Session extends Entity {
 	protected $state;
 
 	public function __construct() {
-		$this->addType('attendeeId', 'int');
-		$this->addType('sessionId', 'string');
-		$this->addType('inCall', 'int');
-		$this->addType('lastPing', 'int');
-		$this->addType('state', 'int');
+		$this->addType('attendeeId', Types::BIGINT);
+		$this->addType('sessionId', Types::STRING);
+		$this->addType('inCall', Types::INTEGER);
+		$this->addType('lastPing', Types::INTEGER);
+		$this->addType('state', Types::SMALLINT);
 	}
 
 	/**

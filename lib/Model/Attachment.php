@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setRoomId(int $roomId)
@@ -54,12 +55,12 @@ class Attachment extends Entity {
 	protected $actorId;
 
 	public function __construct() {
-		$this->addType('roomId', 'int');
-		$this->addType('messageId', 'int');
-		$this->addType('messageTime', 'int');
-		$this->addType('objectType', 'string');
-		$this->addType('actorType', 'string');
-		$this->addType('actorId', 'string');
+		$this->addType('roomId', Types::BIGINT);
+		$this->addType('messageId', Types::BIGINT);
+		$this->addType('messageTime', Types::BIGINT);
+		$this->addType('objectType', Types::STRING);
+		$this->addType('actorType', Types::STRING);
+		$this->addType('actorId', Types::STRING);
 	}
 
 	/**

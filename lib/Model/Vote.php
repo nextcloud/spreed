@@ -11,6 +11,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setPollId(int $pollId)
@@ -37,12 +38,12 @@ class Vote extends Entity {
 	protected ?int $optionId = null;
 
 	public function __construct() {
-		$this->addType('pollId', 'int');
-		$this->addType('roomId', 'int');
-		$this->addType('actorType', 'string');
-		$this->addType('actorId', 'string');
-		$this->addType('displayName', 'string');
-		$this->addType('optionId', 'int');
+		$this->addType('pollId', Types::BIGINT);
+		$this->addType('roomId', Types::BIGINT);
+		$this->addType('actorType', Types::STRING);
+		$this->addType('actorId', Types::STRING);
+		$this->addType('displayName', Types::STRING);
+		$this->addType('optionId', Types::INTEGER);
 	}
 
 	/**

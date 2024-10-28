@@ -10,6 +10,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setUserId(string $userId)
@@ -30,10 +31,10 @@ class Reminder extends Entity implements \JsonSerializable {
 	protected ?\DateTime $dateTime = null;
 
 	public function __construct() {
-		$this->addType('userId', 'string');
-		$this->addType('token', 'string');
-		$this->addType('messageId', 'int');
-		$this->addType('dateTime', 'datetime');
+		$this->addType('userId', Types::STRING);
+		$this->addType('token', Types::STRING);
+		$this->addType('messageId', Types::BIGINT);
+		$this->addType('dateTime', Types::DATETIME);
 	}
 
 	/**

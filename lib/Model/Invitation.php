@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method void setUserId(string $userId)
@@ -48,16 +49,16 @@ class Invitation extends Entity implements \JsonSerializable {
 	protected string $localCloudId = '';
 
 	public function __construct() {
-		$this->addType('userId', 'string');
-		$this->addType('state', 'int');
-		$this->addType('localRoomId', 'int');
-		$this->addType('accessToken', 'string');
-		$this->addType('remoteServerUrl', 'string');
-		$this->addType('remoteToken', 'string');
-		$this->addType('remoteAttendeeId', 'int');
-		$this->addType('inviterCloudId', 'string');
-		$this->addType('inviterDisplayName', 'string');
-		$this->addType('localCloudId', 'string');
+		$this->addType('userId', Types::STRING);
+		$this->addType('state', Types::SMALLINT);
+		$this->addType('localRoomId', Types::BIGINT);
+		$this->addType('accessToken', Types::STRING);
+		$this->addType('remoteServerUrl', Types::STRING);
+		$this->addType('remoteToken', Types::STRING);
+		$this->addType('remoteAttendeeId', Types::BIGINT);
+		$this->addType('inviterCloudId', Types::STRING);
+		$this->addType('inviterDisplayName', Types::STRING);
+		$this->addType('localCloudId', Types::STRING);
 	}
 
 	/**
