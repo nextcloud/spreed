@@ -62,6 +62,7 @@
 				<!-- Call layout switcher -->
 				<NcActionButton v-if="showCallLayoutSwitch"
 					close-after-click
+					:disabled="isCallViewChangeDisabled"
 					@click="changeView">
 					<template #icon>
 						<GridView v-if="!isGrid"
@@ -70,6 +71,14 @@
 							:size="20" />
 					</template>
 					{{ changeViewText }}
+				</NcActionButton>
+				<NcActionButton v-if="canModerate"
+					close-after-click
+					@click="showCallModerationDialog = true">
+					<template #icon>
+						<IconAccountGroup :size="20" />
+					</template>
+					{{ t('spreed', 'Moderate the call') }}
 				</NcActionButton>
 			</template>
 
@@ -148,10 +157,13 @@
 				{{ t('spreed', 'Download attendance list') }}
 			</NcActionLink>
 		</NcActions>
+
+		<CallModerationDialog :show-call-moderation-dialog.sync="showCallModerationDialog" />
 	</div>
 </template>
 
 <script>
+import IconAccountGroup from 'vue-material-design-icons/AccountGroup.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -180,6 +192,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 
+import CallModerationDialog from './CallModerationDialog.vue'
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
 
 import {
@@ -193,7 +206,7 @@ import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManage
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.js'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
-import { callParticipantCollection } from '../../utils/webrtc/index.js'
+import { callParticipantCollection, localCallParticipantModel } from '../../utils/webrtc/index.js'
 
 const AUTO_LOWER_HAND_THRESHOLD = 3000
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
@@ -202,6 +215,7 @@ export default {
 	name: 'TopBarMenu',
 
 	components: {
+		CallModerationDialog,
 		TransitionExpand,
 		NcActionButton,
 		NcActionLink,
@@ -218,6 +232,7 @@ export default {
 		FullscreenExit,
 		GridView,
 		HandBackLeft,
+		IconAccountGroup,
 		IconDownload,
 		MicrophoneOff,
 		PromotedView,
@@ -274,6 +289,8 @@ export default {
 			lowerHandTimeout: null,
 			speakingTimestamp: null,
 			lowerHandDelay: AUTO_LOWER_HAND_THRESHOLD,
+			showCallModerationDialog: false,
+			localCallParticipantModel,
 		}
 	},
 
@@ -309,8 +326,26 @@ export default {
 				: t('spreed', 'Grid view')
 		},
 
+		forcedCallViewMode() {
+			return this.localCallParticipantModel.attributes.forcedCallViewMode
+		},
+
+		isCallViewChangeDisabled() {
+			return !(this.forcedCallViewMode === 'none')
+				&& !(this.forcedCallViewMode === '')
+				&& !this.canModerate
+		},
+
 		isGrid() {
-			return this.callViewStore.isGrid
+			if (this.forcedCallViewMode === 'grid' && !this.canModerate) {
+				return true
+			}
+
+			if (this.forcedCallViewMode === 'speaker' && !this.canModerate) {
+				return false
+			}
+
+			return this.callViewStore.isGrid && !this.isSidebar
 		},
 
 		isVirtualBackgroundAvailable() {
