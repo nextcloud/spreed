@@ -82,6 +82,7 @@
 					dir="auto"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
+					@keydown.meta.up="handleEditLastMessage"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
