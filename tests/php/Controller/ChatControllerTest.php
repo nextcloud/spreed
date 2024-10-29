@@ -34,6 +34,7 @@ use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -43,12 +44,15 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class ChatControllerTest extends TestCase {
@@ -81,6 +85,10 @@ class ChatControllerTest extends TestCase {
 	private Authenticator&MockObject $federationAuthenticator;
 	private ProxyCacheMessageService&MockObject $pcmService;
 	private Notifier&MockObject $notifier;
+	private IRichTextFormatter&MockObject $richTextFormatter;
+	private ITaskProcessingManager&MockObject $taskProcessingManager;
+	private IAppConfig&MockObject $appConfig;
+	private LoggerInterface&MockObject $logger;
 
 	protected Room&MockObject $room;
 
@@ -121,6 +129,10 @@ class ChatControllerTest extends TestCase {
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->pcmService = $this->createMock(ProxyCacheMessageService::class);
 		$this->notifier = $this->createMock(Notifier::class);
+		$this->richTextFormatter = $this->createMock(IRichTextFormatter::class);
+		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -167,6 +179,10 @@ class ChatControllerTest extends TestCase {
 			$this->federationAuthenticator,
 			$this->pcmService,
 			$this->notifier,
+			$this->richTextFormatter,
+			$this->taskProcessingManager,
+			$this->appConfig,
+			$this->logger,
 		);
 	}
 

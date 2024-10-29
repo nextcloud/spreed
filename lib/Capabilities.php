@@ -18,6 +18,8 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\Translation\ITranslationManager;
 use OCP\Util;
 
@@ -108,6 +110,12 @@ class Capabilities implements IPublicCapability {
 		'download-call-participants',
 	];
 
+	public const CONDITIONAL_FEATURES = [
+		'message-expiration',
+		'reactions',
+		'chat-summary-api',
+	];
+
 	public const LOCAL_FEATURES = [
 		'favorites',
 		'chat-read-status',
@@ -119,6 +127,7 @@ class Capabilities implements IPublicCapability {
 		'remind-me-later',
 		'note-to-self',
 		'archived-conversations',
+		'chat-summary-api',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -164,6 +173,7 @@ class Capabilities implements IPublicCapability {
 		protected IUserSession $userSession,
 		protected IAppManager $appManager,
 		protected ITranslationManager $translationManager,
+		protected ITaskProcessingManager $taskProcessingManager,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -298,6 +308,11 @@ class Capabilities implements IPublicCapability {
 			}
 			$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
 			$capabilities['config']['call']['can-enable-sip'] = $this->talkConfig->canUserEnableSIP($user);
+		}
+
+		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
+		if (isset($supportedTaskTypes[TextToTextSummary::ID])) {
+			$capabilities['features'][] = 'chat-summary-api';
 		}
 
 		return [
