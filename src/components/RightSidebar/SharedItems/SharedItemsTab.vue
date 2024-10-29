@@ -97,6 +97,7 @@ import {
 	sharedItemsWithPreviewLimit,
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
+import { CONVERSATION } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
@@ -162,6 +163,7 @@ export default {
 
 		canCreatePollDrafts() {
 			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
+				&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(this.conversation.type)
 		},
 
 		loading() {
