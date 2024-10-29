@@ -108,7 +108,7 @@ import { useCallViewStore } from '../../stores/callView.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
-import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
+import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
 
 export default {
 	name: 'CallButton',

@@ -9,7 +9,7 @@ import adapter from 'webrtc-adapter'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
 
-import { isSafari } from '../../../utils/browserCheck.js'
+import { isSafari } from '../../browserCheck.ts'
 
 /**
  * @param {object} stream the stream object.
