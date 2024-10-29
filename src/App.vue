@@ -474,10 +474,6 @@ export default {
 			} else if (to.name === 'notfound') {
 				this.setPageTitle('')
 			}
-
-			if (to.hash === '#direct-call') {
-				emit('talk:media-settings:show')
-			}
 		})
 
 		if (getCurrentUser()) {
@@ -500,10 +496,6 @@ export default {
 			emit('toggle-navigation', {
 				open: true,
 			})
-		}
-
-		if (this.$route.hash === '#direct-call') {
-			emit('talk:media-settings:show')
 		}
 
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
