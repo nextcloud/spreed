@@ -71,7 +71,7 @@ import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePr
 
 import { useMessageInfo } from '../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../constants.js'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {

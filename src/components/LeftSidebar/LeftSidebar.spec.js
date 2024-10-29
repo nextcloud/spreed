@@ -16,7 +16,7 @@ import LeftSidebar from './LeftSidebar.vue'
 
 import router from '../../__mocks__/router.js'
 import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { findNcListItems, findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'

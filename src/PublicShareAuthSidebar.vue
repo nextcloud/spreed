@@ -36,7 +36,7 @@ import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
-import { EventBus } from './services/EventBus.js'
+import { EventBus } from './services/EventBus.ts'
 import {
 	leaveConversationSync,
 	setGuestUserName

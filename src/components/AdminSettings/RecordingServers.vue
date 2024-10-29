@@ -96,7 +96,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { CONFIG } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 
 const recordingConsentCapability = hasTalkFeature('local', 'recording-consent')
 const recordingConsentOptions = [

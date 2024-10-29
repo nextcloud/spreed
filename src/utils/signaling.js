@@ -17,7 +17,7 @@ import {
 import CancelableRequest from './cancelableRequest.js'
 import { PARTICIPANT } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'

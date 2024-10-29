@@ -49,7 +49,7 @@ import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
 
 import { useStore } from '../../composables/useStore.js'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{

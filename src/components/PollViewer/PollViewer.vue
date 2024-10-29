@@ -138,7 +138,7 @@ import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 

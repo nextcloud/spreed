@@ -367,7 +367,7 @@ import {
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService.js'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'

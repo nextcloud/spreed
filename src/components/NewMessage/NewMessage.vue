@@ -208,7 +208,7 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.js'
+import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
