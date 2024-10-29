@@ -29,13 +29,17 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType",
 		"post-install-cmd": [
 			"@composer bin all install --ansi",
-			"\"vendor/bin/mozart\" compose",
-			"composer dump-autoload"
+			"vendor/bin/php-scoper add-prefix --force # Scope our dependencies",
+			"@php lib-vendor-organizer.php lib/Vendor/ OCA\\\\Talk\\\\Vendor",
+			"composer dump-autoload -o"
 		],
 		"post-update-cmd": [
 			"@composer bin all update --ansi",
-			"\"vendor/bin/mozart\" compose",
-			"composer dump-autoload"
+			"vendor/bin/php-scoper add-prefix --force # Scope our dependencies",
+			"rm -Rf lib/Vendor && mv build lib/Vendor",
+			"find lib/Vendor/ -maxdepth 1 -mindepth 1 -type d | cut -d '/' -f3 | xargs -I {} rm -Rf vendor/{} # Remove origins",
+			"@php lib-vendor-organizer.php lib/Vendor/ OCA\\\\Talk\\\\Vendor",
+			"composer dump-autoload -o"
 		],
 		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky"
 	},
@@ -47,17 +51,5 @@
 		"bamarni/composer-bin-plugin": "^1.8",
 		"cuyz/valinor": "^1.8",
 		"firebase/php-jwt": "^6.10"
-	},
-	"extra": {
-		"mozart": {
-			"dep_namespace": "OCA\\Talk\\Vendor\\",
-			"dep_directory": "/lib/Vendor/",
-			"classmap_directory": "/lib/autoload/",
-			"classmap_prefix": "NEXTCLOUDTALK_",
-			"packages": [
-				"firebase/php-jwt",
-				"cuyz/valinor"
-			]
-		}
 	}
 }
