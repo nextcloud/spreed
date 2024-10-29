@@ -111,7 +111,7 @@ import Reactions from './MessagePart/Reactions.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../../../services/EventBus.js'
+import { EventBus } from '../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 

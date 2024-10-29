@@ -87,7 +87,7 @@ import { useSortParticipants } from '../../../composables/useSortParticipants.js
 import { ATTENDEE } from '../../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
-import { EventBus } from '../../../services/EventBus.js'
+import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'

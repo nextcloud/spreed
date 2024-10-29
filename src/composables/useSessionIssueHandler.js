@@ -7,7 +7,7 @@ import { nextTick, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
 import { generateUrl } from '@nextcloud/router'
 
-import { EventBus } from '../services/EventBus.js'
+import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 
 /**
