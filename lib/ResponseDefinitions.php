@@ -344,6 +344,7 @@ namespace OCA\Talk;
  *             predefined-backgrounds: string[],
  *             can-upload-background: bool,
  *             sip-enabled: bool,
+ *             sip-dialin-info: string,
  *             sip-dialout-enabled: bool,
  *             can-enable-sip: bool,
  *             start-without-media: bool,
