@@ -101,7 +101,7 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { callSIPDialOut } from '../../services/callsService.js'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.js'
@@ -343,7 +343,7 @@ export default {
 	},
 
 	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
+		this.callEnabled = getTalkConfig(this.token, 'call', 'enabled')
 	},
 
 	methods: {

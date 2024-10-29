@@ -103,7 +103,7 @@ export default {
 		},
 		isCurrentUserGroup() {
 			return this.isGroupMention
-				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
+				&& loadState('spreed', 'user_group_ids', []).includes(this.id) // HERE
 		},
 		primary() {
 			return this.isMentionToAll || this.isCurrentUser

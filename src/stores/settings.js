@@ -36,8 +36,8 @@ import {
  */
 export const useSettingsStore = defineStore('settings', {
 	state: () => ({
-		readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
-		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
+		readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE), // HERE
+		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE), // HERE
 		showMediaSettings: {},
 		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
 	}),

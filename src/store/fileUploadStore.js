@@ -30,7 +30,7 @@ import {
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
 const state = {
-	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
+	attachmentFolder: loadState('spreed', 'attachment_folder', ''), // HERE
 	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
 	uploads: {},
 	currentUploadId: undefined,

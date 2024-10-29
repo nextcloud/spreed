@@ -170,7 +170,7 @@ export default {
 	data() {
 		return {
 			showSettings: false,
-			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
+			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'), // Here
 		}
 	},
 

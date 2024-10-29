@@ -18,7 +18,7 @@ const hasUserAccount = Boolean(getCurrentUser()?.uid)
  * Get play sounds option (from server for user or from browser storage for guest)
  */
 const shouldPlaySounds = hasUserAccount
-	? loadState('spreed', 'play_sounds', false)
+	? loadState('spreed', 'play_sounds', false) // HERE?
 	: BrowserStorage.getItem('play_sounds') !== 'no'
 
 /**

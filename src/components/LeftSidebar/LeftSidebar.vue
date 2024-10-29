@@ -464,8 +464,8 @@ export default {
 			searchResultsListedConversations: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
-			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
-			canStartConversations: loadState('spreed', 'start_conversations'),
+			isCirclesEnabled: loadState('spreed', 'circles_enabled'), // HERE
+			canStartConversations: loadState('spreed', 'start_conversations'), // HERE
 			initialisedConversations: false,
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
