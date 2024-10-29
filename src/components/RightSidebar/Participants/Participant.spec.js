@@ -25,7 +25,7 @@ import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import Participant from './Participant.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, PARTICIPANT } from '../../../constants.js'
+import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
@@ -62,6 +62,7 @@ describe('Participant.vue', () => {
 		conversation = {
 			token: 'current-token',
 			participantType: PARTICIPANT.TYPE.USER,
+			lobbyState: WEBINAR.LOBBY.NONE,
 		}
 
 		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
@@ -139,7 +140,7 @@ describe('Participant.vue', () => {
 
 		test('renders avatar with guest name when empty', () => {
 			participant.displayName = ''
-			participant.participantType = PARTICIPANT.TYPE.GUEST
+			participant.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 			const wrapper = mountParticipant(participant)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)
@@ -167,11 +168,6 @@ describe('Participant.vue', () => {
 	})
 
 	describe('user name', () => {
-		beforeEach(() => {
-			participant.statusIcon = ''
-			participant.statusMessage = ''
-		})
-
 		/**
 		 * Check which text is currently rendered as a name
 		 * @param {object} participant participant object
@@ -179,73 +175,95 @@ describe('Participant.vue', () => {
 		 */
 		function checkUserNameRendered(participant, regexp) {
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.find('.participant__user').exists()).toBeTruthy()
-			expect(wrapper.find('.participant__user').text()).toMatch(regexp)
+			const username = wrapper.find('.participant__user')
+			expect(username.exists()).toBeTruthy()
+			expect(username.text()).toMatch(regexp)
 		}
 
-		test('renders plain user name for regular user', async () => {
-			checkUserNameRendered(participant, /^Alice$/)
-		})
+		const testCases = [
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Alice$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)$/],
+			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Guest\s+\(guest\)$/],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, /^Alice\s+\(moderator\)$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
+			['Bot', ATTENDEE.BRIDGE_BOT_ID, ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Bot\s+\(bot\)$/],
+		]
 
-		test('renders guest suffix for guests', async () => {
-			participant.participantType = PARTICIPANT.TYPE.GUEST
-			checkUserNameRendered(participant, /^Alice\s+\(guest\)$/)
-		})
+		const testLobbyCases = [
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Alice\s+\(in the lobby\)$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)\s+\(in the lobby\)$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)\s+\(in the lobby\)$/],
+			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Guest\s+\(guest\)\s+\(in the lobby\)$/],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, /^Alice\s+\(moderator\)$/],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
+		]
 
-		test('renders moderator suffix for moderators', async () => {
-			participant.participantType = PARTICIPANT.TYPE.MODERATOR
-			checkUserNameRendered(participant, /^Alice\s+\(moderator\)$/)
-		})
+		it.each(testCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
+			(displayName, actorId, actorType, participantType, regexp) => {
+				checkUserNameRendered({
+					...participant,
+					actorId,
+					actorType,
+					participantType,
+					displayName,
+				}, regexp)
+			})
 
-		test('renders guest moderator suffix for guest moderators', async () => {
-			participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-			checkUserNameRendered(participant, /^Alice\s+\(moderator\)\s+\(guest\)$/)
-		})
-
-		test('renders bot suffix for bots', async () => {
-			participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
-			participant.actorId = ATTENDEE.BRIDGE_BOT_ID
-			checkUserNameRendered(participant, /^Alice\s+\(bot\)$/)
-		})
+		it.each(testLobbyCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\' with lobby enabled',
+			(displayName, actorId, actorType, participantType, regexp) => {
+				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
+				checkUserNameRendered({
+					...participant,
+					actorId,
+					actorType,
+					participantType,
+					displayName,
+				}, regexp)
+			})
 	})
 
 	describe('user status', () => {
 		/**
 		 * Check which status is currently rendered
 		 * @param {object} participant participant object
-		 * @param {string|null} status status which expected to be rendered
+		 * @param {string} [status] status which expected to be rendered
 		 */
 		async function checkUserSubnameRendered(participant, status) {
 			const wrapper = mountParticipant(participant)
 			await flushPromises()
+			const userSubname = wrapper.find('.participant__status')
 			if (status) {
-				expect(wrapper.find('.participant__status').exists()).toBeTruthy()
-				expect(wrapper.find('.participant__status').text()).toBe(status)
+				expect(userSubname.exists()).toBeTruthy()
+				expect(userSubname.text()).toBe(status)
 			} else {
-				expect(wrapper.find('.participant__status').exists()).toBeFalsy()
+				expect(userSubname.exists()).toBeFalsy()
 			}
 		}
 
-		test('renders user status', async () => {
-			await checkUserSubnameRendered(participant, '🌧️ rainy')
-		})
+		const testCases = [
+			['online', '', '', undefined],
+			['online', '🌧️', 'Rainy', '🌧️ Rainy'],
+			['dnd', '🌧️', 'Rainy', '🌧️ Rainy'],
+			['dnd', '🌧️', '', '🌧️ Do not disturb'],
+			['away', '🌧️', '', '🌧️ Away'],
+		]
 
-		test('does not render user status when not set', async () => {
-			participant.statusIcon = ''
-			participant.statusMessage = ''
-			await checkUserSubnameRendered(participant, null)
-		})
+		it.each(testCases)('renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
+			(status, statusIcon, statusMessage, result) => {
+				checkUserSubnameRendered({
+					...participant,
+					status,
+					statusIcon,
+					statusMessage,
+				}, result)
+			})
 
-		test('renders dnd status', async () => {
-			participant.statusMessage = ''
-			participant.status = 'dnd'
-			await checkUserSubnameRendered(participant, '🌧️ Do not disturb')
-		})
-
-		test('renders away status', async () => {
-			participant.statusMessage = ''
-			participant.status = 'away'
-			await checkUserSubnameRendered(participant, '🌧️ Away')
+		it('renders e-mail as status for e-mail guest', async () => {
+			participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
+			participant.participantType = PARTICIPANT.TYPE.GUEST
+			participant.invitedActorId = 'test@mail.com'
+			await checkUserSubnameRendered(participant, 'test@mail.com')
 		})
 	})
 
@@ -508,6 +526,7 @@ describe('Participant.vue', () => {
 			test('allows moderators to resend invitations for email participants', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
+				participant.invitedActorId = 'alice@mail.com'
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(true)
@@ -517,6 +536,7 @@ describe('Participant.vue', () => {
 				expect(resendInvitationsAction).toHaveBeenCalledWith(expect.anything(), {
 					token: 'current-token',
 					attendeeId: 'alice-attendee-id',
+					actorId: 'alice@mail.com',
 				})
 			})
 

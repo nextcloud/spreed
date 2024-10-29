@@ -214,12 +214,7 @@ export default {
 
 		async handleResendInvitations() {
 			this.isSendingInvitations = true
-			try {
-				await this.$store.dispatch('resendInvitations', { token: this.token })
-				showSuccess(t('spreed', 'Invitations sent'))
-			} catch (e) {
-				showError(t('spreed', 'Error occurred when sending invitations'))
-			}
+			await this.$store.dispatch('resendInvitations', { token: this.token })
 			this.isSendingInvitations = false
 		},
 	},

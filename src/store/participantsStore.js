@@ -883,10 +883,26 @@ const actions = {
 	 * @param {object} _ - unused.
 	 * @param {object} data - the wrapping object.
 	 * @param {string} data.token - conversation token.
-	 * @param {number} data.attendeeId - attendee id to target, or null for all.
+	 * @param {number} [data.attendeeId] - attendee id to target, or null for all.
+	 * @param {string} [data.actorId] - if attendee is provided, the actorId (e-mail) to show in the message.
 	 */
-	async resendInvitations(_, { token, attendeeId }) {
-		await resendInvitations(token, { attendeeId })
+	async resendInvitations(_, { token, attendeeId, actorId }) {
+		if (attendeeId) {
+			try {
+				await resendInvitations(token, attendeeId)
+				showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId }))
+			} catch (error) {
+				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId }))
+			}
+		} else {
+			try {
+				await resendInvitations(token)
+				showSuccess(t('spreed', 'Invitations sent'))
+			} catch (e) {
+				showError(t('spreed', 'Error occurred when sending invitations'))
+			}
+		}
+
 	},
 
 	/**
