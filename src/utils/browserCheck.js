@@ -10,6 +10,13 @@ import { t } from '@nextcloud/l10n'
 
 const parser = new UAParser()
 const browser = parser.getBrowser()
+const os = parser.getOS()
+
+/**
+ * Per-OS flags
+ */
+
+export const isMac = os.name === 'Mac OS'
 
 /**
  * Per-browser flags and a major version
