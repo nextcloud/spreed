@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
@@ -15,6 +16,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
@@ -51,6 +53,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -62,14 +65,20 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
+use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
+use OCP\TaskProcessing\Exception\Exception;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use OCP\TaskProcessing\Task;
+use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
+use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
@@ -114,6 +123,10 @@ class ChatController extends AEnvironmentAwareController {
 		protected Authenticator $federationAuthenticator,
 		protected ProxyCacheMessageService $pcmService,
 		protected Notifier $notifier,
+		protected IRichTextFormatter $richTextFormatter,
+		protected ITaskProcessingManager $taskProcessingManager,
+		protected IAppConfig $appConfig,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -487,6 +500,138 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
+	}
+
+	/**
+	 * Summarize the next bunch of chat messages from a given offset
+	 *
+	 * Required capability: `chat-summary-api`
+	 *
+	 * @param positive-int $fromMessageId Offset from where on the summary should be generated
+	 * @return DataResponse<Http::STATUS_CREATED, array{taskId: int, nextOffset?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'ai-no-provider'|'ai-error'}, array{}>|DataResponse<Http::STATUS_NO_CONTENT, array<empty>, array{}>
+	 * @throws \InvalidArgumentException
+	 *
+	 * 201: Summary was scheduled, use the returned taskId to get the status
+	 *   information and output from the TaskProcessing API:
+	 *   https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id
+	 *   If the response data contains nextOffset, not all messages could be handled in a single request.
+	 *   After receiving the response a second summary should be requested with the provided nextOffset.
+	 * 204: No messages found to summarize
+	 * 400: No AI provider available or summarizing failed
+	 */
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	public function summarizeChat(
+		int $fromMessageId,
+	): DataResponse {
+		$fromMessageId = max(0, $fromMessageId);
+
+		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
+		if (!isset($supportedTaskTypes[TextToTextSummary::ID])) {
+			return new DataResponse([
+				'error' => ChatSummaryException::REASON_AI_ERROR,
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		// if ($this->room->isFederatedConversation()) {
+		// /** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+		// $proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+		// return $proxy->summarizeChat(
+		// $this->room,
+		// $this->participant,
+		// $fromMessageId,
+		// );
+		// }
+
+		$currentUser = $this->userManager->get($this->userId);
+		$batchSize = $this->appConfig->getAppValueInt('ai_unread_summary_batch_size', 500);
+		$comments = $this->chatManager->waitForNewMessages($this->room, $fromMessageId, $batchSize, 0, $currentUser, true, false);
+		$this->preloadShares($comments);
+
+		$messages = [];
+		$nextOffset = 0;
+		foreach ($comments as $comment) {
+			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			if (!$message->getVisibility()) {
+				continue;
+			}
+
+			if ($message->getMessageType() === ChatManager::VERB_SYSTEM
+				&& !in_array($message->getMessageRaw(), [
+					'call_ended',
+					'call_ended_everyone',
+					'file_shared',
+					'object_shared',
+				], true)) {
+				// Ignore system messages apart from calls, shared objects and files
+				continue;
+			}
+
+			$parsedMessage = $this->richTextFormatter->richToParsed(
+				$message->getMessage(),
+				$message->getMessageParameters(),
+			);
+
+			$displayName = $message->getActorDisplayName();
+			if (in_array($message->getActorType(), [
+				Attendee::ACTOR_GUESTS,
+				Attendee::ACTOR_EMAILS,
+			], true)) {
+				if ($displayName === '') {
+					$displayName = $this->l->t('Guest');
+				} else {
+					$displayName = $this->l->t('%s (guest)', $displayName);
+				}
+			}
+
+			if ($comment->getParentId() !== '0') {
+				// FIXME should add something?
+			}
+
+			$messages[] = $displayName . ': ' . $parsedMessage;
+			$nextOffset = (int)$comment->getId();
+		}
+
+		if (empty($messages)) {
+			return new DataResponse([], Http::STATUS_NO_CONTENT);
+		}
+
+		$task = new Task(
+			TextToTextSummary::ID,
+			['input' => implode("\n\n", $messages)],
+			Application::APP_ID,
+			$this->userId,
+			'summary/' . $this->room->getToken(),
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($task);
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to summarize unread messages', ['exception' => $e]);
+			return new DataResponse([
+				'error' => ChatSummaryException::REASON_AI_ERROR,
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$taskId = $task->getId();
+		if ($taskId === null) {
+			return new DataResponse([
+				'error' => ChatSummaryException::REASON_AI_ERROR,
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$data = [
+			'taskId' => $taskId,
+		];
+
+		if ($nextOffset !== $this->room->getLastMessageId()) {
+			$data['nextOffset'] = $nextOffset;
+		}
+
+		return new DataResponse($data, Http::STATUS_CREATED);
 	}
 
 	/**

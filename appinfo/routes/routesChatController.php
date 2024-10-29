@@ -21,6 +21,8 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\ChatController::receiveMessages() */
 		['name' => 'Chat#receiveMessages', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::summarizeChat() */
+		['name' => 'Chat#summarizeChat', 'url' => '/api/{apiVersion}/chat/{token}/summarize', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::sendMessage() */
 		['name' => 'Chat#sendMessage', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::clearHistory() */
