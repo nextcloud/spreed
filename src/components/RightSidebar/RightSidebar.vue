@@ -69,6 +69,7 @@
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
 			<SipSettings v-if="showSIPSettings"
+				:token="token"
 				:meeting-id="conversation.token"
 				:attendee-pin="conversation.attendeePin" />
 			<div v-if="!getUserId" id="app-settings">

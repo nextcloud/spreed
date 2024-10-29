@@ -17,15 +17,19 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { readableNumber } from '../../utils/readableNumber.ts'
 
 export default {
 	name: 'SipSettings',
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		attendeePin: {
 			type: String,
 			required: true,
@@ -36,16 +40,14 @@ export default {
 		},
 	},
 
-	data() {
+	setup() {
+		const dialInInfo = getTalkConfig(token, 'call', 'sip_dialin_info')
 		return {
-			dialInInfo: loadState('spreed', 'sip_dialin_info'),
+			dialInInfo,
+			t,
+			readableNumber,
 		}
 	},
-
-	methods: {
-		t,
-		readableNumber,
-	}
 }
 </script>
 
