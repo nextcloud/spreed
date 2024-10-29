@@ -9,6 +9,7 @@ import Vuex from 'vuex'
 
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
+import { getSharingToken } from '@nextcloud/sharing/public'
 
 import PublicShareSidebar from './PublicShareSidebar.vue'
 import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
@@ -42,19 +43,6 @@ Vue.use(Vuex)
 
 const pinia = createPinia()
 
-/**
- *
- */
-function adjustLayout() {
-	document.querySelector('#app-content').appendChild(document.querySelector('footer'))
-
-	const talkSidebarElement = document.createElement('div')
-	talkSidebarElement.setAttribute('id', 'talk-sidebar')
-	document.querySelector('#content').appendChild(talkSidebarElement)
-}
-
-adjustLayout()
-
 // An "isOpen" boolean should be passed to the component, but as it is a
 // primitive it would not be reactive; it needs to be wrapped in an object and
 // that object passed to the component to get reactivity.
@@ -69,21 +57,14 @@ if (window.innerWidth > 1111) {
 }
 
 /**
- *
+ * Mount the Talk sidebar toggle button to the header.
  */
 function addTalkSidebarTrigger() {
-	const talkSidebarTriggerElement = document.createElement('button')
+	const talkSidebarTriggerElement = document.createElement('div')
 	talkSidebarTriggerElement.setAttribute('id', 'talk-sidebar-trigger')
-
-	// The ".header-right" element may not exist in the public share page if
-	// there are no header actions.
-	if (!document.querySelector('.header-right')) {
-		const headerRightElement = document.createElement('div')
-		headerRightElement.setAttribute('class', 'header-right')
-		document.querySelector('#header').appendChild(headerRightElement)
-	}
-
-	document.querySelector('.header-right').appendChild(talkSidebarTriggerElement)
+	// The ".header-end" element should exist (/server/core/templates/layout.public.php)
+	const mountPoint = document.querySelector('.header-end') ?? document.getElementById('header')
+	mountPoint.appendChild(talkSidebarTriggerElement)
 
 	const talkSidebarTriggerVm = new Vue({
 		propsData: {
@@ -100,21 +81,24 @@ function addTalkSidebarTrigger() {
 addTalkSidebarTrigger()
 
 /**
- *
+ * Mount the Talk sidebar next to the main content.
  */
-function getShareToken() {
-	const shareTokenElement = document.getElementById('sharingToken')
-	return shareTokenElement.value
+function addTalkSidebar() {
+	const talkSidebarElement = document.createElement('div')
+	talkSidebarElement.setAttribute('id', 'talk-sidebar')
+	document.getElementById('content-vue').appendChild(talkSidebarElement)
+
+	const talkSidebarVm = new Vue({
+		store,
+		pinia,
+		id: 'talk-chat-tab',
+		propsData: {
+			shareToken: getSharingToken(),
+			state: sidebarState,
+		},
+		...PublicShareSidebar,
+	})
+	talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
 }
 
-const talkSidebarVm = new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	propsData: {
-		shareToken: getShareToken(),
-		state: sidebarState,
-	},
-	...PublicShareSidebar,
-})
-talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
+addTalkSidebar()

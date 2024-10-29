@@ -256,6 +256,13 @@ export default {
 body .modal-wrapper * {
 	box-sizing: border-box;
 }
+
+footer {
+	transition: width var(--animation-quick);
+}
+#content-vue:has(#talk-sidebar) ~ footer {
+	width: calc(100% - 2 * var(--body-container-margin) - clamp(300px, 27vw, 500px));
+}
 </style>
 
 <style lang="scss" scoped>
@@ -263,9 +270,7 @@ body .modal-wrapper * {
 #talk-sidebar {
 	position: relative;
 	flex-shrink: 0;
-	width: 27vw;
-	min-width: 300px;
-	max-width: 500px;
+	width: clamp(300px, 27vw, 500px);
 
 	background: var(--color-main-background);
 	border-left: 1px solid var(--color-border);
