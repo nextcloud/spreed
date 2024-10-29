@@ -60,11 +60,6 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
-			'sip_dialin_info',
-			$this->talkConfig->getDialInInfo()
-		);
-
-		$this->initialState->provideInitialState(
 			'grid_videos_limit',
 			$this->talkConfig->getGridVideosLimit()
 		);
