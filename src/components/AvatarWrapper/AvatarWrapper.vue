@@ -6,7 +6,7 @@
 <template>
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
 		<div v-if="iconClass" class="avatar icon" :class="[iconClass]" />
-		<div v-else-if="isGuest || isDeletedUser" class="avatar guest">
+		<div v-else-if="isGuestOrDeletedUser" class="avatar guest">
 			{{ firstLetterOfGuestName }}
 		</div>
 		<div v-else-if="isBot" class="avatar bot">
@@ -144,26 +144,30 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.isUser || (this.isFederatedUser && this.token) || this.isBot || this.isGuest || this.isDeletedUser) {
+			if (!this.source) {
 				return ''
 			}
-			if (this.isFederatedUser) {
-				return 'icon-user'
-			}
-			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
-				return 'icon-mail'
-			}
-			if (this.source === ATTENDEE.ACTOR_TYPE.PHONES) {
+			switch (this.source) {
+			case ATTENDEE.ACTOR_TYPE.USERS:
+			case ATTENDEE.ACTOR_TYPE.BRIDGED:
+			case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
+				return ''
+			case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
+				return this.token ? '' : 'icon-user'
+			case ATTENDEE.ACTOR_TYPE.EMAILS:
+				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
+			case ATTENDEE.ACTOR_TYPE.GUESTS:
+				return this.hasCustomName ? '' : 'icon-user'
+			case ATTENDEE.ACTOR_TYPE.PHONES:
 				return 'icon-phone'
-			}
-			if (this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id === ATTENDEE.CHANGELOG_BOT_ID) {
-				return 'icon-changelog'
-			}
-			if (this.source === ATTENDEE.ACTOR_TYPE.CIRCLES) {
+			case ATTENDEE.ACTOR_TYPE.BOTS:
+				return this.id === ATTENDEE.CHANGELOG_BOT_ID ? 'icon-changelog' : ''
+			case ATTENDEE.ACTOR_TYPE.CIRCLES:
 				return 'icon-team'
+			case ATTENDEE.ACTOR_TYPE.GROUPS:
+			default:
+				return 'icon-contacts'
 			}
-			// source: groups
-			return 'icon-contacts'
 		},
 		avatarClass() {
 			return {
@@ -179,27 +183,25 @@ export default {
 				'--condensed-overlap': this.condensedOverlap,
 			}
 		},
-		isUser() {
-			return this.source === ATTENDEE.ACTOR_TYPE.USERS || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
-		},
 		isFederatedUser() {
 			return this.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 		},
 		isBot() {
 			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID
 		},
-		isGuest() {
-			return this.source === ATTENDEE.ACTOR_TYPE.GUESTS
+		isGuestOrDeletedUser() {
+			return [ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS, ATTENDEE.ACTOR_TYPE.DELETED_USERS]
+				.includes(this.source)
 		},
-		isDeletedUser() {
-			return this.source === 'deleted_users'
+		hasCustomName() {
+			return this.name?.trim() && this.name !== t('spreed', 'Guest')
 		},
 		firstLetterOfGuestName() {
-			if (this.isDeletedUser) {
+			if (this.source === ATTENDEE.ACTOR_TYPE.DELETED_USERS) {
 				return 'X'
+			} else {
+				return this.name.toUpperCase().charAt(0)
 			}
-			const customName = this.name?.trim() && this.name !== t('spreed', 'Guest') ? this.name : '?'
-			return customName.charAt(0)
 		},
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)

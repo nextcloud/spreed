@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { shallowMount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
-import Vuex from 'vuex'
 
 import { t } from '@nextcloud/l10n'
 
@@ -12,25 +10,16 @@ import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import AvatarWrapper from './AvatarWrapper.vue'
 
-import { AVATAR } from '../../constants.js'
-import storeConfig from '../../store/storeConfig.js'
+import { ATTENDEE, AVATAR } from '../../constants.js'
 
 describe('AvatarWrapper.vue', () => {
-	let testStoreConfig
-	let store
 	const USER_ID = 'user-id'
 	const USER_NAME = 'John Doe'
 	const PRELOADED_USER_STATUS = { status: 'online', message: null, icon: null }
 
-	beforeEach(() => {
-		testStoreConfig = cloneDeep(storeConfig)
-		store = new Vuex.Store(testStoreConfig)
-	})
-
 	describe('render user avatar', () => {
 		test('component renders NcAvatar with standard size by default', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
 				propsData: {
 					name: USER_NAME,
 				},
@@ -43,10 +32,22 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component does not render NcAvatar for non-users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
 				propsData: {
-					name: 'emails',
-					source: 'emails',
+					name: 'Email Guest',
+					source: ATTENDEE.ACTOR_TYPE.EMAILS,
+				},
+			})
+
+			const avatar = wrapper.findComponent(NcAvatar)
+			expect(avatar.exists()).toBeFalsy()
+		})
+
+		test('component does not render NcAvatar for federated users', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				propsData: {
+					token: 'XXXTOKENXXX',
+					name: 'Federated User',
+					source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
 				},
 			})
 
@@ -57,7 +58,6 @@ describe('AvatarWrapper.vue', () => {
 		test('component renders NcAvatar with specified size', () => {
 			const size = 22
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
 				propsData: {
 					name: USER_NAME,
 					size,
@@ -70,10 +70,10 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component pass props to NcAvatar correctly', async () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
 				propsData: {
 					id: USER_ID,
 					name: USER_NAME,
+					source: ATTENDEE.ACTOR_TYPE.USERS,
 					showUserStatus: true,
 					preloadedUserStatus: PRELOADED_USER_STATUS,
 				},
@@ -92,75 +92,45 @@ describe('AvatarWrapper.vue', () => {
 	})
 
 	describe('render specific icons', () => {
-		test('component render emails icon properly', () => {
+		const testCases = [
+			[null, ATTENDEE.CHANGELOG_BOT_ID, 'Talk updates', ATTENDEE.ACTOR_TYPE.BOTS, 'icon-changelog'],
+			[null, 'federated_user/id', USER_NAME, ATTENDEE.ACTOR_TYPE.FEDERATED_USERS, 'icon-user'],
+			[null, 'guest/id', '', ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],
+			[null, 'guest/id', t('spreed', 'Guest'), ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],
+			[null, 'guest/id', t('spreed', 'Guest'), ATTENDEE.ACTOR_TYPE.EMAILS, 'icon-user'],
+			['new', 'guest/id', 'test@mail.com', ATTENDEE.ACTOR_TYPE.EMAILS, 'icon-mail'],
+			[null, 'sha-phone', '+12345...', ATTENDEE.ACTOR_TYPE.PHONES, 'icon-phone'],
+			[null, 'team/id', 'Team', ATTENDEE.ACTOR_TYPE.CIRCLES, 'icon-team'],
+			[null, 'group/id', 'Group', ATTENDEE.ACTOR_TYPE.GROUPS, 'icon-contacts'],
+		]
+
+		it.each(testCases)('renders for token \'%s\', id \'%s\', name \'%s\' and source \'%s\' icon \'%s\'', (token, id, name, source, result) => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
-				propsData: {
-					name: 'emails',
-					source: 'emails',
-				},
+				propsData: { token, id, name, source },
 			})
 
-			const icon = wrapper.find('.icon')
-			expect(icon.exists()).toBeTruthy()
-			expect(icon.classes('icon-mail')).toBeTruthy()
-		})
-
-		test('component render groups icon properly', () => {
-			const wrapper = shallowMount(AvatarWrapper, {
-				store,
-				propsData: {
-					name: 'groups',
-					source: 'groups',
-				},
-			})
-
-			const icon = wrapper.find('.icon')
-			expect(icon.exists()).toBeTruthy()
-			expect(icon.classes('icon-contacts')).toBeTruthy()
+			const avatar = wrapper.find('.avatar')
+			expect(avatar.exists()).toBeTruthy()
+			expect(avatar.classes(result)).toBeTruthy()
 		})
 	})
 
-	describe('render guests', () => {
-		test('component render icon of guest properly', () => {
+	describe('render specific symbols', () => {
+		const testCases = [
+			['guest/id', USER_NAME, ATTENDEE.ACTOR_TYPE.GUESTS, USER_NAME.charAt(0)],
+			['guest/id', USER_NAME, ATTENDEE.ACTOR_TYPE.EMAILS, USER_NAME.charAt(0)],
+			['deleted_users', USER_NAME, ATTENDEE.ACTOR_TYPE.DELETED_USERS, 'X'],
+			['bot-id', USER_NAME, ATTENDEE.ACTOR_TYPE.BOTS, '>_'],
+		]
+
+		it.each(testCases)('renders for id \'%s\', name \'%s\' and source \'%s\' symbol \'%s\'', (id, name, source, result) => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
-				propsData: {
-					name: t('spreed', 'Guest'),
-					source: 'guests',
-				},
+				propsData: { name, source },
 			})
 
-			const guest = wrapper.find('.guest')
-			expect(guest.exists()).toBeTruthy()
-			expect(guest.text()).toBe('?')
-		})
-
-		test('component render icon of guest with name properly', () => {
-			const wrapper = shallowMount(AvatarWrapper, {
-				store,
-				propsData: {
-					name: USER_NAME,
-					source: 'guests',
-				},
-			})
-
-			const guest = wrapper.find('.guest')
-			expect(guest.text()).toBe(USER_NAME.charAt(0))
-		})
-
-		test('component render icon of deleted user properly', () => {
-			const wrapper = shallowMount(AvatarWrapper, {
-				store,
-				propsData: {
-					name: USER_NAME,
-					source: 'deleted_users',
-				},
-			})
-
-			const deleted = wrapper.find('.guest')
-			expect(deleted.exists()).toBeTruthy()
-			expect(deleted.text()).toBe('X')
+			const avatar = wrapper.find('.avatar')
+			expect(avatar.exists()).toBeTruthy()
+			expect(avatar.text()).toBe(result)
 		})
 	})
 })
