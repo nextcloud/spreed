@@ -162,3 +162,4 @@
 * `download-call-participants` - Whether the endpoints for moderators to download the call participants is available
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
+* `config => call => sip-dialin-info` - String, SIP dial-in information

@@ -197,6 +197,7 @@ class Capabilities implements IPublicCapability {
 					// 'predefined-backgrounds' => list<string>,
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
+					'sip-dialin-info' => $this->talkConfig->getDialInInfo(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
