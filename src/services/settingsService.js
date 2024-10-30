@@ -97,6 +97,7 @@ const setUserConfig = async function(appId, configKey, configValue) {
 
 export {
 	setAttachmentFolder,
+	setBlurBackground,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 	setSIPSettings,

@@ -87,6 +87,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
 const predefinedBackgroundLabels = {
@@ -125,6 +126,7 @@ export default {
 		return {
 			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -254,6 +256,11 @@ export default {
 		},
 
 		loadBackground() {
+			// Set virtual background depending on main blur setting (in Talk settings)
+			if (this.settingsStore.blurBackgroundEnabled) {
+				this.selectedBackground = 'blur'
+				return
+			}
 			// Set virtual background depending on browser storage's settings
 			if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
 				if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
