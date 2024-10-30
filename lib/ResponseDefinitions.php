@@ -348,6 +348,7 @@ namespace OCA\Talk;
  *             can-enable-sip: bool,
  *             start-without-media: bool,
  *             max-duration: int,
+ *             blur-background: bool,
  *         },
  *         chat: array{
  *             max-length: int,

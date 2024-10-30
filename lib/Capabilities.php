@@ -130,6 +130,7 @@ class Capabilities implements IPublicCapability {
 			'predefined-backgrounds',
 			'can-upload-background',
 			'start-without-media',
+			'blur-background',
 		],
 		'chat' => [
 			'read-privacy',
@@ -201,6 +202,7 @@ class Capabilities implements IPublicCapability {
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
+					'blur-background' => $this->talkConfig->getBlurBackground($user?->getUID()),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -250,6 +252,7 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());
 			$capabilities['config']['chat']['typing-privacy'] = $this->talkConfig->getUserTypingPrivacy($user->getUID());
+			$capabilities['config']['call']['blur-background'] = $this->talkConfig->getBlurBackground($user->getUID());
 		}
 
 		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();

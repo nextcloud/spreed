@@ -31,6 +31,7 @@ Instead, the server API `POST /ocs/v2.php/apps/provisioning_api/api/v1/config/us
 | `typing_privacy`            | `config => chat => typing-privacy`      | `0`                                                | One of the typing privacy constants from the [constants list](constants.md#participant-typing-privacy)   |
 | `play_sounds`               |                                         | `'yes'`                                            | `'yes'` and `'no'`                                                                                       |
 | `calls_start_without_media` | `config => call => start-without-media` | `''` falling back to app config with the same name | `'yes'` and `'no'`                                                                                       |
+| `blur_background`           | `config => call => blur-background`     | `'no'`                                             | `'yes'` and `'no'`                                                                                       |
 
 ## Set SIP settings
 
