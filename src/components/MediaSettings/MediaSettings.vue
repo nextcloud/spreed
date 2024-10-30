@@ -321,6 +321,7 @@ export default {
 			isRecordingFromStart: false,
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
+			skipBlurBackgroundEnabled: false,
 		}
 	},
 
@@ -353,7 +354,7 @@ export default {
 		},
 
 		blurBackgroundEnabled() {
-			return this.settingsStore.getBlurBackgroundEnabled
+			return this.settingsStore.blurBackgroundEnabled
 		},
 
 		showVideo() {
@@ -438,7 +439,6 @@ export default {
 				// Check main blur background setting
 				if (this.blurBackgroundEnabled) {
 					this.blurVirtualBackground()
-					this.blurBackground()
 				} else {
 					// Set virtual background depending on BrowserStorage's settings
 					if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
@@ -472,6 +472,15 @@ export default {
 
 		isRecordingFromStart(value) {
 			this.setRecordingConsentGiven(value)
+		},
+
+		isInCall(value) {
+			if (value) {
+				// Apply global blur background setting
+				if (this.blurBackgroundEnabled && !this.skipBlurBackgroundEnabled) {
+					this.blurBackground(true)
+				}
+			}
 		},
 	},
 
@@ -563,10 +572,15 @@ export default {
 		},
 
 		handleUpdateBackground(background) {
+			// Default global blur background setting was changed by user
+			if (this.blurBackgroundEnabled && background !== 'blur') {
+				this.skipBlurBackgroundEnabled = true
+			}
+			// Apply the new background
 			if (background === 'none') {
 				this.clearBackground()
 			} else if (background === 'blur') {
-				this.blurBackground()
+				this.blurBackground(this.blurBackgroundEnabled)
 			} else {
 				this.setBackgroundImage(background)
 			}
@@ -614,12 +628,15 @@ export default {
 
 		/**
 		 * Blurs the background of the participants in current or future call
+		 *
+		 * @param {boolean} globalBlurBackground - Whether the global blur background setting is enabled (in Talk settings)
 		 */
-		blurBackground() {
+		blurBackground(globalBlurBackground = false) {
 			if (this.isInCall) {
 				localMediaModel.enableVirtualBackground()
-				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
-			} else {
+				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT, globalBlurBackground)
+			} else if (!globalBlurBackground) {
+				this.skipBlurBackgroundEnabled = true
 				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
 				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
 				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
