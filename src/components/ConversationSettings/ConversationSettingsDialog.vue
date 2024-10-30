@@ -267,10 +267,9 @@ export default {
 		}
 	},
 
-	mounted() {
+	beforeMount() {
 		subscribe('show-conversation-settings', this.handleShowSettings)
 		subscribe('hide-conversation-settings', this.handleHideSettings)
-
 	},
 
 	beforeDestroy() {

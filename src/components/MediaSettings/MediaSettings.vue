@@ -466,7 +466,7 @@ export default {
 		},
 	},
 
-	mounted() {
+	beforeMount() {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 
