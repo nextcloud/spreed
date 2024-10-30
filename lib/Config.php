@@ -680,4 +680,18 @@ class Config {
 
 		return $this->appConfig->getAppValueBool('calls_start_without_media');
 	}
+
+	/**
+	 * User setting for blur background
+	 *
+	 * @param ?string $userId
+	 * @return bool
+	 */
+	public function getBlurBackground(?string $userId): bool {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::BLUR_BACKGROUND);
+			return $userSetting === 'yes';
+		}
+		return false;
+	}
 }

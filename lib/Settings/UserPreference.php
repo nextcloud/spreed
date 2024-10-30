@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Settings;
 
 class UserPreference {
+	public const BLUR_BACKGROUND = 'blur_background';
 	public const CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
 	public const PLAY_SOUNDS = 'play_sounds';
 	public const TYPING_PRIVACY = 'typing_privacy';
