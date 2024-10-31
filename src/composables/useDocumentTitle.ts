@@ -5,6 +5,7 @@
 
 import { computed, ref, watch } from 'vue'
 import type { ComputedRef } from 'vue'
+import type { Route } from 'vue-router'
 
 import { t } from '@nextcloud/l10n'
 
@@ -21,82 +22,47 @@ export function useDocumentTitle() {
 	const store = useStore()
 	const isDocumentVisible = useDocumentVisibility()
 
-	const defaultPageTitle = ref<string>('')
+	const defaultPageTitle = ref<string>(getDefaultPageTitle())
+	const showAsterisk = ref(false)
 	const savedLastMessageMap = ref<Record<string, number>>({})
 
-	const token = computed(() => store.getters.getToken())
-	/**
-	 * Keeps a list for all last message ids
-	 *
-	 * @return {object} Map with token => lastMessageId
-	 */
-	const lastMessageMap: ComputedRef<Record<string, number>> = computed(() => {
-		const conversationList = store.getters.conversationsList
-		if (conversationList.length === 0) {
-			return {}
-		}
+	const conversationList = computed(() => store.getters.conversationsList)
+	const actorId = computed(() => store.getters.getActorId())
+	const actorType = computed(() => store.getters.getActorType())
 
-		const lastMessage: Record<string, number> = {}
-		conversationList.forEach((conversation: Conversation) => {
-			lastMessage[conversation.token] = 0
-			if (!Array.isArray(conversation.lastMessage)) {
-				const currentActorIsAuthor = conversation.lastMessage.actorType === store.getters.getActorType()
-					&& conversation.lastMessage.actorId === store.getters.getActorId()
-				if (currentActorIsAuthor) {
-					// Set a special value when the actor is the author so we can skip it.
-					// Can't use 0 though because hidden commands result in 0
-					// and they would hide other previously posted new messages
-					lastMessage[conversation.token] = -1
-				} else {
-					lastMessage[conversation.token] = Math.max(
-						// @ts-expect-error: id is missing for federated conversations
-						conversation.lastMessage?.id ? conversation.lastMessage.id : 0,
-						store.getters.getLastKnownMessageId(conversation.token) ? store.getters.getLastKnownMessageId(conversation.token) : 0,
-					)
-				}
-			}
-		})
-		return lastMessage
-	})
-
-	/**
-	 * @return {boolean} Returns true, if
-	 * - a conversation is newly added to lastMessageMap
-	 * - a conversation has a different last message id then previously
-	 */
-	const atLeastOneLastMessageIdChanged = computed(() => {
-		let modified = false
-		Object.keys(lastMessageMap.value).forEach(token => {
-			if (!savedLastMessageMap.value[token] // Conversation is new
-				|| (savedLastMessageMap.value[token] !== lastMessageMap.value[token] // Last message changed
-					&& lastMessageMap.value[token] !== -1)) { // But is not from the current user
-				modified = true
-			}
-		})
-
-		return modified
-	})
-
-	watch(atLeastOneLastMessageIdChanged, () => {
-		if (isDocumentVisible.value) {
+	watch(conversationList, (newValue) => {
+		if (isDocumentVisible.value || document.title.startsWith('* ')
+			|| !Object.keys(savedLastMessageMap.value).length) {
 			return
 		}
-		setPageTitle(getConversationName(token.value), atLeastOneLastMessageIdChanged.value)
+
+		const newLastMessageMap = getLastMessageMap(newValue)
+		/**
+		 * @return {boolean} Returns true, if
+		 * - a conversation is newly added to lastMessageMap
+		 * - a conversation has a different last message id then previously
+		 */
+		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
+			return !savedLastMessageMap.value[token] // Conversation is new
+				|| (savedLastMessageMap.value[token] !== newLastMessageMap[token] // Last message changed
+					&& newLastMessageMap[token] !== -1) // But is not from the current user
+		})
+		if (shouldShowAsterisk) {
+			showAsterisk.value = true
+			setPageTitleFromRoute(Router.currentRoute)
+		}
 	})
 
 	watch(isDocumentVisible, () => {
 		if (isDocumentVisible.value) {
-			// Remove the potential "*" marker for unread chat messages
-			let title = getConversationName(token.value)
-			if (window.document.title.indexOf(t('spreed', 'Duplicate session')) === 0) {
-				title = t('spreed', 'Duplicate session')
-			}
-			setPageTitle(title, false)
+			// Remove asterisk for unread chat messages
+			showAsterisk.value = false
+			setPageTitleFromRoute(Router.currentRoute)
 		} else {
 			// Copy the last message map to the saved version,
 			// this will be our reference to check if any chat got a new
 			// message since the last visit
-			savedLastMessageMap.value = lastMessageMap.value
+			savedLastMessageMap.value = getLastMessageMap(conversationList.value)
 		}
 	})
 
@@ -104,65 +70,93 @@ export function useDocumentTitle() {
 	 * Adjust the page title to the conversation name once conversationsList is loaded
 	 */
 	EventBus.once('conversations-received', () => {
-		if (Router.currentRoute.name === 'conversation') {
-			setPageTitle(getConversationName(token.value), false)
-		}
+		setPageTitleFromRoute(Router.currentRoute)
 	})
 
 	/**
 	 * Change the page title after the route was changed
 	 */
-	Router.afterEach((to) => {
-		if (to.name === 'conversation') {
-			setPageTitle(getConversationName(to.params.token), false)
-		} else if (to.name === 'notfound') {
-			setPageTitle('', false)
+	Router.afterEach((to) => setPageTitleFromRoute(to))
+
+	/**
+	 * Get a list for all last message ids
+	 *
+	 * @param conversationList array of conversations
+	 */
+	function getLastMessageMap(conversationList: Conversation[]): Record<string, number> {
+		if (conversationList.length === 0) {
+			return {}
 		}
-	})
+
+		return conversationList.reduce((acc: Record<string, number>, conversation: Conversation) => {
+			const { token, lastMessage } = conversation
+			// Default to 0 for messages without valid lastMessage
+			if (!lastMessage || Array.isArray(lastMessage)) {
+				acc[token] = 0
+				return acc
+			}
+
+			if (lastMessage.actorId === actorId.value && lastMessage.actorType === actorType.value) {
+				// Set a special value when the actor is the author so we can skip it.
+				// Can't use 0 though because hidden commands result in 0,
+				// and they would hide other previously posted new messages
+				acc[token] = -1
+			} else {
+				// @ts-expect-error: Property 'id' does not exist on type ChatProxyMessage
+				const lastMessageId = lastMessage.id ?? 0
+				const lastKnownMessageId = store.getters.getLastKnownMessageId(token) ?? 0
+				acc[token] = Math.max(lastMessageId, lastKnownMessageId)
+			}
+			return acc
+		}, {})
+	}
+
+	/**
+	 *
+	 * @param route current web route
+	 */
+	function setPageTitleFromRoute(route: Route) {
+		switch (route.name) {
+		case 'conversation':
+			setPageTitle(store.getters.conversation(route.params.token)?.displayName ?? '')
+			break
+		case 'duplicatesession':
+			setPageTitle(t('spreed', 'Duplicate session'))
+			break
+		default:
+			setPageTitle('')
+		}
+	}
 
 	/**
 	 * Set the page title to the conversation name
 	 *
 	 * @param title Prefix for the page title e.g. conversation name
-	 * @param showAsterix Prefix for the page title e.g. conversation name
 	 */
-	function setPageTitle(title: string, showAsterix: boolean) {
-		if (defaultPageTitle.value === '') {
-			// On the first load we store the current page title "Talk - Nextcloud",
-			// so we can append it every time again
-			defaultPageTitle.value = window.document.title
-			// Coming from a "Duplicate session - Talk - …" page?
-			if (defaultPageTitle.value.indexOf(' - ' + t('spreed', 'Talk') + ' - ') !== -1) {
-				defaultPageTitle.value = defaultPageTitle.value.substring(defaultPageTitle.value.indexOf(' - ' + t('spreed', 'Talk') + ' - ') + 3)
-			}
-			// When a conversation is opened directly, the "Talk - " part is
-			// missing from the title
-			if (!IS_DESKTOP && defaultPageTitle.value.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
-				defaultPageTitle.value = t('spreed', 'Talk') + ' - ' + defaultPageTitle.value
-			}
-		}
-
-		let newTitle = defaultPageTitle.value
-		if (title !== '') {
-			newTitle = `${title} - ${newTitle}`
-		}
-		if (showAsterix && !newTitle.startsWith('* ')) {
-			newTitle = '* ' + newTitle
-		}
-		window.document.title = newTitle
+	function setPageTitle(title: string) {
+		const newTitle = title ? `${title} - ${defaultPageTitle.value}` : defaultPageTitle.value
+		document.title = (showAsterisk.value && !newTitle.startsWith('* '))
+			? '* ' + newTitle
+			: newTitle
 	}
 
 	/**
-	 * Get a conversation's name.
-	 *
-	 * @param {string} token The conversation's token
-	 * @return {string} The conversation's name
+	 * Get the default page title of Talk page like "Talk - Nextcloud", to append it every time again
 	 */
-	function getConversationName(token: string) {
-		if (!store.getters.conversation(token)) {
-			return ''
+	function getDefaultPageTitle() {
+		// Do nothing on Desktop
+		if (IS_DESKTOP) {
+			return document.title
 		}
-
-		return store.getters.conversation(token).displayName
+		const appNamePrefix = t('spreed', 'Talk') + ' - '
+		// If coming from a "… - Talk - …" page, keep only "Talk - …" part
+		if (document.title.includes(' - ' + appNamePrefix)) {
+			return document.title.substring(document.title.indexOf(' - ' + appNamePrefix) + 3)
+		}
+		// When a conversation is opened directly, "Talk - " might be missing from the title
+		if (!document.title.startsWith(appNamePrefix)) {
+			return appNamePrefix + document.title
+		}
+		return document.title
 	}
 }
