@@ -1113,6 +1113,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Obecnie czekasz w poczekalni",
     "The meeting will start soon" : "Spotkanie rozpocznie się wkrótce",
     "This meeting is scheduled for {startTime}" : "Spotkanie jest zaplanowane na {startTime}",
+    "Select a device" : "Wybierz urządzenie",
     "No microphone available" : "Brak dostępnego mikrofonu",
     "Select microphone" : "Wybierz mikrofon",
     "No camera available" : "Brak dostępnej kamery",
