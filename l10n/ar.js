@@ -1212,7 +1212,7 @@ OC.L10N.register(
     "No conversations found" : "لم يتم العثور على المحادثات ",
     "You have no archived conversations." : "ليس لديك أي محادثات مؤرشفة.",
     "You have no unread mentions." : "لا توجد لديك أي إشارات غير مقرؤة.",
-    "You have no unread messages." : "لا توجد لديك أية رسائل غير مقرؤة.",
+    "You have no unread messages." : "لا توجد لديك أي رسائل غير مقرؤة.",
     "Users, groups and teams" : "المستخدمين، والمجموعات، والفرق",
     "Users and groups" : "الاعضاء والمجموعات",
     "Users and teams" : "المستخدمين و الفرق",
