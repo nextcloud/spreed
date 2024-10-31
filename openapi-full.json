@@ -301,7 +301,8 @@
                                     "sip-dialout-enabled",
                                     "can-enable-sip",
                                     "start-without-media",
-                                    "max-duration"
+                                    "max-duration",
+                                    "blur-background"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -347,6 +348,9 @@
                                     "max-duration": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "blur-background": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -16368,7 +16372,8 @@
                                             "attachment_folder",
                                             "read_status_privacy",
                                             "typing_privacy",
-                                            "play_sounds"
+                                            "play_sounds",
+                                            "blur_background"
                                         ],
                                         "description": "Key to update"
                                     },
