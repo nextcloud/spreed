@@ -46,7 +46,7 @@
 				{{ t('spreed', 'Shared secret') }}
 			</label>
 			<NcPasswordField id="sip-shared-secret"
-				:value.sync="sharedSecret"
+				v-model="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
 				as-text

@@ -43,15 +43,15 @@
 				{{ t('spreed', 'Add a new recording backend server') }}
 			</NcButton>
 
-			<NcPasswordField class="form__textfield additional-top-margin"
-				:value="secret"
+			<NcPasswordField v-model="secret"
+				class="form__textfield additional-top-margin"
 				name="recording_secret"
 				as-text
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				:label="t('spreed', 'Shared secret')"
 				label-visible
-				@update:value="updateSecret" />
+				@update:model-value="debounceUpdateServers" />
 
 			<template v-if="servers.length && recordingConsentCapability">
 				<h3>{{ t('spreed', 'Recording consent') }}</h3>
@@ -201,11 +201,6 @@ export default {
 				server: '',
 				verify: false,
 			})
-		},
-
-		updateSecret(value) {
-			this.secret = value
-			this.debounceUpdateServers()
 		},
 
 		async updateServers() {
