@@ -115,8 +115,8 @@ export default {
 			get() {
 				return this.newConversation.displayName
 			},
-			set(event) {
-				this.updateNewConversation({ displayName: event.target.value })
+			set(displayName) {
+				this.updateNewConversation({ displayName })
 			},
 		},
 
@@ -124,8 +124,8 @@ export default {
 			get() {
 				return this.newConversation.description
 			},
-			set(event) {
-				this.updateNewConversation({ description: event.target.value })
+			set(description) {
+				this.updateNewConversation({ description })
 			},
 		},
 
@@ -172,8 +172,8 @@ export default {
 			get() {
 				return this.password
 			},
-			set(event) {
-				this.$emit('update:password', event.target.value)
+			set(value) {
+				this.$emit('update:password', value)
 			},
 		},
 
