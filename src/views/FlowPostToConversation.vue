@@ -5,13 +5,13 @@
 
 <template>
 	<div>
-		<NcSelect :value="currentRoom"
+		<NcSelect :model-value="currentRoom"
 			:options="roomOptions"
 			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': currentMode.id, 't': newValue.token }))" />
 
-		<NcSelect :value="currentMode"
+		<NcSelect :model-value="currentMode"
 			:options="modeOptions"
 			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"
