@@ -30,14 +30,13 @@
 			@update:value="updateServer" />
 
 		<NcPasswordField ref="turn_secret"
+			v-model="turnSecret"
 			name="turn_secret"
 			as-text
 			placeholder="secret"
 			class="turn-server__textfield"
-			:value="secret"
 			:disabled="loading"
-			:label="t('spreed', 'TURN server secret')"
-			@update:value="updateSecret" />
+			:label="t('spreed', 'TURN server secret')" />
 
 		<NcSelect class="turn-server__select"
 			name="turn_protocols"
@@ -153,6 +152,14 @@ export default {
 	},
 
 	computed: {
+		turnSecret: {
+			get() {
+				return this.secret
+			},
+			set(value) {
+				this.updateSecret(value)
+			},
+		},
 		turnServerError() {
 			if (this.schemes.includes('turns') && /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$/.test(this.server.trim())) {
 				return t('spreed', '{schema} scheme must be used with a domain', { schema: 'turns:' })

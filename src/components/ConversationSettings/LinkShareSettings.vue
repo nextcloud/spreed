@@ -45,7 +45,7 @@
 
 				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 					<NcPasswordField ref="passwordField"
-						:value.sync="password"
+						v-model="password"
 						autocomplete="new-password"
 						check-password-strength
 						:disabled="isSaving"
