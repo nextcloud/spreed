@@ -79,10 +79,10 @@
 			{{ t('spreed', 'Settings') }}
 		</p>
 		<div class="poll-editor__settings">
-			<NcCheckboxRadioSwitch :checked.sync="isAnonymous" type="checkbox">
+			<NcCheckboxRadioSwitch v-model="isAnonymous" type="checkbox">
 				{{ t('spreed', 'Anonymous poll') }}
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
+			<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
 				{{ t('spreed', 'Multiple answers') }}
 			</NcCheckboxRadioSwitch>
 		</div>

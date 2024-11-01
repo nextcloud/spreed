@@ -58,12 +58,12 @@
 
 				<template v-for="level in recordingConsentOptions">
 					<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+						v-model="recordingConsentSelected"
 						:value="level.value.toString()"
-						:checked.sync="recordingConsentSelected"
 						name="recording-consent"
 						type="radio"
 						:disabled="loading"
-						@update:checked="setRecordingConsent">
+						@update:model-value="setRecordingConsent">
 						{{ level.label }}
 					</NcCheckboxRadioSwitch>
 
@@ -81,14 +81,14 @@
 					v-model="recordingTranscriptionEnabled"
 					type="switch"
 					:disabled="loading"
-					@update:modelValue="setRecordingTranscription">
+					@update:model-value="setRecordingTranscription">
 					{{ t('spreed', 'Automatically transcribe call recordings with a transcription provider') }}
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch v-model="recordingSummaryEnabled"
 					type="switch"
 					:disabled="loading"
-					@update:modelValue="setRecordingSummary">
+					@update:model-value="setRecordingSummary">
 					{{ t('spreed', 'Automatically summarize call recordings with transcription and summary providers') }}
 				</NcCheckboxRadioSwitch>
 			</template>

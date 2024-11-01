@@ -14,9 +14,9 @@
 			:disabled="loading"
 			:label="t('spreed', 'Recording backend URL')" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="recording-server__checkbox"
-			@update:checked="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
