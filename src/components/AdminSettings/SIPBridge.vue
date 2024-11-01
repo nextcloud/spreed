@@ -58,7 +58,7 @@
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
 			<NcTextArea id="dial-in-info"
-				:value.sync="dialInInfo"
+				v-model="dialInInfo"
 				name="message"
 				class="form form__textarea"
 				rows="4"
