@@ -23,7 +23,7 @@
 			{{ t('spreed', 'Question') }}
 		</p>
 		<div class="poll-editor__wrapper">
-			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 			<!--native file picker, hidden -->
 			<input id="poll-upload"
 				ref="pollImport"
@@ -54,7 +54,7 @@
 			:key="index"
 			class="poll-editor__option">
 			<NcTextField ref="pollOption"
-				:value.sync="pollForm.options[index]"
+				v-model="pollForm.options[index]"
 				:label="t('spreed', 'Answer {option}', {option: index + 1})" />
 			<NcButton v-if="pollForm.options.length > 2"
 				type="tertiary"

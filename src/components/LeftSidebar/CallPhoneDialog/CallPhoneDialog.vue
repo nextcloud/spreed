@@ -13,10 +13,10 @@
 		<template v-if="!loading">
 			<div class="call-phone__form">
 				<NcTextField ref="textField"
+					v-model="searchText"
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"
 					label-visible
-					:value.sync="searchText"
 					@keydown.enter="createConversation(participantPhoneItem)" />
 				<DialpadPanel container=".call-phone__form"
 					:value.sync="searchText"

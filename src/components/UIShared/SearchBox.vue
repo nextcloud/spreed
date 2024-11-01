@@ -5,7 +5,7 @@
 
 <template>
 	<NcTextField ref="searchConversations"
-		:value="value"
+		:model-value="value"
 		:aria-label="placeholderText"
 		:aria-describedby="ariaDescribedby"
 		:placeholder="placeholderText"
@@ -14,7 +14,7 @@
 		label-outside
 		@focus="handleFocus"
 		@blur="handleBlur"
-		@update:value="updateValue"
+		@update:model-value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
 		<IconMagnify :size="16" />
