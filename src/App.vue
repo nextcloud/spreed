@@ -50,7 +50,7 @@ import { leaveConversationSync } from './services/participantsService.js'
 import { useCallViewStore } from './stores/callView.js'
 import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.js'
-import { checkBrowser } from './utils/browserCheck.js'
+import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {

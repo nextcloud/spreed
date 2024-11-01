@@ -4,7 +4,7 @@
  */
 
 import TrackSource from './TrackSource.js'
-import { isChromium } from '../../browserCheck.js'
+import { isChromium } from '../../browserCheck.ts'
 import { mediaDevicesManager } from '../../webrtc/index.js'
 
 /**

@@ -55,7 +55,7 @@ import { getPublicShareConversationData } from './services/filesIntegrationServi
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
-import { checkBrowser } from './utils/browserCheck.js'
+import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
