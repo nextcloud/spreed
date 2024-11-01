@@ -30,7 +30,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
-import { checkBrowser } from './utils/browserCheck.js'
+import { checkBrowser } from './utils/browserCheck.ts'
 
 export default {
 
