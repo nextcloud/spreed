@@ -74,7 +74,7 @@
 					:text="t('spreed','Adding a mention will only notify users who did not read the message.')" />
 				<NcRichContenteditable ref="richContenteditable"
 					:key="container"
-					:value.sync="text"
+					v-model="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
