@@ -12,10 +12,10 @@
 			{{ t('spreed', 'Recording consent cannot be changed once a call or breakout session has started.') }}
 		</div>
 		<NcCheckboxRadioSwitch v-if="canModerate && !isGlobalConsent"
+			v-model="recordingConsentSelected"
 			type="switch"
-			:checked.sync="recordingConsentSelected"
 			:disabled="disabled"
-			@update:checked="setRecordingConsent">
+			@update:model-value="setRecordingConsent">
 			{{ t('spreed', 'Require recording consent before joining call in this conversation') }}
 		</NcCheckboxRadioSwitch>
 		<p v-else-if="isGlobalConsent">

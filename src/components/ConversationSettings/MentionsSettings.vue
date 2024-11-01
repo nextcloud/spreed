@@ -5,10 +5,10 @@
 
 <template>
 	<div v-if="canModerate">
-		<NcCheckboxRadioSwitch :checked="mentionPermissions === MENTION_PERMISSIONS.EVERYONE"
+		<NcCheckboxRadioSwitch :model-value="mentionPermissions === MENTION_PERMISSIONS.EVERYONE"
 			:disabled="isMentionPermissionsLoading"
 			type="switch"
-			@update:checked="toggleMentionPermissions">
+			@update:model-value="toggleMentionPermissions">
 			{{ t('spreed', 'Allow participants to mention @all') }}
 		</NcCheckboxRadioSwitch>
 	</div>

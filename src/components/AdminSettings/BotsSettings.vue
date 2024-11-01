@@ -86,7 +86,6 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { BOT } from '../../constants.js'
@@ -98,7 +97,6 @@ export default {
 	components: {
 		NcPopover,
 		NcButton,
-		NcCheckboxRadioSwitch,
 	},
 
 	data() {
