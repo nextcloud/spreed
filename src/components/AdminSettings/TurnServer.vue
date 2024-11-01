@@ -7,7 +7,7 @@
 	<li class="turn-server">
 		<NcSelect class="turn-server__select"
 			name="turn_schemes"
-			:value="schemesOptions.find(i => i.value === schemes)"
+			:model-value="schemesOptions.find(i => i.value === schemes)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server schemes')"
 			:options="schemesOptions"
@@ -40,7 +40,7 @@
 
 		<NcSelect class="turn-server__select"
 			name="turn_protocols"
-			:value="protocolOptions.find(i => i.value === protocols)"
+			:model-value="protocolOptions.find(i => i.value === protocols)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server protocols')"
 			:options="protocolOptions"
