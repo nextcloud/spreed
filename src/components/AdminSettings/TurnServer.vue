@@ -24,10 +24,10 @@
 			class="turn-server__textfield"
 			:class="{ error: turnServerError }"
 			:title="turnServerError"
-			:value="server"
+			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server URL')"
-			@update:value="updateServer" />
+			@update:model-value="updateServer" />
 
 		<NcPasswordField ref="turn_secret"
 			v-model="turnSecret"

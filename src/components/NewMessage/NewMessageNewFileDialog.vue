@@ -14,12 +14,11 @@
 			@submit.prevent="handleCreateNewFile">
 			<NcTextField id="new-file-form-name"
 				ref="textField"
+				v-model="newFileTitle"
 				:error="!!newFileError"
 				:helper-text="newFileError"
 				:label="t('spreed', 'Name of the new file')"
-				:placeholder="newFileTitle"
-				:value="newFileTitle"
-				@update:value="updateNewFileTitle" />
+				:placeholder="newFileTitle" />
 
 			<ul v-if="templates.length > 1" class="templates-picker__list">
 				<NewMessageTemplatePreview v-for="template in templates"
@@ -177,9 +176,6 @@ export default {
 
 	methods: {
 		t,
-		updateNewFileTitle(value) {
-			this.newFileTitle = value
-		},
 
 		// Create text file and share it to a conversation
 		async handleCreateNewFile() {
