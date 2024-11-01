@@ -204,11 +204,10 @@
 					<!-- Custom DateTime picker for the reminder -->
 					<NcActionSeparator />
 
-					<NcActionInput type="datetime-local"
+					<NcActionInput v-model="customReminderDateTime"
+						type="datetime-local"
 						is-native-picker
-						:value="customReminderDateTime"
-						:min="new Date()"
-						@change="setCustomReminderDateTime">
+						:min="new Date()">
 						<template #icon>
 							<CalendarClock :size="20" />
 						</template>
@@ -216,7 +215,7 @@
 
 					<NcActionButton :aria-label="t('spreed', 'Set custom reminder')"
 						close-after-click
-						@click.stop="setCustomReminder(customReminderDateTime)">
+						@click.stop="setReminder(customReminderTimestamp)">
 						<template #icon>
 							<Check :size="20" />
 						</template>
@@ -437,7 +436,7 @@ export default {
 			frequentlyUsedEmojis: [],
 			submenu: null,
 			currentReminder: null,
-			customReminderDateTime: new Date(moment().add(2, 'hours').minute(0).second(0).valueOf()),
+			customReminderTimestamp: moment().add(2, 'hours').minute(0).second(0).valueOf(),
 		}
 	},
 
@@ -500,6 +499,17 @@ export default {
 
 		editedDateTime() {
 			return moment(this.message.lastEditTimestamp * 1000).format('lll')
+		},
+
+		customReminderDateTime: {
+			get() {
+				return new Date(this.customReminderTimestamp)
+			},
+			set(value) {
+				if (value !== null) {
+					this.customReminderTimestamp = value.valueOf()
+				}
+			},
 		},
 
 		reminderOptions() {
@@ -732,14 +742,6 @@ export default {
 				console.error(error)
 				showError(t('spreed', 'Error occurred when creating a reminder'))
 			}
-		},
-
-		setCustomReminderDateTime(event) {
-			this.customReminderDateTime = new Date(event.target.value)
-		},
-
-		setCustomReminder() {
-			this.setReminder(this.customReminderDateTime.valueOf())
 		},
 
 		editMessage() {
