@@ -575,6 +575,8 @@ describe('participantsStore', () => {
 		test('joins call', async () => {
 			// Assert
 			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false, false)
+			// Mock the signaling event
+			EventBus.emit('signaling-join-call')
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
@@ -587,7 +589,12 @@ describe('participantsStore', () => {
 			])
 
 			// Finished connecting to the call
-			EventBus.emit('signaling-users-in-room')
+			EventBus.emit('signaling-users-in-room', [[{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}]])
 
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
@@ -906,7 +913,7 @@ describe('participantsStore', () => {
 				flags,
 				silent: false,
 			})
-
+			EventBus.emit('signaling-join-call')
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 
 			leaveConversation.mockResolvedValue()
