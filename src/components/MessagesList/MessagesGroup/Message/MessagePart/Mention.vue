@@ -74,9 +74,6 @@ export default {
 		isGroupMention() {
 			return this.type === 'user-group' || this.type === 'group'
 		},
-		isEmailGuest() {
-			return this.type === 'guest' && this.id.startsWith('email/')
-		},
 		isMentionToGuest() {
 			return this.type === 'guest'
 		},
@@ -117,8 +114,6 @@ export default {
 					: 'icon-user-forced-white'
 			} else if (this.isGroupMention) {
 				return 'icon-group-forced-white'
-			} else if (this.isEmailGuest) {
-				return 'icon-mail-forced-white'
 			} else if (this.isMentionToGuest) {
 				return 'icon-user-forced-white'
 			} else if (!this.isMentionToAll) {
