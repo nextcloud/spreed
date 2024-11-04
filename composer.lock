@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47863e9129ef4e6fc6540db30e20cb77",
+    "content-hash": "09551da41c6c60e8c97ccb269880034c",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -65,21 +65,21 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.12.0",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "3bc40798a5ff64aee8a28509b73f7f84d5c66ac9"
+                "reference": "3f6d41878331cff9bcd5170ead4af804ff1d19ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/3bc40798a5ff64aee8a28509b73f7f84d5c66ac9",
-                "reference": "3bc40798a5ff64aee8a28509b73f7f84d5c66ac9",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/3f6d41878331cff9bcd5170ead4af804ff1d19ac",
+                "reference": "3f6d41878331cff9bcd5170ead4af804ff1d19ac",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
@@ -126,7 +126,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.12.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.14.0"
             },
             "funding": [
                 {
@@ -134,7 +134,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-04T16:42:55+00:00"
+            "time": "2024-11-04T09:12:32+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -1232,8 +1232,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.1"
     },
