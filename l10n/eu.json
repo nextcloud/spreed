@@ -754,7 +754,7 @@
     "SIP configuration saved!" : "SIP konfigurazioa gorde da!",
     "High-performance backend URL" : "Errendimendu handiko motorraren URLa",
     "Could not get version" : "Ezin bertsioa lortu",
-    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Errorea: exekutatzen ari den bertsioa: {bertsioa}; Zerbitzaria eguneratu egin behar da Talk-en bertsio honekin bateragarria izan dadin",
+    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Errorea: exekutatzen ari den bertsioa: {version}; Zerbitzaria eguneratu egin behar da Talk-en bertsio honekin bateragarria izan dadin",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko.",
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end." : "Oso gomendagarria da cache banatua konfiguratzea Nextcloud Talk eta errendimendu handiko motor bat uztartzen direnean.",
     "Add a new high-performance backend server" : "Gehitu errendimendu handiko atzealdeko zerbitzari berri bat",
