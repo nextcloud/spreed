@@ -66,8 +66,7 @@ updates:
   directories:
     - "/tests/integration"
     - "/vendor-bin/csfixer"
-    - "/vendor-bin/openapi-extractor"
-    - "/vendor-bin/php-scoper"
+    - "/vendor-bin/mozart"
     - "/vendor-bin/phpunit"
     - "/vendor-bin/psalm"
     - "/vendor-bin/rector"

@@ -88,7 +88,6 @@ appstore:
 	--exclude=jest.config.js \
 	--exclude=jest.global.setup.js \
 	--exclude=.l10nignore \
-	--exclude=lib-vendor-organizer.php \
 	--exclude=mkdocs.yml \
 	--exclude=Makefile \
 	--exclude=node_modules \
@@ -101,7 +100,6 @@ appstore:
 	--exclude=.readthedocs.yaml \
 	--exclude=/recording \
 	--exclude=/redocly.yaml \
-	--exclude=/scoper.inc.php \
 	--exclude=/site \
 	--exclude=/src \
 	--exclude=.stylelintignore \
