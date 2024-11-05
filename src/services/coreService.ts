@@ -17,6 +17,7 @@ type SearchPayload = {
 	searchText: string
 	token?: string | 'new'
 	onlyUsers?: boolean
+	forceTypes?: typeof SHARE.TYPE[keyof typeof SHARE.TYPE][]
 }
 
 /**
@@ -26,18 +27,19 @@ type SearchPayload = {
  * @param payload.searchText The string that will be used in the search query.
  * @param [payload.token] The token of the conversation (if any) | 'new' for new conversations
  * @param [payload.onlyUsers] Whether to return only registered users
+ * @param [payload.forceTypes] Whether to force some types to be included in query
  * @param options options
  */
-const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers = false }: SearchPayload, options: object) {
+const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers = false, forceTypes = [] }: SearchPayload, options: object) {
 	const shareTypes = onlyUsers
-		? [SHARE.TYPE.USER]
+		? [SHARE.TYPE.USER].concat(forceTypes)
 		: [
 			SHARE.TYPE.USER,
 			SHARE.TYPE.GROUP,
 			SHARE.TYPE.CIRCLE,
 			token !== 'new' ? SHARE.TYPE.EMAIL : null,
 			canInviteToFederation ? SHARE.TYPE.REMOTE : null,
-		].filter(type => type !== null)
+		].filter(type => type !== null).concat(forceTypes)
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {
 		...options,
