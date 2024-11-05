@@ -1282,6 +1282,7 @@ OC.L10N.register(
     "Copy formatted message" : "Копирај форматирану поруку",
     "Copy message link" : "Копирај линк поруке",
     "Go to file" : "Иди на фајл",
+    "Download file" : "Преузми фајл",
     "Forward message" : "Проследи поруку",
     "Translate" : "Превођење",
     "Set custom reminder" : "Постави произвољни подсетник",
