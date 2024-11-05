@@ -86,7 +86,7 @@ import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
 import { ATTENDEE } from '../../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
-import { searchPossibleConversations } from '../../../services/conversationsService.js'
+import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
@@ -279,7 +279,7 @@ export default {
 			this.resetNavigation()
 			try {
 				this.cancelSearchPossibleConversations('canceled')
-				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				const { request, cancel } = CancelableRequest(autocompleteQuery)
 				this.cancelSearchPossibleConversations = cancel
 
 				const response = await request({

@@ -364,9 +364,9 @@ import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManage
 import {
 	createPrivateConversation,
 	fetchNoteToSelfConversation,
-	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService.js'
+import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
@@ -737,7 +737,7 @@ export default {
 			try {
 				// FIXME: move to conversationsStore
 				this.cancelSearchPossibleConversations('canceled')
-				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				const { request, cancel } = CancelableRequest(autocompleteQuery)
 				this.cancelSearchPossibleConversations = cancel
 
 				const response = await request({
