@@ -76,7 +76,7 @@ import DialpadPanel from '../UIShared/DialpadPanel.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
-import { searchPossibleConversations } from '../../services/conversationsService.js'
+import { autocompleteQuery } from '../../services/coreService.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
 export default {
@@ -205,7 +205,7 @@ export default {
 			this.contactsLoading = true
 			try {
 				this.cancelSearchPossibleConversations('canceled')
-				const { request, cancel } = CancelableRequest(searchPossibleConversations)
+				const { request, cancel } = CancelableRequest(autocompleteQuery)
 				this.cancelSearchPossibleConversations = cancel
 
 				const response = await request({ searchText: this.searchText })
