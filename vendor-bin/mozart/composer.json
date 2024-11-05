@@ -6,6 +6,6 @@
 		"sort-packages": true
 	},
 	"require": {
-		"humbug/php-scoper": "^0.18.7"
+		"coenjacobs/mozart": "^0.7.1"
 	}
 }
