@@ -76,6 +76,7 @@ import DialpadPanel from '../UIShared/DialpadPanel.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
+import { SHARE } from '../../constants.js'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
@@ -208,7 +209,11 @@ export default {
 				const { request, cancel } = CancelableRequest(autocompleteQuery)
 				this.cancelSearchPossibleConversations = cancel
 
-				const response = await request({ searchText: this.searchText })
+				const response = await request({
+					searchText: this.searchText,
+					token: 'new',
+					forceTypes: [SHARE.TYPE.EMAIL], // e-mail guests are allowed directly after conversation creation
+				})
 
 				this.searchResults = response?.data?.ocs?.data || []
 				if (this.searchResults.length === 0) {
