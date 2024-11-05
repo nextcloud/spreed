@@ -3360,10 +3360,7 @@ export interface operations {
                      */
                     silent?: boolean;
                     /**
-                     * @description When the user ticked a checkbox and agreed with being recorded
-                     *                                   (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
-                     *                                   or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
-                     *                                   and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
+                     * @description When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
                      * @default false
                      */
                     recordingConsent?: boolean;
@@ -7995,8 +7992,7 @@ export interface operations {
                 "application/json": {
                     /**
                      * Format: int64
-                     * @description New consent setting for the conversation
-                     *                                  (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
+                     * @description New consent setting for the conversation (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
                      */
                     recordingConsent: number;
                 };
