@@ -742,7 +742,7 @@ export default {
 
 				const response = await request({
 					searchText: this.searchText,
-					token: undefined,
+					token: 'new',
 					onlyUsers: !this.canStartConversations,
 				})
 

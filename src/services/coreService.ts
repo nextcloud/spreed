@@ -15,30 +15,29 @@ const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
 
 type SearchPayload = {
 	searchText: string
-	token?: string
+	token?: string | 'new'
 	onlyUsers?: boolean
 }
 
 /**
  * Fetch possible conversations
  *
- * @param data the wrapping object;
- * @param data.searchText The string that will be used in the search query.
- * @param [data.token] The token of the conversation (if any), or "new" for a new one
- * @param [data.onlyUsers] Only return users
+ * @param payload the wrapping object;
+ * @param payload.searchText The string that will be used in the search query.
+ * @param [payload.token] The token of the conversation (if any) | 'new' for new conversations
+ * @param [payload.onlyUsers] Whether to return only registered users
  * @param options options
  */
-const autocompleteQuery = async function({ searchText, token, onlyUsers }: SearchPayload, options: object) {
-	token = token || 'new'
-	onlyUsers = !!onlyUsers
-
-	const shareTypes = [
-		SHARE.TYPE.USER,
-		!onlyUsers ? SHARE.TYPE.GROUP : null,
-		!onlyUsers ? SHARE.TYPE.CIRCLE : null,
-		(!onlyUsers && token !== 'new') ? SHARE.TYPE.EMAIL : null,
-		(!onlyUsers && canInviteToFederation) ? SHARE.TYPE.REMOTE : null,
-	].filter(type => type !== null)
+const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers = false }: SearchPayload, options: object) {
+	const shareTypes = onlyUsers
+		? [SHARE.TYPE.USER]
+		: [
+			SHARE.TYPE.USER,
+			SHARE.TYPE.GROUP,
+			SHARE.TYPE.CIRCLE,
+			token !== 'new' ? SHARE.TYPE.EMAIL : null,
+			canInviteToFederation ? SHARE.TYPE.REMOTE : null,
+		].filter(type => type !== null)
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {
 		...options,
