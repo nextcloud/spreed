@@ -67,6 +67,7 @@ updates:
     - "/tests/integration"
     - "/vendor-bin/csfixer"
     - "/vendor-bin/mozart"
+    - "/vendor-bin/openapi-extractor"
     - "/vendor-bin/phpunit"
     - "/vendor-bin/psalm"
     - "/vendor-bin/rector"
