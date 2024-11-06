@@ -77,7 +77,7 @@ class BanController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `ban-v1`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkBan[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkBan>, array{}>
 	 *
 	 * 200: List all bans
 	 */
@@ -95,7 +95,7 @@ class BanController extends AEnvironmentAwareController {
 	 * Required capability: `ban-v1`
 	 *
 	 * @param int $banId ID of the ban to be removed
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 *
 	 * 200: Unban successfully or not found
 	 */

@@ -406,7 +406,7 @@ class RoomFormatter {
 	}
 
 	/**
-	 * @return TalkRoomLastMessage|array<empty>
+	 * @return TalkRoomLastMessage|list<empty>
 	 */
 	public function formatLastMessage(
 		string $responseFormat,

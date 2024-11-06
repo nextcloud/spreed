@@ -76,9 +76,9 @@ class FilesIntegrationController extends OCSController {
 	 * owner of such a file.
 	 *
 	 * @param string $fileId ID of the file
-	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
-	 *                                                                                                                                    200: Room token returned
-	 *                                                                                                                                    400: Rooms not allowed for shares
+	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, list<empty>, array{}>
+	 *                                                                                                                                   200: Room token returned
+	 *                                                                                                                                   400: Rooms not allowed for shares
 	 * @throws OCSNotFoundException Share not found
 	 */
 	#[NoAdminRequired]
@@ -142,10 +142,10 @@ class FilesIntegrationController extends OCSController {
 	 * thus logged-in users as seen as guests.
 	 *
 	 * @param string $shareToken Token of the file share
-	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
-	 *                                                                                                                                                                                                    200: Room token and user info returned
-	 *                                                                                                                                                                                                    400: Rooms not allowed for shares
-	 *                                                                                                                                                                                                    404: Share not found
+	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 *                                                                                                                                                                                                   200: Room token and user info returned
+	 *                                                                                                                                                                                                   400: Rooms not allowed for shares
+	 *                                                                                                                                                                                                   404: Share not found
 	 */
 	#[PublicPage]
 	#[UseSession]

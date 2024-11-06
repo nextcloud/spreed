@@ -23,6 +23,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
@@ -59,6 +60,7 @@ use Psr\Log\LoggerInterface;
  *
  * When a message is saved the mentioned users are notified as needed, and
  * pending notifications are removed if the messages are deleted.
+ * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
  */
 class ChatManager {
 	public const MAX_CHAT_LENGTH = 32000;
@@ -950,6 +952,10 @@ class ChatManager {
 		return $this->commentsManager->searchForObjectsWithFilters($search, 'chat', $objectIds, $verb, $since, $until, $actorType, $actorId, $offset, $limit);
 	}
 
+	/**
+	 * @param list<TalkChatMentionSuggestion> $results
+	 * @return list<TalkChatMentionSuggestion>
+	 */
 	public function addConversationNotify(array $results, string $search, Room $room, Participant $participant): array {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return $results;

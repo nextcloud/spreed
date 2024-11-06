@@ -111,8 +111,8 @@ export type components = {
             itemsperpage?: string;
         };
         PublicCapabilities: {
-            spreed: components["schemas"]["Capabilities"];
-        } | unknown[];
+            spreed?: components["schemas"]["Capabilities"];
+        };
     };
     responses: never;
     parameters: never;

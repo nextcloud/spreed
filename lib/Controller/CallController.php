@@ -67,7 +67,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * Get the peers for a call
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkCallPeer>, array{}>
 	 *
 	 * 200: List of peers in the call returned
 	 */
@@ -193,7 +193,7 @@ class CallController extends AEnvironmentAwareController {
 	 *                               (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
 	 *                               or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
 	 *                               and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Call joined successfully
 	 * 400: No recording consent was given
@@ -274,7 +274,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @psalm-param int-mask-of<Participant::FLAG_*>|null $flags
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent Agreement to be recorded
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Call joined successfully
 	 * 400: Conditions to join not met
@@ -314,7 +314,7 @@ class CallController extends AEnvironmentAwareController {
 	 * Ring an attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Attendee rang successfully
 	 * 400: Ringing attendee is not possible
@@ -396,7 +396,7 @@ class CallController extends AEnvironmentAwareController {
 	 *
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: In-call flags updated successfully
 	 * 400: Updating in-call flags is not possible
@@ -439,7 +439,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @param string $sessionId Federated session id to update the flags with
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, list<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: In-call flags updated successfully
 	 * 400: Updating in-call flags is not possible
@@ -469,7 +469,7 @@ class CallController extends AEnvironmentAwareController {
 	 * Leave a call
 	 *
 	 * @param bool $all whether to also terminate the call for all participants
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Call left successfully
 	 * 404: Call session not found
@@ -519,7 +519,7 @@ class CallController extends AEnvironmentAwareController {
 	 * user.
 	 *
 	 * @param string $sessionId Federated session id to leave with
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Call left successfully
 	 * 404: Call session not found

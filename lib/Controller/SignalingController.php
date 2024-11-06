@@ -107,7 +107,7 @@ class SignalingController extends OCSController {
 	 * Get the signaling settings
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK, TalkSignalingSettings, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkSignalingSettings, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Signaling settings returned
 	 * 401: Recording request invalid
@@ -262,7 +262,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @param int $serverId ID of the signaling server
 	 * @psalm-param non-negative-int $serverId
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string, version?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, list<empty>, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string, version?: string}, array{}>
 	 *
 	 * 200: Welcome message returned
 	 * 404: Signaling server not found
@@ -349,7 +349,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @param string $token Token of the room
 	 * @param string $messages JSON encoded messages
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
 	 *
 	 * 200: Signaling message sent successfully
 	 * 400: Sending signaling message is not possible
@@ -494,7 +494,7 @@ class SignalingController extends OCSController {
 	 * Get signaling messages
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, list<array{type: string, data: TalkSignalingSession[]|string}>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, list<array{type: string, data: list<TalkSignalingSession>|string}>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
 	 *
 	 * 200: Signaling messages returned
 	 * 400: Getting signaling messages is not possible
@@ -597,7 +597,7 @@ class SignalingController extends OCSController {
 	/**
 	 * @param Room $room
 	 * @param int $pingTimestamp
-	 * @return TalkSignalingSession[]
+	 * @return list<TalkSignalingSession>
 	 */
 	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
 		$usersInRoom = [];
@@ -699,7 +699,7 @@ class SignalingController extends OCSController {
 	 * See sections "Backend validation" in
 	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: string[], session?: array<string, mixed>}}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: list<string>, session?: array<string, mixed>}}, array{}>
 	 *
 	 * 200: Always, sorry about that
 	 */
@@ -797,7 +797,7 @@ class SignalingController extends OCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, room?: array{version: string, roomid: string, properties: array<string, mixed>, permissions: string[], session?: array<string, mixed>}}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, room?: array{version: string, roomid: string, properties: array<string, mixed>, permissions: list<string>, session?: array<string, mixed>}}, array{}>
 	 */
 	private function backendRoom(array $roomRequest): DataResponse {
 		$token = $roomRequest['roomid']; // It's actually the room token

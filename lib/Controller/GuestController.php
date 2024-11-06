@@ -30,7 +30,7 @@ class GuestController extends AEnvironmentAwareController {
 	 * Set the display name as a guest
 	 *
 	 * @param string $displayName New display name
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Display name updated successfully
 	 * 403: Not a guest

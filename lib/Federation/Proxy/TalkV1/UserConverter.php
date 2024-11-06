@@ -158,8 +158,8 @@ class UserConverter {
 
 	/**
 	 * @param Room $room
-	 * @param TalkReaction[] $reactions
-	 * @return TalkReaction[]
+	 * @param list<TalkReaction> $reactions
+	 * @return list<TalkReaction>
 	 */
 	protected function convertReactions(Room $room, array $reactions): array {
 		return array_map(
@@ -170,8 +170,8 @@ class UserConverter {
 
 	/**
 	 * @param Room $room
-	 * @param array<string, TalkReaction[]> $reactionsList
-	 * @return array<string, TalkReaction[]>
+	 * @param array<string, list<TalkReaction>> $reactionsList
+	 * @return array<string, list<TalkReaction>>
 	 */
 	public function convertReactionsList(Room $room, array $reactionsList): array {
 		return array_map(

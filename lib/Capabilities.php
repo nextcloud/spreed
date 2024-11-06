@@ -171,8 +171,8 @@ class Capabilities implements IPublicCapability {
 
 	/**
 	 * @return array{
-	 *      spreed: TalkCapabilities,
-	 * }|array<empty>
+	 *      spreed?: TalkCapabilities,
+	 * }
 	 */
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();
@@ -257,18 +257,18 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
 		}
 
-		/** @var ?string[] $predefinedBackgrounds */
+		/** @var ?list<string> $predefinedBackgrounds */
 		$predefinedBackgrounds = null;
 		$cachedPredefinedBackgrounds = $this->talkCache->get('predefined_backgrounds');
 		if ($cachedPredefinedBackgrounds !== null) {
 			// Try using cached value
-			/** @var string[]|null $predefinedBackgrounds */
+			/** @var ?list<string> $predefinedBackgrounds */
 			$predefinedBackgrounds = json_decode($cachedPredefinedBackgrounds, true);
 		}
 
 		if (!is_array($predefinedBackgrounds)) {
 			// Cache was empty or invalid, regenerate
-			/** @var string[] $predefinedBackgrounds */
+			/** @var list<string> $predefinedBackgrounds */
 			$predefinedBackgrounds = [];
 			if (file_exists(__DIR__ . '/../img/backgrounds')) {
 				$directoryIterator = new \DirectoryIterator(__DIR__ . '/../img/backgrounds');

@@ -108,7 +108,7 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Invite declined successfully
 	 * 400: Invite was already accepted, use the "Remove the current user from a room" endpoint instead

@@ -16,7 +16,7 @@ use OCP\IDBConnection;
 /**
  * @method Ban mapRowToEntity(array $row)
  * @method Ban findEntity(IQueryBuilder $query)
- * @method Ban[] findEntities(IQueryBuilder $query)
+ * @method list<Ban> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Ban>
  */
 class BanMapper extends QBMapper {
@@ -39,6 +39,9 @@ class BanMapper extends QBMapper {
 		return $this->findEntity($query);
 	}
 
+	/**
+	 * @return list<Ban>
+	 */
 	public function findByRoomId(int $roomId, ?string $bannedActorType = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

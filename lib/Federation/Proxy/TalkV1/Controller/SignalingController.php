@@ -28,7 +28,7 @@ class SignalingController {
 	/**
 	 * @see \OCA\Talk\Controller\SignalingController::getSettings()
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkSignalingSettings, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkSignalingSettings, array{}>|DataResponse<Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Signaling settings returned
@@ -50,7 +50,7 @@ class SignalingController {
 			throw new CannotReachRemoteException();
 		}
 
-		/** @var TalkSignalingSettings|array<empty> $data */
+		/** @var TalkSignalingSettings|list<empty> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
 		return new DataResponse($data, $statusCode);

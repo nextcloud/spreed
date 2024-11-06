@@ -33,7 +33,7 @@ class RoomController {
 	/**
 	 * @see \OCA\Talk\Controller\RoomController::getParticipants()
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Participants returned
@@ -46,10 +46,10 @@ class RoomController {
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/participants',
 		);
 
-		/** @var TalkParticipant[] $data */
+		/** @var list<TalkParticipant> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
-		/** @var TalkParticipant[] $data */
+		/** @var list<TalkParticipant> $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
 		$headers = [];
 		if ($proxy->getHeader('X-Nextcloud-Has-User-Statuses')) {
@@ -65,7 +65,7 @@ class RoomController {
 	 * @param Room $room the federated room to join
 	 * @param Participant $participant the federated user to will join the room;
 	 *                                 the participant must have a session
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{X-Nextcloud-Talk-Proxy-Hash: string}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<TalkRoom>, array{X-Nextcloud-Talk-Proxy-Hash: string}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user joined the room
@@ -91,9 +91,10 @@ class RoomController {
 
 		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash'))];
 
-		/** @var TalkRoom[] $data */
+		/** @var list<TalkRoom> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
+		/** @var list<TalkRoom> $data */
 		$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'displayName');
 
 		return new DataResponse($data, $statusCode, $headers);
@@ -105,7 +106,7 @@ class RoomController {
 	 * @param Room $room the federated room to leave
 	 * @param Participant $participant the federated user that will leave the
 	 *                                 room; the participant must have a session
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user left the room
@@ -136,7 +137,7 @@ class RoomController {
 	/**
 	 * @see \OCA\Talk\Controller\RoomController::getCapabilities()
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|list<empty>, array{X-Nextcloud-Talk-Hash: string}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Get capabilities successfully
@@ -148,7 +149,7 @@ class RoomController {
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/capabilities',
 		);
 
-		/** @var TalkCapabilities|array<empty> $data */
+		/** @var TalkCapabilities|list<empty> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
 		$headers = [

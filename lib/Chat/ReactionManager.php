@@ -127,7 +127,7 @@ class ReactionManager {
 	}
 
 	/**
-	 * @return array<string, TalkReaction[]>
+	 * @return array<string, list<TalkReaction>>
 	 * @throws PreConditionNotMetException
 	 */
 	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction = null): array {

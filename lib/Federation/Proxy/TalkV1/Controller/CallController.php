@@ -36,7 +36,7 @@ class CallController {
 	 *
 	 * @param Room $room the federated room to get the call peers
 	 * @param Participant $participant the federated user to get the call peers
-	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkCallPeer>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: List of peers in the call returned
@@ -48,10 +48,10 @@ class CallController {
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/call/' . $room->getRemoteToken(),
 		);
 
-		/** @var TalkCallPeer[] $data */
+		/** @var list<TalkCallPeer> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
-		/** @var TalkCallPeer[] $data */
+		/** @var list<TalkCallPeer> $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
 
 		$statusCode = $proxy->getStatusCode();
@@ -73,7 +73,7 @@ class CallController {
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent Agreement to be recorded
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user is now in the call
@@ -108,7 +108,7 @@ class CallController {
 	 * @see \OCA\Talk\Controller\RoomController::ringAttendee()
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Attendee rang successfully
@@ -142,7 +142,7 @@ class CallController {
 	 *                                 flags; the participant must have a session
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: In-call flags updated successfully for federated user
@@ -177,7 +177,7 @@ class CallController {
 	 * @param Room $room the federated room to leave the call in
 	 * @param Participant $participant the federated user that will leave the
 	 *                                 call; the participant must have a session
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user left the call

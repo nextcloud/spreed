@@ -36,7 +36,7 @@ class TempAvatarController extends OCSController {
 	/**
 	 * Upload your avatar as a user
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: Avatar uploaded successfully
 	 * 400: Uploading avatar is not possible
@@ -111,7 +111,7 @@ class TempAvatarController extends OCSController {
 	/**
 	 * Delete your avatar as a user
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, list<empty>, array{}>
 	 *
 	 * 200: Avatar deleted successfully
 	 * 400: Deleting avatar is not possible

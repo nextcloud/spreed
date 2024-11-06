@@ -2116,8 +2116,8 @@ export type components = {
             optionId: number;
         };
         PublicCapabilities: {
-            spreed: components["schemas"]["Capabilities"];
-        } | unknown[];
+            spreed?: components["schemas"]["Capabilities"];
+        };
         Reaction: {
             actorDisplayName: string;
             actorId: string;

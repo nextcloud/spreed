@@ -41,7 +41,7 @@ class SettingsController extends OCSController {
 	 *
 	 * @param 'attachment_folder'|'read_status_privacy'|'typing_privacy'|'play_sounds' $key Key to update
 	 * @param string|int|null $value New value for the key
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, list<empty>, array{}>
 	 *
 	 * 200: User setting updated successfully
 	 * 400: Updating user setting is not possible
@@ -60,10 +60,10 @@ class SettingsController extends OCSController {
 	/**
 	 * Update SIP bridge settings
 	 *
-	 * @param string[] $sipGroups New SIP groups
+	 * @param list<string> $sipGroups New SIP groups
 	 * @param string $dialInInfo New dial info
 	 * @param string $sharedSecret New shared secret
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 *
 	 * 200: Successfully set new SIP settings
 	 */

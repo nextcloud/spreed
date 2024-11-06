@@ -416,7 +416,7 @@ class BreakoutRoomService {
 
 	/**
 	 * @param Room $parent
-	 * @return Room[]
+	 * @return list<Room>
 	 */
 	public function stopBreakoutRooms(Room $parent): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {

@@ -435,23 +435,12 @@
                 }
             },
             "PublicCapabilities": {
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "required": [
-                            "spreed"
-                        ],
-                        "properties": {
-                            "spreed": {
-                                "$ref": "#/components/schemas/Capabilities"
-                            }
-                        }
-                    },
-                    {
-                        "type": "array",
-                        "maxItems": 0
+                "type": "object",
+                "properties": {
+                    "spreed": {
+                        "$ref": "#/components/schemas/Capabilities"
                     }
-                ]
+                }
             },
             "RichObjectParameter": {
                 "type": "object",

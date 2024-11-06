@@ -169,7 +169,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Poll returned
 	 * 404: Poll not found
@@ -209,8 +209,8 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @param int[] $optionIds IDs of the selected options
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param list<int> $optionIds IDs of the selected options
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Voted successfully
 	 * 400: Voting is not possible
@@ -274,7 +274,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, list<empty>, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 202: Poll draft was deleted successfully
@@ -347,6 +347,8 @@ class PollController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * @param list<Vote> $votedSelf
+	 * @param list<Vote> $detailedVotes
 	 * @return TalkPoll
 	 * @throws JsonException
 	 */
