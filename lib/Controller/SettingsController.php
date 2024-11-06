@@ -47,7 +47,7 @@ class SettingsController extends OCSController {
 	 * 400: Updating user setting is not possible
 	 */
 	#[NoAdminRequired]
-	public function setUserSetting(string $key, $value): DataResponse {
+	public function setUserSetting(string $key, string|int|null $value): DataResponse {
 		if (!$this->preferenceListener->validatePreference($this->userId, $key, $value)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
