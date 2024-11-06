@@ -13,30 +13,10 @@
 	</EmptyView>
 </template>
 
-<script>
+<script setup lang="ts">
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 
 import { t } from '@nextcloud/l10n'
 
 import EmptyView from '../components/EmptyView.vue'
-
-export default {
-	name: 'SessionConflictView',
-
-	components: {
-		EmptyView,
-		IconInformationOutline,
-	},
-
-	mounted() {
-		this.setPageTitle()
-	},
-
-	methods: {
-		t,
-		setPageTitle() {
-			window.document.title = t('spreed', 'Duplicate session') + ' - ' + window.document.title
-		},
-	},
-}
 </script>
