@@ -29,10 +29,10 @@ import {
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
  * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
- * @return {number} The actual flags based on the available media
+ * @return {Promise<number>} The actual flags based on the available media
  */
 const joinCall = async function(token, flags, silent, recordingConsent) {
-	return await signalingJoinCall(token, flags, silent, recordingConsent)
+	return signalingJoinCall(token, flags, silent, recordingConsent)
 }
 
 /**
