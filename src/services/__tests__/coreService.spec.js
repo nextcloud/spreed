@@ -5,8 +5,8 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { searchPossibleConversations } from './conversationsService.js'
-import { SHARE } from '../constants.js'
+import { SHARE } from '../../constants.js'
+import { autocompleteQuery } from '../coreService.ts'
 
 jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
@@ -24,7 +24,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 	}))
 }))
 
-describe('conversationsService', () => {
+describe('coreService', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
 		jest.clearAllMocks()
@@ -35,8 +35,8 @@ describe('conversationsService', () => {
 	 * @param {boolean} onlyUsers Whether or not to only search for users
 	 * @param {Array} expectedShareTypes The expected search types to look for
 	 */
-	function testSearchPossibleConversations(token, onlyUsers, expectedShareTypes) {
-		searchPossibleConversations(
+	function testAutocompleteQuery(token, onlyUsers, expectedShareTypes) {
+		autocompleteQuery(
 			{
 				searchText: 'search-text',
 				token,
@@ -60,8 +60,8 @@ describe('conversationsService', () => {
 		)
 	}
 
-	test('searchPossibleConversations with only users', () => {
-		testSearchPossibleConversations(
+	test('autocompleteQuery with only users', () => {
+		testAutocompleteQuery(
 			'conversation-token',
 			true,
 			[
@@ -70,8 +70,8 @@ describe('conversationsService', () => {
 		)
 	})
 
-	test('searchPossibleConversations with other share types', () => {
-		testSearchPossibleConversations(
+	test('autocompleteQuery with other share types', () => {
+		testAutocompleteQuery(
 			'conversation-token',
 			false,
 			[
@@ -84,8 +84,8 @@ describe('conversationsService', () => {
 		)
 	})
 
-	test('searchPossibleConversations with other share types and a new token', () => {
-		testSearchPossibleConversations(
+	test('autocompleteQuery with other share types and a new token', () => {
+		testAutocompleteQuery(
 			'new',
 			false,
 			[
