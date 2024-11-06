@@ -15,15 +15,18 @@ import { loadState } from '@nextcloud/initial-state'
 import LeftSidebar from './LeftSidebar.vue'
 
 import router from '../../__mocks__/router.js'
-import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
+import { searchListedConversations } from '../../services/conversationsService.js'
+import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { findNcListItems, findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 jest.mock('../../services/conversationsService', () => ({
-	searchPossibleConversations: jest.fn(),
 	searchListedConversations: jest.fn(),
+}))
+jest.mock('../../services/coreService', () => ({
+	autocompleteQuery: jest.fn(),
 }))
 
 // short-circuit debounce
@@ -296,7 +299,7 @@ describe('LeftSidebar.vue', () => {
 		 * @param {object} loadStateSettingsOverride Allows to override some properties
 		 */
 		async function testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride) {
-			searchPossibleConversations.mockResolvedValue({
+			autocompleteQuery.mockResolvedValue({
 				data: {
 					ocs: {
 						data: possibleResults,

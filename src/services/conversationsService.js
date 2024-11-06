@@ -6,12 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
-import { ATTENDEE, CONVERSATION, SHARE } from '../constants.js'
-
-const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
-	&& getTalkConfig('local', 'federation', 'enabled')
-	&& getTalkConfig('local', 'federation', 'outgoing-enabled')
+import { ATTENDEE, CONVERSATION } from '../constants.js'
 
 /**
  * Fetches the conversations from the server.
@@ -68,38 +63,6 @@ const searchListedConversations = async function({ searchText }, options) {
  */
 const fetchNoteToSelfConversation = async function() {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/note-to-self'))
-}
-
-/**
- * Fetch possible conversations
- *
- * @param {object} data the wrapping object;
- * @param {string} data.searchText The string that will be used in the search query.
- * @param {string} [data.token] The token of the conversation (if any), or "new" for a new one
- * @param {boolean} [data.onlyUsers] Only return users
- * @param {object} options options
- */
-const searchPossibleConversations = async function({ searchText, token, onlyUsers }, options) {
-	token = token || 'new'
-	onlyUsers = !!onlyUsers
-
-	const shareTypes = [
-		SHARE.TYPE.USER,
-		!onlyUsers ? SHARE.TYPE.GROUP : null,
-		!onlyUsers ? SHARE.TYPE.CIRCLE : null,
-		(!onlyUsers && token !== 'new') ? SHARE.TYPE.EMAIL : null,
-		(!onlyUsers && canInviteToFederation) ? SHARE.TYPE.REMOTE : null,
-	].filter(type => type !== null)
-
-	return axios.get(generateOcsUrl('core/autocomplete/get'), {
-		...options,
-		params: {
-			search: searchText,
-			itemType: 'call',
-			itemId: token,
-			shareTypes,
-		},
-	})
 }
 
 /**
@@ -390,7 +353,6 @@ export {
 	fetchNoteToSelfConversation,
 	getUpcomingEvents,
 	searchListedConversations,
-	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,
 	createPrivateConversation,
