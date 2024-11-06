@@ -3643,7 +3643,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to ("[^"]*"|\d) with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $setting
@@ -3652,6 +3652,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userSetting($user, $setting, $value, $statusCode, $apiVersion = 'v1') {
+		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
+			$value = substr($value, 1, -1);
+		} else {
+			$value = (int)$value;
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/settings/user',
@@ -3661,13 +3667,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" has capability "([^"]*)" set to "([^"]*)"$/
+	 * @Then /^user "([^"]*)" has capability "([^"]*)" set to ("[^"]*"|\d)$/
 	 *
 	 * @param string $user
 	 * @param string $capability
 	 * @param string $value
 	 */
 	public function userCheckCapability($user, $capability, $value) {
+		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
+			$value = substr($value, 1, -1);
+		} else {
+			$value = (int)$value;
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'GET', '/cloud/capabilities'
