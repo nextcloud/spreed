@@ -531,7 +531,7 @@ export default {
 			visibility: visible;
 		}
 
-		.file-preview__image.media {
+		.image-container:has(.file-preview__image.media) {
 			outline: 2px solid var(--color-primary-element);
 		}
 	}
