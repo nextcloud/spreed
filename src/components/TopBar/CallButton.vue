@@ -13,7 +13,7 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<NcLoadingIcon v-if="isJoiningCall || loading" />
+				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
 				<IconPhoneDial v-else-if="isPhoneRoom" :size="20" />
 				<IconPhoneOutline v-else-if="silentCall" :size="20" />
 				<IconPhone v-else :size="20" />
@@ -30,7 +30,8 @@
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
-				<IconPhoneHangup :size="20" /> <!-- here -->
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else :size="20" /> <!-- here -->
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
@@ -43,7 +44,8 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
-				<IconPhoneHangup :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ leaveCallLabel }}
@@ -56,7 +58,8 @@
 			force-name
 			:type="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
-				<IconPhoneHangup v-if="!isBreakoutRoom" :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />
 				<IconArrowLeft v-else :size="20" />
 			</template>
 			<NcActionButton v-if="isBreakoutRoom"
