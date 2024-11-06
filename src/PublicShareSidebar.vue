@@ -23,6 +23,7 @@
 				<TopBar v-if="isInCall" is-in-call is-sidebar />
 				<CallView v-if="isInCall" :token="token" is-sidebar />
 				<CallButton v-if="!isInCall" class="call-button" />
+				<CallFailedDialog v-if="connectionFailed" :token="token" />
 				<ChatView is-sidebar />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
@@ -39,6 +40,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
+import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
@@ -63,6 +65,7 @@ export default {
 
 	components: {
 		CallButton,
+		CallFailedDialog,
 		CallView,
 		ChatView,
 		MediaSettings,
@@ -117,6 +120,10 @@ export default {
 
 		warnLeaving() {
 			return !this.isLeavingAfterSessionIssue && this.isInCall
+		},
+
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
 		},
 	},
 
