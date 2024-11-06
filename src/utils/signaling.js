@@ -274,7 +274,7 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				this.currentCallFlags = flags
 				this.currentCallSilent = silent
 				this.currentCallRecordingConsent = recordingConsent
-				this._trigger('joinCall', [token])
+				this._trigger('joinCall', [token, flags])
 				resolve()
 				this._joinCallSuccess(token)
 			}.bind(this))
@@ -1225,7 +1225,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent, recordi
 			this.currentCallFlags = flags
 			this.currentCallSilent = silent
 			this.currentCallRecordingConsent = recordingConsent
-			this._trigger('joinCall', [token])
+			this._trigger('joinCall', [token, flags])
 
 			resolve()
 		})
