@@ -79,7 +79,6 @@
 				{{ t('spreed', 'End call for everyone') }}
 			</NcActionButton>
 		</NcActions>
-		<CallFailedDialog v-if="connectionFailed" :token="token" />
 	</div>
 </template>
 
@@ -102,8 +101,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
-import CallFailedDialog from '../CallView/CallFailedDialog.vue'
-
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { callSIPDialOut } from '../../services/callsService.js'
@@ -120,7 +117,6 @@ export default {
 	name: 'CallButton',
 
 	components: {
-		CallFailedDialog,
 		NcActions,
 		NcActionButton,
 		NcButton,
@@ -277,7 +273,7 @@ export default {
 			}
 
 			if (this.isJoiningCall) {
-				return t('spreed', 'Connecting...')
+				return t('spreed', 'Connecting …')
 			}
 
 			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
@@ -349,10 +345,6 @@ export default {
 
 		isJoiningCall() {
 			return this.$store.getters.isJoiningCall(this.token)
-		},
-
-		connectionFailed() {
-			return this.$store.getters.connectionFailed(this.token)
 		},
 	},
 

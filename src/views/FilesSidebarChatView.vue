@@ -6,6 +6,7 @@
 <template>
 	<div class="talk-tab__wrapper">
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
+		<CallFailedDialog v-if="connectionFailed" :token="token" />
 		<ChatView class="talk-tab__chat-view" is-sidebar />
 		<PollViewer />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
@@ -13,6 +14,7 @@
 </template>
 <script>
 
+import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import ChatView from '../components/ChatView.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
@@ -26,6 +28,7 @@ export default {
 
 	components: {
 		CallButton,
+		CallFailedDialog,
 		ChatView,
 		MediaSettings,
 		PollViewer,
@@ -41,6 +44,15 @@ export default {
 		return {
 			recordingConsentGiven: false,
 		}
+	},
+
+	computed: {
+		token() {
+			return this.$store.getters.getToken()
+		},
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
+		},
 	},
 }
 
