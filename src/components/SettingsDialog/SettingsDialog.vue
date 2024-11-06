@@ -136,7 +136,7 @@
 					</dd>
 				</div>
 				<div>
-					<dt><kbd>Ctrl</kbd> + <kbd>↑</kbd></dt>
+					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>↑</kbd></dt>
 					<dd class="shortcut-description">
 						{{ t('spreed', 'Edit your last message') }}
 					</dd>
@@ -148,7 +148,7 @@
 					</dd>
 				</div>
 				<div>
-					<dt><kbd>Ctrl</kbd> + <kbd>F</kbd></dt>
+					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>F</kbd></dt>
 					<dd class="shortcut-description">
 						{{ t('spreed', 'Search') }}
 					</dd>
@@ -210,6 +210,7 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
+import { isMac } from '../../utils/browserCheck.ts'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
@@ -237,8 +238,10 @@ export default {
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
 		const isBackgroundBlurred = ref(isBackgroundBlurredState)
+		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
+			CmdOrCtrl,
 			settingsStore,
 			soundsStore,
 			supportTypingStatus,

@@ -43,7 +43,7 @@ import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
-import { checkBrowser } from './utils/browserCheck.js'
+import { checkBrowser } from './utils/browserCheck.ts'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
