@@ -38,7 +38,7 @@ import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
 import { useActiveSession } from './composables/useActiveSession.js'
-import { useDocumentVisibility } from './composables/useDocumentVisibility.ts'
+import { useDocumentTitle } from './composables/useDocumentTitle.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
@@ -66,6 +66,7 @@ export default {
 	},
 
 	setup() {
+		useDocumentTitle()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 
@@ -74,7 +75,6 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
-			isDocumentVisible: useDocumentVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
 			callViewStore: useCallViewStore(),
@@ -84,8 +84,6 @@ export default {
 
 	data() {
 		return {
-			savedLastMessageMap: {},
-			defaultPageTitle: false,
 			loading: false,
 			isRefreshingCurrentConversation: false,
 			recordingConsentGiven: false,
@@ -104,57 +102,6 @@ export default {
 
 		warnLeaving() {
 			return !this.isLeavingAfterSessionIssue && this.isInCall
-		},
-
-		/**
-		 * Keeps a list for all last message ids
-		 *
-		 * @return {object} Map with token => lastMessageId
-		 */
-		lastMessageMap() {
-			const conversationList = this.$store.getters.conversationsList
-			if (conversationList.length === 0) {
-				return {}
-			}
-
-			const lastMessage = {}
-			conversationList.forEach(conversation => {
-				lastMessage[conversation.token] = 0
-				if (conversation.lastMessage) {
-					const currentActorIsAuthor = conversation.lastMessage.actorType === this.$store.getters.getActorType()
-						&& conversation.lastMessage.actorId === this.$store.getters.getActorId()
-					if (currentActorIsAuthor) {
-						// Set a special value when the actor is the author so we can skip it.
-						// Can't use 0 though because hidden commands result in 0
-						// and they would hide other previously posted new messages
-						lastMessage[conversation.token] = -1
-					} else {
-						lastMessage[conversation.token] = Math.max(
-							conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0,
-							this.$store.getters.getLastKnownMessageId(conversation.token) ? this.$store.getters.getLastKnownMessageId(conversation.token) : 0,
-						)
-					}
-				}
-			})
-			return lastMessage
-		},
-
-		/**
-		 * @return {boolean} Returns true, if
-		 * - a conversation is newly added to lastMessageMap
-		 * - a conversation has a different last message id then previously
-		 */
-		atLeastOneLastMessageIdChanged() {
-			let modified = false
-			Object.keys(this.lastMessageMap).forEach(token => {
-				if (!this.savedLastMessageMap[token] // Conversation is new
-					|| (this.savedLastMessageMap[token] !== this.lastMessageMap[token] // Last message changed
-						&& this.lastMessageMap[token] !== -1)) { // But is not from the current user
-					modified = true
-				}
-			})
-
-			return modified
 		},
 
 		/**
@@ -187,14 +134,6 @@ export default {
 	},
 
 	watch: {
-		atLeastOneLastMessageIdChanged() {
-			if (this.isDocumentVisible) {
-				return
-			}
-
-			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
-		},
-
 		token(newValue, oldValue) {
 			const shouldShowSidebar = BrowserStorage.getItem('sidebarOpen') !== 'false'
 			// Collapse the sidebar if it's a one to one conversation
@@ -219,22 +158,6 @@ export default {
 				} else {
 					toggle?.removeAttribute('data-theme-dark')
 				}
-			}
-		},
-
-		isDocumentVisible(value) {
-			if (value) {
-				// Remove the potential "*" marker for unread chat messages
-				let title = this.getConversationName(this.token)
-				if (window.document.title.indexOf(t('spreed', 'Duplicate session')) === 0) {
-					title = t('spreed', 'Duplicate session')
-				}
-				this.setPageTitle(title, false)
-			} else {
-				// Copy the last message map to the saved version,
-				// this will be our reference to check if any chat got a new
-				// message since the last visit
-				this.savedLastMessageMap = this.lastMessageMap
 			}
 		},
 	},
@@ -398,11 +321,6 @@ export default {
 		 * the store.
 		 */
 		EventBus.once('conversations-received', () => {
-			if (this.$route.name === 'conversation') {
-				// Adjust the page title once the conversation list is loaded
-				this.setPageTitle(this.getConversationName(this.token), false)
-			}
-
 			if (!getCurrentUser()) {
 				// Set the current actor/participant for guests
 				const conversation = this.$store.getters.conversation(this.token)
@@ -441,7 +359,7 @@ export default {
 			if (this.warnLeaving && !to.params?.skipLeaveWarning) {
 				OC.dialogs.confirmDestructive(
 					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
-						conversation: this.getConversationName(this.token),
+						conversation: this.currentConversation?.displayName ?? '',
 					}),
 					t('spreed', 'Leave call'),
 					{
@@ -460,19 +378,6 @@ export default {
 				)
 			} else {
 				beforeRouteChangeListener(to, from, next)
-			}
-		})
-
-		Router.afterEach((to) => {
-			/**
-			 * Change the page title only after the route was changed
-			 */
-			if (to.name === 'conversation') {
-				// Page title
-				const nextConversationName = this.getConversationName(to.params.token)
-				this.setPageTitle(nextConversationName)
-			} else if (to.name === 'notfound') {
-				this.setPageTitle('')
 			}
 		})
 
@@ -626,38 +531,6 @@ export default {
 			this.fetchSingleConversation(this.token)
 		},
 
-		/**
-		 * Set the page title to the conversation name
-		 *
-		 * @param {string} title Prefix for the page title e.g. conversation name
-		 * @param {boolean} showAsterix Prefix for the page title e.g. conversation name
-		 */
-		setPageTitle(title, showAsterix) {
-			if (this.defaultPageTitle === false) {
-				// On the first load we store the current page title "Talk - Nextcloud",
-				// so we can append it every time again
-				this.defaultPageTitle = window.document.title
-				// Coming from a "Duplicate session - Talk - …" page?
-				if (this.defaultPageTitle.indexOf(' - ' + t('spreed', 'Talk') + ' - ') !== -1) {
-					this.defaultPageTitle = this.defaultPageTitle.substring(this.defaultPageTitle.indexOf(' - ' + t('spreed', 'Talk') + ' - ') + 3)
-				}
-				// When a conversation is opened directly, the "Talk - " part is
-				// missing from the title
-				if (!IS_DESKTOP && this.defaultPageTitle.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
-					this.defaultPageTitle = t('spreed', 'Talk') + ' - ' + this.defaultPageTitle
-				}
-			}
-
-			let newTitle = this.defaultPageTitle
-			if (title !== '') {
-				newTitle = `${title} - ${newTitle}`
-			}
-			if (showAsterix && !newTitle.startsWith('* ')) {
-				newTitle = '* ' + newTitle
-			}
-			window.document.title = newTitle
-		},
-
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
 		},
@@ -668,20 +541,6 @@ export default {
 			}
 
 			event.preventDefault()
-		},
-
-		/**
-		 * Get a conversation's name.
-		 *
-		 * @param {string} token The conversation's token
-		 * @return {string} The conversation's name
-		 */
-		getConversationName(token) {
-			if (!this.$store.getters.conversation(token)) {
-				return ''
-			}
-
-			return this.$store.getters.conversation(token).displayName
 		},
 
 		async fetchSingleConversation(token) {
