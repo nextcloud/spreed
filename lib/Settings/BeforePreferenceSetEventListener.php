@@ -67,7 +67,7 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		// "privacy" 0/1
 		if ($key === UserPreference::TYPING_PRIVACY
 			|| $key === UserPreference::READ_STATUS_PRIVACY) {
-			$valid = (int)$value === Participant::PRIVACY_PRIVATE || (int)$value === Participant::PRIVACY_PUBLIC;
+			$valid = is_numeric($value) && ((int)$value === Participant::PRIVACY_PRIVATE || (int)$value === Participant::PRIVACY_PUBLIC);
 
 			if ($valid && $key === 'read_status_privacy') {
 				$this->participantService->updateReadPrivacyForActor(Attendee::ACTOR_USERS, $userId, (int)$value);
