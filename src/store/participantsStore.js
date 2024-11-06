@@ -370,6 +370,9 @@ const mutations = {
 	finishedJoiningCall(state, { token, sessionId }) {
 		if (state.joiningCall[token] && state.joiningCall[token][sessionId]) {
 			Vue.delete(state.joiningCall[token], sessionId)
+			if (!Object.keys(state.joiningCall[token]).length) {
+				Vue.delete(state.joiningCall, token)
+			}
 		}
 	},
 
@@ -383,6 +386,9 @@ const mutations = {
 	finishedConnecting(state, { token, sessionId }) {
 		if (state.connecting[token] && state.connecting[token][sessionId]) {
 			Vue.delete(state.connecting[token], sessionId)
+			if (!Object.keys(state.connecting[token]).length) {
+				Vue.delete(state.connecting, token)
+			}
 		}
 	},
 
@@ -845,7 +851,6 @@ const actions = {
 		// In this case, we always check if the list is the updated one (it has the current participant in the call)
 
 		const { sessionId } = participantIdentifier
-		let isParticipantsListReceived = null
 
 		if (!sessionId) {
 			console.error('Trying to join call without sessionId')
@@ -858,6 +863,7 @@ const actions = {
 			return
 		}
 
+		let isParticipantsListReceived = null
 		commit('joiningCall', { token, sessionId, flags })
 
 		const handleJoinCall = () => {
@@ -865,16 +871,18 @@ const actions = {
 			commit('finishedJoiningCall', { token, sessionId })
 
 			if (isParticipantsListReceived) {
-				isParticipantsListReceived = null
-				commit('finishedConnecting', { token, sessionId })
+				finishConnecting()
 			} else {
 				commit('connecting', { token, sessionId, flags })
 			}
 		}
 
-		const handleJoinCallFailed = () => {
-			commit('finishedJoiningCall', { token, sessionId })
-			isParticipantsListReceived = null
+		const handleJoinCallFailed = ([token, payload]) => {
+			finishConnecting()
+			commit('connectionFailed', {
+				token,
+				payload
+			})
 		}
 
 		const handleUsersInRoom = (payload) => {
@@ -885,8 +893,7 @@ const actions = {
 					commit('connecting', { token, sessionId, flags })
 					return
 				}
-				commit('finishedConnecting', { token, sessionId })
-				EventBus.off('signaling-users-in-room', handleUsersInRoom)
+				finishConnecting()
 			}
 		}
 
@@ -898,16 +905,25 @@ const actions = {
 					commit('connecting', { token, sessionId, flags })
 					return
 				}
-				commit('finishedConnecting', { token, sessionId })
-				EventBus.off('signaling-users-changed', handleUsersChanged)
+				finishConnecting()
 			}
+		}
+
+		const finishConnecting = () => {
+			isParticipantsListReceived = null
+			commit('finishedConnecting', { token, sessionId })
+			commit('finishedJoiningCall', { token, sessionId })
+			EventBus.off('signaling-join-call', handleJoinCall)
+			EventBus.off('signaling-join-call-failed', handleJoinCallFailed)
+			EventBus.off('signaling-users-in-room', handleUsersInRoom)
+			EventBus.off('signaling-users-changed', handleUsersChanged)
 		}
 
 		// Fallback in case we never receive the users list after joining the call
 		setTimeout(() => {
 			// If, by accident, we never receive a users list, just switch to
 			// "Waiting for others to join the call …" after some seconds.
-			commit('finishedConnecting', { token, sessionId })
+			finishConnecting()
 		}, 10000)
 
 		EventBus.once('signaling-join-call', handleJoinCall)
@@ -921,13 +937,12 @@ const actions = {
 				inCall: actualFlags,
 			}
 			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+			const callViewStore = useCallViewStore()
+			callViewStore.handleJoinCall(getters.conversation(token))
 		} catch (e) {
-			console.error(e)
+			console.error('Error while joining call: ', e)
 
 		}
-
-		const callViewStore = useCallViewStore()
-		callViewStore.handleJoinCall(getters.conversation(token))
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {

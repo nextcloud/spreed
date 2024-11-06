@@ -281,11 +281,7 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 			.catch(function(e) {
 				reject(new Error())
 				console.error('Connection failed, reason: ', e)
-				this._trigger('joinCallFailed', [token])
-				store.commit('connectionFailed', {
-					token,
-					payload: e.response?.data?.ocs,
-				})
+				this._trigger('joinCallFailed', [token, e.response?.data?.ocs])
 			}.bind(this))
 	})
 }
