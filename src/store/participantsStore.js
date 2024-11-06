@@ -337,9 +337,6 @@ const mutations = {
 	},
 
 	setInCall(state, { token, sessionId, flags }) {
-		if (state.connectionFailed[token]) {
-			Vue.delete(state.connectionFailed, token)
-		}
 		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
 				Vue.delete(state.inCall[token], sessionId)
@@ -850,7 +847,7 @@ const actions = {
 		// Exception 2: We may receive the users list in a second event of signaling-users-changed or signaling-users-in-room
 		// In this case, we always check if the list is the updated one (it has the current participant in the call)
 
-		const { sessionId } = participantIdentifier
+		const { sessionId } = participantIdentifier ?? {}
 
 		if (!sessionId) {
 			console.error('Trying to join call without sessionId')
@@ -863,17 +860,23 @@ const actions = {
 			return
 		}
 
-		let isParticipantsListReceived = null
+		let isParticipantsListReceived = false
+		let connectingTimeout = null
 		commit('joiningCall', { token, sessionId, flags })
 
-		const handleJoinCall = () => {
+		const handleJoinCall = ([token, flags]) => {
 			commit('setInCall', { token, sessionId, flags })
 			commit('finishedJoiningCall', { token, sessionId })
-
 			if (isParticipantsListReceived) {
 				finishConnecting()
 			} else {
 				commit('connecting', { token, sessionId, flags })
+				// Fallback in case we never receive the users list after joining the call
+				connectingTimeout = setTimeout(() => {
+					// If, by accident, we never receive a users list, just switch to
+					// "Waiting for others to join the call …" after some seconds.
+					finishConnecting()
+				}, 10000)
 			}
 		}
 
@@ -883,48 +886,42 @@ const actions = {
 				token,
 				payload
 			})
+			commit('setInCall', {
+				token,
+				sessionId: participantIdentifier.sessionId,
+				flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			})
+		}
+
+		const handleParticipantsListReceived = (payload, key) => {
+			const participant = payload[0].find(p => p[key] === sessionId)
+			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				if (state.joiningCall[token]?.[sessionId]) {
+					isParticipantsListReceived = true
+					commit('connecting', { token, sessionId, flags })
+					return
+				}
+				finishConnecting()
+			}
 		}
 
 		const handleUsersInRoom = (payload) => {
-			const participant = payload[0].find(p => p.sessionId === sessionId)
-			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
-				if (state.joiningCall[token]?.[sessionId]) {
-					isParticipantsListReceived = true
-					commit('connecting', { token, sessionId, flags })
-					return
-				}
-				finishConnecting()
-			}
+			handleParticipantsListReceived(payload, 'sessionId')
 		}
 
 		const handleUsersChanged = (payload) => {
-			const participant = payload[0].find(p => p.nextcloudSessionId === sessionId)
-			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
-				if (state.joiningCall[token]?.[sessionId]) {
-					isParticipantsListReceived = true
-					commit('connecting', { token, sessionId, flags })
-					return
-				}
-				finishConnecting()
-			}
+			handleParticipantsListReceived(payload, 'nextcloudSessionId')
 		}
 
 		const finishConnecting = () => {
-			isParticipantsListReceived = null
 			commit('finishedConnecting', { token, sessionId })
 			commit('finishedJoiningCall', { token, sessionId })
 			EventBus.off('signaling-join-call', handleJoinCall)
 			EventBus.off('signaling-join-call-failed', handleJoinCallFailed)
 			EventBus.off('signaling-users-in-room', handleUsersInRoom)
 			EventBus.off('signaling-users-changed', handleUsersChanged)
+			clearTimeout(connectingTimeout)
 		}
-
-		// Fallback in case we never receive the users list after joining the call
-		setTimeout(() => {
-			// If, by accident, we never receive a users list, just switch to
-			// "Waiting for others to join the call …" after some seconds.
-			finishConnecting()
-		}, 10000)
 
 		EventBus.once('signaling-join-call', handleJoinCall)
 		EventBus.once('signaling-join-call-failed', handleJoinCallFailed)
