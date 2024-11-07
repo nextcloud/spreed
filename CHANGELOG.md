@@ -5,6 +5,41 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.2 – 2024-11-07
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(attachments): Fix a performance issue when opening the file picker in Talk
+  [#13698](https://github.com/nextcloud/spreed/issues/13698)
+- fix(meetings): Fix layout for guests on public conversations
+  [#13552](https://github.com/nextcloud/spreed/issues/13552)
+
+## 19.0.11 – 2024-11-07
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Fix layout for guests on public conversations
+  [#13620](https://github.com/nextcloud/spreed/issues/13620)
+- fix(UI): Improve handling of sidebar on mobile view
+  [#12693](https://github.com/nextcloud/spreed/issues/12693)
+- fix(calls): Fix background blur performance if Server was not upgraded
+  [#13603](https://github.com/nextcloud/spreed/issues/13603)
+
+## 18.0.13 – 2024-11-07
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Fix layout for guests on public conversations
+  [#13620](https://github.com/nextcloud/spreed/issues/13620)
+- fix(UI): Improve handling of sidebar on mobile view
+  [#12693](https://github.com/nextcloud/spreed/issues/12693)
+
 ## 20.0.1 – 2024-10-10
 ### Added
 - feat(call): Add wave and fire call reactions
