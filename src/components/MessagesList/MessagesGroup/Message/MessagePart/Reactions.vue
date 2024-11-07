@@ -91,6 +91,7 @@ import ReactionsList from './ReactionsList.vue'
 import { ATTENDEE } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {
 	name: 'Reactions',
@@ -230,12 +231,7 @@ export default {
 				return this.guestNameStore.getGuestNameWithGuestSuffix(this.token, reactingParticipant.actorId)
 			}
 
-			const displayName = reactingParticipant.actorDisplayName.trim()
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
+			return getDisplayNameWithFallback(reactingParticipant.actorDisplayName, reactingParticipant.actorType)
 		},
 
 		reactionsCount(reaction) {
