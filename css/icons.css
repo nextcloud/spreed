@@ -4,6 +4,7 @@
  */
 .app-talk .icon-user,
 .modal-mask .icon-user,
+.v-popper__popper .icon-user,
 .talk-sidebar-callview .icon-user,
 #talk-panel .icon-user,
 #talk-sidebar .icon-user,
@@ -14,6 +15,7 @@
 
 .app-talk .icon-public,
 .modal-mask .icon-public,
+.v-popper__popper .icon-public,
 .talk-sidebar-callview .icon-public,
 #talk-panel .icon-public,
 #talk-sidebar .icon-public,
@@ -24,6 +26,7 @@
 
 .app-talk .icon-contacts,
 .modal-mask .icon-contacts,
+.v-popper__popper .icon-contacts,
 .talk-sidebar-callview .icon-contacts,
 #talk-panel .icon-contacts,
 #talk-sidebar .icon-contacts,
@@ -34,6 +37,7 @@
 
 .app-talk .icon-phone,
 .modal-mask .icon-phone,
+.v-popper__popper .icon-phone,
 .talk-sidebar-callview .icon-phone,
 #talk-panel .icon-phone,
 #talk-sidebar .icon-phone,
@@ -44,6 +48,7 @@
 
 .app-talk .icon-password,
 .modal-mask .icon-password,
+.v-popper__popper .icon-password,
 .talk-sidebar-callview .icon-password,
 #talk-panel .icon-password,
 #talk-sidebar .icon-password,
@@ -54,6 +59,7 @@
 
 .app-talk .icon-file,
 .modal-mask .icon-file,
+.v-popper__popper .icon-file,
 .talk-sidebar-callview .icon-file,
 #talk-panel .icon-file,
 #talk-sidebar .icon-file,
@@ -64,6 +70,7 @@
 
 .app-talk .icon-mail,
 .modal-mask .icon-mail,
+.v-popper__popper .icon-mail,
 .talk-sidebar-callview .icon-mail,
 #talk-panel .icon-mail,
 #talk-sidebar .icon-mail,
@@ -74,6 +81,7 @@
 
 .app-talk .icon-team,
 .modal-mask .icon-team,
+.v-popper__popper .icon-team,
 .talk-sidebar-callview .icon-team,
 #talk-panel .icon-team,
 #talk-sidebar .icon-team,
@@ -84,6 +92,7 @@
 
 .app-talk .icon-changelog,
 .modal-mask .icon-changelog,
+.v-popper__popper .icon-changelog,
 .talk-sidebar-callview .icon-changelog,
 #talk-panel .icon-changelog,
 #talk-sidebar .icon-changelog,
