@@ -108,7 +108,7 @@ abstract class Base implements IProvider {
 
 		return [
 			'type' => 'call',
-			'id' => $room->getId(),
+			'id' => (string)$room->getId(),
 			'name' => $room->getDisplayName($userId),
 			'link' => $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 			'call-type' => $stringType,
@@ -116,12 +116,11 @@ abstract class Base implements IProvider {
 		];
 	}
 
-	protected function getFormerRoom(IL10N $l, int $roomId): array {
+	protected function getFormerRoom(IL10N $l): array {
 		return [
-			'type' => 'call',
-			'id' => $roomId,
+			'type' => 'highlight',
+			'id' => 'deleted',
 			'name' => $l->t('a conversation'),
-			'call-type' => Room::TYPE_UNKNOWN,
 		];
 	}
 
