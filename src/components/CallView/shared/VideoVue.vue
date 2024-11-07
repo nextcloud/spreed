@@ -49,10 +49,10 @@
 			<div v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
-				<VideoBackground :display-name="participantName" :user="participantUserId" />
+				<VideoBackground :display-name="displayName" :user="participantUserId" />
 				<AvatarWrapper :id="participantUserId"
 					:token="token"
-					:name="participantName"
+					:name="displayName"
 					:source="participantActorType"
 					:size="avatarSize"
 					:loading="isLoading"
@@ -104,6 +104,7 @@ import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
+import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import { placeholderImage } from '../Grid/gridPlaceholders.ts'
 
@@ -411,7 +412,7 @@ export default {
 			return null
 		},
 
-		participantName() {
+		displayName() {
 			if (this.model.attributes.name) {
 				return this.model.attributes.name
 			}
@@ -434,12 +435,13 @@ export default {
 
 			if (!participantName) {
 				participantName = this.peerData.displayName
-				if (!participantName && this.peerData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-					participantName = t('spreed', 'Guest')
-				}
 			}
 
-			return participantName
+			return participantName?.trim() ?? ''
+		},
+
+		participantName() {
+			return getDisplayNameWithFallback(this.displayName, this.participantActorType)
 		},
 
 		isSpeaking() {

@@ -17,7 +17,7 @@
 		<template #icon>
 			<AvatarWrapper :id="participant.actorId"
 				:token="token"
-				:name="computedName"
+				:name="displayName"
 				:source="participant.actorType"
 				disable-tooltip
 				:show-user-status="showUserStatus"
@@ -358,6 +358,7 @@ import {
 } from '../../../services/callsService.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
+import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
 
@@ -548,18 +549,12 @@ export default {
 				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
+		displayName() {
+			return this.participant.displayName.trim()
+		},
+
 		computedName() {
-			const displayName = this.participant.displayName.trim()
-
-			if (displayName === '' && (this.isGuestActor || this.isEmailActor)) {
-				return t('spreed', 'Guest')
-			}
-
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
+			return getDisplayNameWithFallback(this.participant.displayName, this.participant.actorType)
 		},
 
 		attendeeId() {
@@ -695,14 +690,14 @@ export default {
 			switch (this.participant.actorType) {
 			case ATTENDEE.ACTOR_TYPE.GROUPS:
 				return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?',
-					this.participant, undefined, { escape: false, sanitize: false })
+					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 			case ATTENDEE.ACTOR_TYPE.CIRCLES:
 				return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?',
-					this.participant, undefined, { escape: false, sanitize: false })
+					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 			case ATTENDEE.ACTOR_TYPE.USERS:
 			default:
 				return t('spreed', 'Do you really want to remove {displayName} from this conversation?',
-					this.participant, undefined, { escape: false, sanitize: false })
+					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 			}
 		},
 
@@ -832,10 +827,10 @@ export default {
 					token: this.token,
 					attendeeId: this.attendeeId,
 				})
-				showSuccess(t('spreed', 'Notification was sent to {displayName}', { displayName: this.participant.displayName }))
+				showSuccess(t('spreed', 'Notification was sent to {displayName}', { displayName: this.computedName }))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))
+				showError(t('spreed', 'Could not send notification to {displayName}', { displayName: this.computedName }))
 			}
 		},
 

@@ -83,10 +83,11 @@ export default {
 			remoteServer,
 			lastEditor,
 			actorDisplayName,
+			actorDisplayNameWithFallback,
 		} = useMessageInfo(firstMessage)
 
 		const actorInfo = computed(() => {
-			return [actorDisplayName.value, remoteServer.value, lastEditor.value]
+			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
 				.filter(value => value).join(' ')
 		})
 
