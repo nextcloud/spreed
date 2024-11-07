@@ -192,6 +192,8 @@ class InvitationTest extends TestCase {
 				->method('getRoom')
 				->with($room, 'user')
 				->willReturn(['call-data']);
+			$provider->expects($this->never())
+				->method('getFormerRoom');
 		} else {
 			$this->manager->expects($this->once())
 				->method('getRoomById')
@@ -200,6 +202,10 @@ class InvitationTest extends TestCase {
 
 			$provider->expects($this->never())
 				->method('getRoom');
+			$provider->expects($this->once())
+				->method('getFormerRoom')
+				->with($l)
+				->willReturn(['call-unknown']);
 		}
 
 		$this->l10nFactory->expects($this->once())
@@ -218,10 +224,6 @@ class InvitationTest extends TestCase {
 			->method('getUser')
 			->with($params['user'])
 			->willReturn(['actor-data']);
-		$provider->expects($this->once())
-			->method('getFormerRoom')
-			->with($l, $params['room'])
-			->willReturn(['call-unknown']);
 
 		$provider->parse($lang, $event);
 	}

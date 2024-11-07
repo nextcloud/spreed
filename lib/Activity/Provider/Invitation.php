@@ -42,11 +42,11 @@ class Invitation extends Base {
 			$l = $this->languageFactory->get('spreed', $language);
 			$parameters = $event->getSubjectParameters();
 
-			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
 			try {
 				$room = $this->manager->getRoomById((int) $parameters['room']);
 				$roomParameter = $this->getRoom($room, $event->getAffectedUser());
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
+				$roomParameter = $this->getFormerRoom($l);
 			}
 
 			$this->setSubjects($event, $l->t('{actor} invited you to {call}'), [

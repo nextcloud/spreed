@@ -1,12 +1,12 @@
 {
 	"config": {
 		"platform": {
-			"php": "8.0"
+			"php": "8.0.2"
 		},
 		"sort-packages": true
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^3.16",
+		"friendsofphp/php-cs-fixer": "^3.64",
 		"nextcloud/coding-standard": "^1.1"
 	}
 }
