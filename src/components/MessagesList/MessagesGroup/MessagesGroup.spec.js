@@ -5,106 +5,115 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import { computed } from 'vue'
 import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
 
-import * as useMessageInfoModule from '../../../composables/useMessageInfo.js'
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
+	let guestNameStore
 	let localVue
 	let testStoreConfig
-	let useMessageInfoSpy
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		guestNameStore = useGuestNameStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
-		// eslint-disable-next-line import/no-named-as-default-member
+		testStoreConfig.modules.conversationsStore.getters.conversation = () => () => ({})
+		testStoreConfig.modules.actorStore.getters.getActorId = () => () => 'actor-1'
+		testStoreConfig.modules.actorStore.getters.getActorType = () => () => ATTENDEE.ACTOR_TYPE.USERS
 		store = new Vuex.Store(testStoreConfig)
-		useMessageInfoSpy = jest.spyOn(useMessageInfoModule, 'useMessageInfo')
 	})
 
 	afterEach(() => {
 		jest.clearAllMocks()
-		useMessageInfoSpy.mockRestore()
 	})
 
-	test('renders grouped messages', () => {
-		useMessageInfoSpy.mockReturnValue({
-			actorDisplayName: computed(() => 'actor one'),
-			remoteServer: computed(() => ''),
-			lastEditor: computed(() => ''),
-		})
+	/**
+	 * Test avatar, actor name and grouped messages
+	 * @param {object} payload test case
+	 * @param {boolean} withTemp Whether to include temporary message in group
+	 */
+	function testMessagesGroup(payload, withTemp = false) {
+		// Arrange
+		const messages = [{
+			id: 100,
+			token: TOKEN,
+			actorId: payload.actorId,
+			actorDisplayName: payload.actorDisplayName,
+			actorType: payload.actorType,
+			message: 'first',
+			messageType: 'comment',
+			messageParameters: {},
+			systemMessage: '',
+			timestamp: 100,
+			isReplyable: true,
+		}, {
+			id: 110,
+			token: TOKEN,
+			actorId: payload.actorId,
+			actorDisplayName: payload.actorDisplayName,
+			actorType: payload.actorType,
+			message: 'second',
+			messageType: 'comment',
+			messageParameters: {},
+			systemMessage: '',
+			timestamp: 200,
+			isReplyable: true,
+		}]
+		if (withTemp) {
+			messages.push({
+				id: 120,
+				token: TOKEN,
+				actorId: payload.actorId,
+				actorDisplayName: payload.actorDisplayName,
+				actorType: payload.actorType,
+				message: 'third',
+				messageType: 'comment',
+				messageParameters: {},
+				systemMessage: '',
+				timestamp: 0, // temporary
+				isReplyable: true,
+			})
+		}
+		const actorInfo = payload.actorDisplayNameWithFallback
+			+ (payload.remoteServer ? ` (${payload.remoteServer})` : '')
+			+ (payload.lastEditor ? ` (${payload.lastEditor})` : '')
+
+		// Act
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
 			store,
 			propsData: {
-				id: 123,
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,
-				messages: [{
-					id: 100,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'first',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 100,
-					isReplyable: true,
-				}, {
-					id: 110,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'second',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 200,
-					isReplyable: true,
-				}, {
-					id: 120,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'third',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 0, // temporary
-					isReplyable: true,
-				}],
+				messages,
 			},
 		})
 
+		// Assert
 		const avatarEl = wrapper.findComponent({ name: 'AvatarWrapper' })
-		expect(avatarEl.attributes('source')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-		expect(avatarEl.attributes('id')).toBe('actor-1')
-		expect(avatarEl.attributes('name')).toBe('actor one')
+		expect(avatarEl.attributes('source')).toBe(payload.actorType)
+		expect(avatarEl.attributes('id')).toBe(payload.actorId)
+		expect(avatarEl.attributes('name')).toBe(payload.actorDisplayName)
 
 		const authorEl = wrapper.find('.messages__author')
-		expect(authorEl.text()).toBe('actor one')
+		expect(authorEl.text()).toBe(actorInfo)
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
 		expect(messagesEl.at(0).props()).toMatchObject({
 			message: {
 				id: 100,
 				message: 'first',
-				actorId: 'actor-1',
 			},
 			previousMessageId: 90,
 			nextMessageId: 110,
@@ -113,153 +122,75 @@ describe('MessagesGroup.vue', () => {
 			message: {
 				id: 110,
 				message: 'second',
-				actorId: 'actor-1',
 			},
 			previousMessageId: 100,
-			nextMessageId: 120,
+			nextMessageId: withTemp ? 120 : 200,
 		})
-		expect(messagesEl.at(2).props()).toMatchObject({
-			message: {
-				id: 120,
-				message: 'third',
-				actorId: 'actor-1',
-			},
-			previousMessageId: 110,
-			nextMessageId: 200,
+		if (withTemp) {
+			expect(messagesEl.at(2).props()).toMatchObject({
+				message: {
+					id: 120,
+					message: 'third',
+				},
+				previousMessageId: 110,
+				nextMessageId: 200,
+			})
+		}
+	}
+
+	test('renders grouped messages for user', () => {
+		testMessagesGroup({
+			actorId: 'actor-1',
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			actorDisplayName: 'Actor One',
+			actorDisplayNameWithFallback: 'Actor One',
 		})
 	})
 
-	test('renders guest display name', () => {
-		// Arrange
-		useMessageInfoSpy.mockReturnValue({
-			actorDisplayName: computed(() => 'guest-one-display-name'),
-			remoteServer: computed(() => ''),
-			lastEditor: computed(() => ''),
-		})
+	test('renders grouped messages for user (with temporary)', () => {
+		testMessagesGroup({
+			actorId: 'actor-1',
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			actorDisplayName: 'Actor One',
+			actorDisplayNameWithFallback: 'Actor One',
+		}, true)
+	})
 
-		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
-			propsData: {
-				id: 123,
-				token: TOKEN,
-				previousMessageId: 90,
-				nextMessageId: 200,
-				messages: [{
-					id: 100,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-					message: 'first',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 100,
-					isReplyable: true,
-				}, {
-					id: 110,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-					message: 'second',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 200,
-					isReplyable: true,
-				}],
-			},
-		})
-
-		const avatarEl = wrapper.findComponent({ name: 'AvatarWrapper' })
-		expect(avatarEl.attributes('source')).toBe(ATTENDEE.ACTOR_TYPE.GUESTS)
-		expect(avatarEl.attributes('id')).toBe('actor-1')
-		expect(avatarEl.attributes('name')).toBe('guest-one-display-name')
-
-		const authorEl = wrapper.find('.messages__author')
-		expect(authorEl.text()).toBe('guest-one-display-name')
-
-		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		expect(messagesEl.at(0).props()).toMatchObject({
-			message: {
-				id: 100,
-				actorId: 'actor-1',
-			},
-		})
-		expect(messagesEl.at(1).props()).toMatchObject({
-			message: {
-				id: 110,
-				actorId: 'actor-1',
-			},
+	test('renders grouped messages for guest with custom name', () => {
+		guestNameStore.addGuestName({ token: TOKEN, actorId: 'guest/id', actorDisplayName: 'Custom Guest' }, {})
+		testMessagesGroup({
+			actorId: 'guest/id',
+			actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+			actorDisplayName: 'Custom Guest',
+			actorDisplayNameWithFallback: 'Custom Guest',
 		})
 	})
 
-	test('renders deleted guest display name', () => {
-		// Arrange
-		useMessageInfoSpy.mockReturnValue({
-			actorDisplayName: computed(() => 'Deleted user'),
-			remoteServer: computed(() => ''),
-			lastEditor: computed(() => ''),
-	   })
-
-		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
-			propsData: {
-				id: 123,
-				token: TOKEN,
-				previousMessageId: 90,
-				nextMessageId: 200,
-				messages: [{
-					id: 100,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: '',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'first',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 100,
-					isReplyable: true,
-				}, {
-					id: 110,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: '',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'second',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 200,
-					isReplyable: true,
-				}],
-			},
+	test('renders grouped messages for guest with default name', () => {
+		testMessagesGroup({
+			actorId: 'guest/id',
+			actorType: ATTENDEE.ACTOR_TYPE.EMAILS,
+			actorDisplayName: 'Guest',
+			actorDisplayNameWithFallback: 'Guest',
 		})
+	})
 
-		const avatarEl = wrapper.findComponent({ name: 'AvatarWrapper' })
-		expect(avatarEl.attributes('source')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-		expect(avatarEl.attributes('id')).toBe('actor-1')
-		expect(avatarEl.attributes('name')).toBe('Deleted user')
-
-		const authorEl = wrapper.find('.messages__author')
-		expect(authorEl.text()).toBe('Deleted user')
-
-		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		expect(messagesEl.at(0).props()).toMatchObject({
-			message: {
-				id: 100,
-				actorId: 'actor-1',
-			},
+	test('renders grouped messages for deleted user', () => {
+		testMessagesGroup({
+			actorId: 'deleted_users',
+			actorType: ATTENDEE.ACTOR_TYPE.DELETED_USERS,
+			actorDisplayName: '',
+			actorDisplayNameWithFallback: 'Deleted user',
 		})
-		expect(messagesEl.at(1).props()).toMatchObject({
-			message: {
-				id: 110,
-				actorId: 'actor-1',
-			},
+	})
+
+	test('renders grouped messages for federated user', () => {
+		testMessagesGroup({
+			actorId: 'actor@nextcloud.local',
+			remoteServer: 'nextcloud.local',
+			actorType: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
+			actorDisplayName: 'Federated Actor',
+			actorDisplayNameWithFallback: 'Federated Actor',
 		})
 	})
 })
