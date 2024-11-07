@@ -221,6 +221,9 @@ export default {
 		},
 
 		handleInput() {
+			if (!this.canAdd) {
+				return
+			}
 			this.contactsLoading = true
 			this.searchResults = []
 			this.debounceFetchSearchResults()
