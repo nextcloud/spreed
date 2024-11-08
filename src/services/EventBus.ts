@@ -11,13 +11,10 @@ type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Event
 type ExtendedEmitter = Emitter<Events> & {
 	once<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
 	once(type: '*', handler: WildcardHandler<Events>): void
-	cancelOnce<Key extends keyof Events>(type: Key, handler?: Handler<Events[Key]>): void
-	cancelOnce(type: '*', handler: WildcardHandler<Events>): void
-	_onceHandlersMap: Map<keyof Events | '*', Map<GenericEventHandler, GenericEventHandler>>
 }
 
 export const EventBus: ExtendedEmitter = mitt() as ExtendedEmitter
-EventBus._onceHandlersMap = new Map()
+export const _onceHandlers = new Map<keyof Events | '*', Map<GenericEventHandler, GenericEventHandler>>()
 
 /**
  * Register a one-time event handler for the given type
@@ -37,10 +34,10 @@ EventBus.once = function<Key extends keyof Events>(type: Key, handler: GenericEv
 	this.on(type, fn)
 
 	// Store reference to the original handler to be able to remove it later
-	if (!EventBus._onceHandlersMap.has(type)) {
-		EventBus._onceHandlersMap.set(type, new Map())
+	if (!_onceHandlers.has(type)) {
+		_onceHandlers.set(type, new Map())
 	}
-	EventBus._onceHandlersMap.get(type)!.set(handler, fn)
+	_onceHandlers.get(type)!.set(handler, fn)
 }
 
 /**
@@ -52,7 +49,7 @@ EventBus.once = function<Key extends keyof Events>(type: Key, handler: GenericEv
  */
 EventBus.off = function<Key extends keyof Events>(type: Key, handler?: GenericEventHandler) {
 	const handlers: Array<GenericEventHandler> | undefined = EventBus.all!.get(type)
-	const onceHandlers: Map<GenericEventHandler, GenericEventHandler> | undefined = EventBus._onceHandlersMap!.get(type)
+	const onceHandlers: Map<GenericEventHandler, GenericEventHandler> | undefined = _onceHandlers!.get(type)
 
 	if (handlers) {
 		if (handler) {
@@ -75,7 +72,7 @@ EventBus.off = function<Key extends keyof Events>(type: Key, handler?: GenericEv
 				}
 			}
 		} else {
-			EventBus._onceHandlersMap.set(type, new Map())
+			_onceHandlers.set(type, new Map())
 		}
 	}
 }

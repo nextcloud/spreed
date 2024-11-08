@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { EventBus } from '../EventBus.ts'
+import { EventBus, _onceHandlers } from '../EventBus.ts'
 
 describe('EventBus', () => {
 	const customEvent1 = jest.fn()
@@ -15,9 +15,9 @@ describe('EventBus', () => {
 	const testEventBus = (type, handlers, onceHandlers) => {
 		expect(EventBus.all.get(type).length).toBe(handlers)
 		if (onceHandlers === undefined) {
-			expect(EventBus._onceHandlersMap.get(type)).toBeUndefined()
+			expect(_onceHandlers.get(type)).toBeUndefined()
 		} else {
-			expect(EventBus._onceHandlersMap.get(type).size).toBe(onceHandlers)
+			expect(_onceHandlers.get(type).size).toBe(onceHandlers)
 		}
 	}
 
