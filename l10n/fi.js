@@ -1321,7 +1321,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Lisää käyttäjiä, ryhmiä tai piirejä",
     "Add users or circles" : "Lisää käyttäjiä tai piirejä",
     "Add groups or circles" : "Lisää ryhmiä tai piirejä",
-    "Open sidebar" : "Avaa sivupalkki",
     "Start a conversation" : "Aloita keskustelu",
     "Post to conversation" : "Lähetä keskusteluun",
     "Share to conversation" : "Jaa keskusteluun",

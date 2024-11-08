@@ -1737,7 +1737,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "ユーザー、グループまたはサークルを追加",
     "Add users or circles" : "ユーザーまたはサークルを追加",
     "Add groups or circles" : "グループまたはサークルを追加",
-    "Open sidebar" : "サイドバーを開く",
     "Start a conversation" : "会話を開始する",
     "Post to conversation" : "会話に投稿する",
     "Share to conversation" : "会話に共有",

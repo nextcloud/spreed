@@ -1216,7 +1216,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Toevoegen gebruikers, groepen of kringen",
     "Add users or circles" : "Toevoegen gebruikers of kringen",
     "Add groups or circles" : "Toevoegen groepen of kringen",
-    "Open sidebar" : "Open zijbalk",
     "Start a conversation" : "Begin een gesprek",
     "Post to conversation" : "Publiceren naar gesprek",
     "Share to conversation" : "Deel naar gesprek",

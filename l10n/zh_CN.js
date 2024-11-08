@@ -1692,7 +1692,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "添加用户，群组或圈子",
     "Add users or circles" : "添加用户或圈子",
     "Add groups or circles" : "添加群组或圈子",
-    "Open sidebar" : "打开侧边栏",
     "Start a conversation" : "发起对话",
     "Post to conversation" : "发布到对话中",
     "Share to conversation" : "分享到对话",

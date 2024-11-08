@@ -1846,7 +1846,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "ئىشلەتكۈچى ، گۇرۇپپا ياكى چەمبىرەك قوشۇڭ",
     "Add users or circles" : "ئىشلەتكۈچى ياكى چەمبىرەك قوشۇڭ",
     "Add groups or circles" : "گۇرۇپپا ياكى چەمبىرەك قوشۇڭ",
-    "Open sidebar" : "يان بالداقنى ئېچىڭ",
     "Start a conversation" : "سۆھبەتنى باشلاڭ",
     "Post to conversation" : "سۆھبەتكە يوللاڭ",
     "Share to conversation" : "سۆھبەتكە ئورتاقلىشىڭ",

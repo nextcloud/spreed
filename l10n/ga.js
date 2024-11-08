@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Cuir úsáideoirí, grúpaí nó ciorcail leis",
     "Add users or circles" : "Cuir úsáideoirí nó ciorcail leis",
     "Add groups or circles" : "Cuir grúpaí nó ciorcail leis",
-    "Open sidebar" : "Oscail barra taoibh",
     "Start a conversation" : "Cuir tús le comhrá",
     "Post to conversation" : "Postáil chuig an gcomhrá",
     "Share to conversation" : "Roinn chuig an gcomhrá",

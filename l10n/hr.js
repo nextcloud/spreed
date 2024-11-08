@@ -1099,7 +1099,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Dodaj korisnike, grupe ili krugove",
     "Add users or circles" : "Dodaj korisnike ili krugove",
     "Add groups or circles" : "Dodaj grupe ili krugove",
-    "Open sidebar" : "Otvori bočnu traku",
     "Start a conversation" : "Započni razgovor",
     "Post to conversation" : "Objavi u razgovoru",
     "Specify commands the users can use in chats" : "Navedite naredbe koje korisnici mogu koristiti pri razmjeni poruka",
