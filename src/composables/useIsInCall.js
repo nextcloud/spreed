@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { createSharedComposable } from '@vueuse/core'
 import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
 import { useStore } from './useStore.js'
@@ -16,7 +17,7 @@ import { useCallViewStore } from '../stores/callView.js'
  *
  * @return {import('vue').ComputedRef<boolean>}
  */
-export function useIsInCall() {
+function useIsInCallComposable() {
 	const store = useStore()
 	const callViewStore = useCallViewStore()
 
@@ -42,3 +43,9 @@ export function useIsInCall() {
 		return sessionStorageJoinedConversation.value === store.getters.getToken() && store.getters.isInCall(store.getters.getToken())
 	})
 }
+
+/**
+ * Shared composable to check whether the user joined the call of the current token in this PHP session or not
+ * @return {import('vue').ComputedRef<boolean>}
+ */
+export const useIsInCall = createSharedComposable(useIsInCallComposable)
