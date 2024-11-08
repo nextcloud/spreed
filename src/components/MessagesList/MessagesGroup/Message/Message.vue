@@ -11,9 +11,9 @@
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message--highlighted': isHighlighted, 'message--hovered': showMessageButtonsBar}"
+		:class="{'message--hovered': showMessageButtonsBar}"
 		tabindex="0"
-		@animationend="isHighlighted = false"
+		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage,
@@ -191,7 +191,6 @@ export default {
 		return {
 			isHovered: false,
 			isDeleting: false,
-			isHighlighted: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
@@ -344,14 +343,6 @@ export default {
 		},
 	},
 
-	mounted() {
-		EventBus.on('highlight-message', this.highlightMessage)
-	},
-
-	beforeDestroy() {
-		EventBus.off('highlight-message', this.highlightMessage)
-	},
-
 	methods: {
 		t,
 		lastReadMessageVisibilityChanged([{ isIntersecting }]) {
@@ -360,10 +351,8 @@ export default {
 			}
 		},
 
-		highlightMessage(messageId) {
-			if (this.message.id === messageId) {
-				this.isHighlighted = true
-			}
+		clearHighlightedClass() {
+			this.$refs.message.classList.remove('message--highlighted')
 		},
 
 		handleMouseover() {
