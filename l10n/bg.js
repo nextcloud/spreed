@@ -1403,7 +1403,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Добавяне на потребители, групи или кръгове",
     "Add users or circles" : "Добавяне на потребители или кръгове",
     "Add groups or circles" : "Добавяне на групи или кръгове",
-    "Open sidebar" : "Отвори страничното меню",
     "Start a conversation" : "Започване на разговор",
     "Post to conversation" : "Публикуване в разговорa",
     "Share to conversation" : "Споделяне в разговора",

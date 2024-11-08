@@ -1138,7 +1138,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Apondre utilizaires, grops o cercles",
     "Add users or circles" : "Apondre utilizaires o cercles",
     "Add groups or circles" : "Apondre grops o cercles",
-    "Open sidebar" : "Dobrir panèl lateral",
     "Start a conversation" : "Començar una conversacion",
     "Post to conversation" : "Publicar a la conversacion",
     "Share to conversation" : "Partejar dins una conversacion",

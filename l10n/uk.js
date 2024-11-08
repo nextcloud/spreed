@@ -1162,7 +1162,6 @@ OC.L10N.register(
     "Add circles" : "Додати кола",
     "Add users, groups or circles" : "Додати користувачів, групи або кола",
     "Add users or circles" : "Додати користувачів або кола",
-    "Open sidebar" : "Відкрити бічну панель",
     "Post to conversation" : "Допис до розмови",
     "Specify commands the users can use in chats" : "Вкажіть команди, які користувачі можуть використовувати в чатах",
     "TURN server" : "Сервер TURN",

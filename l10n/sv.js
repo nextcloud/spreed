@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Lägg till användare, grupper eller cirklar",
     "Add users or circles" : "Lägg till användare eller cirklar",
     "Add groups or circles" : "Lägg till grupper eller cirklar",
-    "Open sidebar" : "Öppna sidofältet",
     "Start a conversation" : "Starta en konversation",
     "Post to conversation" : "Skicka till konversation",
     "Share to conversation" : "Dela till konversation",

@@ -121,7 +121,6 @@ OC.L10N.register(
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Circles" : "Sirklar",
-    "Remove circle and members" : "Eksterne sirklar og medlemmar",
-    "Open sidebar" : "Opne sidestolpe"
+    "Remove circle and members" : "Eksterne sirklar og medlemmar"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "اضافة اعضاء، مجموعات او جماعات",
     "Add users or circles" : "اضافة اعضاء او جماعات",
     "Add groups or circles" : "اضافة مجموعات او جماعات",
-    "Open sidebar" : "افتح الشريط الجانبي",
     "Start a conversation" : "ابدأ محادثة",
     "Post to conversation" : "انشر في محادثة ",
     "Share to conversation" : "شارِك في المُحادثَة",

@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Engadir usuarios, grupos ou círculos",
     "Add users or circles" : "Engadir usuarios ou círculos",
     "Add groups or circles" : "Engadir grupos ou círculos",
-    "Open sidebar" : "Abrir a barra lateral",
     "Start a conversation" : "Iniciar unha conversa",
     "Post to conversation" : "Publicar na conversa",
     "Share to conversation" : "Compartir na conversa",

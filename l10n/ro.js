@@ -892,7 +892,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Adaugă utilizatori, grupuri și cercuri",
     "Add users or circles" : "Adaugă utilizatori și cercuri",
     "Add groups or circles" : "Adaugă grupuri și cercuri",
-    "Open sidebar" : "Deschide bara laterală",
     "Start a conversation" : "Porniți o conversație",
     "Post to conversation" : "Postare în conversație",
     "Share to conversation" : "Partajare la conversație"

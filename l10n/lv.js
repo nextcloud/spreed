@@ -272,7 +272,6 @@ OC.L10N.register(
     "Response to" : "Atbilde uz",
     "Enabled for" : "Iespējots",
     "Moderators" : "Regulētāji",
-    "Open sidebar" : "Atvērt sānjoslu",
     "Start a conversation" : "Sākt sarunu",
     "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā",
     "TURN server" : "TURN serveris",

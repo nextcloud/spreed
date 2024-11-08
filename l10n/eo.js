@@ -346,7 +346,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "Circles" : "Rondoj",
-    "Open sidebar" : "Malfermi flankopanelon"
+    "Circles" : "Rondoj"
 },
 "nplurals=2; plural=(n != 1);");
