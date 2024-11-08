@@ -274,18 +274,15 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				this.currentCallFlags = flags
 				this.currentCallSilent = silent
 				this.currentCallRecordingConsent = recordingConsent
-				this._trigger('joinCall', [token])
+				this._trigger('joinCall', [token, flags])
 				resolve()
 				this._joinCallSuccess(token)
 			}.bind(this))
 			.catch(function(e) {
 				reject(new Error())
 				console.error('Connection failed, reason: ', e)
-				store.commit('connectionFailed', {
-					token,
-					payload: e.response?.data?.ocs,
-				})
-			})
+				this._trigger('joinCallFailed', [token, e.response?.data?.ocs])
+			}.bind(this))
 	})
 }
 
@@ -1228,7 +1225,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent, recordi
 			this.currentCallFlags = flags
 			this.currentCallSilent = silent
 			this.currentCallRecordingConsent = recordingConsent
-			this._trigger('joinCall', [token])
+			this._trigger('joinCall', [token, flags])
 
 			resolve()
 		})

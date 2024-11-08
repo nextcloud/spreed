@@ -66,6 +66,8 @@ const state = {
 	},
 	inCall: {
 	},
+	joiningCall: {
+	},
 	connecting: {
 	},
 	connectionFailed: {
@@ -91,6 +93,10 @@ const state = {
 const getters = {
 	isInCall: (state) => (token) => {
 		return !!(state.inCall[token] && Object.keys(state.inCall[token]).length > 0)
+	},
+
+	isJoiningCall: (state) => (token) => {
+		return !!(state.joiningCall[token] && Object.keys(state.joiningCall[token]).length > 0)
 	},
 
 	isConnecting: (state) => (token) => {
@@ -331,27 +337,15 @@ const mutations = {
 	},
 
 	setInCall(state, { token, sessionId, flags }) {
-		if (state.connectionFailed[token]) {
-			Vue.delete(state.connectionFailed, token)
-		}
 		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
 				Vue.delete(state.inCall[token], sessionId)
-			}
-
-			if (state.connecting[token] && state.connecting[token][sessionId]) {
-				Vue.delete(state.connecting[token], sessionId)
 			}
 		} else {
 			if (!state.inCall[token]) {
 				Vue.set(state.inCall, token, {})
 			}
 			Vue.set(state.inCall[token], sessionId, flags)
-
-			if (!state.connecting[token]) {
-				Vue.set(state.connecting, token, {})
-			}
-			Vue.set(state.connecting[token], sessionId, flags)
 		}
 	},
 
@@ -359,9 +353,39 @@ const mutations = {
 		Vue.set(state.connectionFailed, token, payload)
 	},
 
+	clearConnectionFailed(state, token) {
+		Vue.delete(state.connectionFailed, token)
+	},
+
+	joiningCall(state, { token, sessionId, flags }) {
+		if (!state.joiningCall[token]) {
+			Vue.set(state.joiningCall, token, {})
+		}
+		Vue.set(state.joiningCall[token], sessionId, flags)
+	},
+
+	finishedJoiningCall(state, { token, sessionId }) {
+		if (state.joiningCall[token] && state.joiningCall[token][sessionId]) {
+			Vue.delete(state.joiningCall[token], sessionId)
+			if (!Object.keys(state.joiningCall[token]).length) {
+				Vue.delete(state.joiningCall, token)
+			}
+		}
+	},
+
+	connecting(state, { token, sessionId, flags }) {
+		if (!state.connecting[token]) {
+			Vue.set(state.connecting, token, {})
+		}
+		Vue.set(state.connecting[token], sessionId, flags)
+	},
+
 	finishedConnecting(state, { token, sessionId }) {
 		if (state.connecting[token] && state.connecting[token][sessionId]) {
 			Vue.delete(state.connecting[token], sessionId)
+			if (!Object.keys(state.connecting[token]).length) {
+				Vue.delete(state.connecting, token)
+			}
 		}
 	},
 
@@ -809,8 +833,23 @@ const actions = {
 		return false
 	},
 
-	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent, recordingConsent }) {
-		if (!participantIdentifier?.sessionId) {
+	async joinCall({ commit, getters, state }, { token, participantIdentifier, flags, silent, recordingConsent }) {
+		// SUMMARY: join call process
+		// There are 2 main steps to join a call:
+		// 1. Join the call (signaling-join-call)
+		// 2A. Wait for the users list (signaling-users-in-room) INTERNAL server event
+		// 2B. Wait for the users list (signaling-users-changed) EXTERNAL server event
+		// In case of failure, we receive a signaling-join-call-failed event
+
+		// Exception 1: We may receive the users list before the signaling-join-call event
+		// In this case, we use the isParticipantsListReceived flag to handle this case
+
+		// Exception 2: We may receive the users list in a second event of signaling-users-changed or signaling-users-in-room
+		// In this case, we always check if the list is the updated one (it has the current participant in the call)
+
+		const { sessionId } = participantIdentifier ?? {}
+
+		if (!sessionId) {
 			console.error('Trying to join call without sessionId')
 			return
 		}
@@ -821,31 +860,86 @@ const actions = {
 			return
 		}
 
-		commit('setInCall', {
-			token,
-			sessionId: participantIdentifier.sessionId,
-			flags,
-		})
+		let isParticipantsListReceived = false
+		let connectingTimeout = null
+		commit('joiningCall', { token, sessionId, flags })
 
-		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
-
-		const updatedData = {
-			inCall: actualFlags,
+		const handleJoinCall = ([token, flags]) => {
+			commit('setInCall', { token, sessionId, flags })
+			commit('finishedJoiningCall', { token, sessionId })
+			if (isParticipantsListReceived) {
+				finishConnecting()
+			} else {
+				commit('connecting', { token, sessionId, flags })
+				// Fallback in case we never receive the users list after joining the call
+				connectingTimeout = setTimeout(() => {
+					// If, by accident, we never receive a users list, just switch to
+					// "Waiting for others to join the call …" after some seconds.
+					finishConnecting()
+				}, 10000)
+			}
 		}
-		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 
-		EventBus.once('signaling-users-in-room', () => {
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		})
+		const handleJoinCallFailed = ([token, payload]) => {
+			finishConnecting()
+			commit('connectionFailed', {
+				token,
+				payload
+			})
+			commit('setInCall', {
+				token,
+				sessionId: participantIdentifier.sessionId,
+				flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			})
+		}
 
-		setTimeout(() => {
-			// If by accident we never receive a users list, just switch to
-			// "Waiting for others to join the call …" after some seconds.
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		}, 10000)
+		const handleParticipantsListReceived = (payload, key) => {
+			const participant = payload[0].find(p => p[key] === sessionId)
+			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				if (state.joiningCall[token]?.[sessionId]) {
+					isParticipantsListReceived = true
+					commit('connecting', { token, sessionId, flags })
+					return
+				}
+				finishConnecting()
+			}
+		}
 
-		const callViewStore = useCallViewStore()
-		callViewStore.handleJoinCall(getters.conversation(token))
+		const handleUsersInRoom = (payload) => {
+			handleParticipantsListReceived(payload, 'sessionId')
+		}
+
+		const handleUsersChanged = (payload) => {
+			handleParticipantsListReceived(payload, 'nextcloudSessionId')
+		}
+
+		const finishConnecting = () => {
+			commit('finishedConnecting', { token, sessionId })
+			commit('finishedJoiningCall', { token, sessionId })
+			EventBus.off('signaling-join-call', handleJoinCall)
+			EventBus.off('signaling-join-call-failed', handleJoinCallFailed)
+			EventBus.off('signaling-users-in-room', handleUsersInRoom)
+			EventBus.off('signaling-users-changed', handleUsersChanged)
+			clearTimeout(connectingTimeout)
+		}
+
+		EventBus.once('signaling-join-call', handleJoinCall)
+		EventBus.once('signaling-join-call-failed', handleJoinCallFailed)
+		EventBus.on('signaling-users-in-room', handleUsersInRoom)
+		EventBus.on('signaling-users-changed', handleUsersChanged)
+
+		try {
+			const actualFlags = await joinCall(token, flags, silent, recordingConsent)
+			const updatedData = {
+				inCall: actualFlags,
+			}
+			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+			const callViewStore = useCallViewStore()
+			callViewStore.handleJoinCall(getters.conversation(token))
+		} catch (e) {
+			console.error('Error while joining call: ', e)
+
+		}
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {
@@ -1187,6 +1281,10 @@ const actions = {
 	setPhoneMute(context, { callid, value }) {
 		context.commit('setPhoneMute', { callid, value })
 	},
+
+	clearConnectionFailed(context, token) {
+		context.commit('clearConnectionFailed', token)
+	}
 }
 
 export default { state, mutations, getters, actions }

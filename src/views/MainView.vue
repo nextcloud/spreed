@@ -11,6 +11,7 @@
 			<CallView v-if="isInCall" :token="token" />
 			<ChatView v-else />
 			<PollViewer />
+			<CallFailedDialog v-if="connectionFailed" :token="token" />
 		</template>
 	</div>
 </template>
@@ -18,6 +19,7 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 
+import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
@@ -31,6 +33,7 @@ export default {
 	name: 'MainView',
 	components: {
 		CallView,
+		CallFailedDialog,
 		ChatView,
 		LobbyScreen,
 		PollViewer,
@@ -56,6 +59,10 @@ export default {
 
 		isInLobby() {
 			return this.$store.getters.isInLobby
+		},
+
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
 		},
 	},
 

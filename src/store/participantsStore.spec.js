@@ -540,6 +540,7 @@ describe('participantsStore', () => {
 		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
 		beforeEach(async () => {
+			jest.useFakeTimers()
 			testStoreConfig.getters.conversation = () => jest.fn().mockReturnValue({
 				token: TOKEN,
 				type: 3,
@@ -555,8 +556,7 @@ describe('participantsStore', () => {
 				},
 			})
 
-			// The requested flags and the actual flags can be different if some
-			// media device is not available.
+			// Setup joinCall and leaveCall mock behavior
 			joinCall.mockResolvedValue(actualFlags)
 			leaveCall.mockResolvedValue()
 
@@ -572,25 +572,108 @@ describe('participantsStore', () => {
 			})
 		})
 
-		test('joins call', async () => {
-			// Assert
+		afterEach(() => {
+			jest.clearAllTimers()
+		})
+
+		const assertInitialCallState = () => {
 			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false, false)
+			EventBus.emit('signaling-join-call', [TOKEN, actualFlags])
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
-			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
-				{
-					attendeeId: 1,
-					sessionId: 'session-id-1',
-					inCall: actualFlags,
-					participantType: PARTICIPANT.TYPE.USER,
-				},
-			])
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+			expect(store.getters.participantsList(TOKEN)).toStrictEqual([{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
+		}
 
-			// Finished connecting to the call
-			EventBus.emit('signaling-users-in-room')
-
+		const finishConnectingWithUsers = (event, payload) => {
+			EventBus.emit(event, [payload])
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+		}
+
+		const emitFailureAndAssert = (reason) => {
+			EventBus.emit('signaling-join-call-failed', [TOKEN, reason])
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+			expect(store.getters.connectionFailed(TOKEN)).toBe(reason)
+		}
+
+		const assertParticipantsListReceivedBeforeJoiningCall = (event, payload) => {
+			EventBus.emit(event, [payload])
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(true)
+			expect(store.getters.isConnecting(TOKEN)).toBe(true)
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+			// join call
+			EventBus.emit('signaling-join-call', [TOKEN, actualFlags])
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+		}
+
+		test('joins call with internal signaling', async () => {
+			assertInitialCallState()
+			finishConnectingWithUsers('signaling-users-in-room', [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
+		})
+
+		test('joins call with external signaling', async () => {
+			assertInitialCallState()
+			finishConnectingWithUsers('signaling-users-changed', [{
+				attendeeId: 1,
+				nextcloudSessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
+		})
+
+		test('joins call but it fails', async () => {
+			assertInitialCallState()
+			emitFailureAndAssert('error reason')
+		})
+
+		test('trying to join call but it fails', async () => {
+			emitFailureAndAssert('error reason')
+		})
+
+		test('joins call but it does not receive participants list', async () => {
+			assertInitialCallState()
+			// No other signaling event, simulates a missing participant list
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+			expect(store.getters.isConnecting(TOKEN)).toBe(true)
+
+			// Trigger fallback after delay
+			jest.advanceTimersByTime(10000)
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+		})
+
+		test('joins call but it has already received participants list from internal signaling', async () => {
+			assertParticipantsListReceivedBeforeJoiningCall('signaling-users-in-room', [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
+		})
+
+		test('joins call but it has already received participants list from external signaling', async () => {
+			assertParticipantsListReceivedBeforeJoiningCall('signaling-users-changed', [{
+				attendeeId: 1,
+				nextcloudSessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
 		})
 
 		test('leaves call', async () => {
@@ -906,7 +989,7 @@ describe('participantsStore', () => {
 				flags,
 				silent: false,
 			})
-
+			EventBus.emit('signaling-join-call', [TOKEN, flags])
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 
 			leaveConversation.mockResolvedValue()

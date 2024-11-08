@@ -9,11 +9,12 @@
 			id="call_button"
 			:title="startCallTitle"
 			:aria-label="startCallLabel"
-			:disabled="startCallButtonDisabled || loading"
+			:disabled="startCallButtonDisabled || loading || isJoiningCall"
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<IconPhoneDial v-if="isPhoneRoom" :size="20" />
+				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
+				<IconPhoneDial v-else-if="isPhoneRoom" :size="20" />
 				<IconPhoneOutline v-else-if="silentCall" :size="20" />
 				<IconPhone v-else :size="20" />
 			</template>
@@ -21,6 +22,7 @@
 				{{ startCallLabel }}
 			</template>
 		</NcButton>
+
 		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 			id="call_button"
 			:aria-label="endCallLabel"
@@ -28,7 +30,8 @@
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
-				<IconPhoneHangup :size="20" /> <!-- here -->
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else :size="20" /> <!-- here -->
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
@@ -41,7 +44,8 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
-				<IconPhoneHangup :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ leaveCallLabel }}
@@ -54,7 +58,8 @@
 			force-name
 			:type="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
-				<IconPhoneHangup v-if="!isBreakoutRoom" :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />
 				<IconArrowLeft v-else :size="20" />
 			</template>
 			<NcActionButton v-if="isBreakoutRoom"
@@ -96,6 +101,7 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -124,6 +130,7 @@ export default {
 		IconPhoneHangup,
 		IconPhoneOff,
 		IconPhoneOutline,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -268,6 +275,10 @@ export default {
 				return t('spreed', 'Join call')
 			}
 
+			if (this.isJoiningCall) {
+				return t('spreed', 'Connecting …')
+			}
+
 			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
 		},
 
@@ -333,6 +344,10 @@ export default {
 
 		isInLobby() {
 			return this.$store.getters.isInLobby
+		},
+
+		isJoiningCall() {
+			return this.$store.getters.isJoiningCall(this.token)
 		},
 	},
 
