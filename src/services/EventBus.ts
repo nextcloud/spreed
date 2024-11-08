@@ -14,7 +14,8 @@ type ExtendedEmitter = Emitter<Events> & {
 }
 
 export const EventBus: ExtendedEmitter = mitt() as ExtendedEmitter
-export const _onceHandlers = new Map<keyof Events | '*', Map<GenericEventHandler, GenericEventHandler>>()
+
+const _onceHandlers = new Map<keyof Events | '*', Map<GenericEventHandler, GenericEventHandler>>()
 
 /**
  * Register a one-time event handler for the given type
