@@ -1561,7 +1561,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Gehitu erabiltzaileak, taldeak edo zirkuluak",
     "Add users or circles" : "Gehitu erabiltzaileak edo zirkuluak",
     "Add groups or circles" : "Gehitu taldeak edo zirkuluak",
-    "Open sidebar" : "Ireki alboko barra",
     "Start a conversation" : "Hasi elkarrizketa bat",
     "Post to conversation" : "Argitaratu elkarrizketan",
     "Share to conversation" : "Partekatu elkarrizketara",

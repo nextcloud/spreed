@@ -1623,7 +1623,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Dodaj uporabnike, skupine ali kroge",
     "Add users or circles" : "Dodaj uporabnike ali kroge",
     "Add groups or circles" : "Dodaj skupine ali kroge",
-    "Open sidebar" : "Odpri bočno okno",
     "Start a conversation" : "Začni pogovor",
     "Post to conversation" : "Dodaj v pogovor",
     "Share to conversation" : "Dodaj v pogovor",

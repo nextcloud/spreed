@@ -1565,7 +1565,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Add users, groups or circles",
     "Add users or circles" : "Add users or circles",
     "Add groups or circles" : "Add groups or circles",
-    "Open sidebar" : "باز کردن نوار کناری",
     "Start a conversation" : "مکالمه را شروع کنید",
     "Post to conversation" : "Post to conversation",
     "Share to conversation" : "Share to conversation",

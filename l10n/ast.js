@@ -955,7 +955,6 @@ OC.L10N.register(
     "Users, groups and circles" : "Usuarios, grupos y círculos",
     "Users and circles" : "Usuarioa de círculos",
     "Groups and circles" : "Grupos y círculos",
-    "Open sidebar" : "Abrir la barra llateral",
     "Start a conversation" : "Aniciar una conversación",
     "TURN server" : "Sirividor TURN"
 },

@@ -134,7 +134,6 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "Circles" : "Círculos",
-    "Open sidebar" : "Abrir barra lateral",
     "Start a conversation" : "Iniciar una conversación",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
