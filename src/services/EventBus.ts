@@ -40,6 +40,7 @@ EventBus.once = function<Key extends keyof Events>(type: Key, handler: GenericEv
 	_onceHandlers.get(type)!.set(handler, fn)
 }
 
+const off = EventBus.off.bind(EventBus)
 /**
  * OVERRIDING OF ORIGINAL MITT FUNCTION
  * Remove an event handler for the given type.
@@ -48,31 +49,21 @@ EventBus.once = function<Key extends keyof Events>(type: Key, handler: GenericEv
  * @param [handler] Handler function to remove
  */
 EventBus.off = function<Key extends keyof Events>(type: Key, handler?: GenericEventHandler) {
-	const handlers: Array<GenericEventHandler> | undefined = EventBus.all!.get(type)
-	const onceHandlers: Map<GenericEventHandler, GenericEventHandler> | undefined = _onceHandlers!.get(type)
+	// @ts-expect-error: Vue: No overload matches this call
+	off(type, handler)
 
-	if (handlers) {
-		if (handler) {
-			handlers.splice(handlers.indexOf(handler) >>> 0, 1)
-		} else {
-			EventBus.all!.set(type, [])
-		}
-	}
-
-	if (handlers && onceHandlers) {
-		if (handler) {
-			for (const [_handler, fn] of onceHandlers) {
-				if (handler === fn) {
-					// Event was received once and removed by original code, clearing reference only
-					onceHandlers.delete(_handler)
-				} else if (_handler === handler) {
-					// Event was not received yet, removing the fn and reference
-					handlers.splice(handlers.indexOf(fn) >>> 0, 1)
-					onceHandlers.delete(_handler)
-				}
+	const onceHandlers = handler && _onceHandlers.get(type)
+	if (onceHandlers) {
+		for (const [originalFn, fn] of onceHandlers) {
+			if (fn === handler) {
+				onceHandlers!.delete(originalFn)
+			} else if (originalFn === handler) {
+				// @ts-expect-error: Vue: No overload matches this call
+				off(type, fn)
+				onceHandlers!.delete(originalFn)
 			}
-		} else {
-			_onceHandlers.set(type, new Map())
 		}
+	} else {
+		_onceHandlers.delete(type)
 	}
 }

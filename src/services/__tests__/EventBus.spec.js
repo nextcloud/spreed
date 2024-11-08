@@ -239,7 +239,7 @@ describe('EventBus', () => {
 
 			// Act
 			EventBus.off('custom-event')
-			testEventBus('custom-event', 0, 0)
+			testEventBus('custom-event', 0)
 			EventBus.emit('custom-event')
 			EventBus.emit('custom-event')
 
@@ -264,7 +264,7 @@ describe('EventBus', () => {
 			EventBus.off('*')
 			testEventBus('custom-event-1', 1, 1)
 			testEventBus('custom-event-2', 2, 1)
-			testEventBus('*', 0, 0)
+			testEventBus('*', 0)
 			EventBus.emit('custom-event-1')
 			EventBus.emit('custom-event-2')
 			EventBus.emit('custom-event-3')
@@ -277,7 +277,7 @@ describe('EventBus', () => {
 			expect(customEventOnce3).toHaveBeenCalledTimes(0)
 			testEventBus('custom-event-1', 0, 0)
 			testEventBus('custom-event-2', 1, 0)
-			testEventBus('*', 0, 0)
+			testEventBus('*', 0)
 		})
 	})
 })
