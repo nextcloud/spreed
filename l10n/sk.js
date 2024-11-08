@@ -1792,7 +1792,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Pridať používateľov, skupiny alebo kruhy",
     "Add users or circles" : "Pridať používateľov alebo kruhy",
     "Add groups or circles" : "Pridať skupiny alebo kruhy",
-    "Open sidebar" : "Otvoriť bočný panel",
     "Start a conversation" : "Začať rozhovor",
     "Post to conversation" : "Uverejniť príspevok v konverzácii",
     "Share to conversation" : "Zdieľat v rozhovore",

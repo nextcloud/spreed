@@ -737,7 +737,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Thêm người dùng, nhóm hoặc vòng kết nối",
     "Add users or circles" : "Thêm người dùng hoặc vòng kết nối",
     "Add groups or circles" : "Thêm nhóm hoặc vòng kết nối",
-    "Open sidebar" : "Mở thanh bên",
     "Start a conversation" : "Bắt đầu một cuộc Đàm thoại",
     "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Specify commands the users can use in chats" : "Chỉ định các lệnh mà người dùng có thể sử dụng trong các cuộc trò chuyện",

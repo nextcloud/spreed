@@ -1593,7 +1593,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Felhasználók, csoportok vagy körök hozzáadása",
     "Add users or circles" : "Felhasználók vagy körök hozzáadása",
     "Add groups or circles" : "Csoportok vagy körök kozzáadása",
-    "Open sidebar" : "Oldalsáv megnyitása",
     "Start a conversation" : "Beszélgetés indítása",
     "Post to conversation" : "Elküldés egy beszélgetésbe",
     "Share to conversation" : "Megosztás beszélgetésben",

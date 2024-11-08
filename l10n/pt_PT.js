@@ -361,7 +361,6 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Circles" : "Círculos",
-    "Open sidebar" : "Abrir barra lateral",
     "Start a conversation" : "Iniciar uma conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

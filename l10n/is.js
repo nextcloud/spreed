@@ -570,7 +570,6 @@ OC.L10N.register(
     "Enabled for" : "Virkjað fyrir",
     "Moderators" : "Umsjónarmenn",
     "Circles" : "Hringir",
-    "Open sidebar" : "Opna hliðarspjald",
     "Start a conversation" : "Hefja samtal",
     "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli",
     "TURN server" : "TURN-þjónn",

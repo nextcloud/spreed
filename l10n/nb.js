@@ -1842,7 +1842,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Legg til brukere, grupper eller sirkler",
     "Add users or circles" : "Legg til brukere eller sirkler",
     "Add groups or circles" : "Legg til grupper eller sirkler",
-    "Open sidebar" : "Åpne sidepanel",
     "Start a conversation" : "Start en samtale",
     "Post to conversation" : "Legg ut til samtale",
     "Share to conversation" : "Del til samtale",

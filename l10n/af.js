@@ -326,7 +326,6 @@ OC.L10N.register(
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
-    "iOS app" : "iOS-toep",
-    "Open sidebar" : "Open kantbalk"
+    "iOS app" : "iOS-toep"
 },
 "nplurals=2; plural=(n != 1);");

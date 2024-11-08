@@ -606,7 +606,6 @@ OC.L10N.register(
     "Groups and circles" : "קבוצות ומעגלים",
     "Add circles" : "הוספת מעגלים",
     "Add groups or circles" : "הוספת קבוצות או מעגלים",
-    "Open sidebar" : "פתיחת סרגל הצד",
     "Start a conversation" : "התחלת דיון",
     "TURN server" : "שרת TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",

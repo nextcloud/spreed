@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Kullanıcı, grup ya da takım ekle",
     "Add users or circles" : "Kullanıcı ya da takım ekle",
     "Add groups or circles" : "Grup ya da takım ekle",
-    "Open sidebar" : "Yan çubuğu aç",
     "Start a conversation" : "Bir görüşme başlatın",
     "Post to conversation" : "Görüşmeye gönder",
     "Share to conversation" : "Görüşmeye gönder",

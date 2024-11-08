@@ -104,7 +104,6 @@ OC.L10N.register(
     "Default" : "ค่าเริ่มต้น",
     "The password is wrong. Try again." : "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอป Android",
-    "iOS app" : "แอป iOS",
-    "Open sidebar" : "เปิดแถบด้านข้าง"
+    "iOS app" : "แอป iOS"
 },
 "nplurals=1; plural=0;");

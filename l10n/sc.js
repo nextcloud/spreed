@@ -1072,7 +1072,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Agiunghe utentes, grupos o giros",
     "Add users or circles" : "Agiunghe utentes o giros",
     "Add groups or circles" : "Agiunghe grupos o giros",
-    "Open sidebar" : "Aberi s'istanca laterale",
     "Start a conversation" : "Cumintza una resonada",
     "Post to conversation" : "Pùblica in sa resonada",
     "Specify commands the users can use in chats" : "Ispetzìfica is commandos chi is utentes podent impreare in sa tzarrada",

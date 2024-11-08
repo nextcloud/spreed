@@ -119,7 +119,6 @@
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Circles" : "Sirklar",
-    "Remove circle and members" : "Eksterne sirklar og medlemmar",
-    "Open sidebar" : "Opne sidestolpe"
+    "Remove circle and members" : "Eksterne sirklar og medlemmar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

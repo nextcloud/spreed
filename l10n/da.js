@@ -605,7 +605,6 @@ OC.L10N.register(
     "Groups and circles" : "Grupper og cirkler",
     "Add circles" : "Tilføj cirkler",
     "Add groups or circles" : "Tilføj grupper eller cirkler",
-    "Open sidebar" : "Åbn sidebar",
     "Start a conversation" : "Start en samtale",
     "Specify commands the users can use in chats" : "Definer kommandoer brugerne kan bruge i chats",
     "TURN server" : "TURN server",

@@ -1899,7 +1899,6 @@ OC.L10N.register(
     "Add users, groups or circles" : "Додај кориснике, групе или кругове",
     "Add users or circles" : "Додај кориснике или кругове",
     "Add groups or circles" : "Додај групе или кругове",
-    "Open sidebar" : "Отвори бочну траку",
     "Start a conversation" : "Започни разговор",
     "Post to conversation" : "Објави у разговор",
     "Share to conversation" : "Дели у разговор",

@@ -927,7 +927,6 @@ OC.L10N.register(
     "Groups and circles" : "Grupės ir ratai",
     "Add circles" : "Pridėti ratus",
     "Add groups or circles" : "Pridėti grupes ar ratus",
-    "Open sidebar" : "Atverti šoninę juostą",
     "Start a conversation" : "Pradėti pokalbį",
     "TURN server" : "TURN serveris",
     "Signaling servers" : "Signaliniai serveriai",
