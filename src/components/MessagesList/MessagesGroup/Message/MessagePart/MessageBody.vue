@@ -322,12 +322,19 @@ export default {
 	},
 
 	mounted() {
-		EventBus.on('editing-message-processing', this.setIsEditing)
+		if (this.isEditable) {
+			EventBus.on('editing-message-processing', this.setIsEditing)
+		}
+
 		if (!this.containsCodeBlocks) {
 			return
 		}
 
 		this.codeBlocks = Array.from(this.$refs.messageMain?.querySelectorAll('pre'))
+	},
+
+	beforeDestroy() {
+		EventBus.off('editing-message-processing', this.setIsEditing)
 	},
 
 	methods: {
