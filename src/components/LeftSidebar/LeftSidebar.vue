@@ -675,7 +675,7 @@ export default {
 		this.debounceHandleScroll.clear?.()
 
 		EventBus.off('should-refresh-conversations', this.handleShouldRefreshConversations)
-		EventBus.off('conversations-received', this.handleUnreadMention)
+		EventBus.off('conversations-received', this.handleConversationsReceived)
 		EventBus.off('route-change', this.onRouteChange)
 
 		this.cancelSearchPossibleConversations()
