@@ -37,7 +37,7 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky"
+		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations"
 	},
 	"require-dev": {
 		"nextcloud/ocp": "dev-master",
