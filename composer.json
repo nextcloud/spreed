@@ -6,7 +6,8 @@
 	},
 	"config": {
 		"allow-plugins": {
-			"bamarni/composer-bin-plugin": true
+			"bamarni/composer-bin-plugin": true,
+			"cweagans/composer-patches": true
 		},
 		"autoloader-suffix": "Talk",
 		"optimize-autoloader": true,
@@ -37,7 +38,7 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky"
+		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations"
 	},
 	"require-dev": {
 		"nextcloud/ocp": "dev-master",
@@ -46,6 +47,7 @@
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
 		"cuyz/valinor": "^1.14",
+		"cweagans/composer-patches": "^1.7.3",
 		"firebase/php-jwt": "^6.10"
 	},
 	"extra": {
@@ -58,6 +60,7 @@
 				"firebase/php-jwt",
 				"cuyz/valinor"
 			]
-		}
+		},
+		"patches-file": "composer.patches.json"
 	}
 }
