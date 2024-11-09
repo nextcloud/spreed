@@ -896,6 +896,11 @@
     "The message was sent to all breakout rooms" : "Seoladh an teachtaireacht chuig gach seomra ar leithligh",
     "The message was sent to \"{roomName}\"" : "Seoladh an teachtaireacht chuig \"{roomName}\"",
     "The message could not be sent" : "Níorbh fhéidir an teachtaireacht a sheoladh",
+    "Recording consent is required" : "Tá toiliú taifeadta ag teastáil",
+    "This conversation is read-only" : "Tá an comhrá seo inléite amháin",
+    "Conversation not found or not joined" : "Níor aimsíodh an comhrá nó níor cuireadh isteach ann é",
+    "Please try to reload the page" : "Déan iarracht an leathanach a athlódáil",
+    "Connection failed" : "Theip ar an gceangal",
     "{nickName} raised their hand." : "D'ardaigh {nickName} a lámh.",
     "A participant raised their hand." : "D'ardaigh rannpháirtí a lámh.",
     "Previous page of videos" : "An leathanach físeáin roimhe seo",
@@ -903,16 +908,10 @@
     "Collapse stripe" : "Laghdaigh stríoc",
     "Expand stripe" : "Leathnaigh stríoc",
     "Copy link" : "Cóipeáil an nasc",
-    "Recording consent is required" : "Tá toiliú taifeadta ag teastáil",
-    "This conversation is read-only" : "Tá an comhrá seo inléite amháin",
-    "Conversation not found or not joined" : "Níor aimsíodh an comhrá nó níor cuireadh isteach ann é",
-    "Connection failed" : "Theip ar an gceangal",
     "Connecting …" : "Ag nascadh…",
     "Calling …" : "Ag glaoch…",
     "Waiting for {user} to join the call" : "Ag fanacht le {user} páirt a ghlacadh sa ghlao",
     "Waiting for others to join the call …" : "Ag fanacht le daoine eile a bheith páirteach sa ghlao…",
-    "Please try to reload the page" : "Déan iarracht an leathanach a athlódáil",
-    "Something went wrong" : "Chuaigh rud eigin mícheart",
     "You can invite others in the participant tab of the sidebar" : "Is féidir leat cuireadh a thabhairt do dhaoine eile sa chluaisín rannpháirtí ar an mbarra taoibh",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Is féidir leat cuireadh a thabhairt do dhaoine eile sa chluaisín rannpháirtí ar an mbarra taoibh nó an nasc seo a roinnt chun cuireadh a thabhairt do dhaoine eile!",
     "Share this link to invite others!" : "Roinn an nasc seo le cuireadh a thabhairt do dhaoine eile!",
@@ -1906,6 +1905,7 @@
     "Signaling servers" : "Freastalaithe comharthaíochta",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Is féidir freastalaí comharthaíochta seachtrach a úsáid go roghnach le haghaidh suiteálacha níos mó. Fág folamh chun an freastalaí comharthaíochta inmheánach a úsáid.",
     "- Unsent message drafts are now saved in your browser " : "- Déantar dréachtaí teachtaireachta nár seoladh a shábháil i do bhrabhsálaí anois",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile",
+    "Something went wrong" : "Chuaigh rud eigin mícheart"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

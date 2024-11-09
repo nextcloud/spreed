@@ -758,6 +758,7 @@ OC.L10N.register(
     "The message was sent to all breakout rooms" : "El mensaje se envió a todas las salas separadas",
     "The message was sent to \"{roomName}\"" : "El mensaje se envió a \"{roomName}\"",
     "The message could not be sent" : "No se pudo enviar el mensaje",
+    "This conversation is read-only" : "Esta conversación es de solo lectura",
     "{nickName} raised their hand." : "{nickName} levantó la mano.",
     "A participant raised their hand." : "Un participante levantó la mano.",
     "Previous page of videos" : "Página anterior de videos",
@@ -765,11 +766,9 @@ OC.L10N.register(
     "Collapse stripe" : "Ocultar franja",
     "Expand stripe" : "Expandir franja",
     "Copy link" : "Copiar liga",
-    "This conversation is read-only" : "Esta conversación es de solo lectura",
     "Connecting …" : "Conectando...",
     "Waiting for {user} to join the call" : "Esperando a que {user} se una a la llamada",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
-    "Something went wrong" : "Algo salió mal",
     "You can invite others in the participant tab of the sidebar" : "Puedes invitar a otras personas en la pestaña de participante del menú lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "¡Puedes invitar a otros usando la pestaña de participante de la barra lateral o compartiendo esta liga para invitar a otras personas!",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",
@@ -1473,6 +1472,7 @@ OC.L10N.register(
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Signaling servers" : "Servidores de señalización",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. "
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
+    "Something went wrong" : "Algo salió mal"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

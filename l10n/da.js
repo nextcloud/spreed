@@ -369,7 +369,6 @@ OC.L10N.register(
     "Copy link" : "Kopier link",
     "Connecting …" : "Forbinder ...",
     "Waiting for others to join the call …" : "Venter på andre tilslutter sig opkaldet ...",
-    "Something went wrong" : "Noget gik galt",
     "You can invite others in the participant tab of the sidebar" : "Du kan invitere andre i fanebladet \"deltagere\" i menuen i siden",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Du kan invitere andre i fanebladet \"deltagere\" i menuen i siden, eller dele dette link for at invitere andre!",
     "Share this link to invite others!" : "Del dette link for at invitere andre!",
@@ -610,6 +609,7 @@ OC.L10N.register(
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveren bliver brugt til at proxy trafikken fra deltagerne bagved en firewall.",
     "Signaling servers" : "Signaleringsservere",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
+    "Something went wrong" : "Noget gik galt"
 },
 "nplurals=2; plural=(n != 1);");

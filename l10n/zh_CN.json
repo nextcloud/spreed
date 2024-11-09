@@ -844,6 +844,7 @@
     "The message was sent to all breakout rooms" : "消息已发送至所有分组讨论室",
     "The message was sent to \"{roomName}\"" : "消息已发送至分组讨论室“{roomName}”",
     "The message could not be sent" : "无法发送消息",
+    "This conversation is read-only" : "此对话是只读的 ",
     "{nickName} raised their hand." : "{nickName}举手了。",
     "A participant raised their hand." : "一名参与者设举手了",
     "Previous page of videos" : "视频上一页 ",
@@ -851,12 +852,10 @@
     "Collapse stripe" : "折叠条纹",
     "Expand stripe" : "展开条纹",
     "Copy link" : "复制链接",
-    "This conversation is read-only" : "此对话是只读的 ",
     "Connecting …" : "连接中 …",
     "Calling …" : "呼叫中……",
     "Waiting for {user} to join the call" : "等待{user}加入通话",
     "Waiting for others to join the call …" : "等待其他人加入通话 ...",
-    "Something went wrong" : "发生了错误",
     "You can invite others in the participant tab of the sidebar" : "您可以在侧栏的参与者选项卡中邀请其他人",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "您可以在侧边栏的参与者标签中邀请其他人或分享此链接以邀请其他人！",
     "Share this link to invite others!" : "分享这个链接来邀请其他人！",
@@ -1697,6 +1696,7 @@
     "TURN server" : "TURN 服务器",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 服务器是用来为防火墙后面的参与者代理流量的。",
     "Signaling servers" : "信令服务器",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部的信令服务器。若使用内部的信令服务器请留空。"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部的信令服务器。若使用内部的信令服务器请留空。",
+    "Something went wrong" : "发生了错误"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

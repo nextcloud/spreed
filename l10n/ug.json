@@ -881,6 +881,11 @@
     "The message was sent to all breakout rooms" : "بۇ ئۇچۇر بارلىق بۆسۈش ئۆيلىرىگە ئەۋەتىلدى",
     "The message was sent to \"{roomName}\"" : "بۇ ئۇچۇر \"{roomName}\" غا ئەۋەتىلگەن",
     "The message could not be sent" : "ئۇچۇر ئەۋەتىلمىدى",
+    "Recording consent is required" : "خاتىرىلەش ئىجازىتى تەلەپ قىلىنىدۇ",
+    "This conversation is read-only" : "بۇ سۆھبەت پەقەت ئوقۇلىدۇ",
+    "Conversation not found or not joined" : "سۆھبەت تېپىلمىدى ياكى قوشۇلمىدى",
+    "Please try to reload the page" : "بۇ بەتنى قايتا يۈكلەڭ",
+    "Connection failed" : "ئۇلىنىش مەغلۇپ بولدى",
     "{nickName} raised their hand." : "{nickName their ئۇلارنىڭ قولىنى كۆتۈردى.",
     "A participant raised their hand." : "بىر قاتناشقۇچى قولىنى كۆتۈردى.",
     "Previous page of videos" : "سىنلارنىڭ ئالدىنقى بېتى",
@@ -888,16 +893,10 @@
     "Collapse stripe" : "يىمىرىلىش يولى",
     "Expand stripe" : "بەلۋاغنى كېڭەيتىش",
     "Copy link" : "ئۇلانمىنى كۆچۈرۈڭ",
-    "Recording consent is required" : "خاتىرىلەش ئىجازىتى تەلەپ قىلىنىدۇ",
-    "This conversation is read-only" : "بۇ سۆھبەت پەقەت ئوقۇلىدۇ",
-    "Conversation not found or not joined" : "سۆھبەت تېپىلمىدى ياكى قوشۇلمىدى",
-    "Connection failed" : "ئۇلىنىش مەغلۇپ بولدى",
     "Connecting …" : "ئۇلىنىش…",
     "Calling …" : "چاقىرىش…",
     "Waiting for {user} to join the call" : "{ئىشلەتكۈچى} نىڭ چاقىرىققا قاتنىشىشىنى ساقلاش",
     "Waiting for others to join the call …" : "باشقىلارنىڭ تېلېفونغا قاتنىشىشىنى ساقلاش…",
-    "Please try to reload the page" : "بۇ بەتنى قايتا يۈكلەڭ",
-    "Something went wrong" : "چاتاق چىقتى",
     "You can invite others in the participant tab of the sidebar" : "يان كۆزنەكنىڭ قاتناشقۇچىلار بەتكۈچىدە باشقىلارنى تەكلىپ قىلسىڭىز بولىدۇ",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "سىز يان كۆزنەكنىڭ قاتناشقۇچىلار بەتكۈچىدە باشقىلارنى تەكلىپ قىلالايسىز ياكى بۇ ئۇلىنىشنى ھەمبەھىرلەپ باشقىلارنى تەكلىپ قىلالايسىز!",
     "Share this link to invite others!" : "باشقىلارنى تەكلىپ قىلىش ئۈچۈن بۇ ئۇلىنىشنى ھەمبەھىرلەڭ!",
@@ -1853,6 +1852,7 @@
     "Signaling servers" : "سىگنال مۇلازىمىتىرى",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "سىرتقى سىگنال مۇلازىمېتىرىنى چوڭراق قاچىلاشقا ئىختىيارىي ئىشلىتىشكە بولىدۇ. ئىچكى سىگنال مۇلازىمېتىرىنى ئىشلىتىش ئۈچۈن بوش قويۇڭ.",
     "- Unsent message drafts are now saved in your browser " : "- ئەۋەتىلمىگەن ئۇچۇر لايىھەلىرى تور كۆرگۈچىڭىزدە ساقلاندى ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * ئالدىن كۆرۈش: * تېكىست پاراڭلىشىش ھازىر باشقا سۆھبەت مۇلازىمېتىرلىرى بىلەن فېدېراتسىيە ئۇسۇلدا ئېلىپ بېرىلسا بولىدۇ"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * ئالدىن كۆرۈش: * تېكىست پاراڭلىشىش ھازىر باشقا سۆھبەت مۇلازىمېتىرلىرى بىلەن فېدېراتسىيە ئۇسۇلدا ئېلىپ بېرىلسا بولىدۇ",
+    "Something went wrong" : "چاتاق چىقتى"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

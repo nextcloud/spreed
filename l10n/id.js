@@ -274,7 +274,6 @@ OC.L10N.register(
     "Confirm" : "Konfirmasi",
     "Reset" : "Setel ulang",
     "Copy link" : "Salin tautan",
-    "Something went wrong" : "Ada yang salah",
     "Collapse" : "Tutup",
     "Expand" : "Perluas",
     "Drop your files to upload" : "Lepas berkas Anda untuk mengunggah",
@@ -361,6 +360,7 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS"
+    "iOS app" : "Aplikasi iOS",
+    "Something went wrong" : "Ada yang salah"
 },
 "nplurals=1; plural=0;");

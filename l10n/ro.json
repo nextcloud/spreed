@@ -489,15 +489,14 @@
     "Reset" : "Resetare",
     "Add participant \"{user}\"" : "Adaugă participant \"{user}\"",
     "The message could not be sent" : "Mesajul nu s-a putut transmite ",
+    "This conversation is read-only" : "Această conversație este read-only",
     "{nickName} raised their hand." : "{nickName} a ridicat mâna.",
     "A participant raised their hand." : "Un participant a ridicat mâna.",
     "Copy link" : "Copiză link",
-    "This conversation is read-only" : "Această conversație este read-only",
     "Connecting …" : "Se conectează ...",
     "Calling …" : "Se apelează ...",
     "Waiting for {user} to join the call" : "Se așteaptă ca {user} să intre în videoconferință",
     "Waiting for others to join the call …" : "Se așteaptă ca alții să intre în videoconferință ...",
-    "Something went wrong" : "A apărut o eroare",
     "You can invite others in the participant tab of the sidebar" : "Puteți invita pe alții din tabul Participanți, în bara laterală",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Puteți invita pe alții din tabul Participanți din bara laterală sau să partajați acest link pentru a invita pe altcineva!",
     "Share this link to invite others!" : "Partajați acest link pentru a invita pe altcineva!",
@@ -892,6 +891,7 @@
     "Add groups or circles" : "Adaugă grupuri și cercuri",
     "Start a conversation" : "Porniți o conversație",
     "Post to conversation" : "Postare în conversație",
-    "Share to conversation" : "Partajare la conversație"
+    "Share to conversation" : "Partajare la conversație",
+    "Something went wrong" : "A apărut o eroare"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }
