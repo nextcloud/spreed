@@ -1136,7 +1136,7 @@ export default {
 		 * @return {boolean} true if element was found, false otherwise
 		 */
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
-			let element = document.getElementById(`message_${messageId}`)
+			const element = document.getElementById(`message_${messageId}`)
 			if (!element) {
 				// Message id doesn't exist
 				// TODO: in some cases might need to trigger a scroll up if this is an older message
@@ -1145,9 +1145,10 @@ export default {
 				return false // element not found
 			}
 
-			if (this.isChatVisible && element.offsetParent === null) {
+			let scrollElement = element
+			if (this.isChatVisible && scrollElement.offsetParent === null) {
 				console.debug('Message to focus is hidden, scrolling to its nearest visible parent', messageId)
-				element = element.closest('ul[style="display: none;"]').parentElement
+				scrollElement = scrollElement.closest('ul[style="display: none;"]').parentElement
 			}
 
 			console.debug('Scrolling to a focused message programmatically')
@@ -1155,7 +1156,7 @@ export default {
 
 			// TODO: doesn't work if chat is hidden. Need to store
 			// delayed 'shouldScroll' and call after chat is visible
-			element.scrollIntoView({
+			scrollElement.scrollIntoView({
 				behavior: smooth ? 'smooth' : 'auto',
 				block: 'center',
 				inline: 'nearest',
@@ -1171,8 +1172,9 @@ export default {
 				this.setChatScrolledToBottom(true)
 			}
 
-			if (highlightAnimation) {
-				EventBus.emit('highlight-message', messageId)
+			if (highlightAnimation && scrollElement === element) {
+				// element is visible, highlight it
+				element.classList.add('message--highlighted')
 			}
 			this.isFocusingMessage = false
 
