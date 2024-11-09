@@ -896,6 +896,11 @@
     "The message was sent to all breakout rooms" : "訊息已傳送至所有分組討論室",
     "The message was sent to \"{roomName}\"" : "訊息已發佈至 “{roomName}”",
     "The message could not be sent" : "無法傳送訊息",
+    "Recording consent is required" : "需要錄製同意",
+    "This conversation is read-only" : "對話是唯讀狀態",
+    "Conversation not found or not joined" : "找不到或未加入對話",
+    "Please try to reload the page" : "請重新加載頁面",
+    "Connection failed" : "連線失敗",
     "{nickName} raised their hand." : "{nickName} 舉起了手。",
     "A participant raised their hand." : "一位參與者舉起了手。",
     "Previous page of videos" : "視像的上一頁",
@@ -903,16 +908,10 @@
     "Collapse stripe" : "收合 stripe",
     "Expand stripe" : "展開 stripe",
     "Copy link" : "複製連結",
-    "Recording consent is required" : "需要錄製同意",
-    "This conversation is read-only" : "對話是唯讀狀態",
-    "Conversation not found or not joined" : "找不到或未加入對話",
-    "Connection failed" : "連線失敗",
     "Connecting …" : "連線中...",
     "Calling …" : "連接中...",
     "Waiting for {user} to join the call" : "等待 {user} 加入通話...",
     "Waiting for others to join the call …" : "等待其他人加入通話...",
-    "Please try to reload the page" : "請重新加載頁面",
-    "Something went wrong" : "有地方出錯了",
     "You can invite others in the participant tab of the sidebar" : "您可以在邊欄的“參與者”標籤中邀請其他人",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "您可以在邊欄的“參與者”選項卡中邀請其他人，或分享此連結以邀請其他人！",
     "Share this link to invite others!" : "分享此連結以邀請其他人！",
@@ -1906,6 +1905,7 @@
     "Signaling servers" : "Signaling 伺服器",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部信令伺服器。留空以使用內部信令伺服器。",
     "- Unsent message drafts are now saved in your browser " : "- 未發送的訊息草稿現在保存在您的瀏覽器中",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成",
+    "Something went wrong" : "有地方出錯了"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

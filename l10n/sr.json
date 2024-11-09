@@ -896,6 +896,11 @@
     "The message was sent to all breakout rooms" : "Порука је послата у све сепарее",
     "The message was sent to \"{roomName}\"" : "Порука је послата у „{roomName}”",
     "The message could not be sent" : "Није могла да се пошаље порука",
+    "Recording consent is required" : "Потребна је сагласност за снимање",
+    "This conversation is read-only" : "Овај разговор је само-за-читање",
+    "Conversation not found or not joined" : "Није пронађен разговор или му нисте приступили",
+    "Please try to reload the page" : "Молимо вас, покушајте поново да учитате страницу",
+    "Connection failed" : "Није успело повезивање",
     "{nickName} raised their hand." : "{nickName} је подигао руку.",
     "A participant raised their hand." : "Учесник је подигао руку.",
     "Previous page of videos" : "Претходна страница видеа",
@@ -903,16 +908,10 @@
     "Collapse stripe" : "Сажми црту",
     "Expand stripe" : "Развиј црту",
     "Copy link" : "Копирај везу",
-    "Recording consent is required" : "Потребна је сагласност за снимање",
-    "This conversation is read-only" : "Овај разговор је само-за-читање",
-    "Conversation not found or not joined" : "Није пронађен разговор или му нисте приступили",
-    "Connection failed" : "Није успело повезивање",
     "Connecting …" : "Повезивање ..",
     "Calling …" : "Позивање",
     "Waiting for {user} to join the call" : "Чека се да {user} приступи позиву",
     "Waiting for others to join the call …" : "Чекам да се остали прикључе разговору…",
-    "Please try to reload the page" : "Молимо вас, покушајте поново да учитате страницу",
-    "Something went wrong" : "Нешто је пошло наопако",
     "You can invite others in the participant tab of the sidebar" : "Можете позвати остале у језичку са учесницима у траци са стране",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Можете позвати остале у језичку са учесницима у траци са стране или поделити ову везу као позивницу!",
     "Share this link to invite others!" : "Поделите ову везу да позовете остале!",
@@ -1906,6 +1905,7 @@
     "Signaling servers" : "Сигнализациони сервери",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер се може опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "- Unsent message drafts are now saved in your browser " : "- Нацрти непослатих порука се сада чувају у вашем интернет прегледачу",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин",
+    "Something went wrong" : "Нешто је пошло наопако"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

@@ -833,6 +833,7 @@ OC.L10N.register(
     "The message was sent to all breakout rooms" : "메시지를 모든 소회의실에 전송했습니다.",
     "The message was sent to \"{roomName}\"" : "메시지를 \"{roomName}\"에 전송했습니다.",
     "The message could not be sent" : "메시지를 보낼 수 없습니다.",
+    "This conversation is read-only" : "이 대화는 읽기 전용입니다.",
     "{nickName} raised their hand." : "{nickName}님이 손을 들었습니다.",
     "A participant raised their hand." : "한 참가자가 손을 들었습니다.",
     "Previous page of videos" : "영상의 이전 페이지",
@@ -840,12 +841,10 @@ OC.L10N.register(
     "Collapse stripe" : "스트라이프 접기",
     "Expand stripe" : "스트라이프 확장",
     "Copy link" : "링크 복사",
-    "This conversation is read-only" : "이 대화는 읽기 전용입니다.",
     "Connecting …" : "연결 중...",
     "Calling …" : "통화 거는 중...",
     "Waiting for {user} to join the call" : "{user}님이 통화에 참가하기를 기다리고 있습니다.",
     "Waiting for others to join the call …" : "다른 사람을 기다리는 중 …",
-    "Something went wrong" : "잘못된 접근",
     "You can invite others in the participant tab of the sidebar" : "사이드바의 참가자 탭에서 다른 사람들을 초대할 수 있음",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "당신은 사이드바의 참가자 탭에서 다른 사용자를 초대하거나 이 링크를 공유하여 다른 사용자를 초대할 수 있습니다!",
     "Share this link to invite others!" : "다른 사람을 초대하려면 링크를 공유하십시오!",
@@ -1650,6 +1649,7 @@ OC.L10N.register(
     "TURN server" : "TURN 서버",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 중계합니다.",
     "Signaling servers" : "시그널링 서버",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "대규모 사용자가 필요한 경우 외부 신호 서버를 사용할 수 있습니다. 비워 두면 내장 신호 서버를 사용합니다."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "대규모 사용자가 필요한 경우 외부 신호 서버를 사용할 수 있습니다. 비워 두면 내장 신호 서버를 사용합니다.",
+    "Something went wrong" : "잘못된 접근"
 },
 "nplurals=1; plural=0;");

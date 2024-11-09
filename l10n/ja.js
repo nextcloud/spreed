@@ -845,6 +845,7 @@ OC.L10N.register(
     "The message was sent to all breakout rooms" : "メッセージは全ての子会議室に送信されました",
     "The message was sent to \"{roomName}\"" : "メッセージは \"{roomName}\" に送信されました",
     "The message could not be sent" : "メッセージを送信できませんでした",
+    "This conversation is read-only" : "この会話は読み取り専用です",
     "{nickName} raised their hand." : "{nickName} が挙手しました",
     "A participant raised their hand." : "参加者が挙手しました",
     "Previous page of videos" : "動画の前ページ",
@@ -852,12 +853,10 @@ OC.L10N.register(
     "Collapse stripe" : "スレッドを折りたたむ",
     "Expand stripe" : "スレッドを展開する",
     "Copy link" : "リンクをコピー",
-    "This conversation is read-only" : "この会話は読み取り専用です",
     "Connecting …" : "接続中 …",
     "Calling …" : "接続中...",
     "Waiting for {user} to join the call" : "{user} が通話に参加するのを待っています",
     "Waiting for others to join the call …" : "参加を待っています …",
-    "Something went wrong" : "何かがおかしいです",
     "You can invite others in the participant tab of the sidebar" : "サイドバーの参加者タブで他のユーザーを招待できます",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "サイドバーの参加者タブかこのリンクを共有して他のユーザーを招待できます。",
     "Share this link to invite others!" : "このリンクを共有して他の人を招待します。",
@@ -1744,6 +1743,7 @@ OC.L10N.register(
     "TURN server" : "TURNサーバー",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURNサーバーは参加者のファイアウォール越しの通信を中継します。",
     "Signaling servers" : "シグナリングサーバー",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバーを利用するには、空欄のままにしてください。"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバーを利用するには、空欄のままにしてください。",
+    "Something went wrong" : "何かがおかしいです"
 },
 "nplurals=1; plural=0;");
