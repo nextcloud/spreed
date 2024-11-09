@@ -583,6 +583,7 @@ OC.L10N.register(
     "Reset" : "Επαναφορά",
     "Add participant \"{user}\"" : "Προσθήκη συμμετέχοντος \"{user}\"",
     "Post message" : "Δημοσίευση μηνύματος",
+    "This conversation is read-only" : "Αυτή η συνομιλία είναι μόνο για ανάγνωση",
     "{nickName} raised their hand." : "Ο {nickName} σήκωσε το χέρι του.",
     "A participant raised their hand." : "Ένας συμμετέχων σήκωσε το χέρι του.",
     "Previous page of videos" : "Προηγούμενη σελίδα βίντεο",
@@ -590,10 +591,8 @@ OC.L10N.register(
     "Collapse stripe" : "Σύμπτυξη λωρίδας",
     "Expand stripe" : "Ανάπτυξη λωρίδας",
     "Copy link" : "Αντιγραφή συνδέσμου",
-    "This conversation is read-only" : "Αυτή η συνομιλία είναι μόνο για ανάγνωση",
     "Connecting …" : "Σύνδεση ...",
     "Waiting for others to join the call …" : "Αναμονή για είσοδο υπόλοιπων στην κλήση ...",
-    "Something went wrong" : "Κάτι πήγε στραβά",
     "You can invite others in the participant tab of the sidebar" : "Μπορείτε να προσκαλέσετε άλλους από την καρτέλα συμμετεχόντων της πλευρικής μπάρας",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Μπορείτε να προσκαλέσετε άλλους από την καρτέλα συμμετεχόντων της πλευρικής μπάρας ή κοινοποιήστε τον σύνδεσμο για πρόσκληση και άλλων!",
     "Share this link to invite others!" : "Διαμοιρασμός του συνδέσμου για να προσκαλέσετε άλλους!",
@@ -1029,6 +1028,7 @@ OC.L10N.register(
     "TURN server" : "Διακομιστής TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Ο διακομιστής TURN χρησιμοποιείται ως ενδιάμεσος για την μεταφορά της κίνησης δεδομένων απο τους συμμετέχοντες έως πίσω από το τοίχος προστασίας.",
     "Signaling servers" : "Διακομιστές σηματοδότησης",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης.",
+    "Something went wrong" : "Κάτι πήγε στραβά"
 },
 "nplurals=2; plural=(n != 1);");

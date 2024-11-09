@@ -896,6 +896,11 @@
     "The message was sent to all breakout rooms" : "A mensaxe foi enviada a todas as salas parciais",
     "The message was sent to \"{roomName}\"" : "A mensaxe foi enviada a «{roomName}»",
     "The message could not be sent" : "Non foi posíbel enviar a mensaxe",
+    "Recording consent is required" : "É necesario o consentimento para gravar",
+    "This conversation is read-only" : "Esta conversa é só de lectura",
+    "Conversation not found or not joined" : "Non se atopou a conversa ou non se uniu a ela",
+    "Please try to reload the page" : "Tente volver cargar a páxina.",
+    "Connection failed" : "Produciuse un fallo de conexión",
     "{nickName} raised their hand." : "{nickName} ergueu a man.",
     "A participant raised their hand." : "Un participante ergueu a man.",
     "Previous page of videos" : "Páxina anterior de vídeos",
@@ -903,16 +908,10 @@
     "Collapse stripe" : "Contraer pola raia",
     "Expand stripe" : "Estender a franxa",
     "Copy link" : "Copiar a ligazón",
-    "Recording consent is required" : "É necesario o consentimento para gravar",
-    "This conversation is read-only" : "Esta conversa é só de lectura",
-    "Conversation not found or not joined" : "Non se atopou a conversa ou non se uniu a ela",
-    "Connection failed" : "Produciuse un fallo de conexión",
     "Connecting …" : "Conectando…",
     "Calling …" : "Chamando…",
     "Waiting for {user} to join the call" : "Agardando a que {user} se una á chamada",
     "Waiting for others to join the call …" : "Agardando que outros se unan á chamada…",
-    "Please try to reload the page" : "Tente volver cargar a páxina.",
-    "Something went wrong" : "Algo foi mal",
     "You can invite others in the participant tab of the sidebar" : "Pode convidar a outros na lapela do participante da barra lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Pode convidar a outros na lapela do participante da barra lateral ou compartir esta ligazón para convidalos!",
     "Share this link to invite others!" : "Comparta esta ligazón para convidar a outros!",
@@ -1906,6 +1905,7 @@
     "Signaling servers" : "Servidores de sinalización",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor Signaling externo para instalacións maiores. Deixeo baleiro para usar o servidor Signaling interno.",
     "- Unsent message drafts are now saved in your browser " : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "– *Vista previa:* A parola de texto agora pódese facer de xeito federado con outros servidores de Talk"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "– *Vista previa:* A parola de texto agora pódese facer de xeito federado con outros servidores de Talk",
+    "Something went wrong" : "Algo foi mal"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

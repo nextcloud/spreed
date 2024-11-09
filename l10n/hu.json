@@ -798,6 +798,7 @@
     "The message was sent to all breakout rooms" : "Az üzenet el lett küldve az összes szétbontott szobának",
     "The message was sent to \"{roomName}\"" : "Az üzenet el lett küldve ide: „{roomName}”",
     "The message could not be sent" : "Az üzenetet nem sikerült elküldeni",
+    "This conversation is read-only" : "Ez a beszélgetés csak olvasható",
     "{nickName} raised their hand." : "{nickName} felemelte a kezét.",
     "A participant raised their hand." : "Egy résztvevő felemelte a kezét.",
     "Previous page of videos" : "A videók előző oldala",
@@ -805,11 +806,9 @@
     "Collapse stripe" : "Csík összecsukása",
     "Expand stripe" : "Csík kibontása",
     "Copy link" : "Hivatkozás másolása",
-    "This conversation is read-only" : "Ez a beszélgetés csak olvasható",
     "Connecting …" : "Csatlakozás…",
     "Waiting for {user} to join the call" : "Várakozás, hogy {user} csatlakozzon a híváshoz",
     "Waiting for others to join the call …" : "Várakozás, hogy mások is csatlakozzanak a híváshoz…",
-    "Something went wrong" : "Valami hiba történt",
     "You can invite others in the participant tab of the sidebar" : "Másokat az oldalsávon található „résztvevők” fülön tud meghívni",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Másokat az oldalsávon található „résztvevők” fülön keresztül vagy a hivatkozás megosztásával tud meghívni!",
     "Share this link to invite others!" : "Mások meghívásához ossza meg ezt a hivatkozást!",
@@ -1598,6 +1597,7 @@
     "TURN server" : "TURN kiszolgáló",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "A TURN kiszolgáló arra való, hogy továbbítsa a tűzfal mögött lévő felhasználók forgalmát.",
     "Signaling servers" : "Jelzőkiszolgálók",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Nagyobb telepítések esetén egy külső üzemeltetésű jelzőkiszolgáló is használható. A belső jelzőkiszolgáló használatához hagyja üresen."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Nagyobb telepítések esetén egy külső üzemeltetésű jelzőkiszolgáló is használható. A belső jelzőkiszolgáló használatához hagyja üresen.",
+    "Something went wrong" : "Valami hiba történt"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
