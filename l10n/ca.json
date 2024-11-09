@@ -829,6 +829,7 @@
     "The message was sent to all breakout rooms" : "El missatge s'ha enviat a totes les sales de treball",
     "The message was sent to \"{roomName}\"" : "El missatge s'ha enviat a \"{roomName}\"",
     "The message could not be sent" : "No s'ha pogut enviar el missatge",
+    "This conversation is read-only" : "Aquesta conversa és només de lectura",
     "{nickName} raised their hand." : "{nickName} va aixecar la mà.",
     "A participant raised their hand." : "Un participant va aixecar la mà.",
     "Previous page of videos" : "Pàgina anterior de vídeos",
@@ -836,12 +837,10 @@
     "Collapse stripe" : "Col·lapse la franja",
     "Expand stripe" : "Ampliar la franja",
     "Copy link" : "Copia l'enllaç",
-    "This conversation is read-only" : "Aquesta conversa és només de lectura",
     "Connecting …" : "S'està connectant …",
     "Calling …" : "S'està trucant …",
     "Waiting for {user} to join the call" : "S'està esperant que {user} s'uneixi a la trucada",
     "Waiting for others to join the call …" : "Esperant a la resta per realitzar la trucada …",
-    "Something went wrong" : "Alguna cosa ha anat malament",
     "You can invite others in the participant tab of the sidebar" : "Podeu convidar més gent des de la pestanya Participants al panell lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Podeu convidar a més gent des de la pestanya Participants al panell lateral o compartint aquest enllaç a tercers!",
     "Share this link to invite others!" : "Compartiu aquest enllaç per convidar a més gent!",
@@ -1700,6 +1699,7 @@
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN s'utilitza per proxy el trànsit dels participants darrere d'un servidor de seguretat.",
     "Signaling servers" : "Servidors de senyalització",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana l'ús d'un servidor de senyalització extern per a instal·lacions grans. Deixeu aquest camp buit per utilitzar el servidor de senyalització intern."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana l'ús d'un servidor de senyalització extern per a instal·lacions grans. Deixeu aquest camp buit per utilitzar el servidor de senyalització intern.",
+    "Something went wrong" : "Alguna cosa ha anat malament"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

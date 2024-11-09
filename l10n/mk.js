@@ -576,11 +576,10 @@ OC.L10N.register(
     "Reset" : "Ресетирање",
     "Room {roomNumber}" : "Соба {roomNumber}",
     "Add participant \"{user}\"" : "Додади учесник \"{user}\"",
-    "Copy link" : "Копирај линк",
     "This conversation is read-only" : "Разговорот е само за читање",
+    "Copy link" : "Копирај линк",
     "Connecting …" : "Поврзување ...",
     "Waiting for others to join the call …" : "Чекање на останатите да се приклучат кон повикот ...",
-    "Something went wrong" : "Нешто не е во ред",
     "You can invite others in the participant tab of the sidebar" : "Можете да поканите други учесници во картичката за учесници во страничната лента",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Можете да поканите други учесници во картичката за учесници во страничната лента или да ја споделите оваа врска за да поканите други учесници!",
     "Share this link to invite others!" : "Споделете ја оваа врска за да поканите други учесници!",
@@ -1029,6 +1028,7 @@ OC.L10N.register(
     "Start a conversation" : "Започни разговор",
     "Post to conversation" : "Објава во разговор",
     "Share to conversation" : "Споделено во разговор",
-    "TURN server" : "TURN сервер"
+    "TURN server" : "TURN сервер",
+    "Something went wrong" : "Нешто не е во ред"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

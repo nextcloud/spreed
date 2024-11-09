@@ -621,17 +621,16 @@ OC.L10N.register(
     "The message was sent to all breakout rooms" : "Viesti lähetettiin kaikkiin pienryhmätiloihin.",
     "The message was sent to \"{roomName}\"" : "Viesti lähetettiin huoneeseen \"{roomName}\"",
     "The message could not be sent" : "Viestiä ei voitu lähettää",
+    "This conversation is read-only" : "Keskustelu on \"vain luku\"-tilassa",
     "{nickName} raised their hand." : "{nickName} nosti kätensä.",
     "A participant raised their hand." : "Osallistuja nosti kätensä.",
     "Previous page of videos" : "Videoiden edellinen sivu",
     "Next page of videos" : "Videoiden seuraava sivu",
     "Copy link" : "Kopioi linkki",
-    "This conversation is read-only" : "Keskustelu on \"vain luku\"-tilassa",
     "Connecting …" : "Yhdistetään…",
     "Calling …" : "Soitetaan…",
     "Waiting for {user} to join the call" : "Odotetaan käyttäjän {user} liittyvän puheluun",
     "Waiting for others to join the call …" : "Odotetaan muiden liittymistä puheluun...",
-    "Something went wrong" : "Jokin meni vikaan",
     "You can invite others in the participant tab of the sidebar" : "Voit kutsua muita sivupalkissa olevan Osallistujat-välilehden kautta",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Voit kutsua muita sivupalkissa olevan Osallistujat-välilehden kautta tai jakamalla tämän linkin!",
     "Share this link to invite others!" : "Jaa tämä linkki kutsuaksesi muita!",
@@ -1325,6 +1324,7 @@ OC.L10N.register(
     "Post to conversation" : "Lähetä keskusteluun",
     "Share to conversation" : "Jaa keskusteluun",
     "TURN server" : "TURN-palvelin",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-palvelinta käytetään liikenteen välittämisessä palomuurin takana oleville osallistujille."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-palvelinta käytetään liikenteen välittämisessä palomuurin takana oleville osallistujille.",
+    "Something went wrong" : "Jokin meni vikaan"
 },
 "nplurals=2; plural=(n != 1);");

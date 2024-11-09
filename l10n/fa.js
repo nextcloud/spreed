@@ -786,6 +786,7 @@ OC.L10N.register(
     "The message was sent to all breakout rooms" : "The message was sent to all breakout rooms",
     "The message was sent to \"{roomName}\"" : "The message was sent to \"{roomName}\"",
     "The message could not be sent" : "The message could not be sent",
+    "This conversation is read-only" : "This conversation is read-only",
     "{nickName} raised their hand." : "{nickName} raised their hand.",
     "A participant raised their hand." : "A participant raised their hand.",
     "Previous page of videos" : "Previous page of videos",
@@ -793,11 +794,9 @@ OC.L10N.register(
     "Collapse stripe" : "Collapse stripe",
     "Expand stripe" : "Expand stripe",
     "Copy link" : "کپی کردن لینک",
-    "This conversation is read-only" : "This conversation is read-only",
     "Connecting …" : "Connecting …",
     "Waiting for {user} to join the call" : "Waiting for {user} to join the call",
     "Waiting for others to join the call …" : "Waiting for others to join the call …",
-    "Something went wrong" : "Something went wrong",
     "You can invite others in the participant tab of the sidebar" : "شما می‌توانید دیگران را از زبانه اعضا در نوارکناری دعوت کنید",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "You can invite others in the participant tab of the sidebar or share this link to invite others!",
     "Share this link to invite others!" : "این پیوند را به اشتراک بگذارید تا دیگران را دعوت کنید!",
@@ -1572,6 +1571,7 @@ OC.L10N.register(
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Signaling servers" : "Signaling servers",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
+    "Something went wrong" : "Something went wrong"
 },
 "nplurals=2; plural=(n > 1);");

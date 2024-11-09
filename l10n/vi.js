@@ -350,6 +350,7 @@ OC.L10N.register(
     "Reset" : "Đặt lại",
     "Add participant \"{user}\"" : "Thêm người tham gia \"{user}\"",
     "Post message" : "Đăng tin nhắn",
+    "This conversation is read-only" : "Cuộc trò chuyện này ở chế độ chỉ đọc",
     "{nickName} raised their hand." : "{nickName} giơ tay.",
     "A participant raised their hand." : "Một người tham gia giơ tay.",
     "Previous page of videos" : "Trang trước của video",
@@ -357,10 +358,8 @@ OC.L10N.register(
     "Collapse stripe" : "Thu gọi sọc",
     "Expand stripe" : "Mở rộng sọc",
     "Copy link" : "Sao chép liên kết",
-    "This conversation is read-only" : "Cuộc trò chuyện này ở chế độ chỉ đọc",
     "Connecting …" : "Đang kết nối …",
     "Waiting for others to join the call …" : "Đang chờ người khác tham gia cuộc gọi…",
-    "Something went wrong" : "Có gì đó đã sai.",
     "You can invite others in the participant tab of the sidebar" : "Bạn có thể mời những người khác trong tab người tham gia của thanh bên",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Bạn có thể mời những người khác trong tab người tham gia của thanh bên hoặc chia sẻ liên kết này để mời những người khác!",
     "Share this link to invite others!" : "Chia sẻ liên kết này để mời những người khác!",
@@ -743,6 +742,7 @@ OC.L10N.register(
     "TURN server" : "Máy chủ TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia đằng sau tường lửa.",
     "Signaling servers" : "Máy chủ báo hiệu",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ.",
+    "Something went wrong" : "Có gì đó đã sai."
 },
 "nplurals=1; plural=0;");

@@ -896,6 +896,11 @@
     "The message was sent to all breakout rooms" : "The message was sent to all breakout rooms",
     "The message was sent to \"{roomName}\"" : "The message was sent to \"{roomName}\"",
     "The message could not be sent" : "The message could not be sent",
+    "Recording consent is required" : "Recording consent is required",
+    "This conversation is read-only" : "This conversation is read-only",
+    "Conversation not found or not joined" : "Conversation not found or not joined",
+    "Please try to reload the page" : "Please try to reload the page",
+    "Connection failed" : "Connection failed",
     "{nickName} raised their hand." : "{nickName} raised their hand.",
     "A participant raised their hand." : "A participant raised their hand.",
     "Previous page of videos" : "Previous page of videos",
@@ -903,16 +908,10 @@
     "Collapse stripe" : "Collapse stripe",
     "Expand stripe" : "Expand stripe",
     "Copy link" : "Copy link",
-    "Recording consent is required" : "Recording consent is required",
-    "This conversation is read-only" : "This conversation is read-only",
-    "Conversation not found or not joined" : "Conversation not found or not joined",
-    "Connection failed" : "Connection failed",
     "Connecting …" : "Connecting …",
     "Calling …" : "Calling …",
     "Waiting for {user} to join the call" : "Waiting for {user} to join the call",
     "Waiting for others to join the call …" : "Waiting for others to join the call …",
-    "Please try to reload the page" : "Please try to reload the page",
-    "Something went wrong" : "Something went wrong",
     "You can invite others in the participant tab of the sidebar" : "You can invite others in the participant tab of the sidebar",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "You can invite others in the participant tab of the sidebar or share this link to invite others!",
     "Share this link to invite others!" : "Share this link to invite others!",
@@ -1906,6 +1905,7 @@
     "Signaling servers" : "Signaling servers",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
     "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers",
+    "Something went wrong" : "Something went wrong"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

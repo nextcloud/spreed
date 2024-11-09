@@ -669,6 +669,7 @@ OC.L10N.register(
     "Reset" : "Ripristina",
     "Add participant \"{user}\"" : "Aggiungi il partecipante \"{user}\"",
     "Post message" : "Pubblica messaggio",
+    "This conversation is read-only" : "Questa conversazione è in sola lettura",
     "{nickName} raised their hand." : "{nickName} ha alzato la mano.",
     "A participant raised their hand." : "Un partecipante ha alzato la mano.",
     "Previous page of videos" : "Pagina di video precedente",
@@ -676,10 +677,8 @@ OC.L10N.register(
     "Collapse stripe" : "Contrai striscia",
     "Expand stripe" : "Espandi striscia",
     "Copy link" : "Copia collegamento",
-    "This conversation is read-only" : "Questa conversazione è in sola lettura",
     "Connecting …" : "Connessione in corso…",
     "Waiting for others to join the call …" : "In attesa che altri si uniscano alla chiamata...",
-    "Something went wrong" : "Qualcosa non ha funzionato",
     "You can invite others in the participant tab of the sidebar" : "Puoi invitare altri nella scheda dei partecipanti della barra laterale",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Puoi invitare altri nella scheda dei partecipanti della barra laterale o condividere questo collegamento per invitarli!",
     "Share this link to invite others!" : "Condividi questo collegamento per invitare altri!",
@@ -1225,6 +1224,7 @@ OC.L10N.register(
     "TURN server" : "Server TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall.",
     "Signaling servers" : "Server di segnalazione",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno.",
+    "Something went wrong" : "Qualcosa non ha funzionato"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

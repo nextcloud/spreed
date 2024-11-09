@@ -394,11 +394,10 @@ OC.L10N.register(
     "Cancel" : "Hætta við",
     "Confirm" : "Staðfesta",
     "Reset" : "Endurstilla",
-    "Copy link" : "Afrita tengil",
     "This conversation is read-only" : "This conversation is read-only",
+    "Copy link" : "Afrita tengil",
     "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
-    "Something went wrong" : "Eitthvað fór úrskeiðis",
     "You can invite others in the participant tab of the sidebar" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins eða deilt þessum tengli til að bjóða öðrum!",
     "Share this link to invite others!" : "Deildu þessum tengli til að bjóða öðrum!",
@@ -575,6 +574,7 @@ OC.L10N.register(
     "TURN server" : "TURN-þjónn",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
     "Signaling servers" : "Merkjasendingaþjónar",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
+    "Something went wrong" : "Eitthvað fór úrskeiðis"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

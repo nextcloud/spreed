@@ -816,6 +816,10 @@
     "The message was sent to all breakout rooms" : "Mezua taldekako gela guztietara bidali da",
     "The message was sent to \"{roomName}\"" : "Mezua \"{roomName}\"-(e)ra bidali da",
     "The message could not be sent" : "Ezin izan da mezua bidali",
+    "Recording consent is required" : "Grabatzeko baimena behar da",
+    "This conversation is read-only" : "Elkarrizketa hau irakurtzeko soilik da",
+    "Conversation not found or not joined" : "Elkarrizketa ez da aurkitu edo ez da sartu",
+    "Connection failed" : "Konexioak huts egin du",
     "{nickName} raised their hand." : "{nickName} eskua jaso du.",
     "A participant raised their hand." : "Parte-hartzaile batek eskua jaso du",
     "Previous page of videos" : "Bideoen aurreko orria",
@@ -823,14 +827,9 @@
     "Collapse stripe" : "Tolestu marra",
     "Expand stripe" : "Zabaldu marra",
     "Copy link" : "Kopiatu esteka",
-    "Recording consent is required" : "Grabatzeko baimena behar da",
-    "This conversation is read-only" : "Elkarrizketa hau irakurtzeko soilik da",
-    "Conversation not found or not joined" : "Elkarrizketa ez da aurkitu edo ez da sartu",
-    "Connection failed" : "Konexioak huts egin du",
     "Connecting …" : "Konektatzen ...",
     "Waiting for {user} to join the call" : "{user} deian sartzeko zain",
     "Waiting for others to join the call …" : "Besteak deira batzeko itxaroten...",
-    "Something went wrong" : "Zerbait gaizki joan da",
     "You can invite others in the participant tab of the sidebar" : "Besteak gonbidatu ditzakezu alboko barrako parte-hartzaileak fitxan",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Besteak gonbidatu ditzakezu alboko barrako parte-hartzaileak fitxan edo esteka hau partekatuz!",
     "Share this link to invite others!" : "Partekatu esteka hau besteak gonbidatzeko!",
@@ -1566,6 +1565,7 @@
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzaria suebaki baten atzean dauden parte-hartzaileen trafikoan proxy lanak egiteko erabiltzen da.",
     "Signaling servers" : "Seinalizazio zerbitzariak",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko.",
+    "Something went wrong" : "Zerbait gaizki joan da"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

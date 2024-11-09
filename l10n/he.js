@@ -400,7 +400,6 @@ OC.L10N.register(
     "Reset" : "איפוס",
     "Copy link" : "העתקת קישור",
     "Waiting for others to join the call …" : "בהמתנה לאחרים להצטרף לשיחה…",
-    "Something went wrong" : "משהו השתבש",
     "You can invite others in the participant tab of the sidebar" : "ניתן להזמין אחרים בלשונית המשתתפים בסרגל הצד",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "ניתן להזמין אחרים דרך לשונית המשתפים בסרגל הצד או לשתף את הקישור הזה כדי להזמין אחרים!",
     "Share this link to invite others!" : "יש לשתף את הקישור הזה כדי להזמין אחרים!",
@@ -609,6 +608,7 @@ OC.L10N.register(
     "Start a conversation" : "התחלת דיון",
     "TURN server" : "שרת TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",
-    "Signaling servers" : "שרתי איתות"
+    "Signaling servers" : "שרתי איתות",
+    "Something went wrong" : "משהו השתבש"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");
