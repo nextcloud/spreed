@@ -19,6 +19,11 @@
 	position: static;
 }
 
+/* Overwrites styles from public.scss in public share after re-parenting footer */
+#body-public {
+   --footer-height: 0 !important;
+}
+
 #content.full-height {
 	/* Always full height without header. */
 	height: calc(100% - 50px);
