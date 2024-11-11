@@ -43,7 +43,7 @@ class ProxyRequest {
 						'typing-privacy',
 					],
 					'call' => [
-						'blur-background',
+						'blur-virtual-background',
 					]
 				],
 			]

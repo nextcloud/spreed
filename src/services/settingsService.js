@@ -79,7 +79,7 @@ const setStartWithoutMedia = async function(value) {
 }
 
 const setBlurBackground = async function(value) {
-	await setUserConfig('spreed', 'blur_background', value ? 'yes' : 'no')
+	await setUserConfig('spreed', 'blur_virtual_background', value ? 'yes' : 'no')
 }
 
 /**

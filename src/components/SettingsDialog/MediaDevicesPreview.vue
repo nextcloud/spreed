@@ -91,7 +91,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
-const supportDefaultBlurBackground = getTalkConfig('local', 'call', 'blur-background') !== undefined
+const supportDefaultBlurBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 
