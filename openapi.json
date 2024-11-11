@@ -243,7 +243,7 @@
                                     "can-enable-sip",
                                     "start-without-media",
                                     "max-duration",
-                                    "blur-background"
+                                    "blur-virtual-background"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -290,7 +290,7 @@
                                         "type": "integer",
                                         "format": "int64"
                                     },
-                                    "blur-background": {
+                                    "blur-virtual-background": {
                                         "type": "boolean"
                                     }
                                 }
@@ -16506,8 +16506,7 @@
                                             "attachment_folder",
                                             "read_status_privacy",
                                             "typing_privacy",
-                                            "play_sounds",
-                                            "blur_background"
+                                            "play_sounds"
                                         ],
                                         "description": "Key to update"
                                     },

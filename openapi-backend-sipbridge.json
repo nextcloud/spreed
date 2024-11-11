@@ -126,7 +126,7 @@
                                     "can-enable-sip",
                                     "start-without-media",
                                     "max-duration",
-                                    "blur-background"
+                                    "blur-virtual-background"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -173,7 +173,7 @@
                                         "type": "integer",
                                         "format": "int64"
                                     },
-                                    "blur-background": {
+                                    "blur-virtual-background": {
                                         "type": "boolean"
                                     }
                                 }

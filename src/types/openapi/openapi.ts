@@ -1424,7 +1424,7 @@ export type components = {
                     "start-without-media": boolean;
                     /** Format: int64 */
                     "max-duration": number;
-                    "blur-background": boolean;
+                    "blur-virtual-background": boolean;
                 };
                 chat: {
                     /** Format: int64 */
@@ -7859,7 +7859,7 @@ export interface operations {
                      * @description Key to update
                      * @enum {string}
                      */
-                    key: "attachment_folder" | "read_status_privacy" | "typing_privacy" | "play_sounds" | "blur_background";
+                    key: "attachment_folder" | "read_status_privacy" | "typing_privacy" | "play_sounds";
                     /** @description New value for the key */
                     value?: (string | number) | null;
                 };

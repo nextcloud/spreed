@@ -41,7 +41,7 @@ export const useSettingsStore = defineStore('settings', {
 		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
 		showMediaSettings: {},
 		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
-		blurBackgroundEnabled: getTalkConfig('local', 'call', 'blur-background'),
+		blurBackgroundEnabled: getTalkConfig('local', 'call', 'blur-virtual-background'),
 	}),
 
 	getters: {
