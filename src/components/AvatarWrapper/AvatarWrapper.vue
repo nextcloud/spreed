@@ -6,7 +6,7 @@
 <template>
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
 		<div v-if="iconClass" class="avatar icon" :class="[iconClass]" />
-		<div v-else-if="isGuestOrDeletedUser" class="avatar guest">
+		<div v-else-if="isGuestUser" class="avatar guest">
 			{{ firstLetterOfGuestName }}
 		</div>
 		<div v-else-if="isBot" class="avatar bot">
@@ -150,7 +150,6 @@ export default {
 			switch (this.source) {
 			case ATTENDEE.ACTOR_TYPE.USERS:
 			case ATTENDEE.ACTOR_TYPE.BRIDGED:
-			case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
 				return ''
 			case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
 				return this.token ? '' : 'icon-user'
@@ -158,6 +157,8 @@ export default {
 				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
 			case ATTENDEE.ACTOR_TYPE.GUESTS:
 				return this.hasCustomName ? '' : 'icon-user'
+			case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
+				return 'icon-user'
 			case ATTENDEE.ACTOR_TYPE.PHONES:
 				return 'icon-phone'
 			case ATTENDEE.ACTOR_TYPE.BOTS:
@@ -189,19 +190,14 @@ export default {
 		isBot() {
 			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID
 		},
-		isGuestOrDeletedUser() {
-			return [ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS, ATTENDEE.ACTOR_TYPE.DELETED_USERS]
-				.includes(this.source)
+		isGuestUser() {
+			return [ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(this.source)
 		},
 		hasCustomName() {
 			return this.name?.trim() && this.name !== t('spreed', 'Guest')
 		},
 		firstLetterOfGuestName() {
-			if (this.source === ATTENDEE.ACTOR_TYPE.DELETED_USERS) {
-				return 'X'
-			} else {
-				return this.name.toUpperCase().charAt(0)
-			}
+			return this.name?.trim()?.toUpperCase()?.charAt(0) ?? '?'
 		},
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)

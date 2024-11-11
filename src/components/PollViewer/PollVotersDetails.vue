@@ -29,7 +29,7 @@
 				class="poll-voters-details__list-item">
 				<AvatarWrapper :id="item.actorId"
 					:token="token"
-					:name="getDisplayName(item)"
+					:name="item.actorDisplayName.trim()"
 					:source="item.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
@@ -49,7 +49,8 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.js'
+import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 
 export default {
 
@@ -80,15 +81,7 @@ export default {
 	methods: {
 		t,
 		getDisplayName(item) {
-			if (item.actorDisplayName === '' && item.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return t('spreed', 'Guest')
-			}
-
-			if (item.actorType === 'deleted_users') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return item.actorDisplayName
+			return getDisplayNameWithFallback(item.actorDisplayName, item.actorType)
 		},
 	},
 }

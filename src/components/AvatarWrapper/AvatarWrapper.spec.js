@@ -98,6 +98,7 @@ describe('AvatarWrapper.vue', () => {
 			[null, 'guest/id', '', ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],
 			[null, 'guest/id', t('spreed', 'Guest'), ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],
 			[null, 'guest/id', t('spreed', 'Guest'), ATTENDEE.ACTOR_TYPE.EMAILS, 'icon-user'],
+			[null, 'deleted_users', '', ATTENDEE.ACTOR_TYPE.DELETED_USERS, 'icon-user'],
 			['new', 'guest/id', 'test@mail.com', ATTENDEE.ACTOR_TYPE.EMAILS, 'icon-mail'],
 			[null, 'sha-phone', '+12345...', ATTENDEE.ACTOR_TYPE.PHONES, 'icon-phone'],
 			[null, 'team/id', 'Team', ATTENDEE.ACTOR_TYPE.CIRCLES, 'icon-team'],
@@ -119,7 +120,6 @@ describe('AvatarWrapper.vue', () => {
 		const testCases = [
 			['guest/id', USER_NAME, ATTENDEE.ACTOR_TYPE.GUESTS, USER_NAME.charAt(0)],
 			['guest/id', USER_NAME, ATTENDEE.ACTOR_TYPE.EMAILS, USER_NAME.charAt(0)],
-			['deleted_users', USER_NAME, ATTENDEE.ACTOR_TYPE.DELETED_USERS, 'X'],
 			['bot-id', USER_NAME, ATTENDEE.ACTOR_TYPE.BOTS, '>_'],
 		]
 

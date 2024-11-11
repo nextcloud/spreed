@@ -145,7 +145,7 @@ describe('Participant.vue', () => {
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)
 
-			expect(avatarEl.props('name')).toBe('Guest')
+			expect(avatarEl.props('name')).toBe('')
 		})
 
 		test('renders avatar with unknown name when empty', () => {
@@ -154,7 +154,7 @@ describe('Participant.vue', () => {
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)
 
-			expect(avatarEl.props('name')).toBe('Deleted user')
+			expect(avatarEl.props('name')).toBe('')
 		})
 
 		test('renders offline avatar when no sessions exist', () => {
