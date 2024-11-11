@@ -352,13 +352,14 @@ describe('message actions', () => {
 		expect(result.actorDisplayName.value).toBe('guest name')
 	})
 
-	test('return "deleted user" for messages from deleted users without display name', () => {
+	test('return "Deleted user" as a fallback for messages from deleted users without display name', () => {
 		// Arrange
 		message.value.actorDisplayName = ''
 		// Act
 		const result = useMessageInfo(message)
 		// Assert
-		expect(result.actorDisplayName.value).toBe('Deleted user')
+		expect(result.actorDisplayName.value).toBe('')
+		expect(result.actorDisplayNameWithFallback.value).toBe('Deleted user')
 	})
 
 	describe('edited messages', () => {

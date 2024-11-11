@@ -13,6 +13,7 @@ import { useStore } from './useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 /**
  * Check whether the user can edit the message or not
@@ -37,6 +38,10 @@ export function useMessageInfo(message = ref({})) {
 			isConversationReadOnly: computed(() => false),
 			isFileShareWithoutCaption: computed(() => false),
 			isFileShare: computed(() => false),
+			remoteServer: computed(() => ''),
+			lastEditor: computed(() => ''),
+			actorDisplayName: computed(() => ''),
+			actorDisplayNameWithFallback: computed(() => ''),
 		}
 	}
 
@@ -101,14 +106,16 @@ export function useMessageInfo(message = ref({})) {
 	})
 
 	const actorDisplayName = computed(() => {
-		if (message.value.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+		if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.value.actorType)) {
 			const guestNameStore = useGuestNameStore()
 			return guestNameStore.getGuestName(message.value.token, message.value.actorId)
 		} else {
-			const displayName = message.value.actorDisplayName.trim()
-			return displayName === '' ? t('spreed', 'Deleted user') : displayName
+			return message.value.actorDisplayName.trim()
 		}
+	})
 
+	const actorDisplayNameWithFallback = computed(() => {
+		return getDisplayNameWithFallback(actorDisplayName.value, message.value.actorType)
 	})
 
 	return {
@@ -123,6 +130,6 @@ export function useMessageInfo(message = ref({})) {
 		remoteServer,
 		lastEditor,
 		actorDisplayName,
+		actorDisplayNameWithFallback,
 	}
-
 }

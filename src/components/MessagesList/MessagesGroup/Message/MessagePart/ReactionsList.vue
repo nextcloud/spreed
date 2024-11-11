@@ -32,7 +32,7 @@
 							:source="item.actorType"
 							:size="AVATAR.SIZE.SMALL"
 							disable-menu />
-						<span class="reactions-item__name">{{ item.actorDisplayName }}</span>
+						<span class="reactions-item__name">{{ item.actorDisplayNameWithFallback }}</span>
 						<span class="reactions-item__emojis">
 							{{ item.reaction?.join('') ?? reactionFilter }}
 						</span>
@@ -57,6 +57,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
+import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {
 
@@ -112,10 +113,12 @@ export default {
 				actors.forEach(actor => {
 					const key = `${actor.actorId}-${actor.actorType}`
 					const actorDisplayName = this.getDisplayNameForReaction(actor)
+					const actorDisplayNameWithFallback = getDisplayNameWithFallback(actorDisplayName, actor.actorType)
 
 					modifiedDetailedReactions[reaction].push({
 						...actor,
-						actorDisplayName
+						actorDisplayName,
+						actorDisplayNameWithFallback,
 					})
 
 					if (mergedReactionsMap[key]) {
@@ -123,6 +126,7 @@ export default {
 					} else {
 						mergedReactionsMap[key] = {
 							actorDisplayName,
+							actorDisplayNameWithFallback,
 							actorId: actor.actorId,
 							actorType: actor.actorType,
 							reaction: [reaction]
@@ -150,12 +154,7 @@ export default {
 				return this.guestNameStore.getGuestNameWithGuestSuffix(this.token, reactingParticipant.actorId)
 			}
 
-			const displayName = reactingParticipant.actorDisplayName.trim()
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
+			return reactingParticipant.actorDisplayName.trim()
 		},
 
 		handleTabClick(reaction) {
