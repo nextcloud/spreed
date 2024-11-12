@@ -79,8 +79,8 @@
 			{{ t('spreed', 'Settings') }}
 		</p>
 		<div class="poll-editor__settings">
-			<NcCheckboxRadioSwitch :checked.sync="isPrivate" type="checkbox">
-				{{ t('spreed', 'Private poll') }}
+			<NcCheckboxRadioSwitch :checked.sync="isAnonymous" type="checkbox">
+				{{ t('spreed', 'Anonymous poll') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
 				{{ t('spreed', 'Multiple answers') }}
@@ -166,7 +166,7 @@ const pollForm = reactive<createPollParams>({
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
 
-const isPrivate = computed({
+const isAnonymous = computed({
 	get() {
 		return pollForm.resultMode === POLL.MODE.HIDDEN
 	},
