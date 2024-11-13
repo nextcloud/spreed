@@ -484,6 +484,7 @@ OC.L10N.register(
     "New file" : "Ny fil",
     "Blank" : "Tom",
     "Settings" : "Indstillinger",
+    "Anonymous poll" : "Anonym afstemning",
     "Create poll" : "Opret afstemning",
     "Send" : "Send",
     "Join" : "Deltag",

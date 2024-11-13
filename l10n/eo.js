@@ -324,6 +324,7 @@ OC.L10N.register(
     "Group" : "Grupo",
     "Create new poll" : "Krei novan enketon",
     "Settings" : "Agordoj",
+    "Anonymous poll" : "Enketo sennoma",
     "Send" : "Sendi",
     "Join" : "Aliĝi",
     "guest" : "gasto",

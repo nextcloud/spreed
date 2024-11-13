@@ -770,7 +770,6 @@ OC.L10N.register(
     "Ask a question" : "Entrugar",
     "Answers" : "Rempuestes",
     "Settings" : "Configuración",
-    "Private poll" : "Encuesta privada",
     "Create poll" : "Crear una encuesta",
     "{user1} is typing …" : "{user1} ta escribiendo…",
     "{user1} and {user2} are typing …" : "{user1} y {user2} tán escribiendo…",
@@ -955,6 +954,7 @@ OC.L10N.register(
     "Users, groups and circles" : "Usuarios, grupos y círculos",
     "Users and circles" : "Usuarioa de círculos",
     "Groups and circles" : "Grupos y círculos",
+    "Private poll" : "Encuesta privada",
     "Start a conversation" : "Aniciar una conversación",
     "TURN server" : "Sirividor TURN"
 },
