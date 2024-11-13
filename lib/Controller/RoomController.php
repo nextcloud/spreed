@@ -499,6 +499,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.)
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
+	 * @param string $password The room password
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
@@ -508,7 +509,14 @@ class RoomController extends AEnvironmentAwareController {
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
-	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', string $objectType = '', string $objectId = ''): DataResponse {
+	public function createRoom(int $roomType,
+		string $invite = '',
+		string $roomName = '',
+		string $source = '',
+		string $objectType = '',
+		string $objectId = '',
+		string $password = '',
+	): DataResponse {
 		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
@@ -530,7 +538,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName, true, $objectType, $objectId);
+				return $this->createEmptyRoom($roomName, true, $objectType, $objectId, $password);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -645,7 +653,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
-	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
+	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = '', string $password = ''): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -683,7 +691,9 @@ class RoomController extends AEnvironmentAwareController {
 
 		// Create the room
 		try {
-			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId);
+			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId, $password);
+		} catch (PasswordException $e) {
+			return new DataResponse(['reason' => $e->getReason(), 'hint' => $e->getHint()], Http::STATUS_FORBIDDEN);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

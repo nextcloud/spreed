@@ -1084,7 +1084,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
+	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = '', string $password = ''): Room {
 		$token = $this->getNewToken();
 
 		$insert = $this->db->getQueryBuilder();
@@ -1111,6 +1111,7 @@ class Manager {
 			'token' => $token,
 			'object_type' => $objectType,
 			'object_id' => $objectId,
+			'password' => $password
 		]);
 
 		$event = new RoomCreatedEvent($room);

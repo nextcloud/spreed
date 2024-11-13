@@ -694,4 +694,8 @@ class Config {
 		}
 		return false;
 	}
+
+	public function isPasswordEnforced(): bool {
+		return $this->appConfig->getAppValueBool('force_public_chat_passwords');
+	}
 }

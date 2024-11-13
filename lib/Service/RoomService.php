@@ -132,12 +132,14 @@ class RoomService {
 	 * @param IUser|null $owner
 	 * @param string $objectType
 	 * @param string $objectId
+	 * @param string $password
 	 * @return Room
 	 * @throws InvalidArgumentException on too long or empty names
 	 * @throws InvalidArgumentException unsupported type
 	 * @throws InvalidArgumentException invalid object data
+	 * @throws PasswordException empty or invalid password
 	 */
-	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
+	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = '', string $password = ''): Room {
 		$name = trim($name);
 		if ($name === '' || mb_strlen($name) > 255) {
 			throw new InvalidArgumentException('name');
@@ -167,7 +169,20 @@ class RoomService {
 			throw new InvalidArgumentException('object');
 		}
 
-		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+		if ($type !== Room::TYPE_PUBLIC || !$this->config->isPasswordEnforced()) {
+			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+		} elseif ($password === '') {
+			throw new PasswordException(PasswordException::REASON_VALUE, 'Password needs to be set');
+		} else {
+			$event = new ValidatePasswordPolicyEvent($password);
+			try {
+				$this->dispatcher->dispatchTyped($event);
+			} catch (HintException $e) {
+				throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
+			}
+
+			$room = $this->manager->createRoom($type, $name, $objectType, $objectId, $password);
+		}
 
 		if ($owner instanceof IUser) {
 			$this->participantService->addUsers($room, [[
@@ -177,8 +192,8 @@ class RoomService {
 				'participantType' => Participant::OWNER,
 			]], null);
 		}
-
 		return $room;
+
 	}
 
 	public function prepareConversationName(string $objectName): string {
