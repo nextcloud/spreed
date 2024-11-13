@@ -500,7 +500,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
 	 * @param string $password The room password
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{hint: string, reason: 'breakout-room'|'type'|'value'}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{hint: string, reason: 'breakout-room'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
@@ -651,7 +651,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{hint: string, reason: 'breakout-room'|'type'|'value'}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{hint: string, reason: 'breakout-room'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = '', string $password = ''): DataResponse {
