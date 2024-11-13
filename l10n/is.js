@@ -491,6 +491,7 @@ OC.L10N.register(
     "New file" : "Ný skrá",
     "Blank" : "Tóm",
     "Settings" : "Stillingar",
+    "Anonymous poll" : "Nafnlaus könnun",
     "Create poll" : "Búa til könnun",
     "Send" : "Senda",
     "End poll" : "End poll",

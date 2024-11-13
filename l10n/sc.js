@@ -873,6 +873,7 @@ OC.L10N.register(
     "New file" : "Archìviu nou",
     "Blank" : "Isbòidu",
     "Settings" : "Cunfiguratzione",
+    "Anonymous poll" : "Sondàgiu anònimu",
     "Send" : "Imbia",
     "Add more files" : "Agiunghe àteros archìvios",
     "Join" : "Intra",
