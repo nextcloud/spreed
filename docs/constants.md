@@ -103,7 +103,13 @@
 * `16` Can publish audio stream
 * `32` Can publish video stream
 * `64` Can publish screen sharing stream
-* `128` Can post chat message, share items and do reactions
+* `128` Can post chat message (Was split into 128, 256, 512, 1024 and 2048 with the `conversation-permissions-v2` capability)
+* `256` Can react to chat messages (Only with the `conversation-permissions-v2` capability, otherwise check `128`)
+* `512` Can see attachments in chat messages (Only with the `conversation-permissions-v2` capability, otherwise check `128`)
+* `1024` Can share items (Only with the `conversation-permissions-v2` capability, otherwise check `128`)
+* `2048` Can edit whiteboards (Only with the `conversation-permissions-v2` capability, otherwise check `128`)
+* `4096` Can see the participants list (Only with the `conversation-permissions-v2` capability, otherwise granted)
+* `8192` Can moderate the call (but not other participants), e.g. starting and stopping the lobby, will survive setting conversation permissions for all other users (Only with the `conversation-permissions-v2` capability, otherwise not-granted)
 
 ### Attendee permission modifications
 * `set` - Setting this permission set.
