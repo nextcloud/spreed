@@ -246,6 +246,7 @@ export type components = {
                 };
                 conversations: {
                     "can-create": boolean;
+                    "force-passwords": boolean;
                 };
                 federation: {
                     enabled: boolean;

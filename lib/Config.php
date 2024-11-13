@@ -705,4 +705,8 @@ class Config {
 	public function enableLobbyOnLockedRooms(): bool {
 		return $this->appConfig->getAppValueBool('inactivity_enable_lobby');
 	}
+
+	public function isPasswordEnforced(): bool {
+		return $this->appConfig->getAppValueBool('force_passwords');
+	}
 }

@@ -57,6 +57,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
@@ -80,6 +81,7 @@ class RoomService {
 		protected IEventDispatcher $dispatcher,
 		protected IJobList $jobList,
 		protected LoggerInterface $logger,
+		protected IL10N $l10n,
 	) {
 	}
 
@@ -127,17 +129,13 @@ class RoomService {
 	}
 
 	/**
-	 * @param int $type
-	 * @param string $name
-	 * @param IUser|null $owner
-	 * @param string $objectType
-	 * @param string $objectId
 	 * @return Room
 	 * @throws InvalidArgumentException on too long or empty names
 	 * @throws InvalidArgumentException unsupported type
 	 * @throws InvalidArgumentException invalid object data
+	 * @throws PasswordException empty or invalid password
 	 */
-	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
+	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = '', string $password = ''): Room {
 		$name = trim($name);
 		if ($name === '' || mb_strlen($name) > 255) {
 			throw new InvalidArgumentException('name');
@@ -167,7 +165,20 @@ class RoomService {
 			throw new InvalidArgumentException('object');
 		}
 
-		$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+		if ($type !== Room::TYPE_PUBLIC || !$this->config->isPasswordEnforced()) {
+			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+		} elseif ($password === '') {
+			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
+		} else {
+			$event = new ValidatePasswordPolicyEvent($password);
+			try {
+				$this->dispatcher->dispatchTyped($event);
+			} catch (HintException $e) {
+				throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
+			}
+			$passwordHash = $this->hasher->hash($password);
+			$room = $this->manager->createRoom($type, $name, $objectType, $objectId, $passwordHash);
+		}
 
 		if ($owner instanceof IUser) {
 			$this->participantService->addUsers($room, [[
@@ -177,8 +188,8 @@ class RoomService {
 				'participantType' => Participant::OWNER,
 			]], null);
 		}
-
 		return $room;
+
 	}
 
 	public function prepareConversationName(string $objectName): string {
@@ -542,6 +553,44 @@ class RoomService {
 		}
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
+	 * @throws PasswordException|TypeException
+	 */
+	public function makePublicWithPassword(Room $room, string $password): void {
+		if ($room->getType() === Room::TYPE_PUBLIC) {
+			return;
+		}
+
+		if ($room->getType() !== Room::TYPE_GROUP) {
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
+		if ($password === '') {
+			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
+		}
+
+		$event = new ValidatePasswordPolicyEvent($password);
+		try {
+			$this->dispatcher->dispatchTyped($event);
+		} catch (HintException $e) {
+			throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_PUBLIC, $room->getType());
+		$this->dispatcher->dispatchTyped($event);
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PASSWORD, $password);
+		$this->dispatcher->dispatchTyped($event);
+
+		$passwordHash = $this->hasher->hash($password);
+		$this->manager->setPublic($room->getId(), $passwordHash);
+		$room->setType(Room::TYPE_PUBLIC);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_PUBLIC, $room->getType());
+		$this->dispatcher->dispatchTyped($event);
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PASSWORD, $password);
 		$this->dispatcher->dispatchTyped($event);
 	}
 
@@ -1221,4 +1270,42 @@ class RoomService {
 	public function getInactiveRooms(\DateTime $inactiveSince): array {
 		return $this->manager->getInactiveRooms($inactiveSince);
 	}
+
+	/**
+	 * @param Room $room
+	 * @param int $oldType
+	 * @param int $newType
+	 * @param bool $allowSwitchingOneToOne
+	 * @return void
+	 */
+	public function validateRoomTypeSwitch(Room $room, int $oldType, int $newType, bool $allowSwitchingOneToOne): void {
+		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
+		if ($oldType === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
+		if ($oldType === Room::TYPE_NOTE_TO_SELF) {
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
+		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
+			throw new TypeException(TypeException::REASON_VALUE);
+		}
+
+		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $oldType !== Room::TYPE_ONE_TO_ONE) {
+			throw new TypeException(TypeException::REASON_VALUE);
+		}
+
+		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
+		}
+	}
+
 }

@@ -109,6 +109,7 @@ class Capabilities implements IPublicCapability {
 		'talk-polls-drafts',
 		'download-call-participants',
 		'email-csv-import',
+		'conversation-creation-password',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -224,7 +225,8 @@ class Capabilities implements IPublicCapability {
 					'summary-threshold' => 100,
 				],
 				'conversations' => [
-					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
+					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
+					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
 				],
 				'federation' => [
 					'enabled' => false,

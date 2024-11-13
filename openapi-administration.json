@@ -237,10 +237,14 @@
                             "conversations": {
                                 "type": "object",
                                 "required": [
-                                    "can-create"
+                                    "can-create",
+                                    "force-passwords"
                                 ],
                                 "properties": {
                                     "can-create": {
+                                        "type": "boolean"
+                                    },
+                                    "force-passwords": {
                                         "type": "boolean"
                                     }
                                 }

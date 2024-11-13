@@ -130,6 +130,7 @@ export const mockedCapabilities: Capabilities = {
 			},
 			conversations: {
 				'can-create': true,
+				'force-passwords': false,
 			},
 			federation: {
 				enabled: false,

@@ -25,6 +25,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
@@ -1108,7 +1109,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
+	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = '', string $password = ''): Room {
 		$token = $this->getNewToken();
 
 		$insert = $this->db->getQueryBuilder();
@@ -1118,6 +1119,7 @@ class Manager {
 					'name' => $insert->createNamedParameter($name),
 					'type' => $insert->createNamedParameter($type, IQueryBuilder::PARAM_INT),
 					'token' => $insert->createNamedParameter($token),
+					'password' => $insert->createNamedParameter($password),
 				]
 			);
 
@@ -1135,6 +1137,7 @@ class Manager {
 			'token' => $token,
 			'object_type' => $objectType,
 			'object_id' => $objectId,
+			'password' => $password
 		]);
 
 		$event = new RoomCreatedEvent($room);
@@ -1408,5 +1411,19 @@ class Manager {
 		$query->selectAlias('c.reactions', 'comment_reactions');
 		$query->selectAlias('c.expire_date', 'comment_expire_date');
 		$query->selectAlias('c.meta_data', 'comment_meta_data');
+	}
+
+	/**
+	 * @param int $roomId
+	 * @param string $password
+	 * @throws Exception
+	 */
+	public function setPublic(int $roomId, string $password = ''): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('type', $update->createNamedParameter(Room::TYPE_PUBLIC, IQueryBuilder::PARAM_INT))
+			->set('password', $update->createNamedParameter($password, IQueryBuilder::PARAM_STR))
+			->where($update->expr()->eq('id', $update->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 	}
 }

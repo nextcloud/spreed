@@ -389,10 +389,14 @@
                             "conversations": {
                                 "type": "object",
                                 "required": [
-                                    "can-create"
+                                    "can-create",
+                                    "force-passwords"
                                 ],
                                 "properties": {
                                     "can-create": {
+                                        "type": "boolean"
+                                    },
+                                    "force-passwords": {
                                         "type": "boolean"
                                     }
                                 }
@@ -11252,6 +11256,11 @@
                                         "type": "string",
                                         "default": "",
                                         "description": "ID of the object"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "The room password (only available with `conversation-creation-password` capability)"
                                     }
                                 }
                             }
@@ -11344,7 +11353,7 @@
                         }
                     },
                     "400": {
-                        "description": "Room type invalid",
+                        "description": "Room type invalid or missing or invalid password",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -11367,6 +11376,9 @@
                                                     "type": "object",
                                                     "properties": {
                                                         "error": {
+                                                            "type": "string"
+                                                        },
+                                                        "message": {
                                                             "type": "string"
                                                         }
                                                     }
@@ -11882,6 +11894,7 @@
             "post": {
                 "operationId": "room-make-public",
                 "summary": "Allowed guests to join conversation",
+                "description": "Required capability: `conversation-creation-password` for `string $password` parameter",
                 "tags": [
                     "room"
                 ],
@@ -11893,6 +11906,23 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "New password (only available with `conversation-creation-password` capability)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -11986,8 +12016,13 @@
                                                             "enum": [
                                                                 "breakout-room",
                                                                 "type",
-                                                                "value"
+                                                                "value",
+                                                                "password"
                                                             ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string",
+                                                            "nullable": true
                                                         }
                                                     }
                                                 }
