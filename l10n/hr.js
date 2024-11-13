@@ -874,6 +874,7 @@ OC.L10N.register(
     "New file" : "Nova datoteka",
     "Blank" : "Prazno",
     "Settings" : "Postavke",
+    "Anonymous poll" : "Anonimna anketa",
     "Send" : "Pošalji",
     "Add more files" : "Dodaj više datoteka",
     "Start a call" : "Uputi poziv",

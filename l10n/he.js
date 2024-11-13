@@ -517,6 +517,7 @@ OC.L10N.register(
     "Share from Files" : "שיתוף מקבצים",
     "New file" : "קובץ חדש",
     "Settings" : "הגדרות",
+    "Anonymous poll" : "סקר אלמוני",
     "Create poll" : "יצירת סקר",
     "Send" : "שליחה",
     "Add more files" : "הוספת קבצים נוספים",
