@@ -256,11 +256,6 @@ export default {
 		},
 
 		loadBackground() {
-			// Set virtual background depending on main blur setting (in Talk settings)
-			if (this.settingsStore.blurBackgroundEnabled) {
-				this.selectedBackground = 'blur'
-				return
-			}
 			// Set virtual background depending on browser storage's settings
 			if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
 				if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
@@ -270,6 +265,8 @@ export default {
 				} else {
 					this.selectedBackground = 'none'
 				}
+			} else if (this.settingsStore.blurBackgroundEnabled) {
+				this.selectedBackground = 'blur'
 			} else {
 				this.selectedBackground = 'none'
 			}
