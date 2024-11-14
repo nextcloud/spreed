@@ -229,6 +229,7 @@ class MatterbridgeManager {
 			'login' => $botInfo['id'],
 			'password' => $botInfo['password'],
 			'channel' => $room->getToken(),
+			'skiptls' => true,
 		];
 		$bridge['parts'][] = $localPart;
 		return $bridge;
@@ -345,6 +346,9 @@ class MatterbridgeManager {
 					$content .= '	SeparateDisplayName = true' . "\n";
 					// TODO remove that
 					//$serverUrl = preg_replace('/https:/', 'http:', $serverUrl);
+				}
+				if ($part['skiptls']) {
+					$content .= '	SkipTLSVerify = true' . "\n";
 				}
 				$content .= sprintf('	Server = "%s"', $serverUrl) . "\n";
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";

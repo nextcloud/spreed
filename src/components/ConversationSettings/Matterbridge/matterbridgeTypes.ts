@@ -48,6 +48,10 @@ export const matterbridgeTypes: Record<string, MatterbridgeType> = {
 				placeholder: t('spreed', 'Talk conversation'),
 				icon: 'icon-group',
 			},
+			skiptls: {
+				type: 'checkbox',
+				labelText: t('spreed', 'Skip TLS verification'),
+			},
 		},
 		mainField: 'server',
 	},
