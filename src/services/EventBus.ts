@@ -30,7 +30,8 @@ EventBus.once = function<Key extends keyof Events>(type: Key, handler: GenericEv
 	const fn = (...args: Parameters<GenericEventHandler>) => {
 		// @ts-expect-error: Vue: A spread argument must either have a tuple type or be passed to a rest parameter.
 		handler(...args)
-		this.off(type, fn)
+		// @ts-expect-error: Vue: A spread argument must either have a tuple type or be passed to a rest parameter.
+		this.off(type, handler)
 	}
 	this.on(type, fn)
 
@@ -53,18 +54,19 @@ EventBus.off = function<Key extends keyof Events>(type: Key, handler?: GenericEv
 	// @ts-expect-error: Vue: No overload matches this call
 	off(type, handler)
 
-	const onceHandlers = handler && _onceHandlers.get(type)
-	if (onceHandlers) {
-		for (const [originalFn, fn] of onceHandlers) {
-			if (fn === handler) {
-				onceHandlers!.delete(originalFn)
-			} else if (originalFn === handler) {
-				// @ts-expect-error: Vue: No overload matches this call
-				off(type, fn)
-				onceHandlers!.delete(originalFn)
-			}
-		}
-	} else {
+	if (!handler) {
 		_onceHandlers.delete(type)
+		return
+	}
+
+	const typeOnceHandlers = _onceHandlers.get(type)
+	const onceHandler = typeOnceHandlers?.get(handler)
+	if (onceHandler) {
+		typeOnceHandlers!.delete(handler)
+		if (!typeOnceHandlers!.size) {
+			_onceHandlers.delete(type)
+		}
+		// @ts-expect-error: Vue: No overload matches this call
+		off(type, onceHandler)
 	}
 }
