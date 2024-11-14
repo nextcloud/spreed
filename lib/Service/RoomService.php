@@ -57,6 +57,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
@@ -80,6 +81,7 @@ class RoomService {
 		protected IEventDispatcher $dispatcher,
 		protected IJobList $jobList,
 		protected LoggerInterface $logger,
+		protected IL10N $l10n,
 	) {
 	}
 
@@ -172,7 +174,7 @@ class RoomService {
 		if ($type !== Room::TYPE_PUBLIC || !$this->config->isPasswordEnforced()) {
 			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
 		} elseif ($password === '') {
-			throw new PasswordException(PasswordException::REASON_VALUE, 'Password needs to be set');
+			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
 		} else {
 			$event = new ValidatePasswordPolicyEvent($password);
 			try {

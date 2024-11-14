@@ -26,6 +26,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
@@ -46,6 +47,7 @@ class RoomServiceTest extends TestCase {
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
+	private IL10N&MockObject $l10n;
 	protected ?RoomService $service = null;
 
 	public function setUp(): void {
@@ -60,6 +62,7 @@ class RoomServiceTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->jobList = $this->createMock(IJobList::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->l10n = $this->createMock(IL10N::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -71,6 +74,7 @@ class RoomServiceTest extends TestCase {
 			$this->dispatcher,
 			$this->jobList,
 			$this->logger,
+			$this->l10n,
 		);
 	}
 
@@ -332,6 +336,7 @@ class RoomServiceTest extends TestCase {
 			$dispatcher,
 			$this->jobList,
 			$this->logger,
+			$this->l10n,
 		);
 
 		$room = new Room(
