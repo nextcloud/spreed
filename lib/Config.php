@@ -277,8 +277,8 @@ class Config {
 			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
 		}
 
-		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
-		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE;
+		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off and moderating calls
+		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE & ~Attendee::PERMISSIONS_CALL_MODERATE;
 	}
 
 	public function getAttachmentFolder(string $userId): string {

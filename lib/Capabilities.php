@@ -108,6 +108,7 @@ class Capabilities implements IPublicCapability {
 		'archived-conversations',
 		'talk-polls-drafts',
 		'download-call-participants',
+		'conversation-permissions-v2',
 	];
 
 	public const CONDITIONAL_FEATURES = [

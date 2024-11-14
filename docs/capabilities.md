@@ -164,3 +164,6 @@
 * `config => chat => summary-threshold` (local) - Number of unread messages that should exist to show a "Generate summary" option
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
+
+## 21
+* `conversation-permissions-v2` - The chat permission was split into individual permissions for writing a message, reacting to a message, viewing and sharing attachments, editing whiteboards. Additionally new permissions for moderating a call and seeing the participant list where introduced.
