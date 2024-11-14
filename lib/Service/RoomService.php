@@ -1212,4 +1212,11 @@ class RoomService {
 			));
 		}
 	}
+
+	/**
+	 * @return list<Room>
+	 */
+	public function getInactiveRooms(\DateTime $inactiveSince): array {
+		return $this->manager->getInactiveRooms($inactiveSince);
+	}
 }
