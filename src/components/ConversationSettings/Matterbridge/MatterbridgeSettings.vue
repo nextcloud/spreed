@@ -20,8 +20,7 @@
 				<div v-show="!enabled"
 					class="add-part-wrapper">
 					<Plus class="icon" :size="20" />
-					<NcSelect v-model="selectedType"
-						label="displayName"
+					<NcSelect label="displayName"
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
@@ -102,7 +101,6 @@ import {
 	getBridge,
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
-import { useSidebarStore } from '../../../stores/sidebar.js'
 
 export default {
 	name: 'MatterbridgeSettings',
@@ -120,7 +118,6 @@ export default {
 
 	setup() {
 		return {
-			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -492,17 +489,10 @@ export default {
 				},
 			},
 			newPartPlaceholder: t('spreed', 'Add new bridged channel to current conversation'),
-			selectedType: null,
 		}
 	},
 
 	computed: {
-		show() {
-			return this.sidebarStore.show
-		},
-		opened() {
-			return !!this.token && this.show
-		},
 		token() {
 			const token = this.$store.getters.getToken()
 			this.getBridge(token)
@@ -530,12 +520,6 @@ export default {
 		},
 	},
 
-	beforeMount() {
-	},
-
-	beforeDestroy() {
-	},
-
 	methods: {
 		t,
 		relaunchStateLoop(token) {
@@ -543,8 +527,8 @@ export default {
 			clearInterval(this.stateLoop)
 			this.stateLoop = setInterval(() => this.getBridgeProcessState(token), 60000)
 		},
-		clickAddPart() {
-			const typeKey = this.selectedType.type
+		clickAddPart(event) {
+			const typeKey = event.type
 			const type = this.types[typeKey]
 			const newPart = {
 				type: typeKey,
@@ -554,7 +538,6 @@ export default {
 				newPart[fieldKey] = ''
 			}
 			this.parts.unshift(newPart)
-			this.selectedType = null
 		},
 		onDelete(i) {
 			this.parts.splice(i, 1)
