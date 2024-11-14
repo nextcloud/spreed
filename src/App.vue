@@ -192,6 +192,11 @@ export default {
 		unsubscribe('notifications:action:execute', this.interceptNotificationActions)
 
 		window.removeEventListener('beforeunload', this.preventUnload)
+
+		EventBus.off('joined-conversation')
+		EventBus.off('switch-to-conversation')
+		EventBus.off('conversations-received')
+		EventBus.off('forbidden-route')
 	},
 
 	beforeMount() {
