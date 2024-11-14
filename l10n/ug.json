@@ -1853,7 +1853,6 @@
     "Signaling servers" : "سىگنال مۇلازىمىتىرى",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "سىرتقى سىگنال مۇلازىمېتىرىنى چوڭراق قاچىلاشقا ئىختىيارىي ئىشلىتىشكە بولىدۇ. ئىچكى سىگنال مۇلازىمېتىرىنى ئىشلىتىش ئۈچۈن بوش قويۇڭ.",
     "- Unsent message drafts are now saved in your browser " : "- ئەۋەتىلمىگەن ئۇچۇر لايىھەلىرى تور كۆرگۈچىڭىزدە ساقلاندى ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * ئالدىن كۆرۈش: * تېكىست پاراڭلىشىش ھازىر باشقا سۆھبەت مۇلازىمېتىرلىرى بىلەن فېدېراتسىيە ئۇسۇلدا ئېلىپ بېرىلسا بولىدۇ",
-    "Something went wrong" : "چاتاق چىقتى"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * ئالدىن كۆرۈش: * تېكىست پاراڭلىشىش ھازىر باشقا سۆھبەت مۇلازىمېتىرلىرى بىلەن فېدېراتسىيە ئۇسۇلدا ئېلىپ بېرىلسا بولىدۇ"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

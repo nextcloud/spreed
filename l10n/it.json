@@ -1223,7 +1223,6 @@
     "TURN server" : "Server TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall.",
     "Signaling servers" : "Server di segnalazione",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno.",
-    "Something went wrong" : "Qualcosa non ha funzionato"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

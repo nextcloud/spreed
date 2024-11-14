@@ -1742,7 +1742,6 @@
     "TURN server" : "TURNサーバー",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURNサーバーは参加者のファイアウォール越しの通信を中継します。",
     "Signaling servers" : "シグナリングサーバー",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバーを利用するには、空欄のままにしてください。",
-    "Something went wrong" : "何かがおかしいです"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバーを利用するには、空欄のままにしてください。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
