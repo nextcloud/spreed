@@ -1572,7 +1572,6 @@ OC.L10N.register(
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Signaling servers" : "Signaling servers",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
-    "Something went wrong" : "Something went wrong"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server."
 },
 "nplurals=2; plural=(n > 1);");

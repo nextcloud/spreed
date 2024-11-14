@@ -1908,7 +1908,6 @@ OC.L10N.register(
     "Signaling servers" : "Сигнализациони сервери",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер се може опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "- Unsent message drafts are now saved in your browser " : "- Нацрти непослатих порука се сада чувају у вашем интернет прегледачу",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин",
-    "Something went wrong" : "Нешто је пошло наопако"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

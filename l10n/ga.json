@@ -1906,7 +1906,6 @@
     "Signaling servers" : "Freastalaithe comharthaíochta",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Is féidir freastalaí comharthaíochta seachtrach a úsáid go roghnach le haghaidh suiteálacha níos mó. Fág folamh chun an freastalaí comharthaíochta inmheánach a úsáid.",
     "- Unsent message drafts are now saved in your browser " : "- Déantar dréachtaí teachtaireachta nár seoladh a shábháil i do bhrabhsálaí anois",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile",
-    "Something went wrong" : "Chuaigh rud eigin mícheart"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

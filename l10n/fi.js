@@ -1325,7 +1325,6 @@ OC.L10N.register(
     "Post to conversation" : "Lähetä keskusteluun",
     "Share to conversation" : "Jaa keskusteluun",
     "TURN server" : "TURN-palvelin",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-palvelinta käytetään liikenteen välittämisessä palomuurin takana oleville osallistujille.",
-    "Something went wrong" : "Jokin meni vikaan"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-palvelinta käytetään liikenteen välittämisessä palomuurin takana oleville osallistujille."
 },
 "nplurals=2; plural=(n != 1);");

@@ -1078,7 +1078,6 @@ OC.L10N.register(
     "TURN server" : "Serbidore TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN s'impreat pro imbiare su tràficu dae is partetzipantes a secus de unu firewall.",
     "Signaling servers" : "Serbidores de signalatzione",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Unu serbidore de signalatzione de foras podet èssere impreadu a sèberu pro installatziones prus mannas. Lassa bòidu pro impreare unu serbidore de signalatzione de intro.",
-    "Something went wrong" : "Ddoe at àpidu un'errore"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Unu serbidore de signalatzione de foras podet èssere impreadu a sèberu pro installatziones prus mannas. Lassa bòidu pro impreare unu serbidore de signalatzione de intro."
 },
 "nplurals=2; plural=(n != 1);");

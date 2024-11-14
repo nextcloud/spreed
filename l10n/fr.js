@@ -1908,7 +1908,6 @@ OC.L10N.register(
     "Signaling servers" : "Serveur de signalement",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
     "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk.",
-    "Something went wrong" : "Quelque chose n'a pas fonctionné"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

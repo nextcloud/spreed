@@ -1029,7 +1029,6 @@ OC.L10N.register(
     "TURN server" : "Διακομιστής TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Ο διακομιστής TURN χρησιμοποιείται ως ενδιάμεσος για την μεταφορά της κίνησης δεδομένων απο τους συμμετέχοντες έως πίσω από το τοίχος προστασίας.",
     "Signaling servers" : "Διακομιστές σηματοδότησης",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης.",
-    "Something went wrong" : "Κάτι πήγε στραβά"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης."
 },
 "nplurals=2; plural=(n != 1);");

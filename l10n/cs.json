@@ -1892,7 +1892,6 @@
     "Signaling servers" : "Signální servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Externí signální server může být použit pro větší instalace. Pro použití interního signálního serveru kolonku nevyplňujte.",
     "- Unsent message drafts are now saved in your browser " : "- Neodeslané koncepty zpráv jsou nyní webovým prohlížečem ukládány",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery",
-    "Something went wrong" : "Něco se pokazilo"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

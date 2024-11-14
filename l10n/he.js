@@ -609,7 +609,6 @@ OC.L10N.register(
     "Start a conversation" : "התחלת דיון",
     "TURN server" : "שרת TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",
-    "Signaling servers" : "שרתי איתות",
-    "Something went wrong" : "משהו השתבש"
+    "Signaling servers" : "שרתי איתות"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

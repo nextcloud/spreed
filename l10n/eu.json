@@ -1566,7 +1566,6 @@
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzaria suebaki baten atzean dauden parte-hartzaileen trafikoan proxy lanak egiteko erabiltzen da.",
     "Signaling servers" : "Seinalizazio zerbitzariak",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko.",
-    "Something went wrong" : "Zerbait gaizki joan da"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handietan hautazko kanpoko seinalizazio zerbitzari bat erabil daiteke. Utzi hutsik integratutako seinalizazio zerbitzaria erabiltzeko."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
