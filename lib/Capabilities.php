@@ -144,6 +144,7 @@ class Capabilities implements IPublicCapability {
 			'read-privacy',
 			'has-translation-providers',
 			'typing-privacy',
+			'summary-threshold',
 		],
 		'conversations' => [
 			'can-create',
@@ -217,6 +218,7 @@ class Capabilities implements IPublicCapability {
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
 					'has-translation-providers' => $this->translationManager->hasProviders(),
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
+					'summary-threshold' => 100,
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
