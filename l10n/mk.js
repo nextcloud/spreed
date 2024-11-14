@@ -1028,7 +1028,6 @@ OC.L10N.register(
     "Start a conversation" : "Започни разговор",
     "Post to conversation" : "Објава во разговор",
     "Share to conversation" : "Споделено во разговор",
-    "TURN server" : "TURN сервер",
-    "Something went wrong" : "Нешто не е во ред"
+    "TURN server" : "TURN сервер"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

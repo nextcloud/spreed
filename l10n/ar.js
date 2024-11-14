@@ -1409,6 +1409,7 @@ OC.L10N.register(
     "Delete poll option" : "حذِف خيار التصويت",
     "Add answer" : "إضافة إجابة",
     "Settings" : "الإعدادات",
+    "Anonymous poll" : "استبيان مع إخفاء هوية المصوتين",
     "Multiple answers" : "إجابات متعددة",
     "Save as draft" : "إحفَظ كمسودة",
     "Export draft to file" : "تصدير مسودة إلى ملف",
@@ -1907,7 +1908,6 @@ OC.L10N.register(
     "Signaling servers" : "خوادم التشوير ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي.",
     "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى",
-    "Something went wrong" : "حدث خطأ ما"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

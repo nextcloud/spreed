@@ -1906,7 +1906,6 @@
     "Signaling servers" : "Signaling sunucuları",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Büyük kurulumlar için isteğe göre bir dış signaling sunucusu kullanılabilir. İç signaling sunucusunu kullanmak için boş bırakın.",
     "- Unsent message drafts are now saved in your browser " : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ön izleme:* Metin sohbetlerinin diğer Konuş sunucularıyla birleşik olarak yapılabilmesi sağlandı",
-    "Something went wrong" : "Bir sorun çıktı"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ön izleme:* Metin sohbetlerinin diğer Konuş sunucularıyla birleşik olarak yapılabilmesi sağlandı"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

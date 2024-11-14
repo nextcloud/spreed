@@ -742,7 +742,6 @@ OC.L10N.register(
     "TURN server" : "Máy chủ TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia đằng sau tường lửa.",
     "Signaling servers" : "Máy chủ báo hiệu",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ.",
-    "Something went wrong" : "Có gì đó đã sai."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ."
 },
 "nplurals=1; plural=0;");

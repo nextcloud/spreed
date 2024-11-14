@@ -1600,7 +1600,6 @@ OC.L10N.register(
     "TURN server" : "TURN kiszolgáló",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "A TURN kiszolgáló arra való, hogy továbbítsa a tűzfal mögött lévő felhasználók forgalmát.",
     "Signaling servers" : "Jelzőkiszolgálók",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Nagyobb telepítések esetén egy külső üzemeltetésű jelzőkiszolgáló is használható. A belső jelzőkiszolgáló használatához hagyja üresen.",
-    "Something went wrong" : "Valami hiba történt"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Nagyobb telepítések esetén egy külső üzemeltetésű jelzőkiszolgáló is használható. A belső jelzőkiszolgáló használatához hagyja üresen."
 },
 "nplurals=2; plural=(n != 1);");
