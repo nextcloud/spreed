@@ -65,6 +65,7 @@
 		<job>OCA\Talk\BackgroundJob\CheckTurnCertificate</job>
 		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
 		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
+		<job>OCA\Talk\BackgroundJob\LockInactiveRooms</job>
 		<job>OCA\Talk\BackgroundJob\MaximumCallDuration</job>
 		<job>OCA\Talk\BackgroundJob\Reminder</job>
 		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
