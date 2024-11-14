@@ -500,13 +500,13 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
 	 * @param string $password The room password
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string, hint?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string, hint?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
 	 * 400: Room type invalid
+	 * 400: Missing or invalid password
 	 * 403: Missing permissions to create room
-	 * 403: Missing or invalid password
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
