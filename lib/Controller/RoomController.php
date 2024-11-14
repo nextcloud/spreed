@@ -504,8 +504,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
-	 * 400: Room type invalid
-	 * 400: Missing or invalid password
+	 * 400: Room type invalid or missing or invalid password
 	 * 403: Missing permissions to create room
 	 * 404: User, group or other target to invite was not found
 	 */

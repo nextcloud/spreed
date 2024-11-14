@@ -6196,6 +6196,11 @@ export interface operations {
                      * @default
                      */
                     objectId?: string;
+                    /**
+                     * @description The room password
+                     * @default
+                     */
+                    password?: string;
                 };
             };
         };
@@ -6228,7 +6233,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Room type invalid */
+            /** @description Room type invalid or missing or invalid password */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6239,6 +6244,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 error?: string;
+                                hint?: string;
                             };
                         };
                     };

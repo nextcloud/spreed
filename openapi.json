@@ -10914,6 +10914,9 @@
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
+                                                        },
+                                                        "hint": {
+                                                            "type": "string"
                                                         }
                                                     }
                                                 }
@@ -11110,6 +11113,11 @@
                                         "type": "string",
                                         "default": "",
                                         "description": "ID of the object"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "The room password"
                                     }
                                 }
                             }
@@ -11202,7 +11210,7 @@
                         }
                     },
                     "400": {
-                        "description": "Room type invalid",
+                        "description": "Room type invalid or missing or invalid password",
                         "content": {
                             "application/json": {
                                 "schema": {
