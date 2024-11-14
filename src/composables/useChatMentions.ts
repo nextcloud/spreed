@@ -45,65 +45,84 @@ function useChatMentionsComposable(token: Ref<string>): ReturnType {
 	})
 
 	/**
+	 * Prepare and cache search results
+	 * @param possibleMention mention object from API response
+	 * @param token conversation token
+	 * @param isDarkTheme whether current theme is dark
+	 */
+	function parseMention(possibleMention: ChatMention, token: string, isDarkTheme: boolean): AutocompleteChatMention {
+		const chatMention: AutocompleteChatMention = { ...possibleMention, status: undefined }
+
+		// Set icon for candidate mentions that are not for users.
+		if (possibleMention.source === 'calls') {
+			chatMention.icon = 'icon-user-forced-white'
+			chatMention.iconUrl = getConversationAvatarOcsUrl(token, isDarkTheme)
+			chatMention.subline = possibleMention?.details || t('spreed', 'Everyone')
+		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
+			chatMention.icon = 'icon-group-forced-white'
+			chatMention.subline = t('spreed', 'Group')
+		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			chatMention.icon = 'icon-user-forced-white'
+			chatMention.subline = t('spreed', 'Guest')
+		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
+			chatMention.icon = 'icon-user-forced-white'
+			chatMention.iconUrl = getUserProxyAvatarOcsUrl(token, possibleMention.id, isDarkTheme, 64)
+		} else {
+			// The avatar is automatically shown for users, but an icon is nevertheless required as fallback.
+			chatMention.icon = 'icon-user-forced-white'
+			if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
+				// Prevent local users avatars in federated room to be overwritten
+				chatMention.iconUrl = generateUrl('avatar/{userId}/64' + (isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
+			}
+			// Convert status properties to an object.
+			if (possibleMention.status) {
+				chatMention.status = {
+					status: possibleMention.status,
+					icon: possibleMention.statusIcon,
+				}
+				chatMention.subline = possibleMention.statusMessage
+			}
+		}
+
+		// mentionId should be the default match since 'federation-v1'
+		const id = possibleMention.mentionId ?? possibleMention.id
+		// caching the user id data for each possible mention
+		if (!userDataTokenMap.value[token]) {
+			Vue.set(userDataTokenMap.value, token, {})
+		}
+		Vue.set(userDataTokenMap.value[token], id, chatMention)
+
+		return chatMention
+	}
+
+	/**
+	 * Prepare and cache search results
+	 * @param token conversation token
+	 * @param search search string
+	 * @param isDarkTheme whether current theme is dark
+	 */
+	async function getMentions(token: string, search: string, isDarkTheme: boolean): Promise<AutocompleteChatMention[]> {
+		try {
+			const response = await searchPossibleMentions(token, search)
+			return response.data.ocs.data.map(possibleMention => parseMention(possibleMention, token, isDarkTheme))
+		} catch (error) {
+			console.error('Error while searching possible mentions: ', error)
+			return []
+		}
+	}
+
+	/**
 	 * @param search search string
 	 * @param callback callback for autocomplete feature
 	 */
 	async function autoComplete(search: string, callback: AutoCompleteCallback) {
-		try {
-			const response = await searchPossibleMentions(token.value, search)
-			if (!response) {
-				// It was not possible to get the candidate mentions, so just keep the previous ones.
-				return
-			}
-
-			const possibleMentions = response.data.ocs.data
-
-			possibleMentions.forEach(possibleMention => {
-				// Set icon for candidate mentions that are not for users.
-				if (possibleMention.source === 'calls') {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = getConversationAvatarOcsUrl(token.value, isDarkTheme.value)
-					possibleMention.subline = possibleMention?.details ? possibleMention.details : t('spreed', 'Everyone')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
-					possibleMention.icon = 'icon-group-forced-white'
-					possibleMention.subline = t('spreed', 'Group')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.subline = t('spreed', 'Guest')
-				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
-					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = getUserProxyAvatarOcsUrl(token.value, possibleMention.id, isDarkTheme.value, 64)
-				} else {
-					// The avatar is automatically shown for users, but an icon
-					// is nevertheless required as fallback.
-					possibleMention.icon = 'icon-user-forced-white'
-					if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
-						// Prevent local users avatars in federated room to be overwritten
-						possibleMention.iconUrl = generateUrl('avatar/{userId}/64' + (isDarkTheme.value ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
-					}
-					// Convert status properties to an object.
-					if (possibleMention.status) {
-						possibleMention.status = {
-							status: possibleMention.status,
-							icon: possibleMention.statusIcon,
-						}
-						possibleMention.subline = possibleMention.statusMessage
-					}
-				}
-
-				// mentionId should be the default match since 'federation-v1'
-				possibleMention.id = possibleMention.mentionId ?? possibleMention.id
-				// caching the user id data for each possible mention
-				if (!userDataTokenMap.value[token.value]) {
-					Vue.set(userDataTokenMap.value, token.value, {})
-				}
-				Vue.set(userDataTokenMap.value[token.value], possibleMention.id, possibleMention)
-			})
-
-			callback(possibleMentions)
-		} catch (error) {
-			console.debug('Error while searching possible mentions: ', error)
+		const autocompleteResults = await getMentions(token.value, search, isDarkTheme.value)
+		if (!autocompleteResults.length) {
+			// It was not possible to get the candidate mentions, so just keep the previous ones.
+			return
 		}
+
+		callback(autocompleteResults)
 	}
 
 	return {
