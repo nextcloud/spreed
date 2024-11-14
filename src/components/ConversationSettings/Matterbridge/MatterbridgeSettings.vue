@@ -23,7 +23,7 @@
 					<NcSelect label="displayName"
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
-						:options="formatedTypes"
+						:options="options"
 						@input="clickAddPart">
 						<template #option="option">
 							<img class="icon-multiselect-service"
@@ -137,26 +137,39 @@ export default {
 
 	computed: {
 		token() {
-			const token = this.$store.getters.getToken()
-			this.getBridge(token)
-			this.relaunchStateLoop(token)
-			return token
+			return this.$store.getters.getToken()
 		},
-		formatedTypes() {
+
+		options() {
 			return Object.entries(this.matterbridgeTypes).map(([type, value]) => ({
 				type,
 				displayName: value.name,
 				iconUrl: value.iconUrl,
 			}))
 		},
+
 		processStateText() {
-			return this.processRunning === null
-				? t('spreed', 'unknown state')
-				: this.processRunning
-					? t('spreed', 'running')
-					: this.enabled
-						? t('spreed', 'not running, check Matterbridge log')
-						: t('spreed', 'not running')
+			if (this.processRunning === null) {
+				return t('spreed', 'unknown state')
+			}
+
+			if (this.processRunning) {
+				return t('spreed', 'running')
+			} else {
+				return this.enabled
+					? t('spreed', 'not running, check Matterbridge log')
+					: t('spreed', 'not running')
+			}
+		},
+	},
+
+	watch: {
+		token: {
+			immediate: true,
+			handler(token) {
+				this.getBridge(token)
+				this.relaunchStateLoop(token)
+			},
 		},
 	},
 
