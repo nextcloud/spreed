@@ -137,7 +137,8 @@
                                     "max-length",
                                     "read-privacy",
                                     "has-translation-providers",
-                                    "typing-privacy"
+                                    "typing-privacy",
+                                    "summary-threshold"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -154,6 +155,11 @@
                                     "typing-privacy": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "summary-threshold": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
                                     }
                                 }
                             },

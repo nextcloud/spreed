@@ -74,6 +74,8 @@ export type components = {
                     "has-translation-providers": boolean;
                     /** Format: int64 */
                     "typing-privacy": number;
+                    /** Format: int64 */
+                    "summary-threshold": number;
                 };
                 conversations: {
                     "can-create": boolean;

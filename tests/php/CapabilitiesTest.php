@@ -147,6 +147,7 @@ class CapabilitiesTest extends TestCase {
 						'read-privacy' => 0,
 						'has-translation-providers' => false,
 						'typing-privacy' => 0,
+						'summary-threshold' => 100,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -277,6 +278,7 @@ class CapabilitiesTest extends TestCase {
 						'read-privacy' => $readPrivacy,
 						'has-translation-providers' => false,
 						'typing-privacy' => 0,
+						'summary-threshold' => 100,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
