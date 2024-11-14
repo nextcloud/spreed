@@ -770,6 +770,7 @@ OC.L10N.register(
     "Ask a question" : "Entrugar",
     "Answers" : "Rempuestes",
     "Settings" : "Configuración",
+    "Anonymous poll" : "Encuesta anónima",
     "Create poll" : "Crear una encuesta",
     "{user1} is typing …" : "{user1} ta escribiendo…",
     "{user1} and {user2} are typing …" : "{user1} y {user2} tán escribiendo…",

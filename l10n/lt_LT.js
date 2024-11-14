@@ -932,7 +932,6 @@ OC.L10N.register(
     "Start a conversation" : "Pradėti pokalbį",
     "TURN server" : "TURN serveris",
     "Signaling servers" : "Signaliniai serveriai",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Didesniems diegimams pasirinktinai gali būti naudojamas signalinis serveris. Palikite tuščią norėdami naudoti vidinį signalinį serverį.",
-    "Something went wrong" : "Kažkas nutiko"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Didesniems diegimams pasirinktinai gali būti naudojamas signalinis serveris. Palikite tuščią norėdami naudoti vidinį signalinį serverį."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

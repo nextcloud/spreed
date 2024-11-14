@@ -1699,7 +1699,6 @@ OC.L10N.register(
     "TURN server" : "TURN 服务器",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 服务器是用来为防火墙后面的参与者代理流量的。",
     "Signaling servers" : "信令服务器",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部的信令服务器。若使用内部的信令服务器请留空。",
-    "Something went wrong" : "发生了错误"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部的信令服务器。若使用内部的信令服务器请留空。"
 },
 "nplurals=1; plural=0;");

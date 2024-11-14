@@ -1273,6 +1273,7 @@ OC.L10N.register(
     "Delete poll option" : "Suprimeix l'opció de l'enquesta",
     "Add answer" : "Afegeix la resposta",
     "Settings" : "Paràmetres",
+    "Anonymous poll" : "Enquesta anònima",
     "Multiple answers" : "Respostes múltiples",
     "Create poll" : "Crea enquesta",
     "Someone is typing …" : "Algú està escrivint …",
@@ -1701,7 +1702,6 @@ OC.L10N.register(
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN s'utilitza per proxy el trànsit dels participants darrere d'un servidor de seguretat.",
     "Signaling servers" : "Servidors de senyalització",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana l'ús d'un servidor de senyalització extern per a instal·lacions grans. Deixeu aquest camp buit per utilitzar el servidor de senyalització intern.",
-    "Something went wrong" : "Alguna cosa ha anat malament"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Es recomana l'ús d'un servidor de senyalització extern per a instal·lacions grans. Deixeu aquest camp buit per utilitzar el servidor de senyalització intern."
 },
 "nplurals=2; plural=(n != 1);");

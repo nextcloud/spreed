@@ -893,7 +893,6 @@ OC.L10N.register(
     "Add groups or circles" : "Adaugă grupuri și cercuri",
     "Start a conversation" : "Porniți o conversație",
     "Post to conversation" : "Postare în conversație",
-    "Share to conversation" : "Partajare la conversație",
-    "Something went wrong" : "A apărut o eroare"
+    "Share to conversation" : "Partajare la conversație"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

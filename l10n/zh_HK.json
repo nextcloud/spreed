@@ -1906,7 +1906,6 @@
     "Signaling servers" : "Signaling 伺服器",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部信令伺服器。留空以使用內部信令伺服器。",
     "- Unsent message drafts are now saved in your browser " : "- 未發送的訊息草稿現在保存在您的瀏覽器中",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成",
-    "Something went wrong" : "有地方出錯了"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

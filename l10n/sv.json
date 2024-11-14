@@ -1906,7 +1906,6 @@
     "Signaling servers" : "Signalservrar",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
     "- Unsent message drafts are now saved in your browser " : "- Ej skickade meddelandeutkast sparas nu i din webbläsare",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Förhandsgranskning:* Textchatt kan nu göras på ett federerat sätt med andra Talk-servrar",
-    "Something went wrong" : "Något gick fel"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Förhandsgranskning:* Textchatt kan nu göras på ett federerat sätt med andra Talk-servrar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

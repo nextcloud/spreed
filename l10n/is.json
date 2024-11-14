@@ -573,7 +573,6 @@
     "TURN server" : "TURN-þjónn",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
     "Signaling servers" : "Merkjasendingaþjónar",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
-    "Something went wrong" : "Eitthvað fór úrskeiðis"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn."
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

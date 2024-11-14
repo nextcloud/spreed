@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Delete poll option" : "Изтриване на опция за анкета",
     "Add answer" : "Добавяне на отговор",
     "Settings" : "Настройки",
+    "Anonymous poll" : "Анонимна анкета",
     "Multiple answers" : "Множество отговори",
     "Create poll" : "Създаване на анкета",
     "Send" : "Изпрати",

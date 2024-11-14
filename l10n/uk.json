@@ -1164,7 +1164,6 @@
     "Specify commands the users can use in chats" : "Вкажіть команди, які користувачі можуть використовувати в чатах",
     "TURN server" : "Сервер TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN використовується для перенаправлення трафіку від учасників за брандмауером.",
-    "Signaling servers" : "Сервери сигналізації",
-    "Something went wrong" : "От халепа!"
+    "Signaling servers" : "Сервери сигналізації"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

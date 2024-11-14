@@ -1851,7 +1851,6 @@ OC.L10N.register(
     "Signaling servers" : "Signalservere",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "- Unsent message drafts are now saved in your browser " : "- Utkast til usendte meldinger lagres nå i nettleseren ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Forhåndsvisning: * Tekstchatting kan nå gjøres på en samlet måte med andre Talk-servere",
-    "Something went wrong" : "Noe gikk galt"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Forhåndsvisning: * Tekstchatting kan nå gjøres på en samlet måte med andre Talk-servere"
 },
 "nplurals=2; plural=(n != 1);");
