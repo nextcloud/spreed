@@ -40,6 +40,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array<int, string> */
 	protected static array $messageIdToText;
 	/** @var array<string, int> */
+	protected static array $aiTaskIds;
+	/** @var array<string, int> */
 	protected static array $remoteToInviteId;
 	/** @var array<int, string> */
 	protected static array $inviteIdToRemote;
@@ -113,6 +115,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private ?SharingContext $sharingContext;
 
 	private array $guestsAppWasEnabled = [];
+	private array $testingAppWasEnabled = [];
+	private array $taskProcessingProviderPreference = [];
 
 	private array $guestsOldWhitelist = [];
 
@@ -184,6 +188,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->changedConfigs[$server] = [];
 			$this->guestsAppWasEnabled[$server] = null;
+			$this->testingAppWasEnabled[$server] = null;
 			$this->guestsOldWhitelist[$server] = '';
 		}
 	}
@@ -2423,6 +2428,43 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" requests summary for "([^"]*)" starting from ("[^"]*"|'[^']*') with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userSummarizesRoom(string $user, string $identifier, string $message, string $statusCode, string $apiVersion = 'v1', ?TableNode $tableNode = null): void {
+		$message = substr($message, 1, -1);
+		$fromMessageId = self::$textToMessageId[$message];
+
+		$this->setCurrentUser($user, $identifier);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/summarize',
+			['fromMessageId' => $fromMessageId],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		self::$aiTaskIds[$user . '/summary/' . self::$identifierToToken[$identifier]] = $response['taskId'];
+		if (isset($tableNode?->getRowsHash()['nextOffset'])) {
+			Assert::assertSame(self::$textToMessageId[$tableNode->getRowsHash()['nextOffset']], $response['nextOffset'], 'Offset ID does not match');
+		} elseif (isset($response['nextOffset'])) {
+			Assert::assertArrayNotHasKey('nextOffset', $response, 'Did not expect a follow-up offset key on response, but received: ' . self::$messageIdToText[$response['nextOffset']]);
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" receives summary for "([^"]*)" with (\d+)$/
+	 */
+	public function userReceivesSummary(string $user, string $identifier, string $statusCode, ?TableNode $tableNode = null): void {
+		$this->sendRequest(
+			'GET', '/taskprocessing/task/' . self::$aiTaskIds[$user . '/summary/' . self::$identifierToToken[$identifier]],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		$response = $this->getDataFromResponse($this->response);
+		Assert::assertNotNull($response['task']['output'], 'Task output should not be null');
+		Assert::assertStringContainsString($tableNode->getRowsHash()['contains'], $response['task']['output']['output']);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates a poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -3882,6 +3924,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^Fake summary task provider is enabled$/
+	 */
+	public function enableTestingApp(): void {
+		$currentUser = $this->setCurrentUser('admin');
+
+		// save old state and restore at the end
+		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
+		$this->assertStatusCode($this->response, 200);
+		$data = $this->getDataFromResponse($this->response);
+		$this->testingAppWasEnabled[$this->currentServer] = in_array('testing', $data['apps'], true);
+
+		if (!$this->testingAppWasEnabled[$this->currentServer]) {
+			$this->runOcc(['app:enable', 'testing']);
+		}
+
+		$this->runOcc(['config:app:get', 'core', 'ai.taskprocessing_provider_preferences']);
+		$this->taskProcessingProviderPreference[$this->currentServer] = $this->lastStdOut;
+		$preferences = json_decode($this->lastStdOut ?: '[]', true, flags: JSON_THROW_ON_ERROR);
+		$preferences['core:text2text:summary'] = 'testing-text2text-summary';
+		$this->runOcc(['config:app:set', 'core', 'ai.taskprocessing_provider_preferences', '--value', json_encode($preferences)]);
+
+		$this->setCurrentUser($currentUser);
+	}
+
+	/**
 	 * @BeforeScenario
 	 * @AfterScenario
 	 */
@@ -3909,13 +3976,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @AfterScenario
 	 */
-	public function resetGuestsAppState() {
+	public function resetAppsState() {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->usingServer($server);
 
 			if ($this->guestsAppWasEnabled[$server] === null) {
 				// Guests app was not touched
-				return;
+				continue;
 			}
 
 			$currentUser = $this->setCurrentUser('admin');
@@ -3936,6 +4003,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->setCurrentUser($currentUser);
 
 			$this->guestsAppWasEnabled[$server] = null;
+		}
+
+		foreach (['LOCAL', 'REMOTE'] as $server) {
+			$this->usingServer($server);
+
+			if ($this->testingAppWasEnabled[$server] === null) {
+				// Testing app was not touched
+				continue;
+			}
+
+			$currentUser = $this->setCurrentUser('admin');
+
+			if ($this->taskProcessingProviderPreference[$server]) {
+				$this->runOcc(['config:app:set', 'core', 'ai.taskprocessing_provider_preferences', '--value', $this->taskProcessingProviderPreference[$server]]);
+			} else {
+				$this->runOcc(['config:app:delete', 'core', 'ai.taskprocessing_provider_preferences']);
+			}
+
+			// restore app's enabled state
+			$this->sendRequest($this->testingAppWasEnabled[$server] ? 'POST' : 'DELETE', '/cloud/apps/testing');
+
+			$this->setCurrentUser($currentUser);
+
+			$this->testingAppWasEnabled[$server] = null;
 		}
 	}
 
@@ -4762,11 +4853,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^(force run|run) "([^"]*)" background jobs$/
+	 * @When /^(force run|run|repeating run) "([^"]*)" background jobs$/
 	 */
-	public function runReminderBackgroundJobs(string $useForce, string $class): void {
+	public function runReminderBackgroundJobs(string $useForce, string $class, bool $repeated = false): void {
 		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=' . $class]);
 		$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
+
+		if ($repeated && empty($list)) {
+			return;
+		}
 
 		Assert::assertNotEmpty($list, 'List of ' . $class . ' should not be empty');
 
@@ -4780,6 +4875,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if ($this->lastStdErr) {
 				throw new \RuntimeException($this->lastStdErr);
 			}
+		}
+
+		if ($useForce === 'repeating run') {
+			$this->runReminderBackgroundJobs($useForce, $class, true);
 		}
 	}
 

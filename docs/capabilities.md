@@ -160,5 +160,7 @@
 * `archived-conversations` (local) - Conversations can be marked as archived which will hide them from the conversation list by default
 * `talk-polls-drafts` - Whether moderators can store and retrieve poll drafts
 * `download-call-participants` - Whether the endpoints for moderators to download the call participants is available
+* `chat-summary-api` (local) - Whether the endpoint to get summarized chat messages in a conversation is available
+* `config => chat => summary-threshold` (local) - Number of unread messages that should exist to show a "Generate summary" option
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
