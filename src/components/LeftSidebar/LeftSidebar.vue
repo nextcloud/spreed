@@ -381,7 +381,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
-const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
 	name: 'LeftSidebar',

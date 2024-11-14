@@ -86,6 +86,7 @@ export const mockedCapabilities: Capabilities = {
 			'edit-messages-note-to-self',
 			'archived-conversations',
 			'talk-polls-drafts',
+			'archived-conversations-v2',
 		],
 		'features-local': [
 			'favorites',
@@ -98,6 +99,7 @@ export const mockedCapabilities: Capabilities = {
 			'remind-me-later',
 			'note-to-self',
 			'archived-conversations',
+			'archived-conversations-v2',
 		],
 		config: {
 			attachments: {
