@@ -90,9 +90,10 @@ class Attendee extends Entity {
 	public const PERMISSIONS_CHAT_REACTION = 256;
 	public const PERMISSIONS_FILE_VIEW = 512;
 	public const PERMISSIONS_FILE_SHARE = 1024;
-	public const PERMISSIONS_WHITEBOARD = 2048;
-	public const PERMISSIONS_PARTICIPANTS_VIEW = 4096;
-	public const PERMISSIONS_CALL_MODERATE = 8192;
+	public const PERMISSIONS_OBJECT_SHARE = 2048;
+	public const PERMISSIONS_WHITEBOARD = 4096;
+	public const PERMISSIONS_PARTICIPANTS_VIEW = 8192;
+	public const PERMISSIONS_CALL_MODERATE = 16384;
 	public const PERMISSIONS_MAX_DEFAULT = // Max int (when all permissions are granted as default)
 		self::PERMISSIONS_CALL_START
 		| self::PERMISSIONS_CALL_JOIN
@@ -104,6 +105,7 @@ class Attendee extends Entity {
 		| self::PERMISSIONS_CHAT_REACTION
 		| self::PERMISSIONS_FILE_VIEW
 		| self::PERMISSIONS_FILE_SHARE
+		| self::PERMISSIONS_OBJECT_SHARE
 		| self::PERMISSIONS_WHITEBOARD
 		| self::PERMISSIONS_PARTICIPANTS_VIEW
 		| self::PERMISSIONS_CALL_MODERATE
