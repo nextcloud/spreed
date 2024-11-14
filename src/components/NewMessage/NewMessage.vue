@@ -174,6 +174,7 @@
 
 <script>
 import debounce from 'debounce'
+import { toRefs } from 'vue'
 
 import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
@@ -185,7 +186,6 @@ import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-import { generateUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -204,14 +204,12 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import PollDraftHandler from '../PollViewer/PollDraftHandler.vue'
 import Quote from '../Quote.vue'
 
-import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
-import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
-import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
+import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.js'
-import { searchPossibleMentions } from '../../services/mentionsService.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -292,14 +290,17 @@ export default {
 	expose: ['focusInput'],
 
 	setup(props) {
-		const supportTypingStatus = getTalkConfig(props.token, 'chat', 'typing-privacy') !== undefined
-		const isDarkTheme = useIsDarkTheme()
+		const { token } = toRefs(props)
+		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
+		const { autoComplete, userData } = useChatMentions(token)
+
 		return {
-			isDarkTheme,
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			settingsStore: useSettingsStore(),
 			supportTypingStatus,
+			autoComplete,
+			userData,
 		}
 	},
 
@@ -313,8 +314,6 @@ export default {
 			showPollDraftHandler: false,
 			showNewFileDialog: -1,
 			showFilePicker: false,
-			// Check empty template by default
-			userData: {},
 			clipboardTimeStamp: null,
 			typingInterval: null,
 			wasTypingWithinInterval: false,
@@ -682,7 +681,6 @@ export default {
 					token: this.token,
 				})
 				this.text = ''
-				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
@@ -922,61 +920,6 @@ export default {
 
 		togglePollDraftHandler() {
 			this.showPollDraftHandler = !this.showPollDraftHandler
-		},
-
-		async autoComplete(search, callback) {
-			try {
-				const response = await searchPossibleMentions(this.token, search)
-				if (!response) {
-					// It was not possible to get the candidate mentions, so just keep the previous ones.
-					return
-				}
-
-				const possibleMentions = response.data.ocs.data
-
-				possibleMentions.forEach(possibleMention => {
-					// Set icon for candidate mentions that are not for users.
-					if (possibleMention.source === 'calls') {
-						possibleMention.icon = 'icon-user-forced-white'
-						possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, this.isDarkTheme)
-						possibleMention.subline = possibleMention?.details ? possibleMention.details : t('spreed', 'Everyone')
-					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
-						possibleMention.icon = 'icon-group-forced-white'
-						possibleMention.subline = t('spreed', 'Group')
-					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
-						possibleMention.icon = 'icon-user-forced-white'
-						possibleMention.subline = t('spreed', 'Guest')
-					} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
-						possibleMention.icon = 'icon-user-forced-white'
-						possibleMention.iconUrl = getUserProxyAvatarOcsUrl(this.token, possibleMention.id, this.isDarkTheme, 64)
-					} else {
-						// The avatar is automatically shown for users, but an icon
-						// is nevertheless required as fallback.
-						possibleMention.icon = 'icon-user-forced-white'
-						if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
-							// Prevent local users avatars in federated room to be overwritten
-							possibleMention.iconUrl = generateUrl('avatar/{userId}/64' + (this.isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
-						}
-						// Convert status properties to an object.
-						if (possibleMention.status) {
-							possibleMention.status = {
-								status: possibleMention.status,
-								icon: possibleMention.statusIcon,
-							}
-							possibleMention.subline = possibleMention.statusMessage
-						}
-					}
-
-					// Caching the user id data for each possible mention
-					// mentionId should be the default match since 'federation-v1'
-					possibleMention.id = possibleMention.mentionId ?? possibleMention.id
-					this.userData[possibleMention.id] = possibleMention
-				})
-
-				callback(possibleMentions)
-			} catch (error) {
-				console.debug('Error while searching possible mentions: ', error)
-			}
 		},
 
 		focusInput() {
