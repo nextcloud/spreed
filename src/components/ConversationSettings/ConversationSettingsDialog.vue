@@ -132,7 +132,7 @@ import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
-const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
 	name: 'ConversationSettingsDialog',

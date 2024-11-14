@@ -5,7 +5,7 @@
 import { CONVERSATION, PARTICIPANT } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
-const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 /**
  * check if the conversation has unread messages

@@ -178,7 +178,7 @@ import { PARTICIPANT } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
-const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
 	name: 'Conversation',
