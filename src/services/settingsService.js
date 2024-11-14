@@ -78,7 +78,7 @@ const setStartWithoutMedia = async function(value) {
 	await setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
 }
 
-const setBlurBackground = async function(value) {
+const setBlurVirtualBackground = async function(value) {
 	await setUserConfig('spreed', 'blur_virtual_background', value ? 'yes' : 'no')
 }
 
@@ -97,7 +97,7 @@ const setUserConfig = async function(appId, configKey, configValue) {
 
 export {
 	setAttachmentFolder,
-	setBlurBackground,
+	setBlurVirtualBackground,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 	setSIPSettings,

@@ -687,7 +687,7 @@ class Config {
 	 * @param ?string $userId
 	 * @return bool
 	 */
-	public function getBlurBackground(?string $userId): bool {
+	public function getBlurVirtualBackground(?string $userId): bool {
 		if ($userId !== null) {
 			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::BLUR_VIRTUAL_BACKGROUND);
 			return $userSetting === 'yes';

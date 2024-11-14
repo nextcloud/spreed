@@ -387,7 +387,7 @@ LocalMediaModel.prototype = {
 		this._webRtc.enableVirtualBackground()
 	},
 
-	setVirtualBackgroundBlur(blurStrength, globalBlurBackground = false) {
+	setVirtualBackgroundBlur(blurStrength, globalBlurVirtualBackground = false) {
 		if (!this._webRtc) {
 			throw new Error('WebRtc not initialized yet')
 		}
@@ -396,7 +396,7 @@ LocalMediaModel.prototype = {
 			blurStrength = VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT
 		}
 
-		if (!globalBlurBackground) {
+		if (!globalBlurVirtualBackground) {
 			BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
 			BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.get('token'), blurStrength)
 			BrowserStorage.removeItem('virtualBackgroundUrl_' + this.get('token'))

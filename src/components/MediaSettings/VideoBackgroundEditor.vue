@@ -265,7 +265,7 @@ export default {
 				} else {
 					this.selectedBackground = 'none'
 				}
-			} else if (this.settingsStore.blurBackgroundEnabled) {
+			} else if (this.settingsStore.blurVirtualBackgroundEnabled) {
 				this.selectedBackground = 'blur'
 			} else {
 				this.selectedBackground = 'none'

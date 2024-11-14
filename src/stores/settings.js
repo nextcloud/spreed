@@ -15,7 +15,7 @@ import {
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 	setStartWithoutMedia,
-	setBlurBackground,
+	setBlurVirtualBackground,
 } from '../services/settingsService.js'
 
 /**
@@ -41,7 +41,7 @@ export const useSettingsStore = defineStore('settings', {
 		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
 		showMediaSettings: {},
 		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
-		blurBackgroundEnabled: getTalkConfig('local', 'call', 'blur-virtual-background'),
+		blurVirtualBackgroundEnabled: getTalkConfig('local', 'call', 'blur-virtual-background'),
 	}),
 
 	getters: {
@@ -105,9 +105,9 @@ export const useSettingsStore = defineStore('settings', {
 			Vue.set(this.showMediaSettings, token, value)
 		},
 
-		async setBlurBackgroundEnabled(value) {
-			await setBlurBackground(value)
-			this.blurBackgroundEnabled = value
+		async setBlurVirtualBackgroundEnabled(value) {
+			await setBlurVirtualBackground(value)
+			this.blurVirtualBackgroundEnabled = value
 		},
 
 		async setStartWithoutMedia(value) {

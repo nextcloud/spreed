@@ -63,10 +63,10 @@
 				disablePictureInPicture="true"
 				tabindex="-1" />
 		</div>
-		<NcCheckboxRadioSwitch v-if="supportDefaultBlurBackground"
+		<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
 			type="switch"
-			:checked="blurBackgroundEnabled"
-			@update:checked="setBlurBackgroundEnabled">
+			:checked="blurVirtualBackgroundEnabled"
+			@update:checked="setBlurVirtualBackgroundEnabled">
 			{{ t('spreed', 'Enable blur background by default for all conversation') }}
 		</NcCheckboxRadioSwitch>
 	</div>
@@ -91,7 +91,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
-const supportDefaultBlurBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
+const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 
@@ -142,7 +142,7 @@ export default {
 			videoStreamError,
 			settingsStore: useSettingsStore(),
 			virtualBackground,
-			supportDefaultBlurBackground,
+			supportDefaultBlurVirtualBackground,
 		}
 	},
 
@@ -199,13 +199,13 @@ export default {
 			return t('spreed', 'Error while accessing camera')
 		},
 
-		blurBackgroundEnabled() {
-			return this.settingsStore.blurBackgroundEnabled
+		blurVirtualBackgroundEnabled() {
+			return this.settingsStore.blurVirtualBackgroundEnabled
 		},
 	},
 
 	mounted() {
-		if (this.blurBackgroundEnabled) {
+		if (this.blurVirtualBackgroundEnabled) {
 			// wait for the virtual background to be ready
 			this.$nextTick(() => {
 				this.virtualBackground.setEnabled(true)
@@ -230,9 +230,9 @@ export default {
 			this.updatePreferences('videoinput')
 		},
 
-		async setBlurBackgroundEnabled(value) {
+		async setBlurVirtualBackgroundEnabled(value) {
 			try {
-				await this.settingsStore.setBlurBackgroundEnabled(value)
+				await this.settingsStore.setBlurVirtualBackgroundEnabled(value)
 				if (value) {
 					this.virtualBackground.setEnabled(true)
 					this.virtualBackground.setVirtualBackground({
