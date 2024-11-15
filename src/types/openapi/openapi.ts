@@ -1424,6 +1424,7 @@ export type components = {
                     "start-without-media": boolean;
                     /** Format: int64 */
                     "max-duration": number;
+                    "blur-virtual-background": boolean;
                 };
                 chat: {
                     /** Format: int64 */

@@ -82,7 +82,8 @@
                                     "sip-dialout-enabled",
                                     "can-enable-sip",
                                     "start-without-media",
-                                    "max-duration"
+                                    "max-duration",
+                                    "blur-virtual-background"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -128,6 +129,9 @@
                                     "max-duration": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "blur-virtual-background": {
+                                        "type": "boolean"
                                     }
                                 }
                             },

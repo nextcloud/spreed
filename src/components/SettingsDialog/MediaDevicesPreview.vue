@@ -63,6 +63,12 @@
 				disablePictureInPicture="true"
 				tabindex="-1" />
 		</div>
+		<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
+			type="switch"
+			:checked="blurVirtualBackgroundEnabled"
+			@update:checked="setBlurVirtualBackgroundEnabled">
+			{{ t('spreed', 'Enable blur background by default for all conversation') }}
+		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
@@ -75,10 +81,17 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { useSettingsStore } from '../../stores/settings.js'
+
+const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 
@@ -88,6 +101,7 @@ export default {
 		AlertCircle,
 		MediaDevicesSelector,
 		MicrophoneOff,
+		NcCheckboxRadioSwitch,
 		VideoOff,
 		VolumeIndicator,
 	},
@@ -108,6 +122,7 @@ export default {
 			audioStreamError,
 			videoStream,
 			videoStreamError,
+			virtualBackground,
 		} = useDevices(video, true)
 
 		return {
@@ -125,6 +140,9 @@ export default {
 			audioStreamError,
 			videoStream,
 			videoStreamError,
+			settingsStore: useSettingsStore(),
+			virtualBackground,
+			supportDefaultBlurVirtualBackground,
 		}
 	},
 
@@ -180,6 +198,23 @@ export default {
 
 			return t('spreed', 'Error while accessing camera')
 		},
+
+		blurVirtualBackgroundEnabled() {
+			return this.settingsStore.blurVirtualBackgroundEnabled
+		},
+	},
+
+	mounted() {
+		if (this.blurVirtualBackgroundEnabled) {
+			// wait for the virtual background to be ready
+			this.$nextTick(() => {
+				this.virtualBackground.setEnabled(true)
+				this.virtualBackground.setVirtualBackground({
+					backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+					blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+				})
+			})
+		}
 	},
 
 	methods: {
@@ -193,6 +228,23 @@ export default {
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
+		},
+
+		async setBlurVirtualBackgroundEnabled(value) {
+			try {
+				await this.settingsStore.setBlurVirtualBackgroundEnabled(value)
+				if (value) {
+					this.virtualBackground.setEnabled(true)
+					this.virtualBackground.setVirtualBackground({
+						backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+						blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+					})
+				} else {
+					this.virtualBackground.setEnabled(false)
+				}
+			} catch (error) {
+				console.error('Failed to set blur background enabled:', error)
+			}
 		},
 	},
 }

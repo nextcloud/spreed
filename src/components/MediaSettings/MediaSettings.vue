@@ -93,6 +93,7 @@
 				<template #tab-panel:backgrounds>
 					<VideoBackgroundEditor class="media-settings__tab"
 						:token="token"
+						:skip-blur-virtual-background="skipBlurVirtualBackground"
 						@update-background="handleUpdateVirtualBackground" />
 				</template>
 			</MediaSettingsTabs>
@@ -321,6 +322,7 @@ export default {
 			isRecordingFromStart: false,
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
+			skipBlurVirtualBackground: false,
 		}
 	},
 
@@ -350,6 +352,10 @@ export default {
 
 		showMediaSettings() {
 			return this.settingsStore.getShowMediaSettings(this.token)
+		},
+
+		blurVirtualBackgroundEnabled() {
+			return this.settingsStore.blurVirtualBackgroundEnabled
 		},
 
 		showVideo() {
@@ -423,6 +429,10 @@ export default {
 			return this.updatedBackground || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
 		},
+
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
+		},
 	},
 
 	watch: {
@@ -439,6 +449,9 @@ export default {
 					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
 					}
+				} else if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
+					// Fall back to global blur background setting
+					this.blurVirtualBackground()
 				} else {
 					this.clearVirtualBackground()
 				}
@@ -463,6 +476,25 @@ export default {
 
 		isRecordingFromStart(value) {
 			this.setRecordingConsentGiven(value)
+		},
+
+		isInCall(value) {
+			if (value) {
+				const virtualBackgroundEnabled = BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true'
+				// Apply global blur background setting
+				if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground && !virtualBackgroundEnabled) {
+					this.blurBackground(true)
+				}
+			} else {
+				// Reset the flag for the next call
+				this.skipBlurVirtualBackground = false
+			}
+		},
+
+		connectionFailed(value) {
+			if (value) {
+				this.skipBlurVirtualBackground = false
+			}
 		},
 	},
 
@@ -554,10 +586,15 @@ export default {
 		},
 
 		handleUpdateBackground(background) {
+			// Default global blur background setting was changed by user
+			if (this.blurVirtualBackgroundEnabled && background !== 'blur') {
+				this.skipBlurVirtualBackground = true
+			}
+			// Apply the new background
 			if (background === 'none') {
 				this.clearBackground()
 			} else if (background === 'blur') {
-				this.blurBackground()
+				this.blurBackground(this.blurVirtualBackgroundEnabled)
 			} else {
 				this.setBackgroundImage(background)
 			}
@@ -605,12 +642,15 @@ export default {
 
 		/**
 		 * Blurs the background of the participants in current or future call
+		 *
+		 * @param {boolean} globalBlurVirtualBackground - Whether the global blur background setting is enabled (in Talk settings)
 		 */
-		blurBackground() {
+		blurBackground(globalBlurVirtualBackground = false) {
 			if (this.isInCall) {
 				localMediaModel.enableVirtualBackground()
-				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
-			} else {
+				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT, globalBlurVirtualBackground)
+			} else if (!globalBlurVirtualBackground) {
+				this.skipBlurVirtualBackground = true
 				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
 				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
 				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
