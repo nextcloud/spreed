@@ -5,6 +5,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.0-rc.1 – 2024-11-14
+### Added
+- feat(polls): Allow to draft, export and import polls
+  [#13439](https://github.com/nextcloud/spreed/issues/13439)
+- feat(voice-messages): Auto play voice messages which are grouped together
+  [#13199](https://github.com/nextcloud/spreed/issues/13199)
+- feat(calls): Allow moderators to download a call participants list
+  [#13453](https://github.com/nextcloud/spreed/issues/13453)
+- feat(calls): Allow to enforce a maximum call length
+  [#13445](https://github.com/nextcloud/spreed/issues/13445)
+- feat(chat): Add option to directly download attachments
+  [Desktop #824](https://github.com/nextcloud/talk-desktop/issues/824)
+- feat(calls): Add an option to always disable devices by default
+  [#13446](https://github.com/nextcloud/spreed/issues/13446)
+- feat(email-guests): Identify and recognize guests invited via email address
+  [#6098](https://github.com/nextcloud/spreed/issues/6098)
+- feat(email-guests): Allow to invite email guests when creating a conversation
+  [#4937](https://github.com/nextcloud/spreed/issues/4937)
+- feat(chat): Highlight file and object shares with an icon in conversations list
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Disable interactiveness of reference by default, to avoid focus stealing
+  [#4937](https://github.com/nextcloud/spreed/issues/4937)
+- fix(avatar): Use person icon for deleted accounts and guests without a name
+  [#13754](https://github.com/nextcloud/spreed/issues/13754)
+- fix(call): Omit "with 0 guests" when a call is ended and only 1 logged-in participant joined
+  [#13545](https://github.com/nextcloud/spreed/issues/13545)
+- fix(polls): rename "Private poll" to "Anonymous poll"
+- perf: Fix a performance issue when the page is not reloaded over multiple days
+
 ## 20.0.2 – 2024-11-07
 ### Changed
 - Update translations
