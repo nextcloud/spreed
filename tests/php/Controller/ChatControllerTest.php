@@ -44,7 +44,6 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
@@ -85,7 +84,6 @@ class ChatControllerTest extends TestCase {
 	private Authenticator&MockObject $federationAuthenticator;
 	private ProxyCacheMessageService&MockObject $pcmService;
 	private Notifier&MockObject $notifier;
-	private IRichTextFormatter&MockObject $richTextFormatter;
 	private ITaskProcessingManager&MockObject $taskProcessingManager;
 	private IAppConfig&MockObject $appConfig;
 	private LoggerInterface&MockObject $logger;
@@ -129,7 +127,6 @@ class ChatControllerTest extends TestCase {
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->pcmService = $this->createMock(ProxyCacheMessageService::class);
 		$this->notifier = $this->createMock(Notifier::class);
-		$this->richTextFormatter = $this->createMock(IRichTextFormatter::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
@@ -179,7 +176,6 @@ class ChatControllerTest extends TestCase {
 			$this->federationAuthenticator,
 			$this->pcmService,
 			$this->notifier,
-			$this->richTextFormatter,
 			$this->taskProcessingManager,
 			$this->appConfig,
 			$this->logger,

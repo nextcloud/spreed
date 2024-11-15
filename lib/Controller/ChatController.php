@@ -65,7 +65,6 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
-use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Security\RateLimiting\IRateLimitExceededException;
@@ -123,7 +122,6 @@ class ChatController extends AEnvironmentAwareController {
 		protected Authenticator $federationAuthenticator,
 		protected ProxyCacheMessageService $pcmService,
 		protected Notifier $notifier,
-		protected IRichTextFormatter $richTextFormatter,
 		protected ITaskProcessingManager $taskProcessingManager,
 		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
@@ -570,7 +568,7 @@ class ChatController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$parsedMessage = $this->richTextFormatter->richToParsed(
+			$parsedMessage = $this->richToParsed(
 				$message->getMessage(),
 				$message->getMessageParameters(),
 			);
@@ -632,6 +630,24 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse($data, Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Function is copied from Nextcloud 31 \OCP\RichObjectStrings\IRichTextFormatter::richToParsed
+	 * @deprecated
+	 */
+	protected function richToParsed(string $message, array $parameters): string {
+		$placeholders = [];
+		$replacements = [];
+		foreach ($parameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder . '}';
+			$replacements[] = match($parameter['type']) {
+				'user' => '@' . $parameter['name'],
+				'file' => $parameter['path'] ?? $parameter['name'],
+				default => $parameter['name'],
+			};
+		}
+		return str_replace($placeholders, $replacements, $message);
 	}
 
 	/**
