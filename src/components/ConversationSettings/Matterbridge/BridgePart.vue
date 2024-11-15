@@ -4,40 +4,37 @@
 -->
 
 <template>
-	<div class="part"
-		:class="{ readonly: !editing }">
-		<h3>
-			<img class="icon-service"
-				:src="type.iconUrl">
-			<span>
+	<li class="part" :class="{ readonly: !editing }">
+		<div class="part__header">
+			<img class="part__icon" :src="type.iconUrl" :alt="type.name">
+			<h4 class="part__heading">
 				{{ type.name }}
-			</span>
-			<NcActions :container="container"
-				:force-menu="false">
-				<NcActionButton v-if="editable"
-					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
-					@click="onEditClick">
-					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
-				</NcActionButton>
-			</NcActions>
+			</h4>
 			<NcActions class="actions"
 				:container="container"
-				:force-menu="true"
+				:inline="editable ? 1 : 0"
 				placement="bottom">
-				<NcActionLink icon="icon-info"
-					target="_blank"
-					:href="type.infoTarget"
-					close-after-click>
+				<NcActionButton v-if="editable" close-after-click @click="$emit('edit-clicked')">
+					<template #icon>
+						<IconCheck v-if="editing" :size="20" />
+						<IconPencil v-else :size="20" />
+					</template>
+					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
+				</NcActionButton>
+				<NcActionLink :href="type.infoTarget" target="_blank" close-after-click>
+					<template #icon>
+						<IconInformation :size="20" />
+					</template>
 					{{ t('spreed', 'More information') }}
 				</NcActionLink>
-				<NcActionButton v-if="editable"
-					icon="icon-delete"
-					:close-after-click="true"
-					@click="$emit('delete-part')">
+				<NcActionButton v-if="editable" close-after-click @click="$emit('delete-part')">
+					<template #icon>
+						<IconDelete :size="20" />
+					</template>
 					{{ t('spreed', 'Delete') }}
 				</NcActionButton>
 			</NcActions>
-		</h3>
+		</div>
 		<div v-for="(field, key) in displayedFields"
 			:key="key"
 			class="field">
@@ -71,10 +68,15 @@
 			</div>
 			<!-- eslint-enable -->
 		</div>
-	</div>
+	</li>
 </template>
 
 <script>
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconInformation from 'vue-material-design-icons/Information.vue'
+import IconPencil from 'vue-material-design-icons/Pencil.vue'
+
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -84,13 +86,14 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 export default {
 	name: 'BridgePart',
 	components: {
-		NcActions,
+		IconCheck,
+		IconDelete,
+		IconInformation,
+		IconPencil,
 		NcActionButton,
 		NcActionLink,
+		NcActions,
 	},
-
-	mixins: [
-	],
 
 	props: {
 		num: {
@@ -160,9 +163,7 @@ export default {
 			classes[this.type.fields[name].icon] = true
 			return classes
 		},
-		onEditClick() {
-			this.$emit('edit-clicked')
-		},
+
 		// focus on main field when entering edition mode and when created
 		focusMainField() {
 			if (this.editing && this.$refs[this.type.mainField] && this.$refs[this.type.mainField].length > 0) {
@@ -176,25 +177,22 @@ export default {
 
 <style lang="scss" scoped>
 .part {
-	padding-top: 10px;
-}
-
-h3 {
-	display: flex;
-	align-items: flex-end;
-	margin-bottom: 0;
-
-	> span {
-		flex-grow: 1;
-		padding-top: 12px;
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: calc(2 * var(--default-grid-baseline));
+		//width: 100%;
 	}
 
-	.icon-service {
+	&__heading {
+		flex-grow: 1;
+		margin: 0;
+	}
+
+	&__icon {
 		flex-grow: 0;
-		padding: 0 !important;
-		margin: 14px 10px 0 14px;
-		width: 16px;
-		height: 16px;
+		width: var(--clickable-area-small);
+		height: var(--clickable-area-small);
 		filter: var(--background-invert-if-dark);
 	}
 }
