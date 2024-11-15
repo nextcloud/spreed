@@ -246,7 +246,7 @@ export default {
 				// Generate file name
 				const fileName = this.generateFileName()
 				// Convert blob to file
-				const audioFile = new File([this.blob], fileName)
+				const audioFile = new File([this.blob], fileName, { type: 'audio/wav' })
 				this.$emit('audio-file', audioFile)
 				this.$emit('recording', false)
 			}
