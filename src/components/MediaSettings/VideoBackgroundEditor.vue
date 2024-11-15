@@ -118,6 +118,11 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		skipBlurVirtualBackground: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['update-background'],
@@ -265,7 +270,7 @@ export default {
 				} else {
 					this.selectedBackground = 'none'
 				}
-			} else if (this.settingsStore.blurVirtualBackgroundEnabled) {
+			} else if (this.settingsStore.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
 				this.selectedBackground = 'blur'
 			} else {
 				this.selectedBackground = 'none'
