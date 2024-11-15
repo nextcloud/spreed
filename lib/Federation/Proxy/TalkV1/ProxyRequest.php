@@ -42,6 +42,9 @@ class ProxyRequest {
 						'read-privacy',
 						'typing-privacy',
 					],
+					'call' => [
+						'blur-virtual-background',
+					]
 				],
 			]
 		]));

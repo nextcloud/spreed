@@ -131,6 +131,7 @@ class CapabilitiesTest extends TestCase {
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
+						'blur-virtual-background' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -262,6 +263,7 @@ class CapabilitiesTest extends TestCase {
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
+						'blur-virtual-background' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',

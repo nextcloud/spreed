@@ -87,6 +87,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
 const predefinedBackgroundLabels = {
@@ -117,6 +118,11 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		skipBlurVirtualBackground: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['update-background'],
@@ -125,6 +131,7 @@ export default {
 		return {
 			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -263,6 +270,8 @@ export default {
 				} else {
 					this.selectedBackground = 'none'
 				}
+			} else if (this.settingsStore.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
+				this.selectedBackground = 'blur'
 			} else {
 				this.selectedBackground = 'none'
 			}

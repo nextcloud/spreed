@@ -2458,6 +2458,9 @@ class RoomController extends AEnvironmentAwareController {
 			if (isset($data['config']['call']['start-without-media'])) {
 				$data['config']['call']['start-without-media'] = $this->talkConfig->getCallsStartWithoutMedia($this->userId);
 			}
+			if (isset($data['config']['call']['blur-virtual-background'])) {
+				$data['config']['call']['blur-virtual-background'] = $this->talkConfig->getBlurVirtualBackground($this->userId);
+			}
 
 			if ($response->getHeaders()['X-Nextcloud-Talk-Hash']) {
 				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $response->getHeaders()['X-Nextcloud-Talk-Hash'];

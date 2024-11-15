@@ -119,6 +119,7 @@ export const mockedCapabilities: Capabilities = {
 				'can-enable-sip': true,
 				'start-without-media': false,
 				'max-duration': 0,
+				'blur-virtual-background': false,
 			},
 			chat: {
 				'max-length': 32000,
@@ -152,6 +153,7 @@ export const mockedCapabilities: Capabilities = {
 				'predefined-backgrounds',
 				'can-upload-background',
 				'start-without-media',
+				'blur-virtual-background',
 			],
 			chat: [
 				'read-privacy',
