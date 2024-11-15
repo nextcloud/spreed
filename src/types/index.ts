@@ -174,3 +174,8 @@ export type votePollParams = Required<operations['poll-vote-poll']>['requestBody
 export type votePollResponse = ApiResponse<operations['poll-vote-poll']['responses'][200]['content']['application/json']>
 export type closePollResponse = ApiResponse<operations['poll-close-poll']['responses'][200]['content']['application/json']>
 export type deletePollDraftResponse = ApiResponse<operations['poll-close-poll']['responses'][202]['content']['application/json']>
+
+// Mentions
+export type ChatMention = components['schemas']['ChatMentionSuggestion']
+export type getMentionsParams = operations['chat-mentions']['parameters']['query']
+export type getMentionsResponse = ApiResponse<operations['chat-mentions']['responses'][200]['content']['application/json']>
