@@ -1595,6 +1595,22 @@ class ParticipantService {
 	}
 
 	/**
+	 * @return Participant[]
+	 */
+	public function getParticipantsJoinedCurrentCall(Room $room, int $maxAge): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->gte('a.last_joined_call', $query->createNamedParameter($maxAge, IQueryBuilder::PARAM_INT)))
+			->orderBy('a.id', 'ASC');
+
+		return $this->getParticipantsFromQuery($query, $room);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param int $notificationLevel
 	 * @return Participant[]
