@@ -65,16 +65,16 @@
 				</div>
 			</div>
 			<ul>
-				<li v-for="(part, i) in parts" :key="part.type + i">
-					<BridgePart :num="i+1"
-						:part="part"
-						:type="matterbridgeTypes[part.type]"
-						:editing="part.editing"
-						:editable="!enabled"
-						container=".matterbridge-settings"
-						@edit-clicked="onEditClicked(i)"
-						@delete-part="onDelete(i)" />
-				</li>
+				<BridgePart v-for="(part, i) in parts"
+					:key="part.type + i"
+					:num="i+1"
+					:part="part"
+					:type="matterbridgeTypes[part.type]"
+					:editing="part.editing"
+					:editable="!enabled"
+					container=".matterbridge-settings"
+					@edit-clicked="onEditClicked(i)"
+					@delete-part="onDelete(i)" />
 			</ul>
 		</div>
 	</div>
@@ -314,6 +314,8 @@ export default {
 	}
 
 	.basic-settings {
+		margin-bottom: calc(4 * var(--default-grid-baseline));
+
 		.action {
 			list-style: none;
 		}
@@ -354,7 +356,9 @@ export default {
 	}
 
 	ul {
-		margin-bottom: 64px;
+		display: flex;
+		flex-direction: column;
+		gap: calc(4 * var(--default-grid-baseline));
 	}
 }
 
