@@ -2,8 +2,6 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import Hex from 'crypto-js/enc-hex.js'
-import SHA256 from 'crypto-js/sha256.js'
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
@@ -29,7 +27,6 @@ import {
 	postRichObjectToConversation,
 } from '../services/messagesService.ts'
 import { useCallViewStore } from '../stores/callView.js'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
 import { useReactionsStore } from '../stores/reactions.js'
@@ -672,63 +669,6 @@ const actions = {
 			EventBus.emit('editing-message-processing', { messageId, value: false })
 			throw error
 		}
-	},
-
-	/**
-	 * Creates a temporary message ready to be posted, based
-	 * on the message to be replied and the current actor
-	 *
-	 * @param {object} context default store context;
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.text message string;
-	 * @param {string} data.token conversation token;
-	 * @param {string} data.uploadId upload id;
-	 * @param {number} data.index index;
-	 * @param {object} data.file file to upload;
-	 * @param {string} data.localUrl local URL of file to upload;
-	 * @param {boolean} data.isVoiceMessage whether the temporary file is a voice message
-	 * @return {object} temporary message
-	 */
-	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
-		const chatExtrasStore = useChatExtrasStore()
-		const parentId = chatExtrasStore.getParentIdToReply(token)
-		const parent = parentId && context.getters.message(token, parentId)
-		const date = new Date()
-		let tempId = 'temp-' + date.getTime()
-		const messageParameters = {}
-		if (file) {
-			tempId += '-' + uploadId + '-' + Math.random()
-			messageParameters.file = {
-				type: 'file',
-				file,
-				mimetype: file.type,
-				id: tempId,
-				name: file.newName || file.name,
-				// index, will be the id from now on
-				uploadId,
-				localUrl,
-				index,
-			}
-		}
-
-		return Object.assign({}, {
-			id: tempId,
-			actorId: context.getters.getActorId(),
-			actorType: context.getters.getActorType(),
-			actorDisplayName: context.getters.getDisplayName(),
-			timestamp: 0,
-			systemMessage: '',
-			markdown: hasTalkFeature(token, 'markdown-messages'),
-			messageType: isVoiceMessage ? 'voice-message' : '',
-			message: text,
-			messageParameters,
-			token,
-			parent,
-			isReplyable: false,
-			sendingFailure: '',
-			reactions: {},
-			referenceId: Hex.stringify(SHA256(tempId)),
-		})
 	},
 
 	/**
