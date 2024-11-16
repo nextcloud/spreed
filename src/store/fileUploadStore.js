@@ -11,6 +11,7 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 
+import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { SHARED_ITEM } from '../constants.js'
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.ts'
@@ -227,9 +228,10 @@ const actions = {
 	 * @param {boolean} data.rename whether to rename the files (usually after pasting)
 	 * @param {boolean} data.isVoiceMessage whether the file is a voice recording
 	 */
-	async initialiseUpload({ commit, dispatch }, { uploadId, token, files, rename = false, isVoiceMessage }) {
+	initialiseUpload(context, { uploadId, token, files, rename = false, isVoiceMessage }) {
 		// Set last upload id
-		commit('setCurrentUploadId', uploadId)
+		context.commit('setCurrentUploadId', uploadId)
+		const { createTemporaryMessage } = useTemporaryMessage(context)
 
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i]
@@ -249,11 +251,17 @@ const actions = {
 			const date = new Date()
 			const index = 'temp_' + date.getTime() + Math.random()
 			// Create temporary message for the file and add it to the message list
-			const temporaryMessage = await dispatch('createTemporaryMessage', {
-				text: '{file}', token, uploadId, index, file, localUrl, isVoiceMessage,
+			const temporaryMessage = createTemporaryMessage({
+				message: '{file}',
+				token,
+				uploadId,
+				index,
+				file,
+				localUrl,
+				messageType: isVoiceMessage ? 'voice-message' : 'comment',
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
-			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl, token })
+			context.commit('addFileToBeUploaded', { file, temporaryMessage, localUrl, token })
 		}
 	},
 
@@ -442,7 +450,8 @@ const actions = {
 			const [index, shareableFile] = share
 			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
 
-			const metadata = JSON.stringify(Object.assign({ messageType },
+			const metadata = JSON.stringify(Object.assign(
+				messageType !== 'comment' ? { messageType } : {},
 				caption && index === lastIndex ? { caption } : {},
 				options?.silent ? { silent: options.silent } : {},
 				parent ? { replyTo: parent.id } : {},

@@ -44,31 +44,11 @@ describe('fileUploadStore', () => {
 	let mockedActions = null
 
 	beforeEach(() => {
-		let temporaryMessageCount = 0
-
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		mockedActions = {
-			createTemporaryMessage: jest.fn()
-				.mockImplementation((context, { file, index, uploadId, localUrl, token }) => {
-					temporaryMessageCount += 1
-					return {
-						id: temporaryMessageCount,
-						referenceId: 'reference-id-' + temporaryMessageCount,
-						token,
-						messageParameters: {
-							file: {
-								uploadId,
-								index,
-								token,
-								localUrl,
-								file,
-							},
-						},
-					}
-				}),
 			addTemporaryMessage: jest.fn(),
 			markTemporaryMessageAsFailed: jest.fn(),
 		}
@@ -78,6 +58,9 @@ describe('fileUploadStore', () => {
 		storeConfig = cloneDeep(fileUploadStore)
 		storeConfig.actions = Object.assign(storeConfig.actions, mockedActions)
 		storeConfig.getters.getUserId = jest.fn().mockReturnValue(() => 'current-user')
+		storeConfig.getters.getActorId = jest.fn().mockReturnValue(() => 'current-user')
+		storeConfig.getters.getActorType = jest.fn().mockReturnValue(() => 'users')
+		storeConfig.getters.getDisplayName = jest.fn().mockReturnValue(() => 'Current User')
 	})
 
 	afterEach(() => {
@@ -103,7 +86,7 @@ describe('fileUploadStore', () => {
 			restoreConsole()
 		})
 
-		test('initialises upload for given files', async () => {
+		test('initialises upload for given files', () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -126,7 +109,7 @@ describe('fileUploadStore', () => {
 			]
 			const localUrls = ['local-url:pngimage.png', 'local-url:jpgimage.jpg', undefined]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
@@ -135,10 +118,16 @@ describe('fileUploadStore', () => {
 			const uploads = store.getters.getInitialisedUploads('upload-id1')
 			expect(uploads).toHaveLength(files.length)
 
-			for (const index in files) {
-				expect(mockedActions.createTemporaryMessage.mock.calls[index][1]).toMatchObject({
-					text: '{file}',
+			for (const index in uploads) {
+				expect(uploads[index][1].temporaryMessage).toMatchObject({
+					message: '{file}',
 					token: 'XXTOKENXX',
+				})
+				expect(uploads[index][1].temporaryMessage.messageParameters.file).toMatchObject({
+					type: 'file',
+					mimetype: files[index].type,
+					id: uploads[index][1].temporaryMessage.id,
+					name: files[index].name,
 					uploadId: 'upload-id1',
 					index: expect.anything(),
 					file: files[index],
@@ -155,7 +144,7 @@ describe('fileUploadStore', () => {
 				lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
 			}
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files: [file],
@@ -164,6 +153,7 @@ describe('fileUploadStore', () => {
 			expect(store.getters.currentUploadId).toBe('upload-id1')
 
 			const uniqueFileName = '/Talk/' + file.name + 'uniq'
+			const referenceId = store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.referenceId
 			findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
 			uploadMock.mockResolvedValue()
 			shareFile.mockResolvedValue()
@@ -177,7 +167,7 @@ describe('fileUploadStore', () => {
 			expect(uploadMock).toHaveBeenCalledWith(uniqueFileName, file)
 
 			expect(shareFile).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledWith(uniqueFileName, 'XXTOKENXX', 'reference-id-1', '{"caption":"text-caption","silent":true}')
+			expect(shareFile).toHaveBeenCalledWith(uniqueFileName, 'XXTOKENXX', referenceId, '{"caption":"text-caption","silent":true}')
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(store.getters.currentUploadId).not.toBeDefined()
@@ -198,7 +188,7 @@ describe('fileUploadStore', () => {
 			}
 			const files = [file1, file2]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
@@ -221,10 +211,11 @@ describe('fileUploadStore', () => {
 				expect(findUniquePath).toHaveBeenNthCalledWith(+index + 1, client, '/files/current-user', '/Talk/' + files[index].name, undefined)
 				expect(uploadMock).toHaveBeenNthCalledWith(+index + 1, `/Talk/${files[index].name}uniq`, files[index])
 			}
+			const referenceIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.referenceId)
 
 			expect(shareFile).toHaveBeenCalledTimes(2)
-			expect(shareFile).toHaveBeenNthCalledWith(1, '/Talk/' + files[0].name + 'uniq', 'XXTOKENXX', 'reference-id-1', '{}')
-			expect(shareFile).toHaveBeenNthCalledWith(2, '/Talk/' + files[1].name + 'uniq', 'XXTOKENXX', 'reference-id-2', '{"caption":"text-caption"}')
+			expect(shareFile).toHaveBeenNthCalledWith(1, '/Talk/' + files[0].name + 'uniq', 'XXTOKENXX', referenceIds[0], '{}')
+			expect(shareFile).toHaveBeenNthCalledWith(2, '/Talk/' + files[1].name + 'uniq', 'XXTOKENXX', referenceIds[1], '{"caption":"text-caption"}')
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(2)
 			expect(store.getters.currentUploadId).not.toBeDefined()
@@ -240,7 +231,7 @@ describe('fileUploadStore', () => {
 				},
 			]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
@@ -262,7 +253,7 @@ describe('fileUploadStore', () => {
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledTimes(1)
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledWith(expect.anything(), {
 				token: 'XXTOKENXX',
-				id: 1,
+				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
 				reason: 'failed-upload'
 			})
@@ -280,7 +271,7 @@ describe('fileUploadStore', () => {
 				},
 			]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
@@ -303,7 +294,7 @@ describe('fileUploadStore', () => {
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledTimes(1)
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledWith(expect.anything(), {
 				token: 'XXTOKENXX',
-				id: 1,
+				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
 				reason: 'failed-share'
 			})
@@ -327,14 +318,14 @@ describe('fileUploadStore', () => {
 				},
 			]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
 			})
 
-			// temporary message mock uses incremental id
-			await store.dispatch('removeFileFromSelection', 2)
+			const fileIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.id)
+			await store.dispatch('removeFileFromSelection', fileIds[1])
 
 			const uploads = store.getters.getInitialisedUploads('upload-id1')
 			expect(uploads).toHaveLength(1)
@@ -358,7 +349,7 @@ describe('fileUploadStore', () => {
 				},
 			]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,
@@ -372,7 +363,7 @@ describe('fileUploadStore', () => {
 			expect(store.getters.currentUploadId).not.toBeDefined()
 		})
 
-		test('autorenames files using timestamps when requested', async () => {
+		test('autorenames files using timestamps when requested', () => {
 			const files = [
 				{
 					name: 'pngimage.png',
@@ -388,7 +379,7 @@ describe('fileUploadStore', () => {
 				},
 			]
 
-			await store.dispatch('initialiseUpload', {
+			store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
 				token: 'XXTOKENXX',
 				files,

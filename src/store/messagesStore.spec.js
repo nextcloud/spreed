@@ -29,7 +29,6 @@ import {
 	postNewMessage,
 	postRichObjectToConversation,
 } from '../services/messagesService.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -517,193 +516,39 @@ describe('messagesStore', () => {
 
 	describe('temporary messages', () => {
 		let mockDate
-		let chatExtraStore
 
 		beforeEach(() => {
 			mockDate = new Date('2020-01-01 20:00:00')
 			jest.spyOn(global, 'Date')
 				.mockImplementation(() => mockDate)
-			chatExtraStore = useChatExtrasStore()
 		})
 
-		test('creates temporary message', async () => {
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
+		test('adds temporary message to the list', () => {
+			const temporaryMessage = {
 				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
-
-			expect(getActorIdMock).toHaveBeenCalled()
-			expect(getActorTypeMock).toHaveBeenCalled()
-			expect(getDisplayNameMock).toHaveBeenCalled()
-
-			expect(temporaryMessage).toMatchObject({
 				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
 				timestamp: 0,
 				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {},
-				token: TOKEN,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			})
-		})
-
-		test('creates temporary message with message to be replied', async () => {
-			const parent = {
-				id: 123,
-				token: TOKEN,
-				message: 'hello',
+				messageType: 'comment',
+				message: 'original',
 			}
-
-			store.dispatch('processMessage', { token: TOKEN, message: parent })
-			chatExtraStore.setParentIdToReply({ token: TOKEN, id: 123 })
-
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
-				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
-
-			expect(temporaryMessage).toMatchObject({
-				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {},
-				token: TOKEN,
-				parent,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			})
-		})
-
-		test('creates temporary message with file', async () => {
-			const file = {
-				type: 'text/plain',
-				name: 'original-name.txt',
-				newName: 'new-name.txt',
-			}
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
-				token: TOKEN,
-				uploadId: 'upload-id-1',
-				index: 'upload-index-1',
-				file,
-				localUrl: 'local-url://original-name.txt',
-			})
-
-			expect(temporaryMessage).toMatchObject({
-				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {
-					file: {
-						type: 'file',
-						file,
-						mimetype: 'text/plain',
-						id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
-						name: 'new-name.txt',
-						uploadId: 'upload-id-1',
-						localUrl: 'local-url://original-name.txt',
-						index: 'upload-index-1',
-					},
-				},
-				token: TOKEN,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			})
-		})
-
-		test('adds temporary message to the list', async () => {
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
-				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
 
 			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
-			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
-				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {},
-				token: TOKEN,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			}])
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([temporaryMessage])
 
 			expect(updateConversationLastActiveAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
-
-			// add again just replaces it
-			store.dispatch('addTemporaryMessage', {
-				token: TOKEN,
-				message: { ...temporaryMessage, message: 'replaced' }
-			})
-
-			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
-				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'replaced',
-				messageParameters: {},
-				token: TOKEN,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			}])
 		})
 
-		test('marks temporary message as failed', async () => {
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
+		test('marks temporary message as failed', () => {
+			const temporaryMessage = {
 				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
+				id: 'temp-1577908800000',
+				timestamp: 0,
+				systemMessage: '',
+				messageType: 'comment',
+				message: 'original',
+			}
 
 			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 			store.dispatch('markTemporaryMessageAsFailed', {
@@ -713,67 +558,41 @@ describe('messagesStore', () => {
 			})
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
-				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {},
-				token: TOKEN,
-				isReplyable: false,
+				...temporaryMessage,
 				sendingFailure: 'failure-reason',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
 
-		test('removeTemporaryMessageFromStore', async () => {
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
+		test('removeTemporaryMessageFromStore', () => {
+			const temporaryMessage = {
 				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
+				id: 'temp-1577908800000',
+				timestamp: 0,
+				systemMessage: '',
+				messageType: 'comment',
+				message: 'original',
+			}
 
 			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
-			store.dispatch('removeTemporaryMessageFromStore', { token: TOKEN, id: temporaryMessage.id })
+			store.dispatch('removeTemporaryMessageFromStore', { token: TOKEN, id: 'temp-1577908800000' })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
 		})
 
-		test('gets temporary message by reference', async () => {
-			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
-				text: 'blah',
+		test('gets temporary message by reference', () => {
+			const temporaryMessage = {
 				token: TOKEN,
-				uploadId: null,
-				index: null,
-				file: null,
-				localUrl: null,
-			})
+				id: 'temp-1577908800000',
+				timestamp: 0,
+				systemMessage: '',
+				messageType: 'comment',
+				message: 'original',
+				referenceId: 'reference-1',
+			}
 
 			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
-			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toMatchObject([{
-				id: 'temp-1577908800000',
-				actorId: 'actor-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				actorDisplayName: 'actor-display-name-1',
-				timestamp: 0,
-				systemMessage: '',
-				messageType: '',
-				message: 'blah',
-				messageParameters: {},
-				token: TOKEN,
-				isReplyable: false,
-				sendingFailure: '',
-				reactions: {},
-				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-			}])
+			expect(store.getters.getTemporaryReferences(TOKEN, 'reference-1')).toMatchObject([temporaryMessage])
 		})
 	})
 
