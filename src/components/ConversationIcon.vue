@@ -60,8 +60,8 @@ import WebIcon from 'vue-material-design-icons/Web.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
-import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'

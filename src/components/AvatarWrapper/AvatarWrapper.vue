@@ -51,8 +51,8 @@ import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
-import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { ATTENDEE, AVATAR } from '../../constants.js'
 import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 
