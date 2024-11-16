@@ -121,10 +121,10 @@ import { generateUrl } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcColorPicker from '@nextcloud/vue/dist/Components/NcColorPicker.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
-import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { AVATAR } from '../../constants.js'
 
 // eslint-disable-next-line n/no-extraneous-import

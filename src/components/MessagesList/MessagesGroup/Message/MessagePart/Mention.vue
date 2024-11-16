@@ -19,8 +19,8 @@
 import { loadState } from '@nextcloud/initial-state'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
-import { useIsDarkTheme } from '../../../../../composables/useIsDarkTheme.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
 
 export default {
