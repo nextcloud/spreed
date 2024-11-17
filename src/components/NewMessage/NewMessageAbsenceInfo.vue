@@ -46,10 +46,10 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { AVATAR } from '../../constants.js'
 
 export default {
