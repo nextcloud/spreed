@@ -10,7 +10,8 @@ import Vue, { computed, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
-import { useIsDarkTheme } from './useIsDarkTheme.ts'
+import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
+
 import { ATTENDEE } from '../constants.js'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../services/avatarService.ts'
 import { searchPossibleMentions } from '../services/mentionsService.ts'
