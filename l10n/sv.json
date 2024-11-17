@@ -1514,6 +1514,7 @@
     "Edit display name" : "Ändra visningsnamn",
     "Save name" : "Spara namn",
     "Display name: {name}" : "Visningsnamn: {name}",
+    "Enable blur background by default for all conversation" : "Aktivera suddig bakgrund som standard för alla konversationer",
     "Calls are not supported in your browser" : "Samtal stöds inte i din webbläsare",
     "Access to microphone is only possible with HTTPS" : "Åtkomst till mikrofon är endast möjligt via HTTPS",
     "Access to microphone was denied" : "Åtkomst till mikrofon nekades",
