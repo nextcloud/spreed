@@ -205,6 +205,7 @@ import PollDraftHandler from '../PollViewer/PollDraftHandler.vue'
 import Quote from '../Quote.vue'
 
 import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -293,6 +294,7 @@ export default {
 		const { token } = toRefs(props)
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
+		const { createTemporaryMessage } = useTemporaryMessage()
 
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
@@ -301,6 +303,7 @@ export default {
 			supportTypingStatus,
 			autoComplete,
 			userData,
+			createTemporaryMessage,
 		}
 	},
 
@@ -676,8 +679,8 @@ export default {
 			}
 
 			if (this.hasText) {
-				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
-					text: this.text.trim(),
+				const temporaryMessage = this.createTemporaryMessage({
+					message: this.text.trim(),
 					token: this.token,
 				})
 				this.text = ''
@@ -835,7 +838,7 @@ export default {
 		 * @param {boolean} rename whether to rename the files
 		 * @param {boolean} isVoiceMessage indicates whether the file is a voice message
 		 */
-		async handleFiles(files, rename = false, isVoiceMessage = false) {
+		handleFiles(files, rename = false, isVoiceMessage = false) {
 			if (!this.canUploadFiles) {
 				showWarning(t('spreed', 'File upload is not available in this conversation'))
 				return
@@ -843,7 +846,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = this.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
-			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
 
 		/**
