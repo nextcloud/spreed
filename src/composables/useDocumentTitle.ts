@@ -43,7 +43,7 @@ export function useDocumentTitle() {
 		 * - a conversation has a different last message id then previously
 		 */
 		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
-			return !savedLastMessageMap.value[token] // Conversation is new
+			return savedLastMessageMap.value[token] === undefined // Conversation is new
 				|| (savedLastMessageMap.value[token] !== newLastMessageMap[token] // Last message changed
 					&& newLastMessageMap[token] !== -1) // But is not from the current user
 		})
