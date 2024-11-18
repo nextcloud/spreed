@@ -22,8 +22,9 @@
 			</NcCheckboxRadioSwitch>
 
 			<template v-if="isSharedPublicly">
+				<NcNoteCard v-if="isForcePublicChatPasswordsEnabled" type="warning" :text="publicConversationHint" />
 				<NcCheckboxRadioSwitch :checked="isPasswordProtectionChecked"
-					:disabled="isSaving || isForcePublicChatPasswordsEnabled"
+					:disabled="isSaving || (isForcePublicChatPasswordsEnabled && !isOldPublicConversation)"
 					type="switch"
 					aria-describedby="link_share_settings_password_hint"
 					@update:checked="togglePassword">
@@ -88,6 +89,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
@@ -103,6 +105,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcPasswordField,
+		NcNoteCard,
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
@@ -148,6 +151,19 @@ export default {
 		isPasswordProtectionChecked() {
 			return this.conversation.hasPassword || this.showPasswordField
 		},
+
+		isOldPublicConversation() {
+			// The conversation was set public before the force public chat passwords setting was enabled
+			return this.isSharedPublicly && !this.isPasswordProtectionChecked
+		},
+
+		publicConversationHint() {
+			if (this.isOldPublicConversation) {
+				return t('spreed', 'Password is now required for public conversations. Please set a password.')
+			} else {
+				return t('spreed', 'Password is required for public conversations.')
+			}
+		}
 	},
 
 	methods: {
