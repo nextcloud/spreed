@@ -27,7 +27,7 @@
 
 <script>
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
+import IconLink from 'vue-material-design-icons/Link.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -46,7 +46,7 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		IconAccountMultiple,
-		IconLinkVariant,
+		IconLink,
 		IconPhone,
 	},
 
@@ -126,7 +126,7 @@ export default {
 			} else if (this.isPhoneConversation) {
 				return IconPhone
 			} else {
-				return this.isPublicConversation ? IconLinkVariant : IconAccountMultiple
+				return this.isPublicConversation ? IconLink : IconAccountMultiple
 			}
 		},
 
