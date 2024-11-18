@@ -473,9 +473,12 @@ export default {
 			this.showPresenterOverlay = value
 		},
 
-		showEmptyCallView(value) {
-			this.callViewStore.setIsEmptyCallView(value)
-		},
+		showEmptyCallView: {
+			immediate: true,
+			handler(value) {
+				this.callViewStore.setIsEmptyCallView(value)
+			},
+		}
 	},
 
 	created() {
