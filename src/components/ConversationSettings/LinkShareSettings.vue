@@ -21,31 +21,32 @@
 				{{ t('spreed', 'Allow guests to join this conversation via link') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-				:checked="isPasswordProtectionChecked"
-				:disabled="isSaving || isForcePublicChatPasswordsEnabled"
-				type="switch"
-				aria-describedby="link_share_settings_password_hint"
-				@update:checked="togglePassword">
-				{{ t('spreed', 'Password protection') }}
-			</NcCheckboxRadioSwitch>
+			<template v-if="isSharedPublicly">
+				<NcCheckboxRadioSwitch :checked="isPasswordProtectionChecked"
+					:disabled="isSaving || isForcePublicChatPasswordsEnabled"
+					type="switch"
+					aria-describedby="link_share_settings_password_hint"
+					@update:checked="togglePassword">
+					{{ t('spreed', 'Password protection') }}
+				</NcCheckboxRadioSwitch>
 
-			<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
-				<NcPasswordField ref="passwordField"
-					:value.sync="password"
-					autocomplete="new-password"
-					check-password-strength
-					:disabled="isSaving"
-					class="password-form__input-field"
-					label-visible
-					:label="t('spreed', 'Enter new password')" />
-				<NcButton :disabled="isSaving" type="primary" native-type="submit">
-					<template #icon>
-						<ArrowRight />
-					</template>
-					{{ t('spreed', 'Save password') }}
-				</NcButton>
-			</form>
+				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
+					<NcPasswordField ref="passwordField"
+						:value.sync="password"
+						autocomplete="new-password"
+						check-password-strength
+						:disabled="isSaving"
+						class="password-form__input-field"
+						label-visible
+						:label="t('spreed', 'Enter new password')" />
+					<NcButton :disabled="isSaving" type="primary" native-type="submit">
+						<template #icon>
+							<ArrowRight />
+						</template>
+						{{ t('spreed', 'Save password') }}
+					</NcButton>
+				</form>
+			</template>
 		</template>
 
 		<p v-else-if="isSharedPublicly">
@@ -195,27 +196,17 @@ export default {
 				// Generate a random password
 				this.password = await generatePassword()
 				this.showPasswordField = true
-				await this.handlePasswordEnable()
 				this.$nextTick(() => {
 					this.$refs.passwordField.focus()
 				})
 			} else {
 				this.showPasswordField = false
-				await this.handlePasswordDisable()
+				// disable the password protection for the current conversation
+				if (this.conversation.hasPassword) {
+					await this.setConversationPassword('')
+				}
+				this.password = ''
 			}
-		},
-
-		async handlePasswordDisable() {
-			// disable the password protection for the current conversation
-			if (this.conversation.hasPassword) {
-				await this.setConversationPassword('')
-			}
-			this.password = ''
-			this.showPasswordField = false
-		},
-
-		async handlePasswordEnable() {
-			this.showPasswordField = true
 		},
 
 		async handleSetNewPassword() {
