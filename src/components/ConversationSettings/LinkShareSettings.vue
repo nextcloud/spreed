@@ -23,7 +23,7 @@
 
 			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
 				:checked="isPasswordProtectionChecked"
-				:disabled="isSaving"
+				:disabled="isSaving || isForcePublicChatPasswordsEnabled"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
 				@update:checked="togglePassword">
@@ -82,6 +82,7 @@ import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline
 import Email from 'vue-material-design-icons/Email.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -90,6 +91,8 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
+
+const FORCE_PUBLIC_CHAT_PASSWORDS = loadState('spreed', 'force_public_chat_passwords', false)
 
 export default {
 	name: 'LinkShareSettings',
@@ -123,6 +126,7 @@ export default {
 			showPasswordField: false,
 			isSaving: false,
 			isSendingInvitations: false,
+			isForcePublicChatPasswordsEnabled: FORCE_PUBLIC_CHAT_PASSWORDS,
 		}
 	},
 
@@ -169,11 +173,20 @@ export default {
 			this.isSaving = false
 		},
 
-		async toggleGuests() {
+		async toggleGuests(checked) {
 			const allowGuests = this.conversation.type !== CONVERSATION.TYPE.PUBLIC
 			this.isSaving = true
 			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests })
 			this.isSaving = false
+			if (this.isForcePublicChatPasswordsEnabled) {
+				// Enable password protection automatically if the conversation is shared publicly
+				// and the force public chat passwords setting is enabled
+				await this.togglePassword(true)
+			}
+			if (!checked) {
+				// Disable password protection if the conversation is not shared publicly
+				await this.togglePassword(false)
+			}
 		},
 
 		async togglePassword(checked) {
