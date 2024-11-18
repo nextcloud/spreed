@@ -17,7 +17,7 @@ use OCP\IDBConnection;
 /**
  * @method Reminder mapRowToEntity(array $row)
  * @method Reminder findEntity(IQueryBuilder $query)
- * @method Reminder[] findEntities(IQueryBuilder $query)
+ * @method list<Reminder> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Reminder>
  */
 class ReminderMapper extends QBMapper {
@@ -44,7 +44,7 @@ class ReminderMapper extends QBMapper {
 	}
 
 	/**
-	 * @return Reminder[]
+	 * @return list<Reminder>
 	 */
 	public function findRemindersToExecute(\DateTime $dateTime): array {
 		$query = $this->db->getQueryBuilder();

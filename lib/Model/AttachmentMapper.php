@@ -16,15 +16,12 @@ use OCP\IDBConnection;
 /**
  * @method Attachment mapRowToEntity(array $row)
  * @method Attachment findEntity(IQueryBuilder $query)
- * @method Attachment[] findEntities(IQueryBuilder $query)
+ * @method list<Attachment> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Attachment>
  */
 class AttachmentMapper extends QBMapper {
 	use TTransactional;
 
-	/**
-	 * @param IDBConnection $db
-	 */
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_attachments', Attachment::class);
 	}
@@ -42,11 +39,7 @@ class AttachmentMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $roomId
-	 * @param string $objectType
-	 * @param int $offset
-	 * @param int $limit
-	 * @return Attachment[]
+	 * @return list<Attachment>
 	 * @throws \OCP\DB\Exception
 	 */
 	public function getAttachmentsByType(int $roomId, string $objectType, int $offset, int $limit): array {

@@ -18,22 +18,15 @@ use OCP\IDBConnection;
 /**
  * @method Attendee mapRowToEntity(array $row)
  * @method Attendee findEntity(IQueryBuilder $query)
- * @method Attendee[] findEntities(IQueryBuilder $query)
+ * @method list<Attendee> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Attendee>
  */
 class AttendeeMapper extends QBMapper {
-	/**
-	 * @param IDBConnection $db
-	 */
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_attendees', Attendee::class);
 	}
 
 	/**
-	 * @param int $roomId
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @return Attendee
 	 * @throws DoesNotExistException
 	 */
 	public function findByActor(int $roomId, string $actorType, string $actorId): Attendee {
@@ -48,11 +41,8 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $id
-	 * @return Attendee
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
-	 * @throws DBException
 	 */
 	public function getById(int $id): Attendee {
 		$query = $this->db->getQueryBuilder();
@@ -64,10 +54,6 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $id
-	 * @param string $token
-	 * @return Attendee
-	 * @throws DBException
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
@@ -82,10 +68,7 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $roomId
-	 * @param string $actorType
-	 * @param int|null $lastJoinedCall
-	 * @return Attendee[]
+	 * @return list<Attendee>
 	 */
 	public function getActorsByType(int $roomId, string $actorType, ?int $lastJoinedCall = null): array {
 		$query = $this->db->getQueryBuilder();
@@ -102,10 +85,7 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $roomId
-	 * @param array $actorTypes
-	 * @param int|null $lastJoinedCall
-	 * @return Attendee[]
+	 * @return list<Attendee>
 	 */
 	public function getActorsByTypes(int $roomId, array $actorTypes, ?int $lastJoinedCall = null): array {
 		$query = $this->db->getQueryBuilder();
@@ -122,9 +102,7 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $roomId
-	 * @param array $participantType
-	 * @return Attendee[]
+	 * @return list<Attendee>
 	 * @throws DBException
 	 */
 	public function getActorsByParticipantTypes(int $roomId, array $participantType): array {
@@ -140,12 +118,6 @@ class AttendeeMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
-	/**
-	 * @param int $roomId
-	 * @param string $actorType
-	 * @param int|null $lastJoinedCall
-	 * @return int
-	 */
 	public function getActorsCountByType(int $roomId, string $actorType, ?int $lastJoinedCall = null): int {
 		$query = $this->db->getQueryBuilder();
 		$query->select($query->func()->count('*', 'num_actors'))
@@ -165,9 +137,7 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $roomId
 	 * @param int[] $participantType
-	 * @return int
 	 */
 	public function countActorsByParticipantType(int $roomId, array $participantType): int {
 		$query = $this->db->getQueryBuilder();

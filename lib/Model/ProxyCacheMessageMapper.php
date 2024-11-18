@@ -19,7 +19,7 @@ use OCP\IDBConnection;
 /**
  * @method ProxyCacheMessage mapRowToEntity(array $row)
  * @method ProxyCacheMessage findEntity(IQueryBuilder $query)
- * @method ProxyCacheMessage[] findEntities(IQueryBuilder $query)
+ * @method list<ProxyCacheMessage> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<ProxyCacheMessage>
  */
 class ProxyCacheMessageMapper extends QBMapper {

@@ -17,7 +17,7 @@ use OCP\IDBConnection;
 /**
  * @method BotServer mapRowToEntity(array $row)
  * @method BotServer findEntity(IQueryBuilder $query)
- * @method BotServer[] findEntities(IQueryBuilder $query)
+ * @method list<BotServer> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<BotServer>
  */
 class BotServerMapper extends QBMapper {
@@ -84,7 +84,7 @@ class BotServerMapper extends QBMapper {
 	}
 
 	/**
-	 * @return BotServer[]
+	 * @return list<BotServer>
 	 */
 	public function findByIds(array $botIds): array {
 		$query = $this->db->getQueryBuilder();
@@ -96,7 +96,7 @@ class BotServerMapper extends QBMapper {
 	}
 
 	/**
-	 * @return BotServer[]
+	 * @return list<BotServer>
 	 */
 	public function getAllBots(): array {
 		$query = $this->db->getQueryBuilder();

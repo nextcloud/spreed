@@ -23,7 +23,7 @@ use SensitiveParameter;
  *
  * @method Invitation mapRowToEntity(array $row)
  * @method Invitation findEntity(IQueryBuilder $query)
- * @method Invitation[] findEntities(IQueryBuilder $query)
+ * @method list<Invitation> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Invitation>
  */
 class InvitationMapper extends QBMapper {
@@ -66,7 +66,7 @@ class InvitationMapper extends QBMapper {
 
 	/**
 	 * @param IUser $user
-	 * @return Invitation[]
+	 * @return list<Invitation>
 	 */
 	public function getInvitationsForUser(IUser $user): array {
 		$qb = $this->db->getQueryBuilder();

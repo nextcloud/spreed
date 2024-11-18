@@ -15,7 +15,7 @@ use OCP\IDBConnection;
 /**
  * @method Consent mapRowToEntity(array $row)
  * @method Consent findEntity(IQueryBuilder $query)
- * @method Consent[] findEntities(IQueryBuilder $query)
+ * @method list<Consent> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Consent>
  */
 class ConsentMapper extends QBMapper {
@@ -26,7 +26,7 @@ class ConsentMapper extends QBMapper {
 	}
 
 	/**
-	 * @return Consent[]
+	 * @return list<Consent>
 	 */
 	public function findForToken(string $token): array {
 		$query = $this->db->getQueryBuilder();
@@ -46,7 +46,7 @@ class ConsentMapper extends QBMapper {
 	}
 
 	/**
-	 * @return Consent[]
+	 * @return list<Consent>
 	 */
 	public function findForActor(string $actorType, string $actorId): array {
 		$query = $this->db->getQueryBuilder();
@@ -68,7 +68,7 @@ class ConsentMapper extends QBMapper {
 	}
 
 	/**
-	 * @return Consent[]
+	 * @return list<Consent>
 	 */
 	public function findForTokenByActor(string $token, string $actorType, string $actorId): array {
 		$query = $this->db->getQueryBuilder();
