@@ -20,11 +20,11 @@ use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\RecordingService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\Files\File;
 use OCP\Files\IRootFolder;
-use OCP\SpeechToText\Events\AbstractTranscriptionEvent;
-use OCP\SpeechToText\Events\TranscriptionFailedEvent;
-use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
+use OCP\TaskProcessing\Events\AbstractTaskProcessingEvent;
+use OCP\TaskProcessing\Events\TaskFailedEvent;
+use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -34,12 +34,17 @@ class Listener implements IEventListener {
 		protected RecordingService $recordingService,
 		protected ConsentService $consentService,
 		protected IRootFolder $rootFolder,
+		protected LoggerInterface $logger,
 	) {
 	}
 
 	public function handle(Event $event): void {
-		if ($event instanceof AbstractTranscriptionEvent) {
-			$this->handleTranscriptionEvents($event);
+		if ($event instanceof AbstractTaskProcessingEvent) {
+			try {
+				$this->handleTranscriptionEvents($event);
+			} catch (\Throwable $e) {
+				$this->logger->error('An error occurred while processing recording AI follow-up task', ['exception' => $e]);
+			}
 			return;
 		}
 
@@ -54,40 +59,40 @@ class Listener implements IEventListener {
 		};
 	}
 
-	public function handleTranscriptionEvents(AbstractTranscriptionEvent $event): void {
-		if ($event->getAppId() !== Application::APP_ID) {
+	public function handleTranscriptionEvents(AbstractTaskProcessingEvent $event): void {
+		$task = $event->getTask();
+		if ($task->getAppId() !== Application::APP_ID) {
 			return;
 		}
 
-		if ($event instanceof TranscriptionSuccessfulEvent) {
-			$this->successfulTranscript($event->getUserId(), $event->getFile(), $event->getTranscript());
-		} elseif ($event instanceof TranscriptionFailedEvent) {
-			$this->failedTranscript($event->getUserId(), $event->getFile());
-		}
-	}
+		// 'call/transcription/' . $room->getToken()
+		$customId = $task->getCustomId();
+		if (str_starts_with($customId, 'call/transcription/')) {
+			$aiType = 'transcript';
+			$roomToken = substr($customId, strlen('call/transcription/'));
 
-	protected function successfulTranscript(?string $owner, ?File $fileNode, string $transcript): void {
-		if (!$fileNode instanceof File) {
+			$fileId = (int)($task->getInput()['input'] ?? null);
+		} elseif (str_starts_with($customId, 'call/summary/')) {
+			$aiType = 'summary';
+			[$roomToken, $fileId] = explode('/', substr($customId, strlen('call/summary/')));
+			$fileId = (int)$fileId;
+		} else {
 			return;
 		}
 
-		if ($owner === null) {
+		if ($fileId === 0) {
 			return;
 		}
 
-		$this->recordingService->storeTranscript($owner, $fileNode, $transcript);
-	}
-
-	protected function failedTranscript(?string $owner, ?File $fileNode): void {
-		if (!$fileNode instanceof File) {
+		if ($task->getUserId() === null) {
 			return;
 		}
 
-		if ($owner === null) {
-			return;
+		if ($event instanceof TaskSuccessfulEvent) {
+			$this->recordingService->storeTranscript($task->getUserId(), $roomToken, $fileId, $task->getOutput()['output'] ?? '', $aiType);
+		} elseif ($event instanceof TaskFailedEvent) {
+			$this->recordingService->notifyAboutFailedTranscript($task->getUserId(), $roomToken, $fileId, $aiType);
 		}
-
-		$this->recordingService->notifyAboutFailedTranscript($owner, $fileNode);
 	}
 
 	protected function roomDeleted(RoomDeletedEvent $event): void {
