@@ -11,6 +11,7 @@ import { generateUrl, getBaseUrl } from '@nextcloud/router'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getUpcomingEvents } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.ts'
+import { summarizeChat } from '../services/messagesService.ts'
 import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
 
@@ -41,6 +42,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		chatEditInput: {},
 		tasksCount: 0,
 		tasksDoneCount: 0,
+		chatSummary: {},
 	}),
 
 	getters: {
@@ -60,6 +62,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		getNextEvent: (state) => (token) => {
 			return state.upcomingEvents[token]?.[0]
+		},
+
+		getChatSummaryTaskQueue: (state) => (token) => {
+			return Object.values(Object(state.chatSummary[token]))
+		},
+
+		hasChatSummaryTaskRequested: (state) => (token) => {
+			return state.chatSummary[token] !== undefined
 		},
 	},
 
@@ -246,6 +256,30 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		setTasksCounters({ tasksCount, tasksDoneCount }) {
 			this.tasksCount = tasksCount
 			this.tasksDoneCount = tasksDoneCount
+		},
+
+		async requestChatSummary(token, fromMessageId) {
+			try {
+				const response = await summarizeChat(token, fromMessageId)
+				if (!response.data) {
+					console.warn('No messages found to summarize:', { token, fromMessageId })
+					return
+				}
+				const task = response.data.ocs.data
+
+				if (!this.chatSummary[token]) {
+					Vue.set(this.chatSummary, token, {})
+				}
+				Vue.set(this.chatSummary[token], fromMessageId, {
+					...task,
+					fromMessageId,
+				})
+				if (task.nextOffset && task.nextOffset !== fromMessageId) {
+					await this.requestChatSummary(token, task.nextOffset)
+				}
+			} catch (error) {
+				console.error('Error while requesting a summary:', error)
+			}
 		}
 	},
 })

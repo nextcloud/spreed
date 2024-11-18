@@ -26,6 +26,8 @@ import type {
 	receiveMessagesResponse,
 	setReadMarkerParams,
 	setReadMarkerResponse,
+	summarizeChatParams,
+	summarizeChatResponse,
 } from '../types/index.ts'
 
 type ReceiveMessagesPayload = Partial<receiveMessagesParams> & { token: string }
@@ -209,6 +211,19 @@ const setConversationUnread = async function(token: string, options?: object): m
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }, options), options)
 }
 
+/**
+ * Request chat summary from a given message
+ *
+ * @param token The conversation token
+ * @param fromMessageId The last read message to start from
+ * @param options object destructured
+ */
+const summarizeChat = async function(token: string, fromMessageId: summarizeChatParams['fromMessageId'], options?: object): summarizeChatResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/summarize', { token }, options), {
+		fromMessageId,
+	} as summarizeChatParams, options)
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -220,4 +235,5 @@ export {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 	setConversationUnread,
+	summarizeChat,
 }
