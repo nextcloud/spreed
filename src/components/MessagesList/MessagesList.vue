@@ -1015,7 +1015,7 @@ export default {
 					// e.g: it is the last message in collapsed group
 					// unread marker is set to the combined system message.
 					// Look for the unread marker itself
-					el = document.querySelector('.new-message-marker')
+					el = document.querySelector('.message-unread-marker')
 					if (el) {
 						el = el.closest('.message')
 					} else {

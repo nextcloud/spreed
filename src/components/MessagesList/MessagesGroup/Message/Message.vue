@@ -79,8 +79,10 @@
 
 		<div v-if="isLastReadMessage"
 			v-intersection-observer="lastReadMessageVisibilityChanged"
-			class="new-message-marker">
-			<span>{{ t('spreed', 'Unread messages') }}</span>
+			class="message-unread-marker">
+			<div class="message-unread-marker__wrapper">
+				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
+			</div>
 		</div>
 	</li>
 </template>
@@ -467,22 +469,36 @@ export default {
 	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 
-.new-message-marker {
+.message-unread-marker {
 	position: relative;
-	margin: 20px 15px;
-	border-top: 1px solid var(--color-border);
+	margin: calc(4 * var(--default-grid-baseline));
 
-	span {
+	&::before {
+		content: '';
+		width: 100%;
+		border-top: 1px solid var(--color-border-maxcontrast);
 		position: absolute;
-		top: 0;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		padding: 0 7px 0 7px;
-		text-align: center;
-		white-space: nowrap;
-		color: var(--color-text-light);
+		top: 50%;
+		z-index: -1;
+	}
+
+	&__wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: calc(3 * var(--default-grid-baseline));
+		margin-inline: auto;
+		padding-inline: calc(3 * var(--default-grid-baseline));
+		width: fit-content;
 		border-radius: var(--border-radius);
 		background-color: var(--color-main-background);
+	}
+
+	&__text {
+		text-align: center;
+		white-space: nowrap;
+		font-weight: bold;
+		color: var(--color-main-text);
 	}
 }
 
