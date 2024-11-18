@@ -109,6 +109,12 @@
 				:aria-label="readInfo.sentIconTitle">
 				<CheckIcon :size="16" />
 			</div>
+			<div v-else-if="readInfo.showSilentIcon"
+				:title="readInfo.silentIconTitle"
+				class="message-status"
+				:aria-label="readInfo.silentIconTitle">
+				<IconBellOff :size="16" />
+			</div>
 		</div>
 
 		<!-- Reactions slot -->
@@ -119,9 +125,10 @@
 <script>
 import { vIntersectionObserver as IntersectionObserver, vElementSize as ElementSize } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
-import { toRefs, ref } from 'vue'
+import { toRefs } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
+import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
@@ -159,6 +166,7 @@ export default {
 		Quote,
 		// Icons
 		AlertCircleIcon,
+		IconBellOff,
 		CancelIcon,
 		CheckIcon,
 		CheckAllIcon,
