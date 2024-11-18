@@ -57,6 +57,13 @@
 						</template>
 						{{ editedDateTime }}
 					</NcActionText>
+					<!-- Silent message information -->
+					<NcActionText v-if="readInfo.showSilentIcon">
+						<template #icon>
+							<IconBellOff :size="16" />
+						</template>
+						{{ readInfo.silentIconTitle }}
+					</NcActionText>
 					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
@@ -260,6 +267,7 @@ import { toRefs } from 'vue'
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
@@ -321,6 +329,7 @@ export default {
 		AccountIcon,
 		AlarmIcon,
 		ArrowLeft,
+		IconBellOff,
 		CalendarClock,
 		CloseCircleOutline,
 		Check,
