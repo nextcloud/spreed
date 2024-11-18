@@ -96,6 +96,8 @@ export type postRichObjectResponse = ApiResponse<operations['chat-share-object-t
 export type setReadMarkerParams = Required<operations['chat-set-read-marker']>['requestBody']['content']['application/json']
 export type setReadMarkerResponse = ApiResponse<operations['chat-set-read-marker']['responses'][200]['content']['application/json']>
 export type markUnreadResponse = ApiResponse<operations['chat-mark-unread']['responses'][200]['content']['application/json']>
+export type summarizeChatParams = operations['chat-summarize-chat']['requestBody']['content']['application/json']
+export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat']['responses'][201]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
