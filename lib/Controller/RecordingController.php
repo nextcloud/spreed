@@ -418,7 +418,8 @@ class RecordingController extends AEnvironmentAwareController {
 			$this->recordingService->notificationDismiss(
 				$this->getRoom(),
 				$this->participant,
-				$timestamp
+				$timestamp,
+				null, // FIXME we would/should extend the URL, but the iOS app is crafting it manually atm due to OS limitations
 			);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -446,7 +447,7 @@ class RecordingController extends AEnvironmentAwareController {
 				$this->getRoom(),
 				$this->participant,
 				$fileId,
-				$timestamp
+				$timestamp,
 			);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
