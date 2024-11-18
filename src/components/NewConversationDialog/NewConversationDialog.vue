@@ -97,6 +97,13 @@
 						@click="onClickCopyLink">
 						{{ t('spreed', 'Copy conversation link') }}
 					</NcButton>
+					<NcButton v-if="!error && success && isPublic && password"
+						id="copy-password"
+						ref="copyPassword"
+						type="secondary"
+						@click="onClickCopyPassword">
+						{{ t('spreed', 'Copy password') }}
+					</NcButton>
 				</template>
 			</NcEmptyContent>
 		</NcModal>
@@ -109,6 +116,7 @@ import { provide, ref } from 'vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
+import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -363,6 +371,14 @@ export default {
 
 		onClickCopyLink() {
 			copyConversationLinkToClipboard(this.newConversation.token)
+		},
+		async onClickCopyPassword() {
+			try {
+				await navigator.clipboard.writeText(this.password)
+				showSuccess(t('spreed', 'Conversation password copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'The password could not be copied'))
+			}
 		},
 	},
 

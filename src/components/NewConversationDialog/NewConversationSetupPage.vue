@@ -46,7 +46,7 @@
 		<div class="new-group-conversation__wrapper">
 			<NcCheckboxRadioSwitch :checked.sync="hasPassword"
 				type="switch"
-				:disabled="!isPublic">
+				:disabled="!isPublic || isForcePublicConversationPasswordsEnabled">
 				<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
 			</NcCheckboxRadioSwitch>
 			<NcPasswordField v-if="hasPassword"
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -73,8 +74,10 @@ import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 
 import { CONVERSATION } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
+const FORCE_PUBLIC_CHAT_PASSWORDS = loadState('spreed', 'force_public_chat_passwords', false)
 
 export default {
 
@@ -108,6 +111,12 @@ export default {
 
 	setup() {
 		return { supportsAvatar }
+	},
+
+	data() {
+		return {
+			isForcePublicConversationPasswordsEnabled: FORCE_PUBLIC_CHAT_PASSWORDS,
+		}
 	},
 
 	computed: {
@@ -147,9 +156,10 @@ export default {
 			get() {
 				return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
 			},
-			set(value) {
+			async set(value) {
 				if (value) {
-					this.updateNewConversation({ type: CONVERSATION.TYPE.PUBLIC })
+					this.updateNewConversation({ type: CONVERSATION.TYPE.PUBLIC, hasPassword: this.isForcePublicConversationPasswordsEnabled ?? false })
+					this.passwordValue = await generatePassword()
 				} else {
 					this.updateNewConversation({ type: CONVERSATION.TYPE.GROUP, hasPassword: false })
 				}
