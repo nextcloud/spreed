@@ -522,7 +522,7 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			const marker = wrapper.find('.new-message-marker')
+			const marker = wrapper.find('.message-unread-marker')
 			expect(marker.exists()).toBe(true)
 
 			expect(IntersectionObserver).toHaveBeenCalled()
@@ -559,7 +559,7 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			const marker = wrapper.find('.new-message-marker')
+			const marker = wrapper.find('.message-unread-marker')
 			expect(marker.exists()).toBe(false)
 		})
 	})
