@@ -90,6 +90,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
+import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const FORCE_PUBLIC_CHAT_PASSWORDS = loadState('spreed', 'force_public_chat_passwords', false)
@@ -191,6 +192,8 @@ export default {
 
 		async togglePassword(checked) {
 			if (checked) {
+				// Generate a random password
+				this.password = await generatePassword()
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {

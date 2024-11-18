@@ -13,7 +13,13 @@ type ApiResponseHeaders<T extends { headers: object }> = {
 // Capabilities
 export type Capabilities = {
 	[key: string]: Record<string, unknown>,
-	spreed: components['schemas']['Capabilities'],
+	spreed: components['schemas']['Capabilities']
+} & {
+	password_policy?: {
+		api?: {
+			generate?: string
+		}
+	}
 }
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 
