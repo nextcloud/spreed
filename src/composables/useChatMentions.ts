@@ -52,7 +52,11 @@ function useChatMentionsComposable(token: Ref<string>): ReturnType {
 	 * @param isDarkTheme whether current theme is dark
 	 */
 	function parseMention(possibleMention: ChatMention, token: string, isDarkTheme: boolean): AutocompleteChatMention {
-		const chatMention: AutocompleteChatMention = { ...possibleMention, status: undefined }
+		const chatMention: AutocompleteChatMention = {
+			...possibleMention,
+			id: possibleMention.mentionId ?? possibleMention.id, // mentionId should be the default match since 'federation-v1'
+			status: undefined,
+		}
 
 		// Set icon for candidate mentions that are not for users.
 		if (possibleMention.source === 'calls') {
@@ -85,13 +89,11 @@ function useChatMentionsComposable(token: Ref<string>): ReturnType {
 			}
 		}
 
-		// mentionId should be the default match since 'federation-v1'
-		const id = possibleMention.mentionId ?? possibleMention.id
 		// caching the user id data for each possible mention
 		if (!userDataTokenMap.value[token]) {
 			Vue.set(userDataTokenMap.value, token, {})
 		}
-		Vue.set(userDataTokenMap.value[token], id, chatMention)
+		Vue.set(userDataTokenMap.value[token], chatMention.id, chatMention)
 
 		return chatMention
 	}
