@@ -126,6 +126,7 @@ export const mockedCapabilities: Capabilities = {
 				'read-privacy': 0,
 				'has-translation-providers': true,
 				'typing-privacy': 0,
+				'summary-threshold': 100,
 			},
 			conversations: {
 				'can-create': true,
@@ -158,6 +159,7 @@ export const mockedCapabilities: Capabilities = {
 				'read-privacy',
 				'has-translation-providers',
 				'typing-privacy',
+				'summary-threshold',
 			],
 			conversations: [
 				'can-create',

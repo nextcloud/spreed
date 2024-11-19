@@ -21,6 +21,9 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use OCP\TaskProcessing\TaskTypes\TextToTextFormalization;
+use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\Translation\ITranslationManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -33,6 +36,7 @@ class CapabilitiesTest extends TestCase {
 	protected IUserSession&MockObject $userSession;
 	protected IAppManager&MockObject $appManager;
 	protected ITranslationManager&MockObject $translationManager;
+	protected ITaskProcessingManager&MockObject $taskProcessingManager;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected ICache&MockObject $talkCache;
 
@@ -45,6 +49,7 @@ class CapabilitiesTest extends TestCase {
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->translationManager = $this->createMock(ITranslationManager::class);
+		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->talkCache = $this->createMock(ICache::class);
 
@@ -62,8 +67,8 @@ class CapabilitiesTest extends TestCase {
 			->willReturn('1.2.3');
 	}
 
-	public function testGetCapabilitiesGuest(): void {
-		$capabilities = new Capabilities(
+	protected function getCapabilities(): Capabilities {
+		return new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
 			$this->appConfig,
@@ -71,8 +76,13 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->taskProcessingManager,
 			$this->cacheFactory,
 		);
+	}
+
+	public function testGetCapabilitiesGuest(): void {
+		$capabilities = $this->getCapabilities();
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
@@ -138,6 +148,7 @@ class CapabilitiesTest extends TestCase {
 						'read-privacy' => 0,
 						'has-translation-providers' => false,
 						'typing-privacy' => 0,
+						'summary-threshold' => 100,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -173,16 +184,7 @@ class CapabilitiesTest extends TestCase {
 	 * @dataProvider dataGetCapabilitiesUserAllowed
 	 */
 	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
-		$capabilities = new Capabilities(
-			$this->serverConfig,
-			$this->talkConfig,
-			$this->appConfig,
-			$this->commentsManager,
-			$this->userSession,
-			$this->appManager,
-			$this->translationManager,
-			$this->cacheFactory,
-		);
+		$capabilities = $this->getCapabilities();
 
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->atLeastOnce())
@@ -219,6 +221,9 @@ class CapabilitiesTest extends TestCase {
 		$user->method('getQuota')
 			->willReturn($quota);
 
+		$this->taskProcessingManager->method('getAvailableTaskTypes')
+			->willReturn([TextToTextSummary::ID => true]);
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -237,6 +242,7 @@ class CapabilitiesTest extends TestCase {
 					Capabilities::FEATURES, [
 						'message-expiration',
 						'reactions',
+						'chat-summary-api',
 					]
 				),
 				'features-local' => Capabilities::LOCAL_FEATURES,
@@ -274,6 +280,7 @@ class CapabilitiesTest extends TestCase {
 						'read-privacy' => $readPrivacy,
 						'has-translation-providers' => false,
 						'typing-privacy' => 0,
+						'summary-threshold' => 100,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
@@ -295,19 +302,35 @@ class CapabilitiesTest extends TestCase {
 				'version' => '1.2.3',
 			],
 		], $data);
+	}
 
-		foreach ($data['spreed']['features'] as $feature) {
+	public function testCapabilitiesDocumentation(): void {
+		foreach (Capabilities::FEATURES as $feature) {
 			$suffix = '';
-			if (in_array($feature, $data['spreed']['features-local'])) {
+			if (in_array($feature, Capabilities::LOCAL_FEATURES)) {
 				$suffix = ' (local)';
 			}
 			$this->assertCapabilityIsDocumented("`$feature`" . $suffix);
 		}
 
-		foreach ($data['spreed']['config'] as $feature => $configs) {
-			foreach ($configs as $config => $configData) {
+		foreach (Capabilities::CONDITIONAL_FEATURES as $feature) {
+			$suffix = '';
+			if (in_array($feature, Capabilities::LOCAL_FEATURES)) {
+				$suffix = ' (local)';
+			}
+			$this->assertCapabilityIsDocumented("`$feature`" . $suffix);
+		}
+
+		$openapi = json_decode(file_get_contents(__DIR__ . '/../../openapi.json'), true, flags: JSON_THROW_ON_ERROR);
+		$configDefinition = $openapi['components']['schemas']['Capabilities']['properties']['config']['properties'] ?? null;
+		$this->assertIsArray($configDefinition, 'Failed to read Capabilities config from openapi.json');
+
+		$configFeatures = array_keys($configDefinition);
+
+		foreach ($configFeatures as $feature) {
+			foreach (array_keys($configDefinition[$feature]['properties']) as $config) {
 				$suffix = '';
-				if (isset($data['spreed']['config-local'][$feature]) && in_array($config, $data['spreed']['config-local'][$feature])) {
+				if (isset($data['spreed']['config-local'][$feature]) && in_array($config, Capabilities::LOCAL_CONFIGS[$feature])) {
 					$suffix = ' (local)';
 				}
 				$this->assertCapabilityIsDocumented("`config => $feature => $config`" . $suffix);
@@ -321,16 +344,7 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	public function testGetCapabilitiesUserDisallowed(): void {
-		$capabilities = new Capabilities(
-			$this->serverConfig,
-			$this->talkConfig,
-			$this->appConfig,
-			$this->commentsManager,
-			$this->userSession,
-			$this->appManager,
-			$this->translationManager,
-			$this->cacheFactory,
-		);
+		$capabilities = $this->getCapabilities();
 
 		$user = $this->createMock(IUser::class);
 		$this->userSession->expects($this->once())
@@ -347,16 +361,7 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	public function testCapabilitiesHelloV2Key(): void {
-		$capabilities = new Capabilities(
-			$this->serverConfig,
-			$this->talkConfig,
-			$this->appConfig,
-			$this->commentsManager,
-			$this->userSession,
-			$this->appManager,
-			$this->translationManager,
-			$this->cacheFactory,
-		);
+		$capabilities = $this->getCapabilities();
 
 		$this->talkConfig->expects($this->once())
 			->method('getSignalingTokenPublicKey')
@@ -377,16 +382,7 @@ class CapabilitiesTest extends TestCase {
 	 * @dataProvider dataTestConfigRecording
 	 */
 	public function testConfigRecording(bool $enabled): void {
-		$capabilities = new Capabilities(
-			$this->serverConfig,
-			$this->talkConfig,
-			$this->appConfig,
-			$this->commentsManager,
-			$this->userSession,
-			$this->appManager,
-			$this->translationManager,
-			$this->cacheFactory,
-		);
+		$capabilities = $this->getCapabilities();
 
 		$this->talkConfig->expects($this->once())
 			->method('isRecordingEnabled')
@@ -397,21 +393,22 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	public function testCapabilitiesTranslations(): void {
-		$capabilities = new Capabilities(
-			$this->serverConfig,
-			$this->talkConfig,
-			$this->appConfig,
-			$this->commentsManager,
-			$this->userSession,
-			$this->appManager,
-			$this->translationManager,
-			$this->cacheFactory,
-		);
+		$capabilities = $this->getCapabilities();
 
 		$this->translationManager->method('hasProviders')
 			->willReturn(true);
 
 		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
 		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-providers']);
+	}
+
+	public function testSummaryTaskProviders(): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->taskProcessingManager->method('getAvailableTaskTypes')
+			->willReturn([TextToTextFormalization::ID => true]);
+
+		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
+		$this->assertNotContains('chat-summary-api', $data['spreed']['features']);
 	}
 }

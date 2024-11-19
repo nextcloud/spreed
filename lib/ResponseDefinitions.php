@@ -355,6 +355,7 @@ namespace OCA\Talk;
  *             read-privacy: int,
  *             has-translation-providers: bool,
  *             typing-privacy: int,
+ *             summary-threshold: positive-int,
  *         },
  *         conversations: array{
  *             can-create: bool,

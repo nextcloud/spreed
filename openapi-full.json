@@ -360,7 +360,8 @@
                                     "max-length",
                                     "read-privacy",
                                     "has-translation-providers",
-                                    "typing-privacy"
+                                    "typing-privacy",
+                                    "summary-threshold"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -377,6 +378,11 @@
                                     "typing-privacy": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "summary-threshold": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
                                     }
                                 }
                             },
@@ -6083,6 +6089,179 @@
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/summarize": {
+            "post": {
+                "operationId": "chat-summarize-chat",
+                "summary": "Summarize the next bunch of chat messages from a given offset",
+                "description": "Required capability: `chat-summary-api`",
+                "tags": [
+                    "chat"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fromMessageId"
+                                ],
+                                "properties": {
+                                    "fromMessageId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Offset from where on the summary should be generated",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "taskId"
+                                                    ],
+                                                    "properties": {
+                                                        "taskId": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        },
+                                                        "nextOffset": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No AI provider available or summarizing failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ai-no-provider",
+                                                                "ai-error"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No messages found to summarize"
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
                                 }
                             }
                         }
