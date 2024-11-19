@@ -67,7 +67,7 @@ class SearchPlugin implements ISearchPlugin {
 		$groupIds = [];
 		/** @var array<string, string> $cloudIds */
 		$cloudIds = [];
-		/** @var array<string, string> $emailAttendees */
+		/** @var array<string, Attendee> $emailAttendees */
 		$emailAttendees = [];
 		/** @var list<Attendee> $guestAttendees */
 		$guestAttendees = [];
@@ -85,7 +85,7 @@ class SearchPlugin implements ISearchPlugin {
 				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 					$guestAttendees[] = $attendee;
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_EMAILS) {
-					$emailAttendees[$attendee->getActorId()] = $attendee->getDisplayName();
+					$emailAttendees[$attendee->getActorId()] = $attendee;
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$userIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
@@ -307,7 +307,7 @@ class SearchPlugin implements ISearchPlugin {
 
 	/**
 	 * @param string $search
-	 * @param array<string, string> $attendees
+	 * @param array<string, Attendee> $attendees
 	 * @param ISearchResult $searchResult
 	 */
 	protected function searchEmails(string $search, array $attendees, ISearchResult $searchResult): void {
@@ -325,25 +325,25 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		$matches = $exactMatches = [];
-		foreach ($attendees as $actorId => $displayName) {
+		foreach ($attendees as $actorId => $attendee) {
 			if ($currentSessionHash === $actorId) {
 				// Do not suggest the current guest
 				continue;
 			}
 
-			$displayName = $displayName ?: $this->l->t('Guest');
+			$displayName = $attendee->getDisplayName() ?: $this->l->t('Guest');
 			if ($search === '') {
-				$matches[] = $this->createEmailResult($actorId, $displayName);
+				$matches[] = $this->createEmailResult($actorId, $displayName, $attendee->getInvitedCloudId());
 				continue;
 			}
 
 			if (strtolower($displayName) === $search) {
-				$exactMatches[] = $this->createEmailResult($actorId, $displayName);
+				$exactMatches[] = $this->createEmailResult($actorId, $displayName, $attendee->getInvitedCloudId());
 				continue;
 			}
 
 			if (stripos($displayName, $search) !== false) {
-				$matches[] = $this->createEmailResult($actorId, $displayName);
+				$matches[] = $this->createEmailResult($actorId, $displayName, $attendee->getInvitedCloudId());
 				continue;
 			}
 		}
@@ -386,13 +386,19 @@ class SearchPlugin implements ISearchPlugin {
 		];
 	}
 
-	protected function createEmailResult(string $actorId, string $name): array {
-		return [
+	protected function createEmailResult(string $actorId, string $name, ?string $email): array {
+		$data = [
 			'label' => $name,
 			'value' => [
 				'shareType' => 'email',
 				'shareWith' => 'email/' . $actorId,
 			],
 		];
+
+		if ($email) {
+			$data['details'] = ['email' => $email];
+		}
+
+		return $data;
 	}
 }
