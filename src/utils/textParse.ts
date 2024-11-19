@@ -5,6 +5,7 @@
 
 import { getBaseUrl } from '@nextcloud/router'
 
+import { MENTION } from '../constants.js'
 import type { ChatMessage, Mention } from '../types/index.ts'
 
 /**
@@ -18,14 +19,20 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 		const value: Mention = parameters[key] as Mention
 		let mention = ''
 
-		if (key.startsWith('mention-call') && value.type === 'call') {
+		if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
 			mention = '@all'
-		} else if (key.startsWith('mention-federated-user') && value.type === 'user') {
-			const server = value?.server ?? getBaseUrl().replace('https://', '')
+		} else if (key.startsWith('mention-federated-user')
+			&& [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(value.type)) {
+			const server = (value?.server ?? getBaseUrl()).replace('https://', '')
 			mention = `@"federated_user/${value.id}@${server}"`
-		} else if (key.startsWith('mention-group') && value.type === 'user-group') {
+		} else if (key.startsWith('mention-group')
+			&& [MENTION.TYPE.USERGROUP, MENTION.TYPE.GROUP].includes(value.type)) {
 			mention = `@"group/${value.id}"`
-		} else if (key.startsWith('mention-user') && value.type === 'user') {
+		} else if (key.startsWith('mention-guest') && value.type === MENTION.TYPE.GUEST) {
+			mention = `@"${value.id}"`
+		} else if (key.startsWith('mention-email') && value.type === MENTION.TYPE.EMAIL) {
+			mention = `@"email/${value.id}"`
+		} else if (key.startsWith('mention-user') && value.type === MENTION.TYPE.USER) {
 			mention = value.id.includes(' ') ? `@"${value.id}"` : `@${value.id}`
 		}
 
