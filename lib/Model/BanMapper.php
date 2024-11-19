@@ -16,7 +16,7 @@ use OCP\IDBConnection;
 /**
  * @method Ban mapRowToEntity(array $row)
  * @method Ban findEntity(IQueryBuilder $query)
- * @method Ban[] findEntities(IQueryBuilder $query)
+ * @method list<Ban> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Ban>
  */
 class BanMapper extends QBMapper {

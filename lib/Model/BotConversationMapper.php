@@ -16,7 +16,7 @@ use OCP\IDBConnection;
 /**
  * @method BotConversation mapRowToEntity(array $row)
  * @method BotConversation findEntity(IQueryBuilder $query)
- * @method BotConversation[] findEntities(IQueryBuilder $query)
+ * @method list<BotConversation> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<BotConversation>
  */
 class BotConversationMapper extends QBMapper {
@@ -29,7 +29,7 @@ class BotConversationMapper extends QBMapper {
 	}
 
 	/**
-	 * @return BotConversation[]
+	 * @return list<BotConversation>
 	 */
 	public function findForToken(string $token): array {
 		$query = $this->db->getQueryBuilder();

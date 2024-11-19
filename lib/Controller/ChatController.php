@@ -85,6 +85,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkChatMessage from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkChatReminder from ResponseDefinitions
+ * @psalm-import-type TalkRichObjectParameter from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareController {
@@ -289,8 +290,10 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		/** @var TalkRichObjectParameter $data */
 		$data = $metaData !== '' ? json_decode($metaData, true) : [];
 		if (!is_array($data)) {
+			/** @var TalkRichObjectParameter $data */
 			$data = [];
 		}
 		$data['type'] = $objectType;

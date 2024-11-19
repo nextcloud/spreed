@@ -14,19 +14,17 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
+ * @method Vote findEntity(IQueryBuilder $query)
+ * @method list<Vote> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Vote>
  */
 class VoteMapper extends QBMapper {
-	/**
-	 * @param IDBConnection $db
-	 */
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_poll_votes', Vote::class);
 	}
 
 	/**
-	 * @param int $pollId
-	 * @return Vote[]
+	 * @return list<Vote>
 	 */
 	public function findByPollId(int $pollId): array {
 		$query = $this->db->getQueryBuilder();
@@ -38,10 +36,7 @@ class VoteMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $pollId
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @return Vote[]
+	 * @return list<Vote>
 	 */
 	public function findByPollIdForActor(int $pollId, string $actorType, string $actorId): array {
 		$query = $this->db->getQueryBuilder();

@@ -15,7 +15,7 @@ use OCP\IDBConnection;
 /**
  * @method RetryNotification mapRowToEntity(array $row)
  * @method RetryNotification findEntity(IQueryBuilder $query)
- * @method RetryNotification[] findEntities(IQueryBuilder $query)
+ * @method list<RetryNotification> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<RetryNotification>
  */
 class RetryNotificationMapper extends QBMapper {
@@ -26,7 +26,7 @@ class RetryNotificationMapper extends QBMapper {
 	}
 
 	/**
-	 * @return RetryNotification[]
+	 * @return list<RetryNotification>
 	 */
 	public function getAllDue(\DateTimeInterface $dueDateTime, ?int $limit = 500): array {
 		$query = $this->db->getQueryBuilder();

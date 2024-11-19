@@ -9,26 +9,24 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCA\Talk\Participant;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
  * @method Session mapRowToEntity(array $row)
+ * @method Session findEntity(IQueryBuilder $query)
+ * @method list<Session> findEntities(IQueryBuilder $query)
  * @template-extends QBMapper<Session>
  */
 class SessionMapper extends QBMapper {
-	/**
-	 * @param IDBConnection $db
-	 */
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_sessions', Session::class);
 	}
 
 	/**
-	 * @param string $sessionId
-	 * @return Session
-	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws DoesNotExistException
 	 */
 	public function findBySessionId(string $sessionId): Session {
 		$query = $this->db->getQueryBuilder();
@@ -40,8 +38,7 @@ class SessionMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $attendeeId
-	 * @return Session[]
+	 * @return list<Session>
 	 */
 	public function findByAttendeeId(int $attendeeId): array {
 		$query = $this->db->getQueryBuilder();
@@ -53,7 +50,6 @@ class SessionMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $attendeeId
 	 * @return int Number of deleted entities
 	 */
 	public function deleteByAttendeeId(int $attendeeId): int {

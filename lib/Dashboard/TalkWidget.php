@@ -95,7 +95,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	}
 
 	/**
-	 * @return \OCP\Dashboard\Model\WidgetButton[]
+	 * @return list<WidgetButton>
 	 */
 	public function getWidgetButtons(string $userId): array {
 		$buttons = [];
