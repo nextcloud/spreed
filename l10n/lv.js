@@ -56,6 +56,7 @@ OC.L10N.register(
     "{actor} demoted you from moderator" : "{actor} pazemināja jūs no regulētāja",
     "{actor} shared a file which is no longer available" : "{actor} kopīgoja datni, kas vairs nav pieejama",
     "You shared a file which is no longer available" : "Jūs kopīgojāt datni, kas vairs nav pieejama",
+    "Message deleted by author" : "Ziņojumu izdzēsa autors",
     "%s (guest)" : "%s (viesis)",
     "Talk conversations" : "Sarunas",
     "Talk to %s" : "Runāt ar %s",

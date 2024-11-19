@@ -1145,7 +1145,7 @@ OC.L10N.register(
     "No pending invitations" : "لا توجد دعوات معلقة",
     "Conversation list" : "قائمة المحادثة ",
     "Filter unread mentions" : "تصفية الإشارات غير المقروءة",
-    "Filter unread messages" : "تصفية الرسائل الغير مقروءة",
+    "Filter unread messages" : "تصفية الرسائل غير المقروءة",
     "Clear filters" : "إزالة التصفية",
     "Create a new conversation" : "إنشاء محادثة جديدة",
     "New personal note" : "ملاحظة شخصية جديدة",
