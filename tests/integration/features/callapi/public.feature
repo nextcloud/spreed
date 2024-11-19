@@ -95,12 +95,18 @@ Feature: callapi/public
     And user "guest" joins call "room" with 200 (v4)
     Then user "participant1" sees 2 peers in call "room" with 200 (v4)
     And user "guest" sees 2 peers in call "room" with 200 (v4)
+    And invoking occ with "user:setting participant1 settings email participant1@example.tld"
     And user "participant2" downloads call participants from "room" as "csv" with 403 (v4)
     And user "participant1" downloads call participants from "room" as "csv" with 200 (v4)
-      | name                     | type   | identifier   |
-      | participant1-displayname | users  | participant1 |
-      |                          | guests | guest1       |
+      | name                     | email                    | type   | identifier   |
+      | participant1-displayname | participant1@example.tld | users  | participant1 |
+      |                          |                          | guests | guest1       |
     Then user "guest" leaves call "room" with 200 (v4)
+    And user "participant1" downloads call participants from "room" as "csv" with 200 (v4)
+      | name                     | email                    | type   | identifier   |
+      | participant1-displayname | participant1@example.tld | users  | participant1 |
+      |                          |                          | guests | guest1       |
+    And invoking occ with "user:setting participant1 settings email --delete"
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
     And user "guest" sees 1 peers in call "room" with 200 (v4)
     Then user "guest" leaves room "room" with 200 (v4)
