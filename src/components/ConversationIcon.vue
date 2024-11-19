@@ -41,21 +41,21 @@
 			:show-user-status-compact="!showUserOnlineStatus"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
-			<VideoIcon :size="20" :fill-color="'#E9322D'" />
+			<IconVideo :size="20" :fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite" class="overlap-icon">
-			<Star :size="20" :fill-color="'#FFCC00'" />
+			<IconStar :size="20" :fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
 </template>
 
 <script>
-import LinkVariantIcon from 'vue-material-design-icons/LinkVariant.vue'
-import Star from 'vue-material-design-icons/Star.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import WebIcon from 'vue-material-design-icons/Web.vue'
+import IconLink from 'vue-material-design-icons/Link.vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconWeb from 'vue-material-design-icons/Web.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -73,9 +73,9 @@ export default {
 	name: 'ConversationIcon',
 
 	components: {
+		IconStar,
+		IconVideo,
 		NcAvatar,
-		Star,
-		VideoIcon,
 	},
 
 	props: {
@@ -216,9 +216,9 @@ export default {
 
 		conversationType() {
 			if (this.item.remoteServer) {
-				return { key: 'federated', icon: WebIcon, label: t('spreed', 'Federated conversation') }
+				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return { key: 'public', icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
+				return { key: 'public', icon: IconLink, label: t('spreed', 'Public conversation') }
 			}
 			return null
 		},
