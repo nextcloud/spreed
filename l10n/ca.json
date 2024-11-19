@@ -1068,6 +1068,7 @@
     "You are currently waiting in the lobby" : "Ara esteu esperant al vestíbul",
     "The meeting will start soon" : "La reunió començarà aviat",
     "This meeting is scheduled for {startTime}" : "Aquesta reunió està planificada per a les {startTime}",
+    "Select a device" : "Selecciona un dispositiu.",
     "No microphone available" : "No hi ha micròfon disponible",
     "Select microphone" : "Seleccioneu el micròfon",
     "No camera available" : "No hi ha cap càmera disponible",

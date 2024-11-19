@@ -1516,6 +1516,7 @@ OC.L10N.register(
     "Edit display name" : "編輯顯示名稱",
     "Save name" : "儲存名稱",
     "Display name: {name}" : "顯示名稱：{name}",
+    "Enable blur background by default for all conversation" : "所有對話預設啟用模糊背景",
     "Calls are not supported in your browser" : "您的瀏覽器不支援通話",
     "Access to microphone is only possible with HTTPS" : "僅使用 HTTPS 時才能存取麥克風",
     "Access to microphone was denied" : "無法存取麥克風",
