@@ -131,8 +131,11 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireModeratorParticipant]
 	#[Http\Attribute\NoCSRFRequired]
 	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
-		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
-		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
+		$callStart = $this->room->getActiveSince()?->getTimestamp() ?? 0;
+		if ($callStart === 0) {
+			return new Response(Http::STATUS_BAD_REQUEST);
+		}
+		$participants = $this->participantService->getParticipantsJoinedCurrentCall($this->room, $callStart);
 
 		if (empty($participants)) {
 			return new Response(Http::STATUS_BAD_REQUEST);
@@ -151,12 +154,24 @@ class CallController extends AEnvironmentAwareController {
 		$output = fopen('php://memory', 'w');
 		fputcsv($output, [
 			'name',
+			'email',
 			'type',
 			'identifier',
 		]);
 
 		foreach ($participants as $participant) {
-			fputcsv($output, [$participant->getAttendee()->getDisplayName(), $participant->getAttendee()->getActorType(), $participant->getAttendee()->getActorId()]);
+			$email = '';
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
+				$email = $participant->getAttendee()->getInvitedCloudId();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$email = $this->userManager->get($participant->getAttendee()->getActorId())?->getEMailAddress() ?? '';
+			}
+			fputcsv($output, [
+				$participant->getAttendee()->getDisplayName(),
+				$email,
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId(),
+			]);
 		}
 
 		fseek($output, 0);

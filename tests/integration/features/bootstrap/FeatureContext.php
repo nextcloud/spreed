@@ -2265,8 +2265,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = [];
 		foreach ($tableNode->getRows() as $row) {
-			if ($row[1] === 'guests') {
-				$row[2] = self::$sessionNameToActorId[$row[2]];
+			if ($row[2] === 'guests') {
+				$row[3] = self::$sessionNameToActorId[$row[3]];
 			}
 			$expected[] = implode(',', $row);
 		}
