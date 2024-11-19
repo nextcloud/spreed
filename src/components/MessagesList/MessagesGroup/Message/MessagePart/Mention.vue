@@ -21,6 +21,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
+import { MENTION } from '../../../../../constants.js'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
 
 export default {
@@ -69,16 +70,16 @@ export default {
 
 	computed: {
 		isMentionToAll() {
-			return this.type === 'call'
+			return this.type === MENTION.TYPE.CALL
 		},
 		isGroupMention() {
-			return this.type === 'user-group' || this.type === 'group'
+			return [MENTION.TYPE.USERGROUP, MENTION.TYPE.GROUP].includes(this.type)
 		},
 		isMentionToGuest() {
-			return this.type === 'guest'
+			return this.type === MENTION.TYPE.GUEST || this.type === MENTION.TYPE.EMAIL
 		},
 		isRemoteUser() {
-			return this.type === 'user' && this.server !== ''
+			return [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(this.type) && this.server !== ''
 		},
 		isCurrentGuest() {
 			// On mention bubbles the id is actually "guest/ACTOR_ID" for guests
@@ -86,8 +87,10 @@ export default {
 			// while storing them as "… @id …" in chat messages.
 			// So when comparing a guest we have to prefix "guest/"
 			// when comparing the id
+			// However we do not prefix email accounts, so simply compare id
 			return this.$store.getters.isActorGuest()
-				&& this.id === ('guest/' + this.$store.getters.getActorId())
+				&& (this.id === ('guest/' + this.$store.getters.getActorId())
+					|| this.id === this.$store.getters.getActorId())
 		},
 		isCurrentUser() {
 			if (this.isRemoteUser) {

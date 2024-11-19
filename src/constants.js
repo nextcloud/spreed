@@ -306,3 +306,16 @@ export const FEDERATION = {
 		ACCEPTED: 1,
 	},
 }
+
+export const MENTION = {
+	TYPE: {
+		CALL: 'call',
+		USER: 'user',
+		GUEST: 'guest',
+		EMAIL: 'email',
+		USERGROUP: 'user-group',
+		// Parsed to another types
+		FEDERATED_USER: 'federated_user',
+		GROUP: 'group',
+	},
+}
