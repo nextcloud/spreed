@@ -33,6 +33,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
@@ -56,6 +58,8 @@ class RecordingServiceTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected BackendNotifier&MockObject $backendNotifier;
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
+	protected IFactory&MockObject $l10nFactory;
+	protected IUserManager&MockObject $userManager;
 	protected RecordingService $recordingService;
 
 	public function setUp(): void {
@@ -76,6 +80,8 @@ class RecordingServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
+		$this->l10nFactory = $this->createMock(IFactory::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -93,6 +99,8 @@ class RecordingServiceTest extends TestCase {
 			$this->logger,
 			$this->backendNotifier,
 			$this->taskProcessingManager,
+			$this->l10nFactory,
+			$this->userManager,
 		);
 	}
 

@@ -28,6 +28,8 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
@@ -77,6 +79,8 @@ class RecordingService {
 		protected LoggerInterface $logger,
 		protected BackendNotifier $backendNotifier,
 		protected ITaskProcessingManager $taskProcessingManager,
+		protected IFactory $l10nFactory,
+		protected IUserManager $userManager,
 	) {
 	}
 
@@ -143,7 +147,7 @@ class RecordingService {
 		}
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 		if (!$shouldTranscribe && !$shouldSummarize) {
 			$this->logger->debug('Skipping transcription and summary of call recording, as both are disabled');
 			return;
@@ -203,7 +207,7 @@ class RecordingService {
 		}
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
 			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
@@ -216,8 +220,21 @@ class RecordingService {
 
 		if (($shouldTranscribe && $aiTask === 'transcript')
 			|| ($shouldSummarize && $aiTask === 'summary')) {
+			$user = $this->userManager->get($owner);
+			$language = $this->l10nFactory->getUserLanguage($user);
+			$l = $this->l10nFactory->get(Application::APP_ID, $language);
+
+			if ($aiTask === 'transcript') {
+				$warning = $l->t('Transcript is AI generated and may contain mistakes');
+			} else {
+				$warning = $l->t('Summary is AI generated and may contain mistakes');
+			}
+
 			try {
-				$fileNode = $recordingFolder->newFile($transcriptFileName, $output);
+				$fileNode = $recordingFolder->newFile(
+					$transcriptFileName,
+					$output . "\n\n$warning\n",
+				);
 				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
 			} catch (NoUserException) {
 				throw new InvalidArgumentException('owner_invalid');
