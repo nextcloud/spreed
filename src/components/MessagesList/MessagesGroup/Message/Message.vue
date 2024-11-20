@@ -109,7 +109,7 @@ import MessageBody from './MessagePart/MessageBody.vue'
 import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
 
-import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
+import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.js'
 import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
@@ -262,7 +262,7 @@ export default {
 					messageParameters: this.message.messageParameters,
 					messageType: this.message.messageType
 				})
-				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
+				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
 						component: Mention,
 						props: {

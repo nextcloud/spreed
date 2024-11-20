@@ -1482,6 +1482,10 @@ class ChatController extends AEnvironmentAwareController {
 					$data['statusClearAt'] = $statuses[$data['id']]->getClearAt()?->getTimestamp();
 				}
 
+				if ($type === Attendee::ACTOR_EMAILS && isset($result['details']) && $this->participant->hasModeratorPermissions()) {
+					$data['details'] = $result['details']['email'];
+				}
+
 				$output[] = $data;
 			}
 		}
