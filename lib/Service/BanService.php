@@ -224,7 +224,7 @@ class BanService {
 	/**
 	 * Retrieve all bans for a specific room.
 	 *
-	 * @return Ban[]
+	 * @return list<Ban>
 	 */
 	public function getBansForRoom(int $roomId): array {
 		return $this->banMapper->findByRoomId($roomId);
