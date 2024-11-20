@@ -35,7 +35,7 @@ use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
-use OCP\SpeechToText\ISpeechToTextManager;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -55,7 +55,7 @@ class RecordingServiceTest extends TestCase {
 	protected ChatManager&MockObject $chatManager;
 	protected LoggerInterface&MockObject $logger;
 	protected BackendNotifier&MockObject $backendNotifier;
-	protected ISpeechToTextManager&MockObject $speechToTextManager;
+	protected ITaskProcessingManager&MockObject $taskProcessingManager;
 	protected RecordingService $recordingService;
 
 	public function setUp(): void {
@@ -75,7 +75,7 @@ class RecordingServiceTest extends TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
-		$this->speechToTextManager = $this->createMock(ISpeechToTextManager::class);
+		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -92,7 +92,7 @@ class RecordingServiceTest extends TestCase {
 			$this->chatManager,
 			$this->logger,
 			$this->backendNotifier,
-			$this->speechToTextManager,
+			$this->taskProcessingManager,
 		);
 	}
 

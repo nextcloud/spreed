@@ -148,8 +148,8 @@ use OCP\Settings\IManager;
 use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\Events\VerifyMountPointEvent;
-use OCP\SpeechToText\Events\TranscriptionFailedEvent;
-use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
+use OCP\TaskProcessing\Events\TaskFailedEvent;
+use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserDeletedEvent;
@@ -273,8 +273,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(CallEndedEvent::class, RecordingListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, RecordingListener::class);
-		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
-		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
+		$context->registerEventListener(TaskSuccessfulEvent::class, RecordingListener::class);
+		$context->registerEventListener(TaskFailedEvent::class, RecordingListener::class);
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);

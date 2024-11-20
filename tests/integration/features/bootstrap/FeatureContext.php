@@ -3943,6 +3943,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->taskProcessingProviderPreference[$this->currentServer] = $this->lastStdOut;
 		$preferences = json_decode($this->lastStdOut ?: '[]', true, flags: JSON_THROW_ON_ERROR);
 		$preferences['core:text2text:summary'] = 'testing-text2text-summary';
+		$preferences['core:audio2text'] = 'testing-audio2text';
 		$this->runOcc(['config:app:set', 'core', 'ai.taskprocessing_provider_preferences', '--value', json_encode($preferences)]);
 
 		$this->setCurrentUser($currentUser);
