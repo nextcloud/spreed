@@ -147,7 +147,7 @@ class RecordingService {
 		}
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 		if (!$shouldTranscribe && !$shouldSummarize) {
 			$this->logger->debug('Skipping transcription and summary of call recording, as both are disabled');
 			return;
@@ -207,7 +207,7 @@ class RecordingService {
 		}
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
 			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
