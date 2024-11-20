@@ -557,7 +557,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['lastMessageActorId'] = str_replace(rtrim($this->remoteServerUrl, '/'), '{$REMOTE_URL}', $data['lastMessageActorId']);
 			}
 			if (isset($expectedRoom['lastReadMessage'])) {
-				$data['lastReadMessage'] = self::$messageIdToText[(int)$room['lastReadMessage']] ?? (!$room['lastReadMessage'] ? 'ZERO': 'UNKNOWN_MESSAGE');
+				$data['lastReadMessage'] = self::$messageIdToText[(int)$room['lastReadMessage']] ?? ($room['lastReadMessage'] === -2 ? 'FIRST_MESSAGE_UNREAD': 'UNKNOWN_MESSAGE');
 			}
 			if (isset($expectedRoom['unreadMessages'])) {
 				$data['unreadMessages'] = (int)$room['unreadMessages'];
