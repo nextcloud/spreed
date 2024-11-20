@@ -70,7 +70,7 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_GONE, array{error: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_GONE, array{error: string}, array{}>
 	 *
 	 * 200: Invite accepted successfully
 	 * 400: Invite can not be accepted (maybe it was accepted already)
@@ -82,14 +82,14 @@ class FederationController extends OCSController {
 	public function acceptShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		}
 		try {
 			$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
 		} catch (CannotReachRemoteException) {
 			return new DataResponse(['error' => 'remote'], Http::STATUS_GONE);
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
 		}
@@ -108,7 +108,7 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Invite declined successfully
 	 * 400: Invite was already accepted, use the "Remove the current user from a room" endpoint instead
@@ -119,16 +119,16 @@ class FederationController extends OCSController {
 	public function rejectShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		}
 		try {
 			$this->federationManager->rejectRemoteRoomShare($user, $id);
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
 		}
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
