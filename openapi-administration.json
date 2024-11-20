@@ -1223,7 +1223,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -1363,7 +1365,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -1479,7 +1483,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }

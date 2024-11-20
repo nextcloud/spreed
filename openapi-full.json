@@ -1439,6 +1439,37 @@
                     }
                 ]
             },
+            "SignalingFederationSettings": {
+                "type": "object",
+                "required": [
+                    "server",
+                    "nextcloudServer",
+                    "helloAuthParams",
+                    "roomId"
+                ],
+                "properties": {
+                    "server": {
+                        "type": "string"
+                    },
+                    "nextcloudServer": {
+                        "type": "string"
+                    },
+                    "helloAuthParams": {
+                        "type": "object",
+                        "required": [
+                            "token"
+                        ],
+                        "properties": {
+                            "token": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "roomId": {
+                        "type": "string"
+                    }
+                }
+            },
             "SignalingSession": {
                 "type": "object",
                 "required": [
@@ -1498,43 +1529,8 @@
                 ],
                 "properties": {
                     "federation": {
-                        "oneOf": [
-                            {
-                                "type": "object",
-                                "required": [
-                                    "server",
-                                    "nextcloudServer",
-                                    "helloAuthParams",
-                                    "roomId"
-                                ],
-                                "properties": {
-                                    "server": {
-                                        "type": "string"
-                                    },
-                                    "nextcloudServer": {
-                                        "type": "string"
-                                    },
-                                    "helloAuthParams": {
-                                        "type": "object",
-                                        "required": [
-                                            "token"
-                                        ],
-                                        "properties": {
-                                            "token": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "roomId": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            {
-                                "type": "array",
-                                "maxItems": 0
-                            }
-                        ]
+                        "$ref": "#/components/schemas/SignalingFederationSettings",
+                        "nullable": true
                     },
                     "helloAuthParams": {
                         "type": "object",
@@ -2454,7 +2450,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4210,7 +4208,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4238,7 +4238,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4268,6 +4270,9 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
@@ -4374,7 +4379,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4402,7 +4409,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4430,7 +4439,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4522,7 +4533,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4550,7 +4563,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4755,41 +4770,8 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Conditions to join not met",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
                                                 "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                    "nullable": true
                                                 }
                                             }
                                         }
@@ -4820,6 +4802,44 @@
                                                 },
                                                 "data": {
                                                     "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Conditions to join not met",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -4926,7 +4946,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -4954,7 +4976,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -5072,7 +5096,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -5193,7 +5219,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -5221,7 +5249,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -5351,15 +5381,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        },
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                    "nullable": true
                                                 }
                                             }
                                         }
@@ -5389,15 +5411,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        },
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                    "nullable": true
                                                 }
                                             }
                                         }
@@ -5427,15 +5441,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        },
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                    "nullable": true
                                                 }
                                             }
                                         }
@@ -5466,6 +5472,9 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
@@ -8217,7 +8226,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -8374,7 +8385,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -8402,7 +8415,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -8502,7 +8517,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -8530,7 +8547,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -8558,7 +8577,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10600,7 +10621,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10716,7 +10739,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10845,7 +10870,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10991,7 +11018,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -16620,7 +16649,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -16648,7 +16679,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -16760,7 +16793,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -16788,7 +16823,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -16889,7 +16926,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -17225,7 +17264,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -17320,7 +17361,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -17348,7 +17391,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "avatar"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -17833,8 +17889,8 @@
                             }
                         }
                     },
-                    "410": {
-                        "description": "Remote server could not be reached to notify about the acceptance",
+                    "404": {
+                        "description": "Invite can not be found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -17871,8 +17927,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Invite can not be found",
+                    "410": {
+                        "description": "Remote server could not be reached to notify about the acceptance",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -17893,6 +17949,9 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
@@ -17979,7 +18038,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18009,6 +18070,9 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
@@ -18044,6 +18108,9 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
@@ -18502,7 +18569,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18530,7 +18599,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18558,7 +18629,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18586,7 +18659,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18697,7 +18772,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18725,7 +18802,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18753,7 +18832,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18781,7 +18862,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18809,7 +18892,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18908,7 +18993,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18936,7 +19023,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18964,7 +19053,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -18992,7 +19083,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -19869,7 +19962,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -20009,7 +20104,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -20125,7 +20222,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -20238,7 +20337,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -20498,7 +20599,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
