@@ -41,7 +41,7 @@ class HostedSignalingServerController extends OCSController {
 	/**
 	 * Get the authentication credentials
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, null, array{}>
 	 *
 	 * 200: Authentication credentials returned
 	 * 412: Getting authentication credentials is not possible
@@ -59,7 +59,7 @@ class HostedSignalingServerController extends OCSController {
 			]);
 		}
 
-		return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
 	}
 
 	/**
@@ -101,7 +101,7 @@ class HostedSignalingServerController extends OCSController {
 	/**
 	 * Delete the account
 	 *
-	 * @return DataResponse<Http::STATUS_NO_CONTENT, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_NO_CONTENT, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
 	 *
 	 * 204: Account deleted successfully
 	 * 400: Deleting account is not possible
@@ -135,6 +135,6 @@ class HostedSignalingServerController extends OCSController {
 
 		$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);
 
-		return new DataResponse([], Http::STATUS_NO_CONTENT);
+		return new DataResponse(null, Http::STATUS_NO_CONTENT);
 	}
 }
