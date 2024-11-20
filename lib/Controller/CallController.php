@@ -67,7 +67,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * Get the peers for a call
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkCallPeer>, array{}>
 	 *
 	 * 200: List of peers in the call returned
 	 */
@@ -208,7 +208,7 @@ class CallController extends AEnvironmentAwareController {
 	 *                               (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
 	 *                               or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
 	 *                               and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Call joined successfully
 	 * 400: No recording consent was given
@@ -231,7 +231,7 @@ class CallController extends AEnvironmentAwareController {
 
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if ($flags === null) {
@@ -257,7 +257,7 @@ class CallController extends AEnvironmentAwareController {
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
@@ -289,7 +289,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @psalm-param int-mask-of<Participant::FLAG_*>|null $flags
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent Agreement to be recorded
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Call joined successfully
 	 * 400: Conditions to join not met
@@ -319,17 +319,17 @@ class CallController extends AEnvironmentAwareController {
 			$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
 			$this->roomService->setActiveSince($this->room, $this->participant, $this->timeFactory->getDateTime(), $flags, silent: $silent);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
 	 * Ring an attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Attendee rang successfully
 	 * 400: Ringing attendee is not possible
@@ -348,11 +348,11 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -360,17 +360,17 @@ class CallController extends AEnvironmentAwareController {
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (DoesNotExistException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
 	 * Call a SIP dial-out attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to call
-	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error?: string, message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_NOT_IMPLEMENTED, array{error: string, message?: string}, array{}>
 	 *
 	 * 201: Dial-out initiated successfully
 	 * 400: SIP dial-out not possible
@@ -383,27 +383,27 @@ class CallController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	public function sipDialOut(int $attendeeId): DataResponse {
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		} catch (DialOutFailedException $e) {
 			return new DataResponse([
 				'error' => $e->getMessage(),
 				'message' => $e->getReadableError(),
 			], Http::STATUS_NOT_IMPLEMENTED);
-		} catch (\InvalidArgumentException) {
-			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
-		return new DataResponse([], Http::STATUS_CREATED);
+		return new DataResponse(null, Http::STATUS_CREATED);
 	}
 
 	/**
@@ -411,7 +411,7 @@ class CallController extends AEnvironmentAwareController {
 	 *
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: In-call flags updated successfully
 	 * 400: Updating in-call flags is not possible
@@ -423,7 +423,7 @@ class CallController extends AEnvironmentAwareController {
 	public function updateCallFlags(int $flags): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if ($this->room->isFederatedConversation()) {
@@ -441,10 +441,10 @@ class CallController extends AEnvironmentAwareController {
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
 		} catch (\Exception $exception) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
@@ -454,7 +454,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @param string $sessionId Federated session id to update the flags with
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: In-call flags updated successfully
 	 * 400: Updating in-call flags is not possible
@@ -474,17 +474,17 @@ class CallController extends AEnvironmentAwareController {
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
 		} catch (\Exception) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
 	 * Leave a call
 	 *
 	 * @param bool $all whether to also terminate the call for all participants
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Call left successfully
 	 * 404: Call session not found
@@ -495,7 +495,7 @@ class CallController extends AEnvironmentAwareController {
 	public function leaveCall(bool $all = false): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if ($this->room->isFederatedConversation()) {
@@ -515,7 +515,7 @@ class CallController extends AEnvironmentAwareController {
 			if (!$result) {
 				// Someone else won the race condition, make sure this user disconnects directly and then return
 				$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
-				return new DataResponse();
+				return new DataResponse(null);
 			}
 			$this->participantService->endCallForEveryone($this->room, $this->participant);
 			$this->roomService->resetActiveSinceInModelOnly($this->room);
@@ -526,7 +526,7 @@ class CallController extends AEnvironmentAwareController {
 			}
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
@@ -534,7 +534,7 @@ class CallController extends AEnvironmentAwareController {
 	 * user.
 	 *
 	 * @param string $sessionId Federated session id to leave with
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Call left successfully
 	 * 404: Call session not found
@@ -555,6 +555,6 @@ class CallController extends AEnvironmentAwareController {
 			$this->roomService->resetActiveSince($this->room, $this->participant);
 		}
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 }
