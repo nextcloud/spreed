@@ -550,6 +550,7 @@ class ChatController extends AEnvironmentAwareController {
 		$messages = [];
 		$nextOffset = 0;
 		foreach ($comments as $comment) {
+			$nextOffset = (int)$comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
@@ -590,7 +591,6 @@ class ChatController extends AEnvironmentAwareController {
 			}
 
 			$messages[] = $displayName . ': ' . $parsedMessage;
-			$nextOffset = (int)$comment->getId();
 		}
 
 		if (empty($messages)) {
