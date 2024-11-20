@@ -93,6 +93,24 @@ class ChatManager {
 	public const VERB_RECORD_AUDIO = 'record-audio';
 	public const VERB_RECORD_VIDEO = 'record-video';
 
+	/**
+	 * Last read message ID of -1 is set on the attendee table as default.
+	 * The real value is inserted on user request after the migration from
+	 * `comments_read_markers` to `talk_attendees` with @see Version7000Date20190724121136
+	 *
+	 * @since 21.0.0 (But -1 was used in the database since 7.0.0)
+	 */
+	public const UNREAD_MIGRATION = -1;
+
+	/**
+	 * Frontend and Desktop don't get chat context with ID 0,
+	 * so we collectively tested and decided that -2 should be used instead,
+	 * when marking the first message in a chat as unread.
+	 *
+	 * @since 21.0.0
+	 */
+	public const UNREAD_FIRST_MESSAGE = -2;
+
 	protected ICache $cache;
 	protected ICache $unreadCountCache;
 
