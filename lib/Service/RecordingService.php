@@ -29,10 +29,13 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\Notification\IManager;
-use OCP\PreConditionNotMetException;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
-use OCP\SpeechToText\ISpeechToTextManager;
+use OCP\TaskProcessing\Exception\Exception;
+use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use OCP\TaskProcessing\Task;
+use OCP\TaskProcessing\TaskTypes\AudioToText;
+use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use Psr\Log\LoggerInterface;
 
 class RecordingService {
@@ -73,7 +76,7 @@ class RecordingService {
 		protected ChatManager $chatManager,
 		protected LoggerInterface $logger,
 		protected BackendNotifier $backendNotifier,
-		protected ISpeechToTextManager $speechToTextManager,
+		protected ITaskProcessingManager $taskProcessingManager,
 	) {
 	}
 
@@ -139,42 +142,120 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
-		if ($this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'no') {
+		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+		if (!$shouldTranscribe && !$shouldSummarize) {
+			$this->logger->debug('Skipping transcription and summary of call recording, as both are disabled');
 			return;
 		}
 
+		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
+		if (!isset($supportedTaskTypes[AudioToText::ID])) {
+			$this->logger->error('Can not transcribe call recording as no Audio2Text task provider is available');
+			return;
+		}
+
+		$task = new Task(
+			AudioToText::ID,
+			['input' => $fileNode->getId()],
+			Application::APP_ID,
+			$owner,
+			'call/transcription/' . $room->getToken(),
+		);
+
 		try {
-			$this->speechToTextManager->scheduleFileTranscription($fileNode, $owner, Application::APP_ID);
-			$this->logger->debug('Scheduled transcription of call recording');
-		} catch (PreConditionNotMetException $e) {
-			// No Speech-to-text provider installed
-			$this->logger->debug('Could not generate transcript of call recording', ['exception' => $e]);
-		} catch (InvalidArgumentException $e) {
-			$this->logger->warning('Could not generate transcript of call recording', ['exception' => $e]);
+			$this->taskProcessingManager->scheduleTask($task);
+			$this->logger->debug('Scheduled call recording transcript');
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to transcribe the call recording', ['exception' => $e]);
 		}
 	}
 
-	public function storeTranscript(string $owner, File $recording, string $transcript): void {
+	/**
+	 * @param 'transcript'|'summary' $aiTask
+	 */
+	public function storeTranscript(string $owner, string $roomToken, int $recordingFileId, string $output, string $aiTask): void {
+		$userFolder = $this->rootFolder->getUserFolder($owner);
+		$recordingNodes = $userFolder->getById($recordingFileId);
+
+		if (empty($recordingNodes)) {
+			$this->logger->warning("Could not save recording $aiTask as the recording could not be found", [
+				'owner' => $owner,
+				'roomToken' => $roomToken,
+				'recordingFileId' => $recordingFileId,
+			]);
+			throw new InvalidArgumentException('owner_participant');
+		}
+		$recording = array_pop($recordingNodes);
 		$recordingFolder = $recording->getParent();
-		$roomToken = $recordingFolder->getName();
+
+		if ($recordingFolder->getName() !== $roomToken) {
+			$this->logger->warning("Could not determinate conversation when trying to store $aiTask of call recording, as folder name did not match customId conversation token");
+			throw new InvalidArgumentException('owner_participant');
+		}
 
 		try {
 			$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
 			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException) {
-			$this->logger->warning('Could not determinate conversation when trying to store transcription of call recording');
+			$this->logger->warning("Could not determinate conversation when trying to store $aiTask of call recording");
 			throw new InvalidArgumentException('owner_participant');
 		}
 
-		$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
+		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'no') === 'yes';
+
+		if ($aiTask === 'transcript') {
+			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
+			if (!$shouldTranscribe) {
+				$this->logger->debug('Skipping saving of transcript for call recording as it is disabled');
+			}
+		} else {
+			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' - ' . $aiTask . '.md';
+		}
+
+		if (($shouldTranscribe && $aiTask === 'transcript')
+			|| ($shouldSummarize && $aiTask === 'summary')) {
+			try {
+				$fileNode = $recordingFolder->newFile($transcriptFileName, $output);
+				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
+			} catch (NoUserException) {
+				throw new InvalidArgumentException('owner_invalid');
+			} catch (NotPermittedException) {
+				throw new InvalidArgumentException('owner_permission');
+			}
+		}
+
+		if (!$shouldSummarize) {
+			// If summary is off skip scheduling it
+			$this->logger->debug('Skipping scheduling summary of call recording as it is disabled');
+			return;
+		}
+
+		if ($aiTask === 'summary') {
+			// After saving the summary there is nothing more to do
+			return;
+		}
+
+		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
+		if (!isset($supportedTaskTypes[TextToTextSummary::ID])) {
+			$this->logger->error('Can not summarize call recording as no TextToTextSummary task provider is available');
+			return;
+		}
+
+		$task = new Task(
+			TextToTextSummary::ID,
+			['input' => $output],
+			Application::APP_ID,
+			$owner,
+			'call/summary/' . $room->getToken() . '/' . $recordingFileId,
+		);
 
 		try {
-			$fileNode = $recordingFolder->newFile($transcriptFileName, $transcript);
-			$this->notifyStoredTranscript($room, $participant, $fileNode);
-		} catch (NoUserException) {
-			throw new InvalidArgumentException('owner_invalid');
-		} catch (NotPermittedException) {
-			throw new InvalidArgumentException('owner_permission');
+			$this->taskProcessingManager->scheduleTask($task);
+			$this->logger->debug('Scheduled call recording summary');
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to summarize the call recording', ['exception' => $e]);
 		}
 	}
 
@@ -207,15 +288,31 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
-	public function notifyAboutFailedTranscript(string $owner, File $recording): void {
+	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType): void {
+		$userFolder = $this->rootFolder->getUserFolder($owner);
+		$recordingNodes = $userFolder->getById($recordingFileId);
+
+		if (empty($recordingNodes)) {
+			$this->logger->warning("Could not trying to notify about failed $aiType as the recording could not be found", [
+				'owner' => $owner,
+				'roomToken' => $roomToken,
+				'recordingFileId' => $recordingFileId,
+			]);
+			throw new InvalidArgumentException('owner_participant');
+		}
+		$recording = array_pop($recordingNodes);
 		$recordingFolder = $recording->getParent();
-		$roomToken = $recordingFolder->getName();
+
+		if ($recordingFolder->getName() !== $roomToken) {
+			$this->logger->warning("Could not determinate conversation when trying to notify about failed $aiType, as folder name did not match customId conversation token");
+			throw new InvalidArgumentException('owner_participant');
+		}
 
 		try {
 			$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
 			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException) {
-			$this->logger->warning('Could not determinate conversation when trying to notify about failed transcription of call recording');
+			$this->logger->warning("Could not determinate conversation when trying to notify about failed $aiType of call recording");
 			throw new InvalidArgumentException('owner_participant');
 		}
 
@@ -228,7 +325,7 @@ class RecordingService {
 			->setDateTime($this->timeFactory->getDateTime())
 			->setObject('recording', $room->getToken())
 			->setUser($attendee->getActorId())
-			->setSubject('transcript_failed', [
+			->setSubject($aiType === 'transcript' ? 'transcript_failed' : 'summary_failed', [
 				'objectId' => $recording->getId(),
 			]);
 		$this->notificationManager->notify($notification);
@@ -342,7 +439,10 @@ class RecordingService {
 	}
 
 
-	public function notifyStoredTranscript(Room $room, Participant $participant, File $file): void {
+	/**
+	 * @param 'transcript'|'summary' $aiType
+	 */
+	public function notifyStoredTranscript(Room $room, Participant $participant, File $file, string $aiType): void {
 		$attendee = $participant->getAttendee();
 
 		$notification = $this->notificationManager->createNotification();
@@ -352,20 +452,26 @@ class RecordingService {
 			->setDateTime($this->timeFactory->getDateTime())
 			->setObject('recording', $room->getToken())
 			->setUser($attendee->getActorId())
-			->setSubject('transcript_file_stored', [
+			->setSubject($aiType === 'transcript' ? 'transcript_file_stored' : 'summary_file_stored', [
 				'objectId' => $file->getId(),
 			]);
 		$this->notificationManager->notify($notification);
 	}
 
-	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
+	public function notificationDismiss(Room $room, Participant $participant, int $timestamp, ?string $notificationSubject): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setObject('recording', $room->getToken())
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
 			->setUser($participant->getAttendee()->getActorId());
 
-		foreach (['record_file_stored', 'transcript_file_stored'] as $subject) {
+		if ($notificationSubject === null) {
+			$subjects = ['record_file_stored', 'transcript_file_stored', 'summary_file_stored'];
+		} else {
+			$subjects = [$notificationSubject];
+		}
+
+		foreach ($subjects as $subject) {
 			$notification->setSubject($subject);
 			$this->notificationManager->markProcessed($notification);
 		}
@@ -383,8 +489,8 @@ class RecordingService {
 			$userFolder = $this->rootFolder->getUserFolder(
 				$participant->getAttendee()->getActorId()
 			);
-			/** @var \OCP\Files\File[] */
 			$files = $userFolder->getById($fileId);
+			/** @var \OCP\Files\File $file */
 			$file = array_shift($files);
 		} catch (\Throwable $th) {
 			throw new InvalidArgumentException('file');
@@ -400,6 +506,15 @@ class RecordingService {
 			->setShareType(IShare::TYPE_ROOM)
 			->setSharedWith($room->getToken())
 			->setPermissions(\OCP\Constants::PERMISSION_READ);
+
+		$removeNotification = null;
+		if (!str_ends_with($file->getName(), '.md')) {
+			$removeNotification = 'record_file_stored';
+		} elseif (!str_ends_with($file->getName(), ' - summary.md')) {
+			$removeNotification = 'transcript_file_stored';
+		} elseif (str_ends_with($file->getName(), ' - summary.md')) {
+			$removeNotification = 'summary_file_stored';
+		}
 
 		$share = $this->shareManager->createShare($share);
 
@@ -427,6 +542,6 @@ class RecordingService {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			throw new InvalidArgumentException('system');
 		}
-		$this->notificationDismiss($room, $participant, $timestamp);
+		$this->notificationDismiss($room, $participant, $timestamp, $removeNotification);
 	}
 }

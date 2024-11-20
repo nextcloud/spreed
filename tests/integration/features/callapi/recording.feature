@@ -448,8 +448,10 @@ Feature: callapi/recording
       | 2    | room1 | 0             |
 
   Scenario: Store recording with success and create transcript
+    Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | yes |
+      | call_recording_summary       | yes |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -461,9 +463,10 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
-    When run "OC\SpeechToText\TranscriptionJob" background jobs
+    And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg.  |
     When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
@@ -475,7 +478,12 @@ Feature: callapi/recording
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
+    When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
     When user "participant1" shares file from the first notification to room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
@@ -486,15 +494,19 @@ Feature: callapi/recording
       | room  | actorType | actorId               | actorDisplayName         | messageType  | message | messageParameters |
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
+      | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
 
   Scenario: Store recording with success but fail to transcript
+    Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | yes |
+      | call_recording_summary       | yes |
+    Given the following testing app config is set
+      | fail-testing-audio2text | yes |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" joins room "room1" with 200 (v4)
-    # "leave" is used here as the file name makes the fake transcript provider fail
     When user "participant1" store recording file "/img/leave_call.ogg" in room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                      |
@@ -502,11 +514,80 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
-    When run "OC\SpeechToText\TranscriptionJob" background jobs
+    And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                             | message                                                                                        |
       | spreed | recording   | room1     | Failed to transcript call recording | The server failed to transcript the recording at /Talk/Recording/ROOM(room1)/leave_call.ogg for the call in room1. Please reach out to the administration. |
       | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
+
+  Scenario: Store recording and transcript with success but fail to summarize
+    Given Fake summary task provider is enabled
+    Given the following spreed app config is set
+      | call_recording_transcription | yes |
+      | call_recording_summary       | yes |
+    Given the following testing app config is set
+      | fail-testing-text2text-summary | yes |
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When user "participant1" store recording file "/img/leave_call.ogg" in room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                      |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+    And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                             | message                                                                                        |
+      | spreed | recording   | room1     | Failed to summarize call recording  | The server failed to summarize the recording at /Talk/Recording/ROOM(room1)/leave_call.ogg for the call in room1. Please reach out to the administration. |
+      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.md. |
+      | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
+
+  Scenario: Store recording and transcript with success but summarize is off
+    Given Fake summary task provider is enabled
+    Given the following spreed app config is set
+      | call_recording_transcription | yes |
+      | call_recording_summary       | no |
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When user "participant1" store recording file "/img/leave_call.ogg" in room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                      |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+    And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                             | message                                                                                          |
+      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.md.  |
+      | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
+
+  Scenario: Store recording and summarize with success but transcript is off
+    Given Fake summary task provider is enabled
+    Given the following spreed app config is set
+      | call_recording_transcription | no  |
+      | call_recording_summary       | yes |
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When user "participant1" store recording file "/img/join_call.ogg" in room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                        |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+    And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                               |
+      | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg.        |
 
   Scenario: Store recording with failure exceeding the upload_max_filesize
     Given user "participant1" creates room "room1" (v4)

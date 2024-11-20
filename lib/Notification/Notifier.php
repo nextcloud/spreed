@@ -240,7 +240,7 @@ class Notifier implements INotifier {
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();
-		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed') {
+		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed' || $subject === 'summary_file_stored' || $subject === 'summary_failed') {
 			return $this->parseStoredRecording($notification, $room, $participant, $l);
 		}
 		if ($subject === 'record_file_store_fail') {
@@ -363,9 +363,15 @@ class Notifier implements INotifier {
 		} elseif ($notification->getSubject() === 'transcript_file_stored') {
 			$subject = $l->t('Transcript now available');
 			$message = $l->t('The transcript for the call in {call} was uploaded to {file}.');
-		} else {
+		} elseif ($notification->getSubject() === 'transcript_failed') {
 			$subject = $l->t('Failed to transcript call recording');
 			$message = $l->t('The server failed to transcript the recording at {file} for the call in {call}. Please reach out to the administration.');
+		} elseif ($notification->getSubject() === 'summary_file_stored') {
+			$subject = $l->t('Call summary now available');
+			$message = $l->t('The summary for the call in {call} was uploaded to {file}.');
+		} else {
+			$subject = $l->t('Failed to summarize call recording');
+			$message = $l->t('The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration.');
 		}
 
 		$notification
