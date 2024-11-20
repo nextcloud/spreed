@@ -299,15 +299,17 @@ namespace OCA\Talk;
  *     userId: string,
  * }
  *
+ * @psalm-type TalkSignalingFederationSettings = array{
+ *     server: string,
+ *     nextcloudServer: string,
+ *     helloAuthParams: array{
+ *         token: string,
+ *     },
+ *     roomId: string,
+ * }
+ *
  * @psalm-type TalkSignalingSettings = array{
- *     federation: array{
- *         server: string,
- *         nextcloudServer: string,
- *         helloAuthParams: array{
- *             token: string,
- *         },
- *         roomId: string,
- *     }|array<empty>,
+ *     federation: TalkSignalingFederationSettings|null,
  *     helloAuthParams: array{
  *         "1.0": array{
  *             userid: ?string,
