@@ -105,7 +105,7 @@ class Capabilities implements IPublicCapability {
 		'chat-reference-id',
 		'mention-permissions',
 		'edit-messages-note-to-self',
-		'archived-conversations',
+		'archived-conversations-v2',
 		'talk-polls-drafts',
 		'download-call-participants',
 	];
@@ -126,7 +126,7 @@ class Capabilities implements IPublicCapability {
 		'avatar',
 		'remind-me-later',
 		'note-to-self',
-		'archived-conversations',
+		'archived-conversations-v2',
 		'chat-summary-api',
 	];
 

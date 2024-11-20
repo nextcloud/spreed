@@ -45,4 +45,4 @@ jobs:
         run: composer i
 
       - name: Lint
-        run: composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )
+        run: PHP_CS_FIXER_IGNORE_ENV=1 composer run cs:check || ( echo 'Please run `composer run cs:fix` to format your code' && exit 1 )

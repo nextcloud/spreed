@@ -16496,6 +16496,7 @@
             "post": {
                 "operationId": "room-archive-conversation",
                 "summary": "Archive a conversation",
+                "description": "Required capability: `archived-conversations-v2`",
                 "tags": [
                     "room"
                 ],
@@ -16576,6 +16577,7 @@
             "delete": {
                 "operationId": "room-unarchive-conversation",
                 "summary": "Unarchive a conversation",
+                "description": "Required capability: `archived-conversations-v2`",
                 "tags": [
                     "room"
                 ],
