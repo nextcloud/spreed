@@ -41,7 +41,7 @@ class SettingsController extends OCSController {
 	 *
 	 * @param 'attachment_folder'|'read_status_privacy'|'typing_privacy'|'play_sounds' $key Key to update
 	 * @param string|int|null $value New value for the key
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, null, array{}>
 	 *
 	 * 200: User setting updated successfully
 	 * 400: Updating user setting is not possible
@@ -49,21 +49,21 @@ class SettingsController extends OCSController {
 	#[NoAdminRequired]
 	public function setUserSetting(string $key, string|int|null $value): DataResponse {
 		if (!$this->preferenceListener->validatePreference($this->userId, $key, $value)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 
 	/**
 	 * Update SIP bridge settings
 	 *
-	 * @param string[] $sipGroups New SIP groups
+	 * @param list<string> $sipGroups New SIP groups
 	 * @param string $dialInInfo New dial info
 	 * @param string $sharedSecret New shared secret
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>
 	 *
 	 * 200: Successfully set new SIP settings
 	 */
@@ -84,6 +84,6 @@ class SettingsController extends OCSController {
 		$this->config->setAppValue('spreed', 'sip_bridge_dialin_info', $dialInInfo);
 		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 }
