@@ -113,7 +113,7 @@ namespace OCA\Talk;
  *     isReplyable: bool,
  *     markdown: bool,
  *     reactions: array<string, integer>|\stdClass,
- *     reactionsSelf?: string[],
+ *     reactionsSelf?: list<string>,
  *     referenceId: string,
  *     timestamp: int,
  *     token: string,
@@ -156,7 +156,7 @@ namespace OCA\Talk;
  *     inviterDisplayName: string,
  * }
  *
- * @psalm-type TalkMatterbridgeConfigFields = array<array<string, mixed>>
+ * @psalm-type TalkMatterbridgeConfigFields = list<array<string, mixed>>
  *
  * @psalm-type TalkMatterbridge = array{
  *     enabled: bool,
@@ -184,7 +184,7 @@ namespace OCA\Talk;
  *     participantType: int,
  *     permissions: int,
  *     roomToken: string,
- *     sessionIds: string[],
+ *     sessionIds: list<string>,
  *     status?: string,
  *     statusClearAt?: ?int,
  *     statusIcon?: ?string,
@@ -321,15 +321,15 @@ namespace OCA\Talk;
  *     server: string,
  *     signalingMode: string,
  *     sipDialinInfo: string,
- *     stunservers: array{urls: string[]}[],
+ *     stunservers: list<array{urls: list<string>}>,
  *     ticket: string,
- *     turnservers: array{urls: string[], username: string, credential: mixed}[],
+ *     turnservers: list<array{urls: list<string>, username: string, credential: mixed}>,
  *     userId: ?string,
  * }
  *
  * @psalm-type TalkCapabilities = array{
- *     features: string[],
- *     features-local: string[],
+ *     features: list<string>,
+ *     features-local: list<string>,
  *     config: array{
  *         attachments: array{
  *             allowed: bool,
@@ -340,8 +340,8 @@ namespace OCA\Talk;
  *             breakout-rooms: bool,
  *             recording: bool,
  *             recording-consent: int,
- *             supported-reactions: string[],
- *             predefined-backgrounds: string[],
+ *             supported-reactions: list<string>,
+ *             predefined-backgrounds: list<string>,
  *             can-upload-background: bool,
  *             sip-enabled: bool,
  *             sip-dialout-enabled: bool,
@@ -374,7 +374,7 @@ namespace OCA\Talk;
  *             hello-v2-token-key?: string,
  *         },
  *     },
- *     config-local: array<string, string[]>,
+ *     config-local: array<string, list<string>>,
  *     version: string,
  * }
  */
