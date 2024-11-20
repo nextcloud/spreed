@@ -36,7 +36,7 @@ class TempAvatarController extends OCSController {
 	/**
 	 * Upload your avatar as a user
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: Avatar uploaded successfully
 	 * 400: Uploading avatar is not possible
@@ -96,7 +96,7 @@ class TempAvatarController extends OCSController {
 
 			$avatar = $this->avatarManager->getAvatar($this->userId);
 			$avatar->set($image);
-			return new DataResponse();
+			return new DataResponse(null);
 		} catch (NotSquareException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
@@ -111,7 +111,7 @@ class TempAvatarController extends OCSController {
 	/**
 	 * Delete your avatar as a user
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'avatar'}, array{}>
 	 *
 	 * 200: Avatar deleted successfully
 	 * 400: Deleting avatar is not possible
@@ -122,12 +122,12 @@ class TempAvatarController extends OCSController {
 		try {
 			$avatar = $this->avatarManager->getAvatar($this->userId);
 			$avatar->remove();
-			return new DataResponse();
+			return new DataResponse(null);
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to delete avatar', [
 				'exception' => $e,
 			]);
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'avatar'], Http::STATUS_BAD_REQUEST);
 		}
 	}
 }
