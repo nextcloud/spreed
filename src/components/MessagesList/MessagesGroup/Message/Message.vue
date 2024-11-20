@@ -332,6 +332,8 @@ export default {
 				commonReadIconTitle: t('spreed', 'Message read by everyone who shares their reading status'),
 				showSentIcon: this.showSentIcon,
 				sentIconTitle: t('spreed', 'Message sent'),
+				showSilentIcon: this.message.silent,
+				silentIconTitle: t('spreed', 'Sent without notification'),
 			}
 		},
 

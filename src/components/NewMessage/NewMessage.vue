@@ -88,6 +88,24 @@
 					@submit="handleSubmit" />
 			</div>
 
+			<!-- Silent chat -->
+			<NcActions v-if="showSilentToggle"
+				force-menu
+				:primary="silentChat">
+				<template #icon>
+					<BellOffIcon v-if="silentChat" :size="16" />
+				</template>
+				<NcActionButton close-after-click
+					:model-value="silentChat"
+					:name="silentSendLabel"
+					@click="toggleSilentChat">
+					{{ silentSendInfo }}
+					<template #icon>
+						<BellOffIcon :size="16" />
+					</template>
+				</NcActionButton>
+			</NcActions>
+
 			<!-- Audio recorder -->
 			<NewMessageAudioRecorder v-if="showAudioRecorder"
 				:disabled="disabled"
@@ -119,21 +137,6 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcActions v-if="!broadcast" force-menu>
-					<template #icon>
-						<BellOffIcon v-if="silentChat" :size="16" />
-					</template>
-					<NcActionButton close-after-click
-						:model-value="silentChat"
-						:name="silentSendLabel"
-						@click="toggleSilentChat">
-						{{ silentSendInfo }}
-						<template #icon>
-							<BellOffIcon :size="16" />
-						</template>
-					</NcActionButton>
-				</NcActions>
-
 				<NcButton :disabled="disabled"
 					type="tertiary"
 					native-type="submit"
@@ -174,7 +177,7 @@
 
 <script>
 import debounce from 'debounce'
-import { toRefs } from 'vue'
+import { toRefs, ref } from 'vue'
 
 import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
@@ -295,7 +298,6 @@ export default {
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
 		const { createTemporaryMessage } = useTemporaryMessage()
-
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -354,6 +356,8 @@ export default {
 				return t('spreed', 'No permission to post messages in this conversation')
 			} else if (!this.currentConversationIsJoined) {
 				return t('spreed', 'Joining conversation …')
+			} else if (this.silentChat) {
+				return t('spreed', 'Write a message without notification')
 			} else {
 				// Use the default placeholder
 				return undefined
@@ -433,6 +437,10 @@ export default {
 				: t('spreed', 'Participants will not be notified about new messages')
 		},
 
+		showSilentToggle() {
+			return !this.broadcast && !this.isRecordingAudio && !this.messageToEdit
+		},
+
 		showAttachmentsMenu() {
 			return (this.canUploadFiles || this.canShareFiles || this.canCreatePoll) && !this.broadcast && !this.upload && !this.messageToEdit
 		},
@@ -492,6 +500,8 @@ export default {
 				// reset or fill main input in chat view from the store
 				this.text = this.chatInput
 			}
+			// update the silent chat state
+			this.silentChat = BrowserStorage.getItem('silentChat_' + this.token)
 		},
 
 		text(newValue) {
@@ -538,8 +548,8 @@ export default {
 					this.text = ''
 				}
 				this.clearTypingInterval()
-
 				this.checkAbsenceStatus()
+				this.clearSilentState()
 			}
 		},
 	},
@@ -1003,6 +1013,13 @@ export default {
 				BrowserStorage.removeItem('silentChat_' + this.token)
 			}
 		},
+
+		clearSilentState() {
+			// FIXME text that is only one line should be cleared in upstream
+			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
+				this.toggleSilentChat()
+			}
+		}
 	},
 }
 </script>
