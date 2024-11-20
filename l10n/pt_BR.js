@@ -1516,6 +1516,7 @@ OC.L10N.register(
     "Edit display name" : "Editar nome de exibição",
     "Save name" : "Salvar o nome",
     "Display name: {name}" : "Nome de exibição: {name}",
+    "Enable blur background by default for all conversation" : "Ativar o desfoque de fundo por padrão para todas as conversas",
     "Calls are not supported in your browser" : "Seu navegador não suporta chamadas",
     "Access to microphone is only possible with HTTPS" : "O acesso ao microfone somente é possível via HTTPS",
     "Access to microphone was denied" : "O acesso ao microfone foi negado",
