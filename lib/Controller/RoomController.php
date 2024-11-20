@@ -1557,6 +1557,8 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Archive a conversation
 	 *
+	 *  Required capability: `archived-conversations-v2`
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
 	 * 200: Conversation was archived
@@ -1571,6 +1573,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * Unarchive a conversation
+	 *
+	 * Required capability: `archived-conversations-v2`
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *

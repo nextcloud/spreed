@@ -1291,9 +1291,15 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Archive a conversation */
+        /**
+         * Archive a conversation
+         * @description Required capability: `archived-conversations-v2`
+         */
         post: operations["room-archive-conversation"];
-        /** Unarchive a conversation */
+        /**
+         * Unarchive a conversation
+         * @description Required capability: `archived-conversations-v2`
+         */
         delete: operations["room-unarchive-conversation"];
         options?: never;
         head?: never;

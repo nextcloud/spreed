@@ -157,7 +157,7 @@
 * `edit-messages-note-to-self` - Messages in note-to-self conversations can be edited indefinitely
 
 ## 20.1
-* `archived-conversations` (local) - Conversations can be marked as archived which will hide them from the conversation list by default
+* `archived-conversations-v2` (local) - Conversations can be marked as archived which will hide them from the conversation list by default
 * `talk-polls-drafts` - Whether moderators can store and retrieve poll drafts
 * `download-call-participants` - Whether the endpoints for moderators to download the call participants is available
 * `chat-summary-api` (local) - Whether the endpoint to get summarized chat messages in a conversation is available
