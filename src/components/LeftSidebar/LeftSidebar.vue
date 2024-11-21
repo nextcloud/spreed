@@ -296,6 +296,7 @@
 							<IconArchive :size="20" />
 						</template>
 						{{ t('spreed', 'Archived conversations') }}
+						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">{{ '⬤' }}</span>
 					</NcButton>
 				</template>
 
@@ -537,6 +538,11 @@ export default {
 
 		archivedConversationsList() {
 			return this.$store.getters.archivedConversationsList
+		},
+
+		showArchivedConversationsBubble() {
+			return this.archivedConversationsList
+				.some(conversation => hasUnreadMentions(conversation) || hasCall(conversation))
 		},
 
 		filteredConversationsList() {
@@ -1115,6 +1121,11 @@ export default {
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
 	padding: calc(2 * var(--default-grid-baseline));
+}
+
+.left-sidebar__settings-button-bubble {
+	margin-inline: var(--default-grid-baseline);
+	color: var(--color-primary-element);
 }
 
 :deep(.empty-content) {
