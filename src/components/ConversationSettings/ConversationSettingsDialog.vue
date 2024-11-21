@@ -88,6 +88,9 @@
 					<h4 class="app-settings-section__subtitle">
 						{{ t('spreed', 'Archive conversation') }}
 					</h4>
+					<p class="app-settings-section__hint">
+						{{ t('spreed', 'Archived conversations are hidden from the conversation list by default. However, they will still appear when you search for the conversation name or access a list of archived conversations.') }}
+					</p>
 					<NcCheckboxRadioSwitch type="switch"
 						:checked="isArchived"
 						@update:checked="toggleArchiveConversation">

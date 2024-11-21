@@ -296,6 +296,7 @@
 							<IconArchive :size="20" />
 						</template>
 						{{ t('spreed', 'Archived conversations') }}
+						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">{{ '⬤' }}</span>
 					</NcButton>
 				</template>
 
@@ -372,7 +373,7 @@ import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, hasCall, filterFunction } from '../../utils/conversation.js'
+import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -539,6 +540,11 @@ export default {
 			return this.$store.getters.archivedConversationsList
 		},
 
+		showArchivedConversationsBubble() {
+			return this.archivedConversationsList
+				.some(conversation => hasUnreadMentions(conversation) || hasCall(conversation))
+		},
+
 		filteredConversationsList() {
 			if (this.isFocused) {
 				return this.conversationsList
@@ -546,13 +552,12 @@ export default {
 
 			let validConversationsCount = 0
 			const filteredConversations = this.conversationsList.filter((conversation) => {
-				const conversationIsValid = filterFunction(this.isFiltered, this.showArchived, conversation)
+				const conversationIsValid = filterConversation(conversation, this.isFiltered)
 				if (conversationIsValid) {
 					validConversationsCount++
 				}
-				return conversationIsValid
-					|| hasCall(conversation)
-					|| conversation.token === this.token
+				return shouldIncludeArchived(conversation, this.showArchived)
+					&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
 			})
 			// return empty if it only includes the current conversation without any flags
 			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
@@ -951,6 +956,7 @@ export default {
 		handleConversationsReceived() {
 			this.handleUnreadMention()
 			if (this.$route.params.token) {
+				this.showArchived = this.$store.getters.conversation(this.$route.params.token)?.isArchived ?? false
 				this.scrollToConversation(this.$route.params.token)
 			}
 		},
@@ -1004,6 +1010,7 @@ export default {
 			if (to.name === 'conversation') {
 				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
 				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
@@ -1114,6 +1121,11 @@ export default {
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
 	padding: calc(2 * var(--default-grid-baseline));
+}
+
+.left-sidebar__settings-button-bubble {
+	margin-inline: var(--default-grid-baseline);
+	color: var(--color-primary-element);
 }
 
 :deep(.empty-content) {
