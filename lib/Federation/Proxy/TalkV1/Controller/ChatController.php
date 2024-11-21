@@ -47,7 +47,7 @@ class ChatController {
 	/**
 	 * @see \OCA\Talk\Controller\ChatController::sendMessage()
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 201: Message sent successfully
@@ -80,7 +80,9 @@ class ChatController {
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], $statusCode);
+			/** @var array{error: string} $data */
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_CREATED]);
+			return new DataResponse($data, $statusCode);
 		}
 
 		/** @var ?TalkChatMessageWithParent $data */
@@ -104,7 +106,7 @@ class ChatController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 *  200: Messages returned
@@ -180,7 +182,7 @@ class ChatController {
 					$this->proxyCacheMessages->set($cacheKey, $lastKnownMessageId, 300);
 				}
 			}
-			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+			return new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 		}
 
 		$headers = [];
@@ -197,16 +199,16 @@ class ChatController {
 			}
 		}
 
-		/** @var TalkChatMessageWithParent[] $data */
+		/** @var list<TalkChatMessageWithParent> $data */
 		$data = $this->proxy->getOCSData($proxy);
-		/** @var TalkChatMessageWithParent[] $data */
+		/** @var list<TalkChatMessageWithParent> $data */
 		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Message context returned
@@ -229,7 +231,7 @@ class ChatController {
 		}
 
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
-			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+			return new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 		}
 
 		$headers = [];
@@ -240,16 +242,16 @@ class ChatController {
 			$headers['X-Chat-Last-Given'] = (string)(int)$proxy->getHeader('X-Chat-Last-Given');
 		}
 
-		/** @var TalkChatMessageWithParent[] $data */
+		/** @var list<TalkChatMessageWithParent> $data */
 		$data = $this->proxy->getOCSData($proxy);
-		/** @var TalkChatMessageWithParent[] $data */
+		/** @var list<TalkChatMessageWithParent> $data */
 		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Message edited successfully
@@ -308,7 +310,7 @@ class ChatController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Message deleted successfully
@@ -446,7 +448,7 @@ class ChatController {
 	/**
 	 * @see \OCA\Talk\Controller\ChatController::mentions()
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMentionSuggestion>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: List of mention suggestions returned
@@ -463,8 +465,9 @@ class ChatController {
 			],
 		);
 
-		/** @var TalkChatMentionSuggestion[] $data */
+		/** @var list<TalkChatMentionSuggestion> $data */
 		$data = $this->proxy->getOCSData($proxy);
+		/** @var list<TalkChatMentionSuggestion> $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label');
 
 		// FIXME post-load status information

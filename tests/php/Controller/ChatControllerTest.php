@@ -498,7 +498,7 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->sendMessage('testMessage', '', '', 23);
-		$expected = new DataResponse([], Http::STATUS_BAD_REQUEST);
+		$expected = new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -1060,7 +1060,7 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(1, $limit, $offset, 0, $timeout);
-		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		$expected = new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -1089,7 +1089,7 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
-		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		$expected = new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 
 		$this->assertEquals($expected, $response);
 	}
