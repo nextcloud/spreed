@@ -1223,7 +1223,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Set the read marker to a specific message
 	 *
 	 * @param int|null $lastReadMessage ID if the last read message (Optional only with `chat-read-last` capability)
-	 * @psalm-param non-negative-int|null $lastReadMessage
+	 * @psalm-param int<-2, max>|null $lastReadMessage
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
@@ -1233,6 +1233,15 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequireAuthenticatedParticipant]
 	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
 		$setToMessage = $lastReadMessage ?? $this->room->getLastMessageId();
+		if ($setToMessage === 0) {
+			/**
+			 * Frontend and Desktop don't get chat context with ID 0,
+			 * so we collectively tested and decided that @see ChatManager::UNREAD_FIRST_MESSAGE
+			 * should be used instead.
+			 */
+			$setToMessage = ChatManager::UNREAD_FIRST_MESSAGE;
+		}
+
 		if ($setToMessage === $this->room->getLastMessageId()
 			&& $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			$this->notifier->markMentionNotificationsRead($this->room, $this->participant->getAttendee()->getActorId());
@@ -1279,8 +1288,6 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		$message = $this->room->getLastMessage();
-		$unreadId = 0;
-
 		if ($message instanceof IComment) {
 			try {
 				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
@@ -1289,14 +1296,36 @@ class ChatController extends AEnvironmentAwareController {
 					[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
 					$message->getVerb() === ChatManager::VERB_MESSAGE || $message->getVerb() === ChatManager::VERB_OBJECT_SHARED
 				);
-				$unreadId = (int)$previousMessage->getId();
-			} catch (NotFoundException $e) {
-				// No chat message found, only system messages.
-				// Marking unread from beginning
+				return $this->setReadMarker((int)$previousMessage->getId());
+			} catch (NotFoundException) {
+				// No chat message found, try system messages …
+			}
+
+			try {
+				$messages = $this->chatManager->getHistory(
+					$this->room,
+					(int)$message->getId(),
+					1,
+					false,
+				);
+
+				if (empty($messages)) {
+					throw new NotFoundException('No comments found');
+				}
+
+				$previousMessage = array_pop($messages);
+				return $this->setReadMarker((int)$previousMessage->getId());
+			} catch (NotFoundException) {
+				/**
+				 * Neither system messages found, fall back to `-1`.
+				 * This can happen when you:
+				 * - Set up message expiration
+				 * - Clear the chat history afterwards
+				 */
 			}
 		}
 
-		return $this->setReadMarker($unreadId);
+		return $this->setReadMarker(ChatManager::UNREAD_FIRST_MESSAGE);
 	}
 
 	/**
