@@ -38,6 +38,8 @@ class ReactionController {
 	 * 201: Reaction added successfully
 	 * 400: Adding reaction is not possible
 	 * 404: Message not found
+	 *
+	 * @see \OCA\Talk\Controller\ReactionController::react()
 	 */
 	public function react(Room $room, Participant $participant, int $messageId, string $reaction, string $format): DataResponse {
 		$proxy = $this->proxy->post(
@@ -78,6 +80,8 @@ class ReactionController {
 	 * 200: Reaction deleted successfully
 	 * 400: Deleting reaction is not possible
 	 * 404: Message not found
+	 *
+	 * @see \OCA\Talk\Controller\ReactionController::delete()
 	 */
 	public function delete(Room $room, Participant $participant, int $messageId, string $reaction, string $format): DataResponse {
 		$proxy = $this->proxy->delete(
@@ -118,6 +122,8 @@ class ReactionController {
 	 *
 	 * 200: Reactions returned
 	 * 404: Message or reaction not found
+	 *
+	 * @see \OCA\Talk\Controller\ReactionController::getReactions()
 	 */
 	public function getReactions(Room $room, Participant $participant, int $messageId, ?string $reaction, string $format): DataResponse {
 		$proxy = $this->proxy->get(

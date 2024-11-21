@@ -32,7 +32,7 @@ class CallController {
 	}
 
 	/**
-	 * @see \OCA\Talk\Controller\RoomController::getPeersForCall()
+	 * @see \OCA\Talk\Controller\CallController::getPeersForCall()
 	 *
 	 * @param Room $room the federated room to get the call peers
 	 * @param Participant $participant the federated user to get the call peers
@@ -64,7 +64,7 @@ class CallController {
 	}
 
 	/**
-	 * @see \OCA\Talk\Controller\RoomController::joinFederatedCall()
+	 * @see \OCA\Talk\Controller\CallController::joinFederatedCall()
 	 *
 	 * @param Room $room the federated room to join the call in
 	 * @param Participant $participant the federated user that will join the
@@ -111,7 +111,7 @@ class CallController {
 	}
 
 	/**
-	 * @see \OCA\Talk\Controller\RoomController::ringAttendee()
+	 * @see \OCA\Talk\Controller\CallController::ringAttendee()
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
@@ -144,7 +144,7 @@ class CallController {
 	}
 
 	/**
-	 * @see \OCA\Talk\Controller\RoomController::updateFederatedCallFlags()
+	 * @see \OCA\Talk\Controller\CallController::updateFederatedCallFlags()
 	 *
 	 * @param Room $room the federated room to update the call flags in
 	 * @param Participant $participant the federated user to update the call
@@ -181,7 +181,7 @@ class CallController {
 	}
 
 	/**
-	 * @see \OCA\Talk\Controller\RoomController::leaveFederatedCall()
+	 * @see \OCA\Talk\Controller\CallController::leaveFederatedCall()
 	 *
 	 * @param Room $room the federated room to leave the call in
 	 * @param Participant $participant the federated user that will leave the
