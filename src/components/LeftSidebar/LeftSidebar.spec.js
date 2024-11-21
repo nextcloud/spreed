@@ -112,6 +112,7 @@ describe('LeftSidebar.vue', () => {
 				token: 't100',
 				lastActivity: 100,
 				isFavorite: false,
+				isArchived: false,
 				name: 'one',
 				displayName: 'one',
 			}, {
@@ -119,6 +120,7 @@ describe('LeftSidebar.vue', () => {
 				token: 't200',
 				lastActivity: 80,
 				isFavorite: false,
+				isArchived: true,
 				name: 'two',
 				displayName: 'two',
 			}, {
@@ -126,6 +128,7 @@ describe('LeftSidebar.vue', () => {
 				token: 't300',
 				lastActivity: 120,
 				isFavorite: true,
+				isArchived: false,
 				name: 'three',
 				displayName: 'three',
 			}]
@@ -154,12 +157,11 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			expect(wrapper.vm.initialisedConversations).toBeTruthy()
-
+			const normalConversationsList = conversationsList.filter(conversation => !conversation.isArchived)
 			const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-			expect(conversationListItems).toHaveLength(conversationsList.length)
-			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[0])
-			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[1])
-			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[2])
+			expect(conversationListItems).toHaveLength(normalConversationsList.length)
+			expect(conversationListItems.at(0).props('item')).toStrictEqual(normalConversationsList[0])
+			expect(conversationListItems.at(1).props('item')).toStrictEqual(normalConversationsList[1])
 
 			expect(conversationsReceivedEvent).toHaveBeenCalledWith({
 				singleConversation: false,

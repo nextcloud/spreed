@@ -37,50 +37,28 @@ export function hasUnreadMentions(conversation) {
  * @return {boolean}
  */
 export function hasCall(conversation) {
-	return conversation.hasCall && (!isArchived(conversation) || conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON)
+	return conversation.hasCall && conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
 }
 
 /**
  * check if the conversation is archived
  *
  * @param {object} conversation conversation object
+ * @param {boolean} showArchived whether current filtered list is of archived conversations
  * @return {boolean}
  */
-export function isArchived(conversation) {
-	return conversation.isArchived
-}
-
-/**
- * check if the conversation passes default validation:
- * - non-archived
- * - archived, but have an unread message with notification triggered
- *
- * @param {object} conversation conversation object
- * @return {boolean}
- */
-export function isDefault(conversation) {
-	return !isArchived(conversation)
-		|| (conversation.notificationLevel === PARTICIPANT.NOTIFY.ALWAYS && hasUnreadMessages(conversation))
-		|| (conversation.notificationLevel === PARTICIPANT.NOTIFY.MENTION && hasUnreadMentions(conversation))
+export function shouldIncludeArchived(conversation, showArchived) {
+	return !supportsArchive || (conversation.isArchived === showArchived)
 }
 
 /**
  * apply the active filter
  *
- * @param {string} filter the filter option
- * @param {string} archived the archived filter option
  * @param {object} conversation conversation object
+ * @param {string|null} filter the filter option
  */
-export function filterFunction(filter, archived, conversation) {
-	const shouldIncludeArchived = supportsArchive
-		? (archived ? isArchived(conversation) : isDefault(conversation))
-		: true
-
-	if (filter === 'unread') {
-		return shouldIncludeArchived && hasUnreadMessages(conversation)
-	} else if (filter === 'mentions') {
-		return shouldIncludeArchived && hasUnreadMentions(conversation)
-	} else {
-		return shouldIncludeArchived
-	}
+export function filterConversation(conversation, filter) {
+	return filter === null
+		|| (filter === 'unread' && hasUnreadMessages(conversation))
+		|| (filter === 'mentions' && hasUnreadMentions(conversation))
 }
