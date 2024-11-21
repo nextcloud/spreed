@@ -22,7 +22,10 @@
 						:size="20"
 						fill-color="var(--color-loading-light)" />
 				</template>
-				{{ formattedTime(callTime) }}
+				<span class="call-time__text">
+					<span class="call-time__placeholder">{{ placeholderCallTime }}</span>
+					<span>{{ formattedCallTime }}</span>
+				</span>
 			</NcButton>
 		</template>
 
@@ -153,6 +156,14 @@ export default {
 
 			return ''
 		},
+
+		formattedCallTime() {
+			return formattedTime(this.callTime)
+		},
+
+		placeholderCallTime() {
+			return this.formattedCallTime.replace(/\d/g, '0')
+		},
 	},
 
 	watch: {
@@ -174,11 +185,6 @@ export default {
 
 	methods: {
 		t,
-		/**
-		 * Calculates the stopwatch string given the callTime (ms)
-		 *
-		 */
-		formattedTime,
 
 		stopRecording() {
 			this.$store.dispatch('stopCallRecording', {
@@ -230,6 +236,17 @@ export default {
 	align-items: center;
 	height: var(--default-clickable-area);
 	font-weight: bold;
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&__placeholder {
+		height: 0;
+		overflow: hidden;
+	}
 }
 
 :deep(.button-vue) {
