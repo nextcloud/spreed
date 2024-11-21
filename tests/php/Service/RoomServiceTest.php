@@ -84,7 +84,7 @@ class RoomServiceTest extends TestCase {
 			->willReturn('uid');
 
 		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('invalid_invitee');
+		$this->expectExceptionMessage('invite');
 		$this->service->createOneToOneConversation($user, $user);
 	}
 

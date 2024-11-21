@@ -33,7 +33,7 @@ class RoomController {
 	/**
 	 * @see \OCA\Talk\Controller\RoomController::getParticipants()
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Participants returned
@@ -46,10 +46,10 @@ class RoomController {
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/participants',
 		);
 
-		/** @var TalkParticipant[] $data */
+		/** @var list<TalkParticipant> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
-		/** @var TalkParticipant[] $data */
+		/** @var list<TalkParticipant> $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
 		$headers = [];
 		if ($proxy->getHeader('X-Nextcloud-Has-User-Statuses')) {
@@ -156,5 +156,14 @@ class RoomController {
 		];
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * @return array<string, mixed>|\stdClass
+	 */
+	protected function emptyArray(): array|\stdClass {
+		// Cheating here to make sure the array is always a
+		// JSON object on the API, even when there is no entry at all.
+		return new \stdClass();
 	}
 }

@@ -38,9 +38,9 @@ use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\DialOutFailedException;
-use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantProperty\PermissionsException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\FederationManager;
@@ -183,23 +183,26 @@ class ParticipantService {
 	}
 
 	/**
-	 * @throws Exception
-	 * @throws ForbiddenException
+	 * @throws PermissionsException
 	 */
-	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): bool {
+	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
+			throw new PermissionsException(PermissionsException::REASON_ROOM_TYPE);
 		}
 
 		if ($participant->hasModeratorPermissions()) {
-			throw new ForbiddenException();
+			throw new PermissionsException(PermissionsException::REASON_MODERATOR);
 		}
 
 		$attendee = $participant->getAttendee();
 
 		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS || $attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 			// Can not set publishing permissions for those actor types
-			return false;
+			throw new PermissionsException(PermissionsException::REASON_TYPE);
+		}
+
+		if ($newPermissions < Attendee::PERMISSIONS_DEFAULT || $newPermissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
+			throw new PermissionsException(PermissionsException::REASON_VALUE);
 		}
 
 		$oldPermissions = $participant->getPermissions();
@@ -213,7 +216,7 @@ class ParticipantService {
 		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
 			$newPermissions = $oldPermissions & ~$newPermissions;
 		} else {
-			return false;
+			throw new PermissionsException(PermissionsException::REASON_METHOD);
 		}
 
 		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, $newPermissions, $oldPermissions);
@@ -228,8 +231,6 @@ class ParticipantService {
 
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	public function updateAllPermissions(Room $room, string $method, int $newState): void {
@@ -271,7 +272,7 @@ class ParticipantService {
 			Participant::NOTIFY_MENTION,
 			Participant::NOTIFY_NEVER
 		], true)) {
-			throw new \InvalidArgumentException('Invalid notification level');
+			throw new \InvalidArgumentException('level');
 		}
 
 		$attendee = $participant->getAttendee();
@@ -283,13 +284,14 @@ class ParticipantService {
 	/**
 	 * @param Participant $participant
 	 * @param int $level
+	 * @throws \InvalidArgumentException
 	 */
 	public function updateNotificationCalls(Participant $participant, int $level): void {
 		if (!\in_array($level, [
 			Participant::NOTIFY_CALLS_OFF,
 			Participant::NOTIFY_CALLS_ON,
 		], true)) {
-			throw new \InvalidArgumentException('Invalid notification level');
+			throw new \InvalidArgumentException('level');
 		}
 
 		$attendee = $participant->getAttendee();

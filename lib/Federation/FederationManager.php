@@ -10,6 +10,7 @@ namespace OCA\Talk\Federation;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -64,7 +65,7 @@ class FederationManager {
 	/**
 	 * Check if $sharedBy is allowed to invite $shareWith
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws FederationRestrictionException
 	 */
 	public function isAllowedToInvite(
 		IUser $user,

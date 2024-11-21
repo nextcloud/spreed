@@ -11,6 +11,7 @@ namespace OCA\Talk\Federation;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Federation\TrustedServers;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Federation\ICloudId;
@@ -31,7 +32,7 @@ class RestrictionValidator {
 	/**
 	 * Check if $sharedBy is allowed to invite $shareWith
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws FederationRestrictionException
 	 */
 	public function isAllowedToInvite(
 		IUser $user,
@@ -39,23 +40,23 @@ class RestrictionValidator {
 	): void {
 		if (!($cloudIdToInvite->getUser() && $cloudIdToInvite->getRemote())) {
 			$this->logger->debug('Could not share conversation as the recipient is invalid: ' . $cloudIdToInvite->getId());
-			throw new \InvalidArgumentException('cloudId');
+			throw new FederationRestrictionException(FederationRestrictionException::REASON_CLOUD_ID);
 		}
 
 		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled', true)) {
 			$this->logger->debug('Could not share conversation as outgoing federation is disabled');
-			throw new \InvalidArgumentException('outgoing');
+			throw new FederationRestrictionException(FederationRestrictionException::REASON_OUTGOING);
 		}
 
 		if (!$this->talkConfig->isFederationEnabledForUserId($user)) {
 			$this->logger->debug('Talk federation not allowed for user ' . $user->getUID());
-			throw new \InvalidArgumentException('federation');
+			throw new FederationRestrictionException(FederationRestrictionException::REASON_FEDERATION);
 		}
 
 		if ($this->appConfig->getAppValueBool('federation_only_trusted_servers')) {
 			if (!$this->appManager->isEnabledForUser('federation')) {
 				$this->logger->error('Federation is limited to trusted servers but the "federation" app is disabled');
-				throw new \InvalidArgumentException('trusted_servers');
+				throw new FederationRestrictionException(FederationRestrictionException::REASON_TRUSTED_SERVERS);
 			}
 
 			$trustedServers = Server::get(TrustedServers::class);
@@ -65,7 +66,7 @@ class RestrictionValidator {
 					'Tried to send Talk federation invite to untrusted server {serverUrl}',
 					['serverUrl' => $serverUrl]
 				);
-				throw new \InvalidArgumentException('trusted_servers');
+				throw new FederationRestrictionException(FederationRestrictionException::REASON_TRUSTED_SERVERS);
 			}
 		}
 	}
