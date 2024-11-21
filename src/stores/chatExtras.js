@@ -6,6 +6,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { t } from '@nextcloud/l10n'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
@@ -70,6 +71,11 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		hasChatSummaryTaskRequested: (state) => (token) => {
 			return state.chatSummary[token] !== undefined
+		},
+
+		getChatSummary: (state) => (token) => {
+			return Object.values(Object(state.chatSummary[token])).map(task => task.summary).join('\n\n')
+				|| t('spreed', 'Error occurred during a summary generation')
 		},
 	},
 
@@ -280,6 +286,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			} catch (error) {
 				console.error('Error while requesting a summary:', error)
 			}
-		}
+		},
+
+		storeChatSummary(token, fromMessageId, summary) {
+			if (this.chatSummary[token][fromMessageId]) {
+				Vue.set(this.chatSummary[token][fromMessageId], 'summary', summary)
+			}
+		},
 	},
 })
