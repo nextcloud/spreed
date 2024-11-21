@@ -17,7 +17,6 @@ use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\ICommentsManager;
-use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -119,7 +118,6 @@ class PollService {
 	 * @param Participant $participant
 	 * @param Poll $poll
 	 * @throws WrongPermissionsException
-	 * @throws Exception
 	 */
 	public function updatePoll(Participant $participant, Poll $poll): void {
 		if (!$participant->hasModeratorPermissions()

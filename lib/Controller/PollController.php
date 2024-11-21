@@ -30,7 +30,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\DB\Exception;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -169,7 +168,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Poll returned
 	 * 404: Poll not found
@@ -188,11 +187,11 @@ class PollController extends AEnvironmentAwareController {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT && !$this->participant->hasModeratorPermissions()) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
@@ -209,8 +208,8 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @param int[] $optionIds IDs of the selected options
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param list<int> $optionIds IDs of the selected options
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Voted successfully
 	 * 400: Voting is not possible
@@ -230,21 +229,21 @@ class PollController extends AEnvironmentAwareController {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$votedSelf = $this->pollService->votePoll($this->participant, $poll, $optionIds);
 		} catch (\RuntimeException $e) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'options'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
@@ -274,7 +273,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 202: Poll draft was deleted successfully
@@ -296,27 +295,24 @@ class PollController extends AEnvironmentAwareController {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
 			$this->pollService->deleteByPollId($poll->getId());
-			return new DataResponse([], Http::STATUS_ACCEPTED);
+			return new DataResponse(null, Http::STATUS_ACCEPTED);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$poll->setStatus(Poll::STATUS_CLOSED);
 
 		try {
 			$this->pollService->updatePoll($this->participant, $poll);
-		} catch (WrongPermissionsException $e) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		} catch (Exception $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (WrongPermissionsException) {
+			return new DataResponse(['error' => 'poll'], Http::STATUS_FORBIDDEN);
 		}
 
 		$attendee = $this->participant->getAttendee();
@@ -366,10 +362,10 @@ class PollController extends AEnvironmentAwareController {
 				$data['numVoters'] = 0;
 			}
 		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
-			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
+			$data['details'] = array_values(array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes));
 		}
 
-		$data['votedSelf'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votedSelf);
+		$data['votedSelf'] = array_values(array_map(static fn (Vote $vote) => $vote->getOptionId(), $votedSelf));
 
 		return $data;
 	}
