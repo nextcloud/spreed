@@ -950,6 +950,7 @@ export default {
 		handleConversationsReceived() {
 			this.handleUnreadMention()
 			if (this.$route.params.token) {
+				this.showArchived = this.$store.getters.conversation(this.$route.params.token)?.isArchived ?? false
 				this.scrollToConversation(this.$route.params.token)
 			}
 		},
@@ -1003,6 +1004,7 @@ export default {
 			if (to.name === 'conversation') {
 				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
 				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
