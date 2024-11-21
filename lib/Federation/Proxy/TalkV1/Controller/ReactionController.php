@@ -32,7 +32,7 @@ class ReactionController {
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to add
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Reaction already existed
 	 * 201: Reaction added successfully
@@ -59,10 +59,10 @@ class ReactionController {
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], $statusCode);
+			return new DataResponse(null, $statusCode);
 		}
 
-		/** @var array<string, TalkReaction[]> $data */
+		/** @var array<string, list<TalkReaction>> $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_CREATED, Http::STATUS_OK]);
 		$data = $this->userConverter->convertReactionsList($room, $data);
 
@@ -75,7 +75,7 @@ class ReactionController {
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to remove
-	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Reaction deleted successfully
 	 * 400: Deleting reaction is not possible
@@ -101,10 +101,10 @@ class ReactionController {
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], $statusCode);
+			return new DataResponse(null, $statusCode);
 		}
 
-		/** @var array<string, TalkReaction[]> $data */
+		/** @var array<string, list<TalkReaction>> $data */
 		$data = $this->proxy->getOCSData($proxy);
 		$data = $this->userConverter->convertReactionsList($room, $data);
 
@@ -118,7 +118,7 @@ class ReactionController {
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
 	 * @param string|null $reaction Emoji to filter
-	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Reactions returned
 	 * 404: Message or reaction not found
@@ -140,10 +140,10 @@ class ReactionController {
 			if ($statusCode !== Http::STATUS_NOT_FOUND) {
 				$this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
-		/** @var array<string, TalkReaction[]> $data */
+		/** @var array<string, list<TalkReaction>> $data */
 		$data = $this->proxy->getOCSData($proxy);
 		$data = $this->userConverter->convertReactionsList($room, $data);
 
@@ -151,8 +151,8 @@ class ReactionController {
 	}
 
 	/**
-	 * @param array<string, TalkReaction[]> $reactions
-	 * @return array<string, TalkReaction[]>|\stdClass
+	 * @param array<string, list<TalkReaction>> $reactions
+	 * @return array<string, list<TalkReaction>>|\stdClass
 	 */
 	protected function formatReactions(string $format, array $reactions): array|\stdClass {
 		if ($format === 'json' && empty($reactions)) {
