@@ -293,7 +293,7 @@ class RoomFormatter {
 				$roomData['unreadMessages'] = $attendee->getUnreadMessages();
 			} elseif ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
-				if ($lastReadMessage === -1) {
+				if ($lastReadMessage === ChatManager::UNREAD_MIGRATION) {
 					/*
 					 * Because the migration from the old comment_read_markers was
 					 * not possible in a programmatic way with a reasonable O(1) or O(n)
@@ -395,6 +395,12 @@ class RoomFormatter {
 				$roomData['lastMessage'] = $cachedMessage->jsonSerialize();
 			} catch (DoesNotExistException) {
 			}
+		}
+		if ($currentUser instanceof IUser
+			&& $attendee->getActorType() === Attendee::ACTOR_USERS
+			&& $roomData['lastReadMessage'] === ChatManager::UNREAD_FIRST_MESSAGE
+			&& $roomData['unreadMessages'] === 0) {
+			$roomData['unreadMessages'] = 1;
 		}
 
 		if ($room->isFederatedConversation()) {

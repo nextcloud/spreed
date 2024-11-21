@@ -7382,7 +7382,7 @@
                                         "format": "int64",
                                         "nullable": true,
                                         "description": "ID if the last read message (Optional only with `chat-read-last` capability)",
-                                        "minimum": 0
+                                        "minimum": -2
                                     }
                                 }
                             }

@@ -220,3 +220,37 @@ Feature: chat-2/unread-messages
       | unreadMessages |
       | 1              |
 
+  Scenario: marking first message as unread falls back to system message
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                      | silent | messageParameters |
+      | room | users         | participant1 | user_added           | You added {user}             | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | unreadMessages | lastReadMessage      |
+      | room | 1              | conversation_created |
+    And wait for 1 seconds
+    And user "participant2" marks room "room" as unread with 200
+    Then user "participant2" is participant of room "room" (v4)
+      | unreadMessages | lastReadMessage |
+      | 1              | user_added      |
+
+  Scenario: marking first message as unread falls back to FIRST_MESSAGE_UNREAD
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                      | silent | messageParameters |
+      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | unreadMessages | lastReadMessage      |
+      | room | 0              | conversation_created |
+    And wait for 1 seconds
+    And user "participant1" marks room "room" as unread with 200
+    Then user "participant1" is participant of room "room" (v4)
+      | unreadMessages | lastReadMessage      |
+      | 1              | FIRST_MESSAGE_UNREAD |
