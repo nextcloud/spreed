@@ -8,6 +8,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.js'
+import type { TaskProcessingResponse } from '../types/index.ts'
 
 const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
 	&& getTalkConfig('local', 'federation', 'enabled')
@@ -52,6 +53,11 @@ const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers 
 	})
 }
 
+const getTaskById = async function(id: number, options?: object): TaskProcessingResponse {
+	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
+}
+
 export {
 	autocompleteQuery,
+	getTaskById,
 }
