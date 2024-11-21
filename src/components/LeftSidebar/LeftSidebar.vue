@@ -372,7 +372,7 @@ import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, hasCall, filterFunction } from '../../utils/conversation.js'
+import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -546,13 +546,12 @@ export default {
 
 			let validConversationsCount = 0
 			const filteredConversations = this.conversationsList.filter((conversation) => {
-				const conversationIsValid = filterFunction(this.isFiltered, this.showArchived, conversation)
+				const conversationIsValid = filterConversation(conversation, this.isFiltered)
 				if (conversationIsValid) {
 					validConversationsCount++
 				}
-				return conversationIsValid
-					|| hasCall(conversation)
-					|| conversation.token === this.token
+				return shouldIncludeArchived(conversation, this.showArchived)
+					&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
 			})
 			// return empty if it only includes the current conversation without any flags
 			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
