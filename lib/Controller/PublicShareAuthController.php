@@ -49,7 +49,7 @@ class PublicShareAuthController extends OCSController {
 	 * otherwise.
 	 *
 	 * @param string $shareToken Token of the file share
-	 * @return DataResponse<Http::STATUS_CREATED, array{token: string, name: string, displayName: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, array{token: string, name: string, displayName: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 201: Room created successfully
 	 * 404: Share not found
@@ -59,18 +59,18 @@ class PublicShareAuthController extends OCSController {
 	public function createRoom(string $shareToken): DataResponse {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
-		} catch (ShareNotFound $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ShareNotFound) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if (!$share->getSendPasswordByTalk()) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		$sharerUser = $this->userManager->get($share->getSharedBy());
 
 		if (!$sharerUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if ($share->getShareType() === IShare::TYPE_EMAIL) {
