@@ -3,12 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import type { components, operations } from './openapi/openapi-full.ts'
+import { TASK_PROCESSING } from '../constants.js'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>
 type ApiResponseHeaders<T extends { headers: object }> = {
 	[K in keyof T['headers'] as Lowercase<string & K>]: T['headers'][K];
 }
+type ApiResponseUnwrapped<T> = Promise<{
+	data: {
+		ocs: {
+			meta: components['schemas']['OCSMeta']
+			data: T
+		}
+	}
+}>
 
 // Capabilities
 export type Capabilities = {
@@ -98,6 +107,7 @@ export type setReadMarkerResponse = ApiResponse<operations['chat-set-read-marker
 export type markUnreadResponse = ApiResponse<operations['chat-mark-unread']['responses'][200]['content']['application/json']>
 export type summarizeChatParams = operations['chat-summarize-chat']['requestBody']['content']['application/json']
 export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat']['responses'][201]['content']['application/json']>
+export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
@@ -181,3 +191,23 @@ export type deletePollDraftResponse = ApiResponse<operations['poll-close-poll'][
 export type ChatMention = components['schemas']['ChatMentionSuggestion']
 export type getMentionsParams = operations['chat-mentions']['parameters']['query']
 export type getMentionsResponse = ApiResponse<operations['chat-mentions']['responses'][200]['content']['application/json']>
+
+// AI Summary
+export type TaskProcessingResponse = ApiResponseUnwrapped<{
+	task: {
+		id: number,
+		lastUpdated: number,
+		type: string,
+		status: typeof TASK_PROCESSING.STATUS[keyof typeof TASK_PROCESSING.STATUS],
+		userId: string,
+		appId: string,
+		input: Record<string, unknown>,
+		output: Record<string, unknown> | null,
+		customId: string,
+		completionExpectedAt: number,
+		progress: number,
+		scheduledAt: number,
+		startedAt: number,
+		endedAt: number
+	}
+}>
