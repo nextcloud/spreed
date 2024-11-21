@@ -34,11 +34,11 @@
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
-				<NewMessageAbsenceInfo v-if="!upload && userAbsence"
+				<NewMessageAbsenceInfo v-if="!dialog && userAbsence"
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
-				<NewMessageChatSummary v-if="showChatSummary" />
+				<NewMessageChatSummary v-if="!dialog && showChatSummary" />
 
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
@@ -522,6 +522,8 @@ export default {
 		text(newValue) {
 			if (this.currentUploadId && !this.upload) {
 				return
+			} else if (this.dialog && this.broadcast) {
+				return
 			}
 			this.debouncedUpdateChatInput(newValue)
 		},
@@ -953,7 +955,7 @@ export default {
 		},
 
 		handleEditLastMessage(event) {
-			if (!this.canEditMessage || this.text || this.upload || this.broadcast || this.isRecordingAudio) {
+			if (!this.canEditMessage || this.text || this.dialog || this.isRecordingAudio) {
 				return
 			}
 
