@@ -57,7 +57,12 @@ const getTaskById = async function(id: number, options?: object): TaskProcessing
 	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
+const deleteTaskById = async function(id: number, options?: object): Promise<null> {
+	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
+}
+
 export {
 	autocompleteQuery,
 	getTaskById,
+	deleteTaskById,
 }
