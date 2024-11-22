@@ -12,6 +12,7 @@ import {
 	ATTENDEE,
 	CHAT,
 	CONVERSATION,
+	MESSAGE,
 } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
@@ -967,7 +968,7 @@ const actions = {
 			}
 			context.dispatch('processMessage', { token, message })
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
-			oldestKnownMessageId = Math.min(oldestKnownMessageId, message.id)
+			oldestKnownMessageId = oldestKnownMessageId === 0 ? message.id : Math.min(oldestKnownMessageId, message.id)
 
 			if (message.id <= messageId
 				&& message.systemMessage !== 'reaction'
@@ -979,7 +980,8 @@ const actions = {
 			}
 		})
 
-		if (!context.getters.getFirstKnownMessageId(token) || oldestKnownMessageId < context.getters.getFirstKnownMessageId(token)) {
+		if (!context.getters.getFirstKnownMessageId(token) || oldestKnownMessageId < context.getters.getFirstKnownMessageId(token)
+			|| context.getters.getFirstKnownMessageId(token) === MESSAGE.CHAT_BEGIN_ID) {
 			context.dispatch('setFirstKnownMessageId', {
 				token,
 				id: oldestKnownMessageId,
