@@ -291,7 +291,7 @@ class RoomService {
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
 	 * @throws RecordingConsentException When the room has an active call or the value is invalid
 	 */
-	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRooms = false): void {
+	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRoomsAndFederatedRooms = false): void {
 		$oldRecordingConsent = $room->getRecordingConsent();
 
 		if ($recordingConsent === $oldRecordingConsent) {
@@ -302,16 +302,18 @@ class RoomService {
 			throw new RecordingConsentException(RecordingConsentException::REASON_VALUE);
 		}
 
-		if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-			throw new RecordingConsentException(RecordingConsentException::REASON_CALL);
-		}
+		if (!$allowUpdatingBreakoutRoomsAndFederatedRooms) {
+			if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+				throw new RecordingConsentException(RecordingConsentException::REASON_CALL);
+			}
 
-		if (!$allowUpdatingBreakoutRooms && $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
-		}
+			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+				throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
+			}
 
-		if ($room->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STOPPED) {
-			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
+			if ($room->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STOPPED) {
+				throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
+			}
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, $recordingConsent, $oldRecordingConsent);
