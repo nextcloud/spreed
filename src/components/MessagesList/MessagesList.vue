@@ -78,7 +78,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, CHAT, CONVERSATION } from '../../constants.js'
+import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
@@ -670,9 +670,10 @@ export default {
 						}
 						this.$store.dispatch('setFirstKnownMessageId', { token, id: startingMessageId })
 						this.$store.dispatch('setLastKnownMessageId', { token, id: startingMessageId })
-
+						// If MESSAGE.CHAT_BEGIN_ID we need to get the context from the beginning
+						// using 0 as the API does not support negative values
 						// Get chat messages before last read message and after it
-						await this.getMessageContext(token, startingMessageId)
+						await this.getMessageContext(token, startingMessageId !== MESSAGE.CHAT_BEGIN_ID ? startingMessageId : 0)
 					} catch (exception) {
 						console.debug(exception)
 						// Request was cancelled, stop getting preconditions and restore initial state
