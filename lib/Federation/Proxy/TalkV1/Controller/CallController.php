@@ -103,7 +103,7 @@ class CallController {
 
 		if ($statusCode === Http::STATUS_BAD_REQUEST) {
 			/** @var array{error: string} $data */
-			$data = $this->proxy->getOCSData($proxy);
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_BAD_REQUEST]);
 			return new DataResponse($data, $statusCode);
 		}
 
@@ -136,7 +136,7 @@ class CallController {
 
 		if ($statusCode === Http::STATUS_BAD_REQUEST) {
 			/** @var array{error: string} $data */
-			$data = $this->proxy->getOCSData($proxy);
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_BAD_REQUEST]);
 			return new DataResponse($data, $statusCode);
 		}
 
