@@ -129,6 +129,11 @@ export const ATTENDEE = {
 	CHANGELOG_BOT_ID: 'changelog',
 }
 
+export const MESSAGE = {
+	CHAT_BEGIN_ID: -2,
+	CHAT_MIGRATION_ID: -1,
+}
+
 export const PARTICIPANT = {
 	CALL_FLAG: {
 		DISCONNECTED: 0,
