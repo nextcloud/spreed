@@ -123,6 +123,7 @@ class ProxyRequest {
 			try {
 				$body = $e->getResponse()->getBody()->getContents();
 				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+				$e->getResponse()->getBody()->rewind();
 				if (!is_array($data)) {
 					throw new \RuntimeException('JSON response is not an array');
 				}
