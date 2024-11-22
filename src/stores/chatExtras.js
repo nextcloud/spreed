@@ -293,5 +293,11 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				Vue.set(this.chatSummary[token][fromMessageId], 'summary', summary)
 			}
 		},
+
+		dismissChatSummary(token) {
+			if (this.hasChatSummaryTaskRequested(token)) {
+				Vue.delete(this.chatSummary, token)
+			}
+		},
 	},
 })

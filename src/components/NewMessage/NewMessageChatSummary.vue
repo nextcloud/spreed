@@ -32,7 +32,24 @@
 				class="chat-summary__message"
 				:class="{'chat-summary__message--collapsed': collapsed}">{{ chatSummaryMessage }}</p>
 		</template>
-
+		<div class="chat-summary__actions">
+			<NcButton v-if="loading"
+				class="chat-summary__action"
+				type="primary"
+				:disabled="cancelling"
+				@click="cancelSummary">
+				<template v-if="cancelling" #icon>
+					<NcLoadingIcon />
+				</template>
+				{{ t('spreed', 'Cancel') }}
+			</NcButton>
+			<NcButton v-else-if="chatSummaryMessage"
+				class="chat-summary__action"
+				type="primary"
+				@click="dismissSummary">
+				{{ t('spreed', 'Dismiss') }}
+			</NcButton>
+		</div>
 	</NcNoteCard>
 </template>
 
@@ -51,7 +68,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import { useStore } from '../../composables/useStore.js'
 import { TASK_PROCESSING } from '../../constants.js'
-import { getTaskById } from '../../services/coreService.ts'
+import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import type { TaskProcessingResponse, SummarizeChatTask } from '../../types/index.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
@@ -74,6 +91,7 @@ const collapsed = ref(true)
 const isTextMoreThanOneLine = ref(false)
 
 const loading = ref(true)
+const cancelling = ref(false)
 
 const store = useStore()
 const chatExtrasStore = useChatExtrasStore()
@@ -159,11 +177,8 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 		case TASK_PROCESSING.STATUS.UNKNOWN:
 		case TASK_PROCESSING.STATUS.CANCELLED: {
 			// Task is likely failed, proceed to the next task
-			chatExtrasStore.storeChatSummary(token, task.fromMessageId, '')
 			showError(t('spreed', 'Error occurred during a summary generation'))
-			clearInterval(getTaskInterval)
-			getTaskInterval = undefined
-			checkScheduledTasks(token)
+			cancelSummary()
 			break
 		}
 		case TASK_PROCESSING.STATUS.SCHEDULED:
@@ -179,6 +194,29 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 		}
 		console.error('Error getting chat summary:', error)
 	}
+}
+
+/**
+ *
+ */
+function dismissSummary() {
+	Object.values(cancelGetTask).forEach(cancelFn => cancelFn())
+	clearInterval(getTaskInterval)
+	getTaskInterval = undefined
+	chatExtrasStore.dismissChatSummary(token.value)
+}
+
+/**
+ *
+ */
+async function cancelSummary() {
+	cancelling.value = true
+	const taskQueue: ChatTask[] = chatExtrasStore.getChatSummaryTaskQueue(token.value)
+	for await (const task of taskQueue) {
+		 await deleteTaskById(task.taskId)
+	}
+	cancelling.value = false
+	dismissSummary()
 }
 
 /**
@@ -227,6 +265,13 @@ function setIsTextMoreThanOneLine() {
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--default-grid-baseline);
+		z-index: 1;
 	}
 
 	&__button {
