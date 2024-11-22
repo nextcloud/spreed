@@ -38,6 +38,8 @@
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
+				<NewMessageChatSummary v-if="showChatSummary" />
+
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
 						:close-on-select="false"
@@ -201,6 +203,7 @@ import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
+import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessagePollEditor from './NewMessagePollEditor.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
@@ -234,6 +237,7 @@ export default {
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
 		NewMessageAudioRecorder,
+		NewMessageChatSummary,
 		NewMessageNewFileDialog,
 		NewMessagePollEditor,
 		PollDraftHandler,
@@ -464,6 +468,10 @@ export default {
 
 		userAbsence() {
 			return this.chatExtrasStore.absence[this.token]
+		},
+
+		showChatSummary() {
+			return this.chatExtrasStore.hasChatSummaryTaskRequested(this.token)
 		},
 
 		isMobileDevice() {

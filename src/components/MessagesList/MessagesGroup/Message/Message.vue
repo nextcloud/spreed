@@ -60,8 +60,8 @@
 					:title="t('spreed', 'Show or collapse system messages')"
 					@click="toggleCombinedSystemMessage">
 					<template #icon>
-						<UnfoldMore v-if="isCombinedSystemMessageCollapsed" />
-						<UnfoldLess v-else />
+						<IconUnfoldMore v-if="isCombinedSystemMessageCollapsed" />
+						<IconUnfoldLess v-else />
 					</template>
 				</NcButton>
 			</div>
@@ -79,8 +79,17 @@
 
 		<div v-if="isLastReadMessage"
 			v-intersection-observer="lastReadMessageVisibilityChanged"
-			class="new-message-marker">
-			<span>{{ t('spreed', 'Unread messages') }}</span>
+			class="message-unread-marker">
+			<div class="message-unread-marker__wrapper">
+				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
+				<NcButton v-if="shouldShowSummaryOption"
+					@click="generateSummary">
+					<template #icon>
+						<IconCreation />
+					</template>
+					{{ t('spreed', 'Generate summary') }}
+				</NcButton>
+			</div>
 		</div>
 	</li>
 </template>
@@ -88,8 +97,9 @@
 <script>
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 
-import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
-import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
+import IconCreation from 'vue-material-design-icons/Creation.vue'
+import IconUnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
+import IconUnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -110,24 +120,27 @@ import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
 
 import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.js'
-import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
+
+const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
+const summaryThreshold = getTalkConfig('local', 'chat', 'summary-threshold') ?? 0
 
 export default {
 	name: 'Message',
 
 	components: {
+		IconCreation,
+		IconUnfoldLess,
+		IconUnfoldMore,
 		MessageBody,
 		MessageButtonsBar,
 		MessageForwarder,
 		MessageTranslateDialog,
 		NcButton,
 		Reactions,
-		// Icons
-		UnfoldLess,
-		UnfoldMore,
 	},
 
 	directives: {
@@ -222,9 +235,19 @@ export default {
 			if (this.isLastMessage) {
 				return false
 			}
-			return (!this.isCollapsedSystemMessage && this.message.id === this.visualLastLastReadMessageId)
-				|| (this.isCollapsedSystemMessage && this.message.id === this.visualLastLastReadMessageId && this.message.id !== this.lastCollapsedMessageId)
-				|| (this.isCombinedSystemMessage && this.lastCollapsedMessageId === this.visualLastLastReadMessageId)
+
+			if (this.message.id === this.visualLastLastReadMessageId) {
+				return !this.isCollapsedSystemMessage || this.message.id !== this.lastCollapsedMessageId
+			}
+
+			return this.isCombinedSystemMessage && this.lastCollapsedMessageId === this.visualLastLastReadMessageId
+		},
+
+		shouldShowSummaryOption() {
+			if (!canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.message.token)) {
+				return false
+			}
+			return (this.conversation.unreadMessages >= summaryThreshold)
 		},
 
 		isSystemMessage() {
@@ -424,6 +447,10 @@ export default {
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen
 		},
+
+		async generateSummary() {
+			await this.chatExtrasStore.requestChatSummary(this.message.token, this.message.id)
+		}
 	},
 }
 </script>
@@ -467,22 +494,36 @@ export default {
 	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 
-.new-message-marker {
+.message-unread-marker {
 	position: relative;
-	margin: 20px 15px;
-	border-top: 1px solid var(--color-border);
+	margin: calc(4 * var(--default-grid-baseline));
 
-	span {
+	&::before {
+		content: '';
+		width: 100%;
+		border-top: 1px solid var(--color-border-maxcontrast);
 		position: absolute;
-		top: 0;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		padding: 0 7px 0 7px;
-		text-align: center;
-		white-space: nowrap;
-		color: var(--color-text-light);
+		top: 50%;
+		z-index: -1;
+	}
+
+	&__wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: calc(3 * var(--default-grid-baseline));
+		margin-inline: auto;
+		padding-inline: calc(3 * var(--default-grid-baseline));
+		width: fit-content;
 		border-radius: var(--border-radius);
 		background-color: var(--color-main-background);
+	}
+
+	&__text {
+		text-align: center;
+		white-space: nowrap;
+		font-weight: bold;
+		color: var(--color-main-text);
 	}
 }
 
