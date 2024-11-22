@@ -324,3 +324,17 @@ export const MENTION = {
 		GROUP: 'group',
 	},
 }
+
+/**
+ * Task statuses for OCP\TaskProcessing
+ */
+export const TASK_PROCESSING = {
+	STATUS: {
+		CANCELLED: 'STATUS_CANCELLED',
+		FAILED: 'STATUS_FAILED',
+		SUCCESSFUL: 'STATUS_SUCCESSFUL',
+		RUNNING: 'STATUS_RUNNING',
+		SCHEDULED: 'STATUS_SCHEDULED',
+		UNKNOWN: 'STATUS_UNKNOWN',
+	},
+}

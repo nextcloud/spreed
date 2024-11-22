@@ -163,6 +163,8 @@ export default {
 	&__message {
 		white-space: pre-line;
 		word-wrap: break-word;
+		max-height: 30vh;
+		overflow: auto;
 
 		&--collapsed {
 			text-overflow: ellipsis;
