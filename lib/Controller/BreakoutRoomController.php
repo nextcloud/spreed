@@ -45,7 +45,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 * @psalm-param BreakoutRoom::MODE_* $mode
 	 * @param int<1, 20> $amount Number of breakout rooms - Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT}
 	 * @param string $attendeeMap Mapping of the attendees to breakout rooms
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Breakout rooms configured successfully
 	 * 400: Configuring breakout rooms errored
@@ -87,7 +87,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 * Broadcast a chat message to all breakout rooms
 	 *
 	 * @param string $message Message to broadcast
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 *
 	 * 201: Chat message broadcasted successfully
 	 * 400: Broadcasting chat message is not possible
@@ -111,7 +111,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 * Apply an attendee map to the breakout rooms
 	 *
 	 * @param string $attendeeMap JSON encoded mapping of the attendees to breakout rooms `array<int, int>`
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Attendee map applied successfully
 	 * 400: Applying attendee map is not possible
@@ -181,7 +181,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * Start the breakout rooms
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Breakout rooms started successfully
 	 * 400: Starting breakout rooms is not possible
@@ -202,7 +202,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * Stop the breakout rooms
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Breakout rooms stopped successfully
 	 * 400: Stopping breakout rooms is not possible
@@ -247,7 +247,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return TalkRoom[]
+	 * @return list<TalkRoom>
 	 */
 	protected function formatMultipleRooms(array $rooms): array {
 		$return = [];

@@ -2280,6 +2280,14 @@ export type components = {
             isArchived: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
+        SignalingFederationSettings: {
+            server: string;
+            nextcloudServer: string;
+            helloAuthParams: {
+                token: string;
+            };
+            roomId: string;
+        };
         SignalingSession: {
             actorId: string;
             actorType: string;
@@ -2295,14 +2303,7 @@ export type components = {
             userId: string;
         };
         SignalingSettings: {
-            federation: {
-                server: string;
-                nextcloudServer: string;
-                helloAuthParams: {
-                    token: string;
-                };
-                roomId: string;
-            } | unknown[];
+            federation: components["schemas"]["SignalingFederationSettings"];
             helloAuthParams: {
                 "1.0": {
                     userid: string | null;
@@ -3421,7 +3422,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -3660,7 +3661,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -3819,10 +3820,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                                message?: string;
-                            };
+                            data: unknown;
                         };
                     };
                 };
@@ -3836,10 +3834,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                                message?: string;
-                            };
+                            data: unknown;
                         };
                     };
                 };
@@ -3853,10 +3848,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                                message?: string;
-                            };
+                            data: unknown;
                         };
                     };
                 };
@@ -3871,7 +3863,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                                 message?: string;
                             };
                         };
@@ -8697,7 +8689,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "avatar";
+                            };
                         };
                     };
                 };
@@ -8886,7 +8881,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -8950,7 +8945,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -8966,7 +8961,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };

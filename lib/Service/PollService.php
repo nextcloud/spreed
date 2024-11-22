@@ -93,7 +93,7 @@ class PollService {
 
 	/**
 	 * @param int $roomId
-	 * @return Poll[]
+	 * @return list<Poll>
 	 */
 	public function getDraftsForRoom(int $roomId): array {
 		return $this->pollMapper->getDraftsByRoomId($roomId);
@@ -135,7 +135,7 @@ class PollService {
 	/**
 	 * @param Participant $participant
 	 * @param Poll $poll
-	 * @return Vote[]
+	 * @return list<Vote>
 	 */
 	public function getVotesForActor(Participant $participant, Poll $poll): array {
 		return $this->voteMapper->findByPollIdForActor(
@@ -147,7 +147,7 @@ class PollService {
 
 	/**
 	 * @param Poll $poll
-	 * @return Vote[]
+	 * @return list<Vote>
 	 */
 	public function getVotes(Poll $poll): array {
 		return $this->voteMapper->findByPollId($poll->getId());
@@ -157,7 +157,7 @@ class PollService {
 	 * @param Participant $participant
 	 * @param Poll $poll
 	 * @param int[] $optionIds Options the user voted for
-	 * @return Vote[]
+	 * @return list<Vote>
 	 * @throws \RuntimeException
 	 */
 	public function votePoll(Participant $participant, Poll $poll, array $optionIds): array {

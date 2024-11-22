@@ -30,7 +30,7 @@ class GuestController extends AEnvironmentAwareController {
 	 * Set the display name as a guest
 	 *
 	 * @param string $displayName New display name
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Display name updated successfully
 	 * 403: Not a guest
@@ -41,15 +41,15 @@ class GuestController extends AEnvironmentAwareController {
 	public function setDisplayName(string $displayName): DataResponse {
 		$participant = $this->getParticipant();
 		if (!$participant instanceof Participant) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if (!$participant->isGuest()) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
 		$this->guestManager->updateName($this->getRoom(), $participant, $displayName);
 
-		return new DataResponse();
+		return new DataResponse(null);
 	}
 }

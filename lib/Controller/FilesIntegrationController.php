@@ -76,15 +76,16 @@ class FilesIntegrationController extends OCSController {
 	 * owner of such a file.
 	 *
 	 * @param string $fileId ID of the file
-	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
-	 *                                                                                                                                    200: Room token returned
-	 *                                                                                                                                    400: Rooms not allowed for shares
+	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, null, array{}>
 	 * @throws OCSNotFoundException Share not found
+	 *
+	 * 200: Room token returned
+	 * 400: Rooms not allowed for shares
 	 */
 	#[NoAdminRequired]
 	public function getRoomByFileId(string $fileId): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		$currentUser = $this->userSession->getUser();
@@ -142,10 +143,11 @@ class FilesIntegrationController extends OCSController {
 	 * thus logged-in users as seen as guests.
 	 *
 	 * @param string $shareToken Token of the file share
-	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
-	 *                                                                                                                                                                                                    200: Room token and user info returned
-	 *                                                                                                                                                                                                    400: Rooms not allowed for shares
-	 *                                                                                                                                                                                                    404: Share not found
+	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Room token and user info returned
+	 * 400: Rooms not allowed for shares
+	 * 404: Share not found
 	 */
 	#[PublicPage]
 	#[UseSession]
@@ -153,7 +155,7 @@ class FilesIntegrationController extends OCSController {
 	public function getRoomByShareToken(string $shareToken): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
 			$this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -165,27 +167,27 @@ class FilesIntegrationController extends OCSController {
 				}
 			}
 		} catch (ShareNotFound $e) {
-			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $shareToken, 'action' => 'shareinfo']);
 			return $response;
 		}
 
 		try {
 			if ($share->getNodeType() !== FileInfo::TYPE_FILE) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
+				return new DataResponse(null, Http::STATUS_NOT_FOUND);
 			}
 
 			$fileId = (string)$share->getNodeId();
 
 			try {
 				$room = $this->manager->getRoomByObject('file', $fileId);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				$name = $share->getNode()->getName();
 				$name = $this->roomService->prepareConversationName($name);
 				$room = $this->roomService->createConversation(Room::TYPE_PUBLIC, $name, null, 'file', $fileId);
 			}
-		} catch (NotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (NotFoundException) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		$this->talkSession->setFileShareTokenForRoom($room->getToken(), $shareToken);

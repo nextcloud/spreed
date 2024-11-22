@@ -2114,7 +2114,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$response = $this->getDataFromResponse($this->response);
-		if (array_key_exists('sessionId', $response)) {
+		if (is_array($response) && array_key_exists('sessionId', $response)) {
 			// In the chat guest users are identified by their sessionId. The
 			// sessionId is larger than the size of the actorId column in the
 			// database, though, so the ID stored in the database and returned
@@ -2182,7 +2182,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$response = $this->getDataFromResponse($this->response);
-		if (array_key_exists('sessionId', $response)) {
+		if (is_array($response) && array_key_exists('sessionId', $response)) {
 			// In the chat guest users are identified by their sessionId. The
 			// sessionId is larger than the size of the actorId column in the
 			// database, though, so the ID stored in the database and returned

@@ -580,7 +580,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -644,7 +644,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };
@@ -660,7 +660,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                error: string;
                             };
                         };
                     };

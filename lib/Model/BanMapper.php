@@ -39,6 +39,9 @@ class BanMapper extends QBMapper {
 		return $this->findEntity($query);
 	}
 
+	/**
+	 * @return list<Ban>
+	 */
 	public function findByRoomId(int $roomId, ?string $bannedActorType = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

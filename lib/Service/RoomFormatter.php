@@ -284,6 +284,7 @@ class RoomFormatter {
 
 		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig);
 
+		$currentUser = null;
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
 			if ($room->isFederatedConversation()) {
@@ -396,6 +397,7 @@ class RoomFormatter {
 			} catch (DoesNotExistException) {
 			}
 		}
+
 		if ($currentUser instanceof IUser
 			&& $attendee->getActorType() === Attendee::ACTOR_USERS
 			&& $roomData['lastReadMessage'] === ChatManager::UNREAD_FIRST_MESSAGE
