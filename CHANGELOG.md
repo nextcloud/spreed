@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.0-rc.2 – 2024-11-21
+### Added
+- feat(chat): Allow to summarize the chat history when there are many unread messages
+  [#13430](https://github.com/nextcloud/spreed/issues/13430)
+- feat(call): Summarize call recordings automatically with AI when installed
+  [#13429](https://github.com/nextcloud/spreed/issues/13429)
+- feat(call): Add option to enable blurred background always by default
+  [#13783](https://github.com/nextcloud/spreed/issues/13783)
+- feat(conversations): Allow to archive conversations
+  [#6140](https://github.com/nextcloud/spreed/issues/6140)
+- feat(conversations): Add settings to automatically lock rooms after days of inactivity
+  [#13448](https://github.com/nextcloud/spreed/issues/13448)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Fix visibility of the silent send option being enabled
+  [#13824](https://github.com/nextcloud/spreed/issues/13824)
+- fix(matterbridge): Fix settings disappearing after configuring matterbridge in a conversation
+  [#13786](https://github.com/nextcloud/spreed/issues/13786)
+
 ## 20.1.0-rc.1 – 2024-11-14
 ### Added
 - feat(polls): Allow to draft, export and import polls
