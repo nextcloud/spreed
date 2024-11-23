@@ -1021,6 +1021,7 @@
     "Bots" : "機器人",
     "Danger zone" : "危險區域",
     "Archive conversation" : "封存對話",
+    "Archived conversations are hidden from the conversation list by default. However, they will still appear when you search for the conversation name or access a list of archived conversations." : "預設情況下，已封存的對話會從對話清單中隱藏。但是，當您搜尋對話名稱或存取已封存的對話清單時，它們仍會出現。",
     "Be careful, these actions cannot be undone." : "請謹慎，這些操作無法被還原。",
     "Leave conversation" : "離開對話",
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "離開封閉式對話後，您需要收到邀請才能重新加入。 您可以隨時重新加入公開對話。",

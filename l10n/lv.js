@@ -397,6 +397,7 @@ OC.L10N.register(
     "Date:" : "Datums:",
     "Disable" : "Deaktivēt",
     "Enable" : "Iespējot",
+    "The file must be a PNG or JPG" : "Failam jābūt PNG vai JPG",
     "Choose" : "Izvēlies",
     "Restricted" : "Ierobežota",
     "Personal" : "Personīgs",
