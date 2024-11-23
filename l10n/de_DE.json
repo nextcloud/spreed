@@ -1021,6 +1021,7 @@
     "Bots" : "Bots",
     "Danger zone" : "Gefahrenzone",
     "Archive conversation" : "Unterhaltung archivieren",
+    "Archived conversations are hidden from the conversation list by default. However, they will still appear when you search for the conversation name or access a list of archived conversations." : "Archivierte Unterhaltungen werden standardmäßig aus der Unterhaltungsliste ausgeblendet. Sie werden jedoch weiterhin angezeigt, wenn Sie nach dem Unterhaltungsnamen suchen oder auf eine Liste archivierter Unterhaltungen zugreifen.",
     "Be careful, these actions cannot be undone." : "Seien Sie vorsichtig, diese Aktionen können nicht rückgängig gemacht werden.",
     "Leave conversation" : "Unterhaltung verlassen",
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Nachdem Sie eine Unterhaltung verlassen haben, ist eine Einladung erforderlich, um einer bereits geschlossenen Unterhaltung wieder beizutreten. Einer noch geöffneten Unterhaltung können Sie jederzeit wieder beitreten.",
