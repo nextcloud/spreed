@@ -15,15 +15,14 @@
 			class="send-message-dialog"
 			:token="token"
 			:container="modalContainerId"
-			:aria-label="t('spreed', 'Post message')"
+			:aria-label="dialogTitle"
+			dialog
 			:broadcast="broadcast"
-			@sent="handleMessageSent"
-			@failure="handleMessageFailure" />
+			@submit="handleSubmit" />
 	</NcDialog>
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
@@ -40,7 +39,7 @@ export default {
 
 	props: {
 		/**
-		 * The Breakout room token.
+		 * The conversation token.
 		 */
 		token: {
 			type: String,
@@ -48,9 +47,9 @@ export default {
 		},
 
 		/**
-		 * The conversation display name
+		 * The dialog title
 		 */
-		displayName: {
+		dialogTitle: {
 			type: String,
 			default: '',
 		},
@@ -66,20 +65,12 @@ export default {
 		},
 	},
 
-	emits: ['close'],
+	emits: ['close', 'submit'],
 
 	data() {
 		return {
 			modalContainerId: null,
 		}
-	},
-
-	computed: {
-		dialogTitle() {
-			return this.broadcast
-				? t('spreed', 'Send a message to all breakout rooms')
-				: t('spreed', 'Send a message to "{roomName}"', { roomName: this.displayName })
-		},
 	},
 
 	mounted() {
@@ -92,16 +83,9 @@ export default {
 
 	methods: {
 		t,
-		handleMessageSent() {
-			showSuccess(this.broadcast
-				? t('spreed', 'The message was sent to all breakout rooms')
-				: t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
-			this.$emit('close')
-		},
 
-		handleMessageFailure() {
-			showError(t('spreed', 'The message could not be sent'))
-			this.$emit('close')
+		handleSubmit(event) {
+			this.$emit('submit', event)
 		},
 	},
 
