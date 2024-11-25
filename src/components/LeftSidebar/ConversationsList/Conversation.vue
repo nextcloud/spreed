@@ -25,69 +25,71 @@
 			<span v-html="conversationInformation" />
 		</template>
 		<template v-if="!isSearchResult" #actions>
-			<NcActionButton v-if="canFavorite"
-				key="toggle-favorite"
-				close-after-click
-				@click="toggleFavoriteConversation">
-				<template #icon>
-					<IconStar :size="16" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
-				</template>
-				{{ labelFavorite }}
-			</NcActionButton>
+			<template v-if="submenu === null">
+				<NcActionButton v-if="canFavorite"
+					key="toggle-favorite"
+					close-after-click
+					@click="toggleFavoriteConversation">
+					<template #icon>
+						<IconStar :size="16" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
+					</template>
+					{{ labelFavorite }}
+				</NcActionButton>
 
-			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
-				<template #icon>
-					<IconContentCopy :size="16" />
-				</template>
-				{{ t('spreed', 'Copy link') }}
-			</NcActionButton>
+				<NcActionButton key="copy-link" @click.stop="handleCopyLink">
+					<template #icon>
+						<IconContentCopy :size="16" />
+					</template>
+					{{ t('spreed', 'Copy link') }}
+				</NcActionButton>
 
-			<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
-				<template #icon>
-					<IconEye v-if="item.unreadMessages" :size="16" />
-					<IconEyeOff v-else :size="16" />
-				</template>
-				{{ labelRead }}
-			</NcActionButton>
+				<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
+					<template #icon>
+						<IconEye v-if="item.unreadMessages" :size="16" />
+						<IconEyeOff v-else :size="16" />
+					</template>
+					{{ labelRead }}
+				</NcActionButton>
 
-			<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
-				<template #icon>
-					<IconCog :size="16" />
-				</template>
-				{{ t('spreed', 'Conversation settings') }}
-			</NcActionButton>
+				<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
+					<template #icon>
+						<IconCog :size="16" />
+					</template>
+					{{ t('spreed', 'Conversation settings') }}
+				</NcActionButton>
 
-			<NcActionButton v-if="supportsArchive"
-				key="toggle-archive"
-				close-after-click
-				@click="toggleArchiveConversation">
-				<template #icon>
-					<IconArchive v-if="!item.isArchived" :size="16" />
-					<IconArchiveOff v-else :size="16" />
-				</template>
-				{{ labelArchive }}
-			</NcActionButton>
+				<NcActionButton v-if="supportsArchive"
+					key="toggle-archive"
+					close-after-click
+					@click="toggleArchiveConversation">
+					<template #icon>
+						<IconArchive v-if="!item.isArchived" :size="16" />
+						<IconArchiveOff v-else :size="16" />
+					</template>
+					{{ labelArchive }}
+				</NcActionButton>
 
-			<NcActionButton v-if="item.canLeaveConversation"
-				key="leave-conversation"
-				close-after-click
-				@click="isLeaveDialogOpen = true">
-				<template #icon>
-					<IconExitToApp :size="16" />
-				</template>
-				{{ t('spreed', 'Leave conversation') }}
-			</NcActionButton>
+				<NcActionButton v-if="item.canLeaveConversation"
+					key="leave-conversation"
+					close-after-click
+					@click="isLeaveDialogOpen = true">
+					<template #icon>
+						<IconExitToApp :size="16" />
+					</template>
+					{{ t('spreed', 'Leave conversation') }}
+				</NcActionButton>
 
-			<NcActionButton v-if="item.canDeleteConversation"
-				key="delete-conversation"
-				close-after-click
-				class="critical"
-				@click="isDeleteDialogOpen = true">
-				<template #icon>
-					<IconDelete :size="16" />
-				</template>
-				{{ t('spreed', 'Delete conversation') }}
-			</NcActionButton>
+				<NcActionButton v-if="item.canDeleteConversation"
+					key="delete-conversation"
+					close-after-click
+					class="critical"
+					@click="isDeleteDialogOpen = true">
+					<template #icon>
+						<IconDelete :size="16" />
+					</template>
+					{{ t('spreed', 'Delete conversation') }}
+				</NcActionButton>
+			</template>
 		</template>
 
 		<template v-else-if="item.token" #actions>
@@ -231,6 +233,7 @@ export default {
 	emits: ['click'],
 
 	setup(props) {
+		const submenu = ref(null)
 		const isLeaveDialogOpen = ref(false)
 		const isDeleteDialogOpen = ref(false)
 		const { item, isSearchResult } = toRefs(props)
@@ -238,6 +241,7 @@ export default {
 
 		return {
 			supportsArchive,
+			submenu,
 			isLeaveDialogOpen,
 			isDeleteDialogOpen,
 			counterType,
