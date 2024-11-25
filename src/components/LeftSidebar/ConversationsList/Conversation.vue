@@ -112,7 +112,7 @@
 
 				<NcActionButton v-for="level in notificationLevels"
 					:key="level.value"
-					:model-value="notificationLevel.toString()"
+					:model-value="notificationLevel"
 					:value="level.value.toString()"
 					type="radio"
 					@click="setNotificationLevel(level.value)">
@@ -125,8 +125,8 @@
 				<NcActionSeparator />
 
 				<NcActionButton type="checkbox"
-					:model-value="notifyCalls"
-					@click="setNotificationCalls(!notifyCalls)">
+					:model-value="notificationCalls"
+					@click="setNotificationCalls(!notificationCalls)">
 					<template #icon>
 						<IconPhoneRing :size="16" />
 					</template>
@@ -285,6 +285,8 @@ export default {
 					displayName: '',
 					isFavorite: false,
 					lastMessage: {},
+					notificationLevel: PARTICIPANT.NOTIFY.DEFAULT,
+					notificationCalls: PARTICIPANT.NOTIFY_CALLS.ON,
 					canDeleteConversation: false,
 					canLeaveConversation: false,
 				}
@@ -301,9 +303,6 @@ export default {
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
-		const notificationLevel = ref(item.value.notificationLevel)
-		const notifyCalls = ref(item.value.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON)
-
 		return {
 			supportsArchive,
 			submenu,
@@ -312,8 +311,6 @@ export default {
 			counterType,
 			conversationInformation,
 			notificationLevels,
-			notificationLevel,
-			notifyCalls,
 		}
 	},
 
@@ -358,7 +355,15 @@ export default {
 
 		isActive() {
 			return this.$route?.params?.token === this.item.token
-		}
+		},
+
+		notificationLevel() {
+			return this.item.notificationLevel.toString()
+		},
+
+		notificationCalls() {
+			return this.item.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+		},
 	},
 
 	methods: {
@@ -449,7 +454,6 @@ export default {
 				token: this.item.token,
 				notificationLevel: level,
 			})
-			this.notificationLevel = level
 		},
 
 		/**
@@ -462,7 +466,6 @@ export default {
 				token: this.item.token,
 				notificationCalls: value ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF,
 			})
-			this.notifyCalls = value
 		},
 
 		onClick() {
