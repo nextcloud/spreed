@@ -209,12 +209,14 @@ export default {
 					options,
 				})
 			} else {
-				// Proceed as a normal message
-				try {
-					await this.$store.dispatch('discardUpload', this.currentUploadId)
-					await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
-				} catch (e) {
-					console.error(e)
+				this.$store.dispatch('discardUpload', this.currentUploadId)
+				if (temporaryMessage.message.trim()) {
+					// Proceed as a normal message
+					try {
+						await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
+					} catch (e) {
+						console.error(e)
+					}
 				}
 			}
 		},
