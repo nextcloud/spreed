@@ -25,7 +25,6 @@
 
 	input:disabled + .checkbox-content {
 		opacity: 1 !important;
-		pointer-events: none !important;
 	}
 
 	div:has(table) {
