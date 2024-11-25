@@ -51,6 +51,15 @@
 					{{ labelRead }}
 				</NcActionButton>
 
+				<NcActionButton key="show-notifications"
+					is-menu
+					@click="submenu = 'notifications'">
+					<template #icon>
+						<IconBell :size="16" />
+					</template>
+					{{ t('spreed', 'Notifications') }}
+				</NcActionButton>
+
 				<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
 					<template #icon>
 						<IconCog :size="16" />
@@ -89,6 +98,17 @@
 					</template>
 					{{ t('spreed', 'Delete conversation') }}
 				</NcActionButton>
+			</template>
+			<template v-else-if="submenu === 'notifications'">
+				<NcActionButton :aria-label="t('spreed', 'Back')"
+					@click.stop="submenu = null">
+					<template #icon>
+						<IconArrowLeft :size="16" />
+					</template>
+					{{ t('spreed', 'Back') }}
+				</NcActionButton>
+
+				<NcActionSeparator />
 			</template>
 		</template>
 
@@ -155,7 +175,9 @@ import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconBell from 'vue-material-design-icons/Bell.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
@@ -169,6 +191,7 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
@@ -186,21 +209,24 @@ export default {
 	name: 'Conversation',
 
 	components: {
-		NcButton,
 		ConversationIcon,
-		NcActionButton,
-		NcDialog,
-		NcListItem,
 		IconArchive,
 		IconArchiveOff,
+		IconArrowLeft,
 		IconArrowRight,
+		IconBell,
 		IconCog,
 		IconContentCopy,
 		IconDelete,
 		IconExitToApp,
-		IconEyeOff,
 		IconEye,
+		IconEyeOff,
 		IconStar,
+		NcActionButton,
+		NcActionSeparator,
+		NcButton,
+		NcDialog,
+		NcListItem,
 	},
 
 	props: {
