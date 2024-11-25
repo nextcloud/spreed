@@ -24,7 +24,8 @@
 					:listable.sync="listable"
 					class="new-group-conversation__content"
 					@handle-enter="handleEnter"
-					@avatar-edited="setIsAvatarEdited" />
+					@avatar-edited="setIsAvatarEdited"
+					@is-password-valid="setIsPasswordValid" />
 
 				<!-- Second page -->
 				<NewConversationContactsPage v-if="page === 1"
@@ -186,6 +187,7 @@ export default {
 			password: '',
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
+			isPasswordValid: true,
 		}
 	},
 
@@ -200,7 +202,7 @@ export default {
 
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
-			return this.conversationName === '' || (this.newConversation.hasPassword && this.password === '')
+			return this.conversationName === '' || (this.newConversation.hasPassword && (this.password === '' || !this.isPasswordValid))
 				|| this.conversationName.length > CONVERSATION.MAX_NAME_LENGTH
 				|| this.newConversation.description.length > CONVERSATION.MAX_DESCRIPTION_LENGTH
 		},
@@ -363,6 +365,10 @@ export default {
 
 		onClickCopyLink() {
 			copyConversationLinkToClipboard(this.newConversation.token)
+		},
+
+		setIsPasswordValid(value) {
+			this.isPasswordValid = value
 		},
 	},
 
