@@ -67,7 +67,7 @@
 					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
-						class="action--nested"
+						is-menu
 						@click.stop="submenu = 'reminder'">
 						<template #icon>
 							<AlarmIcon :size="20" />
@@ -753,16 +753,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.action--nested {
-	:deep(.action-button::after) {
-		content: " ";
-		width: 20px;
-		height: var(--default-clickable-area);
-		margin-left: auto;
-		background: no-repeat center var(--icon-triangle-e-dark);
-	}
-}
-
 .edit-timestamp :deep(.action-text__longtext-wrapper) {
 	padding: 0;
 }
