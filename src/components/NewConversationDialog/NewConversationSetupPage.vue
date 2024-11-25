@@ -54,7 +54,9 @@
 				autocomplete="new-password"
 				check-password-strength
 				:placeholder="t('spreed', 'Enter password')"
-				:aria-label="t('spreed', 'Enter password')" />
+				:aria-label="t('spreed', 'Enter password')"
+				@valid="$emit('is-password-valid', true)"
+				@invalid="$emit('is-password-valid', false)" />
 		</div>
 		<ListableSettings v-model="listableValue" />
 	</div>
@@ -104,7 +106,7 @@ export default {
 		}
 	},
 
-	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter'],
+	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter', 'is-password-valid'],
 
 	setup() {
 		return { supportsAvatar }
@@ -202,10 +204,14 @@ export default {
 	&__wrapper {
 		display: flex;
 		gap: var(--default-grid-baseline);
-		align-items: center;
+		align-items: flex-start;
 
 		.checkbox__label {
 			white-space: nowrap;
+		}
+
+		:deep(.input-field) {
+			margin-top: 6px;
 		}
 	}
 

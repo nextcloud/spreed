@@ -600,8 +600,20 @@ const actions = {
 		try {
 			await setConversationPassword(token, newPassword)
 			commit('setConversationHasPassword', { token, hasPassword: !!newPassword })
+			if (newPassword !== '') {
+				showSuccess(t('spreed', 'Conversation password has been saved'))
+			} else {
+				showSuccess(t('spreed', 'Conversation password has been removed'))
+			}
+
 		} catch (error) {
 			console.error('Error while setting a password for conversation: ', error)
+			if (error?.response?.data?.ocs?.data?.message) {
+				showError(error.response.data.ocs.data.message)
+			} else {
+				showError(t('spreed', 'Error occurred while saving conversation password'))
+			}
+
 		}
 	},
 
