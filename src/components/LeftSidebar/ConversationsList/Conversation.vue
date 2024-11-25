@@ -109,6 +109,29 @@
 				</NcActionButton>
 
 				<NcActionSeparator />
+
+				<NcActionButton v-for="level in notificationLevels"
+					:key="level.value"
+					:model-value="notificationLevel.toString()"
+					:value="level.value.toString()"
+					type="radio"
+					@click="setNotificationLevel(level.value)">
+					<template #icon>
+						<component :is="notificationLevelIcon(level.value)" :size="16" />
+					</template>
+					{{ level.label }}
+				</NcActionButton>
+
+				<NcActionSeparator />
+
+				<NcActionButton type="checkbox"
+					:model-value="notifyCalls"
+					@click="setNotificationCalls(!notifyCalls)">
+					<template #icon>
+						<IconPhoneRing :size="16" />
+					</template>
+					{{ t('spreed', 'Notify about calls') }}
+				</NcActionButton>
 			</template>
 		</template>
 
@@ -173,6 +196,7 @@
 import { toRefs, ref } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
+import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
@@ -184,7 +208,10 @@ import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconEye from 'vue-material-design-icons/Eye.vue'
 import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
+import IconPhoneRing from 'vue-material-design-icons/PhoneRing.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -205,11 +232,18 @@ import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
+const notificationLevels = [
+	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
+	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
+	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
+]
+
 export default {
 	name: 'Conversation',
 
 	components: {
 		ConversationIcon,
+		IconAccount,
 		IconArchive,
 		IconArchiveOff,
 		IconArrowLeft,
@@ -221,7 +255,10 @@ export default {
 		IconExitToApp,
 		IconEye,
 		IconEyeOff,
+		IconPhoneRing,
 		IconStar,
+		IconVolumeHigh,
+		IconVolumeOff,
 		NcActionButton,
 		NcActionSeparator,
 		NcButton,
@@ -247,7 +284,6 @@ export default {
 					type: 0,
 					displayName: '',
 					isFavorite: false,
-					notificationLevel: 0,
 					lastMessage: {},
 					canDeleteConversation: false,
 					canLeaveConversation: false,
@@ -265,6 +301,9 @@ export default {
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
+		const notificationLevel = ref(item.value.notificationLevel)
+		const notifyCalls = ref(item.value.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON)
+
 		return {
 			supportsArchive,
 			submenu,
@@ -272,6 +311,9 @@ export default {
 			isDeleteDialogOpen,
 			counterType,
 			conversationInformation,
+			notificationLevels,
+			notificationLevel,
+			notifyCalls,
 		}
 	},
 
@@ -385,6 +427,18 @@ export default {
 			this.$store.dispatch('toggleArchive', this.item)
 		},
 
+		notificationLevelIcon(value) {
+			switch (value) {
+			case PARTICIPANT.NOTIFY.ALWAYS:
+				return IconVolumeHigh
+			case PARTICIPANT.NOTIFY.MENTION:
+				return IconAccount
+			case PARTICIPANT.NOTIFY.NEVER:
+			default:
+				return IconVolumeOff
+			}
+		},
+
 		/**
 		 * Set the notification level for the conversation
 		 *
@@ -395,6 +449,20 @@ export default {
 				token: this.item.token,
 				notificationLevel: level,
 			})
+			this.notificationLevel = level
+		},
+
+		/**
+		 * Set the call notification level for the conversation
+		 *
+		 * @param {boolean} value Whether or not call notifications are enabled
+		 */
+		async setNotificationCalls(value) {
+			await this.$store.dispatch('setNotificationCalls', {
+				token: this.item.token,
+				notificationCalls: value ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF,
+			})
+			this.notifyCalls = value
 		},
 
 		onClick() {
