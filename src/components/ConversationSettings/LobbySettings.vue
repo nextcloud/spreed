@@ -26,6 +26,7 @@
 
 				<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
 					:token="token"
+					container=".lobby-general"
 					@close="isImportEmailsDialogOpen = false" />
 			</div>
 		</div>
