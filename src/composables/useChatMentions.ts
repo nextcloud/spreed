@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createSharedComposable } from '@vueuse/core'
 import type { ComputedRef, Ref } from 'vue'
 import Vue, { computed, ref } from 'vue'
 
@@ -34,13 +33,14 @@ type ReturnType = {
 	userData: ComputedRef<UserData>,
 }
 
+const userDataTokenMap = ref<UserDataTokenMap>({})
+
 /**
  * Provides autoComplete fallback and cached mention object for NcRichContenteditable
  * @param token conversation token
  */
-function useChatMentionsComposable(token: Ref<string>): ReturnType {
+export function useChatMentions(token: Ref<string>): ReturnType {
 	const isDarkTheme = useIsDarkTheme()
-	const userDataTokenMap = ref<UserDataTokenMap>({})
 	const userData = computed(() => {
 		return userDataTokenMap.value[token.value] ?? {}
 	})
@@ -136,9 +136,3 @@ function useChatMentionsComposable(token: Ref<string>): ReturnType {
 		userData,
 	}
 }
-
-/**
- * Shared composable to provide autoComplete fallback and cached mention object for NcRichContenteditable
- * @param token conversation token
- */
-export const useChatMentions = createSharedComposable(useChatMentionsComposable)
