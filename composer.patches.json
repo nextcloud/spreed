@@ -1,7 +1,4 @@
 {
 	"patches": {
-		"firebase/php-jwt": {
-			"PHP 8.4 compatibility": ".patches/firebase-php-jwt-572.diff"
-		}
 	}
 }
