@@ -13,9 +13,13 @@ use OCA\Talk\Events\BeforeEmailInvitationSentEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Exceptions\GuestImportException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\Service\RoomService;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
@@ -24,6 +28,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 class GuestManager {
 	public function __construct(
@@ -33,9 +38,11 @@ class GuestManager {
 		protected IUserSession $userSession,
 		protected ParticipantService $participantService,
 		protected PollService $pollService,
+		protected RoomService $roomService,
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected IEventDispatcher $dispatcher,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -67,6 +74,124 @@ class GuestManager {
 			$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_NAME, $displayName);
 			$this->dispatcher->dispatchTyped($event);
 		}
+	}
+
+	public function validateMailAddress(string $email): bool {
+		return $this->mailer->validateMailAddress($email);
+	}
+
+	/**
+	 * @return array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}
+	 * @throws GuestImportException
+	 */
+	public function importEmails(Room $room, $file, bool $testRun): array {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE
+			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $room->getType() === Room::TYPE_NOTE_TO_SELF
+			|| $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE
+			|| $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
+			throw new GuestImportException(GuestImportException::REASON_ROOM);
+		}
+
+		$content = fopen($file['tmp_name'], 'rb');
+		$details = fgetcsv($content, escape: '');
+		if (!isset($details[0]) || strtolower($details[0]) !== 'email') {
+			throw new GuestImportException(
+				GuestImportException::REASON_HEADER_EMAIL,
+				$this->l->t('Missing email field in header line'),
+			);
+		}
+		if (isset($details[1]) && strtolower($details[1]) !== 'name') {
+			throw new GuestImportException(
+				GuestImportException::REASON_HEADER_NAME,
+				$this->l->t('Missing name field in header line'),
+			);
+		}
+
+		$participants = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_EMAILS);
+		$alreadyInvitedEmails = array_flip(array_map(static fn (Participant $participant): string => $participant->getAttendee()->getInvitedCloudId(), $participants));
+
+		$line = $duplicates = 0;
+		$emailsToAdd = $invalidLines = [];
+		while ($details = fgetcsv($content, escape: '')) {
+			$line++;
+			if (isset($alreadyInvitedEmails[$details[0]])) {
+				$this->logger->debug('Skipping import of ' . $details[0] . ' (line: ' . $line . ') as they are already invited');
+				$duplicates++;
+				continue;
+			}
+
+			if (count($details) > 2) {
+				$this->logger->debug('Invalid entry with too many fields on line: ' . $line);
+				$invalidLines[] = $line;
+				continue;
+			}
+
+			$email = strtolower(trim($details[0]));
+			if (count($details) === 2) {
+				$name = trim($details[1]);
+			} else {
+				$name = null;
+			}
+
+			if (!$this->validateMailAddress($email)) {
+				$this->logger->debug('Invalid email "' . $email . '" on line: ' . $line);
+				$invalidLines[] = $line;
+				continue;
+			}
+
+			if ($name !== null && strcasecmp($name, $email) === 0) {
+				$name = null;
+			}
+
+			$actorId = hash('sha256', $email);
+			$alreadyInvitedEmails[$email] = $actorId;
+			$emailsToAdd[] = [
+				'email' => $email,
+				'actorId' => $actorId,
+				'name' => $name,
+			];
+		}
+
+		if ($testRun) {
+			if (empty($invalidLines)) {
+				return [
+					'invites' => count($emailsToAdd),
+					'duplicates' => $duplicates,
+				];
+			}
+
+			throw new GuestImportException(
+				GuestImportException::REASON_ROWS,
+				$this->l->t('Following lines are invalid: %s', implode(', ', $invalidLines)),
+				$invalidLines,
+				count($emailsToAdd),
+				$duplicates,
+			);
+		}
+
+		$data = [
+			'invites' => count($emailsToAdd),
+			'duplicates' => $duplicates,
+		];
+
+		try {
+			$this->roomService->setType($room, Room::TYPE_PUBLIC);
+			$data['type'] = $room->getType();
+		} catch (TypeException) {
+		}
+
+		foreach ($emailsToAdd as $add) {
+			$participant = $this->participantService->inviteEmailAddress($room, $add['actorId'], $add['email'], $add['name']);
+			$this->sendEmailInvitation($room, $participant);
+		}
+
+		if (!empty($invalidLines)) {
+			$data['invalidLines'] = $invalidLines;
+			$data['invalid'] = count($invalidLines);
+		}
+
+		return $data;
 	}
 
 	public function sendEmailInvitation(Room $room, Participant $participant): void {
