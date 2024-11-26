@@ -4,8 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import IconLockOpen from 'vue-material-design-icons/LockOpen.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -13,7 +14,10 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import ImportEmailsDialog from '../ImportEmailsDialog.vue'
+
 import { useStore } from '../../composables/useStore.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const props = defineProps<{
 	token: string,
@@ -21,6 +25,9 @@ const props = defineProps<{
 
 const store = useStore()
 const isLobbyStateLoading = ref(false)
+const isImportEmailsDialogOpen = ref(false)
+
+const supportImportEmails = computed(() => hasTalkFeature(props.token, 'email-csv-import'))
 
 /**
  * Disable lobby for this conversation
@@ -50,6 +57,17 @@ async function disableLobby() {
 			</template>
 			{{ t('spreed', 'Disable lobby' ) }}
 		</NcButton>
+
+		<NcButton v-if="supportImportEmails" @click="isImportEmailsDialogOpen = true">
+			<template #icon>
+				<IconFileUpload :size="20" />
+			</template>
+			{{ t('spreed', 'Import e-mail participants') }}
+		</NcButton>
+
+		<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
+			:token="token"
+			@close="isImportEmailsDialogOpen = false" />
 	</div>
 </template>
 
