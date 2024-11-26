@@ -153,7 +153,7 @@
 		</form>
 
 		<!-- Poll creation dialog -->
-		<NewMessagePollEditor v-if="showPollEditor"
+		<PollEditor v-if="showPollEditor"
 			ref="pollEditor"
 			:token="token"
 			@close="togglePollEditor" />
@@ -205,9 +205,9 @@ import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
-import NewMessagePollEditor from './NewMessagePollEditor.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import PollDraftHandler from '../PollViewer/PollDraftHandler.vue'
+import PollEditor from '../PollViewer/PollEditor.vue'
 import Quote from '../Quote.vue'
 
 import { useChatMentions } from '../../composables/useChatMentions.ts'
@@ -239,7 +239,7 @@ export default {
 		NewMessageAudioRecorder,
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
-		NewMessagePollEditor,
+		PollEditor,
 		PollDraftHandler,
 		NewMessageTypingIndicator,
 		Quote,
