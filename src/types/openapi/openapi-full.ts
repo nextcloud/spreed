@@ -855,7 +855,10 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Allowed guests to join conversation */
+        /**
+         * Allowed guests to join conversation
+         * @description Required capability: `conversation-creation-password` for `string $password` parameter
+         */
         post: operations["room-make-public"];
         /** Disallowed guests to join conversation */
         delete: operations["room-make-private"];
@@ -1989,6 +1992,7 @@ export type components = {
                 };
                 conversations: {
                     "can-create": boolean;
+                    "force-passwords": boolean;
                 };
                 federation: {
                     enabled: boolean;
@@ -6215,6 +6219,11 @@ export interface operations {
                      * @default
                      */
                     objectId?: string;
+                    /**
+                     * @description The room password (only available with `conversation-creation-password` capability)
+                     * @default
+                     */
+                    password?: string;
                 };
             };
         };
@@ -6247,7 +6256,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Room type invalid */
+            /** @description Room type invalid or missing or invalid password */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6258,6 +6267,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 error?: string;
+                                message?: string;
                             };
                         };
                     };
@@ -6478,7 +6488,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description New password (only available with `conversation-creation-password` capability)
+                     * @default
+                     */
+                    password?: string;
+                };
+            };
+        };
         responses: {
             /** @description Allowed guests successfully */
             200: {
@@ -6505,7 +6525,8 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "breakout-room" | "type" | "value" | "password";
+                                message?: string | null;
                             };
                         };
                     };

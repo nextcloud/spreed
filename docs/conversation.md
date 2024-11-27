@@ -128,6 +128,7 @@
 | `roomName`   | string | Conversation name up to 255 characters (Not available for `roomType = 1`)                                                                                                |
 | `objectType` | string | Type of an object this room references, currently only allowed value is `room` to indicate the parent of a breakout room (See [Object types](constants.md#object-types)) |
 | `objectId`   | string | Id of an object this room references, room token is used for the parent of a breakout room                                                                               |
+| `password`   | string | Password for the room (only available with `conversation-creation-password` capability)                                                                                  |
 
 * Response:
     - Status code:
@@ -135,6 +136,7 @@
         + `201 Created` When the conversation was created
         + `400 Bad Request` When an invalid conversation type was given
         + `400 Bad Request` When the conversation name is empty for `type = 3`
+        + `400 Bad Request` When a password is required for a public room or when the password is invalid according to the password policy
         + `401 Unauthorized` When the user is not logged in
         + `404 Not Found` When the target to invite does not exist
 
@@ -283,6 +285,11 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 * Method: `POST`
 * Endpoint: `/room/{token}/public`
+* Data:
+
+| field      | type    | Description                                                                                     |
+|------------|---------|-------------------------------------------------------------------------------------------------|
+| `password` | ?string | Password for the conversation (only available with `conversation-creation-password` capability) |
 
 * Response:
     - Status code:

@@ -502,16 +502,25 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.)
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param string $password The room password (only available with `conversation-creation-password` capability)
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string, message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
-	 * 400: Room type invalid
+	 * 400: Room type invalid or missing or invalid password
 	 * 403: Missing permissions to create room
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
-	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', string $objectType = '', string $objectId = ''): DataResponse {
+	public function createRoom(
+		int $roomType,
+		string $invite = '',
+		string $roomName = '',
+		string $source = '',
+		string $objectType = '',
+		string $objectId = '',
+		string $password = '',
+	): DataResponse {
 		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
@@ -533,7 +542,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName, true, $objectType, $objectId);
+				return $this->createEmptyRoom($roomName, true, $objectType, $objectId, $password);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -645,10 +654,10 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string, message?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
-	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
+	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = '', string $password = ''): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -686,7 +695,9 @@ class RoomController extends AEnvironmentAwareController {
 
 		// Create the room
 		try {
-			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId);
+			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId, $password);
+		} catch (PasswordException $e) {
+			return new DataResponse(['error' => 'password', 'message' => $e->getHint()], Http::STATUS_BAD_REQUEST);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
@@ -1420,16 +1431,29 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Allowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
+	 * Required capability: `conversation-creation-password` for `string $password` parameter
+	 *
+	 * @param string $password New password (only available with `conversation-creation-password` capability)
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'|'password', message?: null|string}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
-	public function makePublic(): DataResponse {
+	public function makePublic(string $password = ''): DataResponse {
+		if ($this->talkConfig->isPasswordEnforced() && $password === '') {
+			return new DataResponse(['error' => 'password', 'message' => $this->l->t('Password needs to be set')], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
-			$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
+			if ($password !== '') {
+				$this->roomService->makePublicWithPassword($this->room, $password);
+			} else {
+				$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
+			}
+		} catch (PasswordException $e) {
+			return new DataResponse(['error' => 'password', 'message' => $e->getHint()], Http::STATUS_BAD_REQUEST);
 		} catch (TypeException $e) {
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}

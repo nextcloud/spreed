@@ -166,3 +166,7 @@
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
 * `config => call => blur-virtual-background` (local) - Boolean, whether blur background is set by default when joining a conversation
+
+## 21
+* `config => conversations => force-passwords` - Whether passwords are enforced for public rooms
+* `conversation-creation-password` - Whether the endpoints for creating public conversations or making a conversation public support setting a password

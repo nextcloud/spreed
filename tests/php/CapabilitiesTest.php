@@ -152,6 +152,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => false,
+						'force-passwords' => false,
 					],
 					'federation' => [
 						'enabled' => false,
@@ -284,6 +285,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
+						'force-passwords' => false,
 					],
 					'federation' => [
 						'enabled' => false,
