@@ -136,16 +136,14 @@ class PollController extends AEnvironmentAwareController {
 	/**
 	 * Modify a draft poll
 	 *
-	 * Required capability: `edit-draft-polls`
+	 * Required capability: `edit-draft-poll`
 	 *
-	 * @param int $draftPollId The ID of the draft poll
+	 * @param int $pollId
 	 * @param string $question Question of the poll
 	 * @param string[] $options Options of the poll
-	 * @psalm-param list<string> $options
-	 * @param 0|1 $resultMode Mode how the results will be shown
-	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
+	 * @param int $resultMode
 	 * @param int $maxVotes Number of maximum votes per voter
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Draft modified successfully
 	 * 400: Modifying poll is not possible
