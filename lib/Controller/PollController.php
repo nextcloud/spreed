@@ -61,7 +61,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft created successfully
 	 * 201: Poll created successfully
@@ -131,6 +131,79 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($this->renderPoll($poll), Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Modify a draft poll
+	 *
+	 * Required capability: `edit-draft-poll`
+	 *
+	 * @param int $pollId The poll id
+	 * @param string $question Question of the poll
+	 * @param string[] $options Options of the poll
+	 * @psalm-param list<string> $options
+	 * @param 0|1 $resultMode Mode how the results will be shown
+	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
+	 * @param int $maxVotes Number of maximum votes per voter
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
+	 *
+	 * 200: Draft modified successfully
+	 * 400: Modifying poll is not possible
+	 * 403: No permission to modify this poll
+	 * 404: No draft poll exists
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function updateDraftPoll(int $pollId, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
+		}
+
+		if ($this->room->getType() !== Room::TYPE_GROUP
+			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
+			return new DataResponse(['error' => PollPropertyException::REASON_ROOM], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$poll->isDraft()) {
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->participant->hasModeratorPermissions()
+			&& ($poll->getActorType() !== $this->participant->getAttendee()->getActorType()
+				|| $poll->getActorId() !== $this->participant->getAttendee()->getActorId())) {
+			return new DataResponse(['error' => PollPropertyException::REASON_DRAFT], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$poll->setQuestion($question);
+			$poll->setOptions($options);
+			$poll->setResultMode($resultMode);
+			$poll->setMaxVotes($maxVotes);
+		} catch (PollPropertyException $e) {
+			$this->logger->error('Error modifying poll', ['exception' => $e]);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->pollService->updatePoll($this->participant, $poll);
+		} catch (WrongPermissionsException $e) {
+			$this->logger->error('Error modifying poll', ['exception' => $e]);
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_FORBIDDEN);
+		}
+
+		return new DataResponse($poll->renderAsDraft());
 	}
 
 	/**
@@ -273,7 +346,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 202: Poll draft was deleted successfully
@@ -295,7 +368,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException) {
-			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
@@ -304,15 +377,13 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
-			return new DataResponse(['error' => 'poll'], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_BAD_REQUEST);
 		}
 
-		$poll->setStatus(Poll::STATUS_CLOSED);
-
 		try {
-			$this->pollService->updatePoll($this->participant, $poll);
-		} catch (WrongPermissionsException) {
-			return new DataResponse(['error' => 'poll'], Http::STATUS_FORBIDDEN);
+			$this->pollService->closePoll($this->participant, $poll);
+		} catch (WrongPermissionsException $e) {
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_FORBIDDEN);
 		}
 
 		$attendee = $this->participant->getAttendee();
