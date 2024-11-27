@@ -1641,7 +1641,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/avatar": {
             "post": {
                 "operationId": "avatar-upload-avatar",
-                "summary": "Upload an avatar for a room",
+                "summary": "Upload an avatar for gferwgewga room",
                 "tags": [
                     "avatar"
                 ],

@@ -14,7 +14,7 @@ export type paths = {
         /** Get the avatar of a room */
         get: operations["avatar-get-avatar"];
         put?: never;
-        /** Upload an avatar for a room */
+        /** Upload an avatar for gferwgewga room */
         post: operations["avatar-upload-avatar"];
         /** Delete the avatar of a room */
         delete: operations["avatar-delete-avatar"];
