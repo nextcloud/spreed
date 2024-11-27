@@ -68,7 +68,7 @@ jobs:
         if: ${{ steps.node_versions.outputs.nodeVersion }}
         run: npm i -g 'npm@${{ steps.node_versions.outputs.npmVersion }}'
 
-      - name: Install dependencies & build
+      - name: Install dependencies
         if: ${{ steps.node_versions.outputs.nodeVersion }}
         env:
           CYPRESS_INSTALL_BINARY: 0
