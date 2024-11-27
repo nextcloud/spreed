@@ -121,4 +121,8 @@ class Poll extends Entity {
 			'maxVotes' => $this->getMaxVotes(),
 		];
 	}
+
+	public function isDraft(): bool {
+		return $this->getStatus() === self::STATUS_DRAFT;
+	}
 }

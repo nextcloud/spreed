@@ -134,6 +134,73 @@ class PollController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Modify a draft poll
+	 *
+	 * Required capability: `edit-draft-polls`
+	 *
+	 * @param int $draftPollId The ID of the draft poll
+	 * @param string $question Question of the poll
+	 * @param string[] $options Options of the poll
+	 * @psalm-param list<string> $options
+	 * @param 0|1 $resultMode Mode how the results will be shown
+	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
+	 * @param int $maxVotes Number of maximum votes per voter
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>>
+	 *
+	 * 200: Draft modified successfully
+	 * 400: Modifying poll is not possible
+	 * 404: No draft poll exists
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function updateDraftPoll(int $pollId, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			// TODO: add editing a draft to federation
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
+		}
+
+		if ($this->room->getType() !== Room::TYPE_GROUP
+			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
+			return new DataResponse(['error' => PollPropertyException::REASON_ROOM], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->participant->hasModeratorPermissions()) {
+			return new DataResponse(['error' => PollPropertyException::REASON_DRAFT], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$poll->isDraft()) {
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_BAD_REQUEST);
+		}
+
+		$poll->setQuestion($question);
+		$encodedOptions = json_encode($options, JSON_THROW_ON_ERROR, 1);
+		$poll->setOptions($encodedOptions);
+		$poll->setResultMode($resultMode);
+		$poll->setMaxVotes($maxVotes);
+
+		try {
+			$this->pollService->updatePoll($this->participant, $poll);
+		} catch (WrongPermissionsException $e) {
+			$this->logger->error('Error modifying poll', ['exception' => $e]);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($poll->renderAsDraft());
+	}
+
+	/**
 	 * Get all drafted polls
 	 *
 	 * Required capability: `talk-polls-drafts`

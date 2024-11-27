@@ -105,13 +105,7 @@ class PollService {
 	 * @throws DoesNotExistException
 	 */
 	public function getPoll(int $roomId, int $pollId): Poll {
-		$poll = $this->pollMapper->getByPollId($pollId);
-
-		if ($poll->getRoomId() !== $roomId) {
-			throw new DoesNotExistException('Room id mismatch');
-		}
-
-		return $poll;
+		return $this->pollMapper->getPollByRoomIdAndPollId($roomId, $pollId);
 	}
 
 	/**
