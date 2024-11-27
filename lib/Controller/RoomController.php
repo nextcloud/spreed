@@ -14,6 +14,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
+use OCA\Talk\Exceptions\GuestImportException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -73,6 +74,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IL10N;
 use OCP\IPhoneNumberUtil;
 use OCP\IRequest;
 use OCP\IUser;
@@ -121,6 +123,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected Capabilities $capabilities,
 		protected FederationManager $federationManager,
 		protected BanService $banService,
+		protected IL10N $l,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1204,7 +1207,7 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (TypeException) {
 			}
 
-			$email = $newParticipant;
+			$email = strtolower($newParticipant);
 			$actorId = hash('sha256', $email);
 			try {
 				$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_EMAILS, $actorId);
@@ -2422,6 +2425,48 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse();
+	}
+
+	/**
+	 * Import a list of email attendees
+	 *
+	 * Content format is comma separated values:
+	 * - Header line is required and must match `"email","name"` or `"email"`
+	 * - one entry per line
+	 *
+	 * Required capability: `email-csv-import`
+	 *
+	 * @param bool $testRun When set to true, the file is validated and no email is actually sent nor any participant added to the conversation
+	 * @return DataResponse<Http::STATUS_OK, array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'room'|'file'|'header-email'|'header-name'|'rows', message?: string, invites?: non-negative-int, duplicates?: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>
+	 *
+	 * 200: All entries imported successfully
+	 * 400: Import was not successful. When message is provided the string is in user language and should be displayed as an error.
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	public function importEmailsAsParticipants(bool $testRun = false): DataResponse {
+		$file = $this->request->getUploadedFile('file');
+		if ($file === null) {
+			return new DataResponse([
+				'error' => 'file',
+				'message' => $this->l->t('Uploading the file failed'),
+			], Http::STATUS_BAD_REQUEST);
+		}
+		if ($file['error'] !== 0) {
+			$this->logger->error('Uploading email CSV file failed with error: ' . $file['error']);
+			return new DataResponse([
+				'error' => 'file',
+				'message' => $this->l->t('Uploading the file failed'),
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$data = $this->guestManager->importEmails($this->room, $file, $testRun);
+			return new DataResponse($data);
+		} catch (GuestImportException $e) {
+			return new DataResponse($e->getData(), Http::STATUS_BAD_REQUEST);
+		}
+
 	}
 
 	/**

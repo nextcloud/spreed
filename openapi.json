@@ -16685,6 +16685,218 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/import-emails": {
+            "post": {
+                "operationId": "room-import-emails-as-participants",
+                "summary": "Import a list of email attendees",
+                "description": "Content format is comma separated values: - Header line is required and must match `\"email\",\"name\"` or `\"email\"` - one entry per line\nRequired capability: `email-csv-import`",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "testRun": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "When set to true, the file is validated and no email is actually sent nor any participant added to the conversation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All entries imported successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "invites",
+                                                        "duplicates"
+                                                    ],
+                                                    "properties": {
+                                                        "invites": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "duplicates": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "invalid": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "invalidLines": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "format": "int64",
+                                                                "minimum": 0
+                                                            }
+                                                        },
+                                                        "type": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": -1,
+                                                            "maximum": 6
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Import was not successful. When message is provided the string is in user language and should be displayed as an error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "room",
+                                                                "file",
+                                                                "header-email",
+                                                                "header-name",
+                                                                "rows"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                        "invites": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "duplicates": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "invalid": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": 0
+                                                        },
+                                                        "invalidLines": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "format": "int64",
+                                                                "minimum": 0
+                                                            }
+                                                        },
+                                                        "type": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "minimum": -1,
+                                                            "maximum": 6
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
             "post": {
                 "operationId": "settings-set-user-setting",
