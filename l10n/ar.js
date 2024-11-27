@@ -1133,6 +1133,7 @@ OC.L10N.register(
     "Phone number could not be called: {error}" : "تعذّر طلب الاتصال برقم الهاتف: {error}",
     "Phone number could not be called" : "تعذّر الاتصال برقم الهاتف",
     "Conversation actions" : "إجراءات المحادثة ",
+    "Notify about calls" : "إشعار بالمكالمات",
     "Mark as read" : "تحديد كمقروء ",
     "Mark as unread" : "تحديد كغير مقروء ",
     "Remove from favorites" : "إزالتها مِن المفضلة",

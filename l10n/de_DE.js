@@ -1133,6 +1133,7 @@ OC.L10N.register(
     "Phone number could not be called: {error}" : "Die Telefonnummer konnte nicht angerufen werden: {error}",
     "Phone number could not be called" : "Die Telefonnummer konnte nicht angerufen werden",
     "Conversation actions" : "Unterhaltungs-Aktionen",
+    "Notify about calls" : "Über Anrufe benachrichtigen",
     "Mark as read" : "Als gelesen markieren",
     "Mark as unread" : "Als ungelesen markieren",
     "Remove from favorites" : "Von Favoriten entfernen",
