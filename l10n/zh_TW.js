@@ -1133,6 +1133,7 @@ OC.L10N.register(
     "Phone number could not be called: {error}" : "無法撥打電話號碼：{error}",
     "Phone number could not be called" : "無法撥打電話號碼",
     "Conversation actions" : "對話動作",
+    "Notify about calls" : "通話通知",
     "Mark as read" : "標為已讀",
     "Mark as unread" : "標為未讀",
     "Remove from favorites" : "從我的最愛移除",
