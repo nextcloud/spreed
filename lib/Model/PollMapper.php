@@ -44,12 +44,13 @@ class PollMapper extends QBMapper {
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function getByPollId(int $pollId): Poll {
+	public function getPollByRoomIdAndPollId(int $roomId, int $pollId): Poll {
 		$query = $this->db->getQueryBuilder();
 
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
 	}

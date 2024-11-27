@@ -643,6 +643,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/draft/{pollId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Modify a draft poll
+         * @description Required capability: `edit-draft-poll`
+         */
+        post: operations["poll-update-draft-poll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
         parameters: {
             query?: never;
@@ -5005,7 +5025,111 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "draft" | "options" | "question" | "room";
+                                error: "draft" | "options" | "poll" | "question" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "poll-update-draft-poll": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The poll id */
+                pollId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Question of the poll */
+                    question: string;
+                    /** @description Options of the poll */
+                    options: string[];
+                    /**
+                     * Format: int64
+                     * @description Mode how the results will be shown
+                     * @enum {integer}
+                     */
+                    resultMode: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Number of maximum votes per voter
+                     */
+                    maxVotes: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Draft modified successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["PollDraft"];
+                        };
+                    };
+                };
+            };
+            /** @description Modifying poll is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No permission to modify this poll */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No draft poll exists */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5251,7 +5375,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5267,7 +5392,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5283,7 +5409,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
