@@ -33,43 +33,8 @@ class PollService {
 	 * @throws PollPropertyException
 	 */
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): Poll {
-		$question = trim($question);
-
-		if ($question === '' || strlen($question) > 32_000) {
-			throw new PollPropertyException(PollPropertyException::REASON_QUESTION);
-		}
-
-		try {
-			json_encode($options, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		$validOptions = [];
-		foreach ($options as $option) {
-			if (!is_string($option)) {
-				throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-			}
-
-			$option = trim($option);
-			if ($option !== '') {
-				$validOptions[] = $option;
-			}
-		}
-
-		if (count($validOptions) < 2) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		try {
-			$jsonOptions = json_encode($validOptions, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		if (strlen($jsonOptions) > 60_000) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
+		$question = $this->validatePollQuestion($question);
+		$jsonOptions = $this->validatePollOptions($options);
 
 		$poll = new Poll();
 		$poll->setRoomId($roomId);
@@ -115,12 +80,71 @@ class PollService {
 	 */
 	public function updatePoll(Participant $participant, Poll $poll): void {
 		if (!$participant->hasModeratorPermissions()
-		 && ($poll->getActorType() !== $participant->getAttendee()->getActorType()
-		 || $poll->getActorId() !== $participant->getAttendee()->getActorId())) {
+			&& ($poll->getActorType() !== $participant->getAttendee()->getActorType()
+				|| $poll->getActorId() !== $participant->getAttendee()->getActorId())) {
+			// Only moderators and the author of the poll can update it
+			throw new WrongPermissionsException();
+		}
+		$this->pollMapper->update($poll);
+	}
+
+	/**
+	 * @param array $options
+	 * @return string
+	 *
+	 * @since 21.0.0
+	 */
+	public function validatePollOptions(array $options): string {
+		try {
+			json_encode($options, JSON_THROW_ON_ERROR, 1);
+		} catch (\Exception) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
+		}
+
+		$validOptions = [];
+		foreach ($options as $option) {
+			if (!is_string($option)) {
+				throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
+			}
+
+			$option = trim($option);
+			if ($option !== '') {
+				$validOptions[] = $option;
+			}
+		}
+
+		if (count($validOptions) < 2) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
+		}
+
+		try {
+			$jsonOptions = json_encode($validOptions, JSON_THROW_ON_ERROR, 1);
+		} catch (\Exception) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
+		}
+
+		if (strlen($jsonOptions) > 60_000) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
+		}
+
+		return $jsonOptions;
+	}
+
+	/**
+	 * @param Participant $participant
+	 * @param Poll $poll
+	 * @return void
+	 * @throws WrongPermissionsException
+	 */
+	public function closePoll(Participant $participant, Poll $poll): void {
+		if (!$participant->hasModeratorPermissions()
+			&& ($poll->getActorType() !== $participant->getAttendee()->getActorType()
+				|| $poll->getActorId() !== $participant->getAttendee()->getActorId())) {
 			// Only moderators and the author of the poll can update it
 			throw new WrongPermissionsException();
 		}
 
+		$poll->setStatus(Poll::STATUS_CLOSED);
 		$this->pollMapper->update($poll);
 	}
 
@@ -344,5 +368,17 @@ class PollService {
 			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
 			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();
+	}
+
+	/**
+	 * @param string $question
+	 * @return string
+	 */
+	public function validatePollQuestion(string $question): string {
+		$question = trim($question);
+		if ($question === '' || strlen($question) > 32_000) {
+			throw new PollPropertyException(PollPropertyException::REASON_QUESTION);
+		}
+		return $question;
 	}
 }

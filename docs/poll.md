@@ -30,6 +30,34 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
         See [Poll data](#poll-data)
 
+# Edit a draft poll in a conversation
+
+* Federation capability: `federation-v1`
+* Method: `POST`
+* Endpoint: `/poll/{token}/draft/{pollId]}`
+* Data:
+
+| field        | type         | Description                                                                                                                                                                                                                    |
+|--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `question`   | string       | The question of the poll                                                                                                                                                                                                       |
+| `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
+| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
+
+* Response:
+	- Status code:
+		+ `201 Created`
+		+ `400 Bad Request` When the room is a one-to-one conversation
+		+ `400 Bad Request` When the question or the options were too long or invalid (not strings)
+		+ `403 Forbidden` When the conversation is read-only
+		+ `403 Forbidden` When the actor does not have chat permissions
+		+ `404 Not Found` When the conversation could not be found for the participant
+		+ `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+	- Data:
+
+	  See [Poll data](#poll-data)
+
 ## Get state or result of a poll
 
 * Federation capability: `federation-v1`

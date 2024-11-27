@@ -9381,6 +9381,7 @@
                                 "required": [
                                     "question",
                                     "options",
+                                    "resultMode",
                                     "maxVotes"
                                 ],
                                 "properties": {
@@ -9394,6 +9395,15 @@
                                         "items": {
                                             "type": "string"
                                         }
+                                    },
+                                    "resultMode": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Mode how the results will be shown"
                                     },
                                     "maxVotes": {
                                         "type": "integer",
@@ -9430,10 +9440,11 @@
                     {
                         "name": "pollId",
                         "in": "path",
+                        "description": "The poll id",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "pattern": "^\\d+$"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     },
                     {

@@ -138,12 +138,14 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `edit-draft-poll`
 	 *
-	 * @param int $pollId
+	 * @param int $pollId The poll id
 	 * @param string $question Question of the poll
 	 * @param string[] $options Options of the poll
-	 * @param int $resultMode
+	 * @psalm-param list<string> $options
+	 * @param 0|1 $resultMode Mode how the results will be shown
+	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+ * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Draft modified successfully
 	 * 400: Modifying poll is not possible
@@ -157,7 +159,6 @@ class PollController extends AEnvironmentAwareController {
 	#[RequireReadWriteConversation]
 	public function updateDraftPoll(int $pollId, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
 		if ($this->room->isFederatedConversation()) {
-			// TODO: add editing a draft to federation
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
 			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
@@ -166,10 +167,6 @@ class PollController extends AEnvironmentAwareController {
 		if ($this->room->getType() !== Room::TYPE_GROUP
 			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
 			return new DataResponse(['error' => PollPropertyException::REASON_ROOM], Http::STATUS_BAD_REQUEST);
-		}
-
-		if (!$this->participant->hasModeratorPermissions()) {
-			return new DataResponse(['error' => PollPropertyException::REASON_DRAFT], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -182,8 +179,21 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_BAD_REQUEST);
 		}
 
+		if (!$this->participant->hasModeratorPermissions()
+			&& ($poll->getActorType() !== $this->participant->getAttendee()->getActorType()
+				|| $poll->getActorId() !== $this->participant->getAttendee()->getActorId())) {
+			return new DataResponse(['error' => PollPropertyException::REASON_DRAFT], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$question = $this->pollService->validatePollQuestion($question);
+			$encodedOptions = $this->pollService->validatePollOptions($options);
+		} catch (PollPropertyException $e) {
+			$this->logger->error('Error modifying poll', ['exception' => $e]);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+
 		$poll->setQuestion($question);
-		$encodedOptions = json_encode($options, JSON_THROW_ON_ERROR, 1);
 		$poll->setOptions($encodedOptions);
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
@@ -372,12 +382,13 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse(['error' => 'poll'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$poll->setStatus(Poll::STATUS_CLOSED);
-
 		try {
-			$this->pollService->updatePoll($this->participant, $poll);
-		} catch (WrongPermissionsException) {
+			$this->pollService->closePoll($this->participant, $poll);
+		} catch (WrongPermissionsException $e) {
 			return new DataResponse(['error' => 'poll'], Http::STATUS_FORBIDDEN);
+		} catch (Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return new DataResponse(['error' => 'poll'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
 		$attendee = $this->participant->getAttendee();
