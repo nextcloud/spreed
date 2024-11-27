@@ -53,8 +53,7 @@ class AvatarController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 *
-	 * Upload an avatar for a room
+	 * Upload an avatar for gferwgewga room
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
