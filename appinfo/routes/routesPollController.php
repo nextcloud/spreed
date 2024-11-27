@@ -21,6 +21,8 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\PollController::createPoll() */
 		['name' => 'Poll#createPoll', 'url' => '/api/{apiVersion}/poll/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\PollController::updateDraftPoll() */
+		['name' => 'Poll#updateDraftPoll', 'url' => '/api/{apiVersion}/poll/{token}/draft/{pollId}', 'verb' => 'POST', 'requirements' => $requirementsWithPollId],
 		/** @see \OCA\Talk\Controller\PollController::getAllDraftPolls() */
 		['name' => 'Poll#getAllDraftPolls', 'url' => '/api/{apiVersion}/poll/{token}/drafts', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\PollController::showPoll() */

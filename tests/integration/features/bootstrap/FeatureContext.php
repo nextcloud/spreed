@@ -2526,6 +2526,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" updates a draft poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function updateDraftPoll(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$data = $formData->getRowsHash();
+		$data['options'] = json_decode($data['options'], true);
+		if ($data['resultMode'] === 'public') {
+			$data['resultMode'] = 0;
+		} elseif ($data['resultMode'] === 'hidden') {
+			$data['resultMode'] = 1;
+		} else {
+			throw new \Exception('Invalid result mode');
+		}
+		if ($data['maxVotes'] === 'unlimited') {
+			$data['maxVotes'] = 0;
+		}
+
+		$this->setCurrentUser($user);
+		$result = preg_match('/POLL_ID\(([^)]+)\)/', $data['id'], $matches);
+		if ($result) {
+			$data['id'] = self::$questionToPollId[$matches[1]];
+		}
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/draft/' . $data['id'],
+			$data
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$questionToPollId[$data['question']] = $response['id'];
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" gets poll drafts for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
