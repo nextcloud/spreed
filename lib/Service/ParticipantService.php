@@ -806,7 +806,7 @@ class ParticipantService {
 		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
 	}
 
-	public function inviteEmailAddress(Room $room, string $actorId, string $email): Participant {
+	public function inviteEmailAddress(Room $room, string $actorId, string $email, ?string $name = null): Participant {
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
 			$lastMessage = (int)$room->getLastMessage()->getId();
@@ -821,6 +821,10 @@ class ParticipantService {
 			FederationManager::TOKEN_LENGTH,
 			ISecureRandom::CHAR_HUMAN_READABLE
 		));
+
+		if ($name !== null) {
+			$attendee->setDisplayName($name);
+		}
 
 		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
 			&& $this->talkConfig->isSIPConfigured()) {

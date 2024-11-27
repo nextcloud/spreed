@@ -1308,6 +1308,27 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/import-emails": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import a list of email attendees
+         * @description Content format is comma separated values: - Header line is required and must match `"email","name"` or `"email"` - one entry per line
+         *     Required capability: `email-csv-import`
+         */
+        post: operations["room-import-emails-as-participants"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
         parameters: {
             query?: never;
@@ -7944,6 +7965,84 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-import-emails-as-participants": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description When set to true, the file is validated and no email is actually sent nor any participant added to the conversation
+                     * @default false
+                     */
+                    testRun?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description All entries imported successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** Format: int64 */
+                                invites: number;
+                                /** Format: int64 */
+                                duplicates: number;
+                                /** Format: int64 */
+                                invalid?: number;
+                                invalidLines?: number[];
+                                /** Format: int64 */
+                                type?: number;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Import was not successful. When message is provided the string is in user language and should be displayed as an error. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "room" | "file" | "header-email" | "header-name" | "rows";
+                                message?: string;
+                                /** Format: int64 */
+                                invites?: number;
+                                /** Format: int64 */
+                                duplicates?: number;
+                                /** Format: int64 */
+                                invalid?: number;
+                                invalidLines?: number[];
+                                /** Format: int64 */
+                                type?: number;
+                            };
                         };
                     };
                 };
