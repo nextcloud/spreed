@@ -244,7 +244,7 @@ export default {
 		},
 
 		shouldShowSummaryOption() {
-			if (!canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.message.token)) {
+			if (this.conversation.remoteServer || !canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.message.token)) {
 				return false
 			}
 			return (this.conversation.unreadMessages >= summaryThreshold)
