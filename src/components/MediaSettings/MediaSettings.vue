@@ -438,8 +438,17 @@ export default {
 	watch: {
 		modal(newValue) {
 			if (newValue) {
-				this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
-				this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
+				if (this.settingsStore.startWithoutMedia) {
+					// Disable audio
+					this.audioOn = false
+					BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
+					// Disable video
+					this.videoOn = false
+					BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
+				} else {
+					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
+					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
+				}
 				this.silentCall = !!BrowserStorage.getItem('silentCall_' + this.token)
 
 				// Set virtual background depending on BrowserStorage's settings

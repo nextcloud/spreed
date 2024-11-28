@@ -197,15 +197,15 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		// For debug and screenshot purposes. Set to true to enable
 		const devMode = ref(false)
 		provide('CallView:devModeEnabled', devMode)
 		const screenshotMode = ref(false)
 		provide('CallView:screenshotModeEnabled', screenshotMode)
 		const settingsStore = useSettingsStore()
-		const startWithoutMediaEnabled = settingsStore.startWithoutMedia
-		if (startWithoutMediaEnabled) {
+		// If media settings was not used, we check the global config of default devices state here
+		if (!settingsStore.getShowMediaSettings(props.token) && settingsStore.startWithoutMedia) {
 			localMediaModel.disableAudio()
 			localMediaModel.disableVideo()
 		}
