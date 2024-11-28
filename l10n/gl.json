@@ -1131,6 +1131,7 @@
     "Phone number could not be called: {error}" : "Non foi posíbel chamar ao número de teléfono: {error}",
     "Phone number could not be called" : "Non foi posíbel chamar ao número de teléfono",
     "Conversation actions" : "Accións de conversa",
+    "Notify about calls" : "Notificar sobre as chamadas",
     "Mark as read" : "Marcar como lido",
     "Mark as unread" : "Marcar como sen ler",
     "Remove from favorites" : "Retirar de favoritos",
