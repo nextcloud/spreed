@@ -22,13 +22,17 @@
 			</NcCheckboxRadioSwitch>
 
 			<template v-if="isSharedPublicly">
-				<NcCheckboxRadioSwitch :checked="isPasswordProtectionChecked"
-					:disabled="isSaving || forcePasswordProtection"
+				<NcCheckboxRadioSwitch v-if="!forcePasswordProtection"
+					:checked="isPasswordProtectionChecked"
+					:disabled="isSaving"
 					type="switch"
 					aria-describedby="link_share_settings_password_hint"
 					@update:checked="togglePassword">
 					{{ t('spreed', 'Password protection') }}
 				</NcCheckboxRadioSwitch>
+				<p v-if="forcePasswordProtection && isPasswordProtectionChecked" class="app-settings-section__hint">
+					{{ t('spreed', 'This conversation is password-protected. Guests need password to join') }}
+				</p>
 				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 					<NcPasswordField ref="passwordField"
 						:value.sync="password"
@@ -45,9 +49,19 @@
 						native-type="submit"
 						class="password-form__button">
 						<template #icon>
-							<ArrowRight />
+							<IconContentSaveOutline />
 						</template>
 						{{ t('spreed', 'Save password') }}
+					</NcButton>
+					<NcButton v-if="password"
+						type="tertiary"
+						:aria-label="t('spreed', 'Copy password')"
+						:title="t('spreed', 'Copy password')"
+						class="password-form__button"
+						@click="copyPassword">
+						<template #icon>
+							<IconContentCopy :size="16" />
+						</template>
 					</NcButton>
 				</form>
 			</template>
@@ -82,10 +96,12 @@
 </template>
 
 <script>
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -104,9 +120,11 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcPasswordField,
-		ArrowRight,
+		// Icons
 		ClipboardTextOutline,
 		Email,
+		IconContentCopy,
+		IconContentSaveOutline,
 	},
 
 	props: {
@@ -213,6 +231,15 @@ export default {
 			this.isSendingInvitations = true
 			await this.$store.dispatch('resendInvitations', { token: this.token })
 			this.isSendingInvitations = false
+		},
+
+		async copyPassword() {
+			try {
+				await navigator.clipboard.writeText(this.password)
+				showSuccess(t('spreed', 'Password copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Password could not be copied'))
+			}
 		},
 	},
 }
