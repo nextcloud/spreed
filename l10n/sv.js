@@ -1133,6 +1133,7 @@ OC.L10N.register(
     "Phone number could not be called: {error}" : "Kunde inte ringa upp telefonnummer: {error}",
     "Phone number could not be called" : "Kunde inte ringa upp telefonnummer",
     "Conversation actions" : "Konversationsåtgärder",
+    "Notify about calls" : "Meddela om samtal",
     "Mark as read" : "Markera som läst",
     "Mark as unread" : "Markera som oläst",
     "Remove from favorites" : "Ta bort från favoriter",
