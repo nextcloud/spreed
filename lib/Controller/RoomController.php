@@ -2456,7 +2456,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * Content format is comma separated values:
 	 * - Header line is required and must match `"email","name"` or `"email"`
-	 * - one entry per line
+	 * - One entry per line (e.g. `"John Doe","john@example.tld"`)
 	 *
 	 * Required capability: `email-csv-import`
 	 *
