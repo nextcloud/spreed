@@ -16590,7 +16590,7 @@
             "post": {
                 "operationId": "room-import-emails-as-participants",
                 "summary": "Import a list of email attendees",
-                "description": "Content format is comma separated values: - Header line is required and must match `\"email\",\"name\"` or `\"email\"` - one entry per line\nRequired capability: `email-csv-import`",
+                "description": "Content format is comma separated values: - Header line is required and must match `\"email\",\"name\"` or `\"email\"` - One entry per line (e.g. `\"John Doe\",\"john@example.tld\"`)\nRequired capability: `email-csv-import`",
                 "tags": [
                     "room"
                 ],

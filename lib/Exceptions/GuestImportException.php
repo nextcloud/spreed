@@ -28,7 +28,7 @@ class GuestImportException extends \Exception {
 		protected readonly ?int $invites = null,
 		protected readonly ?int $duplicates = null,
 	) {
-		parent::__construct();
+		parent::__construct($reason);
 	}
 
 	/**

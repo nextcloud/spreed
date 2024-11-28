@@ -165,6 +165,33 @@ const resendInvitations = async (token, attendeeId = null) => {
 		attendeeId,
 	})
 }
+
+/**
+ *
+ * @param {string} token conversation token
+ * @param {File} file file to upload
+ * @param {boolean} testRun whether to perform a verification only
+ * @return {import('../types/index.ts').importEmailsResponse}
+ */
+const importEmails = async (token, file, testRun = false) => {
+	let data = {
+		file,
+	}
+
+	if (testRun) {
+		data = {
+			file,
+			testRun,
+		}
+	}
+
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/import-emails', { token }), data, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	})
+}
+
 /**
  * Joins the current user to a conversation specified with
  * the token.
@@ -265,6 +292,7 @@ export {
 	demoteFromModerator,
 	fetchParticipants,
 	setGuestUserName,
+	importEmails,
 	resendInvitations,
 	sendCallNotification,
 	grantAllPermissionsToParticipant,

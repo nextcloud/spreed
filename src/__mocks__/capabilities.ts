@@ -87,6 +87,8 @@ export const mockedCapabilities: Capabilities = {
 			'archived-conversations',
 			'talk-polls-drafts',
 			'archived-conversations-v2',
+			'download-call-participants',
+			'email-csv-import',
 		],
 		'features-local': [
 			'favorites',
@@ -100,6 +102,7 @@ export const mockedCapabilities: Capabilities = {
 			'note-to-self',
 			'archived-conversations',
 			'archived-conversations-v2',
+			'chat-summary-api',
 		],
 		config: {
 			attachments: {
