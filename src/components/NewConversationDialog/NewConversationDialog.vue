@@ -226,20 +226,11 @@ export default {
 
 	watch: {
 		success(value) {
-			if (!value) {
+			if (!value || !this.isPublic) {
 				return
 			}
 			this.$nextTick(() => {
 				this.$refs.copyLink.$el.focus()
-			})
-		},
-
-		error(value) {
-			if (!value) {
-				return
-			}
-			this.$nextTick(() => {
-				this.$refs.closeButton.$el.focus()
 			})
 		},
 	},
