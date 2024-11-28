@@ -84,7 +84,7 @@ class GuestManager {
 	 * @return array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}
 	 * @throws GuestImportException
 	 */
-	public function importEmails(Room $room, $file, bool $testRun): array {
+	public function importEmails(Room $room, string $filePath, bool $testRun): array {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF
@@ -93,7 +93,7 @@ class GuestManager {
 			throw new GuestImportException(GuestImportException::REASON_ROOM);
 		}
 
-		$content = fopen($file['tmp_name'], 'rb');
+		$content = fopen($filePath, 'rb');
 		$details = fgetcsv($content, escape: '');
 
 		$emailKey = $nameKey = null;
@@ -119,7 +119,8 @@ class GuestManager {
 		$participants = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_EMAILS);
 		$alreadyInvitedEmails = array_flip(array_map(static fn (Participant $participant): string => $participant->getAttendee()->getInvitedCloudId(), $participants));
 
-		$line = $duplicates = 0;
+		$line = 1;
+		$duplicates = 0;
 		$emailsToAdd = $invalidLines = [];
 		while ($details = fgetcsv($content, escape: '')) {
 			$line++;

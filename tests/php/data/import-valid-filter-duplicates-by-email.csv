@@ -1,0 +1,5 @@
+"email","name"
+"valid-1@example.tld","Valid 1"
+"valid-2@example.tld","valid-2@example.tld"
+"invalid","Valid 2"
+"valid-1@example.tld","Valid 1 again"
