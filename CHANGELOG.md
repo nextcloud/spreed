@@ -5,6 +5,62 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.0 – 2024-12-03
+### Added
+- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux
+  [Download](https://nextcloud.com/talk-desktop-install)
+- feat(calls): Summarize call recordings automatically with AI when installed
+  [#13429](https://github.com/nextcloud/spreed/issues/13429)
+- feat(chat): Allow to summarize the chat history when there are many unread messages
+  [#13430](https://github.com/nextcloud/spreed/issues/13430)
+- feat(calls): Allow moderators to download a call participants list
+  [#13453](https://github.com/nextcloud/spreed/issues/13453)
+- feat(meetings): Allow importing email lists as attendees
+  [#13882](https://github.com/nextcloud/spreed/issues/13882)
+- feat(email-guests): Identify and recognize guests invited via email address
+  [#6098](https://github.com/nextcloud/spreed/issues/6098)
+- feat(email-guests): Allow to invite email guests when creating a conversation
+  [#4937](https://github.com/nextcloud/spreed/issues/4937)
+- feat(polls): Allow to draft, export and import polls
+  [#13439](https://github.com/nextcloud/spreed/issues/13439)
+- feat(conversations): Allow to archive conversations
+  [#6140](https://github.com/nextcloud/spreed/issues/6140)
+- feat(conversations): Add direct option to change notification settings to the conversation list again
+  [#13870](https://github.com/nextcloud/spreed/issues/13870)
+- feat(chat): Add option to directly download attachments
+  [Desktop #824](https://github.com/nextcloud/talk-desktop/issues/824)
+- feat(voice-messages): Auto play voice messages which are grouped together
+  [#13199](https://github.com/nextcloud/spreed/issues/13199)
+- feat(calls): Add an option to always disable devices by default
+  [#13446](https://github.com/nextcloud/spreed/issues/13446)
+- feat(calls): Add option to enable blurred background always by default
+  [#13783](https://github.com/nextcloud/spreed/issues/13783)
+- feat(conversations): Add settings to automatically lock rooms after days of inactivity
+  [#13448](https://github.com/nextcloud/spreed/issues/13448)
+- feat(calls): Allow to enforce a maximum call length
+  [#13445](https://github.com/nextcloud/spreed/issues/13445)
+- feat(chat): Highlight file and object shares with an icon in conversations list
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(conversations): Fix password validation when setting a password
+  [#13890](https://github.com/nextcloud/spreed/issues/13890)
+- fix(chat): Fix visibility of "Send message without notification" option being enabled
+  [#13824](https://github.com/nextcloud/spreed/issues/13824)
+- fix(matterbridge): Fix settings disappearing after configuring matterbridge in a conversation
+  [#13786](https://github.com/nextcloud/spreed/issues/13786)
+- fix(chat): Disable interactiveness of reference by default, to avoid input-focus stealing
+  [#4937](https://github.com/nextcloud/spreed/issues/4937)
+- fix(avatar): Use person icon for deleted accounts and guests without a name
+  [#13754](https://github.com/nextcloud/spreed/issues/13754)
+- fix(calls): Omit "with 0 guests" when a call is ended and only 1 logged-in participant joined
+  [#13545](https://github.com/nextcloud/spreed/issues/13545)
+- fix(polls): rename "Private poll" to "Anonymous poll"
+- perf: Fix a performance issue when the page is not reloaded over multiple days
+
 ## 20.1.0-rc.3 – 2024-11-28
 ### Added
 - feat(conversations): Add direct option to change notification settings to the conversation list again
