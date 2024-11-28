@@ -2170,8 +2170,8 @@ export type components = {
             optionId: number;
         };
         PublicCapabilities: {
-            spreed: components["schemas"]["Capabilities"];
-        } | unknown[];
+            spreed?: components["schemas"]["Capabilities"];
+        };
         Reaction: {
             actorDisplayName: string;
             actorId: string;
@@ -4023,7 +4023,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4037,7 +4039,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4051,7 +4055,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4065,7 +4071,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4102,7 +4110,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description History cleared successfully, but Matterbridge is configured, so the information can be replicated elsewhere */
+            /** @description History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere */
             202: {
                 headers: {
                     "X-Chat-Last-Common-Read"?: string;
@@ -4290,7 +4298,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4304,7 +4314,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4318,7 +4330,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4332,7 +4346,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4395,7 +4411,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4409,7 +4427,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4423,7 +4443,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4437,7 +4459,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4792,7 +4816,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessage"][];
+                            data: {
+                                [key: string]: components["schemas"]["ChatMessage"];
+                            };
                         };
                     };
                 };
@@ -4862,7 +4888,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4876,7 +4904,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -4890,7 +4920,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5479,7 +5511,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5536,7 +5570,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5550,7 +5586,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5611,7 +5649,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5625,7 +5665,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -5639,20 +5681,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -6266,7 +6297,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                /** @enum {string} */
+                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
                                 message?: string;
                             };
                         };
@@ -6282,7 +6314,11 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
+                                message?: string;
+                            };
                         };
                     };
                 };
@@ -6296,7 +6332,11 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
+                                message?: string;
+                            };
                         };
                     };
                 };
@@ -6509,7 +6549,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6526,7 +6566,7 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value" | "password";
-                                message?: string | null;
+                                message?: string;
                             };
                         };
                     };
@@ -6558,7 +6598,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6613,7 +6653,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6672,7 +6712,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6731,7 +6771,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6786,7 +6826,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6959,8 +6999,8 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** Format: int64 */
-                                type: number;
-                            } | unknown[];
+                                type?: number;
+                            };
                         };
                     };
                 };
@@ -6975,7 +7015,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
                     };
@@ -6990,7 +7031,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
                         };
                     };
                 };
@@ -7004,7 +7048,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
                         };
                     };
                 };
@@ -7114,7 +7161,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "last-moderator" | "participant";
+                            };
                         };
                     };
                 };
@@ -7128,7 +7178,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "last-moderator" | "participant";
+                            };
                         };
                     };
                 };
@@ -7176,7 +7229,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                            };
                         };
                     };
                 };
@@ -7190,7 +7246,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                            };
                         };
                     };
                 };
@@ -7204,7 +7263,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                            };
                         };
                     };
                 };
@@ -7249,13 +7311,14 @@ export interface operations {
             /** @description Permissions updated successfully */
             200: {
                 headers: {
+                    "X-Nextcloud-Has-User-Statuses"?: true;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Participant"][];
                         };
                     };
                 };
@@ -7269,7 +7332,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -7283,7 +7349,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -7297,7 +7366,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -7803,7 +7875,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -7834,7 +7906,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -7875,7 +7947,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -7889,7 +7961,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "level";
+                            };
                         };
                     };
                 };
@@ -7930,7 +8005,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -7944,7 +8019,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "level";
+                            };
                         };
                     };
                 };
@@ -8080,7 +8158,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "config";
+                            };
                         };
                     };
                 };
@@ -8094,7 +8175,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "config";
+                            };
                         };
                     };
                 };
@@ -8108,7 +8192,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "config";
+                            };
                         };
                     };
                 };
@@ -8180,7 +8267,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "config";
+                            };
                         };
                     };
                 };
@@ -8221,7 +8311,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -8271,7 +8361,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Capabilities"] | unknown[];
+                            data: components["schemas"]["Capabilities"] | {
+                                [key: string]: unknown;
+                            };
                         };
                     };
                 };

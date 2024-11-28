@@ -889,23 +889,12 @@
                 }
             },
             "PublicCapabilities": {
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "required": [
-                            "spreed"
-                        ],
-                        "properties": {
-                            "spreed": {
-                                "$ref": "#/components/schemas/Capabilities"
-                            }
-                        }
-                    },
-                    {
-                        "type": "array",
-                        "maxItems": 0
+                "type": "object",
+                "properties": {
+                    "spreed": {
+                        "$ref": "#/components/schemas/Capabilities"
                     }
-                ]
+                }
             },
             "Reaction": {
                 "type": "object",
@@ -5749,7 +5738,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -5777,7 +5776,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -5805,7 +5814,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -5833,7 +5852,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -5929,7 +5958,7 @@
                         }
                     },
                     "202": {
-                        "description": "History cleared successfully, but Matterbridge is configured, so the information can be replicated elsewhere",
+                        "description": "History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere",
                         "headers": {
                             "X-Chat-Last-Common-Read": {
                                 "schema": {
@@ -5985,7 +6014,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -6324,7 +6355,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6352,7 +6393,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6380,7 +6431,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6408,7 +6469,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6629,7 +6700,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6657,7 +6738,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6685,7 +6776,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -6713,7 +6814,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -7717,7 +7828,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -7745,7 +7866,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -7773,7 +7904,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -7892,8 +8033,8 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "array",
-                                                    "items": {
+                                                    "type": "object",
+                                                    "additionalProperties": {
                                                         "$ref": "#/components/schemas/ChatMessage"
                                                     }
                                                 }
@@ -9364,7 +9505,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9505,7 +9656,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9533,7 +9694,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9653,7 +9824,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -9681,7 +9854,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9709,7 +9892,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9737,35 +9930,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -9903,7 +10078,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10086,7 +10263,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10114,7 +10293,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10249,7 +10430,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10277,7 +10460,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -10412,7 +10597,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -11261,9 +11448,21 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "invite",
+                                                                "mode",
+                                                                "object",
+                                                                "password",
+                                                                "permissions",
+                                                                "room",
+                                                                "type"
+                                                            ]
                                                         },
                                                         "message": {
                                                             "type": "string"
@@ -11297,7 +11496,29 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "invite",
+                                                                "mode",
+                                                                "object",
+                                                                "password",
+                                                                "permissions",
+                                                                "room",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -11325,7 +11546,29 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "invite",
+                                                                "mode",
+                                                                "object",
+                                                                "password",
+                                                                "permissions",
+                                                                "room",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -11740,7 +11983,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -11861,7 +12106,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -11889,7 +12136,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -12111,7 +12360,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -12155,8 +12406,7 @@
                                                             ]
                                                         },
                                                         "message": {
-                                                            "type": "string",
-                                                            "nullable": true
+                                                            "type": "string"
                                                         }
                                                     }
                                                 }
@@ -12237,7 +12487,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -12380,7 +12632,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -12526,7 +12780,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -12673,7 +12929,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -12816,7 +13074,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -13159,7 +13419,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -13270,81 +13532,14 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "oneOf": [
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "type"
-                                                            ],
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "integer",
-                                                                    "format": "int64"
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "array",
-                                                            "maxItems": 0
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "integer",
+                                                            "format": "int64"
                                                         }
-                                                    ]
+                                                    }
                                                 }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User, group or other target to invite was not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "501": {
-                        "description": "SIP dial-out is not configured",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
                                             }
                                         }
                                     }
@@ -13374,9 +13569,127 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User, group or other target to invite was not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "SIP dial-out is not configured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -13551,7 +13864,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -13631,7 +13946,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -13659,7 +13976,21 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "last-moderator",
+                                                                "participant"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13687,7 +14018,21 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "last-moderator",
+                                                                "participant"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13779,7 +14124,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -13807,7 +14154,23 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "last-moderator",
+                                                                "owner",
+                                                                "participant",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13835,7 +14198,23 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "last-moderator",
+                                                                "owner",
+                                                                "participant",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13863,7 +14242,23 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "last-moderator",
+                                                                "owner",
+                                                                "participant",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13965,6 +14360,16 @@
                 "responses": {
                     "200": {
                         "description": "Permissions updated successfully",
+                        "headers": {
+                            "X-Nextcloud-Has-User-Statuses": {
+                                "schema": {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -13983,7 +14388,12 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Participant"
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -14011,7 +14421,25 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "participant",
+                                                                "method",
+                                                                "moderator",
+                                                                "room-type",
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -14039,7 +14467,25 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "participant",
+                                                                "method",
+                                                                "moderator",
+                                                                "room-type",
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -14067,7 +14513,25 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "participant",
+                                                                "method",
+                                                                "moderator",
+                                                                "room-type",
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -14211,7 +14675,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14394,7 +14860,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14522,7 +14990,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14621,7 +15091,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14649,7 +15121,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14784,7 +15258,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14812,7 +15288,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14914,7 +15392,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14942,7 +15422,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14970,7 +15452,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -14998,7 +15482,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -15088,7 +15574,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -15116,7 +15604,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -15144,7 +15634,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -15172,7 +15664,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "nullable": true
+                                                }
                                             }
                                         }
                                     }
@@ -15252,7 +15746,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -15330,7 +15826,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -15430,7 +15928,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -15458,7 +15958,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "level"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15558,7 +16071,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -15586,7 +16101,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "level"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15874,7 +16402,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "config"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15902,7 +16443,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "config"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15930,7 +16484,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "config"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -16147,7 +16714,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "config"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -16249,7 +16829,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
@@ -16392,8 +16974,8 @@
                                                             "$ref": "#/components/schemas/Capabilities"
                                                         },
                                                         {
-                                                            "type": "array",
-                                                            "maxItems": 0
+                                                            "type": "object",
+                                                            "additionalProperties": true
                                                         }
                                                     ]
                                                 }
