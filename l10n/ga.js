@@ -1133,6 +1133,7 @@ OC.L10N.register(
     "Phone number could not be called: {error}" : "Níorbh fhéidir uimhir theileafóin a ghlaoch: {error}",
     "Phone number could not be called" : "Níorbh fhéidir uimhir theileafóin a ghlaoch",
     "Conversation actions" : "Gníomhartha comhrá",
+    "Notify about calls" : "Fógra a thabhairt faoi ghlaonna",
     "Mark as read" : "Marcáil mar léite",
     "Mark as unread" : "Marcáil mar neamhléite",
     "Remove from favorites" : "Bain ó cheanáin",
