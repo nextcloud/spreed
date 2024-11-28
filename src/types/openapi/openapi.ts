@@ -1319,7 +1319,7 @@ export type paths = {
         put?: never;
         /**
          * Import a list of email attendees
-         * @description Content format is comma separated values: - Header line is required and must match `"email","name"` or `"email"` - one entry per line
+         * @description Content format is comma separated values: - Header line is required and must match `"email","name"` or `"email"` - One entry per line (e.g. `"John Doe","john@example.tld"`)
          *     Required capability: `email-csv-import`
          */
         post: operations["room-import-emails-as-participants"];
