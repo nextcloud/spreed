@@ -1827,7 +1827,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Verify a dial-in PIN (SIP bridge)
 	 *
 	 * @param numeric-string $pin PIN the participant used to dial-in
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
 	 *
 	 * 200: Participant returned
 	 * 401: SIP request invalid
@@ -1841,24 +1841,24 @@ class RoomController extends AEnvironmentAwareController {
 	public function verifyDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
 		if (!$this->talkConfig->isSIPConfigured()) {
-			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
 			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
 		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant));
@@ -1869,7 +1869,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $number E164 formatted phone number
 	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
 	 *
 	 *  200: Participant created successfully
 	 *  400: Phone number and details could not be confirmed
@@ -1884,32 +1884,32 @@ class RoomController extends AEnvironmentAwareController {
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		if (!isset($options['actorId'], $options['actorType']) || $options['actorType'] !== Attendee::ACTOR_PHONES) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$participant = $this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_PHONES, $options['actorId']);
 		} catch (ParticipantNotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		if ($participant->getAttendee()->getPhoneNumber() !== $number) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant));
@@ -1918,7 +1918,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Create a guest by their dial-in
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, null, array{}>
 	 *
 	 * 200: Participant created successfully
 	 * 400: SIP not enabled
@@ -1931,18 +1931,18 @@ class RoomController extends AEnvironmentAwareController {
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException $e) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
 		if ($this->room->getSIPEnabled() !== Webinary::SIP_ENABLED_NO_PIN) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
@@ -1955,7 +1955,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $callId The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate
 	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
 	 *
 	 * 200: Call ID reset
 	 * 400: Call ID mismatch or attendeeId not found in $options
@@ -1970,33 +1970,33 @@ class RoomController extends AEnvironmentAwareController {
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException $e) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
 		if (empty($options['attendeeId'])) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
 			$this->participantService->resetDialOutRequest($this->room, $options['attendeeId'], $callId);
 		} catch (ParticipantNotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse([], Http::STATUS_OK);
+		return new DataResponse(null);
 	}
 
 	/**
