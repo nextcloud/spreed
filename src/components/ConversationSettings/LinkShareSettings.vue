@@ -38,8 +38,13 @@
 					:disabled="isSaving"
 					class="password-form__input-field"
 					label-visible
-					:label="t('spreed', 'Enter new password')" />
-				<NcButton :disabled="isSaving" type="primary" native-type="submit">
+					:label="t('spreed', 'Enter new password')"
+					@valid="isValid = true"
+					@invalid="isValid = false" />
+				<NcButton :disabled="isSaving || !isValid"
+					type="primary"
+					native-type="submit"
+					class="password-form__button">
 					<template #icon>
 						<ArrowRight />
 					</template>
@@ -123,6 +128,7 @@ export default {
 			showPasswordField: false,
 			isSaving: false,
 			isSendingInvitations: false,
+			isValid: true,
 		}
 	},
 
@@ -148,24 +154,10 @@ export default {
 		t,
 		async setConversationPassword(newPassword) {
 			this.isSaving = true
-			try {
-				await this.$store.dispatch('setConversationPassword', {
-					token: this.token,
-					newPassword,
-				})
-				if (newPassword !== '') {
-					showSuccess(t('spreed', 'Conversation password has been saved'))
-				} else {
-					showSuccess(t('spreed', 'Conversation password has been removed'))
-				}
-			} catch (error) {
-				console.error('Error saving conversation password', error)
-				if (error?.response?.data?.ocs?.data?.message) {
-					showError(error.response.data.ocs.data.message)
-				} else {
-					showError(t('spreed', 'Error occurred while saving conversation password'))
-				}
-			}
+			await this.$store.dispatch('setConversationPassword', {
+				token: this.token,
+				newPassword,
+			})
 			this.isSaving = false
 		},
 
@@ -196,6 +188,7 @@ export default {
 			}
 			this.password = ''
 			this.showPasswordField = false
+			this.isValid = true
 		},
 
 		async handlePasswordEnable() {
@@ -203,9 +196,11 @@ export default {
 		},
 
 		async handleSetNewPassword() {
-			await this.setConversationPassword(this.password)
-			this.password = ''
-			this.showPasswordField = false
+			if (this.isValid) {
+				await this.setConversationPassword(this.password)
+				this.password = ''
+				this.showPasswordField = false
+			}
 		},
 
 		handleCopyLink() {
@@ -235,10 +230,14 @@ button > .material-design-icon {
 .password-form {
 	display: flex;
 	gap: 8px;
-	align-items: flex-end;
+	align-items: flex-start;
 
 	&__input-field {
 		width: 200px;
+	}
+
+	&__button {
+		margin-top: 6px;
 	}
 }
 
