@@ -118,7 +118,6 @@ class RoomFormatter {
 			'lobbyTimer' => 0,
 			'lastPing' => 0,
 			'sessionId' => '0',
-			'lastMessage' => [],
 			'sipEnabled' => Webinary::SIP_DISABLED,
 			'actorType' => '',
 			'actorId' => '',
@@ -376,15 +375,17 @@ class RoomFormatter {
 			}
 		}
 
-		$roomData['lastMessage'] = [];
 		$lastMessage = $room->getLastMessage();
 		if (!$room->isFederatedConversation() && $lastMessage instanceof IComment) {
-			$roomData['lastMessage'] = $this->formatLastMessage(
+			$lastMessageData = $this->formatLastMessage(
 				$responseFormat,
 				$room,
 				$currentParticipant,
 				$lastMessage,
 			);
+			if ($lastMessageData !== null) {
+				$roomData['lastMessage'] = $lastMessageData;
+			}
 		} elseif ($room->isFederatedConversation()) {
 			$roomData['lastCommonReadMessage'] = 0;
 			try {
@@ -414,25 +415,25 @@ class RoomFormatter {
 	}
 
 	/**
-	 * @return TalkRoomLastMessage|array<empty>
+	 * @return TalkRoomLastMessage|null
 	 */
 	public function formatLastMessage(
 		string $responseFormat,
 		Room $room,
 		Participant $participant,
 		IComment $lastMessage,
-	): array {
+	): ?array {
 		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {
-			return [];
+			return null;
 		}
 
 		$now = $this->timeFactory->getDateTime();
 		$expireDate = $message->getComment()->getExpireDate();
 		if ($expireDate instanceof \DateTime && $expireDate < $now) {
-			return [];
+			return null;
 		}
 
 		return $message->toArray($responseFormat);

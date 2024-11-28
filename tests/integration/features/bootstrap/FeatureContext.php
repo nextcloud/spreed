@@ -545,7 +545,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
 			if (isset($expectedRoom['lastMessage'])) {
-				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
+				if (isset($room['lastMessage'])) {
+					$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
+				} else {
+					$data['lastMessage'] = 'UNSET';
+				}
 			}
 			if (isset($expectedRoom['lastMessageActorType'])) {
 				$data['lastMessageActorType'] = $room['lastMessage'] ? $room['lastMessage']['actorType'] : '';

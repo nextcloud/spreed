@@ -254,7 +254,7 @@ namespace OCA\Talk;
  *     isFavorite: bool,
  *     lastActivity: int,
  *     lastCommonReadMessage: int,
- *     lastMessage: TalkRoomLastMessage|array<empty>,
+ *     lastMessage?: TalkRoomLastMessage,
  *     lastPing: int,
  *     lastReadMessage: int,
  *     listable: int,
