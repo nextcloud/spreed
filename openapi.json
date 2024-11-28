@@ -1071,7 +1071,6 @@
                     "isFavorite",
                     "lastActivity",
                     "lastCommonReadMessage",
-                    "lastMessage",
                     "lastPing",
                     "lastReadMessage",
                     "listable",
@@ -1194,15 +1193,7 @@
                         "format": "int64"
                     },
                     "lastMessage": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/components/schemas/RoomLastMessage"
-                            },
-                            {
-                                "type": "array",
-                                "maxItems": 0
-                            }
-                        ]
+                        "$ref": "#/components/schemas/RoomLastMessage"
                     },
                     "lastPing": {
                         "type": "integer",
