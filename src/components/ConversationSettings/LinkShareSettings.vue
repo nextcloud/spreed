@@ -23,7 +23,7 @@
 
 			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
 				:checked="isPasswordProtectionChecked"
-				:disabled="isSaving"
+				:disabled="isSaving || forcePasswordProtection"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
 				@update:checked="togglePassword">
@@ -86,7 +86,6 @@ import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -94,6 +93,8 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 export default {
@@ -148,6 +149,10 @@ export default {
 		isPasswordProtectionChecked() {
 			return this.conversation.hasPassword || this.showPasswordField
 		},
+
+		forcePasswordProtection() {
+			return getTalkConfig(this.token, 'conversations', 'force-passwords')
+		},
 	},
 
 	methods: {
@@ -164,12 +169,22 @@ export default {
 		async toggleGuests() {
 			const allowGuests = this.conversation.type !== CONVERSATION.TYPE.PUBLIC
 			this.isSaving = true
-			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests })
+			if (this.forcePasswordProtection && allowGuests) {
+				await this.togglePassword(allowGuests)
+				await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests, password: this.password })
+			} else {
+				await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests })
+			}
+			if (!allowGuests) {
+				await this.togglePassword(false)
+			}
 			this.isSaving = false
 		},
 
 		async togglePassword(checked) {
 			if (checked) {
+				// Generate a random password
+				this.password = await generatePassword()
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {

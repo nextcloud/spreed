@@ -500,7 +500,7 @@ const actions = {
 		}
 	},
 
-	async toggleGuests({ commit, getters }, { token, allowGuests }) {
+	async toggleGuests({ commit, getters }, { token, allowGuests, password = '' }) {
 		if (!getters.conversations[token]) {
 			return
 		}
@@ -508,7 +508,7 @@ const actions = {
 		try {
 			const conversation = Object.assign({}, getters.conversation(token))
 			if (allowGuests) {
-				await makeConversationPublic(token)
+				await makeConversationPublic(token, password)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
 				showSuccess(t('spreed', 'You allowed guests'))
 			} else {

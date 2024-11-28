@@ -6,6 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import { hasTalkFeature } from './CapabilitiesManager.ts'
 import { ATTENDEE, CONVERSATION } from '../constants.js'
 
 /**
@@ -224,9 +225,13 @@ const setNotificationCalls = async function(token, level) {
  * Make the conversation public
  *
  * @param {string} token The token of the conversation to be removed from favorites
+ * @param {string} password The password to set for the conversation (optional, only if force password is enabled)
  */
-const makeConversationPublic = async function(token) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
+const makeConversationPublic = async function(token, password) {
+	const data = (hasTalkFeature(token, 'conversation-creation-password') && password)
+		? { password }
+		: undefined
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }), data)
 }
 
 /**

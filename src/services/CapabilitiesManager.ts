@@ -19,7 +19,7 @@ type TokenMap = Record<string, string|undefined|null>
 
 let remoteTokenMap: TokenMap = generateTokenMap()
 
-const localCapabilities: Capabilities = _getCapabilities() as Capabilities
+export const localCapabilities: Capabilities = _getCapabilities() as Capabilities
 const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
 
 /**

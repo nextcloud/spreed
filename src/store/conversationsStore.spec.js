@@ -648,7 +648,7 @@ describe('conversationsStore', () => {
 				allowGuests: true,
 			})
 
-			expect(makeConversationPublic).toHaveBeenCalledWith(testToken)
+			expect(makeConversationPublic).toHaveBeenCalledWith(testToken, undefined)
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.type).toEqual(CONVERSATION.TYPE.PUBLIC)

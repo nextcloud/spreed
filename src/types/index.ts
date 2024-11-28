@@ -19,11 +19,27 @@ type ApiResponseUnwrapped<T> = Promise<{
 	}
 }>
 
+type SpreedCapabilities = components['schemas']['Capabilities']
+
+// From https://github.com/nextcloud/password_policy/blob/master/lib/Capabilities.php
+type PasswordPolicyCapabilities = {
+	minLength: number,
+	enforceNonCommonPassword: boolean,
+	enforceNumericCharacters: boolean,
+	enforceSpecialCharacters: boolean,
+	enforceUpperLowerCase: boolean,
+	api: {
+		generate: string,
+		validate: string,
+	},
+}
+
 // Capabilities
 export type Capabilities = {
-	[key: string]: Record<string, unknown>,
-	spreed: components['schemas']['Capabilities'],
-}
+		spreed: SpreedCapabilities,
+		password_policy?: PasswordPolicyCapabilities,
+	}
+
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 
 // Notifications
