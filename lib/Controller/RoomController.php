@@ -2432,7 +2432,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * Content format is comma separated values:
 	 * - Header line is required and must match `"email","name"` or `"email"`
-	 * - one entry per line
+	 * - One entry per line (e.g. `"John Doe","john@example.tld"`)
 	 *
 	 * Required capability: `email-csv-import`
 	 *
@@ -2461,7 +2461,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$data = $this->guestManager->importEmails($this->room, $file, $testRun);
+			$data = $this->guestManager->importEmails($this->room, $file['tmp_name'], $testRun);
 			return new DataResponse($data);
 		} catch (GuestImportException $e) {
 			return new DataResponse($e->getData(), Http::STATUS_BAD_REQUEST);

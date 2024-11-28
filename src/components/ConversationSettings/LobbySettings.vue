@@ -9,14 +9,12 @@
 			<NcNoteCard v-if="hasCall && !hasLobbyEnabled"
 				type="warning"
 				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
-			<div>
-				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
-					type="switch"
-					:disabled="isLobbyStateLoading"
-					@update:checked="toggleLobby">
-					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
-				</NcCheckboxRadioSwitch>
-			</div>
+			<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+				type="switch"
+				:disabled="isLobbyStateLoading"
+				@update:checked="toggleLobby">
+				{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasLobbyEnabled" class="app-settings-subsection">
 			<form :disabled="lobbyTimerFieldDisabled"
@@ -43,18 +41,43 @@
 				</div>
 			</form>
 		</div>
+		<div v-if="supportImportEmails" class="import-email-participants">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Import email participants') }}
+			</h4>
+			<div class="app-settings-section__hint">
+				{{ t('spreed', 'You can import a list of email participants from a CSV file.') }}
+			</div>
+			<NcButton @click="isImportEmailsDialogOpen = true">
+				<template #icon>
+					<IconFileUpload :size="20" />
+				</template>
+				{{ t('spreed', 'Import e-mail participants') }}
+			</NcButton>
+
+			<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
+				:token="token"
+				container=".import-email-participants"
+				@close="isImportEmailsDialogOpen = false" />
+		</div>
 	</div>
 </template>
 
 <script>
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
+import ImportEmailsDialog from '../ImportEmailsDialog.vue'
+
 import { WEBINAR } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { futureRelativeTime } from '../../utils/formattedTime.ts'
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -63,6 +86,9 @@ export default {
 	name: 'LobbySettings',
 
 	components: {
+		IconFileUpload,
+		ImportEmailsDialog,
+		NcButton,
 		NcCheckboxRadioSwitch,
 		NcDateTimePicker,
 		NcNoteCard,
@@ -79,6 +105,7 @@ export default {
 		return {
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
+			isImportEmailsDialogOpen: false,
 		}
 	},
 
@@ -97,6 +124,10 @@ export default {
 
 		lobbyTimerFieldDisabled() {
 			return this.isLobbyStateLoading || this.isLobbyTimerLoading
+		},
+
+		supportImportEmails() {
+			return hasTalkFeature(this.token, 'email-csv-import')
 		},
 
 		defaultLobbyTimer() {
@@ -202,7 +233,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .lobby_timer {
 	&--relative {
 		color: var(--color-text-maxcontrast);

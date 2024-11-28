@@ -84,7 +84,7 @@ class GuestManager {
 	 * @return array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}
 	 * @throws GuestImportException
 	 */
-	public function importEmails(Room $room, $file, bool $testRun): array {
+	public function importEmails(Room $room, string $filePath, bool $testRun): array {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF
@@ -93,43 +93,55 @@ class GuestManager {
 			throw new GuestImportException(GuestImportException::REASON_ROOM);
 		}
 
-		$content = fopen($file['tmp_name'], 'rb');
+		$content = fopen($filePath, 'rb');
 		$details = fgetcsv($content, escape: '');
-		if (!isset($details[0]) || strtolower($details[0]) !== 'email') {
+
+		$emailKey = $nameKey = null;
+		foreach ($details as $key => $header) {
+			if (strtolower($header) === 'email') {
+				$emailKey = $key;
+			} elseif (strtolower($header) === 'name') {
+				$nameKey = $key;
+			}
+		}
+
+		if ($emailKey === null) {
 			throw new GuestImportException(
 				GuestImportException::REASON_HEADER_EMAIL,
 				$this->l->t('Missing email field in header line'),
 			);
 		}
-		if (isset($details[1]) && strtolower($details[1]) !== 'name') {
-			throw new GuestImportException(
-				GuestImportException::REASON_HEADER_NAME,
-				$this->l->t('Missing name field in header line'),
-			);
+
+		if ($nameKey === null) {
+			$this->logger->debug('No name field in header line, skipping name import');
 		}
 
 		$participants = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_EMAILS);
 		$alreadyInvitedEmails = array_flip(array_map(static fn (Participant $participant): string => $participant->getAttendee()->getInvitedCloudId(), $participants));
 
-		$line = $duplicates = 0;
+		$line = 1;
+		$duplicates = 0;
 		$emailsToAdd = $invalidLines = [];
 		while ($details = fgetcsv($content, escape: '')) {
 			$line++;
-			if (isset($alreadyInvitedEmails[$details[0]])) {
-				$this->logger->debug('Skipping import of ' . $details[0] . ' (line: ' . $line . ') as they are already invited');
+			if (isset($alreadyInvitedEmails[$details[$emailKey]])) {
+				$this->logger->debug('Skipping import of ' . $details[$emailKey] . ' (line: ' . $line . ') as they are already invited');
 				$duplicates++;
 				continue;
 			}
 
-			if (count($details) > 2) {
-				$this->logger->debug('Invalid entry with too many fields on line: ' . $line);
+			if (!isset($details[$emailKey])) {
+				$this->logger->debug('Invalid entry without email fields on line: ' . $line);
 				$invalidLines[] = $line;
 				continue;
 			}
 
-			$email = strtolower(trim($details[0]));
-			if (count($details) === 2) {
-				$name = trim($details[1]);
+			$email = strtolower(trim($details[$emailKey]));
+			if ($nameKey !== null && isset($details[$nameKey])) {
+				$name = trim($details[$nameKey]);
+				if ($name === '' || strcasecmp($name, $email) === 0) {
+					$name = null;
+				}
 			} else {
 				$name = null;
 			}
@@ -138,10 +150,6 @@ class GuestManager {
 				$this->logger->debug('Invalid email "' . $email . '" on line: ' . $line);
 				$invalidLines[] = $line;
 				continue;
-			}
-
-			if ($name !== null && strcasecmp($name, $email) === 0) {
-				$name = null;
 			}
 
 			$actorId = hash('sha256', $email);
