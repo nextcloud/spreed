@@ -157,7 +157,7 @@ class CallController extends AEnvironmentAwareController {
 			'email',
 			'type',
 			'identifier',
-		]);
+		], escape: '');
 
 		foreach ($participants as $participant) {
 			$email = '';
@@ -171,7 +171,7 @@ class CallController extends AEnvironmentAwareController {
 				$email,
 				$participant->getAttendee()->getActorType(),
 				$participant->getAttendee()->getActorId(),
-			]);
+			], escape: '');
 		}
 
 		fseek($output, 0);

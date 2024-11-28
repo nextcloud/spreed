@@ -95,17 +95,25 @@ class GuestManager {
 
 		$content = fopen($file['tmp_name'], 'rb');
 		$details = fgetcsv($content, escape: '');
-		if (!isset($details[0]) || strtolower($details[0]) !== 'email') {
+
+		$emailKey = $nameKey = null;
+		foreach ($details as $key => $header) {
+			if (strtolower($header) === 'email') {
+				$emailKey = $key;
+			} elseif (strtolower($header) === 'name') {
+				$nameKey = $key;
+			}
+		}
+
+		if ($emailKey === null) {
 			throw new GuestImportException(
 				GuestImportException::REASON_HEADER_EMAIL,
 				$this->l->t('Missing email field in header line'),
 			);
 		}
-		if (isset($details[1]) && strtolower($details[1]) !== 'name') {
-			throw new GuestImportException(
-				GuestImportException::REASON_HEADER_NAME,
-				$this->l->t('Missing name field in header line'),
-			);
+
+		if ($nameKey === null) {
+			$this->logger->debug('No name field in header line, skipping name import');
 		}
 
 		$participants = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_EMAILS);
@@ -115,21 +123,24 @@ class GuestManager {
 		$emailsToAdd = $invalidLines = [];
 		while ($details = fgetcsv($content, escape: '')) {
 			$line++;
-			if (isset($alreadyInvitedEmails[$details[0]])) {
-				$this->logger->debug('Skipping import of ' . $details[0] . ' (line: ' . $line . ') as they are already invited');
+			if (isset($alreadyInvitedEmails[$details[$emailKey]])) {
+				$this->logger->debug('Skipping import of ' . $details[$emailKey] . ' (line: ' . $line . ') as they are already invited');
 				$duplicates++;
 				continue;
 			}
 
-			if (count($details) > 2) {
-				$this->logger->debug('Invalid entry with too many fields on line: ' . $line);
+			if (!isset($details[$emailKey])) {
+				$this->logger->debug('Invalid entry without email fields on line: ' . $line);
 				$invalidLines[] = $line;
 				continue;
 			}
 
-			$email = strtolower(trim($details[0]));
-			if (count($details) === 2) {
-				$name = trim($details[1]);
+			$email = strtolower(trim($details[$emailKey]));
+			if ($nameKey !== null && isset($details[$nameKey])) {
+				$name = trim($details[$nameKey]);
+				if ($name === '' || strcasecmp($name, $email) === 0) {
+					$name = null;
+				}
 			} else {
 				$name = null;
 			}
@@ -138,10 +149,6 @@ class GuestManager {
 				$this->logger->debug('Invalid email "' . $email . '" on line: ' . $line);
 				$invalidLines[] = $line;
 				continue;
-			}
-
-			if ($name !== null && strcasecmp($name, $email) === 0) {
-				$name = null;
 			}
 
 			$actorId = hash('sha256', $email);
