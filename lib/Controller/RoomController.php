@@ -2485,7 +2485,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$data = $this->guestManager->importEmails($this->room, $file, $testRun);
+			$data = $this->guestManager->importEmails($this->room, $file['tmp_name'], $testRun);
 			return new DataResponse($data);
 		} catch (GuestImportException $e) {
 			return new DataResponse($e->getData(), Http::STATUS_BAD_REQUEST);
