@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.0-rc.3 – 2024-11-28
+### Added
+- feat(conversations): Add direct option to change notification settings to the conversation list again
+  [#13870](https://github.com/nextcloud/spreed/issues/13870)
+- feat(meetings): Allow importing email lists as attendees
+  [#13882](https://github.com/nextcloud/spreed/issues/13882)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(conversation): Fix password validation when setting a password
+  [#13890](https://github.com/nextcloud/spreed/issues/13890)
+- fix(calls): Don't disable microphone and camera when it was enabled in the device check
+  [#13893](https://github.com/nextcloud/spreed/issues/13893)
+- fix(chat): Hide "Generate summary" in federated conversations for now
+  [#13881](https://github.com/nextcloud/spreed/issues/13881)
+- fix(chat): Fix mention suggestions referring to participants of the previous conversation
+  [#13870](https://github.com/nextcloud/spreed/issues/13870)
+- fix(chat): Links in markdown todo-lists are only clickable with edit permissions
+  [#13865](https://github.com/nextcloud/spreed/issues/13865)
+
 ## 20.1.0-rc.2 – 2024-11-21
 ### Added
 - feat(chat): Allow to summarize the chat history when there are many unread messages
