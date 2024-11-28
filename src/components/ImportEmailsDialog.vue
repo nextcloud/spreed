@@ -19,7 +19,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { importEmails } from '../services/participantsService.js'
 
 const loading = ref(false)
-const listImport = ref(null)
+const listImport = ref<HTMLInputElement | null>(null)
 
 const props = defineProps<{
 	token: string,
@@ -29,18 +29,28 @@ const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
 
-const importedFile = ref<File>(null)
-const uploadResult = ref(null)
+const importedFile = ref<File | null>(null)
+const uploadResult = ref<{ error?: boolean, invalid?: number, message?: string, duplicates?: number, invites?: number } | null>(null)
 const uploadResultCaption = computed(() => {
 	return uploadResult.value?.error
 		? { class: 'import-list__caption--error', label: t('spreed', 'Error while verifying uploaded file') }
 		: { class: 'import-list__caption--success', label: t('spreed', 'Uploaded file is verified') }
 })
 
+const importListDescription = t('spreed', 'Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>"email","name"</samp> or just <samp>"email"</samp><br/>- One entry per line (e.g. <samp>"John Doe","john@example.tld"</samp>)',
+	undefined,
+	undefined, {
+		escape: true,
+		sanitize: true
+	})
+
 /**
  * Call native input[type='file'] to import a file
  */
 function triggerImport() {
+	if (!listImport.value) {
+		return
+	}
 	listImport.value.value = ''
 	listImport.value.click()
 }
@@ -51,8 +61,11 @@ function triggerImport() {
  */
 function importList(event: Event) {
 	const file = (event.target as HTMLInputElement).files?.[0]
-	importedFile.value = file ?? null
+	if (!file) {
+		return
+	}
 
+	importedFile.value = file
 	testList(importedFile.value)
 }
 
@@ -77,7 +90,7 @@ async function testList(file: File) {
  * Verify imported file and add participants
  * @param file file to upload
  */
-async function submitList(file: File) {
+async function submitList(file: File | null) {
 	if (!file) {
 		return
 	}
@@ -95,8 +108,8 @@ async function submitList(file: File) {
 
 <template>
 	<NcDialog class="import-list"
-		:name="t('spreed', 'Import e-mail participants')"
-		size="small"
+		:name="t('spreed', 'Import email participants')"
+		size="normal"
 		close-on-click-outside
 		:container="container"
 		@update:open="emit('close')">
@@ -106,7 +119,8 @@ async function submitList(file: File) {
 			type="file"
 			class="hidden-visually"
 			@change="importList">
-
+		<!-- eslint-disable-next-line vue/no-v-html -->
+		<div class="import-list__hint" v-html="importListDescription" />
 		<div class="import-list__wrapper">
 			<NcTextField class="import-list__input"
 				:model-value="importedFile?.name ?? ''"
@@ -117,7 +131,7 @@ async function submitList(file: File) {
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<IconFileUpload v-else :size="20" />
 				</template>
-				{{ t('spreed', 'Browse …') }}
+				{{ t('spreed', 'Browse') }}
 			</NcButton>
 		</div>
 
@@ -136,13 +150,13 @@ async function submitList(file: File) {
 					{{ uploadResultCaption.label }}
 				</p>
 				<p v-if="uploadResult?.invalid" class="import-list__description">
-					{{ n('spreed', '%n invalid e-mail', '%n invalid e-mails', uploadResult.invalid) }}
+					{{ n('spreed', '%n invalid email', '%n invalid emails', uploadResult.invalid) }}
 				</p>
 				<p v-if="uploadResult?.message" class="import-list__description">
 					{{ uploadResult.message }}
 				</p>
 				<p v-if="uploadResult?.duplicates" class="import-list__description">
-					{{ n('spreed', '%n e-mail is already imported or a duplicate', '%n e-mails are already imported or duplicates', uploadResult.duplicates) }}
+					{{ n('spreed', '%n email is already imported or a duplicate', '%n emails are already imported or duplicates', uploadResult.duplicates) }}
 				</p>
 				<p v-if="uploadResult?.invites" class="import-list__description import-list__description--separated">
 					{{ n('spreed', '%n invitation can be sent', '%n invitations can be sent', uploadResult.invites) }}
@@ -165,7 +179,7 @@ async function submitList(file: File) {
 	&__wrapper {
 		display: flex;
 		gap: var(--default-grid-baseline);
-    margin-bottom: calc(var(--default-grid-baseline) * 3);
+		margin-bottom: calc(var(--default-grid-baseline) * 3);
 	}
 
 	&__input {
@@ -201,10 +215,14 @@ async function submitList(file: File) {
   &__description {
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     &--separated {
       border-top: 1px solid var(--color-border-dark);
     }
+  }
+
+  &__hint {
+	color: var(--color-text-maxcontrast);
+	padding: calc(var(--default-grid-baseline) * 2);
   }
 }
 </style>

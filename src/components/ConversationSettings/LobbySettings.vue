@@ -9,26 +9,12 @@
 			<NcNoteCard v-if="hasCall && !hasLobbyEnabled"
 				type="warning"
 				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
-			<div class="lobby-general">
-				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
-					type="switch"
-					:disabled="isLobbyStateLoading"
-					@update:checked="toggleLobby">
-					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
-				</NcCheckboxRadioSwitch>
-
-				<NcButton v-if="supportImportEmails" @click="isImportEmailsDialogOpen = true">
-					<template #icon>
-						<IconFileUpload :size="20" />
-					</template>
-					{{ t('spreed', 'Import e-mail participants') }}
-				</NcButton>
-
-				<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
-					:token="token"
-					container=".lobby-general"
-					@close="isImportEmailsDialogOpen = false" />
-			</div>
+			<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+				type="switch"
+				:disabled="isLobbyStateLoading"
+				@update:checked="toggleLobby">
+				{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasLobbyEnabled" class="app-settings-subsection">
 			<form :disabled="lobbyTimerFieldDisabled"
@@ -54,6 +40,25 @@
 					{{ getRelativeTime }}
 				</div>
 			</form>
+		</div>
+		<div v-if="supportImportEmails" class="import-email-participants">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Import email participants') }}
+			</h4>
+			<div class="app-settings-section__hint">
+				{{ t('spreed', 'You can import a list of email participants from a CSV file.') }}
+			</div>
+			<NcButton @click="isImportEmailsDialogOpen = true">
+				<template #icon>
+					<IconFileUpload :size="20" />
+				</template>
+				{{ t('spreed', 'Import e-mail participants') }}
+			</NcButton>
+
+			<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
+				:token="token"
+				container=".import-email-participants"
+				@close="isImportEmailsDialogOpen = false" />
 		</div>
 	</div>
 </template>
@@ -228,12 +233,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.lobby-general {
-	display: flex;
-	flex-direction: column;
-	gap: var(--default-grid-baseline);
-}
-
 .lobby_timer {
 	&--relative {
 		color: var(--color-text-maxcontrast);
