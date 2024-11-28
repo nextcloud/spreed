@@ -135,6 +135,11 @@ class Manager {
 			. $this->l->t('- Moderators can now ban accounts and guests to prevent them from rejoining a conversation') . "\n"
 			. $this->l->t('- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations') . "\n"
 			. $this->l->t('- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)'),
+			$this->l->t('## New in Talk %s', ['20.1']) . "\n"
+			. $this->l->t('- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux: %s', ['https://nextcloud.com/talk-desktop-install']) . "\n"
+			. $this->l->t('- Summarize call recordings and unread messages in chats with the Nextcloud Assistant') . "\n"
+			. $this->l->t('- Improved meetings with recognizing guests invited via their email address, import of participant lists, drafts for polls and downloading call participant lists') . "\n"
+			. $this->l->t('- Archive conversations to stay focused'),
 		];
 	}
 }
