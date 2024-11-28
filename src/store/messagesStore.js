@@ -151,7 +151,7 @@ const getters = {
 			return false
 		}
 
-		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
+		return getters.getLastKnownMessageId(token) < conversation.lastMessage?.id
 	},
 
 	isMessagesListPopulated: (state) => (token) => {
@@ -552,7 +552,7 @@ const actions = {
 
 			if (message.systemMessage === 'message_edited' || message.systemMessage === 'message_deleted') {
 				// update conversation lastMessage, if it was edited or deleted
-				if (message.parent.id === context.getters.conversation(token).lastMessage.id) {
+				if (message.parent.id === context.getters.conversation(token).lastMessage?.id) {
 					context.dispatch('updateConversationLastMessage', { token, lastMessage: message.parent })
 				}
 				// Check existing messages for having a deleted / edited message as parent, and update them
@@ -1118,7 +1118,7 @@ const actions = {
 
 			// Overwrite the conversation.hasCall property so people can join
 			// after seeing the message in the chat.
-			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
+			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
 				if (['call_started', 'call_ended', 'call_ended_everyone', 'call_missed'].includes(message.systemMessage)) {
 					context.dispatch('overwriteHasCallByChat', {
 						token,
@@ -1150,7 +1150,7 @@ const actions = {
 			id: parseInt(response.headers['x-chat-last-given'], 10),
 		})
 
-		if (conversation && conversation.lastMessage && lastMessage.id > conversation.lastMessage.id) {
+		if (conversation?.lastMessage && lastMessage.id > conversation.lastMessage.id) {
 			context.dispatch('updateConversationLastMessage', {
 				token,
 				lastMessage,
@@ -1237,7 +1237,7 @@ const actions = {
 
 			// update lastMessage and lastReadMessage
 			// do it conditionally because there could have been more messages appearing concurrently
-			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
+			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
 				context.dispatch('updateConversationLastMessage', {
 					token,
 					lastMessage: message,

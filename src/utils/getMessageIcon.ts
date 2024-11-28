@@ -22,10 +22,10 @@ const iconSvgTemplate = (path: string) => {
 }
 
 export const getMessageIcon = (lastMessage: Conversation['lastMessage']): string => {
-	if (Array.isArray(lastMessage)) {
+	if (!lastMessage || Array.isArray(lastMessage)) {
 		return ''
 	}
-	const file = lastMessage?.messageParameters?.file
+	const file = lastMessage.messageParameters?.file
 	if (file) {
 		if (file.mimetype?.startsWith('video')) {
 			return iconSvgTemplate(mdiMovie) // Media - Videos

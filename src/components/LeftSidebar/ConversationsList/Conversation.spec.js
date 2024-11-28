@@ -137,7 +137,7 @@ describe('Conversation.vue', () => {
 		})
 
 		test('displays nothing when there is no last chat message', () => {
-			item.lastMessage = {}
+			delete item.lastMessage
 			testConversationLabel(item, 'No messages')
 		})
 

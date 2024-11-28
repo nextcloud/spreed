@@ -317,6 +317,13 @@ const actions = {
 	updateConversationIfHasChanged(context, conversation) {
 		const oldConversation = context.state.conversations[conversation.token]
 
+		// Update conversation if the number of attributes differ
+		// (e.g. lastMessage was added or removed, because we don't keep lastMessage as an empty object)
+		if (Object.keys(oldConversation).length !== Object.keys(conversation).length) {
+			context.commit('updateConversation', conversation)
+			return true
+		}
+
 		// Update 1-1 conversation, if its status was changed
 		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 			&& (oldConversation.status !== conversation.status
@@ -336,7 +343,7 @@ const actions = {
 			return true
 		}
 
-		// Check if any property were changed (no properties except status-related supposed to be added or deleted)
+		// Check if any property were changed (no properties except status-related and lastMessage supposed to be added or deleted)
 		for (const key of Object.keys(conversation)) {
 			// "lastMessage" is the only property with non-primitive (object) value and cannot be compared by ===
 			// If "lastMessage" was actually changed, it is already checked by "lastActivity"
@@ -760,8 +767,8 @@ const actions = {
 		}
 
 		const conversation = Object.assign({}, getters.conversations[token])
-		if (conversation.lastMessage.id === parseInt(messageId, 10)
-			|| conversation.lastMessage.timestamp >= Date.parse(notification.datetime) / 1000) {
+		if (conversation.lastMessage?.id === parseInt(messageId, 10)
+			|| conversation.lastMessage?.timestamp >= Date.parse(notification.datetime) / 1000) {
 			// Already updated from other source, skipping
 			return
 		}
