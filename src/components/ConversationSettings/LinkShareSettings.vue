@@ -78,15 +78,15 @@
 			<NcButton ref="copyLinkButton"
 				@click="handleCopyLink">
 				<template #icon>
-					<ClipboardTextOutline />
+					<IconClipboardTextOutline />
 				</template>
-				{{ t('spreed', 'Copy conversation link') }}
+				{{ t('spreed', 'Copy link') }}
 			</NcButton>
 			<NcButton v-if="isSharedPublicly && canModerate"
 				:disabled="isSendingInvitations"
 				@click="handleResendInvitations">
 				<template #icon>
-					<Email />
+					<IconEmail />
 				</template>
 				{{ t('spreed', 'Resend invitations') }}
 			</NcButton>
@@ -96,10 +96,10 @@
 </template>
 
 <script>
-import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
+import IconClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
-import Email from 'vue-material-design-icons/Email.vue'
+import IconEmail from 'vue-material-design-icons/Email.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -109,7 +109,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
@@ -121,10 +121,10 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcPasswordField,
 		// Icons
-		ClipboardTextOutline,
-		Email,
+		IconClipboardTextOutline,
 		IconContentCopy,
 		IconContentSaveOutline,
+		IconEmail,
 	},
 
 	props: {
@@ -169,7 +169,11 @@ export default {
 		},
 
 		forcePasswordProtection() {
-			return getTalkConfig(this.token, 'conversations', 'force-passwords')
+			return this.supportForcePasswordProtection && getTalkConfig(this.token, 'conversations', 'force-passwords')
+		},
+
+		supportForcePasswordProtection() {
+			return hasTalkFeature(this.token, 'conversation-creation-password')
 		},
 	},
 
