@@ -43,7 +43,7 @@ export function useConversationInfo({
 	})
 
 	const hasLastMessage = computed(() => {
-		return !!Object.keys(Object(item.value?.lastMessage)).length
+		return !!item.value?.lastMessage && !!Object.keys(Object(item.value?.lastMessage)).length
 	})
 
 	/**

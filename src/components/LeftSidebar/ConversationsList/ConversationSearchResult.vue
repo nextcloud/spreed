@@ -54,7 +54,6 @@ export default {
 					displayName: '',
 					isFavorite: false,
 					notificationLevel: 0,
-					lastMessage: {},
 				}
 			},
 		},

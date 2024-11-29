@@ -284,7 +284,6 @@ export default {
 					type: 0,
 					displayName: '',
 					isFavorite: false,
-					lastMessage: {},
 					notificationLevel: PARTICIPANT.NOTIFY.DEFAULT,
 					notificationCalls: PARTICIPANT.NOTIFY_CALLS.ON,
 					canDeleteConversation: false,

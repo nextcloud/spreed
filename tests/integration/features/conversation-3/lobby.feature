@@ -250,16 +250,16 @@ Feature: conversation/lobby
       | room | the description | 3    | 2               | {actor} set the description |
     And user "participant3" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 3               |             |
+      | room | the description | 3    | 3               | UNSET       |
     And user "participant4" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 5               |             |
+      | room | the description | 3    | 5               | UNSET       |
     And user "guest" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage                 |
       | room | the description | 3    | 6               | {actor} set the description |
     And user "guest2" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 4               |             |
+      | room | the description | 3    | 4               | UNSET       |
 
 
   # Not all the values are checked in the test, only the most relevant ones

@@ -1734,7 +1734,7 @@ export type components = {
             lastActivity: number;
             /** Format: int64 */
             lastCommonReadMessage: number;
-            lastMessage: components["schemas"]["RoomLastMessage"] | unknown[];
+            lastMessage?: components["schemas"]["RoomLastMessage"];
             /** Format: int64 */
             lastPing: number;
             /** Format: int64 */

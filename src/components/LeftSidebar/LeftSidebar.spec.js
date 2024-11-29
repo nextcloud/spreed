@@ -225,7 +225,6 @@ describe('LeftSidebar.vue', () => {
 				isFavorite: false,
 				name: 'one',
 				displayName: 'the searched one by display name',
-				lastMessage: {},
 			}, {
 				id: 200,
 				token: 't200',
@@ -233,7 +232,6 @@ describe('LeftSidebar.vue', () => {
 				isFavorite: false,
 				name: 'searched by name',
 				displayName: 'another one',
-				lastMessage: {},
 			}, {
 				id: 300,
 				token: 't300',
@@ -241,20 +239,17 @@ describe('LeftSidebar.vue', () => {
 				isFavorite: true,
 				name: 'excluded',
 				displayName: 'excluded from results',
-				lastMessage: {},
 			}]
 
 			listedResults = [{
 				id: 1000,
 				name: 'listed one searched',
 				displayName: 'listed one searched',
-				lastMessage: {},
 				token: 'listed-token-1',
 			}, {
 				id: 1001,
 				name: 'listed two searched',
 				displayName: 'listed two searched',
-				lastMessage: {},
 				token: 'listed-token-2',
 			}]
 			usersResults = [{
