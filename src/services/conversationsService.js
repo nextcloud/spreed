@@ -110,13 +110,13 @@ const createPrivateConversation = async function(conversationName, objectType) {
  * Create a new private conversation.
  *
  * @param {string} conversationName The name for the new conversation
- * @param {string} [objectType] The conversation object type
+ * @param {string} [password] The conversation password when creating a public conversation
  */
-const createPublicConversation = async function(conversationName, objectType) {
+const createPublicConversation = async function(conversationName, password) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
 		roomType: CONVERSATION.TYPE.PUBLIC,
 		roomName: conversationName,
-		objectType,
+		password,
 	})
 }
 
