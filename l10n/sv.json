@@ -70,7 +70,7 @@
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderatorer kan nu blockera konton och gäster för att förhindra att de återansluter till en konversation",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Kommande samtal från länkade kalenderhändelser och frånvarande ersättningar visas nu i konversationer",
     "- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- Samtal kan nu göras på ett federerat sätt med andra Talk-servrar (kräver High-performance backend)",
-    "- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux: %s" : "- Vi presenterar Nextcloud Talk skrivbordsklient för Windows, macOS och Linux: %s",
+    "- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux: %s" : "- Introducerar Nextcloud Talk skrivbordsklient för Windows, macOS och Linux: %s",
     "- Summarize call recordings and unread messages in chats with the Nextcloud Assistant" : "- Sammanfatta samtalsinspelningar och olästa meddelanden i chattar med Nextcloud Assistant",
     "- Improved meetings with recognizing guests invited via their email address, import of participant lists, drafts for polls and downloading call participant lists" : "- Förbättrade möten med att känna igen gäster som bjudits in via deras e-postadress, import av deltagarlistor, utkast till omröstningar och nedladdning av deltagarlistor för samtal",
     "- Archive conversations to stay focused" : "- Arkivera konversationer för att hålla fokus",
