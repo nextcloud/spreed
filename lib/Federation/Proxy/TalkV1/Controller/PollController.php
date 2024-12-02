@@ -62,7 +62,7 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Poll returned
@@ -78,7 +78,9 @@ class PollController {
 		);
 
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_FOUND) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			/** @var array{error?: string} $data */
+			$data = $this->proxy->getOCSData($proxy);
+			return new DataResponse(['error' => $data['error'] ?? 'poll'], Http::STATUS_NOT_FOUND);
 		}
 
 		/** @var TalkPoll $data */
@@ -89,7 +91,8 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param list<int> $optionIds
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Voted successfully
@@ -114,7 +117,9 @@ class PollController {
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], $statusCode);
+			/** @var array{error?: string} $data */
+			$data = $this->proxy->getOCSData($proxy);
+			return new DataResponse(['error' => $data['error'] ?? 'poll'], $statusCode);
 		}
 
 		/** @var TalkPoll $data */
@@ -166,7 +171,7 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Poll closed successfully
@@ -192,7 +197,9 @@ class PollController {
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 			}
-			return new DataResponse([], $statusCode);
+			/** @var array{error?: string} $data */
+			$data = $this->proxy->getOCSData($proxy);
+			return new DataResponse(['error' => $data['error'] ?? 'poll'], $statusCode);
 		}
 
 		/** @var TalkPoll $data */

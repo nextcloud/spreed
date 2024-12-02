@@ -213,9 +213,9 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkPoll = TalkPollDraft&array{
- *     details?: TalkPollVote[],
+ *     details?: list<TalkPollVote>,
  *     numVoters?: int<0, max>,
- *     votedSelf?: int[],
+ *     votedSelf?: list<int>,
  *     votes?: array<string, int>,
  * }
  *

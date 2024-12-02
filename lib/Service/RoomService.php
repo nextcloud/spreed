@@ -93,7 +93,7 @@ class RoomService {
 	 */
 	public function createOneToOneConversation(IUser $actor, IUser $targetUser): Room {
 		if ($actor->getUID() === $targetUser->getUID()) {
-			throw new InvalidArgumentException('invalid_invitee');
+			throw new InvalidArgumentException('invite');
 		}
 
 		try {

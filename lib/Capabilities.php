@@ -185,8 +185,8 @@ class Capabilities implements IPublicCapability {
 
 	/**
 	 * @return array{
-	 *      spreed: TalkCapabilities,
-	 * }|array<empty>
+	 *      spreed?: TalkCapabilities,
+	 * }
 	 */
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();

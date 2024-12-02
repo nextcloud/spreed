@@ -125,12 +125,12 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	talkHashStore.setTalkProxyHashDirty(token)
 
 	const response = await getRemoteCapabilities(token)
-	if (Array.isArray(response.data.ocs.data)) {
-		// unknown[] received from server, nothing to update with
+	if (!Object.keys(response.data.ocs.data).length) {
+		// data: {} received from server, nothing to update with
 		return
 	}
 
-	remoteCapabilities[remoteServer] = { spreed: response.data.ocs.data }
+	remoteCapabilities[remoteServer] = { spreed: (response.data.ocs.data as Capabilities['spreed']) }
 	remoteCapabilities[remoteServer].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 	patchTokenMap(joinRoomResponse.data.ocs.data)

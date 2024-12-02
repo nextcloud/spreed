@@ -139,7 +139,7 @@ describe('CapabilitiesManager', () => {
 				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}001` },
 				payload: { token, remoteServer },
 			})
-			const responseMock = generateOCSResponse({ payload: [] })
+			const responseMock = generateOCSResponse({ payload: {} })
 			getRemoteCapabilities.mockReturnValue(responseMock)
 			await setRemoteCapabilities(joinRoomResponseMock)
 			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).toBeTruthy()
