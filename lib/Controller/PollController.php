@@ -37,7 +37,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkPoll from ResponseDefinitions
  * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
-class PollController extends AEnvironmentAwareController {
+class PollController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,

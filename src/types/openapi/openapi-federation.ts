@@ -126,11 +126,11 @@ export type paths = {
         get?: never;
         put?: never;
         /**
-         * Join room on the host server using the session id of the federated user.
+         * Join room on the host server using the session id of the federated user
          * @description The session id can be null only for requests from Talk < 20.
          */
         post: operations["room-join-federated-room"];
-        /** Leave room on the host server using the session id of the federated user. */
+        /** Leave room on the host server using the session id of the federated user */
         delete: operations["room-leave-federated-room"];
         options?: never;
         head?: never;

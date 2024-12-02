@@ -27,7 +27,7 @@ use OCP\IRequest;
 /**
  * @psalm-import-type TalkReaction from ResponseDefinitions
  */
-class ReactionController extends AEnvironmentAwareController {
+class ReactionController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,

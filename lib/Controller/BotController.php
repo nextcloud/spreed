@@ -48,7 +48,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkBot from ResponseDefinitions
  * @psalm-import-type TalkBotWithDetails from ResponseDefinitions
  */
-class BotController extends AEnvironmentAwareController {
+class BotController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,

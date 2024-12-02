@@ -26,7 +26,7 @@ use OCP\IRequest;
 /**
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
-class BreakoutRoomController extends AEnvironmentAwareController {
+class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,

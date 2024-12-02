@@ -24,7 +24,7 @@ use OCP\IRequest;
  * @psalm-import-type TalkMatterbridgeProcessState from ResponseDefinitions
  * @psalm-import-type TalkMatterbridgeWithProcessState from ResponseDefinitions
  */
-class MatterbridgeController extends AEnvironmentAwareController {
+class MatterbridgeController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,

@@ -14,7 +14,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\OCSController;
 
-abstract class AEnvironmentAwareController extends OCSController {
+abstract class AEnvironmentAwareOCSController extends OCSController {
 	protected int $apiVersion = 1;
 	protected ?Room $room = null;
 	protected ?Participant $participant = null;

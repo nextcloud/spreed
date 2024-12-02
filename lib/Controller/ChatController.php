@@ -88,7 +88,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkRichObjectParameter from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
-class ChatController extends AEnvironmentAwareController {
+class ChatController extends AEnvironmentAwareOCSController {
 	/** @var string[] */
 	protected array $guestNames;
 

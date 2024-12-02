@@ -92,7 +92,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkParticipant from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
-class RoomController extends AEnvironmentAwareController {
+class RoomController extends AEnvironmentAwareOCSController {
 	protected array $commonReadMessages = [];
 
 	public function __construct(
@@ -1771,7 +1771,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Join room on the host server using the session id of the federated user.
+	 * Join room on the host server using the session id of the federated user
 	 *
 	 * The session id can be null only for requests from Talk < 20.
 	 *
@@ -2058,7 +2058,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Leave room on the host server using the session id of the federated user.
+	 * Leave room on the host server using the session id of the federated user
 	 *
 	 * @param string $token Token of the room
 	 * @param string $sessionId Federated session id to leave with
