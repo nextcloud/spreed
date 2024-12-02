@@ -214,7 +214,19 @@ Feature: chat/delete
       | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
       | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    Then user "participant1" is participant of room "room1" (v4)
+      | unreadMessages | lastReadMessage |
+      | 1              | Message 1       |
+    Then user "participant2" is participant of room "room1" (v4)
+      | unreadMessages | lastReadMessage |
+      | 0              | Message 2       |
     And user "participant1" deletes chat history for room "room1" with 200
+    Then user "participant1" is participant of room "room1" (v4)
+      | unreadMessages | lastReadMessage      |
+      | 1              | FIRST_MESSAGE_UNREAD |
+    Then user "participant2" is participant of room "room1" (v4)
+      | unreadMessages | lastReadMessage      |
+      | 1              | FIRST_MESSAGE_UNREAD |
     Then user "participant1" sees the following messages in room "room1" with 200
       | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
