@@ -11,9 +11,9 @@ import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getUpcomingEvents } from '../services/conversationsService.js'
+import { getUserAbsence } from '../services/coreService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
-import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
 
 /**
@@ -81,7 +81,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 	actions: {
 		/**
-		 * Fetch an absence status for user and save to store
+		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
 		 * @param {string} token The conversation token
 		 * @return {string} The input text
