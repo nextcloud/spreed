@@ -55,6 +55,9 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 	actions: NotificationAction[],
 }
 
+// Signaling
+export type SignalingSettings = components['schemas']['SignalingSettings']
+
 // Conversations
 export type Conversation = components['schemas']['Room']
 

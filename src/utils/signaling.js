@@ -124,6 +124,7 @@ Signaling.Base.prototype.setSettings = function(settings) {
 	}
 
 	this.settings = settings
+	this._trigger('settingsUpdated', [settings])
 
 	if (this._pendingUpdateSettingsPromise) {
 		this._pendingUpdateSettingsPromise.resolve()
@@ -364,6 +365,7 @@ function Internal(settings) {
 	}.bind(this), 500)
 
 	this._joinCallAgainOnceDisconnected = false
+	Signaling.Base.prototype._trigger.call(this, 'settingsUpdated', [settings])
 }
 
 Internal.prototype = new Signaling.Base()
@@ -611,6 +613,7 @@ function Standalone(settings, urls) {
 	this.joinedUsers = {}
 	this.rooms = []
 	this.connect()
+	Signaling.Base.prototype._trigger.call(this, 'settingsUpdated', [settings])
 }
 
 Standalone.prototype = new Signaling.Base()
