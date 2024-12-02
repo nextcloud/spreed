@@ -12,6 +12,7 @@ use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\CachePrefix;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
@@ -1407,7 +1408,7 @@ class ParticipantService {
 	public function resetChatDetails(Room $room): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_attendees')
-			->set('last_read_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_read_message', $update->createNamedParameter(ChatManager::UNREAD_FIRST_MESSAGE, IQueryBuilder::PARAM_INT))
 			->set('last_mention_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('last_mention_direct', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('last_attendee_activity', $update->createNamedParameter($this->timeFactory->getTime(), IQueryBuilder::PARAM_INT))
