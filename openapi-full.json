@@ -4650,7 +4650,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/federation": {
             "post": {
                 "operationId": "call-join-federated-call",
-                "summary": "Join call on the host server using the session id of the federated user.",
+                "summary": "Join call on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],
@@ -4836,7 +4836,7 @@
             },
             "put": {
                 "operationId": "call-update-federated-call-flags",
-                "summary": "Update the in-call flags on the host server using the session id of the federated user.",
+                "summary": "Update the in-call flags on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],
@@ -5004,7 +5004,7 @@
             },
             "delete": {
                 "operationId": "call-leave-federated-call",
-                "summary": "Leave a call on the host server using the session id of the federated user.",
+                "summary": "Leave a call on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],
@@ -19021,7 +19021,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
             "post": {
                 "operationId": "room-join-federated-room",
-                "summary": "Join room on the host server using the session id of the federated user.",
+                "summary": "Join room on the host server using the session id of the federated user",
                 "description": "The session id can be null only for requests from Talk < 20.",
                 "tags": [
                     "room"
@@ -19158,7 +19158,7 @@
             },
             "delete": {
                 "operationId": "room-leave-federated-room",
-                "summary": "Leave room on the host server using the session id of the federated user.",
+                "summary": "Leave room on the host server using the session id of the federated user",
                 "tags": [
                     "room"
                 ],

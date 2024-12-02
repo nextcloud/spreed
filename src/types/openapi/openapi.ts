@@ -289,11 +289,11 @@ export type paths = {
             cookie?: never;
         };
         get?: never;
-        /** Update the in-call flags on the host server using the session id of the federated user. */
+        /** Update the in-call flags on the host server using the session id of the federated user */
         put: operations["call-update-federated-call-flags"];
-        /** Join call on the host server using the session id of the federated user. */
+        /** Join call on the host server using the session id of the federated user */
         post: operations["call-join-federated-call"];
-        /** Leave a call on the host server using the session id of the federated user. */
+        /** Leave a call on the host server using the session id of the federated user */
         delete: operations["call-leave-federated-call"];
         options?: never;
         head?: never;

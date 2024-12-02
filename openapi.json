@@ -4537,7 +4537,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/federation": {
             "post": {
                 "operationId": "call-join-federated-call",
-                "summary": "Join call on the host server using the session id of the federated user.",
+                "summary": "Join call on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],
@@ -4723,7 +4723,7 @@
             },
             "put": {
                 "operationId": "call-update-federated-call-flags",
-                "summary": "Update the in-call flags on the host server using the session id of the federated user.",
+                "summary": "Update the in-call flags on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],
@@ -4891,7 +4891,7 @@
             },
             "delete": {
                 "operationId": "call-leave-federated-call",
-                "summary": "Leave a call on the host server using the session id of the federated user.",
+                "summary": "Leave a call on the host server using the session id of the federated user",
                 "tags": [
                     "call"
                 ],

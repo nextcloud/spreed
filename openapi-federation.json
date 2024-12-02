@@ -1641,7 +1641,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
             "post": {
                 "operationId": "room-join-federated-room",
-                "summary": "Join room on the host server using the session id of the federated user.",
+                "summary": "Join room on the host server using the session id of the federated user",
                 "description": "The session id can be null only for requests from Talk < 20.",
                 "tags": [
                     "room"
@@ -1778,7 +1778,7 @@
             },
             "delete": {
                 "operationId": "room-leave-federated-room",
-                "summary": "Leave room on the host server using the session id of the federated user.",
+                "summary": "Leave room on the host server using the session id of the federated user",
                 "tags": [
                     "room"
                 ],
