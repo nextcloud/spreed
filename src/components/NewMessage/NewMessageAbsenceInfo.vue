@@ -96,7 +96,10 @@ export default {
 		},
 
 		userAbsenceCaption() {
-			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName })
+			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName }, undefined, {
+				escape: false,
+				sanitize: false
+			})
 		},
 
 		userAbsenceMessage() {
