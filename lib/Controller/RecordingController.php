@@ -32,7 +32,7 @@ use OCP\Http\Client\IClientService;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
-class RecordingController extends AEnvironmentAwareController {
+class RecordingController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,

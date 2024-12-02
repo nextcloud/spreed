@@ -22,7 +22,7 @@ use OCP\IRequest;
 /**
  * @psalm-import-type TalkBan from ResponseDefinitions
  */
-class BanController extends AEnvironmentAwareController {
+class BanController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,

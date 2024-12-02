@@ -45,7 +45,7 @@ use OCP\IUserManager;
 /**
  * @psalm-import-type TalkCallPeer from ResponseDefinitions
  */
-class CallController extends AEnvironmentAwareController {
+class CallController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
@@ -282,7 +282,7 @@ class CallController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Join call on the host server using the session id of the federated user.
+	 * Join call on the host server using the session id of the federated user
 	 *
 	 * @param string $sessionId Federated session id to join with
 	 * @param int<0, 15>|null $flags In-Call flags
@@ -449,7 +449,7 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * Update the in-call flags on the host server using the session id of the
-	 * federated user.
+	 * federated user
 	 *
 	 * @param string $sessionId Federated session id to update the flags with
 	 * @param int<0, 15> $flags New flags
@@ -531,7 +531,7 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * Leave a call on the host server using the session id of the federated
-	 * user.
+	 * user
 	 *
 	 * @param string $sessionId Federated session id to leave with
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>

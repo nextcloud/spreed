@@ -37,7 +37,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
-class AvatarController extends AEnvironmentAwareController {
+class AvatarController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,

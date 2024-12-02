@@ -16,7 +16,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
-class GuestController extends AEnvironmentAwareController {
+class GuestController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
