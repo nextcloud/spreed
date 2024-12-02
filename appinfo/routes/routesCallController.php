@@ -15,6 +15,8 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\CallController::getPeersForCall() */
 		['name' => 'Call#getPeersForCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\CallNotificationController::state() */
+		['name' => 'CallNotification#state', 'url' => '/api/{apiVersion}/call/{token}/notification-state', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::downloadParticipantsForCall() */
 		['name' => 'Call#downloadParticipantsForCall', 'url' => '/api/{apiVersion}/call/{token}/download', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::joinCall() */

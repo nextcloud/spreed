@@ -170,3 +170,4 @@
 ## 21
 * `config => conversations => force-passwords` - Whether passwords are enforced for public rooms
 * `conversation-creation-password` - Whether the endpoints for creating public conversations or making a conversation public support setting a password
+* `call-notification-state-api` (local) - Whether the endpoints exists for checking if a call notification should be dismissed
