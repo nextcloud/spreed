@@ -271,15 +271,6 @@ const setTyping = (typing) => {
 	signalingSetTyping(typing)
 }
 
-/**
- * Get absence information for a user (in a given 1-1 conversation).
- *
- * @param {string} userId user id
- */
-const getUserAbsence = async (userId) => {
-	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
-}
-
 export {
 	joinConversation,
 	rejoinConversation,
@@ -300,5 +291,4 @@ export {
 	setPermissions,
 	setSessionState,
 	setTyping,
-	getUserAbsence,
 }

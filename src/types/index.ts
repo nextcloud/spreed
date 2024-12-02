@@ -214,3 +214,18 @@ export type TaskProcessingResponse = ApiResponseUnwrapped<{
 		endedAt: number
 	}
 }>
+
+// Out of office response
+// From https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-out-of-office-api.html
+export type OutOfOfficeResponse = ApiResponseUnwrapped<{
+	task: {
+		id: string,
+		userId: string,
+		startDate: number,
+		endDate: number,
+		shortMessage: string,
+		message: string,
+		replacementUserId?: string|null,
+		replacementUserDisplayName?: string|null,
+	}
+}>

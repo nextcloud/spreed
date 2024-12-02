@@ -16,6 +16,7 @@
 				disable-tooltip />
 		</template>
 		<p class="absence-reminder__caption">{{ userAbsenceCaption }}</p>
+		<p v-if="userAbsencePeriod">{{ userAbsencePeriod }}</p>
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
 			<p>{{ t('spreed','Replacement: ') }}</p>
@@ -42,6 +43,7 @@
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
@@ -104,6 +106,16 @@ export default {
 
 		userAbsenceMessage() {
 			return this.userAbsence.message || this.userAbsence.shortMessage
+		},
+
+		userAbsencePeriod() {
+			if (!this.userAbsence.startDate || !this.userAbsence.endDate) {
+				return ''
+			}
+			return t('spreed', 'Absence period: {startDate} - {endDate}', {
+				startDate: moment.unix(this.userAbsence.startDate).format('ll'),
+				endDate: moment.unix(this.userAbsence.endDate).format('ll'),
+			})
 		},
 	},
 
