@@ -109,6 +109,7 @@ class Capabilities implements IPublicCapability {
 		'talk-polls-drafts',
 		'download-call-participants',
 		'email-csv-import',
+		'call-notification-state-api',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -129,6 +130,7 @@ class Capabilities implements IPublicCapability {
 		'note-to-self',
 		'archived-conversations-v2',
 		'chat-summary-api',
+		'call-notification-state-api',
 	];
 
 	public const LOCAL_CONFIGS = [

@@ -11,11 +11,14 @@ Feature: callapi/notifications
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     Given user "participant1" joins room "room" with 200 (v4)
     Given user "participant2" joins room "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 201 (v4)
     Given user "participant1" joins call "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 200 (v4)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id | subject                          |
       | spreed | call        | room      | A group call has started in room |
     Given user "participant2" joins call "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 404 (v4)
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
@@ -26,7 +29,9 @@ Feature: callapi/notifications
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     Given user "participant1" joins room "room" with 200 (v4)
     Given user "participant2" joins room "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 201 (v4)
     Given user "participant1" joins call "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 200 (v4)
     Then user "participant2" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
       | room | users         | participant1 | call_started         | {actor} started a call           | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
@@ -36,6 +41,7 @@ Feature: callapi/notifications
       | app    | object_type | object_id | subject                          |
       | spreed | call        | room      | A group call has started in room |
     Given user "participant1" leaves call "room" with 200 (v4)
+    Then user "participant2" checks call notification for "room" with 201 (v4)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id | subject                         |
       | spreed | call        | room      | You missed a group call in room |
@@ -76,7 +82,7 @@ Feature: callapi/notifications
     Then user "participant2" has the following notifications
       | app    | object_type | object_id | subject                          |
       | spreed | call        | room      | A group call has started in room |
-  
+
   Scenario: Calling an attendee that is in DND throws an error 'status' message with 400
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |

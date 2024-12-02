@@ -24,9 +24,13 @@ Feature: federation/call
       | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
+    And using server "REMOTE"
+    Then user "participant2" checks call notification for "LOCAL::room" with 201 (v4)
+    And using server "LOCAL"
     And user "participant1" joins call "room" with 200 (v4)
       | flags | 3 |
     And using server "REMOTE"
+    Then user "participant2" checks call notification for "LOCAL::room" with 200 (v4)
     And user "participant2" joins room "LOCAL::room" with 200 (v4)
     And user "participant2" is participant of room "LOCAL::room" (v4)
       | callFlag |
@@ -35,8 +39,10 @@ Feature: federation/call
       | actorType       | actorId                   | inCall |
       | federated_users | participant1@{$LOCAL_URL} | 3      |
       | users           | participant2              | 0      |
+    Then user "participant2" checks call notification for "LOCAL::room" with 200 (v4)
     When user "participant2" joins call "LOCAL::room" with 200 (v4)
       | flags | 7 |
+    Then user "participant2" checks call notification for "LOCAL::room" with 404 (v4)
     Then using server "LOCAL"
     And user "participant1" is participant of room "room" (v4)
       | callFlag |
@@ -254,11 +260,16 @@ Feature: federation/call
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
     And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    Then user "participant2" checks call notification for "LOCAL::room" with 201 (v4)
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200 (v4)
+    And using server "REMOTE"
+    Then user "participant2" checks call notification for "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
     When user "participant1" leaves call "room" with 200 (v4)
     Then using server "REMOTE"
+    Then user "participant2" checks call notification for "LOCAL::room" with 201 (v4)
     And user "participant2" has the following notifications
       | app    | object_type | object_id   | subject                         |
       | spreed | call        | LOCAL::room | You missed a group call in room |
