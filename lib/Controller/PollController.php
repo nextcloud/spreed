@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use Exception;
 use JsonException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\PollPropertyException;
@@ -61,7 +62,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}|array{error: string}, array{}>
 	 *
 	 * 200: Draft created successfully
 	 * 201: Poll created successfully
@@ -126,7 +127,7 @@ class PollController extends AEnvironmentAwareController {
 
 		try {
 			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
@@ -199,7 +200,7 @@ class PollController extends AEnvironmentAwareController {
 			$this->pollService->updatePoll($this->participant, $poll);
 		} catch (WrongPermissionsException $e) {
 			$this->logger->error('Error modifying poll', ['exception' => $e]);
-			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($poll->renderAsDraft());
@@ -332,7 +333,7 @@ class PollController extends AEnvironmentAwareController {
 					],
 				], JSON_THROW_ON_ERROR);
 				$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), false);
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
@@ -345,13 +346,14 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string}, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 202: Poll draft was deleted successfully
 	 * 400: Poll already closed
 	 * 403: Missing permissions to close poll
 	 * 404: Poll not found
+	 * 500: Poll could not be closed
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -401,7 +403,7 @@ class PollController extends AEnvironmentAwareController {
 				],
 			], JSON_THROW_ON_ERROR);
 			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
