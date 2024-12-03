@@ -40,5 +40,8 @@ jobs:
       - name: Install dependencies
         run: composer i
 
+      - name: Check for vulnerable PHP dependencies
+        run: composer require --dev roave/security-advisories:dev-latest
+
       - name: Run coding standards check
         run: composer run psalm
