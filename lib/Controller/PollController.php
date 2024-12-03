@@ -145,7 +145,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @param 0|1 $resultMode Mode how the results will be shown
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
- * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Draft modified successfully
 	 * 400: Modifying poll is not possible
@@ -161,7 +161,7 @@ class PollController extends AEnvironmentAwareController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
-			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
+			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
 		}
 
 		if ($this->room->getType() !== Room::TYPE_GROUP
@@ -186,17 +186,14 @@ class PollController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$question = $this->pollService->validatePollQuestion($question);
-			$encodedOptions = $this->pollService->validatePollOptions($options);
+			$poll->setQuestion($question);
+			$poll->setOptions($options);
+			$poll->setResultMode($resultMode);
+			$poll->setMaxVotes($maxVotes);
 		} catch (PollPropertyException $e) {
 			$this->logger->error('Error modifying poll', ['exception' => $e]);
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
-
-		$poll->setQuestion($question);
-		$poll->setOptions($encodedOptions);
-		$poll->setResultMode($resultMode);
-		$poll->setMaxVotes($maxVotes);
 
 		try {
 			$this->pollService->updatePoll($this->participant, $poll);

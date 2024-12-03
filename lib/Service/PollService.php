@@ -33,16 +33,13 @@ class PollService {
 	 * @throws PollPropertyException
 	 */
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): Poll {
-		$question = $this->validatePollQuestion($question);
-		$jsonOptions = $this->validatePollOptions($options);
-
 		$poll = new Poll();
 		$poll->setRoomId($roomId);
 		$poll->setActorType($actorType);
 		$poll->setActorId($actorId);
 		$poll->setDisplayName($displayName);
 		$poll->setQuestion($question);
-		$poll->setOptions($jsonOptions);
+		$poll->setOptions($options);
 		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
