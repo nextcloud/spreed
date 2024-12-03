@@ -34,7 +34,6 @@
 			"composer dump-autoload"
 		],
 		"post-update-cmd": [
-			"@composer bin all update --ansi",
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
