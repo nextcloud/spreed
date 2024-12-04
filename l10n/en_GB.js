@@ -1365,6 +1365,7 @@ OC.L10N.register(
     "File upload is not available in this conversation" : "File upload is not available in this conversation",
     "Replacement: " : "Replacement: ",
     "{user} is out of office and might not respond." : "{user} is out of office and might not respond.",
+    "Absence period: {startDate} - {endDate}" : "Absence period: {startDate} - {endDate}",
     "Share files to the conversation" : "Share files to the conversation",
     "Upload from device" : "Upload from device",
     "Create new poll" : "Create new poll",

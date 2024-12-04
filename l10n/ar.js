@@ -1365,6 +1365,7 @@ OC.L10N.register(
     "File upload is not available in this conversation" : "رفع الملفات غير متاح في هذه الدردشة",
     "Replacement: " : "البديل:",
     "{user} is out of office and might not respond." : "{user} خارج المكتب الآن، و يمكن ألّا يستجيب",
+    "Absence period: {startDate} - {endDate}" : "فترة الغياب: {startDate} - {endDate}",
     "Share files to the conversation" : "مشاركة ملفات في المحادثة",
     "Upload from device" : "إرفع من جهاز",
     "Create new poll" : "إنشاء استطلاع جديد",
