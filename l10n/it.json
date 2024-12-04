@@ -864,6 +864,7 @@
     "Choose a conversation to forward the selected message." : "Seleziona una conversazione per inoltrare il messaggio selezionato.",
     "Error while forwarding message" : "Errore durante l'inoltro del messaggio",
     "Translate from" : "Traduci da",
+    "Translate to" : "Traduci in",
     "Your browser does not support playing audio files" : "Il tuo browser non supporta la riproduzione di file audio",
     "Contact" : "Contatto",
     "{stack} in {board}" : "{stack} in {board}",
