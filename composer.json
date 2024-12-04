@@ -34,15 +34,13 @@
 			"composer dump-autoload"
 		],
 		"post-update-cmd": [
-			"@composer bin all update --ansi",
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
 		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations"
 	},
 	"require-dev": {
-		"nextcloud/ocp": "dev-master",
-		"roave/security-advisories": "dev-latest"
+		"nextcloud/ocp": "dev-master"
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
