@@ -448,6 +448,8 @@ class AdminSettings implements ISettings {
 			'uploadLimit' => is_infinite($uploadLimit) ? 0 : $uploadLimit,
 		]);
 		$this->initialState->provideInitialState('recording_consent', $this->talkConfig->getRecordingConsentConfig());
+		$this->initialState->provideInitialState('call_recording_transcription', $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes');
+		$this->initialState->provideInitialState('call_recording_summary', $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes');
 	}
 
 	protected function initSIPBridge(): void {
