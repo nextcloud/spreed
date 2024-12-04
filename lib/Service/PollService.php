@@ -86,48 +86,6 @@ class PollService {
 	}
 
 	/**
-	 * @param array $options
-	 * @return string
-	 *
-	 * @since 21.0.0
-	 */
-	public function validatePollOptions(array $options): string {
-		try {
-			json_encode($options, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		$validOptions = [];
-		foreach ($options as $option) {
-			if (!is_string($option)) {
-				throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-			}
-
-			$option = trim($option);
-			if ($option !== '') {
-				$validOptions[] = $option;
-			}
-		}
-
-		if (count($validOptions) < 2) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		try {
-			$jsonOptions = json_encode($validOptions, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		if (strlen($jsonOptions) > 60_000) {
-			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
-		}
-
-		return $jsonOptions;
-	}
-
-	/**
 	 * @param Participant $participant
 	 * @param Poll $poll
 	 * @return void
@@ -365,17 +323,5 @@ class PollService {
 			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
 			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();
-	}
-
-	/**
-	 * @param string $question
-	 * @return string
-	 */
-	public function validatePollQuestion(string $question): string {
-		$question = trim($question);
-		if ($question === '' || strlen($question) > 32_000) {
-			throw new PollPropertyException(PollPropertyException::REASON_QUESTION);
-		}
-		return $question;
 	}
 }
