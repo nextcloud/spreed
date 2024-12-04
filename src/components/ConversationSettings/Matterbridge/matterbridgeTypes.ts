@@ -211,7 +211,7 @@ export const matterbridgeTypes: Record<string, MatterbridgeType> = {
 			},
 			channel: {
 				type: 'text',
-				placeholder: t('spreed', 'Channel ID or name'),
+				placeholder: t('spreed', 'Channel ID (prefixed with "ID:") or name'),
 				icon: 'icon-group',
 			},
 		},
