@@ -1365,6 +1365,7 @@ OC.L10N.register(
     "File upload is not available in this conversation" : "Filuppladdning är inte tillgängligt i den här konversationen",
     "Replacement: " : "Ersättning:",
     "{user} is out of office and might not respond." : "{user} är frånvarande och kanske inte svarar.",
+    "Absence period: {startDate} - {endDate}" : "Frånvaroperiod: {startDate} - {endDate}",
     "Share files to the conversation" : "Dela filer till konversationen",
     "Upload from device" : "Ladda upp från enheten",
     "Create new poll" : "Skapa ny omröstning",
