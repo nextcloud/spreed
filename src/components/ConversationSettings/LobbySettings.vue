@@ -25,13 +25,18 @@
 				</div>
 				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:value="lobbyTimer"
+					:model-value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"
 					type="datetime"
+					value-type="timestamp"
+					format="YYYY-MM-DD HH:mm"
+					:minute-step="5"
 					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
 					v-bind="dateTimePickerAttrs"
+					confirm
+					clearable
 					@change="saveLobbyTimer" />
 				<div class="lobby_timer--timezone">
 					{{ getTimeZone }}
@@ -152,17 +157,11 @@ export default {
 
 		dateTimePickerAttrs() {
 			return {
-				format: 'YYYY-MM-DD HH:mm',
 				firstDayOfWeek: window.firstDay + 1, // Provided by server
 				lang: {
 					days: window.dayNamesShort, // Provided by server
 					months: window.monthNamesShort, // Provided by server
 				},
-				confirm: true,
-				clearable: true,
-				minuteStep: 5,
-				appendToBody: true,
-				valueType: 'timestamp',
 			}
 		},
 
