@@ -166,6 +166,18 @@ jobs:
         run: |
           cat data/nextcloud.log
 
+      - name: Check Federation log
+        if: always()
+        id: check_federation_log
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        with:
+          files: "data/tests-talk-real-federated-server/data/nextcloud.log"
+
+      - name: Print federation logs
+        if: always() && steps.check_federation_log.outputs.files_exists == 'true'
+        run: |
+          cat data/tests-talk-real-federated-server/data/nextcloud.log
+
   summary:
     permissions:
       contents: none
