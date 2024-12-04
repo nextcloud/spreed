@@ -160,26 +160,17 @@ class Poll extends Entity {
 		$this->setter('options', [$jsonOptions]);
 	}
 
-	public function getOptions(): string {
-		return $this->options;
-	}
-
 	/**
 	 * @param string $question
 	 * @return void
 	 * @throws PollPropertyException
 	 */
 	public function setQuestion(string $question): void {
-		nvlog($question);
 		$question = trim($question);
 		if ($question === '' || strlen($question) > 32_000) {
 			throw new PollPropertyException(PollPropertyException::REASON_QUESTION);
 		}
 
 		$this->setter('question', [$question]);
-	}
-
-	public function getQuestion(): string {
-		return $this->question;
 	}
 }
