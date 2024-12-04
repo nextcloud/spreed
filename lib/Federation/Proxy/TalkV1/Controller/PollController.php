@@ -131,7 +131,7 @@ class PollController {
 
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Draft created successfully
@@ -171,7 +171,7 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Draft created successfully
@@ -199,7 +199,7 @@ class PollController {
 			return new DataResponse($data, Http::STATUS_BAD_REQUEST);
 		}
 
-		/** @var TalkPoll $data */
+		/** @var TalkPollDraft $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_CREATED]);
 		$data = $this->userConverter->convertPoll($room, $data);
 
