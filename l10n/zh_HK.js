@@ -1365,6 +1365,7 @@ OC.L10N.register(
     "File upload is not available in this conversation" : "此對話中無法上傳檔案",
     "Replacement: " : "取代︰",
     "{user} is out of office and might not respond." : "{user} 不在辦公室，可能不會回覆。",
+    "Absence period: {startDate} - {endDate}" : "缺席期間：{startDate} - {endDate}",
     "Share files to the conversation" : "在對話中分享文件",
     "Upload from device" : "從裝置上傳",
     "Create new poll" : "創建新民意調查",
