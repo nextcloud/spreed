@@ -72,6 +72,26 @@
 					</p>
 				</template>
 			</template>
+
+			<template v-if="servers.length">
+				<h3>{{ t('spreed', 'Recording transcription') }}</h3>
+
+				<!-- FIXME hidden until transcription quality is appropriate -->
+				<NcCheckboxRadioSwitch v-if="false"
+					v-model="recordingTranscriptionEnabled"
+					type="switch"
+					:disabled="loading"
+					@update:modelValue="setRecordingTranscription">
+					{{ t('spreed', 'Automatically transcribe call recordings with a transcription provider') }}
+				</NcCheckboxRadioSwitch>
+
+				<NcCheckboxRadioSwitch v-model="recordingSummaryEnabled"
+					type="switch"
+					:disabled="loading"
+					@update:modelValue="setRecordingSummary">
+					{{ t('spreed', 'Automatically summarize call recordings with transcription and summary providers') }}
+				</NcCheckboxRadioSwitch>
+			</template>
 		</template>
 	</section>
 </template>
@@ -134,6 +154,8 @@ export default {
 			saved: false,
 			showForm: true,
 			recordingConsentSelected: loadState('spreed', 'recording_consent').toString(),
+			recordingTranscriptionEnabled: loadState('spreed', 'call_recording_transcription'),
+			recordingSummaryEnabled: loadState('spreed', 'call_recording_summary'),
 			debounceUpdateServers: () => {},
 		}
 	},
@@ -206,6 +228,24 @@ export default {
 		setRecordingConsent(value) {
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'recording_consent', value, {
+				success: () => {
+					this.loading = false
+				},
+			})
+		},
+
+		setRecordingTranscription(value) {
+			this.loading = true
+			OCP.AppConfig.setValue('spreed', 'call_recording_transcription', value ? 'yes' : 'no', {
+				success: () => {
+					this.loading = false
+				},
+			})
+		},
+
+		setRecordingSummary(value) {
+			this.loading = true
+			OCP.AppConfig.setValue('spreed', 'call_recording_summary', value ? 'yes' : 'no', {
 				success: () => {
 					this.loading = false
 				},
