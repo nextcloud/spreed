@@ -171,7 +171,7 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Draft created successfully
@@ -206,7 +206,7 @@ class PollController {
 		if ($status === Http::STATUS_OK) {
 			return new DataResponse($data);
 		}
-		return new DataResponse($data, Http::STATUS_CREATED);
+		return new DataResponse($data);
 	}
 
 	/**
