@@ -2539,14 +2539,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '200' && $statusCode !== '201') {
+		if ($statusCode !== '200') {
 			return;
 		}
 
 		$response = $this->getDataFromResponse($this->response);
-		if (isset($response['id'])) {
-			self::$questionToPollId[$data['question']] = $response['id'];
-		}
+		$this->assertPollEquals($data, $response);
 	}
 
 	/**
