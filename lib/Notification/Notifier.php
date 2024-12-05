@@ -395,7 +395,7 @@ class Notifier implements INotifier {
 					],
 				]);
 
-		if ($notification->getSubject() !== 'transcript_failed') {
+		if ($notification->getSubject() !== 'transcript_failed' && $notification->getSubject() !== 'summary_failed') {
 			$notification->addParsedAction($shareAction);
 			$notification->addParsedAction($dismissAction);
 		}
