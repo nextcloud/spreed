@@ -30,9 +30,19 @@
 					@update:checked="togglePassword">
 					{{ t('spreed', 'Password protection') }}
 				</NcCheckboxRadioSwitch>
-				<p v-if="forcePasswordProtection && isPasswordProtectionChecked" class="app-settings-section__hint">
-					{{ t('spreed', 'This conversation is password-protected. Guests need password to join') }}
-				</p>
+				<template v-else>
+					<p v-if="isPasswordProtectionChecked" class="app-settings-section__hint">
+						{{ t('spreed', 'This conversation is password-protected. Guests need password to join') }}
+					</p>
+					<NcNoteCard v-else-if="!isSaving"
+						type="warning">
+						{{ t('spreed', 'Password protection is needed for public conversations') }}
+						<NcButton class="warning__button" type="primary" @click="enforcePassword">
+							{{ t('spreed', 'Set a password') }}
+						</NcButton>
+					</NcNoteCard>
+				</template>
+
 				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 					<NcPasswordField ref="passwordField"
 						:value.sync="password"
@@ -106,6 +116,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
@@ -120,6 +131,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcPasswordField,
+		NcNoteCard,
 		// Icons
 		IconClipboardTextOutline,
 		IconContentCopy,
@@ -245,6 +257,12 @@ export default {
 				showError(t('spreed', 'Password could not be copied'))
 			}
 		},
+
+		async enforcePassword() {
+			// Turn on password protection and set a password
+			await this.togglePassword(true)
+			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests: true, password: this.password })
+		}
 	},
 }
 </script>
@@ -265,13 +283,17 @@ button > .material-design-icon {
 	gap: 8px;
 	align-items: flex-start;
 
-	&__input-field {
+	:deep(.input-field) {
 		width: 200px;
 	}
 
 	&__button {
 		margin-top: 6px;
 	}
+}
+
+.warning__button {
+	margin-top: var(--default-grid-baseline);
 }
 
 .app-settings-subsection__buttons {
