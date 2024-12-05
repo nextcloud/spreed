@@ -25,6 +25,18 @@ Feature: chat/password
       | room                           | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | public password protected room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
+  Scenario: invited user can send and receive chat messages to and from public password protected room with initial password
+    Given user "participant1" creates room "public password protected room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | password | ARoomPassword123. |
+    And user "participant1" sets password "foobar" for room "public password protected room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "public password protected room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "public password protected room" with 201
+    Then user "participant2" sees the following messages in room "public password protected room" with 200
+      | room                           | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public password protected room | users     | participant2 | participant2-displayname | Message 1 | []                |
+
   Scenario: not invited but joined with password user can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |

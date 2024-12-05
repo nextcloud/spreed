@@ -246,16 +246,17 @@ class RoomServiceTest extends TestCase {
 
 	public static function dataCreateConversation(): array {
 		return [
-			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', ''],
-			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456'],
-			[Room::TYPE_CHANGELOG, 'Talk updates ✅', 'test1', 'changelog', 'conversation'],
+			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', '', ''],
+			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456', ''],
+			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456', 'AGoodPassword123?'],
+			[Room::TYPE_CHANGELOG, 'Talk updates ✅', 'test1', 'changelog', 'conversation', ''],
 		];
 	}
 
 	/**
 	 * @dataProvider dataCreateConversation
 	 */
-	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId): void {
+	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId, string $password): void {
 		$room = $this->createMock(Room::class);
 
 		if ($ownerId !== '') {
@@ -279,12 +280,17 @@ class RoomServiceTest extends TestCase {
 				->method('addUsers');
 		}
 
+		if ($password !== '') {
+			$this->hasher->expects(self::once())
+				->method('hash')
+				->willReturn($password);
+		}
 		$this->manager->expects($this->once())
 			->method('createRoom')
-			->with($type, $name, $objectType, $objectId)
+			->with($type, $name, $objectType, $objectId, $password)
 			->willReturn($room);
 
-		$this->assertSame($room, $this->service->createConversation($type, $name, $owner, $objectType, $objectId));
+		$this->assertSame($room, $this->service->createConversation($type, $name, $owner, $objectType, $objectId, $password));
 	}
 
 	public static function dataPrepareConversationName(): array {
