@@ -166,13 +166,11 @@ class RoomService {
 		}
 
 		if ($type === Room::TYPE_PUBLIC && $password === '' && $this->config->isPasswordEnforced() === true) {
-			throw new InvalidArgumentException('password');
+			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
 		}
 
 		if ($type !== Room::TYPE_PUBLIC) {
 			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
-		} elseif ($password === '') {
-			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
 		} else {
 			$event = new ValidatePasswordPolicyEvent($password);
 			try {
