@@ -9216,21 +9216,36 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "draft",
-                                                                "options",
-                                                                "question",
-                                                                "room"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "draft",
+                                                                        "options",
+                                                                        "question",
+                                                                        "room"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -10122,6 +10137,44 @@
                     },
                     "404": {
                         "description": "Poll not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Poll could not be closed",
                         "content": {
                             "application/json": {
                                 "schema": {

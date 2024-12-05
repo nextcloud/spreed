@@ -4906,6 +4906,8 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "draft" | "options" | "question" | "room";
+                            } | {
+                                error: string;
                             };
                         };
                     };
@@ -5261,6 +5263,22 @@ export interface operations {
             };
             /** @description Poll not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Poll could not be closed */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
