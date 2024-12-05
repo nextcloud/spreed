@@ -2534,7 +2534,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/draft/'. self::$questionToPollId[$data['question']],
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/draft/' . self::$questionToPollId[$data['question']],
 			$data
 		);
 		$this->assertStatusCode($this->response, $statusCode);
