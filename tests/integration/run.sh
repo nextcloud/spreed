@@ -52,6 +52,9 @@ DESTROY_REAL_FEDERATED_SERVER=false
 
 if [ ! -d "$REAL_FEDERATED_SERVER_CONFIG_DIR" ] || NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR" ${ROOT_DIR}/occ status | grep "installed: false"; then
 	DESTROY_REAL_FEDERATED_SERVER=true
+	if [ $CI ]; then
+		DESTROY_REAL_FEDERATED_SERVER=false
+	fi
 	echo ''
 	echo -e "\033[0;31mReal federated server not installed in $REAL_FEDERATED_SERVER_CONFIG_DIR\033[0m"
 	echo -e "\033[0;33mPerforming basic SQLite installation with data directory in $REAL_FEDERATED_SERVER_DATA_DIR\033[0m"
