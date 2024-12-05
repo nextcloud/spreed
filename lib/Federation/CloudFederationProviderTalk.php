@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use Exception;
+use NCU\Federation\ISignedCloudFederationProvider;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\CachePrefix;
@@ -59,7 +60,7 @@ use OCP\Share\Exceptions\ShareNotFound;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
-class CloudFederationProviderTalk implements ICloudFederationProvider {
+class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCloudFederationProvider {
 	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
@@ -631,5 +632,29 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 */
 	public function getSupportedShareTypes(): array {
 		return ['user'];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getFederationIdFromSharedSecret(
+		#[SensitiveParameter]
+		string $sharedSecret,
+		array $payload,
+	): string {
+		try {
+			$invite = $this->invitationMapper->getByRemoteServerOnlyWithAccessToken($payload['remoteServerUrl'], $sharedSecret);
+			return $invite->getInviterCloudId();
+		} catch (DoesNotExistException) {
+		}
+
+		$attendees = $this->attendeeMapper->getByAccessToken($sharedSecret);
+		foreach ($attendees as $attendee) {
+			if (str_ends_with($attendee->getActorId(), $payload['remoteServerUrl'])) {
+				return $attendee->getActorId();
+			}
+		}
+
+		return '';
 	}
 }
