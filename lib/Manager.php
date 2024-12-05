@@ -1082,6 +1082,7 @@ class Manager {
 	 * @param string $name
 	 * @param string $objectType
 	 * @param string $objectId
+	 * @param string $password
 	 * @return Room
 	 */
 	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
