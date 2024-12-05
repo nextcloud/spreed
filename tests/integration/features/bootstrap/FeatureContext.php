@@ -903,7 +903,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['actorId']) && str_ends_with($attendee['actorId'], '@{$REMOTE_URL}')) {
 					$attendee['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $attendee['actorId']);
 				}
-				if (preg_match('/^SHA256\(([a-z0-9@.+\-]+)\)$/', $attendee['actorId'], $match)) {
+				if (isset($attendee['actorId']) && preg_match('/^SHA256\(([a-z0-9@.+\-]+)\)$/', $attendee['actorId'], $match)) {
 					$attendee['actorId'] = hash('sha256', $match[1]);
 				}
 
