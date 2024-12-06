@@ -14,6 +14,7 @@ use OCA\Circles\Model\Member;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Controller\CallNotificationController;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
@@ -1599,6 +1600,60 @@ class ParticipantService {
 		}
 
 		return $this->getParticipantsFromQuery($query, $room);
+	}
+
+	/**
+	 * Do not try to modernize this into using the Room, Participant or other objects.
+	 * This function is called by {@see CallNotificationController::state}
+	 * and mobile as well as desktop clients are basically ddos-ing it, to check
+	 * if the call notification / call screen should be removed.
+	 * @return CallNotificationController::CASE_*
+	 */
+	public function checkIfUserIsMissingCall(string $token, string $userId): int {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('r.active_since', 'a.last_joined_call', 's.in_call')
+			->from('talk_rooms', 'r')
+			->innerJoin(
+				'r', 'talk_attendees', 'a',
+				$query->expr()->eq('r.id', 'a.room_id')
+			)
+			->leftJoin(
+				'a', 'talk_sessions', 's',
+				$query->expr()->andX(
+					$query->expr()->eq('s.attendee_id', 'a.id'),
+					$query->expr()->neq('s.in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT),
+				)
+			)
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)));
+
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			return CallNotificationController::CASE_ROOM_NOT_FOUND;
+		}
+
+		if ($row['active_since'] === null) {
+			return CallNotificationController::CASE_MISSED_CALL;
+		}
+
+		try {
+			$activeSince = new \DateTime($row['active_since']);
+		} catch (\Throwable) {
+			return CallNotificationController::CASE_MISSED_CALL;
+		}
+
+		if ($row['in_call'] !== null) {
+			return CallNotificationController::CASE_PARTICIPANT_JOINED;
+		}
+
+		if ($activeSince->getTimestamp() >= $row['last_joined_call']) {
+			return CallNotificationController::CASE_STILL_CURRENT;
+		}
+		return CallNotificationController::CASE_PARTICIPANT_JOINED;
 	}
 
 	/**
