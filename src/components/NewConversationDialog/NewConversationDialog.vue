@@ -85,18 +85,18 @@
 				</template>
 
 				<template #action>
-					<NcButton v-if="(error || isPublic) && !isLoading"
-						ref="closeButton"
-						type="tertiary"
-						@click="closeModal">
-						{{ t('spreed', 'Close') }}
-					</NcButton>
 					<NcButton v-if="!error && success && isPublic"
 						id="copy-link"
 						ref="copyLink"
 						type="secondary"
 						@click="onClickCopyLink">
-						{{ t('spreed', 'Copy conversation link') }}
+						{{ t('spreed', 'Copy link') }}
+					</NcButton>
+					<NcButton v-if="!error && success && isPublic && newConversation.hasPassword"
+						id="copy-password"
+						type="secondary"
+						@click="onClickCopyPassword">
+						{{ t('spreed', 'Copy password') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -110,6 +110,7 @@ import { provide, ref } from 'vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -123,7 +124,6 @@ import LoadingComponent from '../LoadingComponent.vue'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.js'
-import { setConversationPassword } from '../../services/conversationsService.js'
 import { addParticipant } from '../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
@@ -184,6 +184,7 @@ export default {
 			isLoading: true,
 			success: false,
 			error: false,
+			errorReason: '',
 			password: '',
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
@@ -216,6 +217,9 @@ export default {
 			if (this.isLoading) {
 				return t('spreed', 'Creating the conversation …')
 			} else if (this.error) {
+				if (this.errorReason === 'password_required') {
+					return t('spreed', 'Error: A password is required to create the conversation.')
+				}
 				return t('spreed', 'Error while creating the conversation')
 			} else if (this.success && this.isPublic) {
 				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
@@ -226,20 +230,11 @@ export default {
 
 	watch: {
 		success(value) {
-			if (!value) {
+			if (!value || !this.isPublic) {
 				return
 			}
 			this.$nextTick(() => {
 				this.$refs.copyLink.$el.focus()
-			})
-		},
-
-		error(value) {
-			if (!value) {
-				return
-			}
-			this.$nextTick(() => {
-				this.$refs.closeButton.$el.focus()
 			})
 		},
 	},
@@ -298,14 +293,11 @@ export default {
 				this.newConversation.token = await this.$store.dispatch('createGroupConversation', {
 					conversationName: this.conversationName,
 					isPublic: this.isPublic,
+					password: this.password,
 				})
 
 				// Gather all secondary requests to run in parallel
 				const promises = []
-
-				if (this.isPublic && this.password && this.newConversation.hasPassword) {
-					promises.push(setConversationPassword(this.newConversation.token, this.password))
-				}
 
 				if (this.isAvatarEdited) {
 					promises.push(this.$refs.setupPage.$refs.conversationAvatar.saveAvatar())
@@ -334,6 +326,7 @@ export default {
 				console.error('Error creating new conversation: ', exception)
 				this.isLoading = false
 				this.error = true
+				this.errorReason = exception.message
 				// Stop the execution of the method on exceptions.
 				return
 			}
@@ -365,6 +358,15 @@ export default {
 
 		onClickCopyLink() {
 			copyConversationLinkToClipboard(this.newConversation.token)
+		},
+
+		async onClickCopyPassword() {
+			try {
+				await navigator.clipboard.writeText(this.password)
+				showSuccess(t('spreed', 'Password copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Password could not be copied'))
+			}
 		},
 
 		setIsPasswordValid(value) {

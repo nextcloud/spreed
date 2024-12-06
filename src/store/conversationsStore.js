@@ -22,6 +22,7 @@ import {
 	deleteConversationAvatar,
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
+import { hasTalkFeature, getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
 	makeConversationPublic,
 	makeConversationPrivate,
@@ -64,6 +65,9 @@ import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
+
+const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
+const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -500,7 +504,7 @@ const actions = {
 		}
 	},
 
-	async toggleGuests({ commit, getters }, { token, allowGuests }) {
+	async toggleGuests({ commit, getters }, { token, allowGuests, password }) {
 		if (!getters.conversations[token]) {
 			return
 		}
@@ -508,7 +512,7 @@ const actions = {
 		try {
 			const conversation = Object.assign({}, getters.conversation(token))
 			if (allowGuests) {
-				await makeConversationPublic(token)
+				await makeConversationPublic(token, password)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
 				showSuccess(t('spreed', 'You allowed guests'))
 			} else {
@@ -990,19 +994,33 @@ const actions = {
 	 * @param {object} payload action payload;
 	 * @param {string} payload.conversationName displayed name for a new conversation
 	 * @param {number} payload.isPublic whether a conversation is public or private
+	 * @param {string} payload.password password for a public conversation
 	 * @return {string} token of new conversation
 	 */
-	async createGroupConversation(context, { conversationName, isPublic }) {
+	async createGroupConversation(context, { conversationName, isPublic, password }) {
 		try {
-			const response = isPublic
-				? await createPublicConversation(conversationName)
-				: await createPrivateConversation(conversationName)
+			let response
+			if (isPublic) {
+				if (supportConversationCreationPassword && forcePasswordProtection) {
+					if (!password) {
+						throw new Error('password_required')
+					}
+					response = await createPublicConversation(conversationName, password)
+				} else {
+					response = await createPublicConversation(conversationName)
+					if (password) {
+						response = await setConversationPassword(response.data.ocs.data.token, password)
+					}
+				}
+			} else {
+				response = await createPrivateConversation(conversationName)
+			}
+
 			const conversation = response.data.ocs.data
 			context.dispatch('addConversation', conversation)
 			return conversation.token
 		} catch (error) {
-			console.error('Error creating new group conversation: ', error)
-			return ''
+			return Promise.reject(error)
 		}
 	},
 

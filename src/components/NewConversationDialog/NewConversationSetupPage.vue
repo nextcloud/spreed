@@ -46,7 +46,7 @@
 		<div class="new-group-conversation__wrapper">
 			<NcCheckboxRadioSwitch :checked.sync="hasPassword"
 				type="switch"
-				:disabled="!isPublic">
+				:disabled="!isPublic || forcePasswordProtection">
 				<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
 			</NcCheckboxRadioSwitch>
 			<NcPasswordField v-if="hasPassword"
@@ -74,10 +74,11 @@ import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatar
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 
 import { CONVERSATION } from '../../constants.js'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
-
+const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 export default {
 
 	name: 'NewConversationSetupPage',
@@ -109,7 +110,10 @@ export default {
 	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter', 'is-password-valid'],
 
 	setup() {
-		return { supportsAvatar }
+		return {
+			supportsAvatar,
+			forcePasswordProtection,
+		}
 	},
 
 	computed: {
@@ -149,9 +153,13 @@ export default {
 			get() {
 				return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
 			},
-			set(value) {
+			async set(value) {
 				if (value) {
-					this.updateNewConversation({ type: CONVERSATION.TYPE.PUBLIC })
+					this.updateNewConversation({ type: CONVERSATION.TYPE.PUBLIC, hasPassword: this.forcePasswordProtection ?? false })
+					if (this.forcePasswordProtection) {
+						// Make it easier to users by generating a password
+						this.$emit('update:password', await generatePassword())
+					}
 				} else {
 					this.updateNewConversation({ type: CONVERSATION.TYPE.GROUP, hasPassword: false })
 				}
