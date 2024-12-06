@@ -20,7 +20,8 @@
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
-			<NcCheckboxRadioSwitch id="call-media"
+			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
+				id="call-media"
 				:checked="startWithoutMediaEnabled"
 				:disabled="mediaLoading"
 				type="switch"
@@ -197,13 +198,12 @@
 <script>
 import { ref } from 'vue'
 
-import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import { generateUrl } from '@nextcloud/router'
 
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
@@ -229,6 +229,7 @@ const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
 	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media')
 
 export default {
 	name: 'SettingsDialog',
@@ -257,6 +258,7 @@ export default {
 			isBackgroundBlurred,
 			serverSupportsBackgroundBlurred,
 			customSettingsSections,
+			supportStartWithoutMedia,
 		}
 	},
 
