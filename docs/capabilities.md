@@ -166,3 +166,6 @@
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
 * `config => call => blur-virtual-background` (local) - Boolean, whether blur background is set by default when joining a conversation
+
+## 20.1.1
+* `call-notification-state-api` (local) - Whether the endpoints exists for checking if a call notification should be dismissed
