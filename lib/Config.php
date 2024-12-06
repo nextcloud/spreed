@@ -694,4 +694,15 @@ class Config {
 		}
 		return false;
 	}
+
+	/**
+	 * User setting falling back to admin defined app config
+	 */
+	public function getInactiveLockTime(): int {
+		return $this->appConfig->getAppValueInt('inactivity_lock_after_days');
+	}
+
+	public function enableLobbyOnLockedRooms(): bool {
+		return $this->appConfig->getAppValueBool('inactivity_enable_lobby');
+	}
 }
