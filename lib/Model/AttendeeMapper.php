@@ -54,6 +54,20 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	/**
+	 * @return list<Attendee>
+	 */
+	public function getByAccessToken(string $accessToken): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('access_token', $query->createNamedParameter($accessToken)));
+		// There could be multiple in case of local federation,
+		// so we have to get all and afterwards check
+		// the actor id for the serverUrl.
+		return $this->findEntities($query);
+	}
+
+	/**
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
