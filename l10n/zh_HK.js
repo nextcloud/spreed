@@ -825,6 +825,8 @@ OC.L10N.register(
     "Add a new recording backend server" : "添加新後端系統記録伺服器",
     "Shared secret" : "分享了密碼",
     "Recording consent" : "錄製同意",
+    "Recording transcription" : "錄音轉錄",
+    "Automatically transcribe call recordings with a transcription provider" : "使用轉錄提供者自動轉錄通話錄音",
     "Disabled for all calls" : "對所有通話停用",
     "Enabled for all calls" : "對所有通話啟用",
     "Configurable on conversation level by moderators" : "可由主持人在對話層級配置",
