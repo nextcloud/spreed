@@ -20,7 +20,8 @@
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
-			<NcCheckboxRadioSwitch id="call-media"
+			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
+				id="call-media"
 				:checked="startWithoutMediaEnabled"
 				:disabled="mediaLoading"
 				type="switch"
@@ -228,6 +229,7 @@ const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
 	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media')
 
 export default {
 	name: 'SettingsDialog',
@@ -256,6 +258,7 @@ export default {
 			isBackgroundBlurred,
 			serverSupportsBackgroundBlurred,
 			customSettingsSections,
+			supportStartWithoutMedia,
 		}
 	},
 
