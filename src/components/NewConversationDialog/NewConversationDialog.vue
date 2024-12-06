@@ -184,6 +184,7 @@ export default {
 			isLoading: true,
 			success: false,
 			error: false,
+			errorReason: '',
 			password: '',
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
@@ -216,6 +217,9 @@ export default {
 			if (this.isLoading) {
 				return t('spreed', 'Creating the conversation …')
 			} else if (this.error) {
+				if (this.errorReason === 'password_required') {
+					return t('spreed', 'Error: A password is required to create the conversation.')
+				}
 				return t('spreed', 'Error while creating the conversation')
 			} else if (this.success && this.isPublic) {
 				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
@@ -322,6 +326,7 @@ export default {
 				console.error('Error creating new conversation: ', exception)
 				this.isLoading = false
 				this.error = true
+				this.errorReason = exception.message
 				// Stop the execution of the method on exceptions.
 				return
 			}
