@@ -42,7 +42,7 @@ async function disableLobby() {
 		showSuccess(t('spreed', 'You opened the conversation to everyone'))
 	} catch (e) {
 		console.error('Error occurred when opening the conversation to everyone', e)
-		showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
+		showError(t('spreed', 'An error occurred when opening the conversation to everyone'))
 	} finally {
 		isLobbyStateLoading.value = false
 	}
@@ -62,7 +62,7 @@ async function disableLobby() {
 			<template #icon>
 				<IconFileUpload :size="20" />
 			</template>
-			{{ t('spreed', 'Import e-mail participants') }}
+			{{ t('spreed', 'Import email participants') }}
 		</NcButton>
 
 		<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
