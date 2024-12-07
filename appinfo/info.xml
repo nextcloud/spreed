@@ -81,6 +81,7 @@
 		<post-migration>
 			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
 			<step>OCA\Talk\Migration\CacheUserDisplayNames</step>
+			<step>OCA\Talk\Migration\FixLastReadMessageZero</step>
 		</post-migration>
 	</repair-steps>
 
