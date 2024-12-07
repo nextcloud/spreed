@@ -316,7 +316,6 @@ OC.L10N.register(
     "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
     "Create conversation" : "Buat percakapan",
     "Add participants" : "Tambahkan peserta",
-    "Close" : "Tutup",
     "Allow guests to join via link" : "Izinkan tamu untuk bergabung melalui tautan",
     "Password protect" : "Lindungi dengan kata sandi",
     "New file" : "File baru",
@@ -360,6 +359,7 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS"
+    "iOS app" : "Aplikasi iOS",
+    "Close" : "Tutup"
 },
 "nplurals=1; plural=0;");

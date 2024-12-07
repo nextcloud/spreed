@@ -72,7 +72,6 @@ OC.L10N.register(
     "Today" : "Täna",
     "Yesterday" : "Eile",
     "_%n day ago_::_%n days ago_" : ["%n päev tagasi","%n päeva tagasi"],
-    "Close" : "Sulge",
     "Password protect" : "Parooliga kaitsmine",
     "Upload from device" : "Laadi üles seadmest",
     "Create new poll" : "Loo uus küsitlus",
@@ -108,6 +107,7 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
-    "iOS app" : "iOS-i rakendus"
+    "iOS app" : "iOS-i rakendus",
+    "Close" : "Sulge"
 },
 "nplurals=2; plural=(n != 1);");

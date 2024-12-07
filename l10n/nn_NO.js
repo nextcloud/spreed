@@ -67,6 +67,7 @@ OC.L10N.register(
     "Leave conversation" : "Forlat samtalen",
     "Delete conversation" : "Slett samtale",
     "Password protection" : "Password protection",
+    "Set a password" : "Lag eit passord",
     "Save" : "Lagre",
     "Edit" : "Endra",
     "More information" : "Meir informasjon",
@@ -91,7 +92,6 @@ OC.L10N.register(
     "Yesterday" : "i går",
     "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
     "Add participants" : "Legg til deltakarar",
-    "Close" : "Lukk",
     "Password protect" : "Vern med passord",
     "Send message" : "Send melding",
     "Record voice message" : "Ta opp lyd melding ",
@@ -121,6 +121,7 @@ OC.L10N.register(
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Circles" : "Sirklar",
+    "Close" : "Lukk",
     "Remove circle and members" : "Eksterne sirklar og medlemmar"
 },
 "nplurals=2; plural=(n != 1);");

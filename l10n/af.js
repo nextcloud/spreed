@@ -297,7 +297,6 @@ OC.L10N.register(
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Add participants" : "Voeg deelnemers toe",
-    "Close" : "Sluit",
     "Password protect" : "Beskerm met 'n wagwoord",
     "Enter password" : "Voer wagwoord in",
     "Settings" : "Instellings",
@@ -326,6 +325,7 @@ OC.L10N.register(
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
-    "iOS app" : "iOS-toep"
+    "iOS app" : "iOS-toep",
+    "Close" : "Sluit"
 },
 "nplurals=2; plural=(n != 1);");

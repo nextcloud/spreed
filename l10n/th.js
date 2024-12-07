@@ -71,7 +71,6 @@ OC.L10N.register(
     "Yesterday" : "เมื่อวาน",
     "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"],
     "Add participants" : "เพิ่มผู้เข้าร่วม",
-    "Close" : "ปิด",
     "Password protect" : "ป้องกันด้วยรหัสผ่าน",
     "New file" : "ไฟล์ใหม่",
     "Blank" : "ว่าง",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "Default" : "ค่าเริ่มต้น",
     "The password is wrong. Try again." : "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอป Android",
-    "iOS app" : "แอป iOS"
+    "iOS app" : "แอป iOS",
+    "Close" : "ปิด"
 },
 "nplurals=1; plural=0;");

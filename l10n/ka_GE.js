@@ -73,6 +73,7 @@ OC.L10N.register(
     "Personal" : "პირადი",
     "Yes" : "დიახ",
     "Password protection" : "პაროლით თავდაცვა",
+    "Set a password" : "პაროლის დაყენება",
     "Save" : "შენახვა",
     "Edit" : "შეცვლა",
     "Delete" : "წაშლა",
@@ -99,7 +100,6 @@ OC.L10N.register(
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "_%n day ago_::_%n days ago_" : ["%n დღის წინ","%n დღის წინ"],
-    "Close" : "დახურვა",
     "Password protect" : "პაროლით დაცვა",
     "Create new poll" : "ახალი გამოკითხვის შექმნა",
     "Settings" : "პარამეტრები",
@@ -147,6 +147,7 @@ OC.L10N.register(
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
     "Circles" : "წრეები",
+    "Close" : "დახურვა",
     "TURN server" : "TURN სერვერი",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი."
