@@ -197,6 +197,7 @@ OC.L10N.register(
     "Yes" : "Po",
     "Delete conversation" : "Fshijeni bisedën",
     "Password protection" : "Password protection",
+    "Set a password" : "Vendosni një fjalëkalim",
     "Save" : "Ruaj",
     "Edit" : "Përpuno",
     "Delete" : "Fshij",
@@ -222,7 +223,6 @@ OC.L10N.register(
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
-    "Close" : "Mbylleni",
     "Password protect" : "Mbroje me fjalëkalim",
     "Send message" : "Dërgo mesazh",
     "Create new poll" : "Krijo sondazh të ri",
@@ -267,6 +267,7 @@ OC.L10N.register(
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
     "Circles" : "Rrethet",
+    "Close" : "Mbylleni",
     "Start a conversation" : "Filloni një bisedë",
     "TURN server" : "Serveri TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli."

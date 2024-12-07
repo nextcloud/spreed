@@ -80,6 +80,7 @@ OC.L10N.register(
     "Yes" : "Si",
     "Delete conversation" : "Borrar conversación",
     "Password protection" : "Protección con contraseña",
+    "Set a password" : "Establecer una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Borrar",
@@ -104,7 +105,6 @@ OC.L10N.register(
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Close" : "Cerrar",
     "Password protect" : "Proteger con contraseña",
     "Create new poll" : "Crear nueva encuesta",
     "Settings" : "Configuraciones ",
@@ -156,6 +156,7 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
     "Circles" : "Círculos",
+    "Close" : "Cerrar",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. "

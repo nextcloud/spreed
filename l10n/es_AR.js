@@ -64,6 +64,7 @@ OC.L10N.register(
     "Yes" : "Sí",
     "Delete conversation" : "Eliminar conversación",
     "Password protection" : "Protección con contraseña",
+    "Set a password" : "Establecer una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "More information" : "Más información",
@@ -87,7 +88,6 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Close" : "Cerrar",
     "Password protect" : "Proteger con contraseña",
     "Send message" : "Enviar mensaje",
     "New file" : "Nuevo archivo",
@@ -134,6 +134,7 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "Circles" : "Círculos",
+    "Close" : "Cerrar",
     "Start a conversation" : "Iniciar una conversación",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
