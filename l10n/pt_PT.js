@@ -274,6 +274,7 @@ OC.L10N.register(
     "Leave conversation" : "Sair da conversação",
     "Delete conversation" : "Eliminar conversação",
     "Password protection" : "Protegido por palavra-passe",
+    "Set a password" : "Definir uma palavra-passe",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Apagar",
@@ -305,7 +306,6 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
     "Create a new group conversation" : "Criar nova conversa de grupo",
-    "Close" : "Fechar",
     "Password protect" : "Proteger com palavra-passe",
     "Send message" : "Enviar mensagem",
     "New file" : "Ficheiro novo",
@@ -361,6 +361,7 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Circles" : "Círculos",
+    "Close" : "Fechar",
     "Start a conversation" : "Iniciar uma conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

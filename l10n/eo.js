@@ -314,7 +314,6 @@ OC.L10N.register(
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
-    "Close" : "Malfermi",
     "Password protect" : "Protekti per pasvorto",
     "Create new poll" : "Krei novan enketon",
     "Settings" : "Agordoj",
@@ -347,6 +346,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "Circles" : "Rondoj"
+    "Circles" : "Rondoj",
+    "Close" : "Malfermi"
 },
 "nplurals=2; plural=(n != 1);");
