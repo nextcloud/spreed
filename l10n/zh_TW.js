@@ -1139,7 +1139,6 @@ OC.L10N.register(
     "Login" : "帳號",
     "Error while verifying uploaded file" : "驗證上傳的檔案時發生錯誤",
     "Uploaded file is verified" : "已驗證上傳的檔案",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "內容格式為逗號分隔值 (CSV)：<br/>- 標題行為必填，且必須符合 <samp>\"email\",\"name\"</samp> 或 <samp>\"email\"</samp><br/>- 一個條目一行（例如 <samp>\"John Doe\",\"john@example.tld\"</samp>）",
     "Participants added successfully" : "參與者新增成功",
     "Error while adding participants" : "新增參與者時發生錯誤",
     "Import a file" : "匯入檔案",
@@ -1953,6 +1952,7 @@ OC.L10N.register(
     "Signaling servers" : "訊號伺服器",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部訊號伺服器。留空以使用內部訊號伺服器。",
     "- Unsent message drafts are now saved in your browser " : "- 未傳送的訊息草稿現在會儲存在您的瀏覽器中",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以透過聯盟方式與其他 Talk 伺服器通訊"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以透過聯盟方式與其他 Talk 伺服器通訊",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "內容格式為逗號分隔值 (CSV)：<br/>- 標題行為必填，且必須符合 <samp>\"email\",\"name\"</samp> 或 <samp>\"email\"</samp><br/>- 一個條目一行（例如 <samp>\"John Doe\",\"john@example.tld\"</samp>）"
 },
 "nplurals=1; plural=0;");

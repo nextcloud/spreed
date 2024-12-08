@@ -1136,7 +1136,6 @@ OC.L10N.register(
     "Login" : "Вход",
     "Error while verifying uploaded file" : "Ошибка при проверке загруженного файла",
     "Uploaded file is verified" : "Загруженный файл проверен",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Содержимое в формате «Comma Separated Values» (CSV):<br/>- Строка заголовка обязательна и должна совпадать с <samp>\"email\",\"name\"</samp> или только <samp>\"email\"</samp><br/>- Один участник на одну линию (например, <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Участники успешно добавлены",
     "Error while adding participants" : "Ошибка при добавлении участников",
     "Import a file" : "Импортировать файл",
@@ -1948,6 +1947,7 @@ OC.L10N.register(
     "Signaling servers" : "Сигнальные сервера",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Для крупных развёртываний может быть использован внешний сигнальный сервер. Для использования встроенного сигнального сервера оставьте поле пустым.",
     "- Unsent message drafts are now saved in your browser " : "- Неотправленные черновики сообщений теперь сохраняются в вашем браузере",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Превью:* Обмен сообщениями теперь может происходит в федеративных обсуждениях с другими серверами Talk"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Превью:* Обмен сообщениями теперь может происходит в федеративных обсуждениях с другими серверами Talk",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Содержимое в формате «Comma Separated Values» (CSV):<br/>- Строка заголовка обязательна и должна совпадать с <samp>\"email\",\"name\"</samp> или только <samp>\"email\"</samp><br/>- Один участник на одну линию (например, <samp>\"John Doe\",\"john@example.tld\"</samp>)"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

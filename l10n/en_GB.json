@@ -1060,12 +1060,17 @@
     "Breakout rooms are not allowed in public conversations." : "Breakout rooms are not allowed in public conversations.",
     "Allow guests to join this conversation via link" : "Allow guests to join this conversation via link",
     "Password protection" : "Password protection",
+    "This conversation is password-protected. Guests need password to join" : "This conversation is password-protected. Guests need password to join",
+    "Password protection is needed for public conversations" : "Password protection is needed for public conversations",
     "Set a password" : "Set a password",
     "Enter new password" : "Enter new password",
     "Save password" : "Save password",
+    "Copy password" : "Copy password",
     "Guests are allowed to join this conversation via link" : "Guests are allowed to join this conversation via link",
     "Guests are not allowed to join this conversation" : "Guests are not allowed to join this conversation",
     "Resend invitations" : "Resend invitations",
+    "Password copied to clipboard" : "Password copied to clipboard",
+    "Password could not be copied" : "Password could not be copied",
     "Open conversation to registered users, showing it in search results" : "Open conversation to registered users, showing it in search results",
     "Also open to users created with the Guests app" : "Also open to users created with the Guests app",
     "Open conversation" : "Open conversation",
@@ -1137,7 +1142,6 @@
     "Login" : "Login",
     "Error while verifying uploaded file" : "Error while verifying uploaded file",
     "Uploaded file is verified" : "Uploaded file is verified",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Participants added successfully",
     "Error while adding participants" : "Error while adding participants",
     "Import a file" : "Import a file",
@@ -1341,6 +1345,7 @@
     "Create a new group conversation" : "Create a new group conversation",
     "Create conversation" : "Create conversation",
     "Add participants" : "Add participants",
+    "Error: A password is required to create the conversation." : "Error: A password is required to create the conversation.",
     "Error while creating the conversation" : "Error while creating the conversation",
     "All set, the conversation \"{conversationName}\" was created." : "All set, the conversation \"{conversationName}\" was created.",
     "Conversation visibility" : "Conversation visibility",
@@ -1951,6 +1956,7 @@
     "Signaling servers" : "Signaling servers",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
     "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
