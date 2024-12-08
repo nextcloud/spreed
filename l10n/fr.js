@@ -825,6 +825,7 @@ OC.L10N.register(
     "Add a new recording backend server" : "Ajouter un nouveau moteur d'enregistrement",
     "Shared secret" : "Secret partagé",
     "Recording consent" : "Consentement à l'enregistrement",
+    "Recording transcription" : "Enregistrement de la transcription",
     "Disabled for all calls" : "Désactivé pour tous les appels",
     "Enabled for all calls" : "Activé pour tous les appels",
     "Configurable on conversation level by moderators" : "Configuration au niveau de la conversation par les modérateurs",
@@ -1062,9 +1063,12 @@ OC.L10N.register(
     "Set a password" : "Saisissez un mot de passe",
     "Enter new password" : "Saisir un nouveau mot de passe",
     "Save password" : "Enregistrer le mot de passe",
+    "Copy password" : "Copier le mot de passe",
     "Guests are allowed to join this conversation via link" : "Les invités sont autorisés à rejoindre cette conversation via un lien",
     "Guests are not allowed to join this conversation" : "Les invités ne sont pas autorisés à rejoindre cette conversation",
     "Resend invitations" : "Renvoyer les invitations",
+    "Password copied to clipboard" : "Mot de passe copié dans le presse-papiers",
+    "Password could not be copied" : "Le mot de passe n'a pas pu être copié",
     "Open conversation to registered users, showing it in search results" : "Ouvrir la conversation aux utilisateurs enregistrés, en la montrant dans les résultats de recherche",
     "Also open to users created with the Guests app" : "Aussi ouvrir aux utilisateurs créés avec l'application Invités",
     "Open conversation" : "Ouvrir la conversation",
@@ -1136,7 +1140,6 @@ OC.L10N.register(
     "Login" : "S’identifier",
     "Error while verifying uploaded file" : "Erreur lors de la vérification du fichier téléversé",
     "Uploaded file is verified" : "Le fichier téléversé est vérifié",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Le contenu est au format CSV (valeurs séparées par des virgules) :<br/>- La ligne d'entête est obligatoire et doit correspondre à <samp>\"email\",\"nom\"</samp> ou juste <samp>\"email\"</samp><br/>- Un enregistrement par ligne (par exemple <samp>\"Jean Dupont\",\"jean.dupont@exemple.fr\"</samp>)",
     "Participants added successfully" : "Les participants ont été ajoutés avec succès",
     "Error while adding participants" : "Erreur lors de l'ajout des participants",
     "Import a file" : "Importer un fichier",
@@ -1949,6 +1952,7 @@ OC.L10N.register(
     "Signaling servers" : "Serveur de signalement",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
     "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk."
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk.",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Le contenu est au format CSV (valeurs séparées par des virgules) :<br/>- La ligne d'entête est obligatoire et doit correspondre à <samp>\"email\",\"nom\"</samp> ou juste <samp>\"email\"</samp><br/>- Un enregistrement par ligne (par exemple <samp>\"Jean Dupont\",\"jean.dupont@exemple.fr\"</samp>)"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -1060,12 +1060,17 @@
     "Breakout rooms are not allowed in public conversations." : "Ní cheadaítear seomraí ar leithligh i gcomhráite poiblí.",
     "Allow guests to join this conversation via link" : "Lig d'aíonna páirt a ghlacadh sa chomhrá seo trí nasc",
     "Password protection" : "Cosaint pasfhocal",
+    "This conversation is password-protected. Guests need password to join" : "Tá an comhrá seo cosanta ag pasfhocal. Teastaíonn pasfhocal ó aíonna le bheith páirteach",
+    "Password protection is needed for public conversations" : "Tá cosaint pasfhocail ag teastáil le haghaidh comhráite poiblí",
     "Set a password" : "Socraigh focal faire",
     "Enter new password" : "Cuir isteach pasfhocal nua",
     "Save password" : "Sábháil pasfhocal",
+    "Copy password" : "Cóipeáil pasfhocal",
     "Guests are allowed to join this conversation via link" : "Tá cead ag aíonna páirt a ghlacadh sa chomhrá seo trí nasc",
     "Guests are not allowed to join this conversation" : "Níl cead ag aíonna páirt a ghlacadh sa chomhrá seo",
     "Resend invitations" : "Cuir cuirí ar ais",
+    "Password copied to clipboard" : "Cóipeáladh an pasfhocal chuig an ngearrthaisce",
+    "Password could not be copied" : "Níorbh fhéidir an pasfhocal a chóipeáil",
     "Open conversation to registered users, showing it in search results" : "Oscail an comhrá d'úsáideoirí cláraithe, agus é á thaispeáint i dtorthaí cuardaigh",
     "Also open to users created with the Guests app" : "Ar oscailt freisin d'úsáideoirí a cruthaíodh leis an aip Aíonna",
     "Open conversation" : "Oscail comhrá",
@@ -1137,7 +1142,6 @@
     "Login" : "Logáil isteach",
     "Error while verifying uploaded file" : "Earráid agus an comhad uaslódáilte á fhíorú",
     "Uploaded file is verified" : "Tá an comhad uaslódáilte fíoraithe",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Is é formáid an ábhair ná Luachanna Camóga Deighilte (CSV): <br/>- Tá líne ceanntásca ag teastáil agus ní mór í a mheaitseáil le <samp> \"ríomhphost\",,\"ainm\"</samp> nó díreach <samp>\"ríomhphost\"</samp><br/>- Iontráil amháin in aghaidh an líne (m.sh. <samp>\"John Doe\",,\"john@example.tld\"</samp>)",
     "Participants added successfully" : "D'éirigh leis na rannpháirtithe a chur leis",
     "Error while adding participants" : "Earráid agus rannpháirtithe á gcur leis",
     "Import a file" : "Iompórtáil comhad",
@@ -1341,6 +1345,7 @@
     "Create a new group conversation" : "Cruthaigh comhrá grúpa nua",
     "Create conversation" : "Cruthaigh comhrá",
     "Add participants" : "Cuir rannpháirtithe leis",
+    "Error: A password is required to create the conversation." : "Earráid: Tá pasfhocal ag teastáil chun an comhrá a chruthú.",
     "Error while creating the conversation" : "Earráid agus an comhrá á chruthú",
     "All set, the conversation \"{conversationName}\" was created." : "Gach socraithe, cruthaíodh an comhrá \"{conversationName}\".",
     "Conversation visibility" : "Infheictheacht an chomhrá",
@@ -1951,6 +1956,7 @@
     "Signaling servers" : "Freastalaithe comharthaíochta",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Is féidir freastalaí comharthaíochta seachtrach a úsáid go roghnach le haghaidh suiteálacha níos mó. Fág folamh chun an freastalaí comharthaíochta inmheánach a úsáid.",
     "- Unsent message drafts are now saved in your browser " : "- Déantar dréachtaí teachtaireachta nár seoladh a shábháil i do bhrabhsálaí anois",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Is é formáid an ábhair ná Luachanna Camóga Deighilte (CSV): <br/>- Tá líne ceanntásca ag teastáil agus ní mór í a mheaitseáil le <samp> \"ríomhphost\",,\"ainm\"</samp> nó díreach <samp>\"ríomhphost\"</samp><br/>- Iontráil amháin in aghaidh an líne (m.sh. <samp>\"John Doe\",,\"john@example.tld\"</samp>)"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
