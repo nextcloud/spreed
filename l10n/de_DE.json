@@ -1060,12 +1060,17 @@
     "Breakout rooms are not allowed in public conversations." : "Gruppenräume sind bei öffentlichen Gesprächen nicht gestattet.",
     "Allow guests to join this conversation via link" : "Gästen die Teilnahme an dieser Unterhaltung per Link erlauben",
     "Password protection" : "Passwortschutz",
+    "This conversation is password-protected. Guests need password to join" : "Diese Unterhaltung ist passwortgeschützt. Gäste brauchen ein Passwort um teilzunehmen",
+    "Password protection is needed for public conversations" : "Passwortschutz ist für öffentliche Gespräche erforderlich",
     "Set a password" : "Passwort setzen",
     "Enter new password" : "Neues Passwort eingeben",
     "Save password" : "Passwort speichern",
+    "Copy password" : "Passwort kopieren",
     "Guests are allowed to join this conversation via link" : "Gäste dürfen dieser Unterhaltung über einen Link beitreten",
     "Guests are not allowed to join this conversation" : "Gäste dürfen dieser Unterhaltung nicht beitreten",
     "Resend invitations" : "Einladungen erneut versenden",
+    "Password copied to clipboard" : "Passwort in die Zwischenablage kopiert",
+    "Password could not be copied" : "Passwort kann nicht kopiert werden",
     "Open conversation to registered users, showing it in search results" : "Konversation für registrierte Benutzer öffnen und in den Suchergebnissen anzeigen",
     "Also open to users created with the Guests app" : "Auch für Gäste, die mit der Gast-App erstellt wurden, geöffnet",
     "Open conversation" : "Unterhaltung öffnen",
@@ -1137,7 +1142,6 @@
     "Login" : "Anmeldung",
     "Error while verifying uploaded file" : "Fehler bei der Überprüfung der hochgeladenen Datei",
     "Uploaded file is verified" : "Hochgeladene Datei wurde überprüft",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Format ist Comma Separated Values (CSV):<br/> - Kopfzeile ist erforderlich und muss übereinstimmen mit <samp>\"email\",\"name\"</samp> oder einfach <samp>\"email\"</samp><br/>- Ein Eintrag pro Zeile (z. B. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Teilnehmer hinzugefügt",
     "Error while adding participants" : "Fehler beim Hinzufügen von Teilnehmern",
     "Import a file" : "Eine Datei importieren",
@@ -1341,6 +1345,7 @@
     "Create a new group conversation" : "Neue Gruppenunterhaltung erstellen",
     "Create conversation" : "Unterhaltung erstellen",
     "Add participants" : "Teilnehmer hinzufügen",
+    "Error: A password is required to create the conversation." : "Fehler: Ein Passwort ist erforderlich, um die Unterhaltung zu erstellen.",
     "Error while creating the conversation" : "Fehler beim Erstellen der Unterhaltung",
     "All set, the conversation \"{conversationName}\" was created." : "Alles erledigt, die Unterhaltung „{conversationName}“ wurde erstellt.",
     "Conversation visibility" : "Sichtbarkeit der Unterhaltung",
@@ -1951,6 +1956,7 @@
     "Signaling servers" : "Signaling-Server",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Für größere Installationen kann optional ein externer Signaling-Server eingesetzt werden. Leer lassen, um den internen Signaling-Server zu verwenden.",
     "- Unsent message drafts are now saved in your browser " : "- Nicht gesendete Nachrichtenentwürfe werden jetzt in Ihrem Browser gespeichert",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden",
+    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Format ist Comma-Separated Values (CSV):<br/> - Kopfzeile ist erforderlich und muss übereinstimmen mit <samp>\"email\",\"name\"</samp> oder einfach <samp>\"email\"</samp><br/>- Ein Eintrag pro Zeile (z. B. <samp>\"John Doe\",\"john@example.tld\"</samp>)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
