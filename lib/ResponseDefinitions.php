@@ -44,6 +44,12 @@ namespace OCA\Talk;
  *     secret: string,
  * }
  *
+ * @psalm-type TalkCalendar = array{
+ *     uri: string,
+ *     name: string,
+ *     color: ?string,
+ * }
+ *
  * @psalm-type TalkCallPeer = array{
  *     actorId: string,
  *     actorType: string,
