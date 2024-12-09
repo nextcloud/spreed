@@ -8,29 +8,38 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Calendar\IManager;
+use OCP\Constants;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkCalendar from ResponseDefinitions
+ */
 class SettingsController extends OCSController {
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		protected IRootFolder $rootFolder,
+		protected IDBConnection $db,
 		protected IConfig $config,
 		protected IGroupManager $groupManager,
 		protected LoggerInterface $logger,
 		protected BeforePreferenceSetEventListener $preferenceListener,
+		protected IManager $calendarManager,
 		protected ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -85,5 +94,82 @@ class SettingsController extends OCSController {
 		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
 
 		return new DataResponse(null);
+	}
+
+	/**
+	 * Get writable calendars and the default calendar
+	 *
+	 * Required capability: `schedule-meeting`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{defaultCalendarUri: ?string, calendars: list<TalkCalendar>}, array{}>
+	 *
+	 * 200: Get a list of calendars
+	 */
+	#[NoAdminRequired]
+	public function getPersonalCalendars(): DataResponse {
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
+
+		$defaultCalendarUri = $selectedCalendarUri = null;
+		$selectedCalendar = $this->getSchedulingCalendarFromPropertiesTable($this->userId);
+		if ($selectedCalendar !== false) {
+			$parts = explode('/', rtrim($selectedCalendar, '/'));
+			if (count($parts) === 3 && $parts[0] === 'calendars' && $parts[1] === $this->userId) {
+				$selectedCalendarUri = $parts[2];
+			}
+		}
+
+		$hasPersonal = false;
+		$list = [];
+		foreach ($calendars as $calendar) {
+			if ($calendar->isDeleted()) {
+				continue;
+			}
+
+			if (!($calendar->getPermissions('principals/users/' . $this->userId) & Constants::PERMISSION_CREATE)) {
+				continue;
+			}
+
+			if ($calendar->getUri() === 'personal') {
+				$hasPersonal = true;
+			}
+
+			if ($selectedCalendarUri === $calendar->getUri()) {
+				$defaultCalendarUri = $selectedCalendarUri;
+			}
+
+			$list[] = [
+				'uri' => $calendar->getUri(),
+				'name' => $calendar->getDisplayName() ?? $calendar->getUri(),
+				'color' => $calendar->getDisplayColor(),
+			];
+		}
+
+		return new DataResponse([
+			'defaultCalendarUri' => $defaultCalendarUri ?? ($hasPersonal ? 'personal' : null),
+			'calendars' => $list,
+		]);
+	}
+
+	/**
+	 * @param string $userId
+	 * @return false|string
+	 */
+	protected function getSchedulingCalendarFromPropertiesTable(string $userId) {
+		$propertyPath = 'principals/users/' . $userId;
+		$propertyName = '{urn:ietf:params:xml:ns:caldav}schedule-default-calendar-URL';
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('propertyvalue')
+			->from('properties')
+			->where($query->expr()->eq('userid', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('propertypath', $query->createNamedParameter($propertyPath)))
+			->andWhere($query->expr()->eq('propertyname', $query->createNamedParameter($propertyName)))
+			->setMaxResults(1);
+
+		$result = $query->executeQuery();
+		$property = $result->fetchOne();
+		$result->closeCursor();
+
+		return $property;
 	}
 }
