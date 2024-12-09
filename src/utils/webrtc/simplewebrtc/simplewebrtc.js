@@ -116,6 +116,8 @@ export default function SimpleWebRTC(opts) {
 				} else {
 					self.emit('mute', { id: message.payload.peerId })
 				}
+			} else if (message.payload.action === 'forceCallViewMode') {
+				self.emit('forcedCallViewMode', message.payload.callViewMode)
 			}
 		} else if (message.type === 'nickChanged') {
 			// "nickChanged" can be received from a participant without a Peer

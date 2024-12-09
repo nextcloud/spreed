@@ -23,9 +23,11 @@ export default function LocalCallParticipantModel() {
 		guestName: null,
 		peerNeeded: false,
 		connectionState: null,
+		forcedCallViewMode: null,
 	})
 
 	this._handleForcedMuteBound = this._handleForcedMute.bind(this)
+	this._handleForcedCallViewModeBound = this._handleForcedCallViewMode.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
 
 }
@@ -49,6 +51,7 @@ LocalCallParticipantModel.prototype = {
 	setWebRtc(webRtc) {
 		if (this._webRtc) {
 			this._webRtc.off('forcedMute', this._handleForcedMuteBound)
+			this._webRtc.off('forcedCallViewMode', this._handleForcedCallViewModeBound)
 			this._unwatchDisplayNameChange()
 		}
 
@@ -56,8 +59,10 @@ LocalCallParticipantModel.prototype = {
 
 		this.set('peerId', this._webRtc.connection.getSessionId())
 		this.set('guestName', null)
+		this.set('forcedCallViewMode', null)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
+		this._webRtc.on('forcedCallViewMode', this._handleForcedCallViewModeBound)
 		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
@@ -120,6 +125,10 @@ LocalCallParticipantModel.prototype = {
 		this._trigger('forcedMute')
 	},
 
+	_handleForcedCallViewMode(forcedCallViewMode) {
+		this.set('forcedCallViewMode', forcedCallViewMode)
+	},
+
 	_handleExtendedIceConnectionStateChange(extendedIceConnectionState) {
 		switch (extendedIceConnectionState) {
 		case 'new':
@@ -162,6 +171,16 @@ LocalCallParticipantModel.prototype = {
 		})
 	},
 
+	forceCallViewMode(callViewMode) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		this._webRtc.sendToAll('control', {
+			action: 'forceCallViewMode',
+			callViewMode,
+		})
+	},
 }
 
 EmitterMixin.apply(LocalCallParticipantModel.prototype)
