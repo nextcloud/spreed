@@ -14,7 +14,7 @@
 				:aria-label="t('spreed', 'Open dialpad')"
 				:title="t('spreed', 'Open dialpad')">
 				<template #icon>
-					<Dialpad :size="20" />
+					<IconDialpad :size="20" />
 				</template>
 			</NcButton>
 		</template>
@@ -58,7 +58,7 @@
 				type="tertiary"
 				@click="handleBackspace">
 				<template #icon>
-					<BackspaceOutline :size="20" />
+					<IconBackspaceOutline :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import BackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
-import Dialpad from 'vue-material-design-icons/Dialpad.vue'
+import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
+import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
 
 import { t, getLocale } from '@nextcloud/l10n'
 
@@ -106,8 +106,8 @@ export default {
 	name: 'DialpadPanel',
 
 	components: {
-		BackspaceOutline,
-		Dialpad,
+		IconBackspaceOutline,
+		IconDialpad,
 		NcButton,
 		NcPopover,
 		NcSelect,

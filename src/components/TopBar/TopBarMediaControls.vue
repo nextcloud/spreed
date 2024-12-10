@@ -18,7 +18,7 @@
 						:aria-label="qualityWarningAriaLabel"
 						@click="mouseover = !mouseover">
 						<template #icon>
-							<NetworkStrength2Alert fill-color="#e9322d" :size="20" />
+							<IconNetworkStrength2Alert fill-color="#e9322d" :size="20" />
 						</template>
 					</NcButton>
 				</template>
@@ -59,8 +59,8 @@
 			:class="blurButtonClass"
 			@click.stop="toggleVirtualBackground">
 			<template #icon>
-				<Blur v-if="isVirtualBackgroundEnabled" :size="20" />
-				<BlurOff v-else :size="20" />
+				<IconBlur v-if="isVirtualBackgroundEnabled" :size="20" />
+				<IconBlurOff v-else :size="20" />
 			</template>
 		</NcButton>
 
@@ -75,18 +75,18 @@
 			:disabled="!isScreensharingAllowed"
 			:open.sync="screenSharingMenuOpen">
 			<template #icon>
-				<MonitorOff :size="20" />
+				<IconMonitorOff :size="20" />
 			</template>
 			<!-- Actions -->
 			<NcActionButton close-after-click @click="showScreen">
 				<template #icon>
-					<Monitor :size="20" />
+					<IconMonitor :size="20" />
 				</template>
 				{{ t('spreed', 'Show your screen') }}
 			</NcActionButton>
 			<NcActionButton close-after-click @click="stopScreen">
 				<template #icon>
-					<MonitorOff :size="20" />
+					<IconMonitorOff :size="20" />
 				</template>
 				{{ t('spreed', 'Stop screensharing') }}
 			</NcActionButton>
@@ -98,7 +98,7 @@
 			:disabled="!isScreensharingAllowed"
 			@click.stop="toggleScreenSharingMenu">
 			<template #icon>
-				<MonitorShare :size="20" />
+				<IconMonitorShare :size="20" />
 			</template>
 		</NcButton>
 	</div>
@@ -107,12 +107,12 @@
 <script>
 import escapeHtml from 'escape-html'
 
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import Monitor from 'vue-material-design-icons/Monitor.vue'
-import MonitorOff from 'vue-material-design-icons/MonitorOff.vue'
-import MonitorShare from 'vue-material-design-icons/MonitorShare.vue'
-import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
+import IconBlur from 'vue-material-design-icons/Blur.vue'
+import IconBlurOff from 'vue-material-design-icons/BlurOff.vue'
+import IconMonitor from 'vue-material-design-icons/Monitor.vue'
+import IconMonitorOff from 'vue-material-design-icons/MonitorOff.vue'
+import IconMonitorShare from 'vue-material-design-icons/MonitorShare.vue'
+import IconNetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -144,12 +144,12 @@ export default {
 		NcButton,
 		NcPopover,
 		// Icons
-		Blur,
-		BlurOff,
-		Monitor,
-		MonitorOff,
-		MonitorShare,
-		NetworkStrength2Alert,
+		IconBlur,
+		IconBlurOff,
+		IconMonitor,
+		IconMonitorOff,
+		IconMonitorShare,
+		IconNetworkStrength2Alert,
 	},
 
 	props: {

@@ -23,15 +23,15 @@
 			:title="t('spreed', 'Refresh devices list')"
 			:aria-lebel="t('spreed', 'Refresh devices list')"
 			@click="$emit('refresh')">
-			<RefreshIcon :size="20" />
+			<IconRefresh :size="20" />
 		</NcButton>
 	</div>
 </template>
 
 <script>
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import RefreshIcon from 'vue-material-design-icons/Refresh.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
+import IconRefresh from 'vue-material-design-icons/Refresh.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -45,9 +45,9 @@ export default {
 	components: {
 		NcButton,
 		NcSelect,
-		Microphone,
-		RefreshIcon,
-		VideoIcon,
+		IconMicrophone,
+		IconRefresh,
+		IconVideo,
 	},
 
 	props: {
@@ -86,8 +86,8 @@ export default {
 
 		deviceIcon() {
 			switch (this.kind) {
-			case 'audioinput': return Microphone
-			case 'videoinput': return VideoIcon
+			case 'audioinput': return IconMicrophone
+			case 'videoinput': return IconVideo
 			default: return null
 			}
 		},
