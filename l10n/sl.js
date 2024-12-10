@@ -1051,7 +1051,7 @@ OC.L10N.register(
     "Blur" : "Zameglitev",
     "Upload" : "Pošlji",
     "Files" : "Datoteke",
-    "Select a file" : "Izbor datotek",
+    "Select a file" : "Izbor datoteke",
     "Select virtual office background" : "Izbor slike pisarne za ozadje",
     "Select virtual home background" : "Izbor domačega okolja za sliko ozadja",
     "Select virtual abstract background" : "Izbor abstraktne slike za ozadje",

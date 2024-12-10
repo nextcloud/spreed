@@ -1952,7 +1952,6 @@ OC.L10N.register(
     "Signaling servers" : "Servidores de sinalização",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Um servidor de sinalização externo pode opcionalmente ser usado para instalações maiores. Deixe vazio para usar o servidor de sinalização interno.",
     "- Unsent message drafts are now saved in your browser " : "- Rascunhos de mensagens não enviadas agora são salvos em seu navegador",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Pré-visualização:* O bate-papo por texto agora pode ser feito de forma federada com outros servidores Talk",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "O conteúdo é formatado em Valores Separados por Vírgulas (CSV):<br/>- A linha de cabeçalho é necessária e deve corresponder <samp>\"email\",\"nome\"</samp> or apenas <samp>\"email\"</samp><br/>- Uma entrada por linha (Ex.: <samp>\"John Doe\",\"john@example.tld\"</samp>)"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Pré-visualização:* O bate-papo por texto agora pode ser feito de forma federada com outros servidores Talk"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
