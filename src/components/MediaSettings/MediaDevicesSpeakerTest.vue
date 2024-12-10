@@ -5,7 +5,7 @@
 
 <template>
 	<div class="media-devices-checker">
-		<VolumeHighIcon class="media-devices-checker__icon" :size="16" />
+		<IconVolumeHigh class="media-devices-checker__icon" :size="16" />
 		<NcButton type="secondary" @click="playTestSound">
 			{{ buttonLabel }}
 		</NcButton>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import VolumeHighIcon from 'vue-material-design-icons/VolumeHigh.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -32,8 +32,8 @@ export default {
 	name: 'MediaDevicesSpeakerTest',
 
 	components: {
+		IconVolumeHigh,
 		NcButton,
-		VolumeHighIcon,
 	},
 
 	setup() {

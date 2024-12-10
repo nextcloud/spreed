@@ -28,7 +28,7 @@
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleCancelEditing">
 					<template #icon>
-						<Close :size="20" />
+						<IconClose :size="20" />
 					</template>
 				</NcButton>
 				<NcButton type="primary"
@@ -36,7 +36,7 @@
 					:disabled="!canSubmit"
 					@click="handleSubmitText">
 					<template #icon>
-						<Check :size="20" />
+						<IconCheck :size="20" />
 					</template>
 				</NcButton>
 				<div v-if="showCountDown"
@@ -53,7 +53,7 @@
 				:aria-label="editButtonAriaLabel"
 				@click="handleEditText">
 				<template #icon>
-					<Pencil :size="20" />
+					<IconPencil :size="20" />
 				</template>
 			</NcButton>
 		</template>
@@ -62,9 +62,9 @@
 </template>
 
 <script>
-import Check from 'vue-material-design-icons/Check.vue'
-import Close from 'vue-material-design-icons/Close.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconPencil from 'vue-material-design-icons/Pencil.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -77,12 +77,12 @@ import { parseSpecialSymbols } from '../../utils/textParse.ts'
 export default {
 	name: 'EditableTextField',
 	components: {
-		Check,
-		Close,
+		IconCheck,
+		IconClose,
+		IconPencil,
 		NcButton,
 		NcRichContenteditable,
 		NcRichText,
-		Pencil,
 	},
 
 	props: {

@@ -9,7 +9,7 @@
 		:aria-label="t('spreed', 'Send a reaction')"
 		class="reaction">
 		<template #icon>
-			<EmoticonOutline :size="20" />
+			<IconEmoticonOutline :size="20" />
 		</template>
 
 		<NcActionButtonGroup class="reaction__group"
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
@@ -44,7 +44,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcActionButtonGroup,
-		EmoticonOutline,
+		IconEmoticonOutline,
 	},
 
 	props: {

@@ -15,10 +15,10 @@
 				type="tertiary"
 				@click="showPopover = !showPopover">
 				<template v-if="isRecording || isStartingRecording" #icon>
-					<RecordCircle v-if="isRecording"
+					<IconRecordCircle v-if="isRecording"
 						:size="20"
 						fill-color="#e9322d" />
-					<RecordCircle v-else
+					<IconRecordCircle v-else
 						:size="20"
 						fill-color="var(--color-loading-light)" />
 				</template>
@@ -51,7 +51,7 @@
 				:wide="true"
 				@click="stopRecording">
 				<template #icon>
-					<StopIcon :size="20" />
+					<IconStop :size="20" />
 				</template>
 				{{ t('spreed', 'Stop recording') }}
 			</NcButton>
@@ -60,8 +60,8 @@
 </template>
 
 <script>
-import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
-import StopIcon from 'vue-material-design-icons/Stop.vue'
+import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import IconStop from 'vue-material-design-icons/Stop.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -82,8 +82,8 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcPopover,
-		RecordCircle,
-		StopIcon,
+		IconRecordCircle,
+		IconStop,
 	},
 
 	props: {
