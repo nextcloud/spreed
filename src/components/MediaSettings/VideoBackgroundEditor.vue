@@ -9,7 +9,7 @@
 			class="background-editor__element"
 			:class="{'background-editor__element--selected': selectedBackground === 'none'}"
 			@click="handleSelectBackground('none')">
-			<Cancel :size="20" />
+			<IconCancel :size="20" />
 			{{
 				// TRANSLATORS: "None" refers to "No background effect applied" in videos, for context, other options are "blur" or "image"
 				t('spreed', 'None')
@@ -19,20 +19,20 @@
 			class="background-editor__element"
 			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
 			@click="handleSelectBackground('blur')">
-			<Blur :size="20" />
+			<IconBlur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
 		<template v-if="predefinedBackgrounds?.length">
 			<template v-if="canUploadBackgrounds">
 				<button class="background-editor__element"
 					@click="clickImportInput">
-					<Upload :size="20" />
+					<IconUpload :size="20" />
 					{{ t('spreed', 'Upload') }}
 				</button>
 				<button class="background-editor__element"
 					:class="{'background-editor__element--selected': isCustomBackground }"
 					@click="showFilePicker = true">
-					<Folder :size="20" />
+					<IconFolder :size="20" />
 					{{ t('spreed', 'Files') }}
 				</button>
 			</template>
@@ -46,7 +46,7 @@
 					'background-image': 'url(' + path + ')'
 				}"
 				@click="handleSelectBackground(path)">
-				<CheckBold v-if="selectedBackground === path"
+				<IconCheckBold v-if="selectedBackground === path"
 					:size="40"
 					fill-color="#fff" />
 			</button>
@@ -72,11 +72,11 @@
 </template>
 
 <script>
-import Blur from 'vue-material-design-icons/Blur.vue'
-import Cancel from 'vue-material-design-icons/Cancel.vue'
-import CheckBold from 'vue-material-design-icons/CheckBold.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Upload from 'vue-material-design-icons/Upload.vue'
+import IconBlur from 'vue-material-design-icons/Blur.vue'
+import IconCancel from 'vue-material-design-icons/Cancel.vue'
+import IconCheckBold from 'vue-material-design-icons/CheckBold.vue'
+import IconFolder from 'vue-material-design-icons/Folder.vue'
+import IconUpload from 'vue-material-design-icons/Upload.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
@@ -105,12 +105,12 @@ export default {
 	name: 'VideoBackgroundEditor',
 
 	components: {
-		Blur,
-		Cancel,
-		CheckBold,
 		FilePickerVue,
-		Folder,
-		Upload,
+		IconBlur,
+		IconCancel,
+		IconCheckBold,
+		IconFolder,
+		IconUpload,
 	},
 
 	props: {
