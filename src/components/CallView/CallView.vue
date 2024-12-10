@@ -265,7 +265,19 @@ export default {
 			return this.callViewStore.isViewerOverlay
 		},
 
+		forcedCallViewMode() {
+			return this.localCallParticipantModel.attributes.forcedCallViewMode
+		},
+
 		isGrid() {
+			if (this.forcedCallViewMode === 'grid' && !this.$store.getters.isModerator) {
+				return true
+			}
+
+			if (this.forcedCallViewMode === 'speaker' && !this.$store.getters.isModerator) {
+				return false
+			}
+
 			return this.callViewStore.isGrid && !this.isSidebar
 		},
 
@@ -490,6 +502,7 @@ export default {
 	mounted() {
 		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
 		EventBus.on('refresh-peer-list', this.debounceFetchPeers)
+		EventBus.on('force-call-view-mode', this.forceCallViewMode)
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
@@ -501,6 +514,7 @@ export default {
 		this.debounceFetchPeers.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
+		EventBus.off('force-call-view-mode', this.forceCallViewMode)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
@@ -798,6 +812,10 @@ export default {
 			} else {
 				this.showPresenterOverlay = !this.showPresenterOverlay
 			}
+		},
+
+		forceCallViewMode(mode) {
+			this.localCallParticipantModel.forceCallViewMode(mode)
 		},
 
 	},
