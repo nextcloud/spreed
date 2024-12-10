@@ -45,6 +45,7 @@ jobs:
 
     needs: changes
     if: needs.changes.outputs.src != 'false'
+    name: Federation ${{ matrix.host-server-versions }} -> ${{ matrix.remote-server-versions }}
 
     strategy:
       fail-fast: false
@@ -64,6 +65,20 @@ jobs:
             remote-circles-versions: 'stable30'
             remote-call-summary-bot-versions: 'main'
             remote-notifications-versions: 'stable30'
+          - test-suite: 'federation'
+            php-versions: '8.2'
+            host-server-versions: 'stable30'
+            host-spreed-versions: 'stable30'
+            host-guests-versions: 'stable30'
+            host-circles-versions: 'stable30'
+            host-call-summary-bot-versions: 'main'
+            host-notifications-versions: 'stable30'
+            remote-server-versions: 'master'
+            remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
+            remote-guests-versions: 'master'
+            remote-circles-versions: 'master'
+            remote-call-summary-bot-versions: 'main'
+            remote-notifications-versions: 'master'
 
     services:
       oracle:
