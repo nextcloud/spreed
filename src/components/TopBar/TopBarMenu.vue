@@ -13,7 +13,7 @@
 				<template #icon>
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-					<HandBackLeft :size="18" />
+					<IconHandBackLeft :size="18" />
 				</template>
 			</NcButton>
 		</TransitionExpand>
@@ -24,7 +24,7 @@
 			type="tertiary">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
-				<DotsHorizontal :size="20" />
+				<IconDotsHorizontal :size="20" />
 			</template>
 
 			<template v-if="showActions && isInCall">
@@ -34,17 +34,17 @@
 					<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
 					<template #icon>
-						<HandBackLeft :size="16" />
+						<IconHandBackLeft :size="16" />
 					</template>
 					{{ raiseHandButtonLabel }}
 				</NcActionButton>
 
-				<!-- Mute others -->
+				<!-- Moderator actions -->
 				<template v-if="!isOneToOneConversation && canFullModerate">
 					<NcActionButton close-after-click
 						@click="forceMuteOthers">
 						<template #icon>
-							<MicrophoneOff :size="20" />
+							<IconMicrophoneOff :size="20" />
 						</template>
 						{{ t('spreed', 'Mute others') }}
 					</NcActionButton>
@@ -54,7 +54,7 @@
 				<NcActionButton close-after-click
 					@click="showMediaSettingsDialog">
 					<template #icon>
-						<VideoIcon :size="20" />
+						<IconVideo :size="20" />
 					</template>
 					{{ t('spreed', 'Media settings') }}
 				</NcActionButton>
@@ -64,10 +64,8 @@
 					close-after-click
 					@click="changeView">
 					<template #icon>
-						<GridView v-if="!isGrid"
-							:size="20" />
-						<PromotedView v-else
-							:size="20" />
+						<IconViewGrid v-if="!isGrid" :size="20" />
+						<IconViewGallery v-else :size="20" />
 					</template>
 					{{ changeViewText }}
 				</NcActionButton>
@@ -78,8 +76,8 @@
 				close-after-click
 				@click="toggleFullscreen">
 				<template #icon>
-					<Fullscreen v-if="!isFullscreen" :size="20" />
-					<FullscreenExit v-else :size="20" />
+					<IconFullscreen v-if="!isFullscreen" :size="20" />
+					<IconFullscreenExit v-else :size="20" />
 				</template>
 				{{ labelFullscreen }}
 			</NcActionButton>
@@ -88,7 +86,7 @@
 			<NcActionLink v-if="isFileConversation"
 				:href="linkToFile">
 				<template #icon>
-					<File :size="20" />
+					<IconFile :size="20" />
 				</template>
 				{{ t('spreed', 'Go to file') }}
 			</NcActionLink>
@@ -99,7 +97,7 @@
 					close-after-click
 					@click="startRecording">
 					<template #icon>
-						<RecordCircle :size="20" />
+						<IconRecordCircle :size="20" />
 					</template>
 					{{ t('spreed', 'Start recording') }}
 				</NcActionButton>
@@ -115,7 +113,7 @@
 					close-after-click
 					@click="stopRecording">
 					<template #icon>
-						<StopIcon :size="20" />
+						<IconStop :size="20" />
 					</template>
 					{{ t('spreed', 'Stop recording') }}
 				</NcActionButton>
@@ -126,7 +124,7 @@
 				close-after-click
 				@click="$emit('open-breakout-rooms-editor')">
 				<template #icon>
-					<DotsCircle :size="20" />
+					<IconDotsCircle :size="20" />
 				</template>
 				{{ t('spreed', 'Set up breakout rooms') }}
 			</NcActionButton>
@@ -135,7 +133,7 @@
 			<NcActionButton close-after-click
 				@click="openConversationSettings">
 				<template #icon>
-					<Cog :size="20" />
+					<IconCog :size="20" />
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
@@ -152,20 +150,20 @@
 </template>
 
 <script>
-import Cog from 'vue-material-design-icons/Cog.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconDownload from 'vue-material-design-icons/Download.vue'
-import File from 'vue-material-design-icons/File.vue'
-import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
-import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
-import StopIcon from 'vue-material-design-icons/Stop.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
-import GridView from 'vue-material-design-icons/ViewGrid.vue'
+import IconFile from 'vue-material-design-icons/File.vue'
+import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
+import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import IconStop from 'vue-material-design-icons/Stop.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
+import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
 
 import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -210,20 +208,20 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		// Icons
-		Cog,
-		DotsCircle,
-		DotsHorizontal,
-		File,
-		Fullscreen,
-		FullscreenExit,
-		GridView,
-		HandBackLeft,
+		IconCog,
+		IconDotsCircle,
+		IconDotsHorizontal,
 		IconDownload,
-		MicrophoneOff,
-		PromotedView,
-		RecordCircle,
-		StopIcon,
-		VideoIcon,
+		IconFile,
+		IconFullscreen,
+		IconFullscreenExit,
+		IconHandBackLeft,
+		IconMicrophoneOff,
+		IconRecordCircle,
+		IconStop,
+		IconVideo,
+		IconViewGallery,
+		IconViewGrid,
 	},
 
 	props: {
