@@ -27,7 +27,7 @@ class FederationContext implements Context, SnippetAcceptingContext {
 		}
 
 		$port = getenv('PORT_FED');
-		$rootDir = getenv('NEXTCLOUD_ROOT_DIR');
+		$rootDir = getenv('NEXTCLOUD_HOST_ROOT_DIR');
 
 		self::$phpFederatedServerPid = exec('php -S localhost:' . $port . ' -t ' . $rootDir . ' >/dev/null & echo $!');
 	}

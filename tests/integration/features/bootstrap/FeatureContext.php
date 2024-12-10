@@ -4877,7 +4877,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function runReminderBackgroundJobs(string $useForce, string $class, bool $repeated = false): void {
 		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=' . $class]);
-		$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
+		try {
+			$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
+		} catch (JsonException $e) {
+			var_dump('Output');
+			var_dump($this->lastStdOut);
+			var_dump('Error');
+			var_dump($this->lastStdErr);
+			throw $e;
+		}
 
 		if ($repeated && empty($list)) {
 			return;

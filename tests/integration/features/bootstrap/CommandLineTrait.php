@@ -51,9 +51,11 @@ trait CommandLineTrait {
 		$argString = implode(' ', $args);
 
 		if ($this->currentServer === 'REMOTE') {
-			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('REAL_FEDERATED_SERVER_CONFIG_DIR');
+			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('NEXTCLOUD_REMOTE_CONFIG_DIR');
+			$serverRootDir = getenv('NEXTCLOUD_REMOTE_ROOT_DIR');
 		} else {
-			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('MAIN_SERVER_CONFIG_DIR');
+			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('NEXTCLOUD_HOST_CONFIG_DIR');
+			$serverRootDir = getenv('NEXTCLOUD_HOST_ROOT_DIR');
 		}
 
 		$descriptor = [
@@ -61,7 +63,7 @@ trait CommandLineTrait {
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w'],
 		];
-		$process = proc_open('php console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
+		$process = proc_open('php ' . $serverRootDir . '/console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);
