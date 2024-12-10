@@ -17,7 +17,7 @@ import storeConfig from './storeConfig.js'
 import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.js'
-import { setAttachmentFolder } from '../services/settingsService.js'
+import { setAttachmentFolder } from '../services/settingsService.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 
 jest.mock('../services/DavClient', () => ({

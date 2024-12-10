@@ -16,7 +16,7 @@ import {
 	setTypingStatusPrivacy,
 	setStartWithoutMedia,
 	setBlurVirtualBackground,
-} from '../services/settingsService.js'
+} from '../services/settingsService.ts'
 
 /**
  * @typedef {string} Token

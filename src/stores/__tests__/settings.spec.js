@@ -8,7 +8,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.js'
+import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useSettingsStore } from '../settings.js'
 

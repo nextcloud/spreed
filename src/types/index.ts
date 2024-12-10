@@ -245,3 +245,13 @@ export type OutOfOfficeResponse = ApiResponseUnwrapped<{
 		replacementUserDisplayName?: string|null,
 	}
 }>
+
+// User preferences response
+// from https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-user-preferences-api.html
+export type UserPreferencesResponse = ApiResponseUnwrapped<unknown>
+
+// Settings
+export type setSipSettingsParams = Required<operations['settings-setsip-settings']>['requestBody']['content']['application/json']
+export type setSipSettingsResponse = ApiResponse<operations['settings-setsip-settings']['responses'][200]['content']['application/json']>
+export type setUserSettingsParams = Required<operations['settings-set-user-setting']>['requestBody']['content']['application/json']
+export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-setting']['responses'][200]['content']['application/json']>
