@@ -45,7 +45,7 @@ jobs:
 
     needs: changes
     if: needs.changes.outputs.src != 'false'
-    name: Federation ${{ matrix.host-server-versions }} -> ${{ matrix.remote-server-versions }}
+    name: Federation ${{ matrix.host-server-versions }} (${{ matrix.host-db }}) -> ${{ matrix.remote-server-versions }} (${{ matrix.remote-db }})
 
     strategy:
       fail-fast: false
@@ -53,12 +53,14 @@ jobs:
         include:
           - test-suite: 'federation'
             php-versions: '8.2'
+            host-db: 'oci'
             host-server-versions: 'master'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'master'
             host-circles-versions: 'master'
             host-call-summary-bot-versions: 'main'
             host-notifications-versions: 'master'
+            remote-db: 'mysql'
             remote-server-versions: 'stable30'
             remote-spreed-versions: 'stable30'
             remote-guests-versions: 'stable30'
@@ -67,12 +69,30 @@ jobs:
             remote-notifications-versions: 'stable30'
           - test-suite: 'federation'
             php-versions: '8.2'
+            host-db: 'pgsql'
+            host-server-versions: 'master'
+            host-spreed-versions: ${{ github.event.pull_request.head.sha }}
+            host-guests-versions: 'master'
+            host-circles-versions: 'master'
+            host-call-summary-bot-versions: 'main'
+            host-notifications-versions: 'master'
+            remote-db: 'mysql'
+            remote-server-versions: 'stable30'
+            remote-spreed-versions: 'stable30'
+            remote-guests-versions: 'stable30'
+            remote-circles-versions: 'stable30'
+            remote-call-summary-bot-versions: 'main'
+            remote-notifications-versions: 'stable30'
+          - test-suite: 'federation'
+            php-versions: '8.2'
+            host-db: 'oci'
             host-server-versions: 'stable30'
             host-spreed-versions: 'stable30'
             host-guests-versions: 'stable30'
             host-circles-versions: 'stable30'
             host-call-summary-bot-versions: 'main'
             host-notifications-versions: 'stable30'
+            remote-db: 'mysql'
             remote-server-versions: 'master'
             remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
             remote-guests-versions: 'master'
@@ -108,6 +128,16 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
         options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
+
+      postgres:
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        ports:
+          - 4445:5432/tcp
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: rootpassword
+          POSTGRES_DB: nextcloud
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 2s --health-retries 5
 
     steps:
       - name: Set app env
@@ -224,13 +254,63 @@ jobs:
         working-directory: host/apps/${{ env.APP_NAME }}/tests/integration
         run: composer i
 
-      - name: Set up Nextcloud - Host
+      - name: Set up Nextcloud - Host (Postgres)
+        if: ${{ matrix.host-db == 'pgsql' }}
+        env:
+          DB_PORT: 4445
+        working-directory: host/
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=pgsql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Host (Oracle)
+        if: ${{ matrix.host-db == 'oci' }}
         env:
           DB_PORT: 1521
         working-directory: host/
         run: |
           mkdir data
           ./occ maintenance:install --verbose --database=oci --database-name=XE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=autotest --database-pass=owncloud --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Host (MySQL)
+        if: ${{ matrix.host-db == 'mysql' }}
+        env:
+          DB_PORT: 4444
+        working-directory: host/
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=mysql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Remote (Postgres)
+        if: ${{ matrix.remote-db == 'pgsql' }}
+        env:
+          DB_PORT: 4445
+        working-directory: remote/
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=pgsql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Remote (Oracle)
+        if: ${{ matrix.remote-db == 'oracle' }}
+        env:
+          DB_PORT: 1521
+        working-directory: remote/
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=oci --database-name=XE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=autotest --database-pass=owncloud --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Remote (MySQL)
+        if: ${{ matrix.remote-db == 'mysql' }}
+        env:
+          DB_PORT: 4444
+        working-directory: remote/
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=mysql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+
+      - name: Set up Nextcloud - Host (Shared)
+        working-directory: host/
+        run: |
           ./occ config:system:set debug --value=true --type=boolean
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
@@ -241,13 +321,9 @@ jobs:
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
 
-      - name: Set up Nextcloud - Remote
-        env:
-          DB_PORT: 4444
+      - name: Set up Nextcloud - Remote (Shared)
         working-directory: remote/
         run: |
-          mkdir data
-          ./occ maintenance:install --verbose --database=mysql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
           ./occ config:system:set debug --value=true --type=boolean
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
