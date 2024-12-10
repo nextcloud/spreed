@@ -17,12 +17,12 @@
 		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
-		<Magnify :size="16" />
+		<IconMagnify :size="16" />
 	</NcTextField>
 </template>
 
 <script>
-import Magnify from 'vue-material-design-icons/Magnify.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -31,8 +31,8 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 export default {
 	name: 'SearchBox',
 	components: {
+		IconMagnify,
 		NcTextField,
-		Magnify,
 	},
 	props: {
 		/**
