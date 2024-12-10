@@ -229,8 +229,7 @@ const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
 	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
-const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media')
-
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 export default {
 	name: 'SettingsDialog',
 
