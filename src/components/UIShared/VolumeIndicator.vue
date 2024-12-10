@@ -8,30 +8,30 @@
 		:style="{ height: size + 'px', width: size + 'px' }"
 		:class="{ overload: hasOverload }">
 		<span class="volume-indicator volume-indicator-primary" :style="{ height: iconPrimaryHeight + 'px' }">
-			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
-			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<IconMicrophoneOff v-else :size="size" :fill-color="primaryColor" />
 		</span>
 
 		<span v-if="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
-			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
-			<MicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<IconMicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
 		</span>
 	</span>
 </template>
 
 <script>
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
+import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
 export default {
 	name: 'VolumeIndicator',
 
 	components: {
-		Microphone,
-		MicrophoneOff,
+		IconMicrophone,
+		IconMicrophoneOff,
 	},
 
 	props: {
