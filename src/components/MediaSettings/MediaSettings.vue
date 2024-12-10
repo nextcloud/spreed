@@ -25,7 +25,7 @@
 					:aria-label="mirrorToggleLabel"
 					@click="isMirrored = !isMirrored">
 					<template #icon>
-						<ReflectHorizontal :size="20" />
+						<IconReflectHorizontal :size="20" />
 					</template>
 				</NcButton>
 				<div v-show="!showVideo"
@@ -65,10 +65,8 @@
 						:disabled="!videoPreviewAvailable"
 						@click="toggleVideo">
 						<template #icon>
-							<VideoIcon v-if="videoOn"
-								:size="20" />
-							<VideoOff v-else
-								:size="20" />
+							<IconVideo v-if="videoOn" :size="20" />
+							<IconVideoOff v-else :size="20" />
 						</template>
 					</NcButton>
 				</div>
@@ -144,7 +142,7 @@
 						@click="setSilentCall(true)">
 						{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 						<template #icon>
-							<BellOff :size="16" />
+							<IconBellOff :size="16" />
 						</template>
 					</NcActionButton>
 					<NcActionButton v-else
@@ -152,7 +150,7 @@
 						close-after-click
 						@click="setSilentCall(false)">
 						<template #icon>
-							<Bell :size="16" />
+							<IconBell :size="16" />
 						</template>
 						{{ t('spreed', 'The conversation participants will be notified about this call') }}
 					</NcActionButton>
@@ -177,13 +175,13 @@
 <script>
 import { computed, markRaw, ref } from 'vue'
 
-import Bell from 'vue-material-design-icons/Bell.vue'
-import BellOff from 'vue-material-design-icons/BellOff.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Creation from 'vue-material-design-icons/Creation.vue'
-import ReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import IconBell from 'vue-material-design-icons/Bell.vue'
+import IconBellOff from 'vue-material-design-icons/BellOff.vue'
+import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconCreation from 'vue-material-design-icons/Creation.vue'
+import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
@@ -219,24 +217,25 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		Bell,
-		BellOff,
 		CallButton,
+		MediaDevicesSelector,
+		MediaDevicesSpeakerTest,
+		MediaSettingsTabs,
 		NcActionButton,
 		NcActions,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
 		NcNoteCard,
-		MediaDevicesSelector,
-		MediaDevicesSpeakerTest,
-		MediaSettingsTabs,
-		ReflectHorizontal,
 		VideoBackground,
-		VideoIcon,
-		VideoOff,
-		VolumeIndicator,
 		VideoBackgroundEditor,
+		VolumeIndicator,
+		// Icons
+		IconBell,
+		IconBellOff,
+		IconReflectHorizontal,
+		IconVideo,
+		IconVideoOff,
 	},
 
 	props: {
@@ -275,12 +274,12 @@ export default {
 		const devicesTab = {
 			id: 'devices',
 			label: t('spreed', 'Devices'),
-			icon: markRaw(Cog),
+			icon: markRaw(IconCog),
 		}
 		const backgroundsTab = {
 			id: 'backgrounds',
 			label: t('spreed', 'Backgrounds'),
-			icon: markRaw(Creation),
+			icon: markRaw(IconCreation),
 		}
 		const tabs = computed(() => isVirtualBackgroundAvailable.value ? [devicesTab, backgroundsTab] : [devicesTab])
 
