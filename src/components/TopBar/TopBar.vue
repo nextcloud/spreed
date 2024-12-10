@@ -63,7 +63,7 @@
 				:title="t('spreed', 'Open Calendar')"
 				target="_blank">
 				<div class="icon">
-					<CalendarBlank :size="20" />
+					<IconCalendarBlank :size="20" />
 				</div>
 				<div class="event-info">
 					<p class="event-info__header">
@@ -84,7 +84,7 @@
 				type="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
-					<AccountMultiple :size="20" />
+					<IconAccountMultiple :size="20" />
 				</template>
 				{{ participantsInCall }}
 			</NcButton>
@@ -120,8 +120,8 @@
 </template>
 
 <script>
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import CalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
@@ -165,8 +165,8 @@ export default {
 		TasksCounter,
 		ReactionMenu,
 		// Icons
-		AccountMultiple,
-		CalendarBlank,
+		IconAccountMultiple,
+		IconCalendarBlank,
 	},
 
 	mixins: [richEditor],
