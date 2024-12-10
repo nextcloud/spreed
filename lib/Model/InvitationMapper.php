@@ -46,6 +46,25 @@ class InvitationMapper extends QBMapper {
 
 	/**
 	 * @throws DoesNotExistException
+	 * @internal Does not check user relation
+	 */
+	public function getByRemoteServerAndAccessToken(
+		string $remoteServerUrl,
+		#[SensitiveParameter]
+		string $accessToken,
+	): Invitation {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('remote_server_url', $qb->createNamedParameter($remoteServerUrl)))
+			->andWhere($qb->expr()->eq('access_token', $qb->createNamedParameter($accessToken)));
+
+		return $this->findEntity($qb);
+	}
+
+	/**
+	 * @throws DoesNotExistException
 	 */
 	public function getByRemoteAndAccessToken(
 		string $remoteServerUrl,
