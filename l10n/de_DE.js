@@ -1144,7 +1144,7 @@ OC.L10N.register(
     "Login" : "Anmeldung",
     "Error while verifying uploaded file" : "Fehler bei der Überprüfung der hochgeladenen Datei",
     "Uploaded file is verified" : "Hochgeladene Datei wurde überprüft",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV): <br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>„E-Mail“, „Name“</samp> oder nur <samp>„E-Mail“</samp> übereinstimmen. <br/> - Ein Eintrag pro Zeile (z. B. <samp>„Max Mustermann“, „max@example.tld“</samp>)",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV): <br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"email“,\"name“</samp> oder nur <samp>„email“</samp> übereinstimmen. <br/> - Ein Eintrag pro Zeile (z. B. <samp>„Max Mustermann“, „max@example.tld“</samp>)",
     "Participants added successfully" : "Teilnehmer hinzugefügt",
     "Error while adding participants" : "Fehler beim Hinzufügen von Teilnehmern",
     "Import a file" : "Eine Datei importieren",
@@ -1459,7 +1459,7 @@ OC.L10N.register(
     "Stop session" : "Sitzung beenden",
     "The message was sent to all breakout rooms" : "Die Nachricht wurde an alle Gruppenräume gesendet",
     "Breakout rooms are not started" : "Gruppenräume sind nicht gestartet",
-    "An error occurred when opening the conversation to everyone" : "Beim Öffnen der Konversation für alle ist ein Fehler aufgetreten",
+    "An error occurred when opening the conversation to everyone" : "Es ist ein Fehler beim Öffnen der Unterhaltung aufgetreten",
     "Disable lobby" : "Lobby deaktivieren",
     "moderator" : "Moderator",
     "bot" : "Bot",
@@ -1960,7 +1960,6 @@ OC.L10N.register(
     "Signaling servers" : "Signaling-Server",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Für größere Installationen kann optional ein externer Signaling-Server eingesetzt werden. Leer lassen, um den internen Signaling-Server zu verwenden.",
     "- Unsent message drafts are now saved in your browser " : "- Nicht gesendete Nachrichtenentwürfe werden jetzt in Ihrem Browser gespeichert",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Format ist Comma-Separated Values (CSV):<br/> - Kopfzeile ist erforderlich und muss übereinstimmen mit <samp>\"email\",\"name\"</samp> oder einfach <samp>\"email\"</samp><br/>- Ein Eintrag pro Zeile (z. B. <samp>\"John Doe\",\"john@example.tld\"</samp>)"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden"
 },
 "nplurals=2; plural=(n != 1);");
