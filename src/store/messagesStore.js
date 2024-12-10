@@ -1132,6 +1132,11 @@ const actions = {
 						&& message.actorType === context.getters.getActorType())) {
 					const callViewStore = useCallViewStore()
 					callViewStore.setCallHasJustEnded(message.timestamp)
+
+					context.dispatch('leaveCall', {
+						token,
+						participantIdentifier: context.getters.getParticipantIdentifier(),
+					})
 				}
 			}
 
