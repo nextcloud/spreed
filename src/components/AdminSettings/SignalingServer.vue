@@ -64,7 +64,8 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { getWelcomeMessage } from '../../services/signalingService.js'
+import { fetchSignalingSettings, getWelcomeMessage } from '../../services/signalingService.js'
+import { createConnection } from '../../utils/SignalingStandaloneTest.js'
 
 export default {
 	name: 'SignalingServer',
@@ -166,7 +167,6 @@ export default {
 
 			try {
 				const response = await getWelcomeMessage(this.index)
-				this.checked = true
 				const data = response.data.ocs.data
 				this.versionFound = data.version
 				if (data.warning === 'UPDATE_OPTIONAL') {
@@ -175,8 +175,9 @@ export default {
 						features: data.features.join(', '),
 					})
 				}
+
+				await this.testWebSocketConnection(this.server)
 			} catch (exception) {
-				this.checked = true
 				const data = exception.response.data.ocs.data
 				const error = data.error
 
@@ -198,6 +199,20 @@ export default {
 				} else {
 					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
 				}
+			} finally {
+				this.checked = true
+			}
+		},
+
+		async testWebSocketConnection(url) {
+			try {
+				const response = await fetchSignalingSettings({ token: '' }, {})
+				const settings = response.data.ocs.data
+				const signalingTest = createConnection(settings, url)
+				await signalingTest.connect()
+			} catch (exception) {
+				console.error(exception)
+				this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
 			}
 		},
 	},
