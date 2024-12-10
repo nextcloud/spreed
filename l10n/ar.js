@@ -1960,7 +1960,6 @@ OC.L10N.register(
     "Signaling servers" : "خوادم التشوير ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي.",
     "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "تنسيق المحتوى عبارة عن ملف \"قيم مفصولة بفواصل\" (CSV):<br/>- سطر الترويسة مطلوب و يجب أن يُطابق <samp>\"البريد الإلكتروني\",\"الاسم\"</samp> أو فقط <samp>\"البريد الإلكتروني\"</samp><br/>- إدخالية واحدة لكل سطر (مثال: <samp>\"John Doe\",\"john@example.tld\"</samp>)"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

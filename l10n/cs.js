@@ -1946,7 +1946,6 @@ OC.L10N.register(
     "Signaling servers" : "Signální servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Externí signální server může být použit pro větší instalace. Pro použití interního signálního serveru kolonku nevyplňujte.",
     "- Unsent message drafts are now saved in your browser " : "- Neodeslané koncepty zpráv jsou nyní webovým prohlížečem ukládány",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery",
-    "Content format is Comma Separated Values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Formát obsahu jsou hodnoty oddělované čárkami (CSV):<br/>- Řádek se záhlavím je vyžadován a je třeba, aby se shodoval s <samp>\"email\",\"name\"</samp> nebo pouze <samp>\"email\"</samp><br/>- Každou položku na zvlášť řádek (např. <samp>\"Jan Novák\",\"jan@priklad.tld\"</samp>)"
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
