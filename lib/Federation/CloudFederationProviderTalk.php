@@ -643,7 +643,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		array $payload,
 	): string {
 		try {
-			$invite = $this->invitationMapper->getByRemoteServerOnlyWithAccessToken($payload['remoteServerUrl'], $sharedSecret);
+			$invite = $this->invitationMapper->getByRemoteServerAndAccessToken($payload['remoteServerUrl'], $sharedSecret);
 			return $invite->getInviterCloudId();
 		} catch (DoesNotExistException) {
 		}

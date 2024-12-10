@@ -48,7 +48,7 @@ class InvitationMapper extends QBMapper {
 	 * @throws DoesNotExistException
 	 * @internal Does not check user relation
 	 */
-	public function getByRemoteServerOnlyWithAccessToken(
+	public function getByRemoteServerAndAccessToken(
 		string $remoteServerUrl,
 		#[SensitiveParameter]
 		string $accessToken,
