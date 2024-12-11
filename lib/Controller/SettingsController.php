@@ -125,7 +125,7 @@ class SettingsController extends OCSController {
 				continue;
 			}
 
-			if (!($calendar->getPermissions('principals/users/' . $this->userId) & Constants::PERMISSION_CREATE)) {
+			if (!($calendar->getPermissions() & Constants::PERMISSION_CREATE)) {
 				continue;
 			}
 
