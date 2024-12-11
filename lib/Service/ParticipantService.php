@@ -1653,6 +1653,18 @@ class ParticipantService {
 		if ($activeSince->getTimestamp() >= $row['last_joined_call']) {
 			return CallNotificationController::CASE_STILL_CURRENT;
 		}
+
+		// The participant had joined the call, but left again.
+		// In this case we should not ring any more, but clients stop
+		// pinging the endpoint 45s after receiving the push anyway.
+		// However, it is also possible that the participant was ringed
+		// again by a moderator after they had joined the call before.
+		// So if a client pings the endpoint after 45s initial ringing
+		// + 15 seconds for worst case push notification delay, we will
+		// again tell them to show the call notification.
+		if (($activeSince->getTimestamp() + 45 + 15) < $this->timeFactory->getTime()) {
+			return CallNotificationController::CASE_STILL_CURRENT;
+		}
 		return CallNotificationController::CASE_PARTICIPANT_JOINED;
 	}
 
