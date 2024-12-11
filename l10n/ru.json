@@ -1063,6 +1063,8 @@
     "Guests are allowed to join this conversation via link" : "Гости могут присоединяться к обсуждению по ссылке",
     "Guests are not allowed to join this conversation" : "Гостям не разрешено присоединяться к этому обсуждению",
     "Resend invitations" : "Повторно отправить приглашения",
+    "Password copied to clipboard" : "Пароль скопирован в буфер обмена",
+    "Password could not be copied" : "Не удалось скопировать пароль",
     "Open conversation to registered users, showing it in search results" : "Это обсуждение будет показано в результатах поиска для зарегистрированных пользователей",
     "Also open to users created with the Guests app" : "Также открыть для пользователей, созданных через приложение «Гости»",
     "Open conversation" : "Открытое обсуждение",
