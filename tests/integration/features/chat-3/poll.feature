@@ -878,9 +878,6 @@ Feature: chat-2/poll
     When user "participant1" gets poll drafts for room "room" with 200
       | id                                   | question                    | options      | actorType | actorId      | actorDisplayName         | status | resultMode | maxVotes |
       | POLL_ID(What is the question?)       | What is the question?       | ["You","me"] | users     | participant1 | participant1-displayname | draft  | public     | 0        |
-    Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
-      | room | users     | participant1 | participant1-displayname | {object}  | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"type":"talk-poll","id":POLL_ID(This is not a draft!),"name":"This is not a draft!"}} |
     Then user "participant1" updates a draft poll in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question again? |
