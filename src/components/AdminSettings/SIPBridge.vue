@@ -95,7 +95,7 @@ import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
 import { EventBus } from '../../services/EventBus.ts'
-import { setSIPSettings } from '../../services/settingsService.js'
+import { setSIPSettings } from '../../services/settingsService.ts'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {
@@ -194,11 +194,15 @@ export default {
 			this.loading = true
 			this.saveLabel = t('spreed', 'Saving …')
 
-			const groups = this.sipGroups.map(group => {
+			const sipGroups = this.sipGroups.map(group => {
 				return group.id
 			})
 
-			await setSIPSettings(groups, this.sharedSecret, this.dialInInfo)
+			await setSIPSettings({
+				sipGroups,
+				sharedSecret: this.sharedSecret,
+				dialInInfo: this.dialInInfo,
+			})
 			if (this.currentSetup.dialOutEnabled !== this.dialOutEnabled) {
 				await OCP.AppConfig.setValue('spreed', 'sip_dialout', this.dialOutEnabled ? 'yes' : 'no')
 			}

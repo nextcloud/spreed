@@ -11,7 +11,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { generateFilePath } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
-import { setPlaySounds } from '../services/settingsService.js'
+import { setPlaySounds } from '../services/settingsService.ts'
 
 const hasUserAccount = Boolean(getCurrentUser()?.uid)
 /**

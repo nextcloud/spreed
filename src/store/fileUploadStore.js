@@ -19,7 +19,7 @@ import {
 	getFileTemplates,
 	shareFile,
 } from '../services/filesSharingServices.js'
-import { setAttachmentFolder } from '../services/settingsService.js'
+import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
 	hasDuplicateUploadNames,
