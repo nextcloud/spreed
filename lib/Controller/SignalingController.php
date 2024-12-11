@@ -10,7 +10,6 @@ namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
-use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -920,15 +919,7 @@ class SignalingController extends OCSController {
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}
 		} elseif ($action === 'leave') {
-			// Guests are removed completely as they don't reuse attendees,
-			// but this is only true for guests that joined directly.
-			// Emails are retained as their PIN needs to remain and stay
-			// valid.
-			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
-				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_LEFT);
-			} else {
-				$this->participantService->leaveRoomAsSession($room, $participant);
-			}
+			$this->participantService->leaveRoomAsSession($room, $participant);
 		}
 
 		$this->logger->debug('Room request to "{action}" room {token} by actor {actorType}/{actorId}', [
