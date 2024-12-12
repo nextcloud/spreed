@@ -132,21 +132,28 @@ async function connectSignaling(token) {
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
+	} else {
+		signaling.setSettings(settings)
+	}
 
+	if (settings.encrypted && !encryption) {
 		let supported
 		try {
 			supported = await Encryption.isSupported()
 		} catch (e) {
 			console.error('Encryption is not supported', e)
 		}
-		if (supported) {
-			encryption = new Encryption(signaling)
-			if (webRtc) {
-				encryption.setWebRtc(webRtc)
-			}
+		if (!supported) {
+			throw new Error('Can\'t connect to encrypted conversation')
 		}
-	} else {
-		signaling.setSettings(settings)
+
+		encryption = new Encryption(signaling)
+		if (webRtc) {
+			encryption.setWebRtc(webRtc)
+		}
+	} else if (!settings.encrypted && encryption) {
+		encryption.close()
+		encryption = null
 	}
 
 	tokensInSignaling[token] = true

@@ -256,6 +256,18 @@ const setSIPEnabled = async function(token, newState) {
 }
 
 /**
+ * Change the end-to-end encryption enabled
+ *
+ * @param {string} token The token of the conversation to be modified
+ * @param {boolean} newState The new enabled state to set
+ */
+const setEncryptionEnabled = async function(token, newState) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/encryption', { token }), {
+		enabled: newState,
+	})
+}
+
+/**
  * Change the recording consent per conversation
  *
  * @param {string} token The token of the conversation to be modified
@@ -372,6 +384,7 @@ export {
 	makeConversationPublic,
 	makeConversationPrivate,
 	setSIPEnabled,
+	setEncryptionEnabled,
 	setRecordingConsent,
 	changeLobbyState,
 	changeReadOnlyState,

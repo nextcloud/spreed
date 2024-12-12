@@ -298,6 +298,28 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
+	public function setEncryptionEnabled(Room $room, bool $newEncryptionEnabled): void {
+		$oldEncryptionEnabled = $room->getEncryptionEnabled();
+
+		if ($newEncryptionEnabled === $oldEncryptionEnabled) {
+			return;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_ENCRYPTION_ENABLED, $newEncryptionEnabled, $oldEncryptionEnabled);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('encrypted', $update->createNamedParameter($newEncryptionEnabled, IQueryBuilder::PARAM_BOOL))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setEncryptionEnabled($newEncryptionEnabled);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_ENCRYPTION_ENABLED, $newEncryptionEnabled, $oldEncryptionEnabled);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
 	/**
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
 	 * @throws RecordingConsentException When the room has an active call or the value is invalid
