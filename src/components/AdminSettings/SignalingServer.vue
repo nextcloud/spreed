@@ -111,6 +111,7 @@ export default {
 			errorMessage: '',
 			warningMessage: '',
 			versionFound: '',
+			socket: null,
 		}
 	},
 
@@ -175,6 +176,8 @@ export default {
 						features: data.features.join(', '),
 					})
 				}
+
+				await this.testWebSocketConnection(this.server)
 			} catch (exception) {
 				this.checked = true
 				const data = exception.response.data.ocs.data
@@ -196,6 +199,43 @@ export default {
 				} else {
 					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
 				}
+			}
+		},
+
+		async testWebSocketConnection(url) {
+			try {
+				url = url.replace(/^http/, 'ws').replace(/\/$/, '') + '/spreed'
+
+				this.socket = new WebSocket(url)
+				this.socket.onopen = function(event) {
+					console.info('Connected to websocket successfully, closing', event)
+					this.socket.close()
+				}.bind(this)
+				this.socket.onerror = function(event) {
+					console.error('Error', event)
+					this.socket.close()
+				}.bind(this)
+				this.socket.onclose = function(event) {
+					if (event.wasClean) {
+						console.info('Connection closed cleanly:', event)
+					} else {
+						this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
+						console.error('An exception occurred while testing websocket connection:', event)
+						switch (event.code) {
+						case 1006: {
+							console.info('Code 1006: Possible untrusted certificate')
+							break
+						}
+						default: {
+							console.info(`Code ${event.code}: Unknown exception. See https://www.rfc-editor.org/rfc/rfc6455.html#section-7.4`)
+							break
+						}
+						}
+					}
+					this.socket = null
+				}.bind(this)
+			} catch (exception) {
+				console.error(exception)
 			}
 		},
 	},
