@@ -1367,6 +1367,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/personal-calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get writable calendars and the default calendar
+         * @description Required capability: `schedule-meeting`
+         */
+        get: operations["settings-get-personal-calendars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
         parameters: {
             query?: never;
@@ -1964,6 +1984,11 @@ export type components = {
         };
         BotWithDetailsAndSecret: components["schemas"]["BotWithDetails"] & {
             secret: string;
+        };
+        Calendar: {
+            uri: string;
+            name: string;
+            color: string | null;
         };
         CallPeer: {
             actorId: string;
@@ -8713,6 +8738,39 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "settings-get-personal-calendars": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get a list of calendars */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                defaultCalendarUri: string | null;
+                                calendars: components["schemas"]["Calendar"][];
+                            };
                         };
                     };
                 };
