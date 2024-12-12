@@ -10,6 +10,7 @@ namespace OCA\Talk\Exceptions;
 
 class PollPropertyException extends \InvalidArgumentException {
 	public const REASON_DRAFT = 'draft';
+	public const REASON_POLL = 'poll';
 	public const REASON_QUESTION = 'question';
 	public const REASON_OPTIONS = 'options';
 	public const REASON_ROOM = 'room';
