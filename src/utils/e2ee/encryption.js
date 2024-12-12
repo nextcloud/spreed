@@ -81,6 +81,7 @@ class Encryption {
 		this._handlePeerCreatedBound = this._handlePeerCreated.bind(this)
 
 		this._handleSessionId(signaling.sessionId || '')
+		this._handleUsersJoined(Object.values(signaling.joinedUsers))
 	}
 
 	/**

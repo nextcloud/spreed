@@ -100,6 +100,33 @@ async function signalingGetSettingsForRecording(token, random, checksum) {
 }
 
 /**
+ * Update the encryption module.
+ *
+ * @param {boolean} encrypted True if encryption should be enabled, false otherwise.
+ */
+async function updateEncryption(encrypted) {
+	if (encrypted && !encryption) {
+		let supported
+		try {
+			supported = await Encryption.isSupported()
+		} catch (e) {
+			console.error('Encryption is not supported', e)
+		}
+		if (!supported) {
+			throw new Error('Can\'t connect to encrypted conversation')
+		}
+
+		encryption = new Encryption(signaling)
+		if (webRtc) {
+			encryption.setWebRtc(webRtc)
+		}
+	} else if (!encrypted && encryption) {
+		encryption.close()
+		encryption = null
+	}
+}
+
+/**
  * @param {string} token The token of the conversation to connect to
  */
 async function connectSignaling(token) {
@@ -131,30 +158,18 @@ async function connectSignaling(token) {
 			signaling.setSettings(settings)
 		})
 
+		signaling.on('roomEncryption', async function(roomId, encrypted) {
+			if (roomId === token) {
+				await updateEncryption(encrypted)
+			}
+		})
+
 		signalingTypingHandler?.setSignaling(signaling)
 	} else {
 		signaling.setSettings(settings)
 	}
 
-	if (settings.encrypted && !encryption) {
-		let supported
-		try {
-			supported = await Encryption.isSupported()
-		} catch (e) {
-			console.error('Encryption is not supported', e)
-		}
-		if (!supported) {
-			throw new Error('Can\'t connect to encrypted conversation')
-		}
-
-		encryption = new Encryption(signaling)
-		if (webRtc) {
-			encryption.setWebRtc(webRtc)
-		}
-	} else if (!settings.encrypted && encryption) {
-		encryption.close()
-		encryption = null
-	}
+	updateEncryption(settings.encrypted)
 
 	tokensInSignaling[token] = true
 }
