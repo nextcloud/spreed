@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@linusborg/vue-simple-portal": "^0.1.5",
+    "@matrix-org/olm": "^3.2.15",
     "@nextcloud/auth": "^2.4.0",
     "@nextcloud/axios": "^2.5.1",
     "@nextcloud/browser-storage": "^0.4.0",
@@ -43,6 +44,7 @@
     "@nextcloud/vue": "^8.22.0",
     "@vueuse/components": "^11.3.0",
     "@vueuse/core": "^11.2.0",
+    "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
     "crypto-js": "^4.2.0",
     "debounce": "^2.2.0",
@@ -60,6 +62,7 @@
     "pinia": "^2.3.0",
     "ua-parser-js": "^2.0.0",
     "util": "^0.12.5",
+    "uuid": "^11.0.3",
     "vue": "^2.7.16",
     "vue-cropperjs": "^4.2.0",
     "vue-draggable-resizable": "^2.3.0",

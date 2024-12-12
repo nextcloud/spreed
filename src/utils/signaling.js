@@ -15,6 +15,7 @@ import {
 } from '@nextcloud/router'
 
 import CancelableRequest from './cancelableRequest.js'
+import Encryption from './e2ee/encryption.js'
 import { PARTICIPANT } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -981,42 +982,56 @@ Signaling.Standalone.prototype._getBackendUrl = function(baseURL = undefined) {
 }
 
 Signaling.Standalone.prototype.sendHello = function() {
-	let msg
 	if (this.resumeId) {
 		console.debug('Trying to resume session', this.sessionId)
-		msg = {
+		const msg = {
 			type: 'hello',
 			hello: {
 				version: '1.0',
 				resumeid: this.resumeId,
 			},
 		}
-	} else {
-		// Already reconnected with a new session.
-		this._forceReconnect = false
-		const url = this._getBackendUrl()
-		let helloVersion
-		if (this.hasFeature('hello-v2') && this.settings.helloAuthParams['2.0']) {
-			helloVersion = '2.0'
-		} else {
-			helloVersion = '1.0'
-		}
-		msg = {
-			type: 'hello',
-			hello: {
-				version: helloVersion,
-				auth: {
-					url,
-					params: this.settings.helloAuthParams[helloVersion],
-				},
-			},
-		}
-		if (this.settings.helloAuthParams.internal) {
-			msg.hello.auth.type = 'internal'
-			msg.hello.auth.params = this.settings.helloAuthParams.internal
-		}
+		this.doSend(msg, this.helloResponseReceived.bind(this))
+		return
 	}
-	this.doSend(msg, this.helloResponseReceived.bind(this))
+
+	// Already reconnected with a new session.
+	this._forceReconnect = false
+	const url = this._getBackendUrl()
+	let helloVersion
+	if (this.hasFeature('hello-v2') && this.settings.helloAuthParams['2.0']) {
+		helloVersion = '2.0'
+	} else {
+		helloVersion = '1.0'
+	}
+	const features = []
+	Encryption.isSupported()
+		.then(() => {
+			features.push('encryption')
+		})
+		.catch(() => {
+			// Ignore any errors.
+		})
+		.finally(() => {
+			const msg = {
+				type: 'hello',
+				hello: {
+					version: helloVersion,
+					auth: {
+						url,
+						params: this.settings.helloAuthParams[helloVersion],
+					},
+				},
+			}
+			if (features.length > 0) {
+				msg.hello.features = features
+			}
+			if (this.settings.helloAuthParams.internal) {
+				msg.hello.auth.type = 'internal'
+				msg.hello.auth.params = this.settings.helloAuthParams.internal
+			}
+			this.doSend(msg, this.helloResponseReceived.bind(this))
+		})
 }
 
 Signaling.Standalone.prototype.helloResponseReceived = function(data) {
@@ -1354,7 +1369,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 
 			let userListIsDirty = false
 			for (i = 0; i < joinedUsers.length; i++) {
-				this.joinedUsers[joinedUsers[i].sessionid] = true
+				this.joinedUsers[joinedUsers[i].sessionid] = joinedUsers[i]
 				delete leftUsers[joinedUsers[i].sessionid]
 
 				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
