@@ -23,26 +23,38 @@
 
 		<NcButton v-show="!loading"
 			type="tertiary"
+			:title="t('spreed', 'Delete this server')"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete :size="20" />
+				<IconDelete :size="20" />
 			</template>
 		</NcButton>
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
-			<Check v-else :size="20" :fill-color="'#46BA61'" />
+			<IconAlertCircle v-else-if="errorMessage" :size="20" fill-color="var(--color-error)" />
+			<IconCheck v-else :size="20" fill-color="var(--color-success)" />
 			{{ connectionState }}
 		</span>
+
+		<NcButton v-if="server && checked"
+			type="tertiary"
+			:title="t('spreed', 'Test this server')"
+			:aria-label="t('spreed', 'Test this server')"
+			@click="checkServerVersion">
+			<template #icon>
+				<IconReload :size="20" />
+			</template>
+		</NcButton>
 	</li>
 </template>
 
 <script>
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import IconAlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -57,9 +69,10 @@ export default {
 	name: 'RecordingServer',
 
 	components: {
-		AlertCircle,
-		Check,
-		Delete,
+		IconAlertCircle,
+		IconCheck,
+		IconDelete,
+		IconReload,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
