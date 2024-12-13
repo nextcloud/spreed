@@ -51,6 +51,10 @@
 * `0` Everyone (default) - All participants can mention using `@all`
 * `1` Moderators - Only moderators can mention using `@all`
 
+### Conversation list style
+* `two-lines` Normal (default) - two-line elements (with display name and last message)
+* `compact` Compact - one-line elements (with display name)
+
 ## Participants
 
 ### Participant types

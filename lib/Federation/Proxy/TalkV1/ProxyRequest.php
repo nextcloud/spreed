@@ -44,7 +44,10 @@ class ProxyRequest {
 					],
 					'call' => [
 						'blur-virtual-background',
-					]
+					],
+					'conversations' => [
+						'list-style',
+					],
 				],
 			]
 		]));

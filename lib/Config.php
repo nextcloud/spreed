@@ -697,6 +697,28 @@ class Config {
 	}
 
 	/**
+	 * User setting for conversations list style
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATION_LIST_STYLE_*
+	 */
+	public function getConversationsListStyle(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_LIST_STYLE,
+				UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES
+			);
+
+			if (in_array($userSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+				return $userSetting;
+			}
+		}
+		return UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {

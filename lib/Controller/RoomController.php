@@ -2555,6 +2555,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			if (isset($data['config']['call']['blur-virtual-background'])) {
 				$data['config']['call']['blur-virtual-background'] = $this->talkConfig->getBlurVirtualBackground($this->userId);
 			}
+			if (isset($data['config']['conversations']['list-style'])) {
+				$data['config']['conversations']['list-style'] = $this->talkConfig->getConversationsListStyle($this->userId);
+			}
 
 			if ($response->getHeaders()['X-Nextcloud-Talk-Hash']) {
 				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $response->getHeaders()['X-Nextcloud-Talk-Hash'];

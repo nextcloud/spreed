@@ -92,6 +92,9 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->expects($this->never())
 			->method('isDisabledForUser');
 
+		$this->talkConfig->method('getConversationsListStyle')
+			->willReturn('two-lines');
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(false);
@@ -155,6 +158,7 @@ class CapabilitiesTest extends TestCase {
 					'conversations' => [
 						'can-create' => false,
 						'force-passwords' => false,
+						'list-style' => 'two-lines',
 					],
 					'federation' => [
 						'enabled' => false,
@@ -220,6 +224,9 @@ class CapabilitiesTest extends TestCase {
 			->method('getUserReadPrivacy')
 			->with('uid')
 			->willReturn($readPrivacy);
+
+		$this->talkConfig->method('getConversationsListStyle')
+			->willReturn('two-lines');
 
 		$user->method('getQuota')
 			->willReturn($quota);
@@ -289,6 +296,7 @@ class CapabilitiesTest extends TestCase {
 					'conversations' => [
 						'can-create' => $canCreate,
 						'force-passwords' => false,
+						'list-style' => 'two-lines',
 					],
 					'federation' => [
 						'enabled' => false,
