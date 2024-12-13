@@ -59,6 +59,8 @@ describe('settingsStore', () => {
 	})
 
 	describe('media settings dialog', () => {
+		// FIXME: BrowserStorage.getItem('cachedConversations') is always called whenever capabilitiesManager.ts is imported
+		const EXTRA_CALLS = 3
 		it('shows correct stored values for conversations', () => {
 			// Arrange
 			settingsStore.showMediaSettings['token-1'] = true
@@ -70,10 +72,7 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([true, false])
-			// It's always called at least once : BrowserStorage.getItem('cachedConversations')
-			// Whenever capabilitiesManager.ts is imported
-			// +2
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(2)
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS)
 		})
 
 		it('shows correct values received from BrowserStorage', () => {
@@ -90,11 +89,10 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([true, true, false])
-			// It's always called at least once : BrowserStorage.getItem('cachedConversations') (+2)
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(5) // 2 + 3
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(3, 'showMediaSettings_token-1')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(4, 'showMediaSettings_token-2')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(5, 'showMediaSettings_token-3')
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS + 3)
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 1, 'showMediaSettings_token-1')
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 2, 'showMediaSettings_token-2')
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 3, 'showMediaSettings_token-3')
 		})
 
 		it('updates values correctly', async () => {
@@ -110,8 +108,7 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([false, true])
-			// It's always called at least once : BrowserStorage.getItem('cachedConversations') (+2)
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(2)
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS)
 			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(2)
 			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(1, 'showMediaSettings_token-1', 'false')
 			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(2, 'showMediaSettings_token-2', 'true')

@@ -104,6 +104,11 @@ export const CONVERSATION = {
 		DEFAULT: '',
 	},
 
+	LIST_STYLE: {
+		TWO_LINES: 'two-lines',
+		COMPACT: 'compact',
+	},
+
 	MAX_NAME_LENGTH: 255,
 	MAX_DESCRIPTION_LENGTH: 500,
 }
