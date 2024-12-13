@@ -76,6 +76,11 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return $valid;
 		}
 
+		// "list-style" 'two-lines' / 'compact'
+		if ($key === UserPreference::CONVERSATIONS_LIST_STYLE) {
+			return $value === 'two-lines' || $value === 'compact';
+		}
+
 		return false;
 	}
 
