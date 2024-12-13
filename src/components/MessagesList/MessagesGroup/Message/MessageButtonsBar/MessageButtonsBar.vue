@@ -107,7 +107,7 @@
 						<template #icon>
 							<ContentCopy :size="20" />
 						</template>
-						{{ t('spreed', 'Copy formatted message') }}
+						{{ t('spreed', 'Copy message') }}
 					</NcActionButton>
 					<NcActionButton close-after-click
 						@click.stop="handleCopyMessageLink">
