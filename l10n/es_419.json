@@ -8,6 +8,7 @@
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Tuviste una llamada con {user1}, {user2}, {user3}, {user4} y {user5}",
     "_%n other_::_%n others_" : ["%n otro","otros %n","otros %n"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
+    "Other activities" : "Otras actividades",
     "Talk" : "Hablar",
     "Guest" : "Invitado",
     "Talk to %s" : "Hablar con %s",
