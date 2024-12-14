@@ -963,8 +963,7 @@ const actions = {
 			context.dispatch('addConversation', conversation)
 			return conversation.token
 		} catch (error) {
-			console.error('Error creating new group conversation: ', error)
-			return ''
+			return Promise.reject(error)
 		}
 	},
 
