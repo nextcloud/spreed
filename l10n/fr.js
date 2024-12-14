@@ -402,7 +402,7 @@ OC.L10N.register(
     "The certificate of {host} expires in {days} days" : "Le certificat de {host} expire dans {days} jours",
     "The certificate of {host} expired" : "Le certificat de  {host} a expiré",
     "Contact via Talk" : "Contacter via Talk",
-    "Open Talk" : "Ouvrir Talk",
+    "Open Talk" : "Ouvrir Discussion",
     "Conversations" : "Conversations",
     "Messages in current conversation" : "Messages dans la conversation actuelle",
     "{user}" : "{user}",
