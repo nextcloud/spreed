@@ -671,7 +671,6 @@ OC.L10N.register(
     "Set reminder" : "Configurar un recordatoriu",
     "Reply privately" : "Responder per privao",
     "Edit message" : "Editar el mensaxe",
-    "Copy formatted message" : "Copiar el mensaxe con formatu",
     "Copy message link" : "Copiar l'enllaz del mensaxe",
     "Go to file" : "Dir al ficheru",
     "Translate" : "Traducir",
@@ -955,6 +954,7 @@ OC.L10N.register(
     "Users and circles" : "Usuarioa de círculos",
     "Groups and circles" : "Grupos y círculos",
     "Close" : "Zarrar",
+    "Copy formatted message" : "Copiar el mensaxe con formatu",
     "Private poll" : "Encuesta privada",
     "Start a conversation" : "Aniciar una conversación",
     "TURN server" : "Sirividor TURN"
