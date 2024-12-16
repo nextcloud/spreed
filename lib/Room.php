@@ -103,6 +103,7 @@ class Room {
 		private int $messageExpiration,
 		private int $lobbyState,
 		private int $sipEnabled,
+		private bool $encryptionEnabled,
 		private ?int $assignedSignalingServer,
 		private string $token,
 		private string $name,
@@ -221,6 +222,14 @@ class Room {
 
 	public function setSIPEnabled(int $sipEnabled): void {
 		$this->sipEnabled = $sipEnabled;
+	}
+
+	public function getEncryptionEnabled(): bool {
+		return $this->encryptionEnabled;
+	}
+
+	public function setEncryptionEnabled(bool $encryptionEnabled): void {
+		$this->encryptionEnabled = $encryptionEnabled;
 	}
 
 	public function getAssignedSignalingServer(): ?int {
@@ -432,6 +441,7 @@ class Room {
 			'listable' => $this->getListable(),
 			'active-since' => $this->getActiveSince(),
 			'sip-enabled' => $this->getSIPEnabled(),
+			'encrypted' => $this->getEncryptionEnabled(),
 		];
 
 		if ($roomModified) {

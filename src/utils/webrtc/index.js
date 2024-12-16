@@ -97,6 +97,16 @@ async function signalingGetSettingsForRecording(token, random, checksum) {
 }
 
 /**
+ * Update the encryption module.
+ *
+ * @param {boolean} encrypted True if encryption should be enabled, false otherwise.
+ */
+async function updateEncryption(encrypted) {
+	console.debug('Setup encryption', encrypted)
+	// TODO: Setup end-to-end encryption depending on "encryped" flag.
+}
+
+/**
  * @param {string} token The token of the conversation to connect to
  */
 async function connectSignaling(token) {
@@ -122,12 +132,19 @@ async function connectSignaling(token) {
 			const settings = await getSignalingSettings(token)
 			console.debug('Received updated settings', settings)
 			signaling.setSettings(settings)
+			await updateEncryption(settings.encrypted)
+		})
+
+		signaling.on('roomEncryption', async function(roomId, encrypted) {
+			await updateEncryption(encrypted)
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
 	} else {
 		signaling.setSettings(settings)
 	}
+
+	await updateEncryption(settings.encrypted)
 
 	tokensInSignaling[token] = true
 }

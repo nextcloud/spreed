@@ -49,6 +49,7 @@
 				:name="t('spreed', 'Meeting')">
 				<LobbySettings :token="token" />
 				<SipSettings v-if="canUserEnableSIP" />
+				<SecuritySettings />
 			</NcAppSettingsSection>
 
 			<!-- Conversation permissions -->
@@ -129,6 +130,7 @@ import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
 import MentionsSettings from './MentionsSettings.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
+import SecuritySettings from './SecuritySettings.vue'
 import SipSettings from './SipSettings.vue'
 
 import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
@@ -159,6 +161,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NotificationsSettings,
 		RecordingConsentSettings,
+		SecuritySettings,
 		SipSettings,
 	},
 

@@ -759,6 +759,10 @@ Signaling.Standalone.prototype.connect = function() {
 				this.currentRoomToken = null
 				this.nextcloudSessionId = null
 			} else {
+				if (this.currentRoomToken && data.room.roomid === this.currentRoomToken) {
+					this._trigger('roomEncryption', [data.room.roomid, data.room.properties.encrypted || false])
+				}
+
 				// TODO(fancycode): Only fetch properties of room that was modified.
 				EventBus.emit('should-refresh-conversations')
 			}

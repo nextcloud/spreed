@@ -2370,6 +2370,35 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Update end-to-end encryption enabled state
+	 *
+	 * @param bool $state New state
+	 * @psalm-param Webinary::SIP_* $state
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}, array{}>
+	 *
+	 * 200: End-to-end encryption enabled state updated successfully
+	 * 400: Updating end-to-end encryption enabled state is not possible
+	 * 401: User not found
+	 * 403: Missing permissions to update end-to-end encryption enabled state
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	public function setEncryptionEnabled(bool $enabled): DataResponse {
+		$user = $this->userManager->get($this->userId);
+		if (!$user instanceof IUser) {
+			return new DataResponse(['error' => 'config'], Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$this->roomService->setEncryptionEnabled($this->room, $enabled);
+		} catch (SipConfigurationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Set recording consent requirement for this conversation
 	 *
 	 * @param int $recordingConsent New consent setting for the conversation

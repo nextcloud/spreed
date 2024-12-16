@@ -103,6 +103,8 @@ return [
 		['name' => 'Room#setLobby', 'url' => '/api/{apiVersion}/room/{token}/webinar/lobby', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setSIPEnabled() */
 		['name' => 'Room#setSIPEnabled', 'url' => '/api/{apiVersion}/room/{token}/webinar/sip', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::setEncryptionEnabled() */
+		['name' => 'Room#setEncryptionEnabled', 'url' => '/api/{apiVersion}/room/{token}/webinar/encryption', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setRecordingConsent() */
 		['name' => 'Room#setRecordingConsent', 'url' => '/api/{apiVersion}/room/{token}/recording-consent', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setMessageExpiration() */

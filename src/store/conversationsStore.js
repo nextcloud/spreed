@@ -27,6 +27,7 @@ import {
 	makeConversationPublic,
 	makeConversationPrivate,
 	setSIPEnabled,
+	setEncryptionEnabled,
 	setRecordingConsent,
 	changeLobbyState,
 	changeReadOnlyState,
@@ -681,6 +682,20 @@ const actions = {
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the SIP state for conversation: ', error)
+		}
+	},
+
+	async setEncryptionEnabled({ commit, getters }, { token, enabled }) {
+		if (!getters.conversations[token]) {
+			return
+		}
+
+		try {
+			await setEncryptionEnabled(token, enabled)
+			const conversation = Object.assign({}, getters.conversations[token], { encrypted: enabled })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing the encryption state for conversation: ', error)
 		}
 	},
 

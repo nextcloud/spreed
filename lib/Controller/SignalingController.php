@@ -218,6 +218,7 @@ class SignalingController extends OCSController {
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
+			'encrypted' => $room->getEncryptionEnabled(),
 		];
 
 		return new DataResponse($data);
