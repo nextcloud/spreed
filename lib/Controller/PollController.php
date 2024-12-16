@@ -104,7 +104,7 @@ class PollController extends AEnvironmentAwareOCSController {
 			);
 		} catch (PollPropertyException $e) {
 			$this->logger->error('Error creating poll', ['exception' => $e]);
-			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($draft) {
@@ -145,7 +145,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @param 0|1 $resultMode Mode how the results will be shown
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN, array{error: 'draft'|'options'|'question'|'room'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft modified successfully
 	 * 400: Modifying poll is not possible
@@ -173,7 +173,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_NOT_FOUND);
 		}
 
 		if (!$poll->isDraft()) {
@@ -200,7 +200,7 @@ class PollController extends AEnvironmentAwareOCSController {
 			$this->pollService->updatePoll($this->participant, $poll);
 		} catch (WrongPermissionsException $e) {
 			$this->logger->error('Error modifying poll', ['exception' => $e]);
-			return new DataResponse(['error' => 'poll'], Http::STATUS_FORBIDDEN);
+			return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_FORBIDDEN);
 		}
 
 		return new DataResponse($poll->renderAsDraft());
@@ -346,7 +346,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'poll'}|array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'poll'}, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 202: Poll draft was deleted successfully

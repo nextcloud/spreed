@@ -5588,7 +5588,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "draft" | "options" | "question" | "room";
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5605,7 +5605,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "draft" | "options" | "question" | "room";
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5621,7 +5621,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "draft" | "options" | "poll" | "question" | "room";
                             };
                         };
                     };
@@ -5869,8 +5870,6 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "poll";
-                            } | {
-                                error: string;
                             };
                         };
                     };
@@ -5888,8 +5887,6 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "poll";
-                            } | {
-                                error: string;
                             };
                         };
                     };
@@ -5907,8 +5904,6 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "poll";
-                            } | {
-                                error: string;
                             };
                         };
                     };

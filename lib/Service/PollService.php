@@ -86,9 +86,6 @@ class PollService {
 	}
 
 	/**
-	 * @param Participant $participant
-	 * @param Poll $poll
-	 * @return void
 	 * @throws WrongPermissionsException
 	 */
 	public function closePoll(Participant $participant, Poll $poll): void {

@@ -9582,6 +9582,7 @@
                                                             "enum": [
                                                                 "draft",
                                                                 "options",
+                                                                "poll",
                                                                 "question",
                                                                 "room"
                                                             ]
@@ -9626,6 +9627,7 @@
                                                             "enum": [
                                                                 "draft",
                                                                 "options",
+                                                                "poll",
                                                                 "question",
                                                                 "room"
                                                             ]
@@ -9666,7 +9668,14 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -10284,33 +10293,18 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string",
-                                                                    "enum": [
-                                                                        "poll"
-                                                                    ]
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "poll"
+                                                            ]
                                                         }
-                                                    ]
+                                                    }
                                                 }
                                             }
                                         }
@@ -10340,33 +10334,18 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string",
-                                                                    "enum": [
-                                                                        "poll"
-                                                                    ]
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "poll"
+                                                            ]
                                                         }
-                                                    ]
+                                                    }
                                                 }
                                             }
                                         }
@@ -10396,33 +10375,18 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string",
-                                                                    "enum": [
-                                                                        "poll"
-                                                                    ]
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "error"
-                                                            ],
-                                                            "properties": {
-                                                                "error": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "poll"
+                                                            ]
                                                         }
-                                                    ]
+                                                    }
                                                 }
                                             }
                                         }
