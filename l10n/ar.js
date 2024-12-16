@@ -1269,6 +1269,7 @@ OC.L10N.register(
     "Set reminder" : "ضبط التذكير",
     "Reply privately" : "الرد على الخاص",
     "Edit message" : "تحرير رسالة",
+    "Copy message" : "نسخ الرسالة",
     "Copy message link" : "نسخ رابط الرسالة ",
     "Go to file" : "الذهاب إلى ملف",
     "Download file" : "تنزيل ملف",
