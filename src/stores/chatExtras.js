@@ -7,11 +7,8 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { t } from '@nextcloud/l10n'
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
-import { getUpcomingEvents } from '../services/conversationsService.js'
-import { getUserAbsence } from '../services/coreService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
@@ -22,7 +19,6 @@ import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
 
 /**
  * @typedef {object} State
- * @property {{[key: Token]: object}} absence - The absence status per conversation.
  * @property {{[key: Token]: number}} parentToReply - The parent message id to reply per conversation.
  * @property {{[key: Token]: string}} chatInput -The input value per conversation.
  */
@@ -35,9 +31,7 @@ import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
  */
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: () => ({
-		absence: {},
 		parentToReply: {},
-		upcomingEvents: {},
 		chatInput: {},
 		messageIdToEdit: {},
 		chatEditInput: {},
@@ -59,10 +53,6 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		getMessageIdToEdit: (state) => (token) => {
 			return state.messageIdToEdit[token]
-		},
-
-		getNextEvent: (state) => (token) => {
-			return state.upcomingEvents[token]?.[0]
 		},
 
 		getChatSummaryTaskQueue: (state) => (token) => {
@@ -91,50 +81,6 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				this.restoreChatInput(token)
 			}
 			return this.chatInput[token] ?? ''
-		},
-
-		/**
-		 * Fetch an absence status for user and save to store
-		 *
-		 * @param {object} payload action payload
-		 * @param {string} payload.token The conversation token
-		 * @param {string} payload.userId The id of user
-		 *
-		 */
-		async getUserAbsence({ token, userId }) {
-			try {
-				const response = await getUserAbsence(userId)
-				Vue.set(this.absence, token, response.data.ocs.data)
-				return this.absence[token]
-			} catch (error) {
-				if (error?.response?.status === 404) {
-					Vue.set(this.absence, token, null)
-					return null
-				}
-				console.error(error)
-			}
-		},
-
-		async getUpcomingEvents(token) {
-			const location = generateUrl('call/{token}', { token }, { baseURL: getBaseUrl() })
-			try {
-				const response = await getUpcomingEvents(location)
-				Vue.set(this.upcomingEvents, token, response.data.ocs.data.events)
-			} catch (error) {
-				console.error(error)
-			}
-		},
-
-		/**
-		 * Drop an absence status from the store
-		 *
-		 * @param {string} token The conversation token
-		 *
-		 */
-		removeUserAbsence(token) {
-			if (this.absence[token]) {
-				Vue.delete(this.absence, token)
-			}
 		},
 
 		/**
@@ -255,7 +201,6 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		purgeChatExtras(token) {
 			this.removeParentIdToReply(token)
-			this.removeUserAbsence(token)
 			this.removeChatInput(token)
 		},
 

@@ -218,6 +218,7 @@ import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManage
 import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
@@ -312,6 +313,7 @@ export default {
 		const { createTemporaryMessage } = useTemporaryMessage()
 		return {
 			chatExtrasStore: useChatExtrasStore(),
+			groupwareStore: useGroupwareStore(),
 			settingsStore: useSettingsStore(),
 			supportTypingStatus,
 			autoComplete,
@@ -474,7 +476,7 @@ export default {
 		},
 
 		userAbsence() {
-			return this.chatExtrasStore.absence[this.token]
+			return this.groupwareStore.absence[this.token]
 		},
 
 		showChatSummary() {
@@ -988,13 +990,13 @@ export default {
 			// TODO replace with status message id 'vacationing'
 			if (this.conversation.status === 'dnd') {
 				// Fetch actual absence status from server
-				await this.chatExtrasStore.getUserAbsence({
+				await this.groupwareStore.getUserAbsence({
 					token: this.token,
 					userId: this.conversation.name,
 				})
 			} else {
 				// Remove stored absence status
-				this.chatExtrasStore.removeUserAbsence(this.token)
+				this.groupwareStore.removeUserAbsence(this.token)
 			}
 		},
 

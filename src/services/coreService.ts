@@ -9,7 +9,6 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.js'
 import type {
-	OutOfOfficeResponse,
 	TaskProcessingResponse,
 } from '../types/index.ts'
 
@@ -64,18 +63,8 @@ const deleteTaskById = async function(id: number, options?: object): Promise<nul
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-/**
- * Get absence information for a user (in a given 1-1 conversation).
- *
- * @param userId user id
- */
-const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
-	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
-}
-
 export {
 	autocompleteQuery,
 	getTaskById,
 	deleteTaskById,
-	getUserAbsence,
 }
