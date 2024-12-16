@@ -1269,6 +1269,7 @@ OC.L10N.register(
     "Set reminder" : "Ställ in påminnelse",
     "Reply privately" : "Svara privat",
     "Edit message" : "Redigera meddelande",
+    "Copy message" : "Kopiera meddelande",
     "Copy message link" : "Kopiera meddelandelänk",
     "Go to file" : "Gå till fil",
     "Download file" : "Ladda ner fil",
