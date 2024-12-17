@@ -9,16 +9,16 @@
     "packages-dev": [
         {
             "name": "adhocore/cli",
-            "version": "v1.8.0",
+            "version": "v1.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/adhocore/php-cli.git",
-                "reference": "6092763ab212038de64c44545574cedb7ef86269"
+                "reference": "86be16e3c3b42d76fcdb32529bcded0fedb925d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adhocore/php-cli/zipball/6092763ab212038de64c44545574cedb7ef86269",
-                "reference": "6092763ab212038de64c44545574cedb7ef86269",
+                "url": "https://api.github.com/repos/adhocore/php-cli/zipball/86be16e3c3b42d76fcdb32529bcded0fedb925d3",
+                "reference": "86be16e3c3b42d76fcdb32529bcded0fedb925d3",
                 "shasum": ""
             },
             "require": {
@@ -29,6 +29,9 @@
             },
             "type": "library",
             "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
                 "psr-4": {
                     "Ahc\\Cli\\": "src/"
                 }
@@ -63,7 +66,7 @@
             ],
             "support": {
                 "issues": "https://github.com/adhocore/php-cli/issues",
-                "source": "https://github.com/adhocore/php-cli/tree/v1.8.0"
+                "source": "https://github.com/adhocore/php-cli/tree/v1.9.3"
             },
             "funding": [
                 {
@@ -75,20 +78,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-15T08:55:32+00:00"
+            "time": "2024-12-04T03:40:29+00:00"
         },
         {
             "name": "nextcloud/openapi-extractor",
-            "version": "v1.2.2",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-releases/openapi-extractor.git",
-                "reference": "fb177110c9d182dd9c6c5c19d20f1275f2b7f6af"
+                "reference": "c0761cb7a3a0cd29c85ede9f27883d7f9f477bd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-releases/openapi-extractor/zipball/fb177110c9d182dd9c6c5c19d20f1275f2b7f6af",
-                "reference": "fb177110c9d182dd9c6c5c19d20f1275f2b7f6af",
+                "url": "https://api.github.com/repos/nextcloud-releases/openapi-extractor/zipball/c0761cb7a3a0cd29c85ede9f27883d7f9f477bd0",
+                "reference": "c0761cb7a3a0cd29c85ede9f27883d7f9f477bd0",
                 "shasum": ""
             },
             "require": {
@@ -100,11 +103,12 @@
             },
             "require-dev": {
                 "nextcloud/coding-standard": "^1.2",
-                "nextcloud/ocp": "dev-master"
+                "nextcloud/ocp": "dev-master",
+                "rector/rector": "^2.0"
             },
             "bin": [
-                "generate-spec",
-                "merge-specs"
+                "bin/generate-spec",
+                "bin/merge-specs"
             ],
             "type": "library",
             "autoload": {
@@ -119,9 +123,9 @@
             "description": "A tool for extracting OpenAPI specifications from Nextcloud source code",
             "support": {
                 "issues": "https://github.com/nextcloud-releases/openapi-extractor/issues",
-                "source": "https://github.com/nextcloud-releases/openapi-extractor/tree/v1.2.2"
+                "source": "https://github.com/nextcloud-releases/openapi-extractor/tree/v1.3.0"
             },
-            "time": "2024-11-13T10:36:57+00:00"
+            "time": "2024-12-17T16:34:26+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -231,11 +235,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
