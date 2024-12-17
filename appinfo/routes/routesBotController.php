@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 $requirements = [
 	'apiVersion' => '(v1)',
+];
+
+$requirementsWithToken = [
+	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
 ];
 
@@ -26,7 +30,7 @@ $requirementsWithBotId = [
 return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\BotController::sendMessage() */
-		['name' => 'Bot#sendMessage', 'url' => '/api/{apiVersion}/bot/{token}/message', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Bot#sendMessage', 'url' => '/api/{apiVersion}/bot/{token}/message', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\BotController::react() */
 		['name' => 'Bot#react', 'url' => '/api/{apiVersion}/bot/{token}/reaction/{messageId}', 'verb' => 'POST', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\BotController::deleteReaction() */
@@ -34,7 +38,7 @@ return [
 		/** @see \OCA\Talk\Controller\BotController::adminListBots() */
 		['name' => 'Bot#adminListBots', 'url' => '/api/{apiVersion}/bot/admin', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BotController::listBots() */
-		['name' => 'Bot#listBots', 'url' => '/api/{apiVersion}/bot/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'Bot#listBots', 'url' => '/api/{apiVersion}/bot/{token}', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\BotController::enableBot() */
 		['name' => 'Bot#enableBot', 'url' => '/api/{apiVersion}/bot/{token}/{botId}', 'verb' => 'POST', 'requirements' => $requirementsWithBotId],
 		/** @see \OCA\Talk\Controller\BotController::disableBot() */
