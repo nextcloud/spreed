@@ -1962,9 +1962,6 @@ export type components = {
             url: string;
             url_hash: string;
         };
-        BotWithDetailsAndSecret: components["schemas"]["BotWithDetails"] & {
-            secret: string;
-        };
         CallPeer: {
             actorId: string;
             actorType: string;

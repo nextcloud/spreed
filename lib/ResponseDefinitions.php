@@ -40,10 +40,6 @@ namespace OCA\Talk;
  *     url_hash: string,
  * }
  *
- * @psalm-type TalkBotWithDetailsAndSecret = TalkBotWithDetails&array{
- *     secret: string,
- * }
- *
  * @psalm-type TalkCallPeer = array{
  *     actorId: string,
  *     actorType: string,
