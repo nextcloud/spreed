@@ -34,7 +34,7 @@ use OCP\DB\Types;
  * @method void setFeatures(int $features)
  * @method int getFeatures()
  *
- * @psalm-import-type TalkBotWithDetailsAndSecret from ResponseDefinitions
+ * @psalm-import-type TalkBotWithDetails from ResponseDefinitions
  */
 class BotServer extends Entity implements \JsonSerializable {
 	protected string $name = '';
@@ -62,7 +62,9 @@ class BotServer extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return TalkBotWithDetailsAndSecret
+	 * @return TalkBotWithDetails&array{
+	 *     secret: string,
+	 * }
 	 */
 	public function jsonSerialize(): array {
 		return [
