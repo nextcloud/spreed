@@ -144,7 +144,7 @@ import ConversationIcon from '../ConversationIcon.vue'
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.js'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -193,7 +193,7 @@ export default {
 			AVATAR,
 			localCallParticipantModel,
 			localMediaModel,
-			chatExtrasStore: useChatExtrasStore(),
+			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			isMobile: useIsMobile(),
 			CONVERSATION,
@@ -284,7 +284,7 @@ export default {
 		},
 
 		nextEvent() {
-			return this.chatExtrasStore.getNextEvent(this.token)
+			return this.groupwareStore.getNextEvent(this.token)
 		},
 
 		eventInfo() {
@@ -318,7 +318,7 @@ export default {
 					// Do not fetch upcoming events for guests (401 unauthorzied) or in sidebar
 					return
 				}
-				this.chatExtrasStore.getUpcomingEvents(value)
+				this.groupwareStore.getUpcomingEvents(value)
 			}
 		},
 	},

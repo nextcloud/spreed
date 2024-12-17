@@ -63,6 +63,7 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'
+import { useGroupwareStore } from '../stores/groupware.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 
@@ -370,6 +371,8 @@ const actions = {
 		// FIXME: rename to deleteConversationsFromStore or a better name
 		const chatExtrasStore = useChatExtrasStore()
 		chatExtrasStore.purgeChatExtras(token)
+		const groupwareStore = useGroupwareStore()
+		groupwareStore.purgeGroupwareStore(token)
 		const reactionsStore = useReactionsStore()
 		reactionsStore.purgeReactionsStore(token)
 		context.dispatch('purgeMessagesStore', token)

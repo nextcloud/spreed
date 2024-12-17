@@ -231,20 +231,34 @@ export type TaskProcessingResponse = ApiResponseUnwrapped<{
 	}
 }>
 
+// Groupware
+// Upcoming events response
+// From https://github.com/nextcloud/server/blob/master/apps/dav/lib/CalDAV/UpcomingEvent.php
+export type UpcomingEvent = {
+	uri: string,
+	calendarUri: string,
+	/** Format: int64 */
+	start: number | null,
+	summary: string | null,
+	location: string | null,
+	recurrenceId?: number | null,
+	calendarAppUrl?: string | null,
+};
+export type UpcomingEventsResponse = ApiResponseUnwrapped<{ events: UpcomingEvent[] }>
+
 // Out of office response
 // From https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-out-of-office-api.html
-export type OutOfOfficeResponse = ApiResponseUnwrapped<{
-	task: {
-		id: string,
-		userId: string,
-		startDate: number,
-		endDate: number,
-		shortMessage: string,
-		message: string,
-		replacementUserId?: string|null,
-		replacementUserDisplayName?: string|null,
-	}
-}>
+export type OutOfOfficeResult = {
+	id: string,
+	userId: string,
+	startDate: number,
+	endDate: number,
+	shortMessage: string,
+	message: string,
+	replacementUserId?: string|null,
+	replacementUserDisplayName?: string|null,
+}
+export type OutOfOfficeResponse = ApiResponseUnwrapped<OutOfOfficeResult>
 
 // User preferences response
 // from https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-user-preferences-api.html
