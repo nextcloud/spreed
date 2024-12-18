@@ -38,6 +38,7 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class Config {
+	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';

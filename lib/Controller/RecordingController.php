@@ -46,6 +46,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
@@ -62,6 +63,7 @@ class RecordingController extends AEnvironmentAwareController {
 		private ParticipantService $participantService,
 		private RecordingService $recordingService,
 		private RoomService $roomService,
+		private ITimeFactory $timeFactory,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
@@ -99,16 +101,26 @@ class RecordingController extends AEnvironmentAwareController {
 
 		$client = $this->clientService->newClient();
 		try {
+			$timeBefore = $this->timeFactory->getTime();
 			$response = $client->get($url . '/api/v1/welcome', [
 				'verify' => $verifyServer,
 				'nextcloud' => [
 					'allow_local_address' => true,
 				],
 			]);
+			$timeAfter = $this->timeFactory->getTime();
 
 			if ($response->getHeader(\OCA\Talk\Signaling\Manager::FEATURE_HEADER)) {
 				return new DataResponse([
 					'error' => 'IS_SIGNALING_SERVER',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
+			$responseTime = $this->timeFactory->getDateTime($response->getHeader('date'))->getTimestamp();
+			if (($timeBefore - Config::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
+				|| ($timeAfter + Config::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
+				return new DataResponse([
+					'error' => 'TIME_OUT_OF_SYNC',
 				], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 
