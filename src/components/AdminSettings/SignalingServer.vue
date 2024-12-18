@@ -186,6 +186,8 @@ export default {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
 				} else if (error === 'CERTIFICATE_EXPIRED') {
 					this.errorMessage = t('spreed', 'Error: Certificate expired')
+				} else if (error === 'TIME_OUT_OF_SYNC') {
+					this.errorMessage = t('spreed', 'Error: System times of Nextcloud server and High-performance backend server are out of sync. Please make sure that both servers are connected to a time-server or manually synchronize their time.')
 				} else if (error === 'UPDATE_REQUIRED') {
 					this.versionFound = data.version || t('spreed', 'Could not get version')
 					this.errorMessage = t('spreed', 'Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk', {
