@@ -36,17 +36,30 @@
 			<IconAlertCircleOutline v-else-if="warningMessage" :size="20" fill-color="var(--color-warning)" />
 			<IconCheck v-else :size="20" fill-color="var(--color-success)" />
 			{{ connectionState }}
+
+			<NcButton v-if="server && checked"
+				type="tertiary"
+				:title="t('spreed', 'Test this server')"
+				:aria-label="t('spreed', 'Test this server')"
+				@click="checkServerVersion">
+				<template #icon>
+					<IconReload :size="20" />
+				</template>
+			</NcButton>
 		</span>
 
-		<NcButton v-if="server && checked"
-			type="tertiary"
-			:title="t('spreed', 'Test this server')"
-			:aria-label="t('spreed', 'Test this server')"
-			@click="checkServerVersion">
-			<template #icon>
-				<IconReload :size="20" />
-			</template>
-		</NcButton>
+		<ul v-if="signalingTestInfo.length" class="test-connection-data">
+			<li v-for="(row, idx) in signalingTestInfo"
+				:key="idx"
+				class="test-connection-data__item">
+				<span class="test-connection-data__caption">
+					{{ row.caption }}
+				</span>
+				<span>
+					{{ row.description }}
+				</span>
+			</li>
+		</ul>
 	</li>
 </template>
 
@@ -58,6 +71,7 @@ import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 
 import { t } from '@nextcloud/l10n'
+import { getBaseUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -112,6 +126,7 @@ export default {
 			errorMessage: '',
 			warningMessage: '',
 			versionFound: '',
+			signalingTestInfo: [],
 		}
 	},
 
@@ -160,6 +175,7 @@ export default {
 
 		async checkServerVersion() {
 			this.checked = false
+			this.signalingTestInfo = []
 
 			this.errorMessage = ''
 			this.warningMessage = ''
@@ -210,6 +226,12 @@ export default {
 				const settings = response.data.ocs.data
 				const signalingTest = createConnection(settings, url)
 				await signalingTest.connect()
+				this.signalingTestInfo = [
+					{ caption: t('spreed', 'Nextcloud base URL'), description: getBaseUrl() },
+					{ caption: t('spreed', 'Talk Backend URL'), description: signalingTest.getBackendUrl() },
+					{ caption: t('spreed', 'WebSocket URL'), description: signalingTest.url },
+					{ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') },
+				]
 			} catch (exception) {
 				console.error(exception)
 				this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
@@ -222,7 +244,10 @@ export default {
 <style lang="scss" scoped>
 .signaling-server {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
+	gap: var(--default-grid-baseline);
+	margin-bottom: 10px;
 
 	& &__textfield {
 		width: 300px;
@@ -235,8 +260,25 @@ export default {
 }
 
 .test-connection {
+	flex-basis: fit-content;
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--default-grid-baseline);
+}
+
+.test-connection-data {
+	flex-basis: 100%;
+	display: inline-grid;
+	grid-template-columns: auto auto;
+	gap: var(--default-grid-baseline);
+
+	&__item {
+		display: contents;
+	}
+
+	&__caption {
+		font-weight: bold;
+		margin-inline-end: var(--default-grid-baseline);
+	}
 }
 </style>
