@@ -101,13 +101,6 @@ export default {
 				}
 			}
 
-			if (this.speakingWhileMutedNotification && !this.screenSharingMenuOpen) {
-				return {
-					content: this.speakingWhileMutedNotification,
-					show: true,
-				}
-			}
-
 			let content = ''
 			if (this.model.attributes.audioEnabled) {
 				content = this.disableKeyboardShortcuts
