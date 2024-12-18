@@ -13,6 +13,7 @@
 			<template v-else>
 				<TopBar is-in-call is-sidebar />
 				<CallView :token="token" is-sidebar />
+				<InternalSignalingHint />
 				<ChatView is-sidebar />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
@@ -31,6 +32,7 @@ import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
+import InternalSignalingHint from './components/RightSidebar/InternalSignalingHint.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 
@@ -48,6 +50,7 @@ export default {
 	name: 'PublicShareAuthSidebar',
 
 	components: {
+		InternalSignalingHint,
 		CallView,
 		ChatView,
 		MediaSettings,

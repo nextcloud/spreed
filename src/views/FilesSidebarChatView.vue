@@ -5,6 +5,7 @@
 
 <template>
 	<div class="talk-tab__wrapper">
+		<InternalSignalingHint />
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
 		<CallFailedDialog v-if="connectionFailed" :token="token" />
 		<ChatView class="talk-tab__chat-view" is-sidebar />
@@ -18,6 +19,7 @@ import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import ChatView from '../components/ChatView.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
+import InternalSignalingHint from '../components/RightSidebar/InternalSignalingHint.vue'
 import CallButton from '../components/TopBar/CallButton.vue'
 
 import { useIsInCall } from '../composables/useIsInCall.js'
@@ -27,6 +29,7 @@ export default {
 	name: 'FilesSidebarChatView',
 
 	components: {
+		InternalSignalingHint,
 		CallButton,
 		CallFailedDialog,
 		ChatView,

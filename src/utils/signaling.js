@@ -581,6 +581,14 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 	}.bind(this))
 }
 
+Signaling.Internal.prototype._joinCallSuccess = function(token) {
+	if (this.hideWarning) {
+		return
+	}
+
+	EventBus.emit('signaling-internal-show-warning', token)
+}
+
 /**
  * @param {object} settings The signaling settings
  * @param {string|string[]} urls The url of the signaling server
