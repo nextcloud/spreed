@@ -382,7 +382,7 @@ class Application extends App implements IBootstrap {
 				'name' => $l->t('Talk'),
 				'href' => $urlGenerator->linkToRouteAbsolute('spreed.Page.index'),
 				'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
-				'order' => 3,
+				'order' => -5,
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];
 		});
