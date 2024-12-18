@@ -258,12 +258,14 @@ class SignalingController extends OCSController {
 
 		$client = $this->clientService->newClient();
 		try {
+			$timeBefore = $this->timeFactory->getTime();
 			$response = $client->get($url . '/api/v1/welcome', [
 				'verify' => $verifyServer,
 				'nextcloud' => [
 					'allow_local_address' => true,
 				],
 			]);
+			$timeAfter = $this->timeFactory->getTime();
 
 			$body = $response->getBody();
 			$data = json_decode($body, true);
@@ -285,6 +287,14 @@ class SignalingController extends OCSController {
 				return new DataResponse([
 					'error' => 'UPDATE_REQUIRED',
 					'version' => $data['version'] ?? '',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
+			$responseTime = $this->timeFactory->getDateTime($response->getHeader('date'))->getTimestamp();
+			if (($timeBefore - Config::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
+				|| ($timeAfter + Config::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
+				return new DataResponse([
+					'error' => 'TIME_OUT_OF_SYNC',
 				], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 
