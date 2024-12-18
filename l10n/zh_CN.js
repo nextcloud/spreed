@@ -1408,6 +1408,7 @@ OC.L10N.register(
     "Recording" : "录音",
     "Send a reaction" : "发送回应",
     "React with {reaction}" : "使用{reaction}回应",
+    "Now" : "现在",
     "_%n participant in call_::_%n participants in call_" : ["通话中有%n位参与者"],
     "Show your screen" : "显示您的屏幕",
     "Stop screensharing" : "停止屏幕共享",
