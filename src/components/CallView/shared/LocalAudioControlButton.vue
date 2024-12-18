@@ -85,10 +85,6 @@ export default {
 				return t('spreed', 'No audio. Click to select device')
 			}
 
-			if (this.speakingWhileMutedNotification && !this.screenSharingMenuOpen) {
-				return this.speakingWhileMutedNotification
-			}
-
 			if (this.model.attributes.audioEnabled) {
 				return this.disableKeyboardShortcuts
 					? t('spreed', 'Mute audio')
