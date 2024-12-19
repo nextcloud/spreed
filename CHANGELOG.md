@@ -5,6 +5,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.1 – 2024-12-19
+### Changed
+- Update translations
+- Update dependencies
+- perf(calls): Add endpoint for clients to specifically check if a call notification is still current
+  [#13950](https://github.com/nextcloud/spreed/issues/13950)
+
+### Fixed
+- fix(chat): Add start and end of out-of-office to the note card in one-to-one conversations
+  [#13926](https://github.com/nextcloud/spreed/issues/13926)
+- fix(chat): Fix chats for offline participants when the chat history was reset
+  [#13965](https://github.com/nextcloud/spreed/issues/13965)
+- fix(calls): Remove "Share to chat" button from failure notifications of recording summaries
+  [#13941](https://github.com/nextcloud/spreed/issues/13941)
+- fix(calls): Hide option to start without enabled media when it can not be stored on the server
+  [#13953](https://github.com/nextcloud/spreed/issues/13953)
+- fix(calls): Retain names of guests when they disconnect from the High-performance backend
+  [#13984](https://github.com/nextcloud/spreed/issues/13984)
+- fix(calls): Fix missing "Speaking while muted" popup
+  [#14027](https://github.com/nextcloud/spreed/issues/14027)
+- fix(search): Implement pagination in conversation search results
+  [#14034](https://github.com/nextcloud/spreed/issues/14034)
+- fix(settings): Confirm server time of High-performance and recording backend in admin settings
+  [#14016](https://github.com/nextcloud/spreed/issues/14016)
+
 ## 20.1.0 – 2024-12-03
 ### Added
 - Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux
