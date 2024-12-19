@@ -312,7 +312,7 @@
 				<NcButton
 					v-else
 					:disabled="disabled"
-					variant="tertiary"
+					variant="secondary"
 					type="submit"
 					:title="sendMessageLabel"
 					:aria-label="sendMessageLabel"
