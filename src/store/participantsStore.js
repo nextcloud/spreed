@@ -978,7 +978,7 @@ const actions = {
 	 * @param {object} data - the wrapping object.
 	 * @param {string} data.token - conversation token.
 	 * @param {number} [data.attendeeId] - attendee id to target, or null for all.
-	 * @param {string} [data.actorId] - if attendee is provided, the actorId (e-mail) to show in the message.
+	 * @param {string} [data.actorId] - if attendee is provided, the actorId (email) to show in the message.
 	 */
 	async resendInvitations(_, { token, attendeeId, actorId }) {
 		if (attendeeId) {
