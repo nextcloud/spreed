@@ -83,11 +83,17 @@ class ConversationSearch implements IProvider {
 	}
 
 	/**
+	 * Search for user's conversations
+	 *
+	 * Cursor is the conversation token
+	 * Results are sorted by display name and then conversation token
+	 *
 	 * @inheritDoc
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$rooms = $this->manager->getRoomsForUser($user->getUID());
 
+		$cursorKey = null;
 		$result = [];
 		foreach ($rooms as $room) {
 			if ($room->getType() === Room::TYPE_CHANGELOG) {
@@ -99,10 +105,11 @@ class ConversationSearch implements IProvider {
 				$parameters['token'] === $room->getToken() &&
 				strpos($query->getRoute(), Application::APP_ID . '.') === 0) {
 				// Don't search the current conversation.
-				//User most likely looks for other things with the same name
+				// User most likely looks for other things with the same name
 				continue;
 			}
 
+			$displayName = $room->getDisplayName($user->getUID());
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$otherUserId = str_replace(
 					json_encode($user->getUID()),
@@ -110,7 +117,7 @@ class ConversationSearch implements IProvider {
 					$room->getName()
 				);
 				if (stripos($otherUserId, $query->getTerm()) === false
-					&& stripos($room->getDisplayName($user->getUID()), $query->getTerm()) === false) {
+					&& stripos($displayName, $query->getTerm()) === false) {
 					// Neither name nor displayname (one-to-one) match, skip
 					continue;
 				}
@@ -120,7 +127,7 @@ class ConversationSearch implements IProvider {
 
 			$entry = new SearchResultEntry(
 				$this->avatarService->getAvatarUrl($room),
-				$room->getDisplayName($user->getUID()),
+				$displayName,
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 				'',
@@ -129,12 +136,62 @@ class ConversationSearch implements IProvider {
 
 			$entry->addAttribute('conversation', $room->getToken());
 
-			$result[] = $entry;
+			$result[strtolower($displayName . '#' . $room->getToken())] = $entry;
+
+			if ($query->getCursor() === $room->getToken()) {
+				$cursorKey = strtolower($displayName . '#' . $room->getToken());
+			}
 		}
 
-		return SearchResult::complete(
+		if (count($result) <= $query->getLimit()) {
+			return SearchResult::complete(
+				$this->l->t('Conversations'),
+				array_values($result),
+			);
+		}
+		ksort($result);
+
+		$newCursorWithName = '#';
+		if ($cursorKey) {
+			$foundCursor = false;
+			$filteredResults = [];
+			$lastPossibleCursor = '#';
+			foreach ($result as $key => $entry) {
+				if ($cursorKey === $key) {
+					$foundCursor = true;
+					continue;
+				}
+				if (!$foundCursor) {
+					continue;
+				}
+
+				if (count($filteredResults) === $query->getLimit()) {
+					// We already have enough results, but there are more,
+					// so we add the cursor for the next request.
+					$newCursorWithName = $lastPossibleCursor;
+					break;
+				}
+
+				$filteredResults[] = $entry;
+				$lastPossibleCursor = $key;
+			}
+		} else {
+			$filteredResults = array_slice($result, 0, $query->getLimit());
+			// Next page starts at the last result
+			$newCursorWithName = array_key_last($filteredResults);
+		}
+
+		// Cursor is the token only (to survive renamed),
+		// but the array key is `display name#token`, so we split by the #
+		// and get the last part which is the token.
+		// If it's empty, there is no cursor for a next page
+		$parts = explode('#', $newCursorWithName);
+		$newCursor = end($parts);
+
+		return SearchResult::paginated(
 			$this->l->t('Conversations'),
-			$result
+			array_values($filteredResults),
+			$newCursor
 		);
 	}
 }
