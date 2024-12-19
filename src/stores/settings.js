@@ -16,6 +16,7 @@ import {
 	setTypingStatusPrivacy,
 	setStartWithoutMedia,
 	setBlurVirtualBackground,
+	setConversationsListStyle,
 } from '../services/settingsService.ts'
 
 /**
@@ -42,6 +43,7 @@ export const useSettingsStore = defineStore('settings', {
 		showMediaSettings: {},
 		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
 		blurVirtualBackgroundEnabled: getTalkConfig('local', 'call', 'blur-virtual-background'),
+		conversationsListStyle: getTalkConfig('local', 'conversations', 'list-style'),
 	}),
 
 	getters: {
@@ -113,6 +115,11 @@ export const useSettingsStore = defineStore('settings', {
 		async setStartWithoutMedia(value) {
 			await setStartWithoutMedia(value)
 			this.startWithoutMedia = value
+		},
+
+		async setConversationsListStyle(value) {
+			await setConversationsListStyle(value)
+			this.conversationsListStyle = value
 		},
 	},
 })

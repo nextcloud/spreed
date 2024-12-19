@@ -153,6 +153,7 @@ class Capabilities implements IPublicCapability {
 		],
 		'conversations' => [
 			'can-create',
+			'list-style',
 		],
 		'federation' => [
 			'enabled',
@@ -229,6 +230,7 @@ class Capabilities implements IPublicCapability {
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
 					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
+					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
 				],
 				'federation' => [
 					'enabled' => false,
