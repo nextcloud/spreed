@@ -23,6 +23,7 @@
 <script>
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
+import panzoom from 'panzoom'
 
 import { t } from '@nextcloud/l10n'
 
@@ -139,6 +140,10 @@ export default {
 		} else {
 			this._setScreen(this.callParticipantModel.attributes.screen)
 		}
+		// just grab a DOM element
+		const element = document.getElementById(this.screenContainerId)
+		// And pass it to panzoom
+		panzoom(element)
 	},
 
 	methods: {
@@ -164,6 +169,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.screenContainer {
+	width: 100%;
+	height: 100%;
+}
 
 .screen {
 	width: 100%;
