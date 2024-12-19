@@ -202,6 +202,7 @@ export default {
 				// signaling server is used periodic polling has to be used
 				// instead.
 				OCA.Talk.fetchCurrentConversationIntervalId = window.setInterval(OCA.Talk.fetchCurrentConversationWrapper, 30000)
+				// TODO
 			}
 		},
 
