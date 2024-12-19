@@ -362,6 +362,7 @@ namespace OCA\Talk;
  *         conversations: array{
  *             can-create: bool,
  *     		   force-passwords: bool,
+ *     		   list-style: string,
  *         },
  *         federation: array{
  *             enabled: bool,
