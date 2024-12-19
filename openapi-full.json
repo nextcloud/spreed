@@ -189,24 +189,6 @@
                     }
                 ]
             },
-            "BotWithDetailsAndSecret": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/BotWithDetails"
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "secret"
-                        ],
-                        "properties": {
-                            "secret": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ]
-            },
             "CallPeer": {
                 "type": "object",
                 "required": [

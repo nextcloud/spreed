@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 $requirements = [
 	'apiVersion' => '(v1)',
+];
+
+$requirementsWithToken = [
+	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
 ];
 
@@ -20,14 +24,14 @@ return [
 		/** @see \OCA\Talk\Controller\RecordingController::backend() */
 		['name' => 'Recording#backend', 'url' => '/api/{apiVersion}/recording/backend', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RecordingController::start() */
-		['name' => 'Recording#start', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Recording#start', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RecordingController::stop() */
-		['name' => 'Recording#stop', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'Recording#stop', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RecordingController::store() */
-		['name' => 'Recording#store', 'url' => '/api/{apiVersion}/recording/{token}/store', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Recording#store', 'url' => '/api/{apiVersion}/recording/{token}/store', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RecordingController::notificationDismiss() */
-		['name' => 'Recording#notificationDismiss', 'url' => '/api/{apiVersion}/recording/{token}/notification', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'Recording#notificationDismiss', 'url' => '/api/{apiVersion}/recording/{token}/notification', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RecordingController::shareToChat() */
-		['name' => 'Recording#shareToChat', 'url' => '/api/{apiVersion}/recording/{token}/share-chat', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Recording#shareToChat', 'url' => '/api/{apiVersion}/recording/{token}/share-chat', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 	],
 ];
