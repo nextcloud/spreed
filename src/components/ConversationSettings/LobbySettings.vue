@@ -57,7 +57,7 @@
 				<template #icon>
 					<IconFileUpload :size="20" />
 				</template>
-				{{ t('spreed', 'Import e-mail participants') }}
+				{{ t('spreed', 'Import email participants') }}
 			</NcButton>
 
 			<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
