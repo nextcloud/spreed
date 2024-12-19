@@ -31,6 +31,7 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_READ_ONLY = 'readOnly';
 	public const PROPERTY_RECORDING_CONSENT = 'recordingConsent';
 	public const PROPERTY_SIP_ENABLED = 'sipEnabled';
+	public const PROPERTY_ENCRYPTION_ENABLED = 'encryptionEnabled';
 	public const PROPERTY_TYPE = 'type';
 
 	/**
@@ -39,8 +40,8 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected string $property,
-		protected \DateTime|string|int|null $newValue,
-		protected \DateTime|string|int|null $oldValue = null,
+		protected \DateTime|string|int|bool|null $newValue,
+		protected \DateTime|string|int|bool|null $oldValue = null,
 		protected ?Participant $actor = null,
 	) {
 		parent::__construct($room);
@@ -50,11 +51,11 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 		return $this->property;
 	}
 
-	public function getNewValue(): \DateTime|string|int|null {
+	public function getNewValue(): \DateTime|string|int|bool|null {
 		return $this->newValue;
 	}
 
-	public function getOldValue(): \DateTime|string|int|null {
+	public function getOldValue(): \DateTime|string|int|bool|null {
 		return $this->oldValue;
 	}
 
