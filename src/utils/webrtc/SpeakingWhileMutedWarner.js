@@ -42,12 +42,11 @@
 	*
 	* @param {object} LocalMediaModel the model that emits "speakingWhileMuted"
 	* events.
-	* @param {object} view the view that provides the
 	* "setSpeakingWhileMutedNotification" method.
 	*/
-export default function SpeakingWhileMutedWarner(LocalMediaModel, view) {
+export default function SpeakingWhileMutedWarner(LocalMediaModel) {
 	this._model = LocalMediaModel
-	this._view = view
+	this._toast = null
 
 	this._handleSpeakingWhileMutedChangeBound = this._handleSpeakingWhileMutedChange.bind(this)
 
@@ -103,12 +102,19 @@ SpeakingWhileMutedWarner.prototype = {
 	},
 
 	_showNotification(message) {
-		if (this._notification) {
+		if (this._toast) {
 			return
 		}
 
-		this._view.setSpeakingWhileMutedNotification(message)
-		this._notification = true
+		this._toast = showWarning(message, {
+			timeout: TOAST_PERMANENT_TIMEOUT,
+			onClick: () => {
+				this._toast.hideToast()
+			},
+			onRemove: () => {
+				this._toast = null
+			}
+		})
 	},
 
 	_showBrowserNotification(message) {
@@ -157,10 +163,8 @@ SpeakingWhileMutedWarner.prototype = {
 	_hideWarning() {
 		this._pendingBrowserNotification = false
 
-		if (this._notification) {
-			this._view.setSpeakingWhileMutedNotification(null)
-
-			this._notification = false
+		if (this._toast) {
+			this._toast.hideToast()
 		}
 
 		if (this._browserNotification) {
