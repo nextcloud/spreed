@@ -223,14 +223,15 @@ async function createPoll() {
 /**
  * Pre-fills form from the draft
  * @param id poll draft ID
- * @param isAlreadyOpened poll draft ID
+ * @param fromDrafts whether editor was opened from drafts handler
  */
-function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
-	if (!isAlreadyOpened) {
+function fillPollEditorFromDraft(id: number|null, fromDrafts: boolean) {
+	if (fromDrafts) {
+		// Show 'Back' button, do not reset until closed
 		isOpenedFromDraft.value = true
 	}
 
-	if (pollsStore.drafts[props.token][id]) {
+	if (id && pollsStore.drafts[props.token][id]) {
 		fillPollForm(pollsStore.drafts[props.token][id])
 	}
 }
