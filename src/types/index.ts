@@ -232,6 +232,10 @@ export type TaskProcessingResponse = ApiResponseUnwrapped<{
 }>
 
 // Groupware
+export type Calendar = components['schemas']['Calendar']
+
+export type getPersonalCalendarsResponse = ApiResponse<operations['settings-get-personal-calendars']['responses'][200]['content']['application/json']>
+
 // Upcoming events response
 // From https://github.com/nextcloud/server/blob/master/apps/dav/lib/CalDAV/UpcomingEvent.php
 export type UpcomingEvent = {

@@ -7,6 +7,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import type {
+	getPersonalCalendarsResponse,
 	OutOfOfficeResponse,
 	UpcomingEventsResponse,
 } from '../types/index.ts'
@@ -31,7 +32,15 @@ const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
 	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
 }
 
+/**
+ * Get personal calendars for a user
+ */
+const getPersonalCalendars = async function(): getPersonalCalendarsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/personal-calendars'))
+}
+
 export {
+	getPersonalCalendars,
 	getUpcomingEvents,
 	getUserAbsence,
 }
