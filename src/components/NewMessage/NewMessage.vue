@@ -140,7 +140,7 @@
 			<!-- Send buttons -->
 			<template v-else>
 				<NcButton :disabled="disabled"
-					type="tertiary"
+					type="secondary"
 					native-type="submit"
 					:title="sendMessageLabel"
 					:aria-label="sendMessageLabel"
