@@ -2673,27 +2673,62 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$messages = $this->getDataFromResponse($this->response)['entries'];
 
 		if ($formData === null) {
-			Assert::assertEmpty($messages);
+			Assert::assertEmpty($results);
 			return;
 		}
 
-		$expected = array_map(static function (array $message) {
-			$message['attributes.conversation'] = self::$identifierToToken[$message['attributes.conversation']];
-			$message['attributes.messageId'] = self::$textToMessageId[$message['attributes.messageId']];
-			return $message;
+		$expected = array_map(static function (array $result) {
+			if (isset($result['attributes.conversation'])) {
+				$result['attributes.conversation'] = self::$identifierToToken[$result['attributes.conversation']];
+			}
+			if (isset($result['attributes.messageId'])) {
+				$result['attributes.messageId'] = self::$textToMessageId[$result['attributes.messageId']];
+			}
+			return $result;
 		}, $formData->getHash());
 
 		$count = count($expected);
-		Assert::assertCount($count, $messages, 'Message count does not match');
+		Assert::assertCount($count, $results, 'Result count does not match');
 
-		Assert::assertEquals($expected, array_map(static function ($message) {
-			return [
-				'title' => $message['title'],
-				'subline' => $message['subline'],
-				'attributes.conversation' => $message['attributes']['conversation'],
-				'attributes.messageId' => $message['attributes']['messageId'],
+		Assert::assertEquals($expected, array_map(static function ($actual) {
+			$compare = [
+				'title' => $actual['title'],
+				'subline' => $actual['subline'],
 			];
-		}, $messages));
+			if (isset($actual['attributes']['conversation'])) {
+				$compare['attributes.conversation'] = $actual['attributes']['conversation'];
+			}
+			if (isset($actual['attributes']['messageId'])) {
+				$compare['attributes.messageId'] = $actual['attributes']['messageId'];
+			}
+			return $compare;
+		}, $results));
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+)(?: expected cursor "([^"]*)")?$/
+	 *
+	 * @param string $user
+	 * @param string $search
+	 * @param int $limit
+	 */
+	public function userSearchesRooms(string $user, string $search, string $offset, int $limit, string $expectedCursor, ?TableNode $formData = null): void {
+		$searchUrl = '/search/providers/talk-conversations/search?limit=' . $limit;
+		if ($offset && array_key_exists($offset, self::$identifierToToken)) {
+			$searchUrl .= '&cursor=' . self::$identifierToToken[$offset];
+		}
+
+		$searchUrl .= '&term=' . $search;
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', $searchUrl);
+		$this->assertStatusCode($this->response, 200);
+
+		if ($expectedCursor !== null) {
+			$expectedCursor = self::$identifierToToken[$expectedCursor] ?? '';
+		}
+
+		$this->compareSearchResponse($formData, $expectedCursor);
 	}
 
 	/**
