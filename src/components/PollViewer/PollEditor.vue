@@ -6,6 +6,7 @@
 <template>
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
+		:container="container"
 		v-on="$listeners"
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
@@ -140,6 +141,7 @@ import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
+	container?: string,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -290,7 +292,7 @@ async function createPollDraft() {
  * Open a PollDraftHandler dialog
  */
 function openPollDraftHandler() {
-	EventBus.emit('poll-drafts-open')
+	EventBus.emit('poll-drafts-open', {})
 }
 
 /**

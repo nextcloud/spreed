@@ -19,6 +19,7 @@ const pollEditorRef = ref(null)
 
 const showPollEditor = ref(false)
 const showPollDraftHandler = ref(false)
+const container = ref<string|undefined>(undefined)
 
 const token = computed(() => store.getters.getConversationSettingsToken() || store.getters.getToken())
 const canCreatePollDrafts = computed(() => {
@@ -35,11 +36,13 @@ onBeforeUnmount(() => {
 	EventBus.off('poll-drafts-open', openPollDraftHandler)
 })
 
-const openPollDraftHandler = () => {
+const openPollDraftHandler = ({ selector }: { selector?: string }) => {
+	container.value = selector
 	showPollDraftHandler.value = true
 }
 
-const openPollEditor = ({ id, fromDrafts }: { id: number|null, fromDrafts: boolean }) => {
+const openPollEditor = ({ id, fromDrafts, selector }: { id: number|null, fromDrafts: boolean, selector?: string }) => {
+	container.value = selector
 	showPollEditor.value = true
 	nextTick(() => {
 		pollEditorRef.value?.fillPollEditorFromDraft(id, fromDrafts)
@@ -56,10 +59,12 @@ const openPollEditor = ({ id, fromDrafts }: { id: number|null, fromDrafts: boole
 		<PollEditor v-if="showPollEditor"
 			ref="pollEditorRef"
 			:token="token"
+			:container="container"
 			@close="showPollEditor = false" />
 		<!-- Poll drafts dialog -->
 		<PollDraftHandler v-if="canCreatePollDrafts && showPollDraftHandler"
 			:token="token"
+			:container="container"
 			:editor-opened="showPollEditor"
 			@close="showPollDraftHandler = false" />
 	</div>
