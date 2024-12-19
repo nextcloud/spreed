@@ -200,7 +200,6 @@ export default {
 
 	data() {
 		return {
-			speakingWhileMutedNotification: null,
 			screenSharingMenuOpen: false,
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
@@ -414,7 +413,7 @@ export default {
 	},
 
 	mounted() {
-		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
+		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model)
 	},
 
 	beforeDestroy() {
@@ -444,10 +443,6 @@ export default {
 				this.audioEnabledBeforeSpacebarKeydown = undefined
 			}
 
-		},
-
-		setSpeakingWhileMutedNotification(message) {
-			this.speakingWhileMutedNotification = message
 		},
 
 		toggleVirtualBackground() {
