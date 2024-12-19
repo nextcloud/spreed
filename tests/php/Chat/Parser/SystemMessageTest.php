@@ -22,6 +22,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
@@ -45,6 +46,7 @@ use Test\TestCase;
  * @group DB
  */
 class SystemMessageTest extends TestCase {
+	protected IAppConfig&MockObject $appConfig;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
 	protected GuestManager&MockObject $guestManager;
@@ -62,6 +64,7 @@ class SystemMessageTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
@@ -94,6 +97,7 @@ class SystemMessageTest extends TestCase {
 		if (!empty($methods)) {
 			$mock = $this->getMockBuilder(SystemMessage::class)
 				->setConstructorArgs([
+					$this->appConfig,
 					$this->userManager,
 					$this->groupManager,
 					$this->guestManager,
@@ -113,6 +117,7 @@ class SystemMessageTest extends TestCase {
 			return $mock;
 		}
 		return new SystemMessage(
+			$this->appConfig,
 			$this->userManager,
 			$this->groupManager,
 			$this->guestManager,
@@ -1549,7 +1554,7 @@ class SystemMessageTest extends TestCase {
 			// Automatically ended by background job (max_call_duration reached)
 			'max_call_duration cleanup' => [
 				'call_ended_everyone',
-				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 90],
 				['type' => 'guest', 'id' => 'guest/system', 'name' => 'system'],
 				[
 					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests was ended, as it reached the maximum call duration (Duration "duration")',
@@ -1567,8 +1572,12 @@ class SystemMessageTest extends TestCase {
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')
-			->with(42)
+			->with($parameters['duration'])
 			->willReturn('"duration"');
+
+		$this->appConfig->method('getAppValueInt')
+			->with('max_call_duration')
+			->willReturn(60);
 
 		$parser->expects($this->any())
 			->method('getUser')
