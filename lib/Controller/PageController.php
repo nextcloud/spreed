@@ -270,6 +270,7 @@ class PageController extends Controller {
 		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
@@ -332,6 +333,7 @@ class PageController extends Controller {
 		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
@@ -418,6 +420,7 @@ class PageController extends Controller {
 		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
@@ -475,6 +478,7 @@ class PageController extends Controller {
 		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');

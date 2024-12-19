@@ -39,7 +39,8 @@ class Manager {
 			&& in_array('federation', $features, true)
 			&& in_array('incall-all', $features, true)
 			&& in_array('hello-v2', $features, true)
-			&& in_array('switchto', $features, true);
+			&& in_array('switchto', $features, true)
+			&& in_array('join-features', $features, true);
 	}
 
 	public function getSignalingServerMissingFeatures(IResponse $response): array {
