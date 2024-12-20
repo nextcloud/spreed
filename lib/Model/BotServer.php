@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -33,8 +32,6 @@ use OCP\DB\Types;
  * @method int getState()
  * @method void setFeatures(int $features)
  * @method int getFeatures()
- *
- * @psalm-import-type TalkBotWithDetailsAndSecret from ResponseDefinitions
  */
 class BotServer extends Entity implements \JsonSerializable {
 	protected string $name = '';
@@ -62,7 +59,19 @@ class BotServer extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return TalkBotWithDetailsAndSecret
+	 * @return array{
+	 *     id: int,
+	 *     name: string,
+	 *     url: string,
+	 *     url_hash: string,
+	 *     description: ?string,
+	 *     secret: string,
+	 *     error_count: int,
+	 *     last_error_date: int,
+	 *     last_error_message: string,
+	 *     state: int,
+	 *     features: int,
+	 * }
 	 */
 	public function jsonSerialize(): array {
 		return [
