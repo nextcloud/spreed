@@ -56,22 +56,24 @@
 
 			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Upcoming event -->
-			<a v-if="showUpcomingEvent"
-				class="upcoming-event"
-				:href="nextEvent.calendarAppUrl"
-				:title="t('spreed', 'Open Calendar')"
-				target="_blank">
-				<div class="icon">
-					<IconCalendarBlank :size="20" />
-				</div>
-				<div class="event-info">
-					<p class="event-info__header">
-						{{ t('spreed', 'Next call') }}
-					</p>
-					<p> {{ eventInfo }} </p>
-				</div>
-			</a>
+			<!-- Upcoming events dialog -->
+			<CalendarEventsDialog v-show="showCalendarEvents" :token="token">
+				<template #trigger>
+					<a class="upcoming-event"
+						role="button"
+						:title="t('spreed', 'Open Calendar')">
+						<span class="icon">
+							<IconCalendarBlank :size="20" />
+						</span>
+						<span v-if="showUpcomingEvent" class="event-info">
+							<span class="event-info__header">
+								{{ t('spreed', 'Next call') }}
+							</span>
+							<span>{{ eventInfo }}</span>
+						</span>
+					</a>
+				</template>
+			</CalendarEventsDialog>
 
 			<!-- Call time -->
 			<CallTime v-if="isInCall"
@@ -139,6 +141,7 @@ import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
@@ -155,6 +158,7 @@ export default {
 	components: {
 		// Components
 		BreakoutRoomsEditor,
+		CalendarEventsDialog,
 		CallButton,
 		CallTime,
 		ConversationIcon,
@@ -300,9 +304,12 @@ export default {
 			return moment(this.nextEvent.start * 1000).calendar()
 		},
 
+		showCalendarEvents() {
+			return !this.isInCall && !this.isSidebar && this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
 		showUpcomingEvent() {
-			return this.nextEvent && !this.isInCall && !this.isSidebar && !this.isMobile
-				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+			return this.showCalendarEvents && this.nextEvent && !this.isMobile
 		},
 
 		getUserId() {
@@ -453,8 +460,10 @@ export default {
 	flex-direction: row;
 	gap: calc(var(--default-grid-baseline) * 2);
 	padding: 0 calc(var(--default-grid-baseline) * 2);
-	background-color: rgba(var(--color-info-rgb), 0.1);
+	background-color: var(--color-primary-element-light);
 	height: 100%;
+	min-height: var(--default-clickable-area);
+	min-width: var(--default-clickable-area);
 	border-radius: var(--border-radius);
 }
 

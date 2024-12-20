@@ -10,22 +10,28 @@ import type { AxiosError } from '@nextcloud/axios'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import {
+	getPersonalCalendars,
 	getUpcomingEvents,
 	getUserAbsence,
 } from '../services/groupwareService.ts'
 import type {
+	Calendar,
 	OutOfOfficeResult,
 	UpcomingEvent,
 } from '../types/index.ts'
 
 type State = {
 	absence: Record<string, OutOfOfficeResult>
+	calendars: Record<Calendar['uri'], Calendar>,
+	defaultCalendarUri: string | null,
 	upcomingEvents: Record<string, UpcomingEvent[]>
 }
 
 export const useGroupwareStore = defineStore('groupware', {
 	state: (): State => ({
 		absence: {},
+		calendars: {},
+		defaultCalendarUri: null,
 		upcomingEvents: {},
 	}),
 
@@ -68,6 +74,18 @@ export const useGroupwareStore = defineStore('groupware', {
 			try {
 				const response = await getUpcomingEvents(location)
 				Vue.set(this.upcomingEvents, token, response.data.ocs.data.events)
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
+		async getPersonalCalendars() {
+			try {
+				const response = await getPersonalCalendars()
+				Vue.set(this, 'defaultCalendarUri', response.data.ocs.data.defaultCalendarUri)
+				response.data.ocs.data.calendars.forEach(calendar => {
+					Vue.set(this.calendars, calendar.uri, calendar)
+				})
 			} catch (error) {
 				console.error(error)
 			}
