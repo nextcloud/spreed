@@ -93,6 +93,17 @@
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="showSearchMessagesTab"
+			id="search-messages"
+			key="search-messages"
+			ref="searchMessgesTab"
+			:order="6"
+			:name="t('spreed', 'Search Messages')">
+			<template #icon>
+				<TextSearchVariant :size="20" />
+			</template>
+			<SearchMessagesTab :is-active="activeTab === 'search-messages'" />
+		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
 
@@ -104,6 +115,7 @@ import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.v
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
+import TextSearchVariant from 'vue-material-design-icons/TextSearchVariant.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -116,6 +128,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
 import ParticipantsTab from './Participants/ParticipantsTab.vue'
+import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 import ChatView from '../ChatView.vue'
@@ -136,6 +149,7 @@ export default {
 		NcAppSidebarTab,
 		NcButton,
 		ParticipantsTab,
+		SearchMessagesTab,
 		SetGuestUsername,
 		SharedItemsTab,
 		SipSettings,
@@ -147,6 +161,7 @@ export default {
 		InformationOutline,
 		Message,
 		MessageText,
+		TextSearchVariant,
 	},
 
 	props: {
@@ -267,6 +282,10 @@ export default {
 
 		showSharedItemsTab() {
 			return this.getUserId && (!this.supportFederationV1 || !this.conversation.remoteServer)
+		},
+
+		showSearchMessagesTab() {
+			return this.getUserId
 		},
 
 		showDetailsTab() {
