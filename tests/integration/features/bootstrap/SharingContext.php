@@ -951,6 +951,9 @@ class SharingContext implements Context {
 					'requesttoken' => $requestToken,
 				],
 				'cookies' => $cookieJar,
+				'headers' => [
+					'Origin' => $this->baseUrl,
+				],
 			]
 		);
 		$requestToken = $this->extractRequestTokenFromResponse($response);
