@@ -6,6 +6,7 @@
 	<VueDraggableResizable v-if="!isCollapsed"
 		:key="presenterOverlaySize"
 		parent
+		class="presenter-overlay"
 		:resizable="false"
 		:h="presenterOverlaySize"
 		:w="presenterOverlaySize"
@@ -130,6 +131,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.presenter-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 .presenter-overlay__video {
 	position: relative;
 	--max-size: 242px;
