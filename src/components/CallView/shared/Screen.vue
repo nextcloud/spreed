@@ -23,6 +23,8 @@
 <script>
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
+import panzoom from 'panzoom'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -64,7 +66,27 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+
+		const screen = ref(null)
+		const screenPanzoomInstance = ref(null)
+
+		onMounted(() => {
+			screenPanzoomInstance.value = panzoom(screen.value, {
+				minZoom: 1,
+				maxZoom: 8,
+				bounds: true,
+				boundsPadding: 1,
+			})
+		})
+		onBeforeUnmount(() => {
+			screenPanzoomInstance.value?.dispose()
+		})
+
+		return {
+			guestNameStore,
+			screen,
+			screenPanzoomInstance,
+		}
 	},
 
 	computed: {
@@ -111,11 +133,10 @@ export default {
 			return remoteParticipantName
 		},
 		screenClass() {
-			if (this.isBig) {
-				return 'screen--fit'
-			} else {
-				return 'screen--fill'
-			}
+			return [
+				this.isBig ? 'screen--fit' : 'screen--fill',
+				this.screenPanzoomInstance ? 'screen--magnify' : '',
+			]
 		},
 
 	},
@@ -181,6 +202,9 @@ export default {
 	}
 	&--fill {
 		object-fit: cover;
+	}
+	&--magnify {
+		cursor: zoom-in;
 	}
 }
 
