@@ -20,6 +20,7 @@ class SelectHelper {
 			->addSelect($alias . 'read_only')
 			->addSelect($alias . 'lobby_state')
 			->addSelect($alias . 'sip_enabled')
+			->addSelect($alias . 'encrypted')
 			->addSelect($alias . 'assigned_hpb')
 			->addSelect($alias . 'token')
 			->addSelect($alias . 'name')

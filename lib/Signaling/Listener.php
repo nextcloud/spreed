@@ -59,6 +59,7 @@ class Listener implements IEventListener {
 		ARoomModifiedEvent::PROPERTY_PASSWORD,
 		ARoomModifiedEvent::PROPERTY_READ_ONLY,
 		ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
+		ARoomModifiedEvent::PROPERTY_ENCRYPTION_ENABLED,
 		ARoomModifiedEvent::PROPERTY_TYPE,
 	];
 
