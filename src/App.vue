@@ -22,7 +22,9 @@ import debounce from 'debounce'
 import { provide } from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
+import { showWarning } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
@@ -197,6 +199,7 @@ export default {
 		EventBus.off('switch-to-conversation')
 		EventBus.off('conversations-received')
 		EventBus.off('forbidden-route')
+		EventBus.off('signaling-internal-show-warning', this.showSignalingInternalWarning)
 	},
 
 	beforeMount() {
@@ -332,6 +335,10 @@ export default {
 				this.$store.dispatch('setCurrentParticipant', conversation)
 			}
 		})
+
+		if (loadState('spreed', 'signaling_mode') === 'internal') {
+			EventBus.on('signaling-internal-show-warning', this.showSignalingInternalWarning)
+		}
 
 		const beforeRouteChangeListener = (to, from, next) => {
 			if (this.isNextcloudTalkHashDirty) {
@@ -615,7 +622,13 @@ export default {
 
 			// Breakout to breakout
 			return oldConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM && newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
-		}
+		},
+
+		showSignalingInternalWarning(token) {
+			if (this.$store.getters.isModerator || this.$store.getters.participantsList(token)?.length > 4) {
+				showWarning(t('spreed', 'Having a call with more than 4 participants without external signaling server can cause connectivity issues and cause high load on participating devices'))
+			}
+		},
 	},
 }
 </script>
