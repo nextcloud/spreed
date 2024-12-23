@@ -17,6 +17,7 @@
 
 			<div id="videos">
 				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					ref="videoPromotedWrapper"
 					class="video__promoted"
 					:class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
@@ -73,6 +74,7 @@
 						@force-promote-video="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
 					<PresenterOverlay v-if="shouldShowPresenterOverlay"
+						:key="promotedWrapperDimensions"
 						:token="token"
 						:model="presenterModel"
 						:shared-data="presenterSharedData"
@@ -237,6 +239,8 @@ export default {
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
 			forcePromotedModel: null,
+			resizeObserver: null,
+			promotedWrapperDimensions: null,
 		}
 	},
 
@@ -495,6 +499,9 @@ export default {
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
+
+		this.resizeObserver = new ResizeObserver(this.updatePromotedWrapperDimensions)
+		this.resizeObserver.observe(this.$refs.videoPromotedWrapper)
 	},
 
 	beforeDestroy() {
@@ -506,6 +513,10 @@ export default {
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
+
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	methods: {
@@ -800,6 +811,9 @@ export default {
 			}
 		},
 
+		updatePromotedWrapperDimensions([entry]) {
+			this.promotedWrapperDimensions = `${entry.contentRect.width}:${entry.contentRect.height}`
+		},
 	},
 }
 </script>
