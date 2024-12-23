@@ -3,6 +3,261 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import debounce from 'debounce'
+import type { Emitter } from 'mitt'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import type { Route } from 'vue-router'
+import { useRouter } from 'vue-router/composables'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDateTime from '@nextcloud/vue/dist/Components/NcDateTime.js'
+import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import SearchBox from '../../UIShared/SearchBox.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
+
+import { useStore } from '../../../composables/useStore.js'
+import { EventBus } from '../../../services/EventBus.ts'
+import { searchMessages } from '../../../services/messagesService.ts'
+import CancelableRequest from '../../../utils/cancelableRequest.js'
+
+type UserFilterObject = {
+	id: string
+}
+
+type MessageSearchResultAttributes = {
+	conversation: string
+	messageId: string
+	actorType: string
+	actorId: string
+	timestamp: string
+}
+
+type MessageSearchResultEntry = {
+	subline: string
+	thumbnailUrl: string
+	title: string
+	resourceUrl: string
+	icon: string
+	rounded: boolean
+	attributes: MessageSearchResultAttributes
+}
+
+type Events = {
+  'route-change': { from: Route; to: Route }
+}
+
+type ExtendedEmitter = Emitter<Events>
+
+const typedEventBus = EventBus as ExtendedEmitter
+
+const props = defineProps<{
+	isActive: boolean
+}>()
+
+const searchBox = ref(null)
+const isFocused = ref(false)
+const searchResults = ref<MessageSearchResultEntry[]>([])
+const searchText = ref('')
+const fromUser = ref<UserFilterObject | null>(null)
+const sinceDate = ref<Date | null>(null)
+const untilDate = ref<Date | null>(null)
+const searchLimit = ref(10)
+const searchCursor = ref(0)
+const searchDetailsOpened = ref(false)
+const isFetchingResults = ref(false)
+const isSearchExhausted = ref(false)
+
+const router = useRouter()
+const store = useStore()
+
+const token = computed(() => store.getters.getToken())
+const participantsInitialised = computed(() => props.isActive ? store.getters.participantsInitialised(token.value) : false)
+const participants = computed<UserFilterObject>(() => {
+	if (!props.isActive) return []
+	return store.getters.participantsList(token.value)
+		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
+			id: actorId,
+			displayName,
+			isNoUser: actorType !== 'users',
+			subname: actorId,
+			user: actorId,
+			disableMenu: true,
+			showUserStatus: false,
+		}))
+})
+const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
+
+onMounted(() => {
+	typedEventBus.on('route-change', onRouteChange)
+})
+
+onBeforeUnmount(() => {
+	typedEventBus.off('route-change', onRouteChange)
+	abortSearch()
+})
+
+const onRouteChange = ({ from, to }: { from: Route, to: Route }): void => {
+	if (from.name === 'conversation'
+		&& to.name === 'conversation'
+		&& from.params.token === to.params.token) {
+		return
+	}
+	if (to.name === 'conversation') {
+		abortSearch()
+	}
+}
+
+/**
+ * Cancel search and cleanup the search fields and results.
+ */
+function abortSearch() {
+	cancelSearch.value('canceled')
+	searchText.value = ''
+	fromUser.value = null
+	sinceDate.value = null
+	untilDate.value = null
+	searchDetailsOpened.value = false
+	searchResults.value = []
+	searchCursor.value = 0
+}
+
+/**
+ * Continue fetching more search results
+ */
+function loadMore() {
+	return fetchSearchResults(false)
+}
+
+/**
+ *
+ */
+function fetchNewSearchResult() {
+	return fetchSearchResults(true)
+}
+
+const cancelSearch = ref((cancel: string) => {})
+
+/**
+ * @param [isNew=true] Is it a new search (search parameters changed)?
+ * Fetch the search results from the server
+ */
+async function fetchSearchResults(isNew = true) {
+	isFetchingResults.value = true
+
+	try {
+		cancelSearch.value('canceled')
+		const { request, cancel } = CancelableRequest(searchMessages)
+		cancelSearch.value = cancel
+
+		if (isNew) {
+			searchCursor.value = 0
+		}
+		if (searchCursor.value === 0) {
+			searchResults.value = []
+		}
+
+		const term = searchText.value.trim()
+		if (term.length === 0 && !fromUser.value && !sinceDate.value && !untilDate.value) {
+			return
+		}
+		const response = await request({
+			term: term.length !== 0 ? term : null,
+			person: fromUser.value?.id,
+			since: sinceDate.value?.toISOString(),
+			until: untilDate.value?.toISOString(),
+			limit: searchLimit.value,
+			cursor: searchCursor.value || null,
+			conversation: token.value,
+		})
+
+		const data = response?.data?.ocs?.data
+		if (data?.entries) {
+			let entries = data?.entries
+
+			isSearchExhausted.value = entries.length < searchLimit.value
+			searchCursor.value = data.cursor
+
+			// FIXME: remove the filter after the person filter is fixed on the server
+			if (fromUser.value) {
+				entries = entries.filter((entry) => entry.attributes.actorId === fromUser.value?.id)
+				if (entries.length === 0 && isSearchExhausted.value) {
+					return await loadMore()
+				}
+			}
+
+			searchResults.value = searchResults.value.concat(entries)
+		}
+	} catch (exception) {
+		if (CancelableRequest.isCancel(exception)) {
+			return
+		}
+		console.error('Error searching for messages', exception)
+		showError(t('spreed', 'An error occurred while performing the search'))
+	} finally {
+		isFetchingResults.value = false
+	}
+}
+
+/**
+ *
+ * @param date disabledDate from NcDateTimePicker
+ */
+function notBeforeSinceDate(date: Date) {
+	return sinceDate.value ? date.getDate() < sinceDate.value.getDate() : false
+}
+
+/**
+ *
+ * @param date disabledDate from NcDateTimePicker
+ */
+function notAfterUntilDate(date: Date) {
+	return date.getDate() > (untilDate.value?.getDate() ?? new Date().getDate())
+}
+
+/**
+ *
+ * @param date disabledTime from NcDateTimePicker
+ */
+function notBeforeSinceTime(date: Date) {
+	return sinceDate.value ? date.valueOf() < sinceDate.value?.valueOf() : false
+}
+
+/**
+ *
+ * @param date disabledTime from NcDateTimePicker
+ */
+function notAfterUntilTime(date: Date) {
+	return date.valueOf() > (untilDate.value?.valueOf() ?? Date.now())
+}
+
+/**
+ * Search result on click handler
+ * @param attributes Attributes from message search results
+ */
+function onClickMessageSearchResult(attributes: MessageSearchResultAttributes) {
+	router.push({
+		name: 'conversation',
+		hash: `#message_${attributes.messageId}`,
+		params: {
+			token: attributes.conversation,
+		},
+	}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+}
+
+const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
+</script>
+
 <template>
 	<div class="search-messages-tab">
 		<div class="search-form">
@@ -11,8 +266,7 @@
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
-						@input="debounceFetchSearchResults"
-						@abort-search="clearSearchText" />
+						@input="debounceFetchSearchResults" />
 					<TransitionWrapper name="radial-reveal">
 						<div v-show="searchDetailsOpened" class="search-form__search-detail">
 							<NcSelect v-model="fromUser"
@@ -77,7 +331,7 @@
 						{{ item.subline }}
 					</template>
 					<template #details>
-						<NcDateTime :timestamp="item.attributes.timestamp * 1000"
+						<NcDateTime :timestamp="parseInt(item.attributes.timestamp) * 1000"
 							class="search-results__date"
 							relative-time="narrow"
 							ignore-seconds />
@@ -95,245 +349,6 @@
 		</div>
 	</div>
 </template>
-
-<script>
-import debounce from 'debounce'
-import { ref } from 'vue'
-
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcDateTime from '@nextcloud/vue/dist/Components/NcDateTime.js'
-import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import SearchBox from '../../UIShared/SearchBox.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-
-import { EventBus } from '../../../services/EventBus.ts'
-import { searchMessages } from '../../../services/messagesService.ts'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
-
-export default {
-	name: 'SearchMessagesTab',
-	components: {
-		NcButton,
-		NcDateTime,
-		NcDateTimePicker,
-		NcListItem,
-		NcLoadingIcon,
-		NcSelect,
-		AvatarWrapper,
-		SearchBox,
-		TransitionWrapper,
-		DotsHorizontal,
-	},
-
-	props: {
-		isActive: {
-			type: Boolean,
-			required: true,
-		}
-	},
-
-	setup() {
-		const searchBox = ref(null)
-
-		return {
-			searchBox,
-		}
-	},
-
-	data() {
-		return {
-			searchText: '',
-			isFocused: false,
-			searchResults: [],
-			debounceFetchSearchResults: () => {},
-			cancelSearch: () => {},
-			fromUser: null,
-			sinceDate: null,
-			untilDate: null,
-			searchDetailsOpened: false,
-			isFetchingResults: false,
-			isSearchExhausted: false,
-			searchLimit: 10,
-			searchCursor: 0,
-		}
-	},
-
-	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
-		participantsInitialised() {
-			return this.$store.getters.participantsInitialised(this.token)
-		},
-
-		participants() {
-			return this.$store.getters.participantsList(this.token)
-				.map(({
-					 actorId,
-					 displayName,
-					 actorType,
-				}) => ({
-					 id: actorId,
-					 displayName,
-					 isNoUser: actorType !== 'users',
-					 subname: actorId,
-					 user: actorId,
-					 disableMenu: true,
-					 showUserStatus: false,
-				}))
-		},
-
-		canLoadMore() {
-			return !this.isSearchExhausted && !this.isFetchingResults && this.searchCursor !== 0
-		}
-	},
-
-	mounted() {
-		this.debounceFetchSearchResults = debounce(this.fetchNewSearchResults, 250)
-		EventBus.on('route-change', this.onRouteChange)
-	},
-
-	beforeDestroy() {
-		this.debounceFetchSearchResults.clear?.()
-		EventBus.off('route-change', this.onRouteChange)
-	},
-
-	methods: {
-		t,
-
-		onRouteChange({ from, to }) {
-			if (from.name === 'conversation'
-				&& to.name === 'conversation'
-				&& from.params.token === to.params.token) {
-				return
-			}
-			if (to.name === 'conversation') {
-				this.abortSearch()
-			}
-		},
-
-		abortSearch() {
-			this.clearSearchText()
-			this.fromUser = null
-			this.sinceDate = null
-			this.untilDate = null
-			this.searchDetailsOpened = false
-			this.searchResults = []
-			this.searchCursor = 0
-		},
-
-		clearSearchText() {
-			this.searchText = ''
-		},
-
-		loadMore() {
-			this.fetchSearchResults(false)
-		},
-
-		fetchNewSearchResults() {
-			return this.fetchSearchResults()
-		},
-
-		async fetchSearchResults(isNew = true) {
-			this.isFetchingResults = true
-
-			try {
-				this.cancelSearch('canceled')
-				const { request, cancel } = CancelableRequest(searchMessages)
-				this.cancelSearch = cancel
-
-				if (isNew) {
-					this.searchCursor = 0
-				}
-				if (this.searchCursor === 0) {
-					this.searchResults = []
-				}
-
-				const term = this.searchText.trim()
-				if (term.length === 0 && !this.fromUser && !this.sinceDate && !this.untilDate) {
-					return
-				}
-				const response = await request({
-					term: term.length !== 0 ? term : null,
-					person: this.fromUser?.id,
-					since: this.sinceDate?.toISOString(),
-					until: this.untilDate?.toISOString(),
-					limit: this.searchLimit,
-					cursor: this.searchCursor || null,
-					conversation: this.token,
-				})
-
-				const data = response?.data?.ocs?.data
-				if (data?.entries) {
-					let entries = data?.entries
-
-					this.isSearchExhausted = entries.length < this.searchLimit
-					this.searchCursor = data.cursor
-
-					// FIXME: remove the filter after searching from person is fixed on the server
-					if (this.fromUser) {
-						entries = entries.filter((entry) => entry.attributes.actorId === this.fromUser.id)
-						if (entries.length === 0 && !this.isSearchExhausted) {
-							return await this.fetchSearchResults(false)
-						}
-					}
-
-					this.searchResults = this.searchResults.concat(entries)
-				}
-			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
-					return
-				}
-				console.error('Error searching for messages', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
-			} finally {
-				this.isFetchingResults = false
-			}
-		},
-
-		setFromUser(actorId) {
-			this.fromUser = this.fromUser !== actorId ? actorId : null
-		},
-
-		notBeforeSinceDate(date) {
-			return this.sinceDate ? date.getDate() < this.sinceDate.getDate() : false
-		},
-
-		notAfterUntilDate(date) {
-			return date.getDate() > (this.untilDate?.getDate() ?? new Date().getDate())
-		},
-
-		notBeforeSinceTime(date) {
-			return this.sinceDate ? date.valueOf() < this.sinceDate?.valueOf() : false
-		},
-
-		notAfterUntilTime(date) {
-			return date.valueOf() > (this.untilDate?.valueOf() ?? Date.now())
-		},
-
-		onClickMessageSearchResult({ messageId, conversation }) {
-			this.$router.push({
-				name: 'conversation',
-				hash: `#message_${messageId}`,
-				params: {
-					token: conversation,
-				},
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-		},
-	}
-}
-</script>
 
 <style lang="scss" scoped>
 .search-messages-tab {
