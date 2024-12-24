@@ -36,6 +36,7 @@ type PostNewMessagePayload = Omit<postNewMessageParams, 'replyTo'> & { token: st
 type PostNewMessageOptions = Pick<postNewMessageParams, 'silent'> & object
 type DeleteMessagePayload = { token: string, id: number }
 type EditMessagePayload = { token: string, messageId: number, updatedMessage: editMessageParams['message'] }
+type SearchMessagePayload = { term: string, person?: string, since?: string, until?: string, cursor?: number, limit?: number, conversation?: string }
 
 /**
  * Fetches messages that belong to a particular conversation
@@ -224,6 +225,13 @@ const summarizeChat = async function(token: string, fromMessageId: summarizeChat
 	} as summarizeChatParams, options)
 }
 
+const searchMessages = async function(params: SearchMessagePayload, options: object) {
+	return axios.get(generateOcsUrl('search/providers/talk-message/search'), {
+		...options,
+		params,
+	}).catch(() => {})
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -236,4 +244,5 @@ export {
 	updateLastReadMessage,
 	setConversationUnread,
 	summarizeChat,
+	searchMessages,
 }
