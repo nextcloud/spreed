@@ -57,19 +57,32 @@
 				<template #icon>
 					<IconFileUpload :size="20" />
 				</template>
-				{{ t('spreed', 'Import e-mail participants') }}
+				{{ t('spreed', 'Import email participants') }}
 			</NcButton>
 
 			<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
 				:token="token"
 				container=".import-email-participants"
 				@close="isImportEmailsDialogOpen = false" />
+
+			<template v-if="canCreatePollDrafts">
+				<h4 class="app-settings-section__subtitle">
+					{{ t('spreed', 'Poll drafts') }}
+				</h4>
+				<NcButton @click="openPollDraftHandler">
+					<template #icon>
+						<IconPoll :size="20" />
+					</template>
+					{{ t('spreed', 'Browse poll drafts') }}
+				</NcButton>
+			</template>
 		</div>
 	</div>
 </template>
 
 <script>
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -81,8 +94,9 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 
-import { WEBINAR } from '../../constants.js'
+import { CONVERSATION, WEBINAR } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.ts'
 import { futureRelativeTime } from '../../utils/formattedTime.ts'
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -92,6 +106,7 @@ export default {
 
 	components: {
 		IconFileUpload,
+		IconPoll,
 		ImportEmailsDialog,
 		NcButton,
 		NcCheckboxRadioSwitch,
@@ -182,6 +197,11 @@ export default {
 		getRelativeTime() {
 			return futureRelativeTime(this.lobbyTimer)
 		},
+
+		canCreatePollDrafts() {
+			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
+				&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(this.conversation.type)
+		},
 	},
 
 	methods: {
@@ -227,6 +247,10 @@ export default {
 
 			this.isLobbyTimerLoading = false
 		},
+
+		openPollDraftHandler() {
+			EventBus.emit('poll-drafts-open', { selector: '#settings-section_meeting' })
+		}
 	},
 }
 </script>
