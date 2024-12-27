@@ -10,15 +10,14 @@
 			<label :for="`stun_server_${index}`">stun:</label>
 
 			<NcTextField ref="stun_server"
+				v-model="stunServer"
 				:input-id="`stun_server_${index}`"
 				name="stun_server"
 				class="stun-server__input"
 				placeholder="stunserver:port"
-				:model-value="server"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
-				label-outside
-				@update:model-value="update" />
+				label-outside />
 		</div>
 
 		<AlertCircle v-show="!isValidServer"
@@ -76,6 +75,15 @@ export default {
 	emits: ['remove-server', 'update:server'],
 
 	computed: {
+		stunServer: {
+			get() {
+				return this.server
+			},
+			set(value) {
+				this.$emit('update:server', value)
+			}
+		},
+
 		isValidServer() {
 			let server = this.server
 
@@ -98,9 +106,6 @@ export default {
 		t,
 		removeServer() {
 			this.$emit('remove-server', this.index)
-		},
-		update(value) {
-			this.$emit('update:server', value)
 		},
 	},
 }
