@@ -55,7 +55,7 @@
 						size="normal"
 						container=".matterbridge-settings"
 						close-on-click-outside>
-						<NcTextArea :value="processLog"
+						<NcTextArea :model-value="processLog"
 							class="log-content"
 							:label="t('spreed', 'Log content')"
 							:rows="29"
