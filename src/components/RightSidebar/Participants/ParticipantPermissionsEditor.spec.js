@@ -72,50 +72,48 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		})
 	}
 
-	describe('Properly renders the checkboxes when mounted', () => {
-		test('Properly renders the call start checkbox', async () => {
+	describe('checkboxes render on mount', () => {
+		const testCheckboxRendering = async (participant) => {
+			// Arrange
+			const permissions = participant.permissions
+				|| (PARTICIPANT.PERMISSIONS.MAX_DEFAULT & ~PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) // Default from component
+
+			const permissionsMap = [
+				{ ref: 'callStart', value: !!(permissions & PARTICIPANT.PERMISSIONS.CALL_START) },
+				{ ref: 'lobbyIgnore', value: !!(permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) },
+				{ ref: 'chatMessagesAndReactions', value: !!(permissions & PARTICIPANT.PERMISSIONS.CHAT) },
+				{ ref: 'publishAudio', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) },
+				{ ref: 'publishVideo', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) },
+				{ ref: 'publishScreen', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN) },
+			]
+
+			// Act
 			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
-			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
+
+			// Assert
+			for (const permission of permissionsMap) {
+				expect(wrapper.findComponent(PermissionsEditor).findComponent({ ref: permission.ref })
+					.props('modelValue')).toBe(permission.value)
+			}
+		}
+
+		it('render checkboxes with custom permissions', async () => {
+			await testCheckboxRendering(participant)
 		})
 
-		test('Properly renders the lobby Ignore checkbox', async () => {
-			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
-			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
-		})
-
-		test('Properly renders the publish audio checkbox', async () => {
-			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
-			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
-		})
-
-		test('Properly renders the publish video checkbox', async () => {
-			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
-			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
-		})
-
-		test('Properly renders the publish screen checkbox', async () => {
-			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
-			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(false)
-		})
-
-		test('Properly renders the checkboxes with default permissions', async () => {
+		it('render checkboxes with default permissions', async () => {
 			participant.permissions = PARTICIPANT.PERMISSIONS.DEFAULT
-			const wrapper = await mountParticipantPermissionsEditor(participant)
-			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
-			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
-			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
-			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
-			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
-			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
-			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
-			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
-			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
-			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(true)
+			await testCheckboxRendering(participant)
+		})
+
+		it('render checkboxes with all permissions', async () => {
+			participant.permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT
+			await testCheckboxRendering(participant)
+		})
+
+		it('render checkboxes with restricted permissions', async () => {
+			participant.permissions = PARTICIPANT.PERMISSIONS.CALL_JOIN
+			await testCheckboxRendering(participant)
 		})
 	})
 

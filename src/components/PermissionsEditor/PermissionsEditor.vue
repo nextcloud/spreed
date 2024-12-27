@@ -219,12 +219,12 @@ export default {
 		 * @param {number} permissions - the permissions number.
 		 */
 		writePermissionsToComponent(permissions) {
-			permissions & PERMISSIONS.CALL_START ? this.callStart = true : this.callStart = false
-			permissions & PERMISSIONS.LOBBY_IGNORE ? this.lobbyIgnore = true : this.lobbyIgnore = false
-			permissions & PERMISSIONS.CHAT ? this.chatMessagesAndReactions = true : this.chatMessagesAndReactions = false
-			permissions & PERMISSIONS.PUBLISH_AUDIO ? this.publishAudio = true : this.publishAudio = false
-			permissions & PERMISSIONS.PUBLISH_VIDEO ? this.publishVideo = true : this.publishVideo = false
-			permissions & PERMISSIONS.PUBLISH_SCREEN ? this.publishScreen = true : this.publishScreen = false
+			this.callStart = Boolean(permissions & PERMISSIONS.CALL_START)
+			this.lobbyIgnore = Boolean(permissions & PERMISSIONS.LOBBY_IGNORE)
+			this.chatMessagesAndReactions = Boolean(permissions & PERMISSIONS.CHAT)
+			this.publishAudio = Boolean(permissions & PERMISSIONS.PUBLISH_AUDIO)
+			this.publishVideo = Boolean(permissions & PERMISSIONS.PUBLISH_VIDEO)
+			this.publishScreen = Boolean(permissions & PERMISSIONS.PUBLISH_SCREEN)
 		},
 
 		handleSubmitPermissions() {
