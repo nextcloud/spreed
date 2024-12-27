@@ -46,7 +46,7 @@
 				{{ t('spreed', 'Shared secret') }}
 			</label>
 			<NcPasswordField id="sip-shared-secret"
-				:value.sync="sharedSecret"
+				v-model="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
 				as-text
@@ -58,7 +58,7 @@
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
 			<NcTextArea id="dial-in-info"
-				:value.sync="dialInInfo"
+				v-model="dialInInfo"
 				name="message"
 				class="form form__textarea"
 				rows="4"

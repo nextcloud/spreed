@@ -285,12 +285,12 @@
 					</NcCheckboxRadioSwitch>
 					<template v-if="isBanParticipant">
 						<NcTextArea v-if="isBanParticipant"
+							v-model="internalNote"
 							class="participant-dialog__input"
 							resize="vertical"
 							:label="t('spreed', 'Internal note (reason to ban)')"
 							:error="!!maxLengthWarning"
-							:helper-text="maxLengthWarning"
-							:value.sync="internalNote" />
+							:helper-text="maxLengthWarning" />
 					</template>
 				</template>
 				<template #actions>

@@ -24,8 +24,8 @@
 					<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 				</div>
 				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
+					v-model="lobbyTimer"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:model-value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"
@@ -36,8 +36,7 @@
 					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
 					v-bind="dateTimePickerAttrs"
 					confirm
-					clearable
-					@change="saveLobbyTimer" />
+					clearable />
 				<div class="lobby_timer--timezone">
 					{{ getTimeZone }}
 				</div>
@@ -143,16 +142,21 @@ export default {
 			return new Date(date.getTime() + 3600000)
 		},
 
-		lobbyTimer() {
-			// A timestamp of 0 means that there is no lobby, but it would be
-			// interpreted as the Unix epoch by the DateTimePicker.
-			if (this.conversation.lobbyTimer === 0) {
-				return undefined
-			}
+		lobbyTimer: {
+			get() {
+				// A timestamp of 0 means that there is no lobby, but it would be
+				// interpreted as the Unix epoch by the DateTimePicker.
+				if (this.conversation.lobbyTimer === 0) {
+					return undefined
+				}
 
-			// PHP timestamp is second-based; JavaScript timestamp is
-			// millisecond based.
-			return this.conversation.lobbyTimer * 1000
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				return this.conversation.lobbyTimer * 1000
+			},
+			set(value) {
+				this.saveLobbyTimer(value)
+			}
 		},
 
 		dateTimePickerAttrs() {

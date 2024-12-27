@@ -54,15 +54,15 @@
 			</NcCheckboxRadioSwitch>
 		</template>
 
-		<NcPasswordField class="form__textfield additional-top-margin"
-			:value="secret"
+		<NcPasswordField v-model="secret"
+			class="form__textfield additional-top-margin"
 			name="signaling_secret"
 			as-text
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:model-value="debounceUpdateServers" />
 	</section>
 </template>
 
@@ -148,11 +148,6 @@ export default {
 					this.toggleSave()
 				},
 			})
-		},
-
-		updateSecret(value) {
-			this.secret = value
-			this.debounceUpdateServers()
 		},
 
 		async updateServers() {
