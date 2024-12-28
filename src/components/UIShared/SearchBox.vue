@@ -5,16 +5,16 @@
 
 <template>
 	<NcTextField ref="searchConversations"
-		:value="value"
+		v-model="modelValue"
 		:aria-label="placeholderText"
 		:aria-describedby="ariaDescribedby"
 		:placeholder="placeholderText"
 		:show-trailing-button="isFocused"
+		:trailing-button-label="cancelSearchLabel"
 		class="search-box"
 		label-outside
 		@focus="handleFocus"
 		@blur="handleBlur"
-		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
 		<IconMagnify :size="16" />
@@ -78,6 +78,15 @@ export default {
 	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
 
 	computed: {
+		modelValue: {
+			get() {
+				return this.value
+			},
+			set(value) {
+				this.updateValue(value)
+			}
+		},
+
 		isSearching() {
 			return this.value !== ''
 		},

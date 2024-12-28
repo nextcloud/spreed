@@ -23,8 +23,8 @@
 				<NcCheckboxRadioSwitch v-if="showMediaSettingsToggle"
 					type="switch"
 					:disabled="recordingConsentRequired"
-					:checked="showMediaSettings"
-					@update:checked="setShowMediaSettings">
+					:model-value="showMediaSettings"
+					@update:model-value="setShowMediaSettings">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
 				<p v-if="recordingConsentRequired">
@@ -92,8 +92,8 @@
 						{{ t('spreed', 'Archived conversations are hidden from the conversation list by default. However, they will still appear when you search for the conversation name or access a list of archived conversations.') }}
 					</p>
 					<NcCheckboxRadioSwitch type="switch"
-						:checked="isArchived"
-						@update:checked="toggleArchiveConversation">
+						:model-value="isArchived"
+						@update:model-value="toggleArchiveConversation">
 						{{ t('spreed', 'Archive conversation') }}
 					</NcCheckboxRadioSwitch>
 				</template>

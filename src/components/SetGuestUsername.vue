@@ -18,7 +18,7 @@
 
 		<NcTextField v-else
 			ref="usernameInput"
-			:value.sync="guestUserName"
+			v-model="guestUserName"
 			:placeholder="t('spreed', 'Guest')"
 			class="username-form__input"
 			:show-trailing-button="!!guestUserName"

@@ -14,32 +14,32 @@
 				<p :id="dialogHeaderId" class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
 					<NcCheckboxRadioSwitch ref="callStart"
-						:checked.sync="callStart"
+						v-model="callStart"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="lobbyIgnore"
-						:checked.sync="lobbyIgnore"
+						v-model="lobbyIgnore"
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="chatMessagesAndReactions"
-						:checked.sync="chatMessagesAndReactions"
+						v-model="chatMessagesAndReactions"
 						class="checkbox">
 						{{ t('spreed', 'Can post messages and reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishAudio"
-						:checked.sync="publishAudio"
+						v-model="publishAudio"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishVideo"
-						:checked.sync="publishVideo"
+						v-model="publishVideo"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishScreen"
-						:checked.sync="publishScreen"
+						v-model="publishScreen"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</NcCheckboxRadioSwitch>
@@ -219,12 +219,12 @@ export default {
 		 * @param {number} permissions - the permissions number.
 		 */
 		writePermissionsToComponent(permissions) {
-			permissions & PERMISSIONS.CALL_START ? this.callStart = true : this.callStart = false
-			permissions & PERMISSIONS.LOBBY_IGNORE ? this.lobbyIgnore = true : this.lobbyIgnore = false
-			permissions & PERMISSIONS.CHAT ? this.chatMessagesAndReactions = true : this.chatMessagesAndReactions = false
-			permissions & PERMISSIONS.PUBLISH_AUDIO ? this.publishAudio = true : this.publishAudio = false
-			permissions & PERMISSIONS.PUBLISH_VIDEO ? this.publishVideo = true : this.publishVideo = false
-			permissions & PERMISSIONS.PUBLISH_SCREEN ? this.publishScreen = true : this.publishScreen = false
+			this.callStart = Boolean(permissions & PERMISSIONS.CALL_START)
+			this.lobbyIgnore = Boolean(permissions & PERMISSIONS.LOBBY_IGNORE)
+			this.chatMessagesAndReactions = Boolean(permissions & PERMISSIONS.CHAT)
+			this.publishAudio = Boolean(permissions & PERMISSIONS.PUBLISH_AUDIO)
+			this.publishVideo = Boolean(permissions & PERMISSIONS.PUBLISH_VIDEO)
+			this.publishScreen = Boolean(permissions & PERMISSIONS.PUBLISH_SCREEN)
 		},
 
 		handleSubmitPermissions() {

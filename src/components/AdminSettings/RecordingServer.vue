@@ -7,17 +7,16 @@
 <template>
 	<li class="recording-server">
 		<NcTextField ref="recording_server"
+			v-model="recordingServer"
 			class="recording-server__textfield"
 			name="recording_server"
 			placeholder="https://recording.example.org"
-			:value="server"
 			:disabled="loading"
-			:label="t('spreed', 'Recording backend URL')"
-			@update:value="updateServer" />
+			:label="t('spreed', 'Recording backend URL')" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="recording-server__checkbox"
-			@update:checked="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
@@ -123,6 +122,15 @@ export default {
 				version: this.versionFound,
 			})
 		},
+
+		recordingServer: {
+			get() {
+				return this.server
+			},
+			set(value) {
+				this.$emit('update:server', value)
+			}
+		},
 	},
 
 	watch: {
@@ -143,9 +151,6 @@ export default {
 		t,
 		removeServer() {
 			this.$emit('remove-server', this.index)
-		},
-		updateServer(value) {
-			this.$emit('update:server', value)
 		},
 		updateVerify(checked) {
 			this.$emit('update:verify', checked)
