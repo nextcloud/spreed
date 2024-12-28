@@ -1622,6 +1622,8 @@
     "Failed to remove reaction" : "移除回应失败",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud处于维护模式，请重新加载页面",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Nextcloud通话应用并不完全支持你使用的浏览器。请使用最新版本的 Mozilla Firefox、Microsoft Edge、Google Chrome、Opera 或 Apple Safari 浏览器。",
+    "_%n minute _::_%n minutes_" : ["%n 分钟"],
+    "_In %n minute_::_In %n minutes_" : ["%n 分钟内"],
     "Conversation link copied to clipboard" : "对话链接已复制到剪贴板。",
     "The link could not be copied" : "无法复制链接。",
     "Sending signaling message has failed" : "发送信令消息失败",
