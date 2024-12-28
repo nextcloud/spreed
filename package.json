@@ -56,7 +56,7 @@
     "mitt": "^3.0.1",
     "mockconsole": "0.0.1",
     "pinia": "^2.2.8",
-    "ua-parser-js": "^1.0.39",
+    "ua-parser-js": "^1.0.40",
     "util": "^0.12.5",
     "vue": "^2.7.16",
     "vue-cropperjs": "^4.2.0",
