@@ -14,6 +14,7 @@
 				<TopBar is-in-call is-sidebar />
 				<CallView :token="token" is-sidebar />
 				<ChatView is-sidebar />
+				<PollManager />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
@@ -30,6 +31,7 @@ import { t } from '@nextcloud/l10n'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
+import PollManager from './components/PollViewer/PollManager.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
@@ -51,6 +53,7 @@ export default {
 		CallView,
 		ChatView,
 		MediaSettings,
+		PollManager,
 		PollViewer,
 		TopBar,
 		TransitionWrapper,
