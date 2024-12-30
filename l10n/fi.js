@@ -674,6 +674,7 @@ OC.L10N.register(
     "Hide details" : "Piilota tiedot",
     "Show details" : "Näytä lisätiedot",
     "Date:" : "Päivämäärä:",
+    "Note:" : "Huomioi:",
     "Enter a name for this conversation" : "Anna nimi tälle keskustelulle",
     "Edit conversation name" : "Muokkaa keskustelun nimeä",
     "Edit conversation description" : "Muokkaa keskustelun kuvausta",
