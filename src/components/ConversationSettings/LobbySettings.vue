@@ -9,10 +9,10 @@
 			<NcNoteCard v-if="hasCall && !hasLobbyEnabled"
 				type="warning"
 				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
-			<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+			<NcCheckboxRadioSwitch :model-value="hasLobbyEnabled"
 				type="switch"
 				:disabled="isLobbyStateLoading"
-				@update:checked="toggleLobby">
+				@update:model-value="toggleLobby">
 				{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 			</NcCheckboxRadioSwitch>
 		</div>

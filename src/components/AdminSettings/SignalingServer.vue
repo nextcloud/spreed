@@ -6,17 +6,16 @@
 <template>
 	<li class="signaling-server">
 		<NcTextField ref="signaling_server"
+			v-model="signalingServer"
 			class="signaling-server__textfield"
 			name="signaling_server"
 			placeholder="wss://signaling.example.org"
-			:value="server"
 			:disabled="loading"
-			:label="t('spreed', 'High-performance backend URL')"
-			@update:value="updateServer" />
+			:label="t('spreed', 'High-performance backend URL')" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="signaling-server__checkbox"
-			@update:checked="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
@@ -129,6 +128,15 @@ export default {
 				version: this.versionFound,
 			})
 		},
+
+		signalingServer: {
+			get() {
+				return this.server
+			},
+			set(value) {
+				this.$emit('update:server', value)
+			}
+		}
 	},
 
 	watch: {
@@ -149,9 +157,6 @@ export default {
 		t,
 		removeServer() {
 			this.$emit('remove-server', this.index)
-		},
-		updateServer(value) {
-			this.$emit('update:server', value)
 		},
 		updateVerify(checked) {
 			this.$emit('update:verify', checked)

@@ -12,8 +12,8 @@
 			:text="t('spreed', 'SIP configuration is only possible with a high-performance backend.')" />
 
 		<template v-else>
-			<NcCheckboxRadioSwitch type="switch"
-				:checked.sync="dialOutEnabled"
+			<NcCheckboxRadioSwitch v-model="dialOutEnabled"
+				type="switch"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>

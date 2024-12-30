@@ -14,13 +14,12 @@
 
 		<template v-if="canModerate">
 			<NcSelect id="moderation_settings_message_expiration"
+				v-model="selectedOption"
 				:input-label="t('spreed', 'Set message expiration')"
-				:value="selectedOption"
 				:options="expirationOptions"
 				label="label"
 				close-on-select
-				:clearable="false"
-				@option:selected="changeExpiration" />
+				:clearable="false" />
 		</template>
 
 		<template v-else>
@@ -59,7 +58,6 @@ export default {
 
 	data() {
 		return {
-			overwriteExpiration: undefined,
 			defaultExpirationOptions: [
 				{ id: 3600, label: n('spreed', '%n hour', '%n hours', 1) },
 				{ id: 28800, label: n('spreed', '%n hour', '%n hours', 8) },
@@ -79,29 +77,22 @@ export default {
 		expirationOptions() {
 			const expirationOptions = [...this.defaultExpirationOptions]
 
-			const found = expirationOptions.find((option) => {
-				return option.id === this.conversation.messageExpiration
-			})
-			if (!found) {
+			if (!expirationOptions.some(option => option.id === this.conversation.messageExpiration)) {
 				expirationOptions.push({ id: this.conversation.messageExpiration, label: t('spreed', 'Custom expiration time') })
 			}
 
 			return expirationOptions
 		},
 
-		selectedOption() {
-			if (this.overwriteExpiration) {
-				return this.overwriteExpiration
+		selectedOption: {
+			get() {
+				return this.expirationOptions.find((option) => {
+					return option.id === this.conversation.messageExpiration
+				}) ?? this.expirationOptions.at(-1)
+			},
+			set(value) {
+				this.changeExpiration(value)
 			}
-
-			const option = this.expirationOptions.find((option) => {
-				return option.id === this.conversation.messageExpiration
-			})
-			if (option) {
-				return option
-			}
-
-			return this.expirationOptions.at(-1)
 		},
 	},
 
@@ -109,8 +100,6 @@ export default {
 		t,
 		n,
 		async changeExpiration(expiration) {
-			this.overwriteExpiration = expiration
-
 			try {
 				await this.$store.dispatch('setMessageExpiration', {
 					token: this.token,
@@ -128,8 +117,6 @@ export default {
 				showError(t('spreed', 'Error when trying to set message expiration'))
 				console.error(error)
 			}
-
-			this.overwriteExpiration = undefined
 		},
 	},
 }

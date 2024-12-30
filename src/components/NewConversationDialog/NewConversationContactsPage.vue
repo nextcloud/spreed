@@ -8,8 +8,8 @@
 		<!-- Search -->
 		<div class="set-contacts__form">
 			<NcTextField ref="setContacts"
+				v-model="searchText"
 				v-intersection-observer="visibilityChanged"
-				:value.sync="searchText"
 				type="text"
 				class="set-contacts__form-input"
 				:label="textFieldLabel"

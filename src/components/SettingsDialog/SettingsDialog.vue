@@ -22,11 +22,11 @@
 			<MediaDevicesPreview />
 			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
 				id="call-media"
-				:checked="startWithoutMediaEnabled"
+				:model-value="startWithoutMediaEnabled"
 				:disabled="mediaLoading"
 				type="switch"
 				class="checkbox call-media"
-				@update:checked="toggleStartWithoutMedia">
+				@update:model-value="toggleStartWithoutMedia">
 				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
@@ -61,20 +61,20 @@
 			:name="t('spreed', 'Privacy')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="read_status_privacy"
-				:checked="readStatusPrivacyIsPublic"
+				:model-value="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleReadStatusPrivacy">
+				@update:model-value="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-if="supportTypingStatus"
 				id="typing_status_privacy"
-				:checked="typingStatusPrivacyIsPublic"
+				:model-value="typingStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleTypingStatusPrivacy">
+				@update:model-value="toggleTypingStatusPrivacy">
 				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
@@ -82,11 +82,11 @@
 			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="play_sounds"
-				:checked="shouldPlaySounds"
+				:model-value="shouldPlaySounds"
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="togglePlaySounds">
+				@update:model-value="togglePlaySounds">
 				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
 			</NcCheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
@@ -103,7 +103,7 @@
 			class="app-settings-section">
 			<template v-if="serverSupportsBackgroundBlurred">
 				<NcCheckboxRadioSwitch id="blur-call-background"
-					:checked="isBackgroundBlurred === 'yes'"
+					:model-value="isBackgroundBlurred === 'yes'"
 					:indeterminate="isBackgroundBlurred === ''"
 					type="checkbox"
 					class="checkbox"
@@ -119,10 +119,10 @@
 			</template>
 			<NcCheckboxRadioSwitch v-else
 				id="blur-call-background"
-				:checked="isBackgroundBlurred !== 'false'"
+				:model-value="isBackgroundBlurred !== 'false'"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleBackgroundBlurred">
+				@update:model-value="toggleBackgroundBlurred">
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>

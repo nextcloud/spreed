@@ -25,8 +25,8 @@
 			@keydown.capture="handleKeyDown">
 			<NcSelect v-if="!dialing"
 				ref="regionSelect"
+				v-model="region"
 				class="dial-panel__select"
-				:value="region"
 				:options="options"
 				:append-to-body="false"
 				:clearable="false"
@@ -186,7 +186,6 @@ export default {
 		},
 
 		dialCode(value) {
-			this.region = value
 			this.$emit('update:value', value.dial_code)
 
 			this.$nextTick(() => {

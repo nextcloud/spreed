@@ -5,9 +5,9 @@
 
 <template>
 	<li class="turn-server">
-		<NcSelect class="turn-server__select"
+		<NcSelect v-model="turnSchemes"
+			class="turn-server__select"
 			name="turn_schemes"
-			:value="schemesOptions.find(i => i.value === schemes)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server schemes')"
 			:options="schemesOptions"
@@ -15,19 +15,17 @@
 			:searchable="false"
 			label="label"
 			track-by="value"
-			no-wrap
-			@input="updateSchemes" />
+			no-wrap />
 
 		<NcTextField ref="turn_server"
+			v-model="turnServer"
 			name="turn_server"
 			placeholder="turnserver:port"
 			class="turn-server__textfield"
 			:class="{ error: turnServerError }"
 			:title="turnServerError"
-			:value="server"
 			:disabled="loading"
-			:label="t('spreed', 'TURN server URL')"
-			@update:value="updateServer" />
+			:label="t('spreed', 'TURN server URL')" />
 
 		<NcPasswordField ref="turn_secret"
 			v-model="turnSecret"
@@ -38,9 +36,9 @@
 			:disabled="loading"
 			:label="t('spreed', 'TURN server secret')" />
 
-		<NcSelect class="turn-server__select"
+		<NcSelect v-model="turnProtocols"
+			class="turn-server__select"
 			name="turn_protocols"
-			:value="protocolOptions.find(i => i.value === protocols)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server protocols')"
 			:options="protocolOptions"
@@ -48,8 +46,7 @@
 			:searchable="false"
 			label="label"
 			track-by="value"
-			no-wrap
-			@input="updateProtocols" />
+			no-wrap />
 
 		<NcButton v-show="!loading"
 			type="tertiary"
@@ -152,6 +149,30 @@ export default {
 	},
 
 	computed: {
+		turnServer: {
+			get() {
+				return this.server
+			},
+			set(value) {
+				this.updateServer(value)
+			}
+		},
+		turnSchemes: {
+			get() {
+				return this.schemesOptions.find(i => i.value === this.schemes)
+			},
+			set(value) {
+				this.updateSchemes(value)
+			}
+		},
+		turnProtocols: {
+			get() {
+				return this.protocolOptions.find(i => i.value === this.protocols)
+			},
+			set(value) {
+				this.updateProtocols(value)
+			}
+		},
 		turnSecret: {
 			get() {
 				return this.secret

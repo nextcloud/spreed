@@ -12,11 +12,11 @@
 			type="warning"
 			:text="t('spreed', 'This will also terminate the ongoing call.')" />
 		<div>
-			<NcCheckboxRadioSwitch :checked="isReadOnly"
+			<NcCheckboxRadioSwitch :model-value="isReadOnly"
 				type="switch"
 				aria-describedby="moderation_settings_lock_conversation_hint"
 				:disabled="isReadOnlyStateLoading"
-				@update:checked="toggleReadOnly">
+				@update:model-value="toggleReadOnly">
 				{{ t('spreed', 'Lock the conversation to prevent anyone to post messages or start calls') }}
 			</NcCheckboxRadioSwitch>
 		</div>

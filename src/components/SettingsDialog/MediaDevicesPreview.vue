@@ -65,8 +65,8 @@
 		</div>
 		<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
 			type="switch"
-			:checked="blurVirtualBackgroundEnabled"
-			@update:checked="setBlurVirtualBackgroundEnabled">
+			:model-value="blurVirtualBackgroundEnabled"
+			@update:model-value="setBlurVirtualBackgroundEnabled">
 			{{ t('spreed', 'Enable blur background by default for all conversation') }}
 		</NcCheckboxRadioSwitch>
 	</div>
