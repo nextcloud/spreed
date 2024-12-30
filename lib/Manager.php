@@ -318,6 +318,30 @@ class Manager {
 	}
 
 	/**
+	 * @return list<Room>
+	 */
+	public function getInactiveRooms(\DateTime $inactiveSince): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->andWhere($query->expr()->lte('r.last_activity', $query->createNamedParameter($inactiveSince, IQueryBuilder::PARAM_DATETIME_MUTABLE)))
+			->andWhere($query->expr()->neq('r.read_only', $query->createNamedParameter(Room::READ_ONLY, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('r.type', $query->createNamedParameter([Room::TYPE_PUBLIC, Room::TYPE_GROUP], IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->emptyString('remoteServer'))
+			->orderBy('r.id', 'ASC');
+		$result = $query->executeQuery();
+
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$rooms[] = $this->createRoomObject($row);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string $userId
 	 * @param array $sessionIds A list of talk sessions to consider for loading (otherwise no session is loaded)
 	 * @param bool $includeLastMessage
