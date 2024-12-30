@@ -1032,6 +1032,9 @@ export default {
 }
 
 .new-message-form {
+	--emoji-button-size: calc(var(--default-clickable-area) - var(--border-width-input-focused, 2px) * 2);
+	--emoji-button-radius: calc(var(--border-radius-element, calc(var(--button-size) / 2)) - var(--border-width-input-focused, 2px));
+
 	align-items: flex-end;
 	display: flex;
 	gap: var(--default-grid-baseline);
@@ -1047,8 +1050,8 @@ export default {
 
 		:deep(.button-vue) {
 			// Overwrite NcButton styles to fit inside NcRichContenteditable
-			--button-size: calc(var(--default-clickable-area) - var(--border-width-input-focused, 2px) * 2) !important;
-			--button-radius: calc(var(--border-radius-element, calc(var(--button-size) / 2)) - var(--border-width-input-focused, 2px)) !important;
+			--button-size: var(--emoji-button-size) !important;
+			--button-radius: var(--emoji-button-radius) !important;
 		}
 	}
 
@@ -1061,10 +1064,9 @@ export default {
 	// Override NcRichContenteditable styles
 	:deep(.rich-contenteditable__input) {
 		--contenteditable-space: calc((var(--default-clickable-area) - 1lh - 4px) / 2);
-		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
-		padding: var(--contenteditable-space);
-		padding-left: calc(var(--contenteditable-space) + var(--default-clickable-area));
-		max-height: 180px;
+		--contenteditable-block-offset: var(--contenteditable-space);
+		--contenteditable-inline-end-offset: var(--contenteditable-space);
+		--contenteditable-inline-start-offset: calc(var(--emoji-button-size) + var(--contenteditable-space));
 	}
 
 	&__quote {
