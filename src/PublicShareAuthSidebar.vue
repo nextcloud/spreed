@@ -156,6 +156,7 @@ export default {
 				// signaling server is used periodic polling has to be used
 				// instead.
 				this.fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
+				// TODO
 			}
 
 			if (currentUser || guestNickname) {
