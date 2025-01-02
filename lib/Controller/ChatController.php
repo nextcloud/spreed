@@ -1185,10 +1185,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireReadWriteConversation]
 	public function clearHistory(): DataResponse {
 		$attendee = $this->participant->getAttendee();
-		if (!$this->participant->hasModeratorPermissions(false)
-				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE
-				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			// Actor is not a moderator or not the owner of the message
+		if (!$this->participant->hasModeratorPermissions(false)) {
+			// Actor is not a moderator
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
+		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+				&& ($this->room->getType() === Room::TYPE_ONE_TO_ONE
+					|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
+			// Not allowed to purge one-to-one conversations
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 

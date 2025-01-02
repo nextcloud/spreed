@@ -20,6 +20,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
@@ -36,6 +37,7 @@ use OCP\UserStatus\IUserStatus;
 class RoomFormatter {
 	public function __construct(
 		protected Config $talkConfig,
+		protected IAppConfig $appConfig,
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
 		protected ChatManager $chatManager,
@@ -320,6 +322,13 @@ class RoomFormatter {
 					&& $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = $room->getType() !== Room::TYPE_NOTE_TO_SELF;
+
+				if ($this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+					&& in_array($room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
+					$roomData['canDeleteConversation'] = true;
+					$roomData['canLeaveConversation'] = false;
+				}
+
 				$roomData['canEnableSIP'] =
 					$this->talkConfig->isSIPConfigured()
 					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
