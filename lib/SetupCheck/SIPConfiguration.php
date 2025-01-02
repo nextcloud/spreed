@@ -33,7 +33,7 @@ class SIPConfiguration implements ISetupCheck {
 			return SetupResult::success();
 		}
 		if ($this->talkConfig->getSIPSharedSecret() === '' && $this->talkConfig->getDialInInfo() === '') {
-			return SetupResult::success();
+			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}
 		return SetupResult::error($this->l->t('Using the SIP functionality requires a High-performance backend.'));
 	}
