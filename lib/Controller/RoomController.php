@@ -70,6 +70,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
@@ -116,6 +117,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected ChecksumVerificationService $checksumVerificationService,
 		protected RoomFormatter $roomFormatter,
 		protected IConfig $config,
+		protected IAppConfig $appConfig,
 		protected Config $talkConfig,
 		protected ICloudIdManager $cloudIdManager,
 		protected IPhoneNumberUtil $phoneNumberUtil,
@@ -857,7 +859,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function deleteRoom(): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations') && ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1375,13 +1377,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($room->getType() !== Room::TYPE_CHANGELOG &&
-			$room->getObjectType() !== 'file' &&
+			$room->getObjectType() !== Room::OBJECT_TYPE_FILE &&
 			$this->participantService->getNumberOfUsers($room) === 1 &&
 			\in_array($participant->getAttendee()->getParticipantType(), [
 				Participant::USER,
 				Participant::MODERATOR,
 				Participant::OWNER,
 			], true)) {
+			$this->roomService->deleteRoom($room);
+			return new DataResponse(null);
+		}
+
+		if ($this->appConfig->getAppValueBool('delete_one_to_one_conversations') && $room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$this->roomService->deleteRoom($room);
 			return new DataResponse(null);
 		}
