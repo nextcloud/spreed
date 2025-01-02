@@ -45,7 +45,7 @@ trait TInitialState {
 		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
 			&& !$this->memcacheFactory->isAvailable()) {
 			throw new HintException(
-				'High Performance Back-end clustering is only supported with a distributed cache!'
+				'High-performance backend clustering is only supported with a distributed cache!'
 			);
 		}
 

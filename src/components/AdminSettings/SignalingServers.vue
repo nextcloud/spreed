@@ -45,7 +45,7 @@
 				<span v-if="loading" class="icon icon-loading-small" />
 				<Plus v-else :size="20" />
 			</template>
-			{{ t('spreed', 'Add high-performance backend server') }}
+			{{ t('spreed', 'Add High-performance backend server') }}
 		</NcButton>
 
 		<NcPasswordField v-if="servers.length"
@@ -150,7 +150,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
 				success: () => {
-					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
+					showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
 					this.loading = false
 					this.toggleSave()
 				},
