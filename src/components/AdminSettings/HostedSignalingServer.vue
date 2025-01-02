@@ -8,7 +8,7 @@
 		id="hosted_signaling_server"
 		class="hosted-signaling section">
 		<h2>
-			{{ t('spreed', 'Hosted high-performance backend') }}
+			{{ t('spreed', 'Hosted High-performance backend') }}
 		</h2>
 
 		<p class="settings-hint">

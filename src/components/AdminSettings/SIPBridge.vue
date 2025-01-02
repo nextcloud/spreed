@@ -9,7 +9,7 @@
 
 		<NcNoteCard v-if="!showForm"
 			type="warning"
-			:text="t('spreed', 'SIP configuration is only possible with a high-performance backend.')" />
+			:text="t('spreed', 'SIP configuration is only possible with a High-performance backend.')" />
 
 		<template v-else>
 			<NcCheckboxRadioSwitch v-model="dialOutEnabled"

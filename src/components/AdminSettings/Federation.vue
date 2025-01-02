@@ -10,6 +10,10 @@
 			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
+		<p class="settings-hint additional-top-margin">
+			{{ t('spreed', 'Federated chats and calls work already. Attachment handling is coming in a future version.') }}
+		</p>
+
 		<NcCheckboxRadioSwitch :model-value="isFederationEnabled"
 			:disabled="loading"
 			type="switch"

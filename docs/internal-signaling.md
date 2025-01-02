@@ -53,4 +53,4 @@ Todo
 
 ### External signaling API
 
-See [External signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/) for the Signaling API of the High-Performance Backend.
+See [External signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/) for the Signaling API of the High-performance backend.

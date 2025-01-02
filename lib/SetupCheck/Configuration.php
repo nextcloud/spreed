@@ -30,7 +30,7 @@ class Configuration implements ISetupCheck {
 	}
 
 	public function getName(): string {
-		return $this->l10n->t('Talk configuration');
+		return $this->l10n->t('Talk configuration values');
 	}
 
 	public function run(): SetupResult {
