@@ -12,7 +12,7 @@
 
 		<NcNoteCard v-if="!showForm"
 			type="warning"
-			:text="t('spreed', 'Recording backend configuration is only possible with a high-performance backend.')" />
+			:text="t('spreed', 'Recording backend configuration is only possible with a High-performance backend.')" />
 
 		<template v-else>
 			<NcNoteCard v-if="showUploadLimitWarning" type="warning" :text="uploadLimitWarning" />

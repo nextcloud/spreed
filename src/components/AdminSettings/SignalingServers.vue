@@ -5,17 +5,22 @@
 
 <template>
 	<section id="signaling_server" class="signaling-servers section">
+		<NcNoteCard v-if="!servers.length"
+			type="error"
+			:heading="t('spreed', 'Nextcloud Talk setup not complete')"
+			:text="t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.')" />
+
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 		</h2>
 
 		<p class="settings-hint">
-			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
+			{{ t('spreed', 'The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices.') }}
 		</p>
 
-		<NcNoteCard v-if="!isCacheConfigured"
+		<NcNoteCard v-if="servers.length && !isCacheConfigured"
 			type="warning"
-			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.')" />
+			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend.')" />
 
 		<TransitionWrapper v-if="servers.length"
 			name="fade"
@@ -40,21 +45,11 @@
 				<span v-if="loading" class="icon icon-loading-small" />
 				<Plus v-else :size="20" />
 			</template>
-			{{ t('spreed', 'Add a new high-performance backend server') }}
+			{{ t('spreed', 'Add High-performance backend server') }}
 		</NcButton>
 
-		<template v-if="!servers.length">
-			<p class="settings-hint additional-top-margin">
-				{{ t('spreed', 'Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}
-			</p>
-			<NcCheckboxRadioSwitch v-model="hideWarning"
-				:disabled="loading"
-				@update:model-value="updateHideWarning">
-				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
-			</NcCheckboxRadioSwitch>
-		</template>
-
-		<NcPasswordField v-model="secret"
+		<NcPasswordField v-if="servers.length"
+			v-model="secret"
 			class="form__textfield additional-top-margin"
 			name="signaling_secret"
 			as-text
@@ -63,6 +58,18 @@
 			:label="t('spreed', 'Shared secret')"
 			label-visible
 			@update:model-value="debounceUpdateServers" />
+
+		<template v-if="!servers.length">
+			<NcNoteCard type="warning"
+				class="additional-top-margin"
+				:text="t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.')" />
+			<NcCheckboxRadioSwitch v-model="hideWarning"
+				:disabled="loading"
+				@update:model-value="updateHideWarning">
+				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
+			</NcCheckboxRadioSwitch>
+		</template>
+
 	</section>
 </template>
 
@@ -134,7 +141,7 @@ export default {
 		newServer() {
 			this.servers.push({
 				server: '',
-				verify: false,
+				verify: true,
 			})
 		},
 
@@ -143,7 +150,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
 				success: () => {
-					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
+					showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
 					this.loading = false
 					this.toggleSave()
 				},
@@ -186,6 +193,6 @@ export default {
 }
 
 .additional-top-margin {
-	margin-top: 10px;
+	margin-top: 35px !important;
 }
 </style>

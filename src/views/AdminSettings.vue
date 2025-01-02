@@ -5,18 +5,18 @@
 
 <template>
 	<div>
+		<SignalingServers />
+		<HostedSignalingServer />
 		<GeneralSettings />
-		<MatterbridgeIntegration />
 		<AllowedGroups />
 		<Federation v-if="supportFederation" />
 		<BotsSettings />
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
-		<SignalingServers />
-		<HostedSignalingServer />
 		<RecordingServers />
 		<SIPBridge />
+		<MatterbridgeIntegration />
 	</div>
 </template>
 
