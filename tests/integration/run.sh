@@ -117,7 +117,7 @@ MAIN_SKELETON_DIR=$(occ_host config:system:get skeletondirectory)
 occ_host config:system:set overwrite.cli.url --value "http://localhost:8080/"
 if [[ "$MAIN_SKELETON_DIR" != "" ]]; then
 	echo "Resetting custom skeletondirectory so that tests pass"
-	${NEXTCLOUD_HOST_OCC} config:system:delete skeletondirectory
+	occ_host config:system:delete skeletondirectory
 fi
 
 REAL_FEDERATED_OVERWRITE_CLI_URL=$(occ_remote config:system:get overwrite.cli.url)
