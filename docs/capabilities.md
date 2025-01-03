@@ -171,3 +171,4 @@
 * `config => conversations => force-passwords` - Whether passwords are enforced for public rooms
 * `conversation-creation-password` - Whether the endpoints for creating public conversations or making a conversation public support setting a password
 * `call-notification-state-api` (local) - Whether the endpoints exists for checking if a call notification should be dismissed
+* `config => chat => has-translation-task-providers` (local) - When true, translations can be done using the [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html).

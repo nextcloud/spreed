@@ -24,6 +24,7 @@ use OCP\IUserSession;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextFormalization;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
+use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
 use OCP\Translation\ITranslationManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -147,6 +148,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => 0,
 						'has-translation-providers' => false,
+						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 					],
@@ -280,6 +282,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => $readPrivacy,
 						'has-translation-providers' => false,
+						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 					],
@@ -402,6 +405,16 @@ class CapabilitiesTest extends TestCase {
 
 		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
 		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-providers']);
+	}
+
+	public function testCapabilitiesTranslationsTaskProviders(): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->taskProcessingManager->method('getAvailableTaskTypes')
+			->willReturn([TextToTextTranslate::ID => true]);
+
+		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
+		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-task-providers']);
 	}
 
 	public function testSummaryTaskProviders(): void {
