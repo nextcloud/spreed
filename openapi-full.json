@@ -372,7 +372,8 @@
                                 "type": "object",
                                 "required": [
                                     "can-create",
-                                    "force-passwords"
+                                    "force-passwords",
+                                    "list-style"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -380,6 +381,9 @@
                                     },
                                     "force-passwords": {
                                         "type": "boolean"
+                                    },
+                                    "list-style": {
+                                        "type": "string"
                                     }
                                 }
                             },

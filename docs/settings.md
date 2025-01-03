@@ -32,6 +32,7 @@ Instead, the server API `POST /ocs/v2.php/apps/provisioning_api/api/v1/config/us
 | `play_sounds`               |                                             | `'yes'`                                            | `'yes'` and `'no'`                                                                                       |
 | `calls_start_without_media` | `config => call => start-without-media`     | `''` falling back to app config with the same name | `'yes'` and `'no'`                                                                                       |
 | `blur_virtual_background`   | `config => call => blur-virtual-background` | `'no'`                                             | `'yes'` and `'no'`                                                                                       |
+| `conversations_list_style`  | `config => conversations => list-style`     | `'two-lines'`                                      | One of the constants from the [constants list](constants.md#conversation-list-style)                     |
 
 ## Set SIP settings
 
