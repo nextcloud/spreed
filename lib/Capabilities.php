@@ -20,6 +20,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
+use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
 use OCP\Translation\ITranslationManager;
 use OCP\Util;
 
@@ -148,6 +149,7 @@ class Capabilities implements IPublicCapability {
 		'chat' => [
 			'read-privacy',
 			'has-translation-providers',
+			'has-translation-task-providers',
 			'typing-privacy',
 			'summary-threshold',
 		],
@@ -223,6 +225,7 @@ class Capabilities implements IPublicCapability {
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
 					'has-translation-providers' => $this->translationManager->hasProviders(),
+					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 					'summary-threshold' => 100,
 				],
@@ -323,6 +326,9 @@ class Capabilities implements IPublicCapability {
 		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
 		if (isset($supportedTaskTypes[TextToTextSummary::ID])) {
 			$capabilities['features'][] = 'chat-summary-api';
+		}
+		if (isset($supportedTaskTypes[TextToTextTranslate::ID])) {
+			$capabilities['config']['chat']['has-translation-task-providers'] = true;
 		}
 
 		return [

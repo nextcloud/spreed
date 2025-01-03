@@ -352,12 +352,13 @@ namespace OCA\Talk;
  *             max-length: int,
  *             read-privacy: int,
  *             has-translation-providers: bool,
+ *             has-translation-task-providers: bool,
  *             typing-privacy: int,
  *             summary-threshold: positive-int,
  *         },
  *         conversations: array{
  *             can-create: bool,
- *     		   force-passwords: bool,
+ *             force-passwords: bool,
  *         },
  *         federation: array{
  *             enabled: bool,
