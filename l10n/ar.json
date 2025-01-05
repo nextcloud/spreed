@@ -691,7 +691,7 @@
     "Zimbabwe" : "زيمبابوي",
     "Background blur" : "تضبيب خلفية الصورة",
     "Could not check for WASM loading support. Please check manually if your web server serves `.wasm` files." : "تعذر التحقُّق من دعم تحميل WASM. يرجى التحقق يدويًا مما إذا كان خادوم الويب لديك يتعامل مع ملفات `.wasm`.",
-    "Your web server is not properly set up to deliver `.wasm` files. This is typically an issue with the Nginx configuration. For background blur it needs an adjustment to also deliver `.wasm` files. Compare your Nginx configuration to the recommended configuration in our documentation." : "لم يتم إعداد خادوم الويب لديك بالشكل الصحيح للتعامل مع ملفات `.wasm`. عادةً ما تكون هذه مشكلة في تكوين خادوم الوب Nginx. بالنسبة إلى الخلفية الضبابية، فإنها تحتاج إلى التعديل كذلك للتعامل مع ملفات \".wasm\". قارن إعدادات Nginx بالإعدادات الموصى بها في وثائق النظام.",
+    "Your web server is not properly set up to deliver `.wasm` files. This is typically an issue with the Nginx configuration. For background blur it needs an adjustment to also deliver `.wasm` files. Compare your Nginx configuration to the recommended configuration in our documentation." : "لم يتم إعداد خادوم الويب لديك بالشكل الصحيح للتعامل مع ملفات `.wasm`. عادةً ما تكون هذه مشكلة في تكوين خادوم الويب Nginx. بالنسبة إلى الخلفية الضبابية، فإنها تحتاج إلى التعديل كذلك للتعامل مع ملفات \".wasm\". قارن إعدادات Nginx بالإعدادات الموصى بها في وثائق النظام.",
     "Talk configuration values" : "قيم تهيئة تطبيق \"المحادثة\" Talk",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "يتم دعم فرض مدة المكالمة فقط مع نظام cron. الرجاء تمكين cron النظام أو إزالة تكوين \"max_call_duration\".",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "قيم `max_call_duration` الصغيرة (المضبوطة حاليًا على %d) غير قابلة للتنفيذ بسبب القيود الفنية. يتم تنفيذ مهمة الخلفية كل 5 دقائق فقط، لذا استخدمها على مسؤوليتك الخاصة.",
@@ -1974,7 +1974,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "يتم استخدام خادم TURN كوسيط لمرور المشاركين خلف جدار الحماية.",
     "Signaling servers" : "خوادم التشوير ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي.",
-    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
+    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الويب لديك",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }
