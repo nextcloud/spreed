@@ -232,6 +232,43 @@ export type TaskProcessingResponse = ApiResponseUnwrapped<{
 }>
 
 // Groupware
+export type DavPrincipal = {
+	calendarHomes: string[],
+	calendarUserType: string,
+	displayname: string,
+	email: string,
+	language: string,
+	principalScheme: string,
+	principalUrl: string,
+	scheduleDefaultCalendarUrl: string,
+	scheduleInbox: string,
+	scheduleOutbox: string,
+	url: string,
+	userId: string,
+	[key: string]: unknown,
+}
+export type DavCalendar = {
+	displayname: string,
+	color?: string,
+	components: string[],
+	allowedSharingModes: string[],
+	currentUserPrivilegeSet: string[],
+	enabled?: boolean,
+	order: number,
+	owner: string,
+	resourcetype: string[],
+	timezone?: string,
+	transparency: string,
+	url: string,
+	[key: string]: unknown,
+	isWriteable: () => boolean,
+}
+export type DavCalendarHome = {
+	displayname: string,
+	url: string,
+	findAllCalendars: () => Promise<DavCalendar[]>,
+}
+
 // Upcoming events response
 // From https://github.com/nextcloud/server/blob/master/apps/dav/lib/CalDAV/UpcomingEvent.php
 export type UpcomingEvent = {
