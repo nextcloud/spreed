@@ -342,6 +342,7 @@
                                     "max-length",
                                     "read-privacy",
                                     "has-translation-providers",
+                                    "has-translation-task-providers",
                                     "typing-privacy",
                                     "summary-threshold"
                                 ],
@@ -355,6 +356,9 @@
                                         "format": "int64"
                                     },
                                     "has-translation-providers": {
+                                        "type": "boolean"
+                                    },
+                                    "has-translation-task-providers": {
                                         "type": "boolean"
                                     },
                                     "typing-privacy": {

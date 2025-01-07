@@ -1502,6 +1502,7 @@ export type components = {
                     /** Format: int64 */
                     "read-privacy": number;
                     "has-translation-providers": boolean;
+                    "has-translation-task-providers": boolean;
                     /** Format: int64 */
                     "typing-privacy": number;
                     /** Format: int64 */

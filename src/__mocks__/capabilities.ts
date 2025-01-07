@@ -128,6 +128,7 @@ export const mockedCapabilities: Capabilities = {
 				'max-length': 32000,
 				'read-privacy': 0,
 				'has-translation-providers': true,
+				'has-translation-task-providers': true,
 				'typing-privacy': 0,
 				'summary-threshold': 100,
 			},
