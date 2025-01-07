@@ -117,5 +117,7 @@ return [
 		['name' => 'Room#unarchiveConversation', 'url' => '/api/{apiVersion}/room/{token}/archive', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::importEmailsAsParticipants() */
 		['name' => 'Room#importEmailsAsParticipants', 'url' => '/api/{apiVersion}/room/{token}/import-emails', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::scheduleMeeting() */
+		['name' => 'Room#scheduleMeeting', 'url' => '/api/{apiVersion}/room/{token}/meeting', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 	],
 ];
