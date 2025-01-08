@@ -68,9 +68,7 @@
 				<InformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
-			<SipSettings v-if="showSIPSettings"
-				:meeting-id="conversation.token"
-				:attendee-pin="conversation.attendeePin" />
+			<SipSettings v-if="showSIPSettings" :conversation="conversation" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<NcButton type="tertiary" @click="showSettings">
