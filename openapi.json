@@ -17683,6 +17683,174 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/meeting": {
+            "post": {
+                "operationId": "room-schedule-meeting",
+                "summary": "Schedule a meeting for a conversation",
+                "description": "Required capability: `schedule-meeting`",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "calendarUri",
+                                    "start"
+                                ],
+                                "properties": {
+                                    "calendarUri": {
+                                        "type": "string",
+                                        "description": "Last part of the calendar URI as seen by the participant e.g. 'personal' or 'company_shared_by_other_user'"
+                                    },
+                                    "start": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Unix timestamp when the meeting starts"
+                                    },
+                                    "end": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "Unix timestamp when the meeting ends, falls back to 60 minutes after start"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Title or summary of the event, falling back to the conversation name if none is given"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Description of the event, falling back to the conversation description if none is given"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Meeting scheduled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Meeting could not be created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "calendar",
+                                                                "email",
+                                                                "end",
+                                                                "start"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
             "post": {
                 "operationId": "settings-set-user-setting",

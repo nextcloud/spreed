@@ -72,6 +72,9 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Calendar\Exceptions\CalendarException;
+use OCP\Calendar\ICreateFromString;
+use OCP\Calendar\IManager as ICalendarManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
@@ -80,6 +83,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IPhoneNumberUtil;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
@@ -112,6 +116,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected SessionService $sessionService,
 		protected GuestManager $guestManager,
 		protected IUserStatusManager $statusManager,
+		protected ICalendarManager $calendarManager,
 		protected IEventDispatcher $dispatcher,
 		protected ITimeFactory $timeFactory,
 		protected ChecksumVerificationService $checksumVerificationService,
@@ -127,6 +132,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected Capabilities $capabilities,
 		protected FederationManager $federationManager,
 		protected BanService $banService,
+		protected IURLGenerator $url,
 		protected IL10N $l,
 	) {
 		parent::__construct($appName, $request);
@@ -2563,5 +2569,99 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * Schedule a meeting for a conversation
+	 *
+	 * Required capability: `schedule-meeting`
+	 *
+	 * @param string $calendarUri Last part of the calendar URI as seen by the participant e.g. 'personal' or 'company_shared_by_other_user'
+	 * @param int $start Unix timestamp when the meeting starts
+	 * @param ?int $end Unix timestamp when the meeting ends, falls back to 60 minutes after start
+	 * @param ?string $title Title or summary of the event, falling back to the conversation name if none is given
+	 * @param ?string $description Description of the event, falling back to the conversation description if none is given
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'calendar'|'email'|'end'|'start'}, array{}>
+	 *
+	 * 200: Meeting scheduled
+	 * 400: Meeting could not be created successfully
+	 */
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function scheduleMeeting(string $calendarUri, int $start, ?int $end = null, ?string $title = null, ?string $description = null): DataResponse {
+		$eventBuilder = $this->calendarManager->createEventBuilder();
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId, [$calendarUri]);
+
+		if (empty($calendars)) {
+			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
+		}
+
+		/** @var ICreateFromString $calendar */
+		$calendar = array_pop($calendars);
+
+		$user = $this->userManager->get($this->userId);
+		if (!$user instanceof IUser || $user->getEMailAddress() === null) {
+			return new DataResponse(['error' => 'email'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$startDate = $this->timeFactory->getDateTime('@' . $start);
+		if ($start < $this->timeFactory->getTime()) {
+			return new DataResponse(['error' => 'start'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($end !== null) {
+			$endDate = $this->timeFactory->getDateTime('@' . $end);
+			if ($start >= $end) {
+				return new DataResponse(['error' => 'end'], Http::STATUS_BAD_REQUEST);
+			}
+		} else {
+			$endDate = clone $startDate;
+			$endDate->add(new \DateInterval('PT1H'));
+		}
+
+		$eventBuilder->setLocation(
+			$this->url->linkToRouteAbsolute(
+				'spreed.Page.showCall',
+				['token' => $this->room->getToken()]
+			)
+		);
+		$eventBuilder->setSummary($title ?: $this->room->getDisplayName($this->userId));
+		$eventBuilder->setDescription($description ?: $this->room->getDescription());
+		$eventBuilder->setOrganizer($user->getEMailAddress(), $user->getDisplayName() ?: $this->userId);
+		$eventBuilder->setStartDate($startDate);
+		$eventBuilder->setEndDate($endDate);
+
+		$userIds = $this->participantService->getParticipantUserIds($this->room);
+		foreach ($userIds as $userId) {
+			$targetUser = $this->userManager->get($userId);
+			if (!$targetUser instanceof IUser) {
+				continue;
+			}
+			if ($targetUser->getEMailAddress() === null) {
+				continue;
+			}
+
+			$eventBuilder->addAttendee(
+				$targetUser->getEMailAddress(),
+				$targetUser->getDisplayName(),
+			);
+		}
+
+		$emailGuests = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_EMAILS);
+		foreach ($emailGuests as $emailGuest) {
+			$eventBuilder->addAttendee(
+				$emailGuest->getAttendee()->getInvitedCloudId(),
+				$emailGuest->getAttendee()->getDisplayName(),
+			);
+		}
+
+		try {
+			$eventBuilder->createInCalendar($calendar);
+		} catch (\InvalidArgumentException|CalendarException $e) {
+			$this->logger->debug('Failed to get calendar to schedule a meeting', ['exception' => $e]);
+			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse(null, Http::STATUS_OK);
 	}
 }

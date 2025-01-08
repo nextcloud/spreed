@@ -1352,6 +1352,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/meeting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Schedule a meeting for a conversation
+         * @description Required capability: `schedule-meeting`
+         */
+        post: operations["room-schedule-meeting"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
         parameters: {
             query?: never;
@@ -8238,6 +8258,75 @@ export interface operations {
                                 invalidLines?: number[];
                                 /** Format: int64 */
                                 type?: number;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-schedule-meeting": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Last part of the calendar URI as seen by the participant e.g. 'personal' or 'company_shared_by_other_user' */
+                    calendarUri: string;
+                    /**
+                     * Format: int64
+                     * @description Unix timestamp when the meeting starts
+                     */
+                    start: number;
+                    /**
+                     * Format: int64
+                     * @description Unix timestamp when the meeting ends, falls back to 60 minutes after start
+                     */
+                    end?: number | null;
+                    /** @description Title or summary of the event, falling back to the conversation name if none is given */
+                    title?: string | null;
+                    /** @description Description of the event, falling back to the conversation description if none is given */
+                    description?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Meeting scheduled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Meeting could not be created successfully */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "calendar" | "email" | "end" | "start";
                             };
                         };
                     };
