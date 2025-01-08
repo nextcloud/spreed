@@ -21,6 +21,7 @@
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<template #description>
+			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<NcAppSidebarTab v-if="isInCall"
@@ -112,6 +113,7 @@ import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
+import InternalSignalingHint from './InternalSignalingHint.vue'
 import LobbyStatus from './LobbyStatus.vue'
 import ParticipantsTab from './Participants/ParticipantsTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
@@ -129,6 +131,7 @@ export default {
 	components: {
 		BreakoutRoomsTab,
 		ChatView,
+		InternalSignalingHint,
 		LobbyStatus,
 		NcAppSidebar,
 		NcAppSidebarTab,
