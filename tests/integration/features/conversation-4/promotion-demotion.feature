@@ -71,6 +71,24 @@ Feature: conversation-2/promotion-demotion
       | users      | participant2 | SJLAVPM     |
       | users      | participant3 | SJAVPM      |
 
+  Scenario: Moderator promotes self-joined user
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" joins room "room" with 200 (v4)
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 3    | 5               |
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
+    And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 3    | 2               |
+    When user "participant1" demotes "participant2" in room "room" with 200 (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 3    | 3               |
+
   Scenario: User promotes/demotes moderator
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

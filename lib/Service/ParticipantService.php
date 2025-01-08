@@ -151,7 +151,7 @@ class ParticipantService {
 		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 
-		// XOR so we don't move the participant in and out when they are changed from moderator to owner or vice-versa
+		// XOR so we don't move the participant in and out when they are changed from moderator to owner or vice versa
 		if (($promotedToModerator xor $demotedFromModerator) && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
 			/** @var Manager $manager */
 			$manager = Server::get(Manager::class);
