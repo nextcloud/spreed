@@ -198,7 +198,7 @@ Feature: conversation-2/one-to-one
       | users      | participant1 | 1               |
       | users      | participant2 | 1               |
 
-  Scenario: Check share restrictions on one to one conversatio
+  Scenario: Check share restrictions on one to one conversation
     Given the following "core" app config is set
       | shareapi_restrict_user_enumeration_full_match | no |
       | shareapi_allow_share_dialog_user_enumeration | yes |
@@ -207,3 +207,33 @@ Feature: conversation-2/one-to-one
     And user "participant1" creates room "room15" with 403 (v4)
       | roomType | 1 |
       | invite   | participant2 |
+
+  Scenario: Remove self from one-to-one conversations when deletable config is set deletes it
+    Given user "participant1" creates room "room" with 201 (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    Then user "participant1" removes themselves from room "room" with 200 (v4)
+    And user "participant1" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 1    | 1               |
+    When user "participant1" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And the following "spreed" app config is set
+      | delete_one_to_one_conversations | 1 |
+    Then user "participant1" removes themselves from room "room" with 200 (v4)
+    And user "participant1" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following rooms (v4)
+
+  Scenario: Deleting one-to-one conversations is possible when deletable config is set
+    Given user "participant1" creates room "room" with 201 (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" sends message "Message" to room "room" with 201
+    Then user "participant1" deletes room "room" with 400 (v4)
+    When the following "spreed" app config is set
+      | delete_one_to_one_conversations | 1 |
+    Then user "participant1" deletes room "room" with 200 (v4)
+    And user "participant1" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following rooms (v4)

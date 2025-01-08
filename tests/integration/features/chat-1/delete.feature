@@ -235,3 +235,13 @@ Feature: chat/delete
     Then user "participant2" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage   |
       | room1 | users     | participant1 | participant1-displayname | history_cleared |
+
+  Scenario: Can delete chat history in one-to-one conversations when config is set
+    Given user "participant1" creates room "room" with 201 (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" sends message "Message" to room "room" with 201
+    Then user "participant1" deletes chat history for room "room" with 403
+    When the following "spreed" app config is set
+      | delete_one_to_one_conversations | 1 |
+    Then user "participant1" deletes chat history for room "room" with 200
