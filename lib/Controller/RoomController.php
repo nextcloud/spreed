@@ -2191,7 +2191,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($attendee->getParticipantType() === Participant::USER) {
+		if ($attendee->getParticipantType() === Participant::USER
+			|| $attendee->getParticipantType() === Participant::USER_SELF_JOINED) {
 			$newType = Participant::MODERATOR;
 		} elseif ($attendee->getParticipantType() === Participant::GUEST) {
 			$newType = Participant::GUEST_MODERATOR;
