@@ -10,31 +10,47 @@ import type { AxiosError } from '@nextcloud/axios'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 import {
+	initializeCalDavClient,
+	getPersonalCalendars,
+	getDefaultCalendarUri,
+	convertUrlToUri,
+} from '../services/CalDavClient.ts'
+import {
 	getUpcomingEvents,
 	getUserAbsence,
 } from '../services/groupwareService.ts'
 import type {
+	DavCalendar,
 	OutOfOfficeResult,
 	UpcomingEvent,
 } from '../types/index.ts'
 
 type State = {
 	absence: Record<string, OutOfOfficeResult>
+	calendars: Record<string, DavCalendar & { uri: string }>,
+	defaultCalendarUri: string | null,
 	upcomingEvents: Record<string, UpcomingEvent[]>
 }
 
 export const useGroupwareStore = defineStore('groupware', {
 	state: (): State => ({
 		absence: {},
+		calendars: {},
+		defaultCalendarUri: null,
 		upcomingEvents: {},
 	}),
 
 	getters: {
 		getAllEvents: (state) => (token: string) => {
-			return state.upcomingEvents[token]
+			return state.upcomingEvents[token] ?? []
 		},
 		getNextEvent: (state) => (token: string) => {
 			return state.upcomingEvents[token]?.[0]
+		},
+		writeableCalendars: (state) => {
+			return Object.values(state.calendars).filter(calendar => {
+				return calendar.isWriteable() && calendar.components.includes('VEVENT')
+			})
 		},
 	},
 
@@ -68,6 +84,28 @@ export const useGroupwareStore = defineStore('groupware', {
 			try {
 				const response = await getUpcomingEvents(location)
 				Vue.set(this.upcomingEvents, token, response.data.ocs.data.events)
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
+		async getDefaultCalendarUri() {
+			try {
+				await initializeCalDavClient()
+				Vue.set(this, 'defaultCalendarUri', getDefaultCalendarUri())
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
+		async getPersonalCalendars() {
+			try {
+				await initializeCalDavClient()
+				const calendars = await getPersonalCalendars()
+				calendars.forEach(calendar => {
+					const calendarWithUri = Object.assign(calendar, { uri: convertUrlToUri(calendar.url) })
+					Vue.set(this.calendars, calendarWithUri.uri, calendarWithUri)
+				})
 			} catch (error) {
 				console.error(error)
 			}
