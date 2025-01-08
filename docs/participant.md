@@ -202,7 +202,7 @@
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When the participant to promote is not a normal user (type `3`) or normal guest (type `4`)
+        + `400 Bad Request` When the participant to promote is not a normal user (type `3`), normal guest (type `4`) or self-joined user (type `5`)
         + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the participant to remove is an owner
         + `404 Not Found` When the conversation could not be found for the participant
