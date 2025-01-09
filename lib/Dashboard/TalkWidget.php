@@ -29,6 +29,7 @@ namespace OCA\Talk\Dashboard;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Message;
@@ -49,6 +50,7 @@ use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
 use OCP\Dashboard\Model\WidgetItems;
 use OCP\Dashboard\Model\WidgetOptions;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -68,6 +70,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		protected MessageParser $messageParser,
 		protected ChatManager $chatManager,
 		protected ProxyCacheMessageService $pcmService,
+		protected IEventDispatcher $dispatcher,
 		protected ITimeFactory $timeFactory,
 	) {
 	}
@@ -147,6 +150,9 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	}
 
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {
+		$event = new BeforeRoomsFetchEvent($userId);
+		$this->dispatcher->dispatchTyped($event);
+
 		$rooms = $this->manager->getRoomsForUser($userId, [], true);
 
 		$rooms = array_filter($rooms, function (Room $room) use ($userId) {
@@ -187,6 +193,9 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function getItemsV2(string $userId, ?string $since = null, int $limit = 7): WidgetItems {
+		$event = new BeforeRoomsFetchEvent($userId);
+		$this->dispatcher->dispatchTyped($event);
+
 		$allRooms = $this->manager->getRoomsForUser($userId, [], true);
 
 		$rooms = [];
