@@ -642,15 +642,20 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		string $sharedSecret,
 		array $payload,
 	): string {
+		$remoteServerUrl = $payload['remoteServerUrl'];
+		if (str_starts_with($remoteServerUrl, 'https://')) {
+			$remoteServerUrl = substr($remoteServerUrl, strlen('https://'));
+		}
+
 		try {
-			$invite = $this->invitationMapper->getByRemoteServerAndAccessToken($payload['remoteServerUrl'], $sharedSecret);
+			$invite = $this->invitationMapper->getByRemoteServerAndAccessToken($remoteServerUrl, $sharedSecret);
 			return $invite->getInviterCloudId();
 		} catch (DoesNotExistException) {
 		}
 
 		$attendees = $this->attendeeMapper->getByAccessToken($sharedSecret);
 		foreach ($attendees as $attendee) {
-			if (str_ends_with($attendee->getActorId(), $payload['remoteServerUrl'])) {
+			if (str_ends_with($attendee->getActorId(), '@' . $remoteServerUrl)) {
 				return $attendee->getActorId();
 			}
 		}
