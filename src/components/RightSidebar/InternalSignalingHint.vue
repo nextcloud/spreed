@@ -29,6 +29,8 @@ const warningDescription = t('spreed', 'Calls without High-performance backend c
 	.replace('{linkstart}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">')
 	.replace('{linkend}', ' ↗</a>')
 
+const warningTitle = t('spreed', 'Talk setup incomplete')
+
 onMounted(() => {
 	EventBus.on('signaling-internal-show-warning', showInternalWarning)
 })
@@ -55,6 +57,7 @@ const showInternalWarning = () => {
 		<template #icon>
 			<IconNetworkStrength2Alert fill-color="var(--color-warning)" :size="20" />
 		</template>
+		<strong>{{ warningTitle }}</strong>
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p v-html="warningDescription" />
 	</NcNoteCard>
