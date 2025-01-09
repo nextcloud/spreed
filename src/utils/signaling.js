@@ -132,10 +132,6 @@ Signaling.Base.prototype.setSettings = function(settings) {
 	}
 }
 
-Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
-	return !this.settings.hideWarning
-}
-
 Signaling.Base.prototype.getSessionId = function() {
 	return this.sessionId
 }
