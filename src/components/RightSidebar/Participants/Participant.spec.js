@@ -259,7 +259,7 @@ describe('Participant.vue', () => {
 				}, result)
 			})
 
-		it('renders e-mail as status for e-mail guest', async () => {
+		it('renders email as status for email guest', async () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 			participant.participantType = PARTICIPANT.TYPE.GUEST
 			participant.invitedActorId = 'test@mail.com'

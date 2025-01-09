@@ -69,7 +69,6 @@
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
-
 	</section>
 </template>
 

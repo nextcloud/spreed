@@ -212,7 +212,7 @@ export default {
 				const response = await request({
 					searchText: this.searchText,
 					token: 'new',
-					forceTypes: [SHARE.TYPE.EMAIL], // e-mail guests are allowed directly after conversation creation
+					forceTypes: [SHARE.TYPE.EMAIL], // email guests are allowed directly after conversation creation
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []
