@@ -56,25 +56,8 @@
 
 			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Upcoming events -->
-			<CalendarEventsDialog v-if="showCalendarEvents" :token="token">
-				<template v-if="showUpcomingEvent" #trigger="{ onClick }">
-					<a class="upcoming-event"
-						role="button"
-						:title="t('spreed', 'Upcoming events')"
-						@click="onClick">
-						<div class="icon">
-							<IconCalendarBlank :size="20" />
-						</div>
-						<div class="event-info">
-							<p class="event-info__header">
-								{{ t('spreed', 'Next call') }}
-							</p>
-							<p> {{ eventInfo }} </p>
-						</div>
-					</a>
-				</template>
-			</CalendarEventsDialog>
+			<!-- Upcoming meetings -->
+			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
 			<!-- Call time -->
 			<CallTime v-if="isInCall"
@@ -124,15 +107,12 @@
 
 <script>
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
 import CallButton from './CallButton.vue'
@@ -171,7 +151,6 @@ export default {
 		ReactionMenu,
 		// Icons
 		IconAccountMultiple,
-		IconCalendarBlank,
 	},
 
 	mixins: [richEditor],
@@ -200,7 +179,6 @@ export default {
 			localMediaModel,
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
-			isMobile: useIsMobile(),
 			CONVERSATION,
 		}
 	},
@@ -288,30 +266,9 @@ export default {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
 
-		nextEvent() {
-			return this.groupwareStore.getNextEvent(this.token)
-		},
-
-		eventInfo() {
-			if (!this.nextEvent) {
-				return null
-			}
-
-			// If timestamp is in the past, show "now"
-			if (this.nextEvent.start <= moment().unix()) {
-				return t('spreed', 'Now')
-			}
-
-			return moment(this.nextEvent.start * 1000).calendar()
-		},
-
 		showCalendarEvents() {
 			return this.getUserId && !this.isInCall && !this.isSidebar
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-		},
-
-		showUpcomingEvent() {
-			return this.nextEvent && !this.isMobile
 		},
 
 		getUserId() {
@@ -456,31 +413,4 @@ export default {
 .icon {
 	display: flex;
 }
-
-.upcoming-event {
-	display: flex;
-	flex-direction: row;
-	gap: calc(var(--default-grid-baseline) * 2);
-	padding: 0 calc(var(--default-grid-baseline) * 2);
-	color: var(--color-primary-element-light-text);
-	background-color: var(--color-primary-element-light);
-	height: 100%;
-	border-radius: var(--border-radius);
-
-	&:hover {
-		background-color: var(--color-primary-element-light-hover);
-	}
-}
-
-.event-info {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	line-height: 20px;
-
-	&__header {
-		font-weight: 500;
-	}
-}
-
 </style>
