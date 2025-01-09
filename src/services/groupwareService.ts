@@ -9,6 +9,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 import type {
 	OutOfOfficeResponse,
 	UpcomingEventsResponse,
+	scheduleMeetingParams,
+	scheduleMeetingResponse,
 } from '../types/index.ts'
 
 /**
@@ -31,7 +33,30 @@ const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
 	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
 }
 
+/**
+ * Schedule a new meeting for a given conversation.
+ *
+ * @param token The conversation token
+ * @param payload Function payload
+ * @param payload.calendarUri Last part of the calendar URI as seen by the participant
+ * @param payload.start Unix timestamp when the meeting starts
+ * @param payload.end Unix timestamp when the meeting ends, falls back to 60 minutes after start
+ * @param payload.title Title or summary of the event, falling back to the conversation name if none is given
+ * @param payload.description Description of the event, falling back to the conversation description if none is given
+ * @param options options object destructured
+ */
+const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description }: scheduleMeetingParams, options?: object): scheduleMeetingResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/meeting', { token }, options), {
+		calendarUri,
+		start,
+		end,
+		title,
+		description,
+	} as scheduleMeetingParams, options)
+}
+
 export {
 	getUpcomingEvents,
 	getUserAbsence,
+	scheduleMeeting,
 }

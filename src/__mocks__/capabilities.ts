@@ -84,11 +84,13 @@ export const mockedCapabilities: Capabilities = {
 			'chat-reference-id',
 			'mention-permissions',
 			'edit-messages-note-to-self',
-			'archived-conversations',
-			'talk-polls-drafts',
 			'archived-conversations-v2',
+			'talk-polls-drafts',
 			'download-call-participants',
 			'email-csv-import',
+			'conversation-creation-password',
+			'call-notification-state-api',
+			'schedule-meeting',
 		],
 		'features-local': [
 			'favorites',
@@ -100,9 +102,10 @@ export const mockedCapabilities: Capabilities = {
 			'avatar',
 			'remind-me-later',
 			'note-to-self',
-			'archived-conversations',
 			'archived-conversations-v2',
 			'chat-summary-api',
+			'call-notification-state-api',
+			'schedule-meeting',
 		],
 		config: {
 			attachments: {
@@ -147,6 +150,7 @@ export const mockedCapabilities: Capabilities = {
 			},
 			signaling: {
 				'session-ping-limit': 200,
+				'hello-v2-token-key': '123',
 			},
 		},
 		'config-local': {
@@ -163,17 +167,26 @@ export const mockedCapabilities: Capabilities = {
 			chat: [
 				'read-privacy',
 				'has-translation-providers',
+				'has-translation-task-providers',
 				'typing-privacy',
 				'summary-threshold',
 			],
 			conversations: [
 				'can-create',
 			],
-			federation: [],
+			federation: [
+				'enabled',
+				'incoming-enabled',
+				'outgoing-enabled',
+				'only-trusted-servers',
+			],
 			previews: [
 				'max-gif-size',
 			],
-			signaling: [],
+			signaling: [
+				'session-ping-limit',
+				'hello-v2-token-key',
+			],
 		},
 		version: '20.0.0-dev.0',
 	}
