@@ -165,6 +165,11 @@ export default {
 
 <style lang="scss" scoped>
 
+.screenContainer {
+	width: 100%;
+	height: 100%;
+}
+
 .screen {
 	width: 100%;
 	height: 100%;

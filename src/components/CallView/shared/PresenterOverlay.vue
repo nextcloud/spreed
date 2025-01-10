@@ -4,8 +4,9 @@
 -->
 <template>
 	<VueDraggableResizable v-if="!isCollapsed"
-		:key="presenterOverlaySize"
+		ref="presenterOverlay"
 		parent
+		class="presenter-overlay"
 		:resizable="false"
 		:h="presenterOverlaySize"
 		:w="presenterOverlaySize"
@@ -107,6 +108,7 @@ export default {
 
 	data() {
 		return {
+			resizeObserver: null,
 			presenterOverlaySize: 128,
 			isDragging: false,
 		}
@@ -114,33 +116,56 @@ export default {
 
 	mounted() {
 		window.addEventListener('resize', this.updateSize)
+
+		this.resizeObserver = new ResizeObserver(this.updateSize)
+		this.resizeObserver.observe(this.$refs.presenterOverlay.$el.parentElement)
 	},
 
 	beforeDestroy() {
 		window.removeEventListener('resize', this.updateSize)
+
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	methods: {
 		t,
 		updateSize() {
-			this.presenterOverlaySize = Math.min(Math.max(window.innerWidth * 0.1, 100), 242)
+			// Size should be proportionate to the screen share size
+			const newSize = Math.round(this.$refs.presenterOverlay.$el.parentElement.clientWidth * 0.1)
+			this.presenterOverlaySize = Math.min(Math.max(newSize, 100), 242)
+			// FIXME: inner method should be triggered to re-parent element
+			this.$refs.presenterOverlay.checkParentSize()
+			// FIXME: if it stays out of bounds (right and bottom), bring it back
+			if (this.$refs.presenterOverlay.right < 0) {
+				this.$refs.presenterOverlay.moveHorizontally(this.$refs.presenterOverlay.parentWidth - this.presenterOverlaySize)
+			}
+			if (this.$refs.presenterOverlay.bottom < 0) {
+				this.$refs.presenterOverlay.moveVertically(this.$refs.presenterOverlay.parentHeight - this.presenterOverlaySize)
+			}
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+.presenter-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 .presenter-overlay__video {
 	position: relative;
 	--max-size: 242px;
 	--min-size: 100px;
-	width: 10vw;
-	height: 10vw;
 	max-width: var(--max-size);
 	max-height: var(--max-size);
 	min-width: var(--min-size);
 	min-height: var(--min-size);
 	z-index: 10;
+	aspect-ratio: 1;
 
 	&:hover {
 		cursor: grab;
