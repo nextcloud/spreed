@@ -300,6 +300,9 @@ export type OutOfOfficeResult = {
 }
 export type OutOfOfficeResponse = ApiResponseUnwrapped<OutOfOfficeResult>
 
+export type scheduleMeetingParams = Required<operations['room-schedule-meeting']>['requestBody']['content']['application/json']
+export type scheduleMeetingResponse = ApiResponse<operations['room-schedule-meeting']['responses'][200]['content']['application/json']>
+
 // User preferences response
 // from https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-user-preferences-api.html
 export type UserPreferencesResponse = ApiResponseUnwrapped<unknown>

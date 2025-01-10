@@ -18,11 +18,13 @@ import {
 import {
 	getUpcomingEvents,
 	getUserAbsence,
+	scheduleMeeting,
 } from '../services/groupwareService.ts'
 import type {
 	DavCalendar,
 	OutOfOfficeResult,
 	UpcomingEvent,
+	scheduleMeetingParams,
 } from '../types/index.ts'
 
 type State = {
@@ -109,6 +111,12 @@ export const useGroupwareStore = defineStore('groupware', {
 			} catch (error) {
 				console.error(error)
 			}
+		},
+
+		async scheduleMeeting(token: string, payload: scheduleMeetingParams) {
+			await scheduleMeeting(token, payload)
+			// Fetch updated list of events for this conversation
+			await this.getUpcomingEvents(token)
 		},
 
 		/**
