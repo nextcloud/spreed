@@ -188,6 +188,7 @@ export default {
 				dialOutEnabled: this.dialOutEnabled,
 				sipGroups: this.sipGroups.map(group => group.id).join('_')
 			}
+			EventBus.emit('sip-settings-updated', this.currentSetup)
 		},
 
 		async saveSIPSettings() {

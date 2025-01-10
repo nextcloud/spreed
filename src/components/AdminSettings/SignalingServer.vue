@@ -77,6 +77,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { EventBus } from '../../services/EventBus.ts'
 import { fetchSignalingSettings, getWelcomeMessage } from '../../services/signalingService.js'
 import { createConnection } from '../../utils/SignalingStandaloneTest.js'
 
@@ -237,6 +238,7 @@ export default {
 					{ caption: t('spreed', 'WebSocket URL'), description: signalingTest.url },
 					{ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') },
 				]
+				EventBus.emit('signaling-server-connected', signalingTest)
 			} catch (exception) {
 				console.error(exception)
 				this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
