@@ -43,15 +43,17 @@ const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
  * @param payload.end Unix timestamp when the meeting ends, falls back to 60 minutes after start
  * @param payload.title Title or summary of the event, falling back to the conversation name if none is given
  * @param payload.description Description of the event, falling back to the conversation description if none is given
+ * @param payload.attendeeIds List of attendee ids to invite (null - everyone, [] - only actor)
  * @param options options object destructured
  */
-const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description }: scheduleMeetingParams, options?: object): scheduleMeetingResponse {
+const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description, attendeeIds }: scheduleMeetingParams, options?: object): scheduleMeetingResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/meeting', { token }, options), {
 		calendarUri,
 		start,
 		end,
 		title,
 		description,
+		attendeeIds,
 	} as scheduleMeetingParams, options)
 }
 

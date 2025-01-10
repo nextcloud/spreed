@@ -4,17 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, watch } from 'vue'
+import { computed, onBeforeMount, provide, ref, watch } from 'vue'
 
+import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 
-import { t } from '@nextcloud/l10n'
+import { showSuccess } from '@nextcloud/dialogs'
+import { t, n } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDateTimePickerNative from '@nextcloud/vue/dist/Components/NcDateTimePickerNative.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -26,9 +29,14 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
+import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
+import SearchBox from './UIShared/SearchBox.vue'
+
 import { useStore } from '../composables/useStore.js'
+import { ATTENDEE } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
+import type { Conversation, Participant } from '../types/index.ts'
 
 const props = defineProps<{
 	token: string,
@@ -44,7 +52,11 @@ const store = useStore()
 const groupwareStore = useGroupwareStore()
 const isMobile = useIsMobile()
 
+// Add a visual bulk selection state for SelectableParticipant component
+provide('bulkParticipantsSelection', true)
+
 const isFormOpen = ref(false)
+const isSelectorOpen = ref(false)
 const loading = ref(Object.keys(groupwareStore.calendars).length === 0)
 const submitting = ref(false)
 
@@ -95,6 +107,30 @@ const invalidHint = computed(() => {
 	}
 })
 
+const selectAll = ref(true)
+const selectedAttendeeIds = ref<number[]>([])
+const attendeeHint = computed(() => {
+	return selectedAttendeeIds.value?.length
+		? n('spreed', 'Sending %n invitation', 'Sending %n invitations', selectedAttendeeIds.value.length)
+		: t('spreed', 'Sending no invitations')
+})
+
+const searchText = ref('')
+const isMatch = (string: string = '') => string.toLowerCase().includes(searchText.value.toLowerCase())
+
+const participants = computed(() => {
+	const conversation: Conversation = store.getters.conversation(props.token)
+	return store.getters.participantsList(props.token).filter((participant: Participant) => {
+		return [ATTENDEE.ACTOR_TYPE.USERS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType)
+			&& participant.attendeeId !== conversation.attendeeId
+	})
+})
+const filteredParticipants = computed(() => participants.value.filter((participant: Participant) => {
+	return isMatch(participant.displayName)
+		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.USERS && isMatch(participant.actorId))
+		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && isMatch(participant.invitedActorId))
+}))
+
 onBeforeMount(() => {
 	getCalendars()
 })
@@ -110,12 +146,37 @@ watch(isFormOpen, (value) => {
 	selectedDateTimeEnd.value = new Date(moment().add(2, 'hours').startOf('hour'))
 	newMeetingTitle.value = ''
 	newMeetingDescription.value = ''
+	selectedAttendeeIds.value = participants.value.map((participant: Participant) => participant.attendeeId)
+	searchText.value = ''
+	selectAll.value = true
 	invalid.value = null
 })
 
 watch([selectedCalendar, selectedDateTimeStart, selectedDateTimeEnd], () => {
 	invalid.value = null
 })
+
+watch(participants, (value) => {
+	if (selectAll.value) {
+		selectedAttendeeIds.value = value.map((participant: Participant) => participant.attendeeId)
+	}
+})
+
+/**
+ * Toggle selected attendees
+ * @param value switch value
+ */
+function toggleAll(value: boolean) {
+	selectedAttendeeIds.value = value ? participants.value.map((participant: Participant) => participant.attendeeId) : []
+}
+
+/**
+ * Check selected attendees
+ * @param value array of ids
+ */
+function checkSelection(value: number[]) {
+	selectAll.value = participants.value.length === value.length
+}
 
 /**
  * Get user's calendars to identify belonging of known and future events
@@ -151,7 +212,9 @@ async function submitNewMeeting() {
 			end: selectedDateTimeEnd.value.getTime() / 1000,
 			title: newMeetingTitle.value || null,
 			description: newMeetingDescription.value || null,
+			attendeeIds: selectAll.value ? null : selectedAttendeeIds.value,
 		})
+		showSuccess(t('spreed', 'Meeting created'))
 		isFormOpen.value = false
 	} catch (error) {
 		// @ts-expect-error Vue: Property response does not exist
@@ -232,7 +295,7 @@ async function submitNewMeeting() {
 			size="normal"
 			close-on-click-outside
 			:container="container">
-			<div class="calendar-meeting">
+			<div id="calendar-meeting" class="calendar-meeting">
 				<NcTextField v-model="newMeetingTitle"
 					:label="t('spreed', 'Meeting title')"
 					label-visible />
@@ -269,12 +332,21 @@ async function submitNewMeeting() {
 						{{ option.label }}
 					</template>
 				</NcSelect>
-				<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
-					{{ invalidHint }}
-				</p>
+				<NcCheckboxRadioSwitch v-model="selectAll" type="switch" @update:modelValue="toggleAll">
+					{{ t('spreed', 'Invite all users and email guests') }}
+				</NcCheckboxRadioSwitch>
+				<div class="calendar-meeting__flex-wrapper">
+					<p>{{ attendeeHint }}</p>
+					<NcButton @click="isSelectorOpen = true">
+						{{ t('spreed', 'Select attendees') }}
+					</NcButton>
+				</div>
 			</div>
 
 			<template #actions>
+				<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
+					{{ invalidHint }}
+				</p>
 				<NcButton type="primary"
 					:disabled="!selectedCalendar || submitting || !!invalid"
 					@click="submitNewMeeting">
@@ -286,6 +358,30 @@ async function submitNewMeeting() {
 				</NcButton>
 			</template>
 		</NcDialog>
+
+		<NcDialog v-if="canScheduleMeeting"
+			:open.sync="isSelectorOpen"
+			:name="t('spreed', 'Select attendees')"
+			close-on-click-outside
+			container="#calendar-meeting">
+			<SearchBox class="calendar-meeting__searchbox"
+				:value.sync="searchText"
+				is-focused
+				:placeholder-text="t('spreed', 'Search participants')"
+				@abort-search="searchText = ''" />
+			<ul v-if="filteredParticipants.length" class="calendar-meeting__attendees">
+				<SelectableParticipant v-for="participant in filteredParticipants"
+					:key="participant.attendeeId"
+					:checked.sync="selectedAttendeeIds"
+					:participant="participant"
+					@update:checked="checkSelection" />
+			</ul>
+			<NcEmptyContent v-else class="calendar-events__empty-content" :name="t('spreed', 'No results')">
+				<template #icon>
+					<IconAccountSearch />
+				</template>
+			</NcEmptyContent>
+		</NcDialog>
 	</div>
 </template>
 
@@ -295,6 +391,10 @@ async function submitNewMeeting() {
 
 	:deep(.dialog__content) {
 		padding-block-end: calc(var(--default-grid-baseline) * 3);
+	}
+
+	:deep(.dialog__actions) {
+		align-items: center;
 	}
 
 	&__list {
@@ -358,6 +458,7 @@ async function submitNewMeeting() {
 	}
 
 	&__empty-content {
+		min-width: 150px;
 		margin-top: calc(var(--default-grid-baseline) * 3);
 	}
 
@@ -383,7 +484,20 @@ async function submitNewMeeting() {
 
 	&__flex-wrapper {
 		display: flex;
+		align-items: center;
 		gap: calc(var(--default-grid-baseline) * 2);
+	}
+
+	&__searchbox {
+		margin-inline: var(--default-grid-baseline);
+		margin-block-end: var(--default-grid-baseline);
+		width: calc(100% - var(--default-grid-baseline) * 2) !important;
+	}
+
+	&__attendees {
+		height: calc(100% - var(--default-clickable-area) - 2 * var(--default-grid-baseline));
+		padding-block: var(--default-grid-baseline);
+		overflow-y: auto;
 	}
 
 	// Overwrite default NcDateTimePickerNative styles
