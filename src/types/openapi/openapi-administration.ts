@@ -248,6 +248,8 @@ export type components = {
                 conversations: {
                     "can-create": boolean;
                     "force-passwords": boolean;
+                    /** @enum {string} */
+                    "list-style": "two-lines" | "compact";
                 };
                 federation: {
                     enabled: boolean;

@@ -56,6 +56,19 @@
 					@close="showFilePicker = false" />
 			</div>
 		</NcAppSettingsSection>
+		<NcAppSettingsSection v-if="!isGuest && supportConversationsListStyle"
+			id="talk_appearance"
+			:name="t('spreed', 'Appearance')"
+			class="app-settings-section">
+			<NcCheckboxRadioSwitch id="conversations_list_style"
+				:model-value="conversationsListStyle"
+				:disabled="appearanceLoading"
+				type="switch"
+				class="checkbox"
+				@update:modelValue="toggleConversationsListStyle">
+				{{ t('spreed', 'Show conversations list in compact mode') }}
+			</NcCheckboxRadioSwitch>
+		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="privacy"
 			:name="t('spreed', 'Privacy')"
@@ -212,7 +225,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 
 import MediaDevicesPreview from './MediaDevicesPreview.vue'
 
-import { PRIVACY } from '../../constants.js'
+import { CONVERSATION, PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -230,6 +243,8 @@ const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
+const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
+
 export default {
 	name: 'SettingsDialog',
 
@@ -258,6 +273,7 @@ export default {
 			serverSupportsBackgroundBlurred,
 			customSettingsSections,
 			supportStartWithoutMedia,
+			supportConversationsListStyle,
 		}
 	},
 
@@ -266,6 +282,7 @@ export default {
 			showSettings: false,
 			showFilePicker: false,
 			attachmentFolderLoading: true,
+			appearanceLoading: false,
 			privacyLoading: false,
 			playSoundsLoading: false,
 			mediaLoading: false,
@@ -299,6 +316,10 @@ export default {
 
 		startWithoutMediaEnabled() {
 			return this.settingsStore.startWithoutMedia
+		},
+
+		conversationsListStyle() {
+			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
 		},
 
 		settingsUrl() {
@@ -388,6 +409,19 @@ export default {
 				showError(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
+		},
+
+		async toggleConversationsListStyle(value) {
+			this.appearanceLoading = true
+			try {
+				await this.settingsStore.setConversationsListStyle(
+					value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES
+				)
+				showSuccess(t('spreed', 'Your personal setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting personal setting'))
+			}
+			this.appearanceLoading = false
 		},
 
 		/**

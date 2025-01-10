@@ -86,6 +86,10 @@ const setBlurVirtualBackground = async function(value: boolean) {
 	return setUserConfig('spreed', 'blur_virtual_background', value ? 'yes' : 'no')
 }
 
+const setConversationsListStyle = async function(value: string) {
+	return setUserConfig('spreed', 'conversations_list_style', value)
+}
+
 /**
  * Set user config using provisioning API
  *
@@ -102,6 +106,7 @@ const setUserConfig = async function(appId: string, configKey: string, configVal
 export {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
+	setConversationsListStyle,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 	setSIPSettings,
