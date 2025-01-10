@@ -176,7 +176,8 @@ export default {
 
 			return this.participants.filter(participant => {
 				return isMatch(participant.displayName)
-					|| (participant.actorType !== ATTENDEE.ACTOR_TYPE.GUESTS && isMatch(participant.actorId))
+					|| (![ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType) && isMatch(participant.actorId))
+					|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && isMatch(participant.invitedActorId))
 			})
 		},
 

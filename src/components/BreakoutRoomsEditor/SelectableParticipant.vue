@@ -13,7 +13,7 @@
 			@keydown.enter.stop.prevent="handleEnter">
 		<!-- Participant's avatar -->
 		<AvatarWrapper :id="actorId"
-			token="new"
+			:token="participant.roomToken ?? 'new'"
 			:name="computedName"
 			:source="actorType"
 			disable-menu
@@ -44,6 +44,7 @@ import { t } from '@nextcloud/l10n'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
+import { ATTENDEE } from '../../constants.js'
 import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.ts'
 
 export default {
@@ -110,7 +111,7 @@ export default {
 		},
 
 		computedName() {
-			return this.participant.displayName || this.participant.label
+			return this.participant.displayName || this.participant.label || t('spreed', 'Guest')
 		},
 
 		preloadedUserStatus() {
@@ -118,6 +119,9 @@ export default {
 		},
 
 		participantStatus() {
+			if (this.actorType === ATTENDEE.ACTOR_TYPE.EMAILS) {
+				return this.participant.invitedActorId
+			}
 			return this.participant.shareWithDisplayNameUnique
 				?? getStatusMessage(this.participant)
 		},
