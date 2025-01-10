@@ -4,7 +4,6 @@
  */
 
 import { computed, ref, watch } from 'vue'
-import type { ComputedRef } from 'vue'
 import type { Route } from 'vue-router'
 
 import { t } from '@nextcloud/l10n'
@@ -14,6 +13,7 @@ import { useStore } from './useStore.js'
 import Router from '../router/router.js'
 import { EventBus } from '../services/EventBus.ts'
 import type { Conversation } from '../types/index.ts'
+import { hasUnreadMentions, hasCall } from '../utils/conversation.js'
 
 /**
  * Composable to check whether the page is visible.
@@ -45,7 +45,7 @@ export function useDocumentTitle() {
 		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
 			return savedLastMessageMap.value[token] === undefined // Conversation is new
 				|| (savedLastMessageMap.value[token] !== newLastMessageMap[token] // Last message changed
-					&& newLastMessageMap[token] !== -1) // But is not from the current user
+					&& newLastMessageMap[token] !== -1) // And it is not from the current user nor archived
 		})
 		if (shouldShowAsterisk) {
 			showAsterisk.value = true
@@ -89,15 +89,19 @@ export function useDocumentTitle() {
 		}
 
 		return conversationList.reduce((acc: Record<string, number>, conversation: Conversation) => {
-			const { token, lastMessage } = conversation
+			const { token, lastMessage, isArchived } = conversation
 			// Default to 0 for messages without valid lastMessage
 			if (!lastMessage || Array.isArray(lastMessage)) {
 				acc[token] = 0
 				return acc
 			}
 
-			if (lastMessage.actorId === actorId.value && lastMessage.actorType === actorType.value) {
-				// Set a special value when the actor is the author so we can skip it.
+			if ((lastMessage.actorId === actorId.value && lastMessage.actorType === actorType.value)
+				|| (isArchived && !hasUnreadMentions(conversation) && !hasCall(conversation))) {
+				// Set a special value when (one of the following is true):
+				// - The actor is the author
+				// - The conversation is archived and no relevant notification (mention or call).
+				// so to skip the asterisk for these messages
 				// Can't use 0 though because hidden commands result in 0,
 				// and they would hide other previously posted new messages
 				acc[token] = -1
