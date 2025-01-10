@@ -576,6 +576,8 @@ OC.L10N.register(
     "Reset" : "Ресетирање",
     "Room {roomNumber}" : "Соба {roomNumber}",
     "Add participant \"{user}\"" : "Додади учесник \"{user}\"",
+    "Upcoming events" : "Престојни настани",
+    "No upcoming events" : "Нема престојни настани",
     "This conversation is read-only" : "Разговорот е само за читање",
     "Copy link" : "Копирај линк",
     "Connecting …" : "Поврзување ...",

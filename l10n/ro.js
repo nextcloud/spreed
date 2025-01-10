@@ -490,6 +490,8 @@ OC.L10N.register(
     "Confirm" : "Confirmă",
     "Reset" : "Resetare",
     "Add participant \"{user}\"" : "Adaugă participant \"{user}\"",
+    "Upcoming events" : "Evenimente viitoare",
+    "No upcoming events" : "Niciun eveniment următor",
     "This conversation is read-only" : "Această conversație este read-only",
     "{nickName} raised their hand." : "{nickName} a ridicat mâna.",
     "A participant raised their hand." : "Un participant a ridicat mâna.",

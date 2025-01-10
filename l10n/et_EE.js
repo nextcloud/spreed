@@ -37,6 +37,8 @@ OC.L10N.register(
     "Cancel" : "Loobu",
     "Confirm" : "Kinnita",
     "Reset" : "Lähtesta",
+    "Upcoming events" : "Tulekul sündmused",
+    "No upcoming events" : "Tulekul sündmuseid pole",
     "Copy link" : "Kopeeri link",
     "You" : "Sina",
     "Collapse" : "Sulge",
