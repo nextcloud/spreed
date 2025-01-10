@@ -5,6 +5,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-beta.1 – 2025-01-10
+### Added
+- Schedule a meeting directly from within the conversation
+  [#6292](https://github.com/nextcloud/spreed/issues/6292)
+
+### Changed
+- Update translations
+- Update dependencies
+- Require Nextcloud 31 / Hub 10
+
 ## 20.1.1 – 2024-12-19
 ### Changed
 - Update translations
