@@ -9,18 +9,36 @@
 		:name="item.displayName"
 		:title="item.displayName"
 		:data-nav-id="`conversation_${item.token}`"
-		:class="['conversation', { 'conversation--active': isActive }]"
+		class="conversation"
+		:class="{
+			'conversation--active': isActive,
+			'conversation--compact': compact,
+			'conversation--compact__read': compact && !item.unreadMessages
+		}"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
 		:counter-type="counterType"
 		force-menu
+		:compact="compact"
 		@click="onClick">
-		<template #icon>
-			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
+		<template #name>
+			<template v-if="compact && iconType">
+				<component :is="iconType.component" :size="15" :fill-color="iconType.color" />
+				<span class="hidden-visually">{{ iconType.text }}</span>
+			</template>
+			<span>{{ item.displayName }}</span>
 		</template>
-		<template #subname>
+		<template #icon>
+			<ConversationIcon :item="item"
+				:hide-favorite="false"
+				:hide-call="false"
+				:compact="compact"
+				:show-user-online-status="compact"
+				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+		</template>
+		<template v-if="!compact" #subname>
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<span v-html="conversationInformation" />
 		</template>
@@ -210,6 +228,7 @@ import IconEye from 'vue-material-design-icons/Eye.vue'
 import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
 import IconPhoneRing from 'vue-material-design-icons/PhoneRing.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
@@ -226,7 +245,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
-import { PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT, AVATAR } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
@@ -259,6 +278,7 @@ export default {
 		IconStar,
 		IconVolumeHigh,
 		IconVolumeOff,
+		IconVideo,
 		NcActionButton,
 		NcActionSeparator,
 		NcButton,
@@ -288,8 +308,14 @@ export default {
 					notificationCalls: PARTICIPANT.NOTIFY_CALLS.ON,
 					canDeleteConversation: false,
 					canLeaveConversation: false,
+					hasCall: false,
 				}
 			},
+		},
+
+		compact: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -303,6 +329,7 @@ export default {
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
 		return {
+			AVATAR,
 			supportsArchive,
 			submenu,
 			isLeaveDialogOpen,
@@ -362,6 +389,23 @@ export default {
 
 		notificationCalls() {
 			return this.item.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+		},
+
+		iconType() {
+			if (this.item.hasCall) {
+				return {
+					component: 'IconVideo',
+					color: '#E9322D',
+					text: t('spreed', 'Call in progress')
+				}
+			} else if (this.item.isFavorite) {
+				return {
+					component: 'IconStar',
+					color: '#FFCC00',
+					text: t('spreed', 'Favorite')
+				}
+			}
+			return null
 		},
 	},
 
@@ -509,6 +553,20 @@ export default {
 			background-color: var(--color-primary-element-hover);
 			border-color: var(--color-primary-element-hover);
 		}
+	}
+
+	&--compact {
+		padding-block: 2px !important; // Overwrite list-item 4px padding
+		&:deep(.list-item-content__name) {
+			display: flex;
+			gap: calc(var(--default-grid-baseline) / 2);
+		}
+		&__read {
+			&:deep(.list-item-content__name) {
+				font-weight: 400;
+			}
+		}
+
 	}
 }
 
