@@ -370,6 +370,8 @@ OC.L10N.register(
     "Confirm" : "Bekræft",
     "Reset" : "Nulstil",
     "Now" : "Nu",
+    "Upcoming events" : "Kommende begivenheder",
+    "No upcoming events" : "Ingen kommende begivenheder",
     "Copy link" : "Kopier link",
     "Connecting …" : "Forbinder ...",
     "Waiting for {user} to join the call" : "Venter på at {user} deltager i kaldet",
