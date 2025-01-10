@@ -519,6 +519,7 @@ OC.L10N.register(
     "Back" : "Distro",
     "Cancel" : "Arrest",
     "Confirm" : "Kadarnañ",
+    "Upcoming events" : "Darvoudoù da zont",
     "Copy link" : "Kopiañ al liamm",
     "Waiting for others to join the call …" : "O c'hortoz ma teuio ar re all er gemenadenn ...",
     "You can invite others in the participant tab of the sidebar" : "Galout a rit kouviañ tud gant an daolenn lodek er verenn gostez",

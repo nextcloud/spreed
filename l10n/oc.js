@@ -591,6 +591,7 @@ OC.L10N.register(
     "Confirm" : "Confirmar",
     "Reset" : "Reïnicializar",
     "Add participant \"{user}\"" : "Apondre participant « {user} »",
+    "Upcoming events" : "Eveniments venents",
     "Loading …" : "Cargament…",
     "This conversation is read-only" : "Aquesta conversacion es en lectura sola",
     "{nickName} raised their hand." : "{nickName} a levat la man.",

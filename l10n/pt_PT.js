@@ -259,6 +259,7 @@ OC.L10N.register(
     "Cancel" : "Cancelar",
     "Confirm" : "Confirmar",
     "Reset" : "Reiniciar",
+    "Upcoming events" : "Próximos eventos",
     "Copy link" : "Copiar ligação",
     "Waiting for others to join the call …" : "À espera que outros se juntem à chamada ..",
     "You can invite others in the participant tab of the sidebar" : "Pode convidar outros no separador participantes na barra lateral  ",

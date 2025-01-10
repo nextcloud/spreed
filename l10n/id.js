@@ -273,6 +273,8 @@ OC.L10N.register(
     "Cancel" : "Membatalkan",
     "Confirm" : "Konfirmasi",
     "Reset" : "Setel ulang",
+    "Upcoming events" : "Acara mendatang",
+    "No upcoming events" : "Tdak ada acara mendatang",
     "Copy link" : "Salin tautan",
     "Collapse" : "Tutup",
     "Expand" : "Perluas",

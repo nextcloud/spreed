@@ -773,6 +773,8 @@ OC.L10N.register(
     "Room {roomNumber}" : "Room {roomNumber}",
     "Add participant \"{user}\"" : "Add participant \"{user}\"",
     "Now" : "Now",
+    "Upcoming events" : "رویدادهای پیش‌رو",
+    "No upcoming events" : "رویداد پیش‌رویی وجود ندارد",
     "This conversation is read-only" : "This conversation is read-only",
     "{nickName} raised their hand." : "{nickName} raised their hand.",
     "A participant raised their hand." : "A participant raised their hand.",
