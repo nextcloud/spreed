@@ -23,6 +23,8 @@
 <script>
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
+import panzoom from 'panzoom'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -62,9 +64,55 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+
+		const screen = ref(null)
+		const instance = ref(null)
+		const instanceTransform = ref({ x: 0, y: 0, scale: 1 })
+		const instanceGrabbing = ref(false)
+
+		const screenClass = computed(() => {
+			if (!props.isBig) {
+				return ['screen--fill']
+			} else {
+				return [
+					'screen--fit',
+					instanceTransform.value.scale === 1
+						? 'screen--magnify'
+						: (instanceGrabbing.value ? 'screen--grabbing' : 'screen--grab'),
+				]
+			}
+		})
+
+		onMounted(() => {
+			if (props.isBig) {
+				instance.value = panzoom(screen.value, {
+					minZoom: 1,
+					maxZoom: 8,
+					bounds: true,
+					boundsPadding: 1,
+				})
+				instance.value.on('zoom', (instance) => {
+					instanceTransform.value = instance.getTransform()
+				})
+				instance.value.on('panstart', () => {
+					instanceGrabbing.value = true
+				})
+				instance.value.on('panend', () => {
+					instanceGrabbing.value = false
+				})
+			}
+		})
+		onBeforeUnmount(() => {
+			instance.value?.dispose()
+		})
+
+		return {
+			guestNameStore,
+			screen,
+			screenClass,
+		}
 	},
 
 	computed: {
@@ -110,14 +158,6 @@ export default {
 
 			return remoteParticipantName
 		},
-		screenClass() {
-			if (this.isBig) {
-				return 'screen--fit'
-			} else {
-				return 'screen--fill'
-			}
-		},
-
 	},
 
 	watch: {
@@ -181,6 +221,15 @@ export default {
 	}
 	&--fill {
 		object-fit: cover;
+	}
+	&--magnify {
+		cursor: zoom-in;
+	}
+	&--grab {
+		cursor: grab;
+	}
+	&--grabbing {
+		cursor: grabbing;
 	}
 }
 
