@@ -2578,6 +2578,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $calendarUri Last part of the calendar URI as seen by the participant e.g. 'personal' or 'company_shared_by_other_user'
 	 * @param int $start Unix timestamp when the meeting starts
+	 * @param ?list<int> $attendeeIds List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event
 	 * @param ?int $end Unix timestamp when the meeting ends, falls back to 60 minutes after start
 	 * @param ?string $title Title or summary of the event, falling back to the conversation name if none is given
 	 * @param ?string $description Description of the event, falling back to the conversation description if none is given
@@ -2588,7 +2589,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
-	public function scheduleMeeting(string $calendarUri, int $start, ?int $end = null, ?string $title = null, ?string $description = null): DataResponse {
+	public function scheduleMeeting(string $calendarUri, int $start, ?array $attendeeIds = null, ?int $end = null, ?string $title = null, ?string $description = null): DataResponse {
 		$eventBuilder = $this->calendarManager->createEventBuilder();
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId, [$calendarUri]);
 
@@ -2631,9 +2632,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$eventBuilder->setStartDate($startDate);
 		$eventBuilder->setEndDate($endDate);
 
-		$userIds = $this->participantService->getParticipantUserIds($this->room);
-		foreach ($userIds as $userId) {
-			$targetUser = $this->userManager->get($userId);
+		$userAttendees = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_USERS);
+		foreach ($userAttendees as $userAttendee) {
+			if ($attendeeIds !== null && !in_array($userAttendee->getAttendee()->getId(), $attendeeIds, true)) {
+				continue;
+			}
+
+			$targetUser = $this->userManager->get($userAttendee->getAttendee()->getActorId());
 			if (!$targetUser instanceof IUser) {
 				continue;
 			}
@@ -2649,6 +2654,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$emailGuests = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_EMAILS);
 		foreach ($emailGuests as $emailGuest) {
+			if ($attendeeIds !== null && !in_array($emailGuest->getAttendee()->getId(), $attendeeIds, true)) {
+				continue;
+			}
+
 			$eventBuilder->addAttendee(
 				$emailGuest->getAttendee()->getInvitedCloudId(),
 				$emailGuest->getAttendee()->getDisplayName(),

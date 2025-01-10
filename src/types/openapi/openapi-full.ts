@@ -8704,6 +8704,8 @@ export interface operations {
                      * @description Unix timestamp when the meeting starts
                      */
                     start: number;
+                    /** @description List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event */
+                    attendeeIds?: number[] | null;
                     /**
                      * Format: int64
                      * @description Unix timestamp when the meeting ends, falls back to 60 minutes after start

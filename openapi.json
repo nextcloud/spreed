@@ -17719,6 +17719,15 @@
                                         "format": "int64",
                                         "description": "Unix timestamp when the meeting starts"
                                     },
+                                    "attendeeIds": {
+                                        "type": "array",
+                                        "nullable": true,
+                                        "description": "List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event",
+                                        "items": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    },
                                     "end": {
                                         "type": "integer",
                                         "format": "int64",
