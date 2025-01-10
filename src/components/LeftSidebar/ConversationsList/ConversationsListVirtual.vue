@@ -10,7 +10,7 @@
 		:item-size="CONVERSATION_ITEM_SIZE"
 		key-field="token">
 		<template #default="{ item }">
-			<Conversation :item="item" />
+			<Conversation :item="item" :compact="compact" />
 		</template>
 		<template #after>
 			<LoadingPlaceholder v-if="loading" type="conversations" />
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 import Conversation from './Conversation.vue'
@@ -27,13 +28,6 @@ import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import { AVATAR } from '../../../constants.js'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
-/* Consider:
- * avatar size (and two lines of text)
- * list-item padding
- * list-item__wrapper padding
- */
-const CONVERSATION_ITEM_SIZE = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2
 
 export default {
 	name: 'ConversationsListVirtual',
@@ -54,9 +48,20 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		compact: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
-	setup() {
+	setup(props) {
+		/* Consider:
+		* avatar size (and two lines of text) or compact mode (34px)
+		* list-item padding
+		* list-item__wrapper padding
+		*/
+		const CONVERSATION_ITEM_SIZE = computed(() => props.compact ? 34 + 2 * 2 + 0 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
 		return {
 			CONVERSATION_ITEM_SIZE,
 		}
@@ -71,7 +76,7 @@ export default {
 		 */
 		getFirstItemInViewportIndex() {
 			// (ceil to include partially) of (absolute number of items above viewport) + 1 (next item is in viewport) - 1 (index starts from 0)
-			return Math.ceil(this.$refs.scroller.$el.scrollTop / CONVERSATION_ITEM_SIZE)
+			return Math.ceil(this.$refs.scroller.$el.scrollTop / this.CONVERSATION_ITEM_SIZE)
 		},
 
 		/**
@@ -82,7 +87,7 @@ export default {
 		 */
 		getLastItemInViewportIndex() {
 			// (floor to include only fully visible) of (absolute number of items below and in viewport) - 1 (index starts from 0)
-			return Math.floor((this.$refs.scroller.$el.scrollTop + this.$refs.scroller.$el.clientHeight) / CONVERSATION_ITEM_SIZE) - 1
+			return Math.floor((this.$refs.scroller.$el.scrollTop + this.$refs.scroller.$el.clientHeight) / this.CONVERSATION_ITEM_SIZE) - 1
 		},
 
 		/**
@@ -106,7 +111,7 @@ export default {
 			 */
 			const doScroll = (to) => {
 				const ITEMS_TO_BORDER_AFTER_SCROLL = 1
-				const padding = ITEMS_TO_BORDER_AFTER_SCROLL * CONVERSATION_ITEM_SIZE
+				const padding = ITEMS_TO_BORDER_AFTER_SCROLL * this.CONVERSATION_ITEM_SIZE
 				const from = this.$refs.scroller.$el.scrollTop
 				const direction = from < to ? 1 : -1
 
@@ -123,10 +128,10 @@ export default {
 			}
 
 			if (index < firstItemIndex) { // Item is above
-				await doScroll(index * CONVERSATION_ITEM_SIZE)
+				await doScroll(index * this.CONVERSATION_ITEM_SIZE)
 			} else if (index > lastItemIndex) { // Item is below
 				// Position of item + item's height and move to bottom
-				await doScroll((index + 1) * CONVERSATION_ITEM_SIZE - viewportHeight)
+				await doScroll((index + 1) * this.CONVERSATION_ITEM_SIZE - viewportHeight)
 			}
 		},
 

@@ -152,6 +152,7 @@
 					ref="scroller"
 					:conversations="filteredConversationsList"
 					:loading="!initialisedConversations"
+					:compact="isCompact"
 					class="scroller"
 					@scroll.native="debounceHandleScroll" />
 				<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
@@ -170,18 +171,20 @@
 					:key="`conversation_${item.id}`"
 					:ref="`conversation-${item.token}`"
 					:item="item"
+					:compact="isCompact"
 					@click="abortSearch" />
 				<Hint v-if="searchResultsConversationList.length === 0" :hint="t('spreed', 'No matches found')" />
 
 				<!-- Create a new conversation -->
 				<NcListItem v-if="canStartConversations"
 					:name="searchText"
+					:compact="isCompact"
 					data-nav-id="conversation_create_new"
 					@click="createConversation(searchText)">
 					<template #icon>
-						<ChatPlus :size="AVATAR.SIZE.DEFAULT" />
+						<ChatPlus :size="isCompact? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
 					</template>
-					<template #subname>
+					<template v-if="!isCompact" #subname>
 						{{ t('spreed', 'New group conversation') }}
 					</template>
 				</NcListItem>
@@ -193,6 +196,7 @@
 						:key="`open-conversation_${item.id}`"
 						:item="item"
 						is-search-result
+						:compact="isCompact"
 						@click="abortSearch" />
 				</template>
 
@@ -203,11 +207,12 @@
 						:key="`user_${item.id}`"
 						:data-nav-id="`user_${item.id}`"
 						:name="item.label"
+						:compact="isCompact"
 						@click="createAndJoinConversation(item)">
 						<template #icon>
 							<AvatarWrapper v-bind="iconData(item)" />
 						</template>
-						<template #subname>
+						<template v-if="!isCompact" #subname>
 							{{ t('spreed', 'New private conversation') }}
 						</template>
 					</NcListItem>
@@ -222,11 +227,12 @@
 							:key="`group_${item.id}`"
 							:data-nav-id="`group_${item.id}`"
 							:name="item.label"
+							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 							</template>
-							<template #subname>
+							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
 							</template>
 						</NcListItem>
@@ -239,11 +245,12 @@
 							:key="`circle_${item.id}`"
 							:data-nav-id="`circle_${item.id}`"
 							:name="item.label"
+							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 							</template>
-							<template #subname>
+							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
 							</template>
 						</NcListItem>
@@ -256,11 +263,12 @@
 							:key="`federated_${item.id}`"
 							:data-nav-id="`federated_${item.id}`"
 							:name="item.label"
+							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
 								<AvatarWrapper v-bind="iconData(item)" />
 							</template>
-							<template #subname>
+							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
 							</template>
 						</NcListItem>
@@ -371,6 +379,7 @@ import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
+import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
@@ -434,6 +443,7 @@ export default {
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
+		const settingsStore = useSettingsStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
@@ -451,6 +461,7 @@ export default {
 			canNoteToSelf,
 			supportsArchive,
 			showArchived,
+			settingsStore,
 		}
 	},
 
@@ -609,6 +620,10 @@ export default {
 						: t('spreed', 'Other sources')
 				}
 			}
+		},
+
+		isCompact() {
+			return this.settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT
 		},
 	},
 
@@ -1030,11 +1045,14 @@ export default {
 					disableMenu: true,
 					token: 'new',
 					showUserStatus: true,
+					size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
+					compact: this.isCompact,
 				}
 			}
 			return {
 				type: CONVERSATION.TYPE.GROUP,
 				objectType: item.source,
+				compact: this.isCompact,
 			}
 		},
 	},
@@ -1146,10 +1164,15 @@ export default {
 	.avatardiv .avatardiv__user-status {
 		right: -2px !important;
 		bottom: -2px !important;
-		min-height: 14px !important;
-		min-width: 14px !important;
+		min-height: 11px !important;
+		min-width: 11px !important;
 		line-height: 1 !important;
 		font-size: clamp(var(--font-size-small), 85%, var(--default-font-size)) !important;
 	}
+}
+
+// Overwrite NcListItem styles: remove padding in compact view
+:deep(.list-item--compact) {
+	padding-block: 0 !important;
 }
 </style>
