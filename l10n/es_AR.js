@@ -46,6 +46,7 @@ OC.L10N.register(
     "Cancel" : "Cancelar",
     "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
+    "Upcoming events" : "Próximos eventos",
     "Copy link" : "Copiar enlace",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "Mute audio" : "Silenciar audio",
