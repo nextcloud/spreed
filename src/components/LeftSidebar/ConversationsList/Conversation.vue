@@ -32,9 +32,9 @@
 		</template>
 		<template #icon>
 			<ConversationIcon :item="item"
-				:hide-favorite="false"
-				:hide-call="false"
-				:compact="compact"
+				:hide-favorite="compact"
+				:hide-call="compact"
+				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:show-user-online-status="compact"
 				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
@@ -245,7 +245,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
-import { PARTICIPANT, AVATAR } from '../../../constants.js'
+import { PARTICIPANT, AVATAR, CONVERSATION } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
@@ -337,6 +337,7 @@ export default {
 			counterType,
 			conversationInformation,
 			notificationLevels,
+			CONVERSATION,
 		}
 	},
 
