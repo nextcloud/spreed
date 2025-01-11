@@ -7,7 +7,7 @@
 	<RecycleScroller ref="scroller"
 		item-tag="ul"
 		:items="conversations"
-		:item-size="CONVERSATION_ITEM_SIZE"
+		:item-size="itemSize"
 		key-field="token">
 		<template #default="{ item }">
 			<Conversation :item="item" :compact="compact" />
@@ -61,9 +61,9 @@ export default {
 		* list-item padding
 		* list-item__wrapper padding
 		*/
-		const CONVERSATION_ITEM_SIZE = computed(() => props.compact ? 34 + 2 * 2 + 0 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
+		const itemSize = computed(() => props.compact ? 34 + 2 * 2 + 0 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
 		return {
-			CONVERSATION_ITEM_SIZE,
+			itemSize,
 		}
 	},
 
@@ -76,7 +76,7 @@ export default {
 		 */
 		getFirstItemInViewportIndex() {
 			// (ceil to include partially) of (absolute number of items above viewport) + 1 (next item is in viewport) - 1 (index starts from 0)
-			return Math.ceil(this.$refs.scroller.$el.scrollTop / this.CONVERSATION_ITEM_SIZE)
+			return Math.ceil(this.$refs.scroller.$el.scrollTop / this.itemSize)
 		},
 
 		/**
@@ -87,7 +87,7 @@ export default {
 		 */
 		getLastItemInViewportIndex() {
 			// (floor to include only fully visible) of (absolute number of items below and in viewport) - 1 (index starts from 0)
-			return Math.floor((this.$refs.scroller.$el.scrollTop + this.$refs.scroller.$el.clientHeight) / this.CONVERSATION_ITEM_SIZE) - 1
+			return Math.floor((this.$refs.scroller.$el.scrollTop + this.$refs.scroller.$el.clientHeight) / this.itemSize) - 1
 		},
 
 		/**
@@ -111,7 +111,7 @@ export default {
 			 */
 			const doScroll = (to) => {
 				const ITEMS_TO_BORDER_AFTER_SCROLL = 1
-				const padding = ITEMS_TO_BORDER_AFTER_SCROLL * this.CONVERSATION_ITEM_SIZE
+				const padding = ITEMS_TO_BORDER_AFTER_SCROLL * this.itemSize
 				const from = this.$refs.scroller.$el.scrollTop
 				const direction = from < to ? 1 : -1
 
@@ -128,10 +128,10 @@ export default {
 			}
 
 			if (index < firstItemIndex) { // Item is above
-				await doScroll(index * this.CONVERSATION_ITEM_SIZE)
+				await doScroll(index * this.itemSize)
 			} else if (index > lastItemIndex) { // Item is below
 				// Position of item + item's height and move to bottom
-				await doScroll((index + 1) * this.CONVERSATION_ITEM_SIZE - viewportHeight)
+				await doScroll((index + 1) * this.itemSize - viewportHeight)
 			}
 		},
 
