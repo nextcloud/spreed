@@ -519,6 +519,7 @@ OC.L10N.register(
     "Back" : "Distro",
     "Cancel" : "Arrest",
     "Confirm" : "Kadarnañ",
+    "Calendar" : "Deiziadur",
     "Save" : "Enrollañ",
     "Search participants" : "Klask implijer",
     "No results" : "Disoc'h ebet",

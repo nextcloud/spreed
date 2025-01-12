@@ -278,6 +278,8 @@ OC.L10N.register(
     "Reset" : "Restarigi",
     "Loading …" : "Ŝargado...",
     "No upcoming events" : "Neniuj venontaj eventoj",
+    "From" : "De",
+    "To" : "Al",
     "Calendar" : "Kalendaro",
     "Save" : "Konservi",
     "No results" : "Neniu rezulto",
