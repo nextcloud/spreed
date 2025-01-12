@@ -800,6 +800,7 @@ OC.L10N.register(
     "Current breakout rooms and settings will be lost" : "Huidige vergaderruimtes en instellingen gaan verloren",
     "Room {roomNumber}" : "Vergaderruimte {roomNumber}",
     "Add participant \"{user}\"" : "Toevoegen deelnemer \"{user}\"",
+    "Now" : "Nu",
     "Loading …" : "Laden …",
     "No upcoming events" : "Geen aanstaande activiteiten",
     "From" : "Van",
