@@ -23,13 +23,6 @@
 		force-menu
 		:compact="compact"
 		@click="onClick">
-		<template #name>
-			<template v-if="compact && iconType">
-				<component :is="iconType.component" :size="15" :fill-color="iconType.color" />
-				<span class="hidden-visually">{{ iconType.text }}</span>
-			</template>
-			<span>{{ item.displayName }}</span>
-		</template>
 		<template #icon>
 			<ConversationIcon :item="item"
 				:hide-favorite="compact"
@@ -37,6 +30,13 @@
 				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:show-user-online-status="compact"
 				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+		</template>
+		<template #name>
+			<template v-if="compact && iconType">
+				<component :is="iconType.component" :size="15" :fill-color="iconType.color" />
+				<span class="hidden-visually">{{ iconType.text }}</span>
+			</template>
+			<span class="text"> {{ item.displayName }} </span>
 		</template>
 		<template v-if="!compact" #subname>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -569,6 +569,12 @@ export default {
 		}
 
 	}
+}
+
+.text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 :deep(.dialog) {
