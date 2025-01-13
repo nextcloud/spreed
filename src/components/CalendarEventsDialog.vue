@@ -31,13 +31,16 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
+import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
+import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { useStore } from '../composables/useStore.js'
 import { ATTENDEE } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import type { Conversation, Participant } from '../types/index.ts'
+import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
 	token: string,
@@ -91,7 +94,7 @@ const selectedDateTimeStart = ref(new Date(moment().add(1, 'hours').startOf('hou
 const selectedDateTimeEnd = ref(new Date(moment().add(2, 'hours').startOf('hour')))
 const newMeetingTitle = ref('')
 const newMeetingDescription = ref('')
-const invalid = ref<string|null>(null)
+const invalid = ref<string | null>(null)
 const invalidHint = computed(() => {
 	switch (invalid.value) {
 	case null:
@@ -111,9 +114,44 @@ const invalidHint = computed(() => {
 const selectAll = ref(true)
 const selectedAttendeeIds = ref<number[]>([])
 const attendeeHint = computed(() => {
-	return selectedAttendeeIds.value?.length
-		? n('spreed', 'Sending %n invitation', 'Sending %n invitations', selectedAttendeeIds.value.length)
-		: t('spreed', 'Sending no invitations')
+	if (!selectedAttendeeIds.value?.length) {
+		return t('spreed', 'Sending no invitations')
+	}
+
+	const list: Participant[] = selectedParticipants.value.slice(0, 2)
+	const remainingCount = selectedParticipants.value.length - list.length
+	const summary = list.map(participant => getDisplayNameWithFallback(participant.displayName, participant.actorType))
+
+	if (remainingCount === 0) {
+		// Amount is 2 or less
+		switch (summary.length) {
+		case 1: {
+			return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] },
+				undefined, {
+					escape: false,
+					sanitize: false,
+				})
+		}
+		case 2: {
+			return t('spreed', '{participant0} and {participant1} will receive invitations',
+				{ participant0: summary[0], participant1: summary[1] }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
+		}
+		case 0:
+		default: {
+			return ''
+		}
+		}
+	} else {
+		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations',
+			'{participant0}, {participant1} and %n others will receive invitations', remainingCount,
+			{ participant0: summary[0], participant1: summary[1] }, {
+				escape: false,
+				sanitize: false,
+			})
+	}
 })
 
 const searchText = ref('')
@@ -126,11 +164,26 @@ const participants = computed(() => {
 			&& participant.attendeeId !== conversation.attendeeId
 	})
 })
+const participantsInitialised = computed(() => store.getters.participantsInitialised(props.token))
 const filteredParticipants = computed(() => participants.value.filter((participant: Participant) => {
 	return isMatch(participant.displayName)
 		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.USERS && isMatch(participant.actorId))
 		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && isMatch(participant.invitedActorId))
 }))
+const selectedParticipants = computed(() => participants.value
+	.filter((participant: Participant) => selectedAttendeeIds.value.includes(participant.attendeeId))
+	.sort((a: Participant, b: Participant) => {
+		if (a.actorType === ATTENDEE.ACTOR_TYPE.USERS && b.actorType === ATTENDEE.ACTOR_TYPE.EMAILS) {
+			return -1
+		} else if (a.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && b.actorType === ATTENDEE.ACTOR_TYPE.USERS) {
+			return 1
+		} else if (a.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && b.actorType === ATTENDEE.ACTOR_TYPE.EMAILS
+			&& (!a.displayName || !b.displayName)) {
+			return a.displayName ? -1 : 1
+		}
+		return 0
+	})
+)
 
 onBeforeMount(() => {
 	getCalendars()
@@ -169,6 +222,14 @@ watch(participants, (value) => {
  */
 function toggleAll(value: boolean) {
 	selectedAttendeeIds.value = value ? participants.value.map((participant: Participant) => participant.attendeeId) : []
+}
+
+/**
+ * Remove selected attendee from contact bubble
+ * @param value switch value
+ */
+function removeSelectedParticipant(value: Participant) {
+	selectedAttendeeIds.value = selectedAttendeeIds.value.filter(id => value.attendeeId !== id)
 }
 
 /**
@@ -374,16 +435,30 @@ async function submitNewMeeting() {
 				is-focused
 				:placeholder-text="t('spreed', 'Search participants')"
 				@abort-search="searchText = ''" />
-			<ul v-if="filteredParticipants.length" class="calendar-meeting__attendees">
+			<!-- Selected results -->
+			<TransitionWrapper v-if="selectedAttendeeIds.length"
+				class="calendar-meeting__attendees-selected"
+				name="zoom"
+				tag="div"
+				group>
+				<ContactSelectionBubble v-for="participant in selectedParticipants"
+					:key="participant.actorType + participant.actorId"
+					:participant="participant"
+					@update="removeSelectedParticipant" />
+			</TransitionWrapper>
+			<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
 				<SelectableParticipant v-for="participant in filteredParticipants"
 					:key="participant.attendeeId"
 					:checked.sync="selectedAttendeeIds"
 					:participant="participant"
 					@update:checked="checkSelection" />
 			</ul>
-			<NcEmptyContent v-else class="calendar-meeting__empty-content" :name="t('spreed', 'No results')">
+			<NcEmptyContent v-else
+				class="calendar-meeting__empty-content"
+				:name="!participantsInitialised ? t('spreed', 'Loading …') :t('spreed', 'No results')">
 				<template #icon>
-					<IconAccountSearch />
+					<NcLoadingIcon v-if="!participantsInitialised" />
+					<IconAccountSearch v-else />
 				</template>
 			</NcEmptyContent>
 			<template #actions>
@@ -411,6 +486,7 @@ async function submitNewMeeting() {
 
 		& > * {
 			margin-inline: calc(var(--default-grid-baseline) / 2);
+
 			&:not(:last-child) {
 				border-bottom: 1px solid var(--color-border-dark);
 			}
@@ -508,6 +584,18 @@ async function submitNewMeeting() {
 		height: calc(5.5 * var(--item-height));
 		padding-block: var(--default-grid-baseline);
 		overflow-y: auto;
+	}
+
+	&__attendees-selected {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--default-grid-baseline);
+		border-bottom: 1px solid var(--color-background-darker);
+		padding: var(--default-grid-baseline) 0;
+		max-height: 97px;
+		overflow-y: auto;
+		flex: 1 0 auto;
+		align-content: flex-start;
 	}
 
 	&__empty-content {
