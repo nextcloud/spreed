@@ -88,7 +88,7 @@ class ApiController extends OCSController {
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('preferences')
-			->where($delete->expr()->in('configkey', $delete->createNamedParameter(['changelog', 'note_to_self'], IQueryBuilder::PARAM_STR_ARRAY)))
+			->where($delete->expr()->in('configkey', $delete->createNamedParameter(['changelog', 'note_to_self', 'samples_created'], IQueryBuilder::PARAM_STR_ARRAY)))
 			->andWhere($delete->expr()->eq('appid', $delete->createNamedParameter('spreed')))
 			->executeStatement();
 

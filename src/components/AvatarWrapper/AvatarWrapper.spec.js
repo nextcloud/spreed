@@ -94,6 +94,7 @@ describe('AvatarWrapper.vue', () => {
 	describe('render specific icons', () => {
 		const testCases = [
 			[null, ATTENDEE.CHANGELOG_BOT_ID, 'Talk updates', ATTENDEE.ACTOR_TYPE.BOTS, 'icon-changelog'],
+			[null, ATTENDEE.SAMPLE_BOT_ID, 'Nextcloud', ATTENDEE.ACTOR_TYPE.BOTS, 'icon-changelog'],
 			[null, 'federated_user/id', USER_NAME, ATTENDEE.ACTOR_TYPE.FEDERATED_USERS, 'icon-user'],
 			[null, 'guest/id', '', ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],
 			[null, 'guest/id', t('spreed', 'Guest'), ATTENDEE.ACTOR_TYPE.GUESTS, 'icon-user'],

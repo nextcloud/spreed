@@ -132,6 +132,7 @@ export const ATTENDEE = {
 	BRIDGE_BOT_ID: 'bridge-bot',
 
 	CHANGELOG_BOT_ID: 'changelog',
+	SAMPLE_BOT_ID: 'sample',
 }
 
 export const MESSAGE = {

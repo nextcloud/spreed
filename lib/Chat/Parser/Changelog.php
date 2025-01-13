@@ -11,8 +11,10 @@ namespace OCA\Talk\Chat\Parser;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Model\Attendee;
+use OCP\Defaults;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Server;
 
 /**
  * @template-implements IEventListener<Event>
@@ -28,13 +30,19 @@ class Changelog implements IEventListener {
 			return;
 		}
 
-		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS ||
-			$chatMessage->getActorId() !== Attendee::ACTOR_ID_CHANGELOG) {
+		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS) {
 			return;
 		}
 
-		$l = $chatMessage->getL10n();
-		$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_CHANGELOG, $l->t('Talk updates ✅'));
-		$event->stopPropagation();
+		if ($chatMessage->getActorId() === Attendee::ACTOR_ID_CHANGELOG) {
+			$l = $chatMessage->getL10n();
+			$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_CHANGELOG, $l->t('Talk updates ✅'));
+			$event->stopPropagation();
+		}
+
+		if ($chatMessage->getActorId() === Attendee::ACTOR_ID_SAMPLE) {
+			$theme = Server::get(Defaults::class);
+			$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_SAMPLE, $theme->getName());
+		}
 	}
 }
