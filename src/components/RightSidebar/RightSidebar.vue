@@ -48,7 +48,7 @@
 			key="search-messages"
 			:order="0"
 			:name="t('spreed', 'Search messages')">
-			<SearchMessagesTab :is-active="activeTab === 'search-messages'" />
+			<SearchMessagesTab />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="isInCall"
 			id="chat"

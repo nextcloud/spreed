@@ -17,7 +17,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDateTime from '@nextcloud/vue/dist/Components/NcDateTime.js'
-import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
+import NcDateTimePickerNative from '@nextcloud/vue/dist/Components/NcDateTimePickerNative.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
@@ -61,10 +61,6 @@ type ExtendedEmitter = Emitter<Events>
 
 const typedEventBus = EventBus as ExtendedEmitter
 
-const props = defineProps<{
-	isActive: boolean
-}>()
-
 const searchBox = ref(null)
 const isFocused = ref(false)
 const searchResults = ref<MessageSearchResultEntry[]>([])
@@ -82,9 +78,8 @@ const router = useRouter()
 const store = useStore()
 
 const token = computed(() => store.getters.getToken())
-const participantsInitialised = computed(() => props.isActive ? store.getters.participantsInitialised(token.value) : false)
+const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
 const participants = computed<UserFilterObject>(() => {
-	if (!props.isActive) return []
 	return store.getters.participantsList(token.value)
 		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
 			id: actorId,
@@ -210,38 +205,6 @@ async function fetchSearchResults(isNew = true) {
 }
 
 /**
- *
- * @param date disabledDate from NcDateTimePicker
- */
-function notBeforeSinceDate(date: Date) {
-	return sinceDate.value ? date.getDate() < sinceDate.value.getDate() : false
-}
-
-/**
- *
- * @param date disabledDate from NcDateTimePicker
- */
-function notAfterUntilDate(date: Date) {
-	return date.getDate() > (untilDate.value?.getDate() ?? new Date().getDate())
-}
-
-/**
- *
- * @param date disabledTime from NcDateTimePicker
- */
-function notBeforeSinceTime(date: Date) {
-	return sinceDate.value ? date.valueOf() < sinceDate.value?.valueOf() : false
-}
-
-/**
- *
- * @param date disabledTime from NcDateTimePicker
- */
-function notAfterUntilTime(date: Date) {
-	return date.valueOf() > (untilDate.value?.valueOf() ?? Date.now())
-}
-
-/**
  * Search result on click handler
  * @param attributes Attributes from message search results
  */
@@ -277,26 +240,24 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:loading="!participantsInitialised"
 								:options="participants"
 								@update:modelValue="debounceFetchSearchResults" />
-							<NcDateTimePicker v-model="sinceDate"
+							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
+								v-model="sinceDate"
 								class="search-form__search-detail__date-picker"
-								type="datetime"
-								format="YYYY-MM-DD HH:mm"
-								clearable
+								format="YYYY-MM-DD"
+								type="date"
+								:step="1"
 								:aria-label="t('spreed', 'Since')"
-								:placeholder="t('spreed', 'Since')"
-								:disabled-date="notAfterUntilDate"
-								:disabled-time="notAfterUntilTime"
+								:label="t('spreed', 'Since')"
 								:minute-step="1"
 								@update:modelValue="debounceFetchSearchResults" />
-							<NcDateTimePicker v-model="untilDate"
+							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
+								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
-								type="datetime"
-								format="YYYY-MM-DD HH:mm"
-								clearable
+								format="YYYY-MM-DD"
+								type="date"
+								:step="1"
 								:aria-label="t('spreed', 'Until')"
-								:placeholder="t('spreed', 'Until')"
-								:disabled-date="notBeforeSinceDate"
-								:disabled-time="notBeforeSinceTime"
+								:label="t('spreed', 'Until')"
 								:minute-step="1"
 								@update:modelValue="debounceFetchSearchResults" />
 						</div>
