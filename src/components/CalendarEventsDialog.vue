@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, provide, ref, watch } from 'vue'
 
+import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
@@ -96,14 +97,14 @@ const invalidHint = computed(() => {
 	case null:
 		return ''
 	case 'calendar':
-		return t('spreed', 'Error: Invalid calendar selected')
+		return t('spreed', 'Invalid calendar selected')
 	case 'start':
-		return t('spreed', 'Error: Invalid start time selected')
+		return t('spreed', 'Invalid start time selected')
 	case 'end':
-		return t('spreed', 'Error: Invalid end time selected')
+		return t('spreed', 'Invalid end time selected')
 	case 'unknown':
 	default:
-		return t('spreed', 'Error: Unknown error occurred')
+		return t('spreed', 'Unknown error occurred')
 	}
 })
 
@@ -289,59 +290,62 @@ async function submitNewMeeting() {
 		</NcPopover>
 
 		<NcDialog v-if="canScheduleMeeting"
+			id="calendar-meeting"
 			:open.sync="isFormOpen"
-			class="calendar-events"
+			class="calendar-meeting"
 			:name="t('spreed', 'Schedule a meeting')"
 			size="normal"
 			close-on-click-outside
 			:container="container">
-			<div id="calendar-meeting" class="calendar-meeting">
-				<NcTextField v-model="newMeetingTitle"
-					:label="t('spreed', 'Meeting title')"
-					label-visible />
-				<NcTextArea v-model="newMeetingDescription"
-					:label="t('spreed', 'Description')"
-					resize="vertical"
-					label-visible />
-				<div class="calendar-meeting__flex-wrapper">
-					<NcDateTimePickerNative id="schedule_meeting_input"
-						v-model="selectedDateTimeStart"
-						:class="{ 'invalid-time': invalid === 'start' }"
-						:min="new Date()"
-						:step="300"
-						:label="t('spreed', 'From')"
-						type="datetime-local" />
-					<NcDateTimePickerNative id="schedule_meeting_input"
-						v-model="selectedDateTimeEnd"
-						:class="{ 'invalid-time': invalid === 'end' }"
-						:min="new Date()"
-						:step="300"
-						:label="t('spreed', 'To')"
-						type="datetime-local" />
-				</div>
-				<NcSelect id="schedule_meeting_select"
-					v-model="selectedCalendar"
-					:options="calendarOptions"
-					:input-label="t('spreed', 'Calendar')">
-					<template #selected-option="option">
-						<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
-						{{ option.label }}
-					</template>
-					<template #option="option">
-						<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
-						{{ option.label }}
-					</template>
-				</NcSelect>
-				<NcCheckboxRadioSwitch v-model="selectAll" type="switch" @update:modelValue="toggleAll">
-					{{ t('spreed', 'Invite all users and email guests') }}
-				</NcCheckboxRadioSwitch>
-				<div class="calendar-meeting__flex-wrapper">
-					<p>{{ attendeeHint }}</p>
-					<NcButton @click="isSelectorOpen = true">
-						{{ t('spreed', 'Select attendees') }}
-					</NcButton>
-				</div>
+			<NcTextField v-model="newMeetingTitle"
+				:label="t('spreed', 'Meeting title')"
+				label-visible />
+			<NcTextArea v-model="newMeetingDescription"
+				:label="t('spreed', 'Description')"
+				resize="vertical"
+				label-visible />
+			<div class="calendar-meeting__flex-wrapper">
+				<NcDateTimePickerNative id="schedule_meeting_input"
+					v-model="selectedDateTimeStart"
+					:class="{ 'invalid-time': invalid === 'start' }"
+					:min="new Date()"
+					:step="300"
+					:label="t('spreed', 'From')"
+					type="datetime-local" />
+				<NcDateTimePickerNative id="schedule_meeting_input"
+					v-model="selectedDateTimeEnd"
+					:class="{ 'invalid-time': invalid === 'end' }"
+					:min="new Date()"
+					:step="300"
+					:label="t('spreed', 'To')"
+					type="datetime-local" />
 			</div>
+			<NcSelect id="schedule_meeting_select"
+				v-model="selectedCalendar"
+				:options="calendarOptions"
+				:input-label="t('spreed', 'Calendar')">
+				<template #selected-option="option">
+					<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
+					{{ option.label }}
+				</template>
+				<template #option="option">
+					<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
+					{{ option.label }}
+				</template>
+			</NcSelect>
+			<h5 class="calendar-meeting__header">
+				{{ t('spreed', 'Attendees') }}
+			</h5>
+			<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
+				{{ t('spreed', 'Invite all users and emails') }}
+			</NcCheckboxRadioSwitch>
+			<NcButton type="tertiary" @click="isSelectorOpen = true">
+				<template #icon>
+					<IconAccountPlus :size="20" />
+				</template>
+				{{ t('spreed', 'Add attendees') }}
+			</NcButton>
+			<p>{{ attendeeHint }}</p>
 
 			<template #actions>
 				<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
@@ -361,7 +365,8 @@ async function submitNewMeeting() {
 
 		<NcDialog v-if="canScheduleMeeting"
 			:open.sync="isSelectorOpen"
-			:name="t('spreed', 'Select attendees')"
+			:name="t('spreed', 'Add attendees')"
+			class="calendar-meeting"
 			close-on-click-outside
 			container="#calendar-meeting">
 			<SearchBox class="calendar-meeting__searchbox"
@@ -376,27 +381,25 @@ async function submitNewMeeting() {
 					:participant="participant"
 					@update:checked="checkSelection" />
 			</ul>
-			<NcEmptyContent v-else class="calendar-events__empty-content" :name="t('spreed', 'No results')">
+			<NcEmptyContent v-else class="calendar-meeting__empty-content" :name="t('spreed', 'No results')">
 				<template #icon>
 					<IconAccountSearch />
 				</template>
 			</NcEmptyContent>
+			<template #actions>
+				<NcButton type="primary" @click="isSelectorOpen = false">
+					<template #icon>
+						<IconCheck :size="20" />
+					</template>
+					{{ t('spreed', 'Done') }}
+				</NcButton>
+			</template>
 		</NcDialog>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 .calendar-events {
-	margin-block-end: calc(var(--default-grid-baseline) * 2);
-
-	:deep(.dialog__content) {
-		padding-block-end: calc(var(--default-grid-baseline) * 3);
-	}
-
-	:deep(.dialog__actions) {
-		align-items: center;
-	}
-
 	&__list {
 		--item-height: calc(2lh + var(--default-grid-baseline) * 3);
 		display: flex;
@@ -468,14 +471,21 @@ async function submitNewMeeting() {
 }
 
 .calendar-meeting {
-	display: flex;
-	flex-direction: column;
-	margin: calc(var(--default-grid-baseline) / 2);
-	gap: var(--default-grid-baseline);
+	--item-height: calc(2lh + var(--default-grid-baseline) * 2);
+
+	:deep(.dialog__content) {
+		display: flex;
+		flex-direction: column;
+		margin: calc(var(--default-grid-baseline) / 2);
+		gap: var(--default-grid-baseline);
+	}
+
+	:deep(.dialog__actions) {
+		align-items: center;
+	}
 
 	&__header {
-		margin-block: calc(var(--default-grid-baseline) * 3);
-		text-align: center;
+		margin-block: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__invalid-hint {
@@ -495,9 +505,14 @@ async function submitNewMeeting() {
 	}
 
 	&__attendees {
-		height: calc(100% - var(--default-clickable-area) - 2 * var(--default-grid-baseline));
+		height: calc(5.5 * var(--item-height));
 		padding-block: var(--default-grid-baseline);
 		overflow-y: auto;
+	}
+
+	&__empty-content {
+		height: calc(5.5 * var(--item-height));
+		margin-block: auto !important;
 	}
 
 	// Overwrite default NcDateTimePickerNative styles
