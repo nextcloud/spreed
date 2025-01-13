@@ -232,6 +232,7 @@ export type components = {
                     /** Format: int64 */
                     "max-duration": number;
                     "blur-virtual-background": boolean;
+                    "end-to-end-encryption": boolean;
                 };
                 chat: {
                     /** Format: int64 */

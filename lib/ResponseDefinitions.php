@@ -347,6 +347,7 @@ namespace OCA\Talk;
  *             start-without-media: bool,
  *             max-duration: int,
  *             blur-virtual-background: bool,
+ *             end-to-end-encryption: bool,
  *         },
  *         chat: array{
  *             max-length: int,

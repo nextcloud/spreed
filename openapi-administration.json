@@ -150,7 +150,8 @@
                                     "can-enable-sip",
                                     "start-without-media",
                                     "max-duration",
-                                    "blur-virtual-background"
+                                    "blur-virtual-background",
+                                    "end-to-end-encryption"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -198,6 +199,9 @@
                                         "format": "int64"
                                     },
                                     "blur-virtual-background": {
+                                        "type": "boolean"
+                                    },
+                                    "end-to-end-encryption": {
                                         "type": "boolean"
                                     }
                                 }
