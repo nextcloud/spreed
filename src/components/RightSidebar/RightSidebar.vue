@@ -17,7 +17,7 @@
 		@closed="handleClosed">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
-			<MessageText :size="20" />
+			<IconMessageText :size="20" />
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<!-- search in messages button-->
@@ -56,7 +56,7 @@
 			:order="1"
 			:name="t('spreed', 'Chat')">
 			<template #icon>
-				<Message :size="20" />
+				<IconMessage :size="20" />
 			</template>
 			<ChatView :is-visible="opened" is-sidebar />
 		</NcAppSidebarTab>
@@ -67,7 +67,7 @@
 			:order="2"
 			:name="participantsText">
 			<template #icon>
-				<AccountMultiple :size="20" />
+				<IconAccountMultiple :size="20" />
 			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
@@ -80,7 +80,7 @@
 			:order="3"
 			:name="breakoutRoomsText">
 			<template #icon>
-				<DotsCircle :size="20" />
+				<IconDotsCircle :size="20" />
 			</template>
 			<BreakoutRoomsTab :main-token="mainConversationToken"
 				:main-conversation="mainConversation"
@@ -92,7 +92,7 @@
 			:order="4"
 			:name="t('spreed', 'Details')">
 			<template #icon>
-				<InformationOutline :size="20" />
+				<IconInformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
 			<SipSettings v-if="showSIPSettings" :conversation="conversation" />
@@ -100,7 +100,7 @@
 				<div id="app-settings-header">
 					<NcButton type="tertiary" @click="showSettings">
 						<template #icon>
-							<CogIcon :size="20" />
+							<IconCog :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
 					</NcButton>
@@ -114,7 +114,7 @@
 			:order="5"
 			:name="t('spreed', 'Shared items')">
 			<template #icon>
-				<FolderMultipleImage :size="20" />
+				<IconFolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</NcAppSidebarTab>
@@ -122,15 +122,15 @@
 </template>
 
 <script>
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import CogIcon from 'vue-material-design-icons/Cog.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
-import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-import Message from 'vue-material-design-icons/Message.vue'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
+import IconMessage from 'vue-material-design-icons/Message.vue'
+import IconMessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -152,7 +152,6 @@ import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.js'
 
@@ -173,15 +172,15 @@ export default {
 		SharedItemsTab,
 		SipSettings,
 		// Icons
-		AccountMultiple,
+		IconAccountMultiple,
 		IconArrowLeft,
-		CogIcon,
-		DotsCircle,
-		FolderMultipleImage,
-		InformationOutline,
+		IconCog,
+		IconDotsCircle,
+		IconFolderMultipleImage,
+		IconInformationOutline,
 		IconMagnify,
-		Message,
-		MessageText,
+		IconMessage,
+		IconMessageText,
 	},
 
 	props: {
