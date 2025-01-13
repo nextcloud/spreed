@@ -14,8 +14,9 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 class StandaloneTest {
 
-	constructor(settings, url) {
+	constructor(settings, url, forceHelloV1 = false) {
 		this.settings = settings
+		this.forceHelloV1 = forceHelloV1
 		this.features = null
 		this.version = null
 
@@ -128,7 +129,7 @@ class StandaloneTest {
 	}
 
 	sendHello() {
-		const version = this.hasFeature('hello-v2') ? '2.0' : '1.0'
+		const version = (!this.forceHelloV1 && this.hasFeature('hello-v2')) ? '2.0' : '1.0'
 
 		const msg = {
 			type: 'hello',
@@ -162,13 +163,14 @@ class StandaloneTest {
  * Returns test instance
  * @param {object} settings signaling settings
  * @param {string} url HPB server URL
+ * @param {boolean} [forceHelloV1] param to test hello-v1 connection
  */
-function createConnection(settings, url) {
+function createConnection(settings, url, forceHelloV1 = false) {
 	if (!settings) {
 		console.error('Signaling settings are not given')
 	}
 
-	return new StandaloneTest(settings, url)
+	return new StandaloneTest(settings, url, forceHelloV1)
 }
 
 export { createConnection }
