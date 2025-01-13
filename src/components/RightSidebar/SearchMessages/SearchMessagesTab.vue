@@ -6,11 +6,12 @@
 <script setup lang="ts">
 import debounce from 'debounce'
 import type { Emitter } from 'mitt'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
 import { useRouter } from 'vue-router/composables'
 
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import IconFilter from 'vue-material-design-icons/Filter.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -18,6 +19,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDateTime from '@nextcloud/vue/dist/Components/NcDateTime.js'
 import NcDateTimePickerNative from '@nextcloud/vue/dist/Components/NcDateTimePickerNative.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
@@ -85,7 +87,6 @@ const participants = computed<UserFilterObject>(() => {
 			id: actorId,
 			displayName,
 			isNoUser: actorType !== 'users',
-			subname: actorId,
 			user: actorId,
 			disableMenu: true,
 			showUserStatus: false,
@@ -112,6 +113,14 @@ const onRouteChange = ({ from, to }: { from: Route, to: Route }): void => {
 		abortSearch()
 	}
 }
+
+watch(searchText, (value) => {
+	if (value.trim().length === 0) {
+		searchResults.value = []
+		searchCursor.value = 0
+		isSearchExhausted.value = false
+	}
+})
 
 /**
  * Cancel search and cleanup the search fields and results.
@@ -148,6 +157,11 @@ const cancelSearch = ref((cancel: string) => {})
  * Fetch the search results from the server
  */
 async function fetchSearchResults(isNew = true) {
+	// Don't search if the search text is empty
+	if (searchText.value.trim().length === 0) {
+		return
+	}
+
 	isFetchingResults.value = true
 
 	try {
@@ -177,7 +191,7 @@ async function fetchSearchResults(isNew = true) {
 		})
 
 		const data = response?.data?.ocs?.data
-		if (data?.entries) {
+		if (data?.entries.length > 0) {
 			let entries = data?.entries
 
 			isSearchExhausted.value = entries.length < searchLimit.value
@@ -186,7 +200,7 @@ async function fetchSearchResults(isNew = true) {
 			// FIXME: remove the filter after the person filter is fixed on the server
 			if (fromUser.value) {
 				entries = entries.filter((entry) => entry.attributes.actorId === fromUser.value?.id)
-				if (entries.length === 0 && isSearchExhausted.value) {
+				if (entries.length === 0 && !isSearchExhausted.value) {
 					return await loadMore()
 				}
 			}
@@ -224,22 +238,33 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 <template>
 	<div class="search-messages-tab">
 		<div class="search-form">
-			<div class="search-form__search-box-wrapper">
-				<div class="search-form__main">
+			<div class="search-form__main">
+				<div class="search-form__search-box-wrapper">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
+						:placeholder-text="t('spreed', 'Search messages …')"
 						:is-focused.sync="isFocused"
 						@input="debounceFetchSearchResults" />
-					<TransitionWrapper name="radial-reveal">
-						<div v-show="searchDetailsOpened" class="search-form__search-detail">
-							<NcSelect v-model="fromUser"
-								class="search-form__search-detail__from-user"
-								:aria-label-combobox="t('spreed', 'From User')"
-								:placeholder="t('spreed', 'From User')"
-								user-select
-								:loading="!participantsInitialised"
-								:options="participants"
-								@update:modelValue="debounceFetchSearchResults" />
+					<NcButton :pressed.sync="searchDetailsOpened"
+						:aria-label="t('spreed', 'Search options')"
+						:title="t('spreed', 'Search options')"
+						type="tertiary-no-background">
+						<template #icon>
+							<IconFilter :size="15" />
+						</template>
+					</NcButton>
+				</div>
+				<TransitionWrapper name="radial-reveal">
+					<div v-show="searchDetailsOpened" class="search-form__search-detail">
+						<NcSelect v-model="fromUser"
+							class="search-form__search-detail__from-user"
+							:aria-label-combobox="t('spreed', 'From User')"
+							:placeholder="t('spreed', 'From User')"
+							user-select
+							:loading="!participantsInitialised"
+							:options="participants"
+							@update:modelValue="debounceFetchSearchResults" />
+						<div class="search-form__search-detail__date-picker-wrapper">
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
 								v-model="sinceDate"
 								class="search-form__search-detail__date-picker"
@@ -261,15 +286,8 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:minute-step="1"
 								@update:modelValue="debounceFetchSearchResults" />
 						</div>
-					</TransitionWrapper>
-				</div>
-				<NcButton :pressed.sync="searchDetailsOpened"
-					aria-label="Search Detail"
-					type="tertiary-no-background">
-					<template #icon>
-						<DotsHorizontal />
-					</template>
-				</NcButton>
+					</div>
+				</TransitionWrapper>
 			</div>
 		</div>
 		<div class="search-results">
@@ -285,8 +303,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:name="item.title"
 							:source="item.attributes.actorType"
 							:disable-menu="true"
-							token="new"
-							:show-user-status="true" />
+							token="new" />
 					</template>
 					<template #subname>
 						{{ item.subline }}
@@ -299,6 +316,13 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 					</template>
 				</NcListItem>
 			</template>
+			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"
+				class="search-results__empty"
+				:name="t('spreed', 'No results found')">
+				<template #icon>
+					<IconMessageOutline :size="64" />
+				</template>
+			</NcEmptyContent>
 			<template v-if="canLoadMore">
 				<NcButton wide type="tertiary" @click="fetchSearchResults(false)">
 					{{ t('spreed', 'Load more results') }}
@@ -321,6 +345,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 .search-form {
 	display: flex;
 	flex-direction: column;
+	padding-bottom: var(--default-grid-baseline);
 
 	&__search-box-wrapper {
 		display: flex;
@@ -337,6 +362,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		margin-top: calc(var(--default-grid-baseline) * 4);
 
 		&__from-user {
 			margin-top: 8px;
@@ -347,6 +373,12 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 
 		&__date-picker {
 			width: 100%;
+			min-width: 100px;
+
+			&-wrapper {
+				display: flex;
+				gap: var(--default-grid-baseline);
+			}
 		}
 	}
 }
@@ -354,6 +386,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 .search-results {
 	transition: all 0.15s ease;
 	height: 100%;
+	overflow-y: auto;
 
 	&__date {
 		font-size: x-small;
@@ -361,6 +394,10 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 
 	&__loading {
 		height: var(--default-clickable-area);
+	}
+
+	&__empty {
+		height: 100%;
 	}
 }
 </style>
