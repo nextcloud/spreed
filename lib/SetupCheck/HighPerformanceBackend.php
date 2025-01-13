@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
+use OCA\Talk\Signaling\Manager;
+use OCP\AppFramework\Http;
 use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -21,6 +23,7 @@ class HighPerformanceBackend implements ISetupCheck {
 		readonly protected ICacheFactory $cacheFactory,
 		readonly protected IURLGenerator $urlGenerator,
 		readonly protected IL10N $l,
+		readonly protected Manager $signalManager,
 	) {
 	}
 
@@ -54,12 +57,58 @@ class HighPerformanceBackend implements ISetupCheck {
 			);
 		}
 
-		if ($this->cacheFactory->isAvailable()) {
-			return SetupResult::success();
+		try {
+			$testResult = $this->signalManager->checkServerCompatibility(0);
+		} catch (\OutOfBoundsException) {
+			return SetupResult::error($this->l->t('High-performance backend not configured correctly'));
 		}
-		return SetupResult::warning(
-			$this->l->t('It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend.'),
-			$this->urlGenerator->linkToDocs('admin-cache'),
-		);
+		if ($testResult['status'] === Http::STATUS_INTERNAL_SERVER_ERROR) {
+			$error = $testResult['data']['error'];
+			if ($error === 'CAN_NOT_CONNECT') {
+				return SetupResult::error($this->l->t('Error: Cannot connect to server'));
+			}
+			if ($error === 'JSON_INVALID') {
+				return SetupResult::error($this->l->t('Error: Server did not respond with proper JSON'));
+			}
+			if ($error === 'CERTIFICATE_EXPIRED') {
+				return SetupResult::error($this->l->t('Error: Certificate expired'));
+			}
+			if ($error === 'TIME_OUT_OF_SYNC') {
+				return SetupResult::error($this->l->t('Error: System times of Nextcloud server and High-performance backend server are out of sync. Please make sure that both servers are connected to a time-server or manually synchronize their time.'));
+			}
+			if ($error === 'UPDATE_REQUIRED') {
+				$version = $testResult['data']['version'] ?? $this->l->t('Could not get version');
+				return SetupResult::error(str_replace(
+					'{version}',
+					$version,
+					$this->l->t('Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk'),
+				));
+			}
+			if ($error) {
+				return SetupResult::error(str_replace('{error}', $error, $this->l->t('Error: Server responded with: {error}')));
+			}
+			return SetupResult::error($this->l->t('Error: Unknown error occurred'));
+		}
+		if ($testResult['status'] === Http::STATUS_OK
+			&& isset($testResult['data']['warning'])
+			&& $testResult['data']['warning'] === 'UPDATE_OPTIONAL'
+		) {
+			$version = $testResult['data']['version'] ?? $this->l->t('Could not get version');
+			$features = implode(', ', $testResult['data']['features'] ?? []);
+			return SetupResult::warning(str_replace(
+				['{version}', '{features}'],
+				[$version, $features],
+				$this->l->t('Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}')
+			));
+		}
+
+		if (!$this->cacheFactory->isAvailable()) {
+			return SetupResult::warning(
+				$this->l->t('It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend.'),
+				$this->urlGenerator->linkToDocs('admin-cache'),
+			);
+		}
+
+		return SetupResult::success();
 	}
 }

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
@@ -22,7 +21,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
-use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
@@ -59,7 +57,6 @@ class SignalingController extends OCSController {
 		private \OCA\Talk\Signaling\Manager $signalingManager,
 		private TalkSession $session,
 		private Manager $manager,
-		private CertificateService $certificateService,
 		private ParticipantService $participantService,
 		private SessionService $sessionService,
 		private IDBConnection $dbConnection,
@@ -272,89 +269,12 @@ class SignalingController extends OCSController {
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function getWelcomeMessage(int $serverId): DataResponse {
-		$signalingServers = $this->talkConfig->getSignalingServers();
-		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
+		try {
+			$testResult = $this->signalingManager->checkServerCompatibility($serverId);
+		} catch (\OutOfBoundsException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
-
-		$url = rtrim($signalingServers[$serverId]['server'], '/');
-		$url = strtolower($url);
-
-		if (str_starts_with($url, 'wss://')) {
-			$url = 'https://' . substr($url, 6);
-		}
-
-		if (str_starts_with($url, 'ws://')) {
-			$url = 'http://' . substr($url, 5);
-		}
-
-		$verifyServer = (bool)$signalingServers[$serverId]['verify'];
-
-		if ($verifyServer && str_contains($url, 'https://')) {
-			$expiration = $this->certificateService->getCertificateExpirationInDays($url);
-
-			if ($expiration < 0) {
-				return new DataResponse(['error' => 'CERTIFICATE_EXPIRED'], Http::STATUS_INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		$client = $this->clientService->newClient();
-		try {
-			$timeBefore = $this->timeFactory->getTime();
-			$response = $client->get($url . '/api/v1/welcome', [
-				'verify' => $verifyServer,
-				'nextcloud' => [
-					'allow_local_address' => true,
-				],
-			]);
-			$timeAfter = $this->timeFactory->getTime();
-
-			$body = $response->getBody();
-			$data = json_decode($body, true);
-
-			if (!is_array($data)) {
-				return new DataResponse([
-					'error' => 'JSON_INVALID',
-				], Http::STATUS_INTERNAL_SERVER_ERROR);
-			}
-
-			if (!isset($data['version'])) {
-				return new DataResponse([
-					'error' => 'UPDATE_REQUIRED',
-					'version' => '',
-				], Http::STATUS_INTERNAL_SERVER_ERROR);
-			}
-
-			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
-				return new DataResponse([
-					'error' => 'UPDATE_REQUIRED',
-					'version' => $data['version'] ?? '',
-				], Http::STATUS_INTERNAL_SERVER_ERROR);
-			}
-
-			$responseTime = $this->timeFactory->getDateTime($response->getHeader('date'))->getTimestamp();
-			if (($timeBefore - Config::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
-				|| ($timeAfter + Config::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
-				return new DataResponse([
-					'error' => 'TIME_OUT_OF_SYNC',
-				], Http::STATUS_INTERNAL_SERVER_ERROR);
-			}
-
-			$missingFeatures = $this->signalingManager->getSignalingServerMissingFeatures($response);
-			if (!empty($missingFeatures)) {
-				return new DataResponse([
-					'warning' => 'UPDATE_OPTIONAL',
-					'features' => $missingFeatures,
-					'version' => $data['version'] ?? '',
-				]);
-			}
-
-			return new DataResponse($data);
-		} catch (ConnectException $e) {
-			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
-		} catch (\Exception $e) {
-			return new DataResponse(['error' => (string)$e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
-		}
+		return new DataResponse($testResult['data'], $testResult['status']);
 	}
 
 	/**
