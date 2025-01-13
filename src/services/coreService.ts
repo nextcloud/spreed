@@ -23,6 +23,15 @@ type SearchPayload = {
 	forceTypes?: typeof SHARE.TYPE[keyof typeof SHARE.TYPE][]
 }
 
+type SearchMessagePayload = {
+	term: string,
+	person?: string,
+	since?: string,
+	until?: string,
+	cursor?: number,
+	limit?: number,
+	conversation?: string }
+
 /**
  * Fetch possible conversations
  *
@@ -63,8 +72,16 @@ const deleteTaskById = async function(id: number, options?: object): Promise<nul
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
+const searchMessages = async function(params: SearchMessagePayload, options: object) {
+	return axios.get(generateOcsUrl('search/providers/talk-message/search'), {
+		...options,
+		params,
+	}).catch(() => {})
+}
+
 export {
 	autocompleteQuery,
 	getTaskById,
 	deleteTaskById,
+	searchMessages,
 }

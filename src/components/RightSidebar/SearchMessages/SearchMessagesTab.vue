@@ -5,10 +5,8 @@
 
 <script setup lang="ts">
 import debounce from 'debounce'
-import type { Emitter } from 'mitt'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import type { Route } from 'vue-router'
-import { useRouter } from 'vue-router/composables'
 
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
 import IconFilter from 'vue-material-design-icons/Filter.vue'
@@ -31,9 +29,10 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
+import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
+import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import { searchMessages } from '../../../services/messagesService.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 type UserFilterObject = {
@@ -61,15 +60,12 @@ type MessageSearchResultEntry = {
 	icon: string
 	rounded: boolean
 	attributes: MessageSearchResultAttributes
+	to: Route
 }
 
-type Events = {
-  'route-change': { from: Route; to: Route }
-}
-
-type ExtendedEmitter = Emitter<Events>
-
-const typedEventBus = EventBus as ExtendedEmitter
+const emit = defineEmits<{
+	(event: 'close'): void
+}>()
 
 const searchBox = ref(null)
 const isFocused = ref(false)
@@ -84,8 +80,8 @@ const searchDetailsOpened = ref(false)
 const isFetchingResults = ref(false)
 const isSearchExhausted = ref(false)
 
-const router = useRouter()
 const store = useStore()
+const isInCall = useIsInCall()
 
 const token = computed(() => store.getters.getToken())
 const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
@@ -104,22 +100,18 @@ const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResult
 const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
 
 onMounted(() => {
-	typedEventBus.on('route-change', onRouteChange)
+	EventBus.on('route-change', onRouteChange)
 })
 
 onBeforeUnmount(() => {
-	typedEventBus.off('route-change', onRouteChange)
+	EventBus.off('route-change', onRouteChange)
 	abortSearch()
 })
 
 const onRouteChange = ({ from, to }: { from: Route, to: Route }): void => {
-	if (from.name === 'conversation'
-		&& to.name === 'conversation'
-		&& from.params.token === to.params.token) {
-		return
-	}
-	if (to.name === 'conversation') {
+	if (to.name !== 'conversation' || from.params.token !== to.params.token || (to.hash && isInCall.value)) {
 		abortSearch()
+		emit('close')
 	}
 }
 
@@ -214,7 +206,20 @@ async function fetchSearchResults(isNew = true) {
 				}
 			}
 
-			searchResults.value = searchResults.value.concat(entries)
+			searchResults.value = searchResults.value.concat(entries.map((entry : Omit<MessageSearchResultEntry, 'to'>) => {
+				return {
+					...entry,
+					to: {
+						name: 'conversation',
+						hash: `#message_${entry.attributes.messageId}`,
+						params: {
+							token: entry.attributes.conversation,
+							skipLeaveWarning: true
+						}
+					}
+				}
+			})
+			)
 		}
 	} catch (exception) {
 		if (CancelableRequest.isCancel(exception)) {
@@ -225,20 +230,6 @@ async function fetchSearchResults(isNew = true) {
 	} finally {
 		isFetchingResults.value = false
 	}
-}
-
-/**
- * Search result on click handler
- * @param attributes Attributes from message search results
- */
-function onClickMessageSearchResult(attributes: MessageSearchResultAttributes) {
-	router.push({
-		name: 'conversation',
-		hash: `#message_${attributes.messageId}`,
-		params: {
-			token: attributes.conversation,
-		},
-	}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 }
 
 const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
@@ -337,8 +328,8 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 					:key="`message_${item.attributes.messageId}`"
 					:data-nav-id="`message_${item.attributes.messageId}`"
 					:name="item.title"
-					:v-tooltip="item.subline"
-					@click="onClickMessageSearchResult(item.attributes)">
+					:to="item.to"
+					:v-tooltip="item.subline">
 					<template #icon>
 						<AvatarWrapper :id="item.attributes.actorId"
 							:name="item.title"

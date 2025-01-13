@@ -24,7 +24,7 @@
 		<template v-if="!showSearchMessagesTab && getUserId" #secondary-actions>
 			<NcActionButton type="tertiary"
 				:title="t('spreed', 'Search messages')"
-				@click="showSearchMessagesTab=true">
+				@click="showSearchMessagesTab = true">
 				<template #icon>
 					<IconMagnify :size="20" />
 				</template>
@@ -33,7 +33,7 @@
 		<template v-else-if="getUserId" #tertiary-actions>
 			<NcButton type="tertiary"
 				:title="t('spreed', 'Back')"
-				@click="showSearchMessagesTab=false">
+				@click="showSearchMessagesTab = false">
 				<template #icon>
 					<IconArrowLeft :size="20" />
 				</template>
@@ -48,76 +48,78 @@
 			key="search-messages"
 			:order="0"
 			:name="t('spreed', 'Search messages')">
-			<SearchMessagesTab />
+			<SearchMessagesTab @close="showSearchMessagesTab = false" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="isInCall"
-			id="chat"
-			key="chat"
-			:order="1"
-			:name="t('spreed', 'Chat')">
-			<template #icon>
-				<IconMessage :size="20" />
-			</template>
-			<ChatView :is-visible="opened" is-sidebar />
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showParticipantsTab && !showSearchMessagesTab"
-			id="participants"
-			key="participants"
-			ref="participantsTab"
-			:order="2"
-			:name="participantsText">
-			<template #icon>
-				<IconAccountMultiple :size="20" />
-			</template>
-			<ParticipantsTab :is-active="activeTab === 'participants'"
-				:can-search="canSearchParticipants"
-				:can-add="canAddParticipants" />
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showBreakoutRoomsTab && !showSearchMessagesTab"
-			id="breakout-rooms"
-			key="breakout-rooms"
-			ref="breakout-rooms"
-			:order="3"
-			:name="breakoutRoomsText">
-			<template #icon>
-				<IconDotsCircle :size="20" />
-			</template>
-			<BreakoutRoomsTab :main-token="mainConversationToken"
-				:main-conversation="mainConversation"
-				:is-active="activeTab === 'breakout-rooms'" />
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showDetailsTab && !showSearchMessagesTab"
-			id="details-tab"
-			key="details-tab"
-			:order="4"
-			:name="t('spreed', 'Details')">
-			<template #icon>
-				<IconInformationOutline :size="20" />
-			</template>
-			<SetGuestUsername v-if="!getUserId" />
-			<SipSettings v-if="showSIPSettings" :conversation="conversation" />
-			<div v-if="!getUserId" id="app-settings">
-				<div id="app-settings-header">
-					<NcButton type="tertiary" @click="showSettings">
-						<template #icon>
-							<IconCog :size="20" />
-						</template>
-						{{ t('spreed', 'Settings') }}
-					</NcButton>
+		<template v-else>
+			<NcAppSidebarTab v-if="isInCall"
+				id="chat"
+				key="chat"
+				:order="1"
+				:name="t('spreed', 'Chat')">
+				<template #icon>
+					<IconMessage :size="20" />
+				</template>
+				<ChatView :is-visible="opened" is-sidebar />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showParticipantsTab"
+				id="participants"
+				key="participants"
+				ref="participantsTab"
+				:order="2"
+				:name="participantsText">
+				<template #icon>
+					<IconAccountMultiple :size="20" />
+				</template>
+				<ParticipantsTab :is-active="activeTab === 'participants'"
+					:can-search="canSearchParticipants"
+					:can-add="canAddParticipants" />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showBreakoutRoomsTab"
+				id="breakout-rooms"
+				key="breakout-rooms"
+				ref="breakout-rooms"
+				:order="3"
+				:name="breakoutRoomsText">
+				<template #icon>
+					<IconDotsCircle :size="20" />
+				</template>
+				<BreakoutRoomsTab :main-token="mainConversationToken"
+					:main-conversation="mainConversation"
+					:is-active="activeTab === 'breakout-rooms'" />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showDetailsTab"
+				id="details-tab"
+				key="details-tab"
+				:order="4"
+				:name="t('spreed', 'Details')">
+				<template #icon>
+					<IconInformationOutline :size="20" />
+				</template>
+				<SetGuestUsername v-if="!getUserId" />
+				<SipSettings v-if="showSIPSettings" :conversation="conversation" />
+				<div v-if="!getUserId" id="app-settings">
+					<div id="app-settings-header">
+						<NcButton type="tertiary" @click="showSettings">
+							<template #icon>
+								<IconCog :size="20" />
+							</template>
+							{{ t('spreed', 'Settings') }}
+						</NcButton>
+					</div>
 				</div>
-			</div>
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showSharedItemsTab && !showSearchMessagesTab"
-			id="shared-items"
-			key="shared-items"
-			ref="sharedItemsTab"
-			:order="5"
-			:name="t('spreed', 'Shared items')">
-			<template #icon>
-				<IconFolderMultipleImage :size="20" />
-			</template>
-			<SharedItemsTab :active="activeTab === 'shared-items'" />
-		</NcAppSidebarTab>
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showSharedItemsTab"
+				id="shared-items"
+				key="shared-items"
+				ref="sharedItemsTab"
+				:order="5"
+				:name="t('spreed', 'Shared items')">
+				<template #icon>
+					<IconFolderMultipleImage :size="20" />
+				</template>
+				<SharedItemsTab :active="activeTab === 'shared-items'" />
+			</NcAppSidebarTab>
+		</template>
 	</NcAppSidebar>
 </template>
 
