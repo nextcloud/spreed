@@ -10,13 +10,16 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
 import { useRouter } from 'vue-router/composables'
 
+import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
 import IconFilter from 'vue-material-design-icons/Filter.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcChip from '@nextcloud/vue/dist/Components/NcChip.js'
 import NcDateTime from '@nextcloud/vue/dist/Components/NcDateTime.js'
 import NcDateTimePickerNative from '@nextcloud/vue/dist/Components/NcDateTimePickerNative.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -35,6 +38,11 @@ import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 type UserFilterObject = {
 	id: string
+	displayName: string
+	isNoUser: boolean
+	user: string
+	disableMenu: boolean
+	showUserStatus: boolean
 }
 
 type MessageSearchResultAttributes = {
@@ -93,6 +101,7 @@ const participants = computed<UserFilterObject>(() => {
 		}))
 })
 const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
+const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
 
 onMounted(() => {
 	typedEventBus.on('route-change', onRouteChange)
@@ -288,6 +297,38 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 						</div>
 					</div>
 				</TransitionWrapper>
+				<TransitionWrapper name="fade">
+					<div v-show="hasFilter && !searchDetailsOpened"
+						class="search-form__search-bubbles">
+						<NcChip v-if="fromUser"
+							type="tertiary"
+							:text="fromUser.displayName"
+							@close="fromUser = null">
+							<template #icon>
+								<NcAvatar :size="24"
+									:user="fromUser.id"
+									:display-name="fromUser.displayName"
+									:show-user-status="false" />
+							</template>
+						</NcChip>
+						<NcChip v-if="sinceDate"
+							type="tertiary"
+							:text="t('spreed', 'Since') + ' ' + sinceDate?.toLocaleDateString()"
+							@close="sinceDate = null">
+							<template #icon>
+								<IconCalendarRange :size="15" />
+							</template>
+						</NcChip>
+						<NcChip v-if="untilDate"
+							type="tertiary"
+							:text="t('spreed', 'Until') + ' ' + untilDate?.toLocaleDateString()"
+							@close="untilDate = null">
+							<template #icon>
+								<IconCalendarRange :size="15" />
+							</template>
+						</NcChip>
+					</div>
+				</TransitionWrapper>
 			</div>
 		</div>
 		<div class="search-results">
@@ -380,6 +421,13 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 				gap: var(--default-grid-baseline);
 			}
 		}
+	}
+
+	&__search-bubbles {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--default-grid-baseline);
+		margin-top: var(--default-grid-baseline);
 	}
 }
 
