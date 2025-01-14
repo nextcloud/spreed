@@ -57,7 +57,7 @@ EventBus.on('signaling-join-room', (payload) => {
 	store.dispatch('updateLastJoinedConversationToken', token)
 })
 
-EventBus.on('signaling-recording-status-changed', (token, status) => {
+EventBus.on('signaling-recording-status-changed', ([token, status]) => {
 	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
 
 	if (status !== CALL.RECORDING.FAILED) {
