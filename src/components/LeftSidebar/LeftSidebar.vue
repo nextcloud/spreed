@@ -1168,8 +1168,22 @@ export default {
 	}
 }
 
-// Overwrite NcListItem styles: remove padding in compact view
+/* Overwrite NcListItem styles for compact view */
 :deep(.list-item--compact) {
 	padding-block: 0 !important;
 }
+
+:deep(.list-item--compact:not(:has(.list-item-content__subname))) {
+	--list-item-height: calc(var(--clickable-area-small, 24px) + 4px) !important;
+}
+
+:deep(.list-item--compact .button-vue--size-normal) {
+	--button-size: var(--clickable-area-small, 24px);
+	--button-radius: var(--border-radius);
+}
+
+:deep(.list-item--compact .list-item-content__actions) {
+	height: var(--clickable-area-small, 24px);
+}
+
 </style>

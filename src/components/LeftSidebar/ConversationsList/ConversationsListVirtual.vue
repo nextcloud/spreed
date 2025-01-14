@@ -57,11 +57,11 @@ export default {
 
 	setup(props) {
 		/* Consider:
-		* avatar size (and two lines of text) or compact mode (34px)
+		* avatar size (and two lines of text) or compact mode (28px)
 		* list-item padding
 		* list-item__wrapper padding
 		*/
-		const itemSize = computed(() => props.compact ? 34 + 2 * 2 + 0 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
+		const itemSize = computed(() => props.compact ? 28 + 2 * 2 + 0 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
 		return {
 			itemSize,
 		}

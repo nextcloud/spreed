@@ -300,8 +300,8 @@ export const BOT = {
 
 export const AVATAR = {
 	SIZE: {
-		COMPACT: 20,
 		EXTRA_SMALL: 22,
+		COMPACT: 24,
 		SMALL: 32,
 		DEFAULT: 40,
 		MEDIUM: 64,
