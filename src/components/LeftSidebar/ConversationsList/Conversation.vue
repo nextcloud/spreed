@@ -23,20 +23,20 @@
 		force-menu
 		:compact="compact"
 		@click="onClick">
+		<template #icon>
+			<ConversationIcon :item="item"
+				:hide-favorite="compact"
+				:hide-call="compact"
+				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
+				:show-user-online-status="compact"
+				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+		</template>
 		<template #name>
 			<template v-if="compact && iconType">
 				<component :is="iconType.component" :size="15" :fill-color="iconType.color" />
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
-			<span>{{ item.displayName }}</span>
-		</template>
-		<template #icon>
-			<ConversationIcon :item="item"
-				:hide-favorite="false"
-				:hide-call="false"
-				:compact="compact"
-				:show-user-online-status="compact"
-				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+			<span class="text"> {{ item.displayName }} </span>
 		</template>
 		<template v-if="!compact" #subname>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -245,7 +245,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
-import { PARTICIPANT, AVATAR } from '../../../constants.js'
+import { PARTICIPANT, AVATAR, CONVERSATION } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
@@ -337,6 +337,7 @@ export default {
 			counterType,
 			conversationInformation,
 			notificationLevels,
+			CONVERSATION,
 		}
 	},
 
@@ -568,6 +569,12 @@ export default {
 		}
 
 	}
+}
+
+.text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 :deep(.dialog) {

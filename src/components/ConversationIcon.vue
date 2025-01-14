@@ -19,7 +19,7 @@
 				:height="size"
 				:alt="item.displayName"
 				class="avatar icon">
-			<span v-if="!hideUserStatus && conversationType && !compact"
+			<span v-if="!hideUserStatus && conversationType"
 				class="conversation-icon__type"
 				role="img"
 				aria-hidden="false"
@@ -131,11 +131,6 @@ export default {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
 		},
-
-		compact: {
-			type: Boolean,
-			default: false,
-		}
 	},
 
 	setup() {
@@ -148,11 +143,11 @@ export default {
 
 	computed: {
 		showCall() {
-			return !this.hideCall && this.item.hasCall && !this.compact
+			return !this.hideCall && this.item.hasCall
 		},
 
 		showFavorite() {
-			return !this.hideFavorite && this.item.isFavorite && !this.compact
+			return !this.hideFavorite && this.item.isFavorite
 		},
 
 		preloadedUserStatus() {

@@ -182,7 +182,7 @@
 					data-nav-id="conversation_create_new"
 					@click="createConversation(searchText)">
 					<template #icon>
-						<ChatPlus :size="isCompact? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
+						<ChatPlus :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
 					</template>
 					<template v-if="!isCompact" #subname>
 						{{ t('spreed', 'New group conversation') }}
@@ -230,7 +230,7 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+								<ConversationIcon :item="iconData(item)" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -248,7 +248,7 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+								<ConversationIcon :item="iconData(item)" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -1046,13 +1046,12 @@ export default {
 					token: 'new',
 					showUserStatus: true,
 					size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
-					compact: this.isCompact,
 				}
 			}
 			return {
 				type: CONVERSATION.TYPE.GROUP,
 				objectType: item.source,
-				compact: this.isCompact,
+				size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
 			}
 		},
 	},
@@ -1166,13 +1165,25 @@ export default {
 		bottom: -2px !important;
 		min-height: 11px !important;
 		min-width: 11px !important;
-		line-height: 1 !important;
-		font-size: clamp(var(--font-size-small), 85%, var(--default-font-size)) !important;
 	}
 }
 
-// Overwrite NcListItem styles: remove padding in compact view
+/* Overwrite NcListItem styles for compact view */
 :deep(.list-item--compact) {
 	padding-block: 0 !important;
 }
+
+:deep(.list-item--compact:not(:has(.list-item-content__subname))) {
+	--list-item-height: calc(var(--clickable-area-small, 24px) + 4px) !important;
+}
+
+:deep(.list-item--compact .button-vue--size-normal) {
+	--button-size: var(--clickable-area-small, 24px);
+	--button-radius: var(--border-radius);
+}
+
+:deep(.list-item--compact .list-item-content__actions) {
+	height: var(--clickable-area-small, 24px);
+}
+
 </style>

@@ -31,7 +31,7 @@
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
 		<!-- Override user status for federated users -->
-		<span v-if="showUserStatus && isFederatedUser && !compact"
+		<span v-if="showUserStatus && isFederatedUser"
 			class="avatar-wrapper__user-status"
 			role="img"
 			aria-hidden="false"
@@ -129,11 +129,6 @@ export default {
 		},
 
 		loading: {
-			type: Boolean,
-			default: false,
-		},
-
-		compact: {
 			type: Boolean,
 			default: false,
 		},
