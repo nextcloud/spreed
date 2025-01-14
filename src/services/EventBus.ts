@@ -35,7 +35,7 @@ type Events = Record<EventType, unknown> & {
 	'signaling-join-call-failed': [string, { meta: components['schemas']['OCSMeta'], data: { error: string } }],
 	'signaling-join-room': [string],
 	'signaling-participant-list-changed': void,
-	'signaling-recording-status-changed': string,
+	'signaling-recording-status-changed': [string, number],
 	'signaling-servers-updated': { server: string, verify: boolean }[],
 	'signaling-users-changed': [(Partial<Participant> & ({ sessionId: string } | { nextcloudSessionId: string }))[]],
 	'signaling-users-in-room': [{ sessionId: string, userId: string }[]],
