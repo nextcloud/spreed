@@ -48,7 +48,6 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
 
-import { useStore } from '../../composables/useStore.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 
@@ -60,7 +59,6 @@ const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
 
-const store = useStore()
 const pollsStore = usePollsStore()
 /**
  * Receive poll drafts for the current conversation as owner/moderator
@@ -72,7 +70,7 @@ const pollDrafts = computed(() => pollsStore.getDrafts(props.token))
  * Opens poll editor pre-filled from the draft
  * @param id poll draft ID
  */
-function openPollEditor(id) {
+function openPollEditor(id: number) {
 	EventBus.emit('poll-editor-open', id)
 }
 </script>
