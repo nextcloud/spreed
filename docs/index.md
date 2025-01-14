@@ -15,6 +15,7 @@
 	* [Configuring eturnal](eturnal.md)
 * [Scalability](scalability.md)
 * [Call experience](call-experience.md)
+* [Sample conversations](sample-conversations.md)
 * [Occ commands](occ.md)
 * [Bots](bot-list.md)
 * [Matterbridge integration](matterbridge.md)
