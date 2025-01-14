@@ -10,6 +10,7 @@
 				:aria-label="qualityWarningAriaLabel"
 				trigger="hover"
 				:auto-hide="false"
+				:focus-trap="false"
 				:shown="showQualityWarningTooltip">
 				<template #trigger>
 					<NcButton id="quality_warning_button"
