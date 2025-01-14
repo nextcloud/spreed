@@ -93,7 +93,6 @@ OC.L10N.register(
     "Yesterday" : "i går",
     "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
     "Add participants" : "Legg til deltakarar",
-    "Password protect" : "Vern med passord",
     "Send message" : "Send melding",
     "Record voice message" : "Ta opp lyd melding ",
     "Settings" : "Instillingar",
@@ -123,6 +122,7 @@ OC.L10N.register(
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Circles" : "Sirklar",
+    "Password protect" : "Vern med passord",
     "Close" : "Lukk",
     "Remove circle and members" : "Eksterne sirklar og medlemmar"
 },

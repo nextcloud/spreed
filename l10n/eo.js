@@ -319,7 +319,6 @@ OC.L10N.register(
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
-    "Password protect" : "Protekti per pasvorto",
     "Create new poll" : "Krei novan enketon",
     "Settings" : "Agordoj",
     "Anonymous poll" : "Enketo sennoma",
@@ -351,6 +350,7 @@ OC.L10N.register(
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "Circles" : "Rondoj",
+    "Password protect" : "Protekti per pasvorto",
     "Close" : "Malfermi"
 },
 "nplurals=2; plural=(n != 1);");
