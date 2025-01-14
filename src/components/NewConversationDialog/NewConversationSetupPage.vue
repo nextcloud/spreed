@@ -47,7 +47,7 @@
 			<NcCheckboxRadioSwitch v-model="hasPassword"
 				type="switch"
 				:disabled="!isPublic">
-				<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
+				<span class="checkbox__label">{{ t('spreed', 'Password protection') }}</span>
 			</NcCheckboxRadioSwitch>
 			<NcPasswordField v-if="hasPassword"
 				v-model="passwordValue"
