@@ -158,6 +158,7 @@ class Capabilities implements IPublicCapability {
 		'conversations' => [
 			'can-create',
 			'list-style',
+			'description-length',
 		],
 		'federation' => [
 			'enabled',
@@ -236,6 +237,7 @@ class Capabilities implements IPublicCapability {
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
 					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
 					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
+					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 				],
 				'federation' => [
 					'enabled' => false,

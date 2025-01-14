@@ -269,9 +269,9 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 * Endpoint: `/room/{token}/description`
 * Data:
 
-| field         | type   | Description                          |
-|---------------|--------|--------------------------------------|
-| `description` | string | New description for the conversation |
+| field         | type   | Description                                                                                |
+|---------------|--------|--------------------------------------------------------------------------------------------|
+| `description` | string | New description for the conversation (limited to 2.000 characters, was 500 before Talk 21) |
 
 * Response:
     - Status code:

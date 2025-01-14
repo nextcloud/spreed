@@ -377,7 +377,8 @@
                                 "required": [
                                     "can-create",
                                     "force-passwords",
-                                    "list-style"
+                                    "list-style",
+                                    "description-length"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -392,6 +393,11 @@
                                             "two-lines",
                                             "compact"
                                         ]
+                                    },
+                                    "description-length": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
                                     }
                                 }
                             },
@@ -12590,7 +12596,7 @@
                                 "properties": {
                                     "description": {
                                         "type": "string",
-                                        "description": "New description"
+                                        "description": "New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)"
                                     }
                                 }
                             }

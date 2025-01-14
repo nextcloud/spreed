@@ -174,3 +174,4 @@
 * `schedule-meeting` (local) - Whether logged-in participants can schedule meetings
 * `config => chat => has-translation-task-providers` (local) - When true, translations can be done using the [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html).
 * `config => conversations => list-style` (local) - Whether conversation list should appear in certain way
+* `config => conversations => description-length` (local) - The maximum length for conversation descriptions, currently 2000. Before this config was added the implicit limit was 500, since the existance of the feature capability `room-description`.
