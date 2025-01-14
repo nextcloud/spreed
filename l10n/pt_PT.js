@@ -318,7 +318,6 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
     "Create a new group conversation" : "Criar nova conversa de grupo",
-    "Password protect" : "Proteger com palavra-passe",
     "Send message" : "Enviar mensagem",
     "New file" : "Ficheiro novo",
     "Settings" : "Definições",
@@ -373,6 +372,7 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Circles" : "Círculos",
+    "Password protect" : "Proteger com palavra-passe",
     "Close" : "Fechar",
     "Start a conversation" : "Iniciar uma conversação"
 },

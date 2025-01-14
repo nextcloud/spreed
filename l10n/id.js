@@ -320,7 +320,6 @@ OC.L10N.register(
     "Create conversation" : "Buat percakapan",
     "Add participants" : "Tambahkan peserta",
     "Allow guests to join via link" : "Izinkan tamu untuk bergabung melalui tautan",
-    "Password protect" : "Lindungi dengan kata sandi",
     "New file" : "File baru",
     "Blank" : "Kosong",
     "Settings" : "Setelan",
@@ -363,6 +362,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "Password protect" : "Lindungi dengan kata sandi",
     "Close" : "Tutup"
 },
 "nplurals=1; plural=0;");

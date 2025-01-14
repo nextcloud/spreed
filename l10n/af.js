@@ -300,7 +300,6 @@ OC.L10N.register(
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Add participants" : "Voeg deelnemers toe",
-    "Password protect" : "Beskerm met 'n wagwoord",
     "Enter password" : "Voer wagwoord in",
     "Settings" : "Instellings",
     "Send" : "Stuur",
@@ -329,6 +328,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
+    "Password protect" : "Beskerm met 'n wagwoord",
     "Close" : "Sluit"
 },
 "nplurals=2; plural=(n != 1);");
