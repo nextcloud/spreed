@@ -1410,7 +1410,7 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 		EventBus.emit('should-refresh-chat-messages')
 		break
 	case 'recording':
-		EventBus.emit('signaling-recording-status-changed', token, data.recording.status)
+		EventBus.emit('signaling-recording-status-changed', [token, data.recording.status])
 		break
 	default:
 		console.error('Unknown room message event', data)

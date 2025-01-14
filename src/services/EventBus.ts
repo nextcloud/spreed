@@ -5,8 +5,49 @@
 
 import mitt from 'mitt'
 import type { Emitter, EventType, Handler, WildcardHandler } from 'mitt'
+import type { Route } from 'vue-router'
 
-type Events = Record<EventType, unknown>
+import type { ChatMessage, Conversation, Participant } from '../types/index.ts'
+import type { components } from '../types/openapi/openapi-full.ts'
+
+// List of used events across the app
+type Events = Record<EventType, unknown> & {
+	'audio-player-ended': number,
+	'conversations-received': { singleConversation: boolean },
+	'deleted-session-detected': void,
+	'duplicate-session-detected': void,
+	'editing-message': void,
+	'editing-message-processing': { messageId: number, value: boolean },
+	'focus-chat-input': void,
+	'focus-message': number, // TODO: listener method can receive ...[messageId, smooth, highlightAnimation]
+	'forbidden-route': { error: string },
+	'joined-conversation': { token: string },
+	'message-height-changed': { heightDiff: number },
+	'poll-drafts-open': void,
+	'poll-editor-open': number,
+	'refresh-peer-list': void,
+	'retry-message': number,
+	'route-change': { from: Route, to: Route },
+	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean },
+	'should-refresh-chat-messages': void,
+	'should-refresh-conversations': { token: string, properties: Partial<Conversation> } | { all: true } | void,
+	'signaling-join-call': [string, number],
+	'signaling-join-call-failed': [string, { meta: components['schemas']['OCSMeta'], data: { error: string } }],
+	'signaling-join-room': [string],
+	'signaling-participant-list-changed': void,
+	'signaling-recording-status-changed': [string, number],
+	'signaling-servers-updated': { server: string, verify: boolean }[],
+	'signaling-users-changed': [(Partial<Participant> & ({ sessionId: string } | { nextcloudSessionId: string }))[]],
+	'signaling-users-in-room': [{ sessionId: string, userId: string }[]],
+	'smart-picker-open': void,
+	'switch-to-conversation': { token: string },
+	'talk:poll-added': { token: string, message: ChatMessage },
+	'upload-discard': void,
+	'upload-finished': void,
+	'upload-start': void,
+}
+
+// Extended types for mitt() library
 type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Events>
 type ExtendedEmitter = Emitter<Events> & {
 	once<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
