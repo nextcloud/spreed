@@ -36,9 +36,11 @@ class CanUseTalkMiddleware extends Middleware {
 	public const TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT = '0.16.0';
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
 	public const TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
+	public const TALK_ANDROID_MIN_VERSION_E2EE_CALLS = '22.0.0';
 
 	public const TALK_IOS_MIN_VERSION = '15.0.0';
 	public const TALK_IOS_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
+	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '22.0.0';
 
 
 	public function __construct(
@@ -139,14 +141,18 @@ class CanUseTalkMiddleware extends Middleware {
 			$versionRegex = IRequest::USER_AGENT_TALK_ANDROID;
 			$minVersion = self::TALK_ANDROID_MIN_VERSION;
 
-			if ($this->talkConfig->recordingConsentRequired()) {
+			if ($this->talkConfig->isCallEndToEndEncryptionEnabled()) {
+				$minVersion = self::TALK_ANDROID_MIN_VERSION_E2EE_CALLS;
+			} elseif ($this->talkConfig->recordingConsentRequired()) {
 				$minVersion = self::TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT;
 			}
 		} elseif ($client === 'ios') {
 			$versionRegex = IRequest::USER_AGENT_TALK_IOS;
 			$minVersion = self::TALK_IOS_MIN_VERSION;
 
-			if ($this->talkConfig->recordingConsentRequired()) {
+			if ($this->talkConfig->isCallEndToEndEncryptionEnabled()) {
+				$minVersion = self::TALK_IOS_MIN_VERSION_E2EE_CALLS;
+			} elseif ($this->talkConfig->recordingConsentRequired()) {
 				$minVersion = self::TALK_IOS_MIN_VERSION_RECORDING_CONSENT;
 			}
 		} else {
