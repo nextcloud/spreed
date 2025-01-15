@@ -139,6 +139,7 @@ export const mockedCapabilities: Capabilities = {
 				'can-create': true,
 				'force-passwords': false,
 				'list-style': 'two-lines',
+				'description-length': 2000,
 			},
 			federation: {
 				enabled: false,

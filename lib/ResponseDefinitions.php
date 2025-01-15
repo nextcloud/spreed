@@ -360,6 +360,7 @@ namespace OCA\Talk;
  *             can-create: bool,
  *             force-passwords: bool,
  *             list-style: 'two-lines'|'compact',
+ *             description-length: positive-int,
  *         },
  *         federation: array{
  *             enabled: bool,

@@ -376,12 +376,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($shouldFilter === '') {
 			$rooms = array_filter($rooms, static function (array $room) {
 				// Filter out "Talk updates" and "Note to self" conversations
-				return $room['type'] !== 4 && $room['type'] !== 6;
+				return $room['type'] !== 4 && $room['type'] !== 6 && $room['objectType'] !== 'sample';
 			});
 		} elseif ($shouldFilter === 'note-to-self ') {
 			$rooms = array_filter($rooms, static function (array $room) {
 				// Filter out "Talk updates" conversations
-				return $room['type'] !== 4;
+				return $room['type'] !== 4 && $room['objectType'] !== 'sample';
 			});
 		}
 
@@ -416,7 +416,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$rooms = array_filter($rooms, static function (array $room) {
 			// Filter out "Talk updates" and "Note to self" conversations
-			return $room['type'] !== 4 && $room['type'] !== 6;
+			return $room['type'] !== 4 && $room['type'] !== 6 && $room['objectType'] !== 'sample';
 		});
 
 		if ($formData === null) {
@@ -750,7 +750,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$rooms = array_filter($rooms, function ($room) {
 			// Filter out "Talk updates" and "Note to self" conversations
-			return $room['type'] !== 4 && $room['type'] !== 6;
+			return $room['type'] !== 4 && $room['type'] !== 6 && $room['objectType'] !== 'sample';
 		});
 
 		if ($isParticipant) {
@@ -2778,7 +2778,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$actualItems = $data[$widgetId]['items'];
 		}
 
-		$actualItems = array_values(array_filter($actualItems, static fn ($item) => $item['title'] !== 'Note to self' && $item['title'] !== 'Talk updates ✅'));
+		$actualItems = array_values(array_filter($actualItems, static fn ($item) => $item['title'] !== 'Note to self' && $item['title'] !== 'Talk updates ✅' && $item['title'] !== 'Let´s get started!'));
 
 		if (empty($expectedItems)) {
 			Assert::assertEmpty($actualItems);

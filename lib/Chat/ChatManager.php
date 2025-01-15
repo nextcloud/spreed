@@ -291,6 +291,45 @@ class ChatManager {
 	}
 
 	/**
+	 * Post a new message to the given chat.
+	 *
+	 * @param Room $chat
+	 * @param string $message
+	 * @return IComment
+	 */
+	public function postSampleMessage(Room $chat, string $message, string $replyTo): IComment {
+		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SAMPLE, 'chat', (string)$chat->getId());
+
+		if ($replyTo) {
+			$comment->setParentId($replyTo);
+		}
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
+		$comment->setCreationDateTime($this->timeFactory->getDateTime());
+		$comment->setVerb(self::VERB_MESSAGE); // Has to be 'comment', so it counts as unread message
+		$metaData = [
+			Message::METADATA_CAN_MENTION_ALL => true,
+		];
+		$comment->setMetaData($metaData);
+
+		$event = new BeforeSystemMessageSentEvent($chat, $comment);
+		$this->dispatcher->dispatchTyped($event);
+		try {
+			$this->commentsManager->save($comment);
+
+			// Update last_message
+			$this->roomService->setLastMessage($chat, $comment);
+			$this->unreadCountCache->clear($chat->getId() . '-');
+
+			$event = new SystemMessageSentEvent($chat, $comment);
+			$this->dispatcher->dispatchTyped($event);
+		} catch (NotFoundException $e) {
+		}
+		$this->cache->remove($chat->getToken());
+
+		return $comment;
+	}
+
+	/**
 	 * Sends a new message to the given chat.
 	 *
 	 * @throws IRateLimitExceededException Only when $rateLimitGuestMentions is true and the author is a guest participant

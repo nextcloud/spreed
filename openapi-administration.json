@@ -243,7 +243,8 @@
                                 "required": [
                                     "can-create",
                                     "force-passwords",
-                                    "list-style"
+                                    "list-style",
+                                    "description-length"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -258,6 +259,11 @@
                                             "two-lines",
                                             "compact"
                                         ]
+                                    },
+                                    "description-length": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
                                     }
                                 }
                             },

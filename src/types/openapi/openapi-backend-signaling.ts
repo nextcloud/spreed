@@ -70,6 +70,8 @@ export type components = {
                     "force-passwords": boolean;
                     /** @enum {string} */
                     "list-style": "two-lines" | "compact";
+                    /** Format: int64 */
+                    "description-length": number;
                 };
                 federation: {
                     enabled: boolean;

@@ -33,6 +33,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\SampleConversationsService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -155,7 +156,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
-		if ($event->getRoom()->getType() === Room::TYPE_CHANGELOG || $this->isCreatingNoteToSelfAutomatically($event)) {
+		if ($event->getRoom()->getType() === Room::TYPE_CHANGELOG || $this->isCreatingNoteToSelfAutomatically($event) || $this->isCreatingSample($event)) {
 			$this->sendSystemMessage($event->getRoom(), 'conversation_created', forceSystemAsActor: true);
 		} else {
 			$this->sendSystemMessage($event->getRoom(), 'conversation_created');
@@ -176,7 +177,7 @@ class Listener implements IEventListener {
 
 	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
 		if ($event->getNewValue() !== '') {
-			if ($this->isCreatingNoteToSelf($event)) {
+			if ($this->isCreatingNoteToSelf($event) || $this->isCreatingSample($event)) {
 				return;
 			}
 
@@ -562,7 +563,7 @@ class Listener implements IEventListener {
 
 	protected function avatarChanged(RoomModifiedEvent $event): void {
 		if ($event->getNewValue()) {
-			if ($this->isCreatingNoteToSelf($event)) {
+			if ($this->isCreatingNoteToSelf($event) || $this->isCreatingSample($event)) {
 				return;
 			}
 
@@ -589,6 +590,24 @@ class Listener implements IEventListener {
 			}
 			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
 				isset($step['function']) && $step['function'] === 'ensureNoteToSelfExistsForUser') {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected function isCreatingSample(ARoomEvent $event): bool {
+		if ($event->getRoom()->getType() !== Room::TYPE_GROUP) {
+			return false;
+		}
+
+		$exception = new \Exception();
+		$trace = $exception->getTrace();
+
+		foreach ($trace as $step) {
+			if (isset($step['class']) && $step['class'] === SampleConversationsService::class &&
+				isset($step['function']) && $step['function'] === 'initialCreateSamples') {
 				return true;
 			}
 		}

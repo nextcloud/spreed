@@ -2033,6 +2033,8 @@ export type components = {
                     "force-passwords": boolean;
                     /** @enum {string} */
                     "list-style": "two-lines" | "compact";
+                    /** Format: int64 */
+                    "description-length": number;
                 };
                 federation: {
                     enabled: boolean;
@@ -6752,7 +6754,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description New description */
+                    /** @description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21) */
                     description: string;
                 };
             };

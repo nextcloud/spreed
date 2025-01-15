@@ -18,6 +18,7 @@
 | `share:password` | No             | Video verification to verify the identity of the share recipient | Share token                                             |
 | `room`           | Yes            | Room is a breakout room                                          | Token of the main/parent conversation                   |
 | `phone`          | Yes            | Room is created when calling a phone number with SIP dial-out    | `phone` (not set atm, just used for the default avatar) |
+| `sample`         | No             | Room is a sample conversation                                    | User ID the sample                                      |
 
 ### Read-only states
 * `0` Read-write

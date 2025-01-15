@@ -836,7 +836,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Update the description of a room
 	 *
-	 * @param string $description New description
+	 * @param string $description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Description updated successfully

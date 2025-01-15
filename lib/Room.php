@@ -43,6 +43,7 @@ class Room {
 	public const OBJECT_TYPE_FILE = 'file';
 	public const OBJECT_TYPE_PHONE = 'phone';
 	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
+	public const OBJECT_TYPE_SAMPLE = 'sample';
 
 	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;
@@ -75,7 +76,7 @@ class Room {
 	public const START_CALL_MODERATORS = 2;
 	public const START_CALL_NOONE = 3;
 
-	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
+	public const DESCRIPTION_MAXIMUM_LENGTH = 2000;
 
 	public const HAS_FEDERATION_NONE = 0;
 	public const HAS_FEDERATION_TALKv1 = 1;

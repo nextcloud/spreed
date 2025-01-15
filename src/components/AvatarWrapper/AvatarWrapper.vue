@@ -162,7 +162,7 @@ export default {
 			case ATTENDEE.ACTOR_TYPE.PHONES:
 				return 'icon-phone'
 			case ATTENDEE.ACTOR_TYPE.BOTS:
-				return this.id === ATTENDEE.CHANGELOG_BOT_ID ? 'icon-changelog' : ''
+				return [ATTENDEE.CHANGELOG_BOT_ID, ATTENDEE.SAMPLE_BOT_ID].includes(this.id) ? 'icon-changelog' : ''
 			case ATTENDEE.ACTOR_TYPE.CIRCLES:
 				return 'icon-team'
 			case ATTENDEE.ACTOR_TYPE.GROUPS:
@@ -188,7 +188,7 @@ export default {
 			return this.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 		},
 		isBot() {
-			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID
+			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID && this.id !== ATTENDEE.SAMPLE_BOT_ID
 		},
 		isGuestUser() {
 			return [ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(this.source)
