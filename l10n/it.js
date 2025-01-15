@@ -807,6 +807,7 @@ OC.L10N.register(
     "Add to favorites" : "Aggiungi ai preferiti",
     "You need to promote a new moderator before you can leave the conversation." : "Devi promuovere un nuovo moderatore prima di poter abbandonare la conversazione. ",
     "Conversation list" : "Elenco delle conversazioni",
+    "Create a new conversation" : "Crea una nuova conversazione",
     "Clear filter" : "Pulisci il filtro",
     "Unread mentions" : "Menzioni non lette",
     "No matches found" : "Nessuna corrispondenza trovata",
