@@ -124,6 +124,7 @@ import LoadingComponent from '../LoadingComponent.vue'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { addParticipant } from '../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
@@ -135,7 +136,7 @@ const NEW_CONVERSATION = {
 	type: CONVERSATION.TYPE.GROUP,
 	isDummyConversation: true,
 }
-
+const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 export default {
 	name: 'NewConversationDialog',
 
@@ -205,7 +206,7 @@ export default {
 		disabled() {
 			return this.conversationName === '' || (this.newConversation.hasPassword && (this.password === '' || !this.isPasswordValid))
 				|| this.conversationName.length > CONVERSATION.MAX_NAME_LENGTH
-				|| this.newConversation.description.length > CONVERSATION.MAX_DESCRIPTION_LENGTH
+				|| this.newConversation.description.length > maxDescriptionLength
 		},
 
 		isFilled() {

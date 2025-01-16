@@ -27,7 +27,7 @@
 				:loading="isDescriptionLoading"
 				:edit-button-aria-label="t('spreed', 'Edit conversation description')"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				:max-length="CONVERSATION.MAX_DESCRIPTION_LENGTH"
+				:max-length="maxDescriptionLength"
 				multiline
 				use-markdown
 				@submit-text="handleUpdateDescription"
@@ -53,9 +53,10 @@ import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'
 
 import { CONVERSATION } from '../../constants.js'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
+const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 
 export default {
 	name: 'BasicInfo',
@@ -82,6 +83,7 @@ export default {
 		return {
 			supportsAvatar,
 			CONVERSATION,
+			maxDescriptionLength
 		}
 	},
 
