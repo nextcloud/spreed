@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.13 – 2025-01-16
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Retain names of guests when they disconnect from the High-performance backend
+  [#13982](https://github.com/nextcloud/spreed/issues/13982)
+- fix(search): Add pagination support to the conversation search in unified search
+  [#14032](https://github.com/nextcloud/spreed/issues/14032)
+- fix(setupcheck): Check server times of Webserver nodes and High-performance backend to be in sync
+  [#14014](https://github.com/nextcloud/spreed/issues/14014)
+- fix(moderation): Allow promoting self-joined users
+  [#14080](https://github.com/nextcloud/spreed/issues/14080)
+
 ## 18.0.13 – 2024-11-07
 ### Changed
 - Update translations
