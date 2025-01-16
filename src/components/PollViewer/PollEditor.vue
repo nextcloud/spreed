@@ -130,7 +130,7 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { useStore } from '../../composables/useStore.js'
-import { POLL } from '../../constants.js'
+import { POLL } from '../../enums.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
@@ -193,7 +193,7 @@ const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
  * Remove a previously added option
  * @param index option index
  */
-function deleteOption(index) {
+function deleteOption(index: number) {
 	pollForm.options.splice(index, 1)
 }
 
@@ -230,7 +230,7 @@ function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
 		isOpenedFromDraft.value = true
 	}
 
-	if (pollsStore.drafts[props.token][id]) {
+	if (id && pollsStore.drafts[props.token][id]) {
 		fillPollForm(pollsStore.drafts[props.token][id])
 	}
 }
