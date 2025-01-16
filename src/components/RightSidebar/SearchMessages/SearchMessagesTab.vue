@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import debounce from 'debounce'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import type { Route } from 'vue-router'
 
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
@@ -29,6 +29,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
+import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.js'
@@ -63,7 +64,11 @@ const participants = computed<UserFilterObject>(() => {
 		}))
 })
 
+// initialize navigation
+const searchMessagesTab = ref(null)
 const searchBox = ref(null)
+
+const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
 {
@@ -173,8 +178,9 @@ async function fetchSearchResults(isNew = true) {
 	isFetchingResults.value = true
 
 	try {
-		// cancel the previous search request
+		// cancel the previous search request and reset the navigation
 		cancelSearchFn()
+		resetNavigation()
 
 		const { request, cancel } = CancelableRequest(searchMessages) as SearchMessageCancelableRequest
 		cancelSearchFn = cancel
@@ -228,6 +234,7 @@ async function fetchSearchResults(isNew = true) {
 				}
 			})
 			)
+			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
 		if (CancelableRequest.isCancel(exception)) {
@@ -244,7 +251,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 </script>
 
 <template>
-	<div class="search-messages-tab">
+	<div ref="searchMessagesTab" class="search-messages-tab">
 		<div class="search-form">
 			<div class="search-form__main">
 				<div class="search-form__search-box-wrapper">
