@@ -648,7 +648,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		}
 
 		try {
-			$invite = $this->invitationMapper->getByRemoteServerAndAccessToken($remoteServerUrl, $sharedSecret);
+			$invite = $this->invitationMapper->getByRemoteServerAndAccessToken($payload['remoteServerUrl'], $sharedSecret);
 			return $invite->getInviterCloudId();
 		} catch (DoesNotExistException) {
 		}
