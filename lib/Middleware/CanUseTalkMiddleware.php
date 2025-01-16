@@ -34,6 +34,8 @@ use OCP\IUserSession;
 class CanUseTalkMiddleware extends Middleware {
 	public const TALK_DESKTOP_MIN_VERSION = '0.6.0';
 	public const TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT = '0.16.0';
+	public const TALK_DESKTOP_MIN_VERSION_E2EE_CALLS = '1.1.0';
+
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
 	public const TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
 	public const TALK_ANDROID_MIN_VERSION_E2EE_CALLS = '22.0.0';
@@ -134,7 +136,9 @@ class CanUseTalkMiddleware extends Middleware {
 			$versionRegex = IRequest::USER_AGENT_TALK_DESKTOP;
 			$minVersion = self::TALK_DESKTOP_MIN_VERSION;
 
-			if ($this->talkConfig->recordingConsentRequired()) {
+			if ($this->talkConfig->isCallEndToEndEncryptionEnabled()) {
+				$minVersion = self::TALK_DESKTOP_MIN_VERSION_E2EE_CALLS;
+			} elseif ($this->talkConfig->recordingConsentRequired()) {
 				$minVersion = self::TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT;
 			}
 		} elseif ($client === 'android') {
@@ -163,6 +167,10 @@ class CanUseTalkMiddleware extends Middleware {
 
 		if (isset($matches[1])) {
 			$clientVersion = $matches[1];
+			if (str_contains($clientVersion, '-')) {
+				// Claim pre-releases being compatible with the final releases
+				$clientVersion = substr($clientVersion, 0, strpos($clientVersion, '-'));
+			}
 
 			// API requirement and safety net
 			if (version_compare($clientVersion, $minVersion, '<')) {
