@@ -49,6 +49,20 @@ const emit = defineEmits<{
 	(event: 'close'): void
 }>()
 
+const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
+const participants = computed<UserFilterObject>(() => {
+	return store.getters.participantsList(token.value)
+		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
+		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
+			id: actorId,
+			displayName,
+			isNoUser: actorType !== 'users',
+			user: actorId,
+			disableMenu: true,
+			showUserStatus: false,
+		}))
+})
+
 const searchBox = ref(null)
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
@@ -76,19 +90,6 @@ const store = useStore()
 const isInCall = useIsInCall()
 
 const token = computed(() => store.getters.getToken())
-const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
-const participants = computed<UserFilterObject>(() => {
-	return store.getters.participantsList(token.value)
-		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
-			id: actorId,
-			displayName,
-			isNoUser: actorType !== 'users',
-			user: actorId,
-			disableMenu: true,
-			showUserStatus: false,
-		}))
-})
 const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
 const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
 
