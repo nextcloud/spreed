@@ -340,37 +340,37 @@ export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-
 
 // Unified Search
 export type MessageSearchResultAttributes = {
-	conversation: string
-	messageId: string
-	actorType: string
-	actorId: string
-	timestamp: string
+	conversation: string,
+	messageId: string,
+	actorType: string,
+	actorId: string,
+	timestamp: string,
 }
 
 export type CoreUnifiedSearchResultEntry = {
-    thumbnailUrl: string;
-    title: string;
-    subline: string;
-    resourceUrl: string;
-    icon: string;
-    rounded: boolean;
-    attributes: MessageSearchResultAttributes;
+	thumbnailUrl: string,
+	title: string,
+	subline: string,
+	resourceUrl: string,
+	icon: string,
+	rounded: boolean,
+	attributes: MessageSearchResultAttributes,
 }
 
 export type UserFilterObject = {
-	id: string
-	displayName: string
-	isNoUser: boolean
-	user: string
-	disableMenu: boolean
-	showUserStatus: boolean
+	id: string,
+	displayName: string,
+	isNoUser: boolean,
+	user: string,
+	disableMenu: boolean,
+	showUserStatus: boolean,
 }
 
 export type CoreUnifiedSearchResult = {
-    name: string;
-    isPaginated: boolean;
-    entries: CoreUnifiedSearchResultEntry[];
-    cursor: number | string | null;
+	name: string,
+	isPaginated: boolean,
+	entries: CoreUnifiedSearchResultEntry[],
+	cursor: number | string | null,
 }
 export type UnifiedSearchResponse = ApiResponseUnwrapped<CoreUnifiedSearchResult>
 
