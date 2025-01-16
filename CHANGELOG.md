@@ -5,6 +5,55 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.2 – 2025-01-16
+### Changed
+- Update translations
+- Update dependencies
+- Clarify the usage of the High-performance backend and warn when it's not configured
+  [#14065](https://github.com/nextcloud/spreed/issues/14065)
+
+### Fixed
+- fix(moderation): Allow promoting self-joined users
+  [#14082](https://github.com/nextcloud/spreed/issues/14082)
+- fix(firstrun): Create default conversations when loading the dashboard
+  [#14089](https://github.com/nextcloud/spreed/issues/14089)
+- fix(archive): Don't add asterix to title for unread messages in archived conversations
+  [#14102](https://github.com/nextcloud/spreed/issues/14102)
+
+## 19.0.12 – 2025-01-16
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Retain names of guests when they disconnect from the High-performance backend
+  [#13983](https://github.com/nextcloud/spreed/issues/13983)
+- fix(search): Add pagination support to the conversation search in unified search
+  [#14033](https://github.com/nextcloud/spreed/issues/14033)
+- fix(setupcheck): Check server times of Webserver nodes and High-performance backend to be in sync
+  [#14015](https://github.com/nextcloud/spreed/issues/14015)
+- fix(moderation): Allow promoting self-joined users
+  [#14081](https://github.com/nextcloud/spreed/issues/14081)
+- fix(calls): Fix "Talk while muted" toast
+  [#14026](https://github.com/nextcloud/spreed/issues/14026)
+- fix(firstrun): Create default conversations when loading the dashboard
+  [#14090](https://github.com/nextcloud/spreed/issues/14090)
+
+## 18.0.14 – 2025-01-16
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Retain names of guests when they disconnect from the High-performance backend
+  [#13982](https://github.com/nextcloud/spreed/issues/13982)
+- fix(search): Add pagination support to the conversation search in unified search
+  [#14032](https://github.com/nextcloud/spreed/issues/14032)
+- fix(setupcheck): Check server times of Webserver nodes and High-performance backend to be in sync
+  [#14014](https://github.com/nextcloud/spreed/issues/14014)
+- fix(moderation): Allow promoting self-joined users
+  [#14080](https://github.com/nextcloud/spreed/issues/14080)
+
 ## 20.1.1 – 2024-12-19
 ### Changed
 - Update translations
