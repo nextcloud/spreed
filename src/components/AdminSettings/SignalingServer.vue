@@ -237,6 +237,14 @@ export default {
 					{ caption: t('spreed', 'WebSocket URL'), description: signalingTest.url },
 					{ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') },
 				]
+				if (signalingTest.hasFeature('hello-v2')) {
+					// additionally verify hello-v1 ticket
+					const signalingTestV1 = createConnection(settings, url, true)
+					await signalingTestV1.connect()
+					this.signalingTestInfo.push(
+						{ caption: t('spreed', '"Hello" response'), description: 'OK' },
+					)
+				}
 			} catch (exception) {
 				console.error(exception)
 				this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
