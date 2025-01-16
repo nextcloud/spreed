@@ -20,6 +20,10 @@ async function initialize() {
 
 	await Olm.init({
 		locateFile: () => {
+			if (IS_DESKTOP) {
+				return wasmFile
+			}
+			// FIXME this is a dirty hack and should be properly fixed so it does not break when changing the webpack config in a unknown way.
 			return generateFilePath('spreed', 'js', wasmFile.split('/').pop())
 		},
 	})
