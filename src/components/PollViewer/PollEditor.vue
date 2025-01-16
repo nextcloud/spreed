@@ -94,7 +94,7 @@
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
-				<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
 					<template #icon>
 						<IconFileDownload :size="20" />
 					</template>
@@ -193,7 +193,7 @@ const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
  * Remove a previously added option
  * @param index option index
  */
-function deleteOption(index) {
+function deleteOption(index: number) {
 	pollForm.options.splice(index, 1)
 }
 
@@ -230,7 +230,7 @@ function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
 		isOpenedFromDraft.value = true
 	}
 
-	if (pollsStore.drafts[props.token][id]) {
+	if (id && pollsStore.drafts[props.token][id]) {
 		fillPollForm(pollsStore.drafts[props.token][id])
 	}
 }
