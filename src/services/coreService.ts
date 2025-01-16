@@ -10,6 +10,8 @@ import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.js'
 import type {
 	TaskProcessingResponse,
+	UnifiedSearchResponse,
+	SearchMessagePayload,
 } from '../types/index.ts'
 
 const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
@@ -22,15 +24,6 @@ type SearchPayload = {
 	onlyUsers?: boolean
 	forceTypes?: typeof SHARE.TYPE[keyof typeof SHARE.TYPE][]
 }
-
-type SearchMessagePayload = {
-	term: string,
-	person?: string,
-	since?: string,
-	until?: string,
-	cursor?: number,
-	limit?: number,
-	conversation?: string }
 
 /**
  * Fetch possible conversations
@@ -72,11 +65,11 @@ const deleteTaskById = async function(id: number, options?: object): Promise<nul
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-const searchMessages = async function(params: SearchMessagePayload, options: object) {
-	return axios.get(generateOcsUrl('search/providers/talk-message/search'), {
+const searchMessages = async function(params: SearchMessagePayload, options: object): UnifiedSearchResponse {
+	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {
 		...options,
 		params,
-	}).catch(() => {})
+	})
 }
 
 export {

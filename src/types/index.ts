@@ -312,3 +312,49 @@ export type setSipSettingsParams = Required<operations['settings-setsip-settings
 export type setSipSettingsResponse = ApiResponse<operations['settings-setsip-settings']['responses'][200]['content']['application/json']>
 export type setUserSettingsParams = Required<operations['settings-set-user-setting']>['requestBody']['content']['application/json']
 export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-setting']['responses'][200]['content']['application/json']>
+
+// Unified Search
+export type MessageSearchResultAttributes = {
+	conversation: string
+	messageId: string
+	actorType: string
+	actorId: string
+	timestamp: string
+}
+
+export type CoreUnifiedSearchResultEntry = {
+    thumbnailUrl: string;
+    title: string;
+    subline: string;
+    resourceUrl: string;
+    icon: string;
+    rounded: boolean;
+    attributes: MessageSearchResultAttributes;
+}
+
+export type UserFilterObject = {
+	id: string
+	displayName: string
+	isNoUser: boolean
+	user: string
+	disableMenu: boolean
+	showUserStatus: boolean
+}
+
+export type CoreUnifiedSearchResult = {
+    name: string;
+    isPaginated: boolean;
+    entries: CoreUnifiedSearchResultEntry[];
+    cursor: number | string | null;
+}
+export type UnifiedSearchResponse = ApiResponseUnwrapped<CoreUnifiedSearchResult>
+
+export type SearchMessagePayload = {
+	term: string,
+	person?: string,
+	since?: string | null,
+	until?: string | null,
+	cursor?: number | string | null,
+	limit?: number,
+	from?: string
+}

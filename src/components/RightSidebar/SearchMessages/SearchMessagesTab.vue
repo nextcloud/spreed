@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import debounce from 'debounce'
-import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
 
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
@@ -31,37 +31,16 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
+import { ATTENDEE } from '../../../constants.js'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
+import {
+	CoreUnifiedSearchResultEntry,
+	UserFilterObject,
+	SearchMessagePayload,
+	UnifiedSearchResponse,
+} from '../../../types/index.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
-
-type UserFilterObject = {
-	id: string
-	displayName: string
-	isNoUser: boolean
-	user: string
-	disableMenu: boolean
-	showUserStatus: boolean
-}
-
-type MessageSearchResultAttributes = {
-	conversation: string
-	messageId: string
-	actorType: string
-	actorId: string
-	timestamp: string
-}
-
-type MessageSearchResultEntry = {
-	subline: string
-	thumbnailUrl: string
-	title: string
-	resourceUrl: string
-	icon: string
-	rounded: boolean
-	attributes: MessageSearchResultAttributes
-	to: Route
-}
 
 const emit = defineEmits<{
 	(event: 'close'): void
@@ -69,13 +48,23 @@ const emit = defineEmits<{
 
 const searchBox = ref(null)
 const isFocused = ref(false)
-const searchResults = ref<MessageSearchResultEntry[]>([])
+const searchResults = ref<(CoreUnifiedSearchResultEntry &
+{
+	to: {
+		name: string;
+		hash: string;
+		params: {
+			token: string;
+			skipLeaveWarning: boolean;
+		};
+	}
+})[]>([])
 const searchText = ref('')
 const fromUser = ref<UserFilterObject | null>(null)
 const sinceDate = ref<Date | null>(null)
 const untilDate = ref<Date | null>(null)
 const searchLimit = ref(10)
-const searchCursor = ref(0)
+const searchCursor = ref<number | string | null>(0)
 const searchDetailsOpened = ref(false)
 const isFetchingResults = ref(false)
 const isSearchExhausted = ref(false)
@@ -87,6 +76,7 @@ const token = computed(() => store.getters.getToken())
 const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)
+		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
 		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
 			id: actorId,
 			displayName,
@@ -127,7 +117,7 @@ watch(searchText, (value) => {
  * Cancel search and cleanup the search fields and results.
  */
 function abortSearch() {
-	cancelSearch.value('canceled')
+	cancelSearchFn()
 	searchText.value = ''
 	fromUser.value = null
 	sinceDate.value = null
@@ -151,24 +141,32 @@ function fetchNewSearchResult() {
 	return fetchSearchResults(true)
 }
 
-const cancelSearch = ref((cancel: string) => {})
+let cancelSearchFn = () => {}
+
+type SearchMessageCancelableRequest = {
+	request: (payload: SearchMessagePayload) => UnifiedSearchResponse,
+	cancel: () => void,
+}
 
 /**
  * @param [isNew=true] Is it a new search (search parameters changed)?
  * Fetch the search results from the server
  */
 async function fetchSearchResults(isNew = true) {
+	const term = searchText.value.trim()
 	// Don't search if the search text is empty
-	if (searchText.value.trim().length === 0) {
+	if (term.length === 0) {
 		return
 	}
 
 	isFetchingResults.value = true
 
 	try {
-		cancelSearch.value('canceled')
-		const { request, cancel } = CancelableRequest(searchMessages)
-		cancelSearch.value = cancel
+		// cancel the previous search request
+		cancelSearchFn()
+
+		const { request, cancel } = CancelableRequest(searchMessages) as SearchMessageCancelableRequest
+		cancelSearchFn = cancel
 
 		if (isNew) {
 			searchCursor.value = 0
@@ -177,18 +175,17 @@ async function fetchSearchResults(isNew = true) {
 			searchResults.value = []
 		}
 
-		const term = searchText.value.trim()
 		if (term.length === 0 && !fromUser.value && !sinceDate.value && !untilDate.value) {
 			return
 		}
 		const response = await request({
-			term: term.length !== 0 ? term : null,
+			term,
 			person: fromUser.value?.id,
-			since: sinceDate.value?.toISOString(),
-			until: untilDate.value?.toISOString(),
+			since: !isNaN(sinceDate.value) ? sinceDate.value?.toISOString() : null,
+			until: !isNaN(untilDate.value) ? untilDate.value?.toISOString() : null,
 			limit: searchLimit.value,
 			cursor: searchCursor.value || null,
-			conversation: token.value,
+			from: `/call/${token.value}`,
 		})
 
 		const data = response?.data?.ocs?.data
@@ -206,7 +203,7 @@ async function fetchSearchResults(isNew = true) {
 				}
 			}
 
-			searchResults.value = searchResults.value.concat(entries.map((entry : Omit<MessageSearchResultEntry, 'to'>) => {
+			searchResults.value = searchResults.value.concat(entries.map((entry : CoreUnifiedSearchResultEntry) => {
 				return {
 					...entry,
 					to: {
@@ -271,16 +268,16 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								format="YYYY-MM-DD"
 								type="date"
 								:step="1"
+								:max="new Date()"
 								:aria-label="t('spreed', 'Since')"
 								:label="t('spreed', 'Since')"
-								:minute-step="1"
 								@update:modelValue="debounceFetchSearchResults" />
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
 								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
 								format="YYYY-MM-DD"
 								type="date"
-								:step="1"
+								:max="new Date()"
 								:aria-label="t('spreed', 'Until')"
 								:label="t('spreed', 'Until')"
 								:minute-step="1"
@@ -335,7 +332,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:name="item.title"
 							:source="item.attributes.actorType"
 							:disable-menu="true"
-							token="new" />
+							:token="item.attributes.conversation" />
 					</template>
 					<template #subname>
 						{{ item.subline }}

@@ -335,7 +335,10 @@ export default {
 
 		sidebarTitle() {
 			return this.showSearchMessagesTab
-				? t('spreed', 'Search in {name}', { name: this.conversation.displayName })
+				? t('spreed', 'Search in {name}', { name: this.conversation.displayName }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
 				: this.conversation.displayName
 		}
 	},
