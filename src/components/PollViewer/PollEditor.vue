@@ -6,6 +6,7 @@
 <template>
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
+		:container="container"
 		v-on="$listeners"
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
@@ -31,7 +32,7 @@
 				class="hidden-visually"
 				@change="importPoll">
 			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="props.canCreatePollDrafts" close-after-click @click="openPollDraftHandler">
+				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" close-after-click @click="openPollDraftHandler">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
@@ -102,7 +103,7 @@
 				</NcActionLink>
 			</NcActions>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
-				{{ t('spreed', 'Create poll') }}
+				{{ createPollLabel }}
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -141,6 +142,7 @@ import { validatePollForm } from '../../utils/validatePollForm.ts'
 const props = defineProps<{
 	token: string,
 	canCreatePollDrafts: boolean,
+	container?: string,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -166,6 +168,12 @@ const pollForm = reactive<createPollParams>({
 })
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
+const createPollLabel = computed(() => {
+	return store.getters.getToken() !== props.token
+		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName },
+			undefined, { escape: false, sanitize: false })
+		: t('spreed', 'Create poll')
+})
 
 const isAnonymous = computed({
 	get() {
@@ -289,7 +297,7 @@ async function createPollDraft() {
  * Open a PollDraftHandler dialog
  */
 function openPollDraftHandler() {
-	EventBus.emit('poll-drafts-open')
+	EventBus.emit('poll-drafts-open', { selector: props.container })
 }
 
 /**

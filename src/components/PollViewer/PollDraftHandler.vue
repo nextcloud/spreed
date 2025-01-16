@@ -6,6 +6,7 @@
 <template>
 	<NcDialog class="drafts"
 		:name="t('spreed', 'Poll drafts')"
+		:container="container"
 		size="normal"
 		close-on-click-outside
 		v-on="$listeners"
@@ -56,6 +57,7 @@ import { usePollsStore } from '../../stores/polls.ts'
 const props = defineProps<{
 	token: string,
 	editorOpened?: boolean,
+	container?: string,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -74,7 +76,7 @@ const pollDraftsLoaded = computed(() => pollsStore.draftsLoaded(props.token))
  * @param id poll draft ID
  */
 function openPollEditor(id: number | null) {
-	EventBus.emit('poll-editor-open', { id, fromDrafts: !props.editorOpened })
+	EventBus.emit('poll-editor-open', { id, fromDrafts: !props.editorOpened, selector: props.container })
 }
 </script>
 
