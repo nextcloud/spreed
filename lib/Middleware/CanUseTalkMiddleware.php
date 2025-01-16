@@ -32,8 +32,12 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
-	public const TALK_DESKTOP_MIN_VERSION = '0.6.0';
-	public const TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT = '0.16.0';
+	public const TALK_DESKTOP_MIN_VERSION = '1.0.0';
+	/**
+	 * Actual version was 0.16.0 but otherwise the logic would differ in the version check,
+	 * so we simply bump the recording consent version as well
+	 */
+	public const TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT = '1.0.0';
 	public const TALK_DESKTOP_MIN_VERSION_E2EE_CALLS = '1.1.0';
 
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
