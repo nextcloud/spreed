@@ -28,7 +28,7 @@
 				draft
 				@click="openPollEditor" />
 		</div>
-		<template v-if="props.showCreateButton" #actions>
+		<template v-if="!props.editorOpened" #actions>
 			<NcButton @click="openPollEditor(null)">
 				{{ t('spreed', 'Create new poll') }}
 			</NcButton>
@@ -55,7 +55,7 @@ import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{
 	token: string,
-	showCreateButton?: boolean,
+	editorOpened?: boolean,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -73,8 +73,8 @@ const pollDraftsLoaded = computed(() => pollsStore.draftsLoaded(props.token))
  * Opens poll editor pre-filled from the draft
  * @param id poll draft ID
  */
-function openPollEditor(id: number) {
-	EventBus.emit('poll-editor-open', id)
+function openPollEditor(id: number | null) {
+	EventBus.emit('poll-editor-open', { id, fromDrafts: !props.editorOpened })
 }
 </script>
 

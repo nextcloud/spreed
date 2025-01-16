@@ -45,7 +45,7 @@
 
 		<NcActionButton v-if="canCreatePoll"
 			close-after-click
-			@click="$emit('toggle-poll-editor')">
+			@click="showPollEditor">
 			<template #icon>
 				<PollIcon :size="20" />
 			</template>
@@ -119,7 +119,7 @@ export default {
 		},
 	},
 
-	emits: ['update-new-file-dialog', 'toggle-poll-editor', 'open-file-upload', 'handle-file-share'],
+	emits: ['update-new-file-dialog', 'open-file-upload', 'handle-file-share'],
 
 	computed: {
 		fileTemplateOptions() {
@@ -138,6 +138,10 @@ export default {
 
 		showSmartPicker() {
 			EventBus.emit('smart-picker-open')
+		},
+
+		showPollEditor() {
+			EventBus.emit('poll-editor-open', { id: null, fromDrafts: false })
 		},
 	},
 }

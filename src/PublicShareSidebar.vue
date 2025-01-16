@@ -26,6 +26,7 @@
 				<CallButton v-if="!isInCall" class="call-button" />
 				<CallFailedDialog v-if="connectionFailed" :token="token" />
 				<ChatView is-sidebar />
+				<PollManager />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
@@ -45,6 +46,7 @@ import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
+import PollManager from './components/PollViewer/PollManager.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
 import InternalSignalingHint from './components/RightSidebar/InternalSignalingHint.vue'
 import CallButton from './components/TopBar/CallButton.vue'
@@ -74,6 +76,7 @@ export default {
 		MediaSettings,
 		NcButton,
 		NcLoadingIcon,
+		PollManager,
 		PollViewer,
 		TopBar,
 		TransitionWrapper,

@@ -31,7 +31,7 @@
 				class="hidden-visually"
 				@change="importPoll">
 			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="isModerator" close-after-click @click="openPollDraftHandler">
+				<NcActionButton v-if="props.canCreatePollDrafts" close-after-click @click="openPollDraftHandler">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
@@ -88,7 +88,7 @@
 		</div>
 		<template #actions>
 			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="isModerator" :disabled="!isFilled" @click="createPollDraft">
+				<NcActionButton v-if="props.canCreatePollDrafts" :disabled="!isFilled" @click="createPollDraft">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
@@ -140,6 +140,7 @@ import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
+	canCreatePollDrafts: boolean,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -184,8 +185,6 @@ const isMultipleAnswer = computed({
 	}
 })
 
-const isModerator = computed(() => (store.getters as unknown).isModerator)
-
 const exportPollURI = computed(() => convertToJSONDataURI(pollForm))
 const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
@@ -223,10 +222,11 @@ async function createPoll() {
 /**
  * Pre-fills form from the draft
  * @param id poll draft ID
- * @param isAlreadyOpened poll draft ID
+ * @param fromDrafts whether editor was opened from drafts handler
  */
-function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
-	if (!isAlreadyOpened) {
+function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
+	if (fromDrafts) {
+		// Show 'Back' button, do not reset until closed
 		isOpenedFromDraft.value = true
 	}
 

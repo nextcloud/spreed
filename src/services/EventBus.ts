@@ -11,7 +11,7 @@ import type { ChatMessage, Conversation, Participant } from '../types/index.ts'
 import type { components } from '../types/openapi/openapi-full.ts'
 
 // List of used events across the app
-type Events = Record<EventType, unknown> & {
+export type Events = Record<EventType, unknown> & {
 	'audio-player-ended': number,
 	'conversations-received': { singleConversation: boolean },
 	'deleted-session-detected': void,
@@ -24,7 +24,7 @@ type Events = Record<EventType, unknown> & {
 	'joined-conversation': { token: string },
 	'message-height-changed': { heightDiff: number },
 	'poll-drafts-open': void,
-	'poll-editor-open': number,
+	'poll-editor-open': { id: number | null, fromDrafts: boolean },
 	'refresh-peer-list': void,
 	'retry-message': number,
 	'route-change': { from: Route, to: Route },
