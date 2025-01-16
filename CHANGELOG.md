@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 - fix(firstrun): Create default conversations when loading the dashboard
   [#14090](https://github.com/nextcloud/spreed/issues/14090)
 
-## 18.0.13 – 2025-01-16
+## 18.0.14 – 2025-01-16
 ### Changed
 - Update translations
 - Update dependencies
