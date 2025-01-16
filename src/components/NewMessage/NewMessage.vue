@@ -29,7 +29,6 @@
 				:can-create-poll="canCreatePoll"
 				@open-file-upload="openFileUploadWindow"
 				@handle-file-share="showFilePicker = true"
-				@toggle-poll-editor="togglePollEditor"
 				@update-new-file-dialog="updateNewFileDialog" />
 
 			<!-- Input area -->
@@ -152,17 +151,6 @@
 			</template>
 		</form>
 
-		<!-- Poll creation dialog -->
-		<PollEditor v-if="showPollEditor"
-			ref="pollEditor"
-			:token="token"
-			@close="togglePollEditor" />
-
-		<PollDraftHandler v-if="canCreatePollDrafts && showPollDraftHandler"
-			:token="token"
-			:show-create-button="!showPollEditor"
-			@close="togglePollDraftHandler" />
-
 		<!-- New file creation dialog -->
 		<NewMessageNewFileDialog v-if="showNewFileDialog !== -1"
 			:token="token"
@@ -206,8 +194,6 @@ import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
-import PollDraftHandler from '../PollViewer/PollDraftHandler.vue'
-import PollEditor from '../PollViewer/PollEditor.vue'
 import Quote from '../Quote.vue'
 
 import { useChatMentions } from '../../composables/useChatMentions.ts'
@@ -239,8 +225,6 @@ export default {
 		NewMessageAudioRecorder,
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
-		PollEditor,
-		PollDraftHandler,
 		NewMessageTypingIndicator,
 		Quote,
 		// Icons
@@ -328,8 +312,6 @@ export default {
 			silentChat: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
-			showPollEditor: false,
-			showPollDraftHandler: false,
 			showNewFileDialog: -1,
 			showFilePicker: false,
 			clipboardTimeStamp: null,
@@ -413,10 +395,6 @@ export default {
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-		},
-
-		canCreatePollDrafts() {
-			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
 		},
 
 		currentConversationIsJoined() {
@@ -583,8 +561,6 @@ export default {
 		EventBus.on('upload-discard', this.handleUploadSideEffects)
 		EventBus.on('retry-message', this.handleRetryMessage)
 		EventBus.on('smart-picker-open', this.handleOpenTributeMenu)
-		EventBus.on('poll-editor-open', this.fillPollEditorFromDraft)
-		EventBus.on('poll-drafts-open', this.togglePollDraftHandler)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -597,8 +573,6 @@ export default {
 		EventBus.off('upload-discard', this.handleUploadSideEffects)
 		EventBus.off('retry-message', this.handleRetryMessage)
 		EventBus.off('smart-picker-open', this.handleOpenTributeMenu)
-		EventBus.off('poll-editor-open', this.fillPollEditorFromDraft)
-		EventBus.off('poll-drafts-open', this.togglePollDraftHandler)
 	},
 
 	methods: {
@@ -914,24 +888,6 @@ export default {
 
 		handleRecording(payload) {
 			this.isRecordingAudio = payload
-		},
-
-		togglePollEditor() {
-			this.showPollEditor = !this.showPollEditor
-		},
-
-		fillPollEditorFromDraft(id) {
-			const isPollEditorOpened = this.showPollEditor
-			this.showPollEditor = true
-			this.$nextTick(() => {
-				this.$refs.pollEditor?.fillPollEditorFromDraft(id, isPollEditorOpened)
-				// Wait for editor to be mounted and filled before unmounting drafts dialog
-				this.togglePollDraftHandler()
-			})
-		},
-
-		togglePollDraftHandler() {
-			this.showPollDraftHandler = !this.showPollDraftHandler
 		},
 
 		focusInput() {
