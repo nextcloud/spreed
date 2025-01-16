@@ -10,6 +10,8 @@ import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.js'
 import type {
 	TaskProcessingResponse,
+	UnifiedSearchResponse,
+	SearchMessagePayload,
 } from '../types/index.ts'
 
 const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
@@ -63,8 +65,16 @@ const deleteTaskById = async function(id: number, options?: object): Promise<nul
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
+const searchMessages = async function(params: SearchMessagePayload, options: object): UnifiedSearchResponse {
+	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {
+		...options,
+		params,
+	})
+}
+
 export {
 	autocompleteQuery,
 	getTaskById,
 	deleteTaskById,
+	searchMessages,
 }

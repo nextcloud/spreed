@@ -1158,10 +1158,14 @@ export default {
 
 			// TODO: doesn't work if chat is hidden. Need to store
 			// delayed 'shouldScroll' and call after chat is visible
-			scrollElement.scrollIntoView({
-				behavior: smooth ? 'smooth' : 'auto',
-				block: 'center',
-				inline: 'nearest',
+			// FIXME: because scrollToBottom is also triggered and it is wrapped in $nextTick
+			// We need to trigger this at the same time (nextTick) to avoid focusing and then scrolling to bottom
+			this.$nextTick(() => {
+				scrollElement.scrollIntoView({
+					behavior: smooth ? 'smooth' : 'auto',
+					block: 'center',
+					inline: 'nearest',
+				})
 			})
 
 			if (this.$refs.scroller && !smooth) {

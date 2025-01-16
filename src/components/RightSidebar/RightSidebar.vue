@@ -6,8 +6,8 @@
 <template>
 	<NcAppSidebar v-if="isSidebarAvailable"
 		:open="opened"
-		:name="conversation.displayName"
-		:title="conversation.displayName"
+		:name="sidebarTitle"
+		:title="sidebarTitle"
 		:active.sync="activeTab"
 		:class="'active-tab-' + activeTab"
 		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
@@ -17,97 +17,128 @@
 		@closed="handleClosed">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
-			<MessageText :size="20" />
+			<IconMessageText :size="20" />
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
+		</template>
+		<!-- search in messages button-->
+		<template v-if="!showSearchMessagesTab && getUserId" #secondary-actions>
+			<NcActionButton type="tertiary"
+				:title="t('spreed', 'Search messages')"
+				@click="showSearchMessagesTab = true">
+				<template #icon>
+					<IconMagnify :size="20" />
+				</template>
+			</NcActionButton>
+		</template>
+		<template v-else-if="getUserId" #tertiary-actions>
+			<NcButton type="tertiary"
+				:title="t('spreed', 'Back')"
+				@click="showSearchMessagesTab = false">
+				<template #icon>
+					<IconArrowLeft :size="20" />
+				</template>
+			</NcButton>
 		</template>
 		<template #description>
 			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="isInCall"
-			id="chat"
-			key="chat"
-			:order="1"
-			:name="t('spreed', 'Chat')">
-			<template #icon>
-				<Message :size="20" />
-			</template>
-			<ChatView :is-visible="opened" is-sidebar />
+		<NcAppSidebarTab v-if="showSearchMessagesTab"
+			id="search-messages"
+			key="search-messages"
+			:order="0"
+			:name="t('spreed', 'Search messages')">
+			<SearchMessagesTab @close="showSearchMessagesTab = false" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showParticipantsTab"
-			id="participants"
-			key="participants"
-			ref="participantsTab"
-			:order="2"
-			:name="participantsText">
-			<template #icon>
-				<AccountMultiple :size="20" />
-			</template>
-			<ParticipantsTab :is-active="activeTab === 'participants'"
-				:can-search="canSearchParticipants"
-				:can-add="canAddParticipants" />
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showBreakoutRoomsTab"
-			id="breakout-rooms"
-			key="breakout-rooms"
-			ref="breakout-rooms"
-			:order="3"
-			:name="breakoutRoomsText">
-			<template #icon>
-				<DotsCircle :size="20" />
-			</template>
-			<BreakoutRoomsTab :main-token="mainConversationToken"
-				:main-conversation="mainConversation"
-				:is-active="activeTab === 'breakout-rooms'" />
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showDetailsTab"
-			id="details-tab"
-			key="details-tab"
-			:order="4"
-			:name="t('spreed', 'Details')">
-			<template #icon>
-				<InformationOutline :size="20" />
-			</template>
-			<SetGuestUsername v-if="!getUserId" />
-			<SipSettings v-if="showSIPSettings" :conversation="conversation" />
-			<div v-if="!getUserId" id="app-settings">
-				<div id="app-settings-header">
-					<NcButton type="tertiary" @click="showSettings">
-						<template #icon>
-							<CogIcon :size="20" />
-						</template>
-						{{ t('spreed', 'Settings') }}
-					</NcButton>
+		<template v-else>
+			<NcAppSidebarTab v-if="isInCall"
+				id="chat"
+				key="chat"
+				:order="1"
+				:name="t('spreed', 'Chat')">
+				<template #icon>
+					<IconMessage :size="20" />
+				</template>
+				<ChatView :is-visible="opened" is-sidebar />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showParticipantsTab"
+				id="participants"
+				key="participants"
+				ref="participantsTab"
+				:order="2"
+				:name="participantsText">
+				<template #icon>
+					<IconAccountMultiple :size="20" />
+				</template>
+				<ParticipantsTab :is-active="activeTab === 'participants'"
+					:can-search="canSearchParticipants"
+					:can-add="canAddParticipants" />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showBreakoutRoomsTab"
+				id="breakout-rooms"
+				key="breakout-rooms"
+				ref="breakout-rooms"
+				:order="3"
+				:name="breakoutRoomsText">
+				<template #icon>
+					<IconDotsCircle :size="20" />
+				</template>
+				<BreakoutRoomsTab :main-token="mainConversationToken"
+					:main-conversation="mainConversation"
+					:is-active="activeTab === 'breakout-rooms'" />
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showDetailsTab"
+				id="details-tab"
+				key="details-tab"
+				:order="4"
+				:name="t('spreed', 'Details')">
+				<template #icon>
+					<IconInformationOutline :size="20" />
+				</template>
+				<SetGuestUsername v-if="!getUserId" />
+				<SipSettings v-if="showSIPSettings" :conversation="conversation" />
+				<div v-if="!getUserId" id="app-settings">
+					<div id="app-settings-header">
+						<NcButton type="tertiary" @click="showSettings">
+							<template #icon>
+								<IconCog :size="20" />
+							</template>
+							{{ t('spreed', 'Settings') }}
+						</NcButton>
+					</div>
 				</div>
-			</div>
-		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="showSharedItemsTab"
-			id="shared-items"
-			key="shared-items"
-			ref="sharedItemsTab"
-			:order="5"
-			:name="t('spreed', 'Shared items')">
-			<template #icon>
-				<FolderMultipleImage :size="20" />
-			</template>
-			<SharedItemsTab :active="activeTab === 'shared-items'" />
-		</NcAppSidebarTab>
+			</NcAppSidebarTab>
+			<NcAppSidebarTab v-if="showSharedItemsTab"
+				id="shared-items"
+				key="shared-items"
+				ref="sharedItemsTab"
+				:order="5"
+				:name="t('spreed', 'Shared items')">
+				<template #icon>
+					<IconFolderMultipleImage :size="20" />
+				</template>
+				<SharedItemsTab :active="activeTab === 'shared-items'" />
+			</NcAppSidebarTab>
+		</template>
 	</NcAppSidebar>
 </template>
 
 <script>
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import CogIcon from 'vue-material-design-icons/Cog.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
-import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
-import Message from 'vue-material-design-icons/Message.vue'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
+import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
+import IconMessage from 'vue-material-design-icons/Message.vue'
+import IconMessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -116,13 +147,13 @@ import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import InternalSignalingHint from './InternalSignalingHint.vue'
 import LobbyStatus from './LobbyStatus.vue'
 import ParticipantsTab from './Participants/ParticipantsTab.vue'
+import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.js'
 
@@ -133,21 +164,25 @@ export default {
 		ChatView,
 		InternalSignalingHint,
 		LobbyStatus,
+		NcActionButton,
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcButton,
 		ParticipantsTab,
+		SearchMessagesTab,
 		SetGuestUsername,
 		SharedItemsTab,
 		SipSettings,
 		// Icons
-		AccountMultiple,
-		CogIcon,
-		DotsCircle,
-		FolderMultipleImage,
-		InformationOutline,
-		Message,
-		MessageText,
+		IconAccountMultiple,
+		IconArrowLeft,
+		IconCog,
+		IconDotsCircle,
+		IconFolderMultipleImage,
+		IconInformationOutline,
+		IconMagnify,
+		IconMessage,
+		IconMessageText,
 	},
 
 	props: {
@@ -168,6 +203,7 @@ export default {
 			activeTab: 'participants',
 			contactsLoading: false,
 			unreadNotificationHandle: null,
+			showSearchMessagesTab: false,
 		}
 	},
 
@@ -296,6 +332,15 @@ export default {
 				title: t('spreed', 'Open chat')
 			}
 		},
+
+		sidebarTitle() {
+			return this.showSearchMessagesTab
+				? t('spreed', 'Search in {name}', { name: this.conversation.displayName }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
+				: this.conversation.displayName
+		}
 	},
 
 	watch: {
