@@ -659,6 +659,11 @@ body.talk-in-fullscreen {
 body#body-public {
 	--footer-height: 0;
 }
+
+// Inversed left arrow icon for RTL languages
+body[dir="rtl"] .material-design-icon.arrow-left-icon {
+	transform: scaleX(-1);
+}
 </style>
 
 <style lang="scss" scoped>
