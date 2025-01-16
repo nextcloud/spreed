@@ -732,4 +732,13 @@ class Config {
 	public function isPasswordEnforced(): bool {
 		return $this->appConfig->getAppValueBool('force_passwords');
 	}
+
+	public function isCallEndToEndEncryptionEnabled(): bool {
+		if ($this->getSignalingMode() !== self::SIGNALING_EXTERNAL) {
+			return false;
+		}
+
+		// TODO Default value will be set to true, once all mobile clients support it.
+		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+	}
 }

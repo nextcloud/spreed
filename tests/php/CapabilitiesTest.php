@@ -136,6 +136,7 @@ class CapabilitiesTest extends TestCase {
 						'start-without-media' => false,
 						'max-duration' => 0,
 						'blur-virtual-background' => false,
+						'end-to-end-encryption' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -275,6 +276,7 @@ class CapabilitiesTest extends TestCase {
 						'start-without-media' => false,
 						'max-duration' => 0,
 						'blur-virtual-background' => false,
+						'end-to-end-encryption' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',

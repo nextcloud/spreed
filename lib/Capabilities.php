@@ -119,6 +119,7 @@ class Capabilities implements IPublicCapability {
 		'message-expiration',
 		'reactions',
 		'chat-summary-api',
+		'call-end-to-end-encryption',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -224,6 +225,7 @@ class Capabilities implements IPublicCapability {
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
+					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -335,6 +337,10 @@ class Capabilities implements IPublicCapability {
 		}
 		if (isset($supportedTaskTypes[TextToTextTranslate::ID])) {
 			$capabilities['config']['chat']['has-translation-task-providers'] = true;
+		}
+
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL) {
+			$capabilities['features'][] = 'call-end-to-end-encryption';
 		}
 
 		return [

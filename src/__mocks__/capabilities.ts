@@ -91,6 +91,11 @@ export const mockedCapabilities: Capabilities = {
 			'conversation-creation-password',
 			'call-notification-state-api',
 			'schedule-meeting',
+			// Conditional features
+			'message-expiration',
+			'reactions',
+			'chat-summary-api',
+			'call-end-to-end-encryption',
 		],
 		'features-local': [
 			'favorites',
@@ -126,6 +131,7 @@ export const mockedCapabilities: Capabilities = {
 				'start-without-media': false,
 				'max-duration': 0,
 				'blur-virtual-background': false,
+				'end-to-end-encryption': false,
 			},
 			chat: {
 				'max-length': 32000,
@@ -176,6 +182,7 @@ export const mockedCapabilities: Capabilities = {
 			conversations: [
 				'can-create',
 				'list-style',
+				'description-length',
 			],
 			federation: [
 				'enabled',
