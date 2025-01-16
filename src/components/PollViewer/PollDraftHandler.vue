@@ -12,10 +12,11 @@
 		@update:open="emit('close')">
 		<EmptyView v-if="!pollDrafts.length"
 			class="drafts__empty"
-			:name="t('spreed', 'No poll drafts')"
-			:description="t('spreed', 'There is no poll drafts yet saved for this conversation')">
+			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
+			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
 			<template #icon>
-				<IconPoll />
+				<IconPoll v-if="pollDraftsLoaded" />
+				<NcLoadingIcon v-else />
 			</template>
 		</EmptyView>
 		<div v-else class="drafts__wrapper">
@@ -44,6 +45,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
@@ -65,6 +67,7 @@ const pollsStore = usePollsStore()
  */
 pollsStore.getPollDrafts(props.token)
 const pollDrafts = computed(() => pollsStore.getDrafts(props.token))
+const pollDraftsLoaded = computed(() => pollsStore.draftsLoaded(props.token))
 
 /**
  * Opens poll editor pre-filled from the draft

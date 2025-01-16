@@ -94,7 +94,7 @@
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
-				<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
 					<template #icon>
 						<IconFileDownload :size="20" />
 					</template>
