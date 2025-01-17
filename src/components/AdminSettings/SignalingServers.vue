@@ -5,11 +5,6 @@
 
 <template>
 	<section id="signaling_server" class="signaling-servers section">
-		<NcNoteCard v-if="!servers.length"
-			type="error"
-			:heading="t('spreed', 'Nextcloud Talk setup not complete')"
-			:text="t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.')" />
-
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 		</h2>

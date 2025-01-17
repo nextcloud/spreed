@@ -5,8 +5,6 @@
 
 <template>
 	<div>
-		<SignalingServers />
-		<HostedSignalingServer />
 		<GeneralSettings />
 		<AllowedGroups />
 		<Federation v-if="supportFederation" />
@@ -14,6 +12,8 @@
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
+		<SignalingServers />
+		<HostedSignalingServer />
 		<RecordingServers />
 		<SIPBridge />
 		<MatterbridgeIntegration />
