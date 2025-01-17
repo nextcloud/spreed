@@ -33,7 +33,7 @@ class RecordingBackend implements ISetupCheck {
 			return SetupResult::success();
 		}
 		if (empty($this->talkConfig->getRecordingServers())) {
-			return SetupResult::info($this->l->t('No recording backend configured'));
+			return SetupResult::success();
 		}
 		return SetupResult::error($this->l->t('Using the recording backend requires a High-performance backend.'));
 	}

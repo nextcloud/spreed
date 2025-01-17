@@ -5,7 +5,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 20.1.2 – 2025-01-16
+## 20.1.3 – 2025-01-17
 ### Changed
 - Update translations
 - Update dependencies
