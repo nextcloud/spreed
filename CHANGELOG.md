@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-beta.2 – 2025-01-17
+### Added
+- feat(search): Add message search to the right sidebar
+  [#14125](https://github.com/nextcloud/spreed/issues/14125)
+- feat(conversations): Add sample conversation mechanism
+  [#14124](https://github.com/nextcloud/spreed/issues/14124)
+- feat(calls): Add end-to-end encryption for calls with the High-performance backend
+  [#14005](https://github.com/nextcloud/spreed/issues/14005)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(federation): Fix federation from Nextcloud 30 to 31 with https
+  [#14141](https://github.com/nextcloud/spreed/issues/14141)
+- fix(conversations): Make compact list more compact and avatar bigger
+  [#14118](https://github.com/nextcloud/spreed/issues/14118)
+- fix(signaling): Test actual websocket connection in admin settings
+  [#13973](https://github.com/nextcloud/spreed/issues/13973)
+- fix(archive): Don't add asterix to title for unread messages in archived conversations
+  [#14101](https://github.com/nextcloud/spreed/issues/14101)
+- 
 ## 20.1.2 – 2025-01-16
 ### Changed
 - Update translations
