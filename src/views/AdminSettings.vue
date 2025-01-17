@@ -4,6 +4,10 @@
 -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
+import { loadState } from '@nextcloud/initial-state'
+
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
@@ -18,13 +22,22 @@ import TurnServers from '../components/AdminSettings/TurnServers.vue'
 import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
 
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import type { InitialState } from '../types/index.ts'
 
 const supportFederation = hasTalkFeature('local', 'federation-v1')
+
+const signalingServers = ref<InitialState['spreed']['signaling_servers']>(loadState('spreed', 'signaling_servers', {
+	hideWarning: false,
+	secret: '',
+	servers: [],
+}))
 </script>
 
 <template>
 	<div>
-		<SignalingServers />
+		<SignalingServers :servers.sync="signalingServers.servers"
+			:secret.sync="signalingServers.secret"
+			:hide-warning.sync="signalingServers.hideWarning" />
 		<HostedSignalingServer />
 		<GeneralSettings />
 		<AllowedGroups />
