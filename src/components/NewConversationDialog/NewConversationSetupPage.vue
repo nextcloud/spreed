@@ -79,6 +79,7 @@ import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
+const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 export default {
 
 	name: 'NewConversationSetupPage',
@@ -143,10 +144,10 @@ export default {
 		},
 
 		descriptionErrorLabel() {
-			if (this.conversationDescription.length <= CONVERSATION.MAX_DESCRIPTION_LENGTH) {
+			if (this.conversationDescription.length <= maxDescriptionLength) {
 				return
 			}
-			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_DESCRIPTION_LENGTH })
+			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: maxDescriptionLength })
 		},
 
 		isPublic: {
