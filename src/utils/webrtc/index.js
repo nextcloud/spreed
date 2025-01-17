@@ -23,6 +23,7 @@ import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
 import { isSafari } from '../browserCheck.ts'
 import CancelableRequest from '../cancelableRequest.js'
+import Encryption from '../e2ee/encryption.js'
 import Signaling from '../signaling.js'
 import SignalingTypingHandler from '../SignalingTypingHandler.js'
 
@@ -44,6 +45,8 @@ const signalingTypingHandler = enableTypingIndicators ? new SignalingTypingHandl
 let cancelFetchSignalingSettings = null
 let signaling = null
 let tokensInSignaling = {}
+/** @type {Encryption} */
+let encryption = null
 
 /**
  * @param {string} token The token of the conversation to get the signaling settings for
@@ -112,6 +115,10 @@ async function connectSignaling(token) {
 		}
 		signaling.disconnect()
 		signaling = null
+		if (encryption) {
+			encryption.close()
+			encryption = null
+		}
 
 		tokensInSignaling = {}
 	}
@@ -125,6 +132,26 @@ async function connectSignaling(token) {
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
+
+		if (encryption) {
+			encryption.close()
+			encryption = null
+		}
+
+		if (Encryption.isEnabled()) {
+			let supported
+			try {
+				supported = await Encryption.isSupported()
+			} catch (e) {
+				console.error('Encryption is not supported', e)
+			}
+			if (supported) {
+				encryption = new Encryption(signaling)
+				if (webRtc) {
+					encryption.setWebRtc(webRtc)
+				}
+			}
+		}
 	} else {
 		signaling.setSettings(settings)
 	}
@@ -171,6 +198,9 @@ function setupWebRtc() {
 	}
 
 	webRtc = initWebRtc(signaling, callParticipantCollection, localCallParticipantModel)
+	if (encryption) {
+		encryption.setWebRtc(webRtc)
+	}
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 

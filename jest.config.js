@@ -67,6 +67,7 @@ module.exports = {
 		'\\.(css|scss)$': 'jest-transform-stub',
 		'^.+\\.svg(\\?raw)?$': '<rootDir>/src/__mocks__/svg.js',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
+		'@matrix-org/olm/(.*).wasm$': '<rootDir>/node_modules/@matrix-org/olm/$1.js',
 	},
 
 	transform: {
