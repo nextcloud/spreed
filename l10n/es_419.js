@@ -36,6 +36,7 @@ OC.L10N.register(
     "Disabled" : "Deshabilitado",
     "Permissions" : "Permisos",
     "General settings" : "Configuraciones generales",
+    "Enable encryption" : "Habilitar encripción",
     "Language" : "Idioma",
     "Country" : "País",
     "Status" : "Estatus",

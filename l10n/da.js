@@ -339,6 +339,7 @@ OC.L10N.register(
     "Integration into other apps" : "Integration med andre apps",
     "Allow conversations on files" : "Tillad samtaler om filer",
     "Allow conversations on public shares for files" : "Tillad samtaler om offentlige delinger af filer",
+    "Enable encryption" : "Slå kryptering til",
     "All messages" : "Alle beskeder",
     "@-mentions only" : "Kun når nævnt med @",
     "Off" : "Slået fra",
