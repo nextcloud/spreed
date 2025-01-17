@@ -43,10 +43,22 @@
 			</NcPopover>
 		</div>
 
-		<LocalAudioControlButton :token="token"
-			:conversation="conversation"
-			:model="model"
-			type="tertiary" />
+		<NcPopover :boundary="boundaryElement"
+			:show-triggers="[]"
+			:hide-triggers="['click']"
+			:auto-hide="false"
+			:focus-trap="false"
+			:shown="speakingWhileMutedWarner?.showPopup">
+			<template #trigger>
+				<LocalAudioControlButton :token="token"
+					:conversation="conversation"
+					:model="model"
+					type="tertiary" />
+			</template>
+			<div class="hint">
+				<span>{{ speakingWhileMutedWarner?.message }}</span>
+			</div>
+		</NcPopover>
 
 		<LocalVideoControlButton :token="token"
 			:conversation="conversation"
@@ -182,6 +194,7 @@ export default {
 	data() {
 		return {
 			screenSharingMenuOpen: false,
+			speakingWhileMutedWarner: null,
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
 			qualityWarningInGracePeriodTimeout: null,
@@ -533,7 +546,7 @@ export default {
 }
 
 .hint {
-	padding: 12px;
+	padding: calc(3 * var(--default-grid-baseline));
 	max-width: 300px;
 	text-align: left;
 	&__actions {
