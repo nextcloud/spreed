@@ -145,6 +145,11 @@ body[data-theme-dark] .mention-bubble .icon-mail-forced-white.mention-bubble__ic
 	background-color: #3B3B3B;
 }
 
+/* Invert the icon direction */
+body[dir="rtl"] .bidirectional-icon {
+	transform: scaleX(-1);
+}
+
 .user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
 .user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
 .user-bubble__avatar .icon-mail-forced-white.avatar-class-icon,
