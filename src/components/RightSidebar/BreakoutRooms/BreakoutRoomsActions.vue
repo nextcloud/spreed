@@ -62,7 +62,7 @@
 				type="secondary"
 				@click="switchToBreakoutRoom">
 				<template #icon>
-					<ArrowRight :size="20" />
+					<ArrowRight class="bidirectional-icon" :size="20" />
 				</template>
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>

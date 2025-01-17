@@ -156,7 +156,7 @@
 		<template v-else-if="item.token" #actions>
 			<NcActionButton key="join-conversation" close-after-click @click="onActionClick">
 				<template #icon>
-					<IconArrowRight :size="16" />
+					<IconArrowRight class="bidirectional-icon" :size="16" />
 				</template>
 				{{ t('spreed', 'Join conversation') }}
 			</NcActionButton>
