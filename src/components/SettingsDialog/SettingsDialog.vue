@@ -203,6 +203,12 @@
 						{{ t('spreed', 'Raise or lower hand') }}
 					</dd>
 				</div>
+				<div>
+					<dt><kbd>{{ t('spreed', 'Mouse wheel') }}</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Zoom-in / zoom-out a screen share') }}
+					</dd>
+				</div>
 			</dl>
 		</NcAppSettingsSection>
 	</NcAppSettingsDialog>

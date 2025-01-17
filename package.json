@@ -59,6 +59,7 @@
     "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "mockconsole": "0.0.1",
+    "panzoom": "^9.4.3",
     "pinia": "^2.3.0",
     "ua-parser-js": "^2.0.0",
     "util": "^0.12.5",
