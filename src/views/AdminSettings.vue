@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { loadState } from '@nextcloud/initial-state'
 
@@ -31,6 +31,7 @@ const signalingServers = ref<InitialState['spreed']['signaling_servers']>(loadSt
 	secret: '',
 	servers: [],
 }))
+const hasSignalingServers = computed(() => signalingServers.value.servers.length > 0)
 </script>
 
 <template>
@@ -38,16 +39,16 @@ const signalingServers = ref<InitialState['spreed']['signaling_servers']>(loadSt
 		<SignalingServers :servers.sync="signalingServers.servers"
 			:secret.sync="signalingServers.secret"
 			:hide-warning.sync="signalingServers.hideWarning" />
-		<HostedSignalingServer />
-		<GeneralSettings />
+		<HostedSignalingServer :has-signaling-servers="hasSignalingServers" />
+		<GeneralSettings :has-signaling-servers="hasSignalingServers" />
 		<AllowedGroups />
 		<Federation v-if="supportFederation" />
 		<BotsSettings />
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
-		<RecordingServers />
-		<SIPBridge />
+		<RecordingServers :has-signaling-servers="hasSignalingServers" />
+		<SIPBridge :has-signaling-servers="hasSignalingServers" />
 		<MatterbridgeIntegration />
 	</div>
 </template>

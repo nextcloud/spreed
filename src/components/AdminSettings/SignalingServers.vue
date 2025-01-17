@@ -82,7 +82,6 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 
 import { SIGNALING } from '../../constants.js'
-import { EventBus } from '../../services/EventBus.ts'
 import { InitialState } from '../../types/index.ts'
 
 const isCacheConfigured = loadState('spreed', 'has_cache_configured')
@@ -177,7 +176,6 @@ function updateServers() {
 	}), {
 		success: () => {
 			showSuccess(t('spreed', 'High-performance backend settings saved'))
-			EventBus.emit('signaling-servers-updated', serversProxy.value)
 			loading.value = false
 		},
 	})
