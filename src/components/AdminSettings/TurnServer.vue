@@ -89,7 +89,7 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { isCertificateValid } from '../../services/certificateService.js'
+import { isCertificateValid } from '../../services/certificateService.ts'
 
 export default {
 	name: 'TurnServer',
