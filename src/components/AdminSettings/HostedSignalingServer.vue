@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<section v-if="showForm"
+	<section v-if="!hasSignalingServers || trialAccount.length !== 0"
 		id="hosted_signaling_server"
 		class="hosted-signaling section">
 		<h2>
@@ -140,6 +140,13 @@ export default {
 		NcTextField,
 	},
 
+	props: {
+		hasSignalingServers: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
 			hostedHPBNextcloudUrl: '',
@@ -209,14 +216,6 @@ export default {
 
 		this.hostedHPBLanguage = this.languages.find(language => language.code === state.language) ?? this.languages[0]
 		this.hostedHPBCountry = this.countries.find(country => country.code === state.country) ?? this.countries[0]
-
-		const signaling = loadState('spreed', 'signaling_servers')
-		this.updateSignalingServers(signaling.servers)
-		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
-	},
-
-	beforeDestroy() {
-		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -255,10 +254,6 @@ export default {
 			} finally {
 				this.loading = false
 			}
-		},
-
-		updateSignalingServers(servers) {
-			this.showForm = this.trialAccount.length !== 0 || servers.length === 0
 		},
 	},
 }
