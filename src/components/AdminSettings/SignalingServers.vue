@@ -72,8 +72,9 @@
 	</section>
 </template>
 
-<script>
+<script setup lang="ts">
 import debounce from 'debounce'
+import { ref, onBeforeUnmount } from 'vue'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
@@ -91,96 +92,72 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.ts'
+import type { InitialState } from '../../types/index.ts'
 
-export default {
-	name: 'SignalingServers',
+const isCacheConfigured = loadState('spreed', 'has_cache_configured')
+const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
 
-	components: {
-		NcButton,
-		NcCheckboxRadioSwitch,
-		NcNoteCard,
-		NcPasswordField,
-		Plus,
-		SignalingServer,
-		TransitionWrapper,
-	},
+const state = loadState<InitialState['spreed']['signaling_servers']>('spreed', 'signaling_servers')
+const servers = ref(state.servers ?? [])
+const secret = ref(state.secret ?? '')
+const hideWarning = ref(state.hideWarning ?? false)
 
-	data() {
-		return {
-			servers: [],
-			secret: '',
-			hideWarning: false,
-			loading: false,
-			saved: false,
-			isCacheConfigured: loadState('spreed', 'has_cache_configured'),
-			isClusteredMode: loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
-			debounceUpdateServers: () => {},
-		}
-	},
+const loading = ref(false)
 
-	beforeMount() {
-		this.debounceUpdateServers = debounce(this.updateServers, 1000)
-		const state = loadState('spreed', 'signaling_servers')
-		this.servers = state.servers
-		this.secret = state.secret
-		this.hideWarning = state.hideWarning
-	},
+const debounceUpdateServers = debounce(updateServers, 1000)
 
-	beforeDestroy() {
-		this.debounceUpdateServers.clear?.()
-	},
+onBeforeUnmount(() => {
+	debounceUpdateServers.clear?.()
+})
 
-	methods: {
-		t,
-		removeServer(index) {
-			this.servers.splice(index, 1)
-			this.debounceUpdateServers()
+/**
+ * Removes HPB server from the list
+ * @param index index of server (remnant from clustered setup, should be always 0)
+ */
+function removeServer(index: number) {
+	servers.value.splice(index, 1)
+	debounceUpdateServers()
+}
+
+/**
+ * Adds HPB server to the list
+ */
+function newServer() {
+	servers.value.push({ server: '', verify: true })
+}
+
+/**
+ * Update hideWarning value on server
+ */
+function updateHideWarning() {
+	loading.value = true
+
+	OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', hideWarning.value ? 'yes' : 'no', {
+		success: () => {
+			showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
+			loading.value = false
 		},
+	})
+}
 
-		newServer() {
-			this.servers.push({
-				server: '',
-				verify: true,
-			})
+/**
+ * Update servers list / secret value on server
+ */
+function updateServers() {
+	loading.value = true
+
+	servers.value = servers.value.filter(server => server.server.trim() !== '')
+
+	OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
+		servers: servers.value,
+		secret: secret.value,
+	}), {
+		success: () => {
+			showSuccess(t('spreed', 'High-performance backend settings saved'))
+			EventBus.emit('signaling-servers-updated', servers.value)
+			loading.value = false
 		},
-
-		updateHideWarning() {
-			this.loading = true
-
-			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
-				success: () => {
-					showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
-					this.loading = false
-					this.toggleSave()
-				},
-			})
-		},
-
-		async updateServers() {
-			this.loading = true
-
-			this.servers = this.servers.filter(server => server.server.trim() !== '')
-
-			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-				servers: this.servers,
-				secret: this.secret,
-			}), {
-				success: () => {
-					showSuccess(t('spreed', 'High-performance backend settings saved'))
-					EventBus.emit('signaling-servers-updated', this.servers)
-					this.loading = false
-					this.toggleSave()
-				},
-			})
-		},
-
-		toggleSave() {
-			this.saved = true
-			setTimeout(() => {
-				this.saved = false
-			}, 3000)
-		},
-	},
+	})
 }
 </script>
 

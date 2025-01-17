@@ -3,24 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div>
-		<SignalingServers />
-		<HostedSignalingServer />
-		<GeneralSettings />
-		<AllowedGroups />
-		<Federation v-if="supportFederation" />
-		<BotsSettings />
-		<WebServerSetupChecks />
-		<StunServers />
-		<TurnServers />
-		<RecordingServers />
-		<SIPBridge />
-		<MatterbridgeIntegration />
-	</div>
-</template>
-
-<script>
+<script setup lang="ts">
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
@@ -37,27 +20,21 @@ import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChec
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 const supportFederation = hasTalkFeature('local', 'federation-v1')
-
-export default {
-	name: 'AdminSettings',
-
-	components: {
-		AllowedGroups,
-		BotsSettings,
-		Federation,
-		GeneralSettings,
-		HostedSignalingServer,
-		MatterbridgeIntegration,
-		RecordingServers,
-		SignalingServers,
-		SIPBridge,
-		StunServers,
-		TurnServers,
-		WebServerSetupChecks,
-	},
-
-	setup() {
-		return { supportFederation }
-	}
-}
 </script>
+
+<template>
+	<div>
+		<SignalingServers />
+		<HostedSignalingServer />
+		<GeneralSettings />
+		<AllowedGroups />
+		<Federation v-if="supportFederation" />
+		<BotsSettings />
+		<WebServerSetupChecks />
+		<StunServers />
+		<TurnServers />
+		<RecordingServers />
+		<SIPBridge />
+		<MatterbridgeIntegration />
+	</div>
+</template>

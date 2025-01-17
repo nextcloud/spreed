@@ -42,6 +42,17 @@ export type Capabilities = {
 
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 
+// Initial state
+export type InitialState = {
+	spreed: {
+		'signaling_servers': {
+			hideWarning: boolean,
+			secret: string,
+			servers: { server: string, verify: boolean }[],
+		},
+	},
+}
+
 // Notifications
 type NotificationAction = {
 	label: string,

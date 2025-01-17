@@ -15,6 +15,12 @@ declare global {
 		webkitRequestFullscreen: RequestFullscreen;
 	}
 
+	const OCP: {
+		AppConfig: {
+			setValue: (app: string, key: string, value: string | number | boolean, options?: { success?: () => void, error?: () => void }) => void,
+		},
+	}
+
 	// @nextcloud/webpack-vue-config build globals
 	const appName: string
 	const appVersion: string
