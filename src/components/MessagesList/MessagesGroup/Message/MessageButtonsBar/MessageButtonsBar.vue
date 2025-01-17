@@ -177,7 +177,7 @@
 					<NcActionButton :aria-label="t('spreed', 'Back')"
 						@click.stop="submenu = null">
 						<template #icon>
-							<ArrowLeft />
+							<IconArrowLeft class="bidirectional-icon" />
 						</template>
 						{{ t('spreed', 'Back') }}
 					</NcActionButton>
@@ -230,7 +230,7 @@
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
-					<ArrowLeft :size="20" />
+					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 			</NcButton>
 			<NcButton v-for="emoji in frequentlyUsedEmojis"
@@ -265,7 +265,7 @@ import { toRefs } from 'vue'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
@@ -327,7 +327,7 @@ export default {
 		// Icons
 		AccountIcon,
 		AlarmIcon,
-		ArrowLeft,
+		IconArrowLeft,
 		IconBellOff,
 		CalendarClock,
 		CloseCircleOutline,

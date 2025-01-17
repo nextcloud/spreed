@@ -292,7 +292,7 @@
 						wide
 						@click="showArchived = false">
 						<template #icon>
-							<IconArrowLeft :size="20" />
+							<IconArrowLeft class="bidirectional-icon" :size="20" />
 						</template>
 						{{ t('spreed', 'Back to conversations') }}
 					</NcButton>

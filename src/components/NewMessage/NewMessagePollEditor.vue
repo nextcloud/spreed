@@ -15,7 +15,7 @@
 			:aria-label="t('spreed', 'Back')"
 			@click="goBack">
 			<template #icon>
-				<IconArrowLeft :size="20" />
+				<IconArrowLeft class="bidirectional-icon" :size="20" />
 			</template>
 		</NcButton>
 		<!-- Poll Question -->

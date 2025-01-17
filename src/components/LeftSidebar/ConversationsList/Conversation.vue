@@ -121,7 +121,7 @@
 				<NcActionButton :aria-label="t('spreed', 'Back')"
 					@click.stop="submenu = null">
 					<template #icon>
-						<IconArrowLeft :size="16" />
+						<IconArrowLeft class="bidirectional-icon" :size="16" />
 					</template>
 					{{ t('spreed', 'Back') }}
 				</NcActionButton>
