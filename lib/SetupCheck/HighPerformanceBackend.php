@@ -34,7 +34,11 @@ class HighPerformanceBackend implements ISetupCheck {
 
 	public function run(): SetupResult {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
-			return SetupResult::error(
+			$setupResult = SetupResult::error(...);
+			if ($this->talkConfig->getHideSignalingWarning()) {
+				$setupResult = SetupResult::warning(...);
+			}
+			return $setupResult(
 				$this->l->t('No High-performance backend configured - Running Nextcloud Talk without the High-performance backend only scales for very small calls (max. 2-3 participants). Please set up the High-performance backend to ensure calls with multiple participants work seamlessly.'),
 				'https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend',
 			);
