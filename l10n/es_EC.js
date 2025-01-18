@@ -1176,6 +1176,7 @@ OC.L10N.register(
     "You have new unread messages in the chat." : "Tienes nuevos mensajes no leídos en el chat.",
     "You have been mentioned in the chat." : "Has sido mencionado en el chat.",
     "No results found" : "No se encontraron resultados",
+    "Load more results" : "Cargar más resultados",
     "Projects" : "Proyectos",
     "No shared items" : "No hay elementos compartidos",
     "Search conversations or users" : "Buscar conversaciones o usuarios",
