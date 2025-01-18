@@ -282,6 +282,7 @@ OC.L10N.register(
     "From" : "De",
     "To" : "Al",
     "Calendar" : "Kalendaro",
+    "Attendees" : "Ĉeestontoj",
     "Save" : "Konservi",
     "No results" : "Neniu rezulto",
     "Done" : "Farita",

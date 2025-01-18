@@ -61,6 +61,7 @@ OC.L10N.register(
     "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
     "Calendar" : "Calendario",
+    "Attendees" : "Asistentes",
     "Save" : "Guardar",
     "No results" : "No hay resultados",
     "Copy link" : "Copiar liga",
