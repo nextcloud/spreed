@@ -4,7 +4,7 @@
  */
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.js'
@@ -12,6 +12,7 @@ import type {
 	TaskProcessingResponse,
 	UnifiedSearchResponse,
 	SearchMessagePayload,
+	ContactsMenuResponse,
 } from '../types/index.ts'
 
 const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
@@ -72,9 +73,16 @@ const searchMessages = async function(params: SearchMessagePayload, options: obj
 	})
 }
 
+const getContacts = async function(searchText: string): Promise<ContactsMenuResponse> {
+	return axios.post(generateUrl('/contactsmenu/contacts'), {
+		filter: searchText,
+	})
+}
+
 export {
 	autocompleteQuery,
 	getTaskById,
 	deleteTaskById,
 	searchMessages,
+	getContacts,
 }

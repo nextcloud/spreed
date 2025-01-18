@@ -315,37 +315,37 @@ export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-
 
 // Unified Search
 export type MessageSearchResultAttributes = {
-	conversation: string
-	messageId: string
-	actorType: string
-	actorId: string
+	conversation: string,
+	messageId: string,
+	actorType: string,
+	actorId: string,
 	timestamp: string
 }
 
 export type CoreUnifiedSearchResultEntry = {
-    thumbnailUrl: string;
-    title: string;
-    subline: string;
-    resourceUrl: string;
-    icon: string;
-    rounded: boolean;
-    attributes: MessageSearchResultAttributes;
+    thumbnailUrl: string,
+    title: string,
+    subline: string,
+    resourceUrl: string,
+    icon: string,
+    rounded: boolean,
+    attributes: MessageSearchResultAttributes
 }
 
 export type UserFilterObject = {
-	id: string
-	displayName: string
-	isNoUser: boolean
-	user: string
-	disableMenu: boolean
+	id: string,
+	displayName: string,
+	isNoUser: boolean,
+	user: string,
+	disableMenu: boolean,
 	showUserStatus: boolean
 }
 
 export type CoreUnifiedSearchResult = {
-    name: string;
-    isPaginated: boolean;
-    entries: CoreUnifiedSearchResultEntry[];
-    cursor: number | string | null;
+	name: string,
+	isPaginated: boolean,
+	entries: CoreUnifiedSearchResultEntry[],
+	cursor: number | string | null,
 }
 export type UnifiedSearchResponse = ApiResponseUnwrapped<CoreUnifiedSearchResult>
 
@@ -357,4 +357,29 @@ export type SearchMessagePayload = {
 	cursor?: number | string | null,
 	limit?: number,
 	from?: string
+}
+
+// Contacts menu
+export interface ContactsMenuEntry {
+	id: number | string | null,
+	fullName: string,
+	avatar: string | null,
+	topAction: object | null,
+	actions: object[],
+	lastMessage: '',
+	emailAddresses: string[],
+	profileTitle: string | null,
+	profileUrl: string | null,
+	status: string | null,
+	statusMessage: null | string,
+	statusMessageTimestamp: null | number,
+	statusIcon: null | string,
+	isUser: boolean,
+	uid: null | string
+}
+
+export type ContactsMenuResponse = {
+	data: {
+		contacts: ContactsMenuEntry[],
+	}
 }
