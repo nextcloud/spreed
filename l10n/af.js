@@ -269,6 +269,7 @@ OC.L10N.register(
     "From" : "Van",
     "To" : "Aan",
     "Calendar" : "Kalender",
+    "Attendees" : "Bywoners",
     "Save" : "Stoor",
     "This conversation is read-only" : "Hierdie gesprek is leesalleen",
     "Copy link" : "Kopieer skakel",
