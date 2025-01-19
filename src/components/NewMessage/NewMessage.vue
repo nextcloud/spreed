@@ -146,7 +146,7 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<SendIcon :size="16" />
+						<SendIcon class="bidirectional-icon" :size="16" />
 					</template>
 				</NcButton>
 			</template>

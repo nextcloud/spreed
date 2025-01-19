@@ -15,7 +15,7 @@
 			:aria-label="t('spreed', 'Back')"
 			@click="goBack">
 			<template #icon>
-				<IconArrowLeft :size="20" />
+				<IconArrowLeft class="bidirectional-icon" :size="20" />
 			</template>
 		</NcButton>
 		<!-- Poll Question -->
@@ -337,7 +337,7 @@ function goBack() {
 	&__back-button {
 		position: absolute !important;
 		top: var(--default-grid-baseline);
-		left: var(--default-grid-baseline);
+		inset-inline-start: var(--default-grid-baseline);
 		z-index: 1;
 	}
 }

@@ -60,12 +60,12 @@
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />
-				<IconArrowLeft v-else :size="20" />
+				<IconArrowLeft v-else class="bidirectional-icon" :size="20" />
 			</template>
 			<NcActionButton v-if="isBreakoutRoom"
 				@click="switchToParentRoom">
 				<template #icon>
-					<IconArrowLeft :size="20" />
+					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcActionButton>

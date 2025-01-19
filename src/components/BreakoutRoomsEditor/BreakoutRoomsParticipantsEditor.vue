@@ -42,7 +42,7 @@
 				type="tertiary"
 				@click="goBack">
 				<template #icon>
-					<ArrowLeft :size="20" />
+					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 				{{ t('spreed', 'Back') }}
 			</NcButton>
@@ -92,7 +92,7 @@
 <script>
 import { provide } from 'vue'
 
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
@@ -121,7 +121,7 @@ export default {
 		BreakoutRoomItem,
 		SelectableParticipant,
 		NcButton,
-		ArrowLeft,
+		IconArrowLeft,
 		Delete,
 		NcDialog,
 	},

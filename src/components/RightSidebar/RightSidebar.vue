@@ -35,7 +35,7 @@
 				:title="t('spreed', 'Back')"
 				@click="showSearchMessagesTab = false">
 				<template #icon>
-					<IconArrowLeft :size="20" />
+					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 			</NcButton>
 		</template>

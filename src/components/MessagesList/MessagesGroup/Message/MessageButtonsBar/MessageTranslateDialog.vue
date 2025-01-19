@@ -20,7 +20,7 @@
 					:options="optionsFrom"
 					no-wrap />
 
-				<ArrowRight />
+				<ArrowRight class="bidirectional-icon" />
 
 				<NcSelect v-model="selectedTo"
 					class="translate-dialog__select"
