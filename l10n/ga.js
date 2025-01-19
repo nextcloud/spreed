@@ -1655,6 +1655,8 @@ OC.L10N.register(
     "Space bar" : "Barra spáis",
     "Push to talk or push to mute" : "Brúigh chun cainte nó brú chun balbhaigh",
     "Raise or lower hand" : "Ardaigh nó lámh níos ísle",
+    "Mouse wheel" : "Roth luiche",
+    "Zoom-in / zoom-out a screen share" : "Súmáil isteach / zúmáil amach sciar scáileáin",
     "Choose the folder in which attachments should be saved." : "Roghnaigh an fillteán inar cheart ceangaltáin a shábháil.",
     "Error while setting attachment folder" : "Earráid agus fillteán ceangaltáin á shocrú",
     "Your privacy setting has been saved" : "Sábháladh do shocrú príobháideachta",
