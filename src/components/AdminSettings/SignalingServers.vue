@@ -5,7 +5,7 @@
 
 <template>
 	<section id="signaling_server" class="signaling-servers section">
-		<NcNoteCard v-if="!servers.length"
+		<NcNoteCard v-if="!serversProxy.length"
 			type="error"
 			:heading="t('spreed', 'Nextcloud Talk setup not complete')"
 			:text="t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.')" />
@@ -18,26 +18,21 @@
 			{{ t('spreed', 'The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices.') }}
 		</p>
 
-		<NcNoteCard v-if="servers.length && !isCacheConfigured"
+		<NcNoteCard v-if="serversProxy.length && !isCacheConfigured"
 			type="warning"
 			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend.')" />
 
-		<TransitionWrapper v-if="servers.length"
-			name="fade"
-			tag="ul"
-			group>
-			<SignalingServer v-for="(server, index) in servers"
-				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
-				:index="index"
-				:loading="loading"
-				@remove-server="removeServer"
-				@update:server="debounceUpdateServers"
-				@update:verify="debounceUpdateServers" />
-		</TransitionWrapper>
+		<SignalingServer v-for="(server, index) in serversProxy"
+			:key="`server${index}`"
+			:server.sync="server.server"
+			:verify.sync="server.verify"
+			:index="index"
+			:loading="loading"
+			@remove-server="removeServer"
+			@update:server="debounceUpdateServers"
+			@update:verify="debounceUpdateServers" />
 
-		<NcButton v-if="!servers.length || isClusteredMode"
+		<NcButton v-if="!serversProxy.length || isClusteredMode"
 			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
@@ -48,32 +43,30 @@
 			{{ t('spreed', 'Add High-performance backend server') }}
 		</NcButton>
 
-		<NcPasswordField v-if="servers.length"
-			v-model="secret"
+		<NcPasswordField v-if="serversProxy.length"
+			v-model="secretProxy"
 			class="form__textfield additional-top-margin"
 			name="signaling_secret"
 			as-text
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
-			label-visible
-			@update:model-value="debounceUpdateServers" />
+			label-visible />
 
-		<template v-if="!servers.length">
+		<template v-if="!serversProxy.length">
 			<NcNoteCard type="warning"
 				class="additional-top-margin"
 				:text="t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.')" />
-			<NcCheckboxRadioSwitch v-model="hideWarning"
-				:disabled="loading"
-				@update:model-value="updateHideWarning">
+			<NcCheckboxRadioSwitch v-model="hideWarningProxy" :disabled="loading">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 	</section>
 </template>
 
-<script>
+<script setup lang="ts">
 import debounce from 'debounce'
+import { computed, ref, onBeforeUnmount } from 'vue'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
@@ -87,100 +80,105 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
-import { EventBus } from '../../services/EventBus.ts'
+import { InitialState } from '../../types/index.ts'
 
-export default {
-	name: 'SignalingServers',
+const isCacheConfigured = loadState('spreed', 'has_cache_configured')
+const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
 
-	components: {
-		NcButton,
-		NcCheckboxRadioSwitch,
-		NcNoteCard,
-		NcPasswordField,
-		Plus,
-		SignalingServer,
-		TransitionWrapper,
+const props = defineProps<{
+	hideWarning: boolean,
+	secret: string,
+	servers: { server: string, verify: boolean }[],
+}>()
+
+const emit = defineEmits<{
+	(e: 'update:servers', value: InitialState['spreed']['signaling_servers']['servers']): void
+	(e: 'update:secret', value: InitialState['spreed']['signaling_servers']['secret']): void
+	(e: 'update:hideWarning', value: InitialState['spreed']['signaling_servers']['hideWarning']): void
+}>()
+
+const loading = ref(false)
+
+const serversProxy = computed({
+	get() {
+		return props.servers
 	},
-
-	data() {
-		return {
-			servers: [],
-			secret: '',
-			hideWarning: false,
-			loading: false,
-			saved: false,
-			isCacheConfigured: loadState('spreed', 'has_cache_configured'),
-			isClusteredMode: loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
-			debounceUpdateServers: () => {},
-		}
+	set(value) {
+		emit('update:servers', value)
+		debounceUpdateServers()
+	}
+})
+const secretProxy = computed({
+	get() {
+		return props.secret
 	},
-
-	beforeMount() {
-		this.debounceUpdateServers = debounce(this.updateServers, 1000)
-		const state = loadState('spreed', 'signaling_servers')
-		this.servers = state.servers
-		this.secret = state.secret
-		this.hideWarning = state.hideWarning
+	set(value) {
+		emit('update:secret', value)
+		debounceUpdateServers()
+	}
+})
+const hideWarningProxy = computed({
+	get() {
+		return props.hideWarning
 	},
+	set(value) {
+		emit('update:hideWarning', value)
+		updateHideWarning(value)
+	}
+})
 
-	beforeDestroy() {
-		this.debounceUpdateServers.clear?.()
-	},
+const debounceUpdateServers = debounce(updateServers, 1000)
 
-	methods: {
-		t,
-		removeServer(index) {
-			this.servers.splice(index, 1)
-			this.debounceUpdateServers()
+onBeforeUnmount(() => {
+	debounceUpdateServers.clear?.()
+})
+
+/**
+ * Removes HPB server from the list
+ * @param index index of server (remnant from clustered setup, should be always 0)
+ */
+function removeServer(index: number) {
+	serversProxy.value = serversProxy.value.filter((_item, idx) => idx !== index)
+}
+
+/**
+ * Adds HPB server to the list
+ */
+function newServer() {
+	serversProxy.value.push({ server: '', verify: true })
+}
+
+/**
+ * Update hideWarning value on server
+ * @param value new value
+ */
+function updateHideWarning(value: boolean) {
+	loading.value = true
+	OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', value ? 'yes' : 'no', {
+		success: () => {
+			showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
+			loading.value = false
 		},
+	})
+}
 
-		newServer() {
-			this.servers.push({
-				server: '',
-				verify: true,
-			})
+/**
+ * Update servers list / secret value on server
+ */
+function updateServers() {
+	loading.value = true
+
+	OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
+		servers: serversProxy.value.filter(server => server.server.trim() !== ''),
+		secret: secretProxy.value,
+	}), {
+		success: () => {
+			showSuccess(t('spreed', 'High-performance backend settings saved'))
+			loading.value = false
 		},
-
-		updateHideWarning() {
-			this.loading = true
-
-			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
-				success: () => {
-					showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
-					this.loading = false
-					this.toggleSave()
-				},
-			})
-		},
-
-		async updateServers() {
-			this.loading = true
-
-			this.servers = this.servers.filter(server => server.server.trim() !== '')
-
-			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-				servers: this.servers,
-				secret: this.secret,
-			}), {
-				success: () => {
-					showSuccess(t('spreed', 'High-performance backend settings saved'))
-					EventBus.emit('signaling-servers-updated', this.servers)
-					this.loading = false
-					this.toggleSave()
-				},
-			})
-		},
-
-		toggleSave() {
-			this.saved = true
-			setTimeout(() => {
-				this.saved = false
-			}, 3000)
-		},
-	},
+	})
 }
 </script>
 

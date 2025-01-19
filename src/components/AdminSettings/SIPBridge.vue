@@ -7,7 +7,7 @@
 	<div id="sip-bridge" class="sip-bridge section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<NcNoteCard v-if="!showForm"
+		<NcNoteCard v-if="!hasSignalingServers"
 			type="warning"
 			:text="t('spreed', 'SIP configuration is only possible with a High-performance backend.')" />
 
@@ -110,11 +110,17 @@ export default {
 		NcPasswordField,
 	},
 
+	props: {
+		hasSignalingServers: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
 			loading: false,
 			loadingGroups: false,
-			showForm: true,
 			groups: [],
 			sipGroups: [],
 			dialInInfo: '',
@@ -148,17 +154,11 @@ export default {
 		this.debounceSearchGroup('')
 		this.loading = false
 		this.saveCurrentSetup()
-
-		const signaling = loadState('spreed', 'signaling_servers')
-		this.updateSignalingServers(signaling.servers)
-		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
-
 		this.isDialoutSupported()
 	},
 
 	beforeDestroy() {
 		this.debounceSearchGroup.clear?.()
-		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -228,10 +228,6 @@ export default {
 					this.dialOutSupported = false
 				}
 			}
-		},
-
-		updateSignalingServers(servers) {
-			this.showForm = servers.length > 0
 		},
 	},
 }
