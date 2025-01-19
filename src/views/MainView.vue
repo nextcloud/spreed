@@ -10,6 +10,7 @@
 			<TopBar :is-in-call="isInCall" />
 			<CallView v-if="isInCall" :token="token" />
 			<ChatView v-else />
+			<PollManager />
 			<PollViewer />
 			<CallFailedDialog v-if="connectionFailed" :token="token" />
 		</template>
@@ -23,6 +24,7 @@ import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
+import PollManager from '../components/PollViewer/PollManager.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 
@@ -36,6 +38,7 @@ export default {
 		CallFailedDialog,
 		ChatView,
 		LobbyScreen,
+		PollManager,
 		PollViewer,
 		TopBar,
 	},
