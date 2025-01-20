@@ -537,18 +537,26 @@ class Notifier implements INotifier {
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_FEDERATED_USERS) {
 			try {
-				$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+				$cloudId = $this->cloudIdManager->resolveCloudId($subjectParameters['userId']);
+				$cloudParticipant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $subjectParameters['userId']);
 				$richSubjectUser = [
 					'type' => 'user',
 					'id' => $cloudId->getUser(),
-					'name' => $message->getActorDisplayName(),
+					'name' => $cloudParticipant->getAttendee()->getDisplayName(),
+					'server' => $cloudId->getRemote(),
+				];
+			} catch (ParticipantNotFoundException) {
+				$richSubjectUser = [
+					'type' => 'user',
+					'id' => $cloudId->getUser(),
+					'name' => $cloudId->getDisplayId(),
 					'server' => $cloudId->getRemote(),
 				];
 			} catch (\InvalidArgumentException) {
 				$richSubjectUser = [
 					'type' => 'highlight',
-					'id' => $message->getActorId(),
-					'name' => $message->getActorId(),
+					'id' => $subjectParameters['userId'],
+					'name' => $subjectParameters['userId'],
 				];
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
