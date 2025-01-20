@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>talk_webhook_demo</id>
+	<name>Talk Webhook demo</name>
+	<summary><![CDATA[Copy of old "Call summary bot"]]></summary>
+	<description><![CDATA[Version of the call summary bot before it was migrated to the new events]]></description>
+
+	<version>1.0.0</version>
+	<licence>agpl</licence>
+
+	<author>Joas Schilling</author>
+	<namespace>TalkWebhookDemo</namespace>
+	<category>workflow</category>
+	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
+
+	<dependencies>
+		<nextcloud min-version="31" max-version="31" />
+	</dependencies>
+
+	<repair-steps>
+		<install>
+			<step>OCA\TalkWebhookDemo\Migration\InstallBot</step>
+		</install>
+		<uninstall>
+			<step>OCA\TalkWebhookDemo\Migration\UninstallBot</step>
+		</uninstall>
+	</repair-steps>
+</info>

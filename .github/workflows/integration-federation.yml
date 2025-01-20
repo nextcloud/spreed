@@ -58,14 +58,12 @@ jobs:
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'master'
             host-circles-versions: 'master'
-            host-call-summary-bot-versions: 'main'
             host-notifications-versions: 'master'
             remote-db: 'mysql'
             remote-server-versions: 'stable30'
             remote-spreed-versions: 'stable30'
             remote-guests-versions: 'stable30'
             remote-circles-versions: 'stable30'
-            remote-call-summary-bot-versions: 'main'
             remote-notifications-versions: 'stable30'
           - test-suite: 'federation'
             php-versions: '8.2'
@@ -74,14 +72,12 @@ jobs:
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'master'
             host-circles-versions: 'master'
-            host-call-summary-bot-versions: 'main'
             host-notifications-versions: 'master'
             remote-db: 'mysql'
             remote-server-versions: 'stable30'
             remote-spreed-versions: 'stable30'
             remote-guests-versions: 'stable30'
             remote-circles-versions: 'stable30'
-            remote-call-summary-bot-versions: 'main'
             remote-notifications-versions: 'stable30'
           - test-suite: 'federation'
             php-versions: '8.2'
@@ -90,14 +86,12 @@ jobs:
             host-spreed-versions: 'stable30'
             host-guests-versions: 'stable30'
             host-circles-versions: 'stable30'
-            host-call-summary-bot-versions: 'main'
             host-notifications-versions: 'stable30'
             remote-db: 'mysql'
             remote-server-versions: 'master'
             remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
             remote-guests-versions: 'master'
             remote-circles-versions: 'master'
-            remote-call-summary-bot-versions: 'main'
             remote-notifications-versions: 'master'
 
     services:
@@ -159,13 +153,6 @@ jobs:
           path: host/apps/spreed
           ref: ${{ matrix.host-spreed-versions }}
 
-      - name: Checkout call_summary_bot app - Host
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-        with:
-          repository: nextcloud/call_summary_bot
-          path: host/apps/call_summary_bot
-          ref: ${{ matrix.host-call-summary-bot-versions }}
-
       - name: Checkout circles app - Host
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
@@ -200,13 +187,6 @@ jobs:
         with:
           path: remote/apps/spreed
           ref: ${{ matrix.remote-spreed-versions }}
-
-      - name: Checkout call_summary_bot app - Remote
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-        with:
-          repository: nextcloud/call_summary_bot
-          path: remote/apps/call_summary_bot
-          ref: ${{ matrix.remote-call-summary-bot-versions }}
 
       - name: Checkout circles app - Remote
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -316,7 +296,6 @@ jobs:
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
-          ./occ app:enable --force call_summary_bot
           ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
@@ -329,7 +308,6 @@ jobs:
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
-          ./occ app:enable --force call_summary_bot
           ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
