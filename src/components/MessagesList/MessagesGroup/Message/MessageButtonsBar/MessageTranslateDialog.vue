@@ -259,7 +259,7 @@ export default {
 
 	&__button {
 		flex-shrink: 0;
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 
 	&__message {

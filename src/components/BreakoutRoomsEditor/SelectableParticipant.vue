@@ -220,7 +220,7 @@ export default {
 
 	&__check-icon {
 		display: none;
-		margin-left: auto;
+		margin-inline-start: auto;
 		width: var(--default-clickable-area);
 		flex-shrink: 0;
 	}

@@ -100,7 +100,7 @@ export default {
 	}
 
 	.equalizer {
-		margin-left: 8px;
+		margin-inline-start: 8px;
 		height: var(--default-clickable-area);
 		display: flex;
 		align-items: center;

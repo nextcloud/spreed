@@ -112,8 +112,8 @@ export default {
 	}
 
 	&__display-name {
-			margin-left: 4px;
-		}
+		margin-inline-start: 4px;
+	}
 
 	&__list-item {
 		display: flex;

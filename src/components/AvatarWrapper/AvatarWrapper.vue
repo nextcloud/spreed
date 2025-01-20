@@ -250,15 +250,15 @@ export default {
 			padding: 0;
 			display: block;
 			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
+			margin-inline-start: auto;
+			margin-inline-end: auto;
 		}
 	}
 
 	&--condensed {
 		width: unset;
 		height: unset;
-		margin-left: calc(var(--condensed-overlap) * -1px);
+		margin-inline-start: calc(var(--condensed-overlap) * -1px);
 		display: flex;
 
 		& > .icon,

@@ -260,8 +260,8 @@ export default {
 		height: 64px;
 		opacity: 0.4;
 
-		margin-left: auto;
-		margin-right: auto;
+		margin-inline-start: auto;
+		margin-inline-end: auto;
 	}
 }
 

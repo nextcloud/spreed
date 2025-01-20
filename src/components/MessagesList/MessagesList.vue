@@ -1372,7 +1372,7 @@ export default {
 		display: grid;
 		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
 		z-index: 2;
-		margin-left: calc($messages-avatar-width);
+		margin-inline-start: calc($messages-avatar-width);
 		margin-bottom: 5px;
 		padding-inline: var(--default-grid-baseline);
 		pointer-events: none;

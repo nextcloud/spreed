@@ -158,7 +158,7 @@ export default {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin-left: auto;
+			margin-inline-start: auto;
 		}
 
 		&-button {

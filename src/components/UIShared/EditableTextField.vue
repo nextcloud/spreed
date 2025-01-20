@@ -250,7 +250,7 @@ export default {
 	align-items: flex-end;
 
 	&__edit {
-		margin-left: var(--default-clickable-area);
+		margin-inline-start: var(--default-clickable-area);
 	}
 
 	&__output {
@@ -273,7 +273,7 @@ export default {
 .spinner {
 	width: var(--default-clickable-area);
 	height: var(--default-clickable-area);
-	margin-left: var(--default-clickable-area);
+	margin-inline-start: var(--default-clickable-area);
 	flex-shrink: 0;
 }
 

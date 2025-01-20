@@ -343,13 +343,13 @@ export default {
 		padding: calc(2 * var(--default-grid-baseline));
 
 		.conversation-icon {
-			margin-left: 0;
+			margin-inline-start: 0;
 		}
 	}
 
 	&--authorised {
 		.conversation-icon {
-			margin-left: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+			margin-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 		}
 	}
 }
@@ -376,7 +376,7 @@ export default {
 		display: flex;
 		flex-direction:column;
 		flex-grow: 1;
-		margin-left: 8px;
+		margin-inline-start: 8px;
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
