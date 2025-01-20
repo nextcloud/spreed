@@ -284,7 +284,7 @@ export default {
 	border-radius: var(--border-radius-pill);
 	position: absolute;
 	top: 0;
-	right: 0;
+	inset-inline-end: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;

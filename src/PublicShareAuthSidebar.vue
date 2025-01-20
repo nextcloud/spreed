@@ -235,7 +235,7 @@ body .modal-wrapper * {
 	height: 100%;
 
 	background: var(--color-main-background);
-	border-left: 1px solid var(--color-border);
+	border-inline-start: 1px solid var(--color-border);
 
 	overflow-x: hidden;
 	overflow-y: auto;

@@ -347,7 +347,7 @@ export default {
 		}
 	}
 
-	&--authorised {
+	&--authorised:not(.top-bar--sidebar) {
 		.conversation-icon {
 			margin-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 		}

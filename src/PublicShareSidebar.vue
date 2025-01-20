@@ -287,7 +287,7 @@ footer {
 	width: clamp(300px, 27vw, 500px);
 
 	background: var(--color-main-background);
-	border-left: 1px solid var(--color-border);
+	border-inline-start: 1px solid var(--color-border);
 
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -302,19 +302,6 @@ footer {
 	/* Remove default margin-top as it is unneeded when showing only the empty
 	 * content in a flex sidebar. */
 	margin-top: 0;
-}
-
-#talk-sidebar .emptycontent button .icon {
-	/* Override rules set for the main icon of an empty content area when an
-	 * icon is shown in a button. */
-	background-size: unset;
-	width: unset;
-	height: unset;
-	margin: unset;
-
-	/* Frame the loading icon on the right border of the button. */
-	top: -3px;
-	right: -5px;
 }
 
 #talk-sidebar .call-button {

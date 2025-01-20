@@ -324,7 +324,9 @@ export default {
 			text-align: left;
 
 			.icon-checkmark {
-				margin: 0 10px 0 2px;
+				margin-block: 0;
+				margin-inline-end: 10px;
+				margin-inline-start: 2px;
 			}
 		}
 		.icon {
@@ -349,7 +351,9 @@ export default {
 				margin-top: auto;
 				margin-bottom: auto;
 				&::before {
-					margin: 0 10px 0 15px;
+					margin-block: 0;
+					margin-inline-start: 15px;
+					margin-inline-end: 10px;
 				}
 			}
 		}

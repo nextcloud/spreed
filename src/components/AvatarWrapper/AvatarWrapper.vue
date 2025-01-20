@@ -282,7 +282,7 @@ export default {
 
 	&__user-status {
 		position: absolute;
-		right: -4px;
+		inset-inline-end: -4px;
 		bottom: -4px;
 		height: 18px;
 		width: 18px;
