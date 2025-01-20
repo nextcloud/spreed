@@ -425,7 +425,6 @@ Feature: create
     And share is returned with
       | permissions            | 1 |
       | share_type             | 0 |
-      | mail_send              | 0 |
     And user "participant1" accepts last share
     When user "participant1" shares "welcome (2).txt" with room "group room"
     Then the OCS status code should be "404"
@@ -738,7 +737,6 @@ Feature: create
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
-      | mail_send              | 0 |
     And user "participant2" gets all received shares
     And the list of returned shares has 2 shares
     And share 0 is returned with
