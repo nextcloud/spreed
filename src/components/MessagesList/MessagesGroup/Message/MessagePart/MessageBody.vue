@@ -548,7 +548,7 @@ export default {
 			}
 
 			&:last-child {
-				margin-right: var(--clickable-area-small, 24px);
+				margin-inline-end: var(--clickable-area-small, 24px);
 			}
 		}
 	}

@@ -336,7 +336,7 @@ export default {
 	}
 
 	.talk-sidebar-callview & {
-		margin-right: var(--default-clickable-area);
+		margin-inline-end: var(--default-clickable-area);
 	}
 
 	&--sidebar {

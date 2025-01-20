@@ -318,7 +318,7 @@ export default {
 		}
 
 		& .participant-name {
-			margin-right: 0;
+			margin-inline-end: 0;
 		}
 	}
 }
@@ -346,7 +346,9 @@ export default {
 
 .participant-name {
 	color: white;
-	margin: 0 auto 0 8px;
+	margin-block: 0px;
+	margin-inline-start: 8px;
+	margin-inline-end: auto;
 	position: relative;
 	white-space: nowrap;
 	overflow: hidden;

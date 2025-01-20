@@ -378,6 +378,6 @@ export default {
 }
 
 .delete {
-	margin-right: auto;
+	margin-inline-end: auto;
 }
 </style>

@@ -262,7 +262,7 @@ export default {
 .icon-multiselect-service {
 	width: 16px !important;
 	height: 16px !important;
-	margin-right: 10px;
+	margin-inline-end: 10px;
 	filter: var(--background-invert-if-dark);
 }
 
