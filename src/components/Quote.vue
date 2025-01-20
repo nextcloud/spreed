@@ -245,7 +245,9 @@ export default {
 .quote {
 	position: relative;
 	margin: 4px 0;
-	padding: 6px 6px 6px 24px;
+	padding-block: 6px;
+	padding-inline-end: 6px;
+	padding-inline-start: 24px;
 	display: flex;
 	max-width: $messages-text-max-width;
 	border-radius: var(--border-radius-large);
@@ -257,7 +259,7 @@ export default {
 		content: ' ';
 		position: absolute;
 		top: 8px;
-		left: 8px;
+		inset-inline-start: 8px;
 		height: calc(100% - 16px);
 		width: 8px;
 		border-radius: var(--border-radius);

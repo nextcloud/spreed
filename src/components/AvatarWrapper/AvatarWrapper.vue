@@ -241,7 +241,7 @@ export default {
 		}
 
 		&.bot {
-			padding-left: 5px;
+			padding-inline-start: 5px;
 			background-color: var(--color-background-darker);
 		}
 

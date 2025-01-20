@@ -111,7 +111,7 @@ export default {
 	margin: auto;
 
 	.placeholder-item {
-		padding-right: 8px;
+		padding-inline-end: 8px;
 		&__avatar {
 			width: 48px;
 			padding: 20px 8px 0;
