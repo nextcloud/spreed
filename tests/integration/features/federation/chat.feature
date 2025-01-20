@@ -301,7 +301,7 @@ Feature: federation/chat
     And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1@localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 3    | LOCAL        | room        |
