@@ -1272,6 +1272,7 @@
     "Participants will not be notified about new messages" : "Účastníci nebudú upozornený na nové správy",
     "The message could not be edited" : "Správu sa nepodarilo upraviť",
     "File upload is not available in this conversation" : "Nahrávanie súboru nie je v tejto konverzácii dostupné",
+    "Replacement: " : "Náhrada:",
     "{user} is out of office and might not respond." : "{user} je mimo kancelárie a pravdepodobne nebude odpovedať.",
     "Share files to the conversation" : "Zdieľať súbory v konverzácii",
     "Upload from device" : "Nahrať zo zariadenia",
