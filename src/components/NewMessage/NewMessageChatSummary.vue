@@ -277,7 +277,7 @@ function setIsTextMoreThanOneLine() {
 	&__button {
 		position: absolute !important;
 		top: var(--default-grid-baseline);
-		right: calc(5 * var(--default-grid-baseline));
+		inset-inline-end: calc(5 * var(--default-grid-baseline));
 		z-index: 1;
 
 		& .icon {

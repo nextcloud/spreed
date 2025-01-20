@@ -556,7 +556,7 @@ export default {
 	&__progress {
 		position: absolute;
 		top: 50%;
-		right: 0;
+		inset-inline-end: 0;
 		transform: translate(100%, -50%);
 	}
 
@@ -701,7 +701,7 @@ export default {
 	visibility: hidden;
 	position: absolute !important;
 	top: 8px;
-	right: 8px;
+	inset-inline-end: 8px;
 }
 
 </style>

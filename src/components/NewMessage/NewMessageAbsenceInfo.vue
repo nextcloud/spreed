@@ -193,7 +193,7 @@ export default {
 	&__button {
 		position: absolute !important;
 		top: 4px;
-		right: 20px;
+		inset-inline-end: 20px;
 
 		& .icon {
 			transition: $transition;

@@ -307,7 +307,7 @@ export default {
 	&__close {
 		position: absolute !important;
 		top: 4px;
-		right: 4px;
+		inset-inline-end: 4px;
 	}
 }
 

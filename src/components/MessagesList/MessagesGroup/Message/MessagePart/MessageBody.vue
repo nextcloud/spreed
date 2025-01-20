@@ -516,7 +516,7 @@ export default {
 			.message-copy-code {
 				position: absolute;
 				top: 0;
-				right: calc(4px + var(--default-clickable-area));
+				inset-inline-end: calc(4px + var(--default-clickable-area));
 				margin-top: 4px;
 				background-color: var(--color-background-dark);
 			}

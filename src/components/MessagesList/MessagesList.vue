@@ -1347,7 +1347,7 @@ export default {
 		&-element {
 			position: absolute;
 			top: 0;
-			left: calc(2 * var(--default-grid-baseline));
+			inset-inline-start: calc(2 * var(--default-grid-baseline));
 		}
 	}
 }

@@ -1159,9 +1159,9 @@ export default {
 	overflow: hidden;
 	outline-offset: -2px;
 
-	// FIXME clean up after nextcloud/vue release
+	// FIXME in upstream to make the status position dependent on the language direction
 	.avatardiv .avatardiv__user-status {
-		right: -2px !important;
+		inset-inline-end: -2px !important;
 		bottom: -2px !important;
 		min-height: 11px !important;
 		min-width: 11px !important;

@@ -1000,7 +1000,7 @@ export default {
 	&__emoji-picker {
 		position: absolute;
 		bottom: var(--border-width-input-focused, 2px);
-		left: var(--border-width-input-focused, 2px);
+		inset-inline-start: var(--border-width-input-focused, 2px);
 		z-index: 1;
 
 		:deep(.button-vue) {

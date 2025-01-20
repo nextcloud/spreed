@@ -476,7 +476,7 @@ export default {
 	&__scroll {
 		position: absolute;
 		top: 0;
-		right: 0;
+		inset-inline-end: 0;
 		width: fit-content;
 		height: 100%;
 		padding: 8px 8px 0 0;
@@ -529,7 +529,7 @@ export default {
 
 .message-buttons-bar {
 	display: flex;
-	right: 14px;
+	inset-inline-end: 14px;
 	top: 0;
 	position: sticky;
 	background-color: var(--color-main-background);

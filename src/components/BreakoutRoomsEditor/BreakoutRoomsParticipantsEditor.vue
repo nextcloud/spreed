@@ -366,12 +366,7 @@ export default {
 	}
 }
 
-// TODO: upstream collapse icon position fix
-:deep(.icon-collapse) {
-	position: absolute !important;
-	left: 0;
-}
-
+// Warning dialog when deleting breakout rooms
 :deep(.dialog) {
 	padding-block: 0px 8px;
 	padding-inline: 12px 8px;
