@@ -614,6 +614,19 @@ class SharingContext implements Context {
 			$defaultExpectedFields['share_with_link'] = 'URL';
 		}
 
+		if (isset($fields['share_type']) && ($fields['share_type'] === '0' || $fields['share_type'] === '1')) {
+			/**
+			 * This field was changed so often in the server,
+			 * that we simply don't care any more. We want to test Talk,
+			 * not normal user shares.
+			 * Refs:
+			 * - https://github.com/nextcloud/server/pull/49898
+			 * - https://github.com/nextcloud/server/pull/48381
+			 * - https://github.com/nextcloud/spreed/pull/13632
+			 */
+			unset($defaultExpectedFields['mail_send']);
+		}
+
 		$expectedFields = array_merge($defaultExpectedFields, $fields);
 
 		if (!array_key_exists('uid_file_owner', $expectedFields) &&
