@@ -249,7 +249,7 @@ function setIsTextMoreThanOneLine() {
 	&__caption {
 		font-weight: bold;
 		margin: var(--default-grid-baseline) var(--default-clickable-area);
-		margin-left: 0;
+		margin-inline-start: 0;
 	}
 
 	&__message {

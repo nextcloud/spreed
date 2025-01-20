@@ -251,7 +251,7 @@ export default {
 
 			// Edit button
 			button {
-				margin-left: 16px;
+				margin-inline-start: 16px;
 			}
 		}
 	}

@@ -251,7 +251,7 @@ export default {
 
 	&__action {
 		flex-shrink: 0;
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 }
 </style>

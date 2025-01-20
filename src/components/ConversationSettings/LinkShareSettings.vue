@@ -275,7 +275,7 @@ button > .material-design-icon {
 }
 
 .spinner {
-	margin-left: 24px;
+	margin-inline-start: 24px;
 }
 
 .password-form {
