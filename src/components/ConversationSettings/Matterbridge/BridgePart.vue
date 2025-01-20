@@ -200,7 +200,7 @@ export default {
 input {
 	background-size: 16px;
 	background-position: 14px;
-	padding-left: var(--default-clickable-area);
+	padding-inline-start: var(--default-clickable-area);
 	width: 100%;
 	text-overflow: ellipsis;
 	&[type=checkbox] {

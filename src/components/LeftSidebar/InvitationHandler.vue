@@ -222,7 +222,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			margin-inline-end: auto;
-			padding-left: 4px;
+			padding-inline-start: 4px;
 
 			&__name {
 				line-height: 20px;

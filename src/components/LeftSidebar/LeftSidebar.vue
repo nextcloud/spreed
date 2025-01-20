@@ -1095,7 +1095,7 @@ export default {
 	margin-block: var(--default-grid-baseline);
 
 	:deep(.app-navigation-entry-link) {
-		padding-left: var(--default-grid-baseline);
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
 	:deep(.app-navigation-entry-icon) {
@@ -1103,7 +1103,7 @@ export default {
 	}
 
 	:deep(.app-navigation-entry__name) {
-		padding-left: calc(2 * var(--default-grid-baseline));
+		padding-inline-start: calc(2 * var(--default-grid-baseline));
 		font-weight: 500;
 	}
 }
