@@ -17,6 +17,7 @@ use OCP\EventDispatcher\Event;
  *         type: 'Person',
  *         id: non-empty-string,
  *         name: non-empty-string,
+ *         talkParticipantType: non-empty-string,
  *     },
  *     object: array{
  *         type: 'Note',

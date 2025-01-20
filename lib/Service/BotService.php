@@ -128,6 +128,7 @@ class BotService {
 				'type' => 'Person',
 				'id' => $attendee->getActorType() . '/' . $attendee->getActorId(),
 				'name' => $attendee->getDisplayName(),
+				'talkParticipantType' => (string)$attendee->getParticipantType(),
 			],
 			'object' => [
 				'type' => 'Note',
