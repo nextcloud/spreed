@@ -268,12 +268,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button > .material-design-icon {
-	display: inline-block;
-	vertical-align: middle;
-	margin-right: 7px;
-}
-
 .spinner {
 	margin-inline-start: 24px;
 }

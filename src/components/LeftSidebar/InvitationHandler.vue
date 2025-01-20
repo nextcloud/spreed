@@ -221,7 +221,7 @@ export default {
 		&-desc {
 			display: flex;
 			flex-direction: column;
-			margin-right: auto;
+			margin-inline-end: auto;
 			padding-left: 4px;
 
 			&__name {

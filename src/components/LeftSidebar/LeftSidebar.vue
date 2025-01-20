@@ -1080,13 +1080,13 @@ export default {
 	.filters {
 		position: absolute;
 		top: 0;
-		right: calc(var(--default-grid-baseline) + var(--default-clickable-area));
+		inset-inline-end: calc(var(--default-grid-baseline) + var(--default-clickable-area));
 	}
 
 	.actions {
 		position: absolute;
 		top: 0;
-		right: 0;
+		inset-inline-end: 0;
 	}
 }
 
