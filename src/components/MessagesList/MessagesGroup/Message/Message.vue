@@ -537,9 +537,5 @@ export default {
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 	height: var(--default-clickable-area);
 	z-index: 1;
-
-	& h6 {
-		margin-left: auto;
-	}
 }
 </style>
