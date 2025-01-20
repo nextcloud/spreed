@@ -51,7 +51,7 @@
 				type="secondary"
 				@click="switchToParentRoom">
 				<template #icon>
-					<ArrowLeft :size="20" />
+					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
@@ -62,7 +62,7 @@
 				type="secondary"
 				@click="switchToBreakoutRoom">
 				<template #icon>
-					<ArrowRight :size="20" />
+					<ArrowRight class="bidirectional-icon" :size="20" />
 				</template>
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>
@@ -115,7 +115,7 @@
 <script>
 import { ref } from 'vue'
 
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
@@ -155,7 +155,7 @@ export default {
 		Play,
 		Cog,
 		Check,
-		ArrowLeft,
+		IconArrowLeft,
 		ArrowRight,
 		Send,
 	},
