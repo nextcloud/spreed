@@ -112,6 +112,7 @@ class Notifier {
 	public function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers, ?Participant $participant = null): array {
 		$usersToNotify = $this->getMentionedUsers($comment);
 		$usersToNotify = $this->getMentionedGroupMembers($chat, $comment, $usersToNotify);
+		$usersToNotify = $this->getMentionedTeamMembers($chat, $comment, $usersToNotify);
 		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify, $participant);
 		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
 
@@ -526,6 +527,57 @@ class Notifier {
 					'sourceId' => $group->getGID(),
 				];
 				$alreadyMentionedUserIds[$member->getUID()] = true;
+			}
+		}
+
+		return $list;
+	}
+
+	/**
+	 * @param Room $chat
+	 * @param IComment $comment
+	 * @param array $list
+	 * @psalm-param array<int, array{type: string, id: string, reason: string, sourceId?: string}> $list
+	 * @return array[]
+	 * @psalm-return array<int, array{type: string, id: string, reason: string, sourceId?: string}>
+	 */
+	private function getMentionedTeamMembers(Room $chat, IComment $comment, array $list): array {
+		$mentions = $comment->getMentions();
+
+		if (empty($mentions)) {
+			return [];
+		}
+
+		$alreadyMentionedUserIds = array_filter(
+			array_map(static fn (array $entry) => $entry['type'] === Attendee::ACTOR_USERS ? $entry['id'] : null, $list),
+			static fn ($userId) => $userId !== null
+		);
+		$alreadyMentionedUserIds = array_flip($alreadyMentionedUserIds);
+
+		foreach ($mentions as $mention) {
+			if ($mention['type'] !== 'team') {
+				continue;
+			}
+
+			try {
+				$this->participantService->getParticipantByActor($chat, Attendee::ACTOR_CIRCLES, $mention['id']);
+			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+
+			$members = $this->participantService->getCircleMembers($mention['id']);
+			if (empty($members)) {
+				continue;
+			}
+
+			foreach ($members as $member) {
+				$list[] = [
+					'id' => $member->getUserId(),
+					'type' => Attendee::ACTOR_USERS,
+					'reason' => 'team',
+					'sourceId' => $mention['id'],
+				];
+				$alreadyMentionedUserIds[$member->getUserId()] = true;
 			}
 		}
 
