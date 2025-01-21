@@ -1655,6 +1655,8 @@ OC.L10N.register(
     "Space bar" : "空白鍵",
     "Push to talk or push to mute" : "一鍵通話或一鍵靜音",
     "Raise or lower hand" : "舉起或放下手",
+    "Mouse wheel" : "滑鼠滾輪",
+    "Zoom-in / zoom-out a screen share" : "放大/縮小螢幕分享",
     "Choose the folder in which attachments should be saved." : "選擇用於儲存附件的資料夾。",
     "Error while setting attachment folder" : "設定附件資料夾時出錯",
     "Your privacy setting has been saved" : "您的隱私設定已儲存",
