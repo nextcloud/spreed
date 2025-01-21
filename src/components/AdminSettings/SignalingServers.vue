@@ -6,9 +6,24 @@
 <template>
 	<section id="signaling_server" class="signaling-servers section">
 		<NcNoteCard v-if="!serversProxy.length"
-			type="error"
-			:heading="t('spreed', 'Nextcloud Talk setup not complete')"
-			:text="t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.')" />
+			type="warning"
+			:heading="t('spreed', 'Nextcloud Talk setup not complete')">
+			{{ t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.') }}
+			{{ t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.') }}
+
+			<NcButton v-if="props.hasValidSubscription"
+				type="primary"
+				class="additional-top-margin"
+				href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">
+				{{ t('spreed', 'Nextcloud portal') }} ↗
+			</NcButton>
+			<NcButton v-else
+				type="primary"
+				class="additional-top-margin"
+				href="https://nextcloud-talk.readthedocs.io/en/latest/quick-install/">
+				{{ t('spreed', 'Quick installation guide') }} ↗
+			</NcButton>
+		</NcNoteCard>
 
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
@@ -57,10 +72,9 @@
 			@update:model-value="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">
-			<NcNoteCard type="warning"
-				class="additional-top-margin"
-				:text="t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.')" />
 			<NcCheckboxRadioSwitch v-model="hideWarningProxy"
+				type="switch"
+				class="additional-top-margin"
 				:disabled="loading"
 				@update:model-value="updateHideWarning">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
@@ -96,6 +110,7 @@ const props = defineProps<{
 	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning'],
 	secret: InitialState['spreed']['signaling_servers']['secret'],
 	servers: InitialState['spreed']['signaling_servers']['servers'],
+	hasValidSubscription: InitialState['spreed']['has_valid_subscription'],
 }>()
 
 const emit = defineEmits<{
@@ -161,7 +176,9 @@ function updateHideWarning(value: boolean) {
 	loading.value = true
 	OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', value ? 'yes' : 'no', {
 		success: () => {
-			showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
+			if (value) {
+				showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
+			}
 			loading.value = false
 		},
 	})
@@ -193,6 +210,6 @@ function updateServers() {
 }
 
 .additional-top-margin {
-	margin-top: 35px !important;
+	margin-top: 1em !important;
 }
 </style>

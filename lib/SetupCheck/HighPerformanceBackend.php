@@ -16,6 +16,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\SetupCheck\ISetupCheck;
 use OCP\SetupCheck\SetupResult;
+use OCP\Support\Subscription\IRegistry;
 
 class HighPerformanceBackend implements ISetupCheck {
 	public function __construct(
@@ -24,6 +25,7 @@ class HighPerformanceBackend implements ISetupCheck {
 		readonly protected IURLGenerator $urlGenerator,
 		readonly protected IL10N $l,
 		readonly protected Manager $signalManager,
+		readonly protected IRegistry $subscription,
 	) {
 	}
 
@@ -39,11 +41,16 @@ class HighPerformanceBackend implements ISetupCheck {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			$setupResult = SetupResult::error(...);
 			if ($this->talkConfig->getHideSignalingWarning()) {
-				$setupResult = SetupResult::warning(...);
+				$setupResult = SetupResult::info(...);
 			}
+			$documentation = 'https://nextcloud-talk.readthedocs.io/en/latest/quick-install/';
+			if ($this->subscription->delegateHasValidSubscription()) {
+				$documentation = 'https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend';
+			}
+
 			return $setupResult(
 				$this->l->t('No High-performance backend configured - Running Nextcloud Talk without the High-performance backend only scales for very small calls (max. 2-3 participants). Please set up the High-performance backend to ensure calls with multiple participants work seamlessly.'),
-				'https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend',
+				$documentation,
 			);
 		}
 

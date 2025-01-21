@@ -25,16 +25,20 @@ class RecordingBackend implements ISetupCheck {
 	}
 
 	public function getName(): string {
-		return $this->l->t('Recording backend');
+		$name = $this->l->t('Recording backend');
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			return '[skip] ' . $name;
+		}
+		return $name;
 	}
 
 	public function run(): SetupResult {
-		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
-			return SetupResult::success();
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			return SetupResult::success($this->l->t('Using the recording backend requires a High-performance backend.'));
 		}
 		if (empty($this->talkConfig->getRecordingServers())) {
 			return SetupResult::info($this->l->t('No recording backend configured'));
 		}
-		return SetupResult::error($this->l->t('Using the recording backend requires a High-performance backend.'));
+		return SetupResult::success();
 	}
 }
