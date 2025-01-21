@@ -50,7 +50,7 @@ Feature: federation/reminder
     And using server "REMOTE"
     And user "participant2" has the following notifications
       | app    | object_type | object_id      | subject                                                 |
-      | spreed | reminder    | LOCAL::room/Message 1 | Reminder: participant1-displayname in conversation room |
+      | spreed | reminder    | LOCAL::room/Message 1 | Reminder: participant1@localhost:8080 in conversation room |
     # Participant1 sets timestamp to past so it should trigger now
     When using server "LOCAL"
     And user "participant1" sets reminder for message "Message 2" in room "room" for time 1234567 with 201 (v1)
