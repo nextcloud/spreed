@@ -72,12 +72,12 @@
 			@update:model-value="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">
-			<NcCheckboxRadioSwitch v-model="hideWarningProxy"
+			<NcCheckboxRadioSwitch v-model="showWarningProxy"
 				type="switch"
 				class="additional-top-margin"
 				:disabled="loading"
 				@update:model-value="updateHideWarning">
-				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
+				{{ t('spreed', 'Warn about connectivity issues in calls with more than 2 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 	</section>
@@ -137,12 +137,13 @@ const secretProxy = computed({
 		emit('update:secret', value)
 	}
 })
-const hideWarningProxy = computed({
+/** Opposite value of hideWarning */
+const showWarningProxy = computed({
 	get() {
-		return props.hideWarning
+		return !props.hideWarning
 	},
 	set(value) {
-		emit('update:hideWarning', value)
+		emit('update:hideWarning', !value)
 	}
 })
 
@@ -170,13 +171,14 @@ function newServer() {
 
 /**
  * Update hideWarning value on server
- * @param value new value
+ * @param showWarning new value
  */
-function updateHideWarning(value: boolean) {
+function updateHideWarning(showWarning: boolean) {
 	loading.value = true
-	OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', value ? 'yes' : 'no', {
+	/** showWarningProxy is opposite value of hideWarning, so should flip here */
+	OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', !showWarning ? 'yes' : 'no', {
 		success: () => {
-			if (value) {
+			if (!showWarning) {
 				showSuccess(t('spreed', 'Missing High-performance backend warning hidden'))
 			}
 			loading.value = false
