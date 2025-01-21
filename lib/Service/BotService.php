@@ -9,9 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Events\BotDisabledEvent;
 use OCA\Talk\Events\BotEnabledEvent;
+use OCA\Talk\Events\BotInvokeEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Attendee;
@@ -24,6 +27,8 @@ use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\ICertificateManager;
@@ -34,8 +39,12 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type InvocationData from BotInvokeEvent
+ */
 class BotService {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
@@ -51,11 +60,12 @@ class BotService {
 		protected ITimeFactory $timeFactory,
 		protected LoggerInterface $logger,
 		protected ICertificateManager $certificateManager,
+		protected IEventDispatcher $dispatcher,
 	) {
 	}
 
 	public function afterBotEnabled(BotEnabledEvent $event): void {
-		$this->sendAsyncRequest($event->getBotServer(), [
+		$this->invokeBots([$event->getBotServer()], $event->getRoom(), null, [
 			'type' => 'Join',
 			'actor' => [
 				'type' => 'Application',
@@ -71,7 +81,7 @@ class BotService {
 	}
 
 	public function afterBotDisabled(BotDisabledEvent $event): void {
-		$this->sendAsyncRequest($event->getBotServer(), [
+		$this->invokeBots([$event->getBotServer()], $event->getRoom(), null, [
 			'type' => 'Leave',
 			'actor' => [
 				'type' => 'Application',
@@ -93,7 +103,7 @@ class BotService {
 			return;
 		}
 
-		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK | Bot::FEATURE_EVENT);
 		if (empty($bots)) {
 			return;
 		}
@@ -110,12 +120,15 @@ class BotService {
 			'parameters' => $message->getMessageParameters(),
 		];
 
-		$this->sendAsyncRequests($bots, [
+		$botServers = array_map(static fn (Bot $bot): BotServer => $bot->getBotServer(), $bots);
+
+		$this->invokeBots($botServers, $event->getRoom(), $event->getComment(), [
 			'type' => 'Create',
 			'actor' => [
 				'type' => 'Person',
 				'id' => $attendee->getActorType() . '/' . $attendee->getActorId(),
 				'name' => $attendee->getDisplayName(),
+				'talkParticipantType' => (string)$attendee->getParticipantType(),
 			],
 			'object' => [
 				'type' => 'Note',
@@ -133,7 +146,7 @@ class BotService {
 	}
 
 	public function afterSystemMessageSent(SystemMessageSentEvent $event, MessageParser $messageParser): void {
-		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK | Bot::FEATURE_EVENT);
 		if (empty($bots)) {
 			return;
 		}
@@ -150,7 +163,9 @@ class BotService {
 			'parameters' => $message->getMessageParameters(),
 		];
 
-		$this->sendAsyncRequests($bots, [
+		$botServers = array_map(static fn (Bot $bot): BotServer => $bot->getBotServer(), $bots);
+
+		$this->invokeBots($botServers, $event->getRoom(), $event->getComment(), [
 			'type' => 'Activity',
 			'actor' => [
 				'type' => 'Person',
@@ -170,6 +185,70 @@ class BotService {
 				'name' => $event->getRoom()->getName(),
 			]
 		]);
+	}
+
+	/**
+	 * @param BotServer[] $bots
+	 * @param InvocationData $body
+	 */
+	protected function invokeBots(array $bots, Room $room, ?IComment $comment, array $body): void {
+		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
+
+		foreach ($bots as $bot) {
+			if ($bot->getFeatures() & Bot::FEATURE_EVENT) {
+				$event = new BotInvokeEvent($bot->getUrl(), $body);
+				$this->dispatcher->dispatchTyped($event);
+
+				if ($comment instanceof IComment) {
+					if (!empty($event->getReactions())) {
+						$reactionManager = Server::get(ReactionManager::class);
+						foreach ($event->getReactions() as $reaction) {
+							try {
+								$reactionManager->addReactionMessage(
+									$room,
+									Attendee::ACTOR_BOTS,
+									Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
+									(int)$comment->getId(),
+									$reaction
+								);
+							} catch (\Exception $e) {
+								$this->logger->error('Error while trying to react as a bot: ' . $e->getMessage(), ['exception' => $e]);
+							}
+						}
+					}
+					if (!empty($event->getAnswers())) {
+						$chatManager = Server::get(ChatManager::class);
+						foreach ($event->getAnswers() as $answer) {
+							$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+							try {
+								$replyTo = null;
+								if ($answer['reply'] === true) {
+									$replyTo = $comment;
+								} elseif (is_int($answer['reply'])) {
+									$replyTo = $chatManager->getParentComment($room, (string)$answer['reply']);
+								}
+								$chatManager->sendMessage(
+									$room,
+									null,
+									Attendee::ACTOR_BOTS,
+									Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
+									$answer['message'],
+									$creationDateTime,
+									$replyTo,
+									$answer['referenceId'],
+									$answer['silent'],
+									rateLimitGuestMentions: false
+								);
+							} catch (\Exception $e) {
+								$this->logger->error('Error while trying to answer as a bot: ' . $e->getMessage(), ['exception' => $e]);
+							}
+						}
+					}
+				}
+			} else {
+				$this->sendAsyncRequest($bot, $body, $jsonBody);
+			}
+		}
 	}
 
 	/**
@@ -218,18 +297,6 @@ class BotService {
 			$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
 			$this->botServerMapper->update($botServer);
 		});
-	}
-
-	/**
-	 * @param Bot[] $bots
-	 * @param array $body
-	 */
-	protected function sendAsyncRequests(array $bots, array $body): void {
-		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
-
-		foreach ($bots as $bot) {
-			$this->sendAsyncRequest($bot->getBotServer(), $body, $jsonBody);
-		}
 	}
 
 	/**
@@ -339,8 +406,7 @@ class BotService {
 			throw new \InvalidArgumentException('The provided secret is too short (min. 40 chars, max. 128 chars)');
 		}
 
-		$url = filter_var($url);
-		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
+		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://') || str_starts_with($url, 'nextcloudapp://'))) {
 			throw new \InvalidArgumentException('The provided URL is not a valid URL');
 		}
 

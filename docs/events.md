@@ -220,6 +220,13 @@ Sends a request to the bot server, informing it was removed from a chat.
 * Event: `OCA\Talk\Events\BotDisabledEvent`
 * Since: 20.0.0
 
+### Bot invoke
+
+Sends the request as an event when the bot has the feature `event`
+
+* Event: `OCA\Talk\Events\BotInvokeEvent`
+* Since: 21.0.0
+
 ## Inbound events to invoke Talk
 
 ### Bot install

@@ -167,7 +167,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
+			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
 		} catch (MessageTooLongException) {
 			return new DataResponse(null, Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception) {

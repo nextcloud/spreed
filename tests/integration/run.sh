@@ -9,7 +9,6 @@ APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
 CIRCLES_BRANCH="master"
-CSB_BRANCH="main"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -134,10 +133,15 @@ echo -e "\033[0;36m# Setting up apps\033[0m"
 echo -e "\033[0;36m#\033[0m"
 cp -R ./spreedcheats ../../../spreedcheats
 occ_host app:getpath spreedcheats
+cp -R ./talk_webhook_demo ../../../talk_webhook_demo
+occ_host app:getpath talk_webhook_demo
 
 REMOTE_SPREED_DIR=$(occ_remote app:getpath spreed)
 if [ ! -d ${REMOTE_ROOT_DIR}/apps/spreedcheats ]; then
 	cp -R ${REMOTE_SPREED_DIR}/tests/integration/spreedcheats ${REMOTE_ROOT_DIR}/apps/spreedcheats
+fi
+if [ ! -d ${REMOTE_ROOT_DIR}/apps/talk_webhook_demo ]; then
+	cp -R ${REMOTE_SPREED_DIR}/tests/integration/talk_webhook_demo ${REMOTE_ROOT_DIR}/apps/talk_webhook_demo
 fi
 
 # Add apps to the parent directory of "spreed" (unless they are
@@ -145,21 +149,20 @@ fi
 occ_host app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 occ_host app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
 occ_host app:getpath circles || (cd ../../../ && git clone --depth 1 --branch ${CIRCLES_BRANCH} https://github.com/nextcloud/circles)
-occ_host app:getpath call_summary_bot || (cd ../../../ && git clone --depth 1 --branch ${CSB_BRANCH} https://github.com/nextcloud/call_summary_bot)
 
 for OCC in occ_host occ_remote; do
 	${OCC} app:enable spreed || exit 1
 	${OCC} app:enable --force spreedcheats || exit 1
+	${OCC} app:enable --force talk_webhook_demo || exit 1
 	${OCC} app:enable --force notifications || exit 1
 	${OCC} app:enable --force guests || exit 1
 	${OCC} app:enable --force circles || exit 1
-	${OCC} app:enable --force call_summary_bot || exit 1
 
 	${OCC} app:list | grep spreed
+	${OCC} app:list | grep talk_webhook_demo
 	${OCC} app:list | grep notifications
 	${OCC} app:list | grep guests
 	${OCC} app:list | grep circles
-	${OCC} app:list | grep call_summary_bot
 done
 
 echo ''
@@ -220,6 +223,7 @@ echo -e "\033[0;36m#\033[0m"
 # Main server
 export NEXTCLOUD_CONFIG_DIR="$MAIN_SERVER_CONFIG_DIR"
 occ_host app:disable spreedcheats
+occ_host app:disable talk_webhook_demo
 occ_host config:system:set overwrite.cli.url --value "$MAIN_OVERWRITE_CLI_URL"
 if [[ "$MAIN_SKELETON_DIR" != "" ]]; then
 	occ_host config:system:set skeletondirectory --value "$MAIN_SKELETON_DIR"
@@ -231,6 +235,7 @@ if $DESTROY_REAL_FEDERATED_SERVER; then
 else
 	export NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR"
 	occ_remote app:disable spreedcheats
+	occ_remote app:disable talk_webhook_demo
 	occ_remote config:system:set overwrite.cli.url --value "$REAL_FEDERATED_OVERWRITE_CLI_URL"
 	if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" ]]; then
 		occ_remote config:system:set skeletondirectory --value "$REAL_FEDERATED_SKELETON_DIR"
@@ -238,7 +243,9 @@ else
 fi
 
 rm -rf ../../../spreedcheats
+rm -rf ../../../talk_webhook_demo
 rm -rf ${REMOTE_ROOT_DIR}/apps/spreedcheats
+rm -rf ${REMOTE_ROOT_DIR}/apps/talk_webhook_demo
 
 wait $PHPPID1
 wait $PHPPID2

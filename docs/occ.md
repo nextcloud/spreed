@@ -19,7 +19,7 @@ Install a new bot on the server
 |---|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 | `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | `false` |
-| `--feature\|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - none: When all features should be disabled for the bot | yes | yes | yes | *Required* |
+| `--feature\|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - event: The bot reads posted messages from local events - none: When all features should be disabled for the bot | yes | yes | yes | *Required* |
 
 ## talk:bot:list
 
