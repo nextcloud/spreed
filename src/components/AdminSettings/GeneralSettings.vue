@@ -86,6 +86,13 @@ export default {
 		NcSelect,
 	},
 
+	props: {
+		hasSignalingServers: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
 			loading: true,
@@ -99,7 +106,6 @@ export default {
 			conversationsFilesPublicShares: parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
 
 			hasFeatureJoinFeatures: false,
-			hasSignalingServers: false,
 			isE2EECallsEnabled: false,
 			hasSIPBridge: !!loadState('spreed', 'sip_bridge_shared_secret'),
 		}
@@ -122,25 +128,17 @@ export default {
 		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('spreed', 'default_group_notification')) - 1]
 		this.loading = false
 
-		const signaling = loadState('spreed', 'signaling_servers')
-		this.updateSignalingServers(signaling.servers)
-		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
 		EventBus.on('signaling-server-connected', this.updateSignalingDetails)
 		EventBus.on('sip-settings-updated', this.updateSipDetails)
 	},
 
 	beforeDestroy() {
-		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 		EventBus.off('signaling-server-connected', this.updateSignalingDetails)
 		EventBus.off('sip-settings-updated', this.updateSipDetails)
 	},
 
 	methods: {
 		t,
-
-		updateSignalingServers(servers) {
-			this.hasSignalingServers = servers.length > 0
-		},
 
 		updateSignalingDetails(signaling) {
 			this.hasFeatureJoinFeatures = signaling.hasFeature('join-features')

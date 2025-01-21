@@ -10,7 +10,7 @@
 			{{ t('spreed', 'Recording backend') }}
 		</h2>
 
-		<NcNoteCard v-if="!showForm"
+		<NcNoteCard v-if="!hasSignalingServers"
 			type="warning"
 			:text="t('spreed', 'Recording backend configuration is only possible with a High-performance backend.')" />
 
@@ -138,6 +138,13 @@ export default {
 		TransitionWrapper,
 	},
 
+	props: {
+		hasSignalingServers: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
 	setup() {
 		return {
 			recordingConsentCapability,
@@ -152,7 +159,6 @@ export default {
 			uploadLimit: 0,
 			loading: false,
 			saved: false,
-			showForm: true,
 			recordingConsentSelected: loadState('spreed', 'recording_consent').toString(),
 			recordingTranscriptionEnabled: loadState('spreed', 'call_recording_transcription'),
 			recordingSummaryEnabled: loadState('spreed', 'call_recording_summary'),
@@ -178,15 +184,10 @@ export default {
 		this.servers = state.servers
 		this.secret = state.secret
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
-
-		const signaling = loadState('spreed', 'signaling_servers')
-		this.updateSignalingServers(signaling.servers)
-		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	beforeDestroy() {
 		this.debounceUpdateServers.clear?.()
-		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -264,10 +265,6 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
-		},
-
-		updateSignalingServers(servers) {
-			this.showForm = servers.length > 0
 		},
 	},
 }

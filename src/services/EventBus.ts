@@ -36,7 +36,6 @@ type Events = Record<EventType, unknown> & {
 	'signaling-join-room': [string],
 	'signaling-participant-list-changed': void,
 	'signaling-recording-status-changed': [string, number],
-	'signaling-servers-updated': { server: string, verify: boolean }[],
 	'signaling-users-changed': [(Partial<Participant> & ({ sessionId: string } | { nextcloudSessionId: string }))[]],
 	'signaling-users-in-room': [{ sessionId: string, userId: string }[]],
 	'smart-picker-open': void,

@@ -3,24 +3,11 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div>
-		<SignalingServers />
-		<HostedSignalingServer />
-		<GeneralSettings />
-		<AllowedGroups />
-		<Federation v-if="supportFederation" />
-		<BotsSettings />
-		<WebServerSetupChecks />
-		<StunServers />
-		<TurnServers />
-		<RecordingServers />
-		<SIPBridge />
-		<MatterbridgeIntegration />
-	</div>
-</template>
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 
-<script>
+import { loadState } from '@nextcloud/initial-state'
+
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
@@ -35,29 +22,33 @@ import TurnServers from '../components/AdminSettings/TurnServers.vue'
 import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
 
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import type { InitialState } from '../types/index.ts'
 
 const supportFederation = hasTalkFeature('local', 'federation-v1')
 
-export default {
-	name: 'AdminSettings',
-
-	components: {
-		AllowedGroups,
-		BotsSettings,
-		Federation,
-		GeneralSettings,
-		HostedSignalingServer,
-		MatterbridgeIntegration,
-		RecordingServers,
-		SignalingServers,
-		SIPBridge,
-		StunServers,
-		TurnServers,
-		WebServerSetupChecks,
-	},
-
-	setup() {
-		return { supportFederation }
-	}
-}
+const signalingServers = ref<InitialState['spreed']['signaling_servers']>(loadState('spreed', 'signaling_servers', {
+	hideWarning: false,
+	secret: '',
+	servers: [],
+}))
+const hasSignalingServers = computed(() => signalingServers.value.servers.length > 0)
 </script>
+
+<template>
+	<div>
+		<SignalingServers :servers.sync="signalingServers.servers"
+			:secret.sync="signalingServers.secret"
+			:hide-warning.sync="signalingServers.hideWarning" />
+		<HostedSignalingServer :has-signaling-servers="hasSignalingServers" />
+		<GeneralSettings :has-signaling-servers="hasSignalingServers" />
+		<AllowedGroups />
+		<Federation v-if="supportFederation" />
+		<BotsSettings />
+		<WebServerSetupChecks />
+		<StunServers />
+		<TurnServers />
+		<RecordingServers :has-signaling-servers="hasSignalingServers" />
+		<SIPBridge :has-signaling-servers="hasSignalingServers" />
+		<MatterbridgeIntegration />
+	</div>
+</template>
