@@ -70,7 +70,7 @@ Feature: federation/invite
     Then user "participant2" is participant of the following rooms (v4)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 3    | LOCAL        | room        |
-    Then last response has federation invites header set to "NULL"
+    Then last response has federation invites header set to "0"
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
     And user "participant2" declines invite to room "room" of server "LOCAL" with 400 (v1)

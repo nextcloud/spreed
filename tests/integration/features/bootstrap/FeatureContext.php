@@ -3567,12 +3567,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $count
 	 */
 	public function hasFederationInvitesHeader(string $count): void {
-		if ($count === 'NULL') {
-			Assert::assertFalse($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should not contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
-		} else {
-			Assert::assertTrue($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
-			Assert::assertEquals($count, $this->response->getHeader('X-Nextcloud-Talk-Federation-Invites')[0]);
-		}
+		Assert::assertTrue($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
+		Assert::assertEquals($count, $this->response->getHeader('X-Nextcloud-Talk-Federation-Invites')[0]);
 	}
 
 	/**

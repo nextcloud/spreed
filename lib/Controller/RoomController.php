@@ -283,9 +283,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$headers = ['X-Nextcloud-Talk-Modified-Before' => (string)$nextModifiedSince];
 		if ($this->talkConfig->isFederationEnabledForUserId($user)) {
 			$numInvites = $this->federationManager->getNumberOfPendingInvitationsForUser($user);
-			if ($numInvites !== 0) {
-				$headers['X-Nextcloud-Talk-Federation-Invites'] = (string)$numInvites;
-			}
+			$headers['X-Nextcloud-Talk-Federation-Invites'] = (string)$numInvites;
 		}
 
 		/** @var array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string, X-Nextcloud-Talk-Federation-Invites?: numeric-string} $headers */
