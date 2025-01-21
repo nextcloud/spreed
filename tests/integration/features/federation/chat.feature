@@ -244,8 +244,11 @@ Feature: federation/chat
     And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName          |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1@localhost:8080 |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    # This is the previous version of the line. localhost:8080 is not the expected result but the username
+    # is resolved to it because of missing display name resolution for federation. Revert this when it's been fixed
+    #| LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
