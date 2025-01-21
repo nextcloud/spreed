@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Circles\CirclesManager;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -17,6 +18,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -25,14 +27,20 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
+use OCP\Server;
 
 /**
  * Helper class to get a rich message from a plain text message.
  * @template-implements IEventListener<Event>
  */
 class UserMention implements IEventListener {
+	/** @var array<string, string> */
+	protected array $circleNames = [];
+	/** @var array<string, string> */
+	protected array $circleLinks = [];
 
 	public function __construct(
+		protected IAppManager $appManager,
 		protected ICommentsManager $commentsManager,
 		protected IUserManager $userManager,
 		protected IGroupManager $groupManager,
@@ -117,7 +125,7 @@ class UserMention implements IEventListener {
 				$mention['type'] === 'email' ||
 				$mention['type'] === 'group' ||
 				// $mention['type'] === 'federated_group' ||
-				// $mention['type'] === 'team' ||
+				 $mention['type'] === 'team' ||
 				// $mention['type'] === 'federated_team' ||
 				$mention['type'] === 'federated_user') {
 				$search = $mention['type'] . '/' . $mention['id'];
@@ -135,7 +143,7 @@ class UserMention implements IEventListener {
 				&& !str_starts_with($search, 'email/')
 				&& !str_starts_with($search, 'group/')
 				// && !str_starts_with($search, 'federated_group/')
-				// && !str_starts_with($search, 'team/')
+				 && !str_starts_with($search, 'team/')
 				// && !str_starts_with($search, 'federated_team/')
 				&& !str_starts_with($search, 'federated_user/')) {
 				$message = str_replace('@' . $search, '{' . $mentionParameterId . '}', $message);
@@ -213,6 +221,8 @@ class UserMention implements IEventListener {
 					'id' => $mention['id'],
 					'name' => $displayName,
 				];
+			} elseif ($mention['type'] === 'team') {
+				$messageParameters[$mentionParameterId] = $this->getCircle($mention['id']);
 			} else {
 				try {
 					$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
@@ -254,6 +264,49 @@ class UserMention implements IEventListener {
 				return 'public';
 			default:
 				throw new \InvalidArgumentException('Unknown room type');
+		}
+	}
+
+	protected function getCircle(string $circleId): array {
+		if (!$this->appManager->isEnabledForUser('circles')) {
+			return [
+				'type' => 'highlight',
+				'id' => $circleId,
+				'name' => $circleId,
+			];
+		}
+
+		if (!isset($this->circleNames[$circleId])) {
+			$this->loadCircleDetails($circleId);
+		}
+
+		if (!isset($this->circleNames[$circleId])) {
+			return [
+				'type' => 'highlight',
+				'id' => $circleId,
+				'name' => $circleId,
+			];
+		}
+
+		return [
+			'type' => 'circle',
+			'id' => $circleId,
+			'name' => $this->circleNames[$circleId],
+			'link' => $this->circleLinks[$circleId],
+		];
+	}
+
+	protected function loadCircleDetails(string $circleId): void {
+		try {
+			$circlesManager = Server::get(CirclesManager::class);
+			$circlesManager->startSuperSession();
+			$circle = $circlesManager->getCircle($circleId);
+
+			$this->circleNames[$circleId] = $circle->getDisplayName();
+			$this->circleLinks[$circleId] = $circle->getUrl();
+		} catch (\Exception) {
+		} finally {
+			$circlesManager?->stopSession();
 		}
 	}
 }

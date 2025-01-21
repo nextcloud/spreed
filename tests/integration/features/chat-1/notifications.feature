@@ -364,6 +364,82 @@ Feature: chat/notifications
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
+
+  Scenario: Team-mention when recipient is online in the group room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant2" to team "1234"
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds team "1234" to room "room" with 200 (v4)
+    Given user "participant2" joins room "room" with 200 (v4)
+    When user "participant1" sends message 'Hi @"TEAM_ID(1234)" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                    | subject                                                           |
+      | spreed | chat        | room/Hi @"TEAM_ID(1234)" bye | participant1-displayname mentioned team 1234 in conversation room |
+
+  Scenario: Team-mention when team is not a member of the room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant2" to team "1234"
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    Given user "participant2" joins room "room" with 200 (v4)
+    When user "participant1" sends message 'Hi @"TEAM_ID(1234)" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
+  Scenario: Team-mention when recipient is offline in the group room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant2" to team "1234"
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds team "1234" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant1" sends message 'Hi @"TEAM_ID(1234)" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                    | subject                                                           |
+      | spreed | chat        | room/Hi @"TEAM_ID(1234)" bye | participant1-displayname mentioned team 1234 in conversation room |
+
+  Scenario: Silent team-mention when recipient is offline in the group room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant2" to team "1234"
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds team "1234" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant1" silent sends message 'Hi @"TEAM_ID(1234)" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
+  Scenario: Team-mention when recipient with disabled notifications in the group room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant2" to team "1234"
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds team "1234" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    And user "participant2" sets notifications to disabled for room "room" (v4)
+    When user "participant1" sends message 'Hi @"TEAM_ID(1234)" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
+
   Scenario: Replying with all mention types only gives a reply notification
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |

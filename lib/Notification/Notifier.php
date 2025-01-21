@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\Circles\CirclesManager;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
@@ -28,6 +29,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
@@ -47,6 +49,7 @@ use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\Notification\UnknownNotificationException;
 use OCP\RichObjectStrings\Definitions;
+use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -57,12 +60,17 @@ class Notifier implements INotifier {
 	protected array $rooms = [];
 	/** @var Participant[][] */
 	protected array $participants = [];
+	/** @var array<string, string> */
+	protected array $circleNames = [];
+	/** @var array<string, string> */
+	protected array $circleLinks = [];
 	protected ICommentsManager $commentManager;
 
 	public function __construct(
 		protected IFactory $lFactory,
 		protected IURLGenerator $url,
 		protected Config $config,
+		protected IAppManager $appManager,
 		protected IUserManager $userManager,
 		protected IGroupManager $groupManager,
 		protected GuestManager $guestManager,
@@ -262,7 +270,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_team' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
 			if ($participant instanceof Participant &&
 				$room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
@@ -774,6 +782,9 @@ class Notifier implements INotifier {
 				];
 
 				$subject = $l->t('{user} mentioned group {group} in conversation {call}');
+			} elseif ($notification->getSubject() === 'mention_team') {
+				$richSubjectParameters['team'] = $this->getCircle($subjectParameters['sourceId']);
+				$subject = $l->t('{user} mentioned team {team} in conversation {call}');
 			} elseif ($notification->getSubject() === 'mention_all') {
 				$subject = $l->t('{user} mentioned everyone in conversation {call}');
 			} else {
@@ -789,6 +800,9 @@ class Notifier implements INotifier {
 				];
 
 				$subject = $l->t('A deleted user mentioned group {group} in conversation {call}');
+			} elseif ($notification->getSubject() === 'mention_team') {
+				$richSubjectParameters['team'] = $this->getCircle($subjectParameters['sourceId']);
+				$subject = $l->t('A deleted user mentioned team {team} in conversation {call}');
 			} elseif ($notification->getSubject() === 'mention_all') {
 				$subject = $l->t('A deleted user mentioned everyone in conversation {call}');
 			} else {
@@ -806,6 +820,9 @@ class Notifier implements INotifier {
 					];
 
 					$subject = $l->t('{guest} (guest) mentioned group {group} in conversation {call}');
+				} elseif ($notification->getSubject() === 'mention_team') {
+					$richSubjectParameters['team'] = $this->getCircle($subjectParameters['sourceId']);
+					$subject = $l->t('{guest} (guest) mentioned team {team} in conversation {call}');
 				} elseif ($notification->getSubject() === 'mention_all') {
 					$subject = $l->t('{guest} (guest) mentioned everyone in conversation {call}');
 				} else {
@@ -821,6 +838,9 @@ class Notifier implements INotifier {
 					];
 
 					$subject = $l->t('A guest mentioned group {group} in conversation {call}');
+				} elseif ($notification->getSubject() === 'mention_team') {
+					$richSubjectParameters['team'] = $this->getCircle($subjectParameters['sourceId']);
+					$subject = $l->t('A guest mentioned team {team} in conversation {call}');
 				} elseif ($notification->getSubject() === 'mention_all') {
 					$subject = $l->t('A guest mentioned everyone in conversation {call}');
 				} else {
@@ -1246,5 +1266,48 @@ class Notifier implements INotifier {
 		$notification->setParsedSubject($subject);
 
 		return $notification;
+	}
+
+	protected function getCircle(string $circleId): array {
+		if (!$this->appManager->isEnabledForUser('circles')) {
+			return [
+				'type' => 'highlight',
+				'id' => $circleId,
+				'name' => $circleId,
+			];
+		}
+
+		if (!isset($this->circleNames[$circleId])) {
+			$this->loadCircleDetails($circleId);
+		}
+
+		if (!isset($this->circleNames[$circleId])) {
+			return [
+				'type' => 'highlight',
+				'id' => $circleId,
+				'name' => $circleId,
+			];
+		}
+
+		return [
+			'type' => 'circle',
+			'id' => $circleId,
+			'name' => $this->circleNames[$circleId],
+			'link' => $this->circleLinks[$circleId],
+		];
+	}
+
+	protected function loadCircleDetails(string $circleId): void {
+		try {
+			$circlesManager = Server::get(CirclesManager::class);
+			$circlesManager->startSuperSession();
+			$circle = $circlesManager->getCircle($circleId);
+
+			$this->circleNames[$circleId] = $circle->getDisplayName();
+			$this->circleLinks[$circleId] = $circle->getUrl();
+		} catch (\Exception) {
+		} finally {
+			$circlesManager?->stopSession();
+		}
 	}
 }

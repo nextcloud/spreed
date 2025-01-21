@@ -1147,7 +1147,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Add a participant to a room
 	 *
 	 * @param string $newParticipant New participant
-	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones' $source Source of the participant
+	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
 	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
 	 *
 	 * 200: Participant successfully added
@@ -1215,7 +1215,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 
 			$this->participantService->addGroup($this->room, $group, $participants);
-		} elseif ($source === 'circles') {
+		} elseif ($source === 'circles' || $source === 'teams') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST);
 			}

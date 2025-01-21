@@ -71,6 +71,8 @@ class SearchPlugin implements ISearchPlugin {
 		$emailAttendees = [];
 		/** @var list<Attendee> $guestAttendees */
 		$guestAttendees = [];
+		/** @var array<string, string> $teamIds */
+		$teamIds = [];
 
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
@@ -92,6 +94,8 @@ class SearchPlugin implements ISearchPlugin {
 					$cloudIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 					$groupIds[$attendee->getActorId()] = $attendee->getDisplayName();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
+					$teamIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				}
 			}
 		}
@@ -101,6 +105,7 @@ class SearchPlugin implements ISearchPlugin {
 		$this->searchGuests($search, $guestAttendees, $searchResult);
 		$this->searchEmails($search, $emailAttendees, $searchResult);
 		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
+		$this->searchTeams($search, $teamIds, $searchResult);
 
 		return false;
 	}
@@ -352,6 +357,58 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
+	/**
+	 * @param string $search
+	 * @param array<string, Attendee> $attendees
+	 * @param ISearchResult $searchResult
+	 */
+	/**
+	 * @param array<string|int, string> $teams
+	 */
+	protected function searchTeams(string $search, array $teams, ISearchResult $searchResult): void {
+		$search = strtolower($search);
+
+		$type = new SearchResultType('teams');
+
+		$matches = $exactMatches = [];
+		foreach ($teams as $teamId => $displayName) {
+			if ($displayName === '') {
+				continue;
+			}
+
+			$teamId = (string)$teamId;
+			if ($searchResult->hasResult($type, $teamId)) {
+				continue;
+			}
+
+			if ($search === '') {
+				$matches[] = $this->createTeamResult($teamId, $displayName);
+				continue;
+			}
+
+			if (strtolower($teamId) === $search) {
+				$exactMatches[] = $this->createTeamResult($teamId, $displayName);
+				continue;
+			}
+
+			if (stripos($teamId, $search) !== false) {
+				$matches[] = $this->createTeamResult($teamId, $displayName);
+				continue;
+			}
+
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createTeamResult($teamId, $displayName);
+				continue;
+			}
+
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createTeamResult($teamId, $displayName);
+			}
+		}
+
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
 	protected function createResult(string $type, string $uid, string $name): array {
 		if ($type === 'user' && $name === '') {
 			$name = $this->userManager->getDisplayName($uid) ?? $uid;
@@ -400,5 +457,15 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		return $data;
+	}
+
+	protected function createTeamResult(string $actorId, string $name): array {
+		return [
+			'label' => $name,
+			'value' => [
+				'shareType' => 'team',
+				'shareWith' => 'team/' . $actorId,
+			],
+		];
 	}
 }
