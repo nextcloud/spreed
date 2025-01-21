@@ -48,8 +48,9 @@
 								{{ conversation.description }}
 							</p>
 						</template>
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<div class="description__popover" v-html="renderedDescription" />
+						<NcRichText class="description__popover"
+							:text="conversation.description"
+							use-extended-markdown />
 					</NcPopover>
 				</div>
 			</a>
@@ -113,7 +114,7 @@ import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
@@ -146,14 +147,13 @@ export default {
 		TopBarMediaControls,
 		NcButton,
 		NcPopover,
+		NcRichText,
 		TopBarMenu,
 		TasksCounter,
 		ReactionMenu,
 		// Icons
 		IconAccountMultiple,
 	},
-
-	mixins: [richEditor],
 
 	props: {
 		isInCall: {
@@ -214,10 +214,6 @@ export default {
 
 		statusMessage() {
 			return getStatusMessage(this.conversation)
-		},
-
-		renderedDescription() {
-			return this.renderContent(this.conversation.description)
 		},
 
 		/**
@@ -312,6 +308,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/markdown';
+
 .top-bar {
 	--border-width: 1px;
 
@@ -405,9 +403,13 @@ export default {
 }
 
 .description__popover {
-	padding: var(--default-grid-baseline);
+	padding: calc(var(--default-grid-baseline) * 2);
 	width: fit-content;
 	max-width: 50em;
+
+	:deep(> div) {
+		@include markdown;
+	}
 }
 
 .icon {
