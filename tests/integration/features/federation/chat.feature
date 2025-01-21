@@ -244,11 +244,8 @@ Feature: federation/chat
     And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
-    # This is the previous version of the line. localhost:8080 is not the expected result but the username
-    # is resolved to it because of missing display name resolution for federation. Revert this when it's been fixed
-    #| LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName          |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1@localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
@@ -279,8 +276,8 @@ Feature: federation/chat
     Then using server "REMOTE"
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/Hi @all bye         | participant1-displayname mentioned everyone in conversation room       | Hi room bye |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @all bye         | participant1@localhost:8080 mentioned everyone in conversation room       | Hi room bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1@localhost:8080 mentioned you in conversation room | Hi @participant2-displayname bye |
       | spreed | chat        | LOCAL::room/Message 1-1         | participant1-displayname replied to your message in conversation room  | Message 1-1 |
     When next message request has the following parameters set
       | timeout                  | 0         |
