@@ -9,7 +9,6 @@ APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
 CIRCLES_BRANCH="master"
-CSB_BRANCH="main"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -115,6 +114,8 @@ echo -e "\033[0;36m# Setting up apps\033[0m"
 echo -e "\033[0;36m#\033[0m"
 cp -R ./spreedcheats ../../../spreedcheats
 ${ROOT_DIR}/occ app:getpath spreedcheats
+cp -R ./talk_webhook_demo ../../../talk_webhook_demo
+${ROOT_DIR}/occ app:getpath talk_webhook_demo
 
 # Add apps to the parent directory of "spreed" (unless they are
 # already there or in "apps").
@@ -128,16 +129,16 @@ for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
 
 	${ROOT_DIR}/occ app:enable spreed || exit 1
 	${ROOT_DIR}/occ app:enable --force spreedcheats || exit 1
+	${ROOT_DIR}/occ app:enable --force talk_webhook_demo || exit 1
 	${ROOT_DIR}/occ app:enable --force notifications || exit 1
 	${ROOT_DIR}/occ app:enable --force guests || exit 1
 	${ROOT_DIR}/occ app:enable --force circles || exit 1
-	${ROOT_DIR}/occ app:enable --force call_summary_bot || exit 1
 
 	${ROOT_DIR}/occ app:list | grep spreed
+	${ROOT_DIR}/occ app:list | grep talk_webhook_demo
 	${ROOT_DIR}/occ app:list | grep notifications
 	${ROOT_DIR}/occ app:list | grep guests
 	${ROOT_DIR}/occ app:list | grep circles
-	${ROOT_DIR}/occ app:list | grep call_summary_bot
 done
 
 echo ''
@@ -200,6 +201,7 @@ echo -e "\033[0;36m#\033[0m"
 # Main server
 export NEXTCLOUD_CONFIG_DIR="$MAIN_SERVER_CONFIG_DIR"
 ${ROOT_DIR}/occ app:disable spreedcheats
+${ROOT_DIR}/occ app:disable talk_webhook_demo
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "$MAIN_OVERWRITE_CLI_URL"
 if [[ "$MAIN_SKELETON_DIR" != "" ]]; then
 	${ROOT_DIR}/occ config:system:set skeletondirectory --value "$MAIN_SKELETON_DIR"
@@ -211,6 +213,7 @@ if $DESTROY_REAL_FEDERATED_SERVER; then
 else
 	export NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR"
 	${ROOT_DIR}/occ app:disable spreedcheats
+	${ROOT_DIR}/occ app:disable talk_webhook_demo
 	${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "$REAL_FEDERATED_OVERWRITE_CLI_URL"
 	if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" ]]; then
 		${ROOT_DIR}/occ config:system:set skeletondirectory --value "$REAL_FEDERATED_SKELETON_DIR"
@@ -218,6 +221,7 @@ else
 fi
 
 rm -rf ../../../spreedcheats
+rm -rf ../../../talk_webhook_demo
 
 wait $PHPPID1
 wait $PHPPID2
