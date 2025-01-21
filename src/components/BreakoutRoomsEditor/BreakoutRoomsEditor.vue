@@ -169,13 +169,13 @@ export default {
 
 	&__number-input {
 		display: block;
-		margin-bottom: calc(var(--default-grid-baseline)*4);
+		margin-bottom: calc(var(--default-grid-baseline) * 4);
 	}
 
 	&__caption {
 		font-weight: bold;
 		display: block;
-		margin: calc(var(--default-grid-baseline)*3) 0 calc(var(--default-grid-baseline)*2) 0;
+		margin: calc(var(--default-grid-baseline) * 3) 0 calc(var(--default-grid-baseline) * 2) 0;
 	}
 
 	&__error-hint {

@@ -280,7 +280,6 @@ export default {
 .reactions-wrapper {
 	--minimal-button-width: 48px;
 	--font-family-emoji: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Twemoji Mozilla', 'Noto Color Emoji', 'EmojiOne Color', 'Android Emoji';
-
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--default-grid-baseline);

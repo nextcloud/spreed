@@ -990,7 +990,6 @@ export default {
 .new-message-form {
 	--emoji-button-size: calc(var(--default-clickable-area) - var(--border-width-input-focused, 2px) * 2);
 	--emoji-button-radius: calc(var(--border-radius-element, calc(var(--button-size) / 2)) - var(--border-width-input-focused, 2px));
-
 	align-items: flex-end;
 	display: flex;
 	gap: var(--default-grid-baseline);

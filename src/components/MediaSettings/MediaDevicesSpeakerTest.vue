@@ -84,6 +84,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:math';
+
 .media-devices-checker {
 	display: flex;
 	gap: var(--default-grid-baseline);
@@ -117,7 +119,7 @@ export default {
 
 @keyframes equalizer {
 	@for $i from 0 through 15 {
-		#{4*$i}% { height: random(70) + 20%; }
+		#{4 * $i}% { height: math.random(70) + 20%; }
 	}
 }
 </style>
