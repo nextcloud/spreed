@@ -9,6 +9,7 @@ import SHA256 from 'crypto-js/sha256.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import { CHAT } from '../constants.ts'
 import type {
 	ChatMessage,
 	clearHistoryResponse,
@@ -45,15 +46,22 @@ type EditMessagePayload = { token: string, messageId: number, updatedMessage: ed
  * @param data.token the conversation token;
  * @param data.lastKnownMessageId last known message id;
  * @param data.includeLastKnown whether to include the last known message in the response;
+ * @param [data.lookIntoFuture=0] direction of message fetch
  * @param [data.limit=100] Number of messages to load
  * @param options options;
  */
-const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse {
+const fetchMessages = async function({
+	token,
+	lastKnownMessageId,
+	includeLastKnown,
+	lookIntoFuture = CHAT.FETCH_OLD,
+	limit = 100,
+}: ReceiveMessagesPayload, options?: object): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
 			setReadMarker: 0,
-			lookIntoFuture: 0,
+			lookIntoFuture,
 			lastKnownMessageId,
 			limit,
 			includeLastKnown: includeLastKnown ? 1 : 0,
@@ -71,12 +79,16 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param [data.limit=100] Number of messages to load
  * @param options options
  */
-const pollNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse => {
+const pollNewMessages = async ({
+	token,
+	lastKnownMessageId,
+	limit = 100,
+}: ReceiveMessagesPayload, options?: object): receiveMessagesResponse => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
 			setReadMarker: 0,
-			lookIntoFuture: 1,
+			lookIntoFuture: CHAT.FETCH_NEW,
 			lastKnownMessageId,
 			limit,
 			includeLastKnown: 0,
