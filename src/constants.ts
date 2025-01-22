@@ -29,6 +29,8 @@ export const SESSION = {
 export const CHAT = {
 	FETCH_LIMIT: 100,
 	MINIMUM_VISIBLE: 5,
+	FETCH_OLD: 0,
+	FETCH_NEW: 1,
 } as const
 
 export const CALL = {
