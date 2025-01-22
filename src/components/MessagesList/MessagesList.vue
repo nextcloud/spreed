@@ -621,7 +621,7 @@ export default {
 			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
-				this.focusMessage(focusMessageId)
+				this.focusMessage(focusMessageId, false)
 				return
 			}
 
