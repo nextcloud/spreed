@@ -19,6 +19,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\Support\Subscription\IRegistry;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -31,6 +32,7 @@ class AdminSettingsTest extends TestCase {
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected IGroupManager&MockObject $groupManager;
 	protected MatterbridgeManager&MockObject $matterbridgeManager;
+	protected IRegistry&MockObject $subscription;
 	protected IUserSession&MockObject $userSession;
 	protected IL10N&MockObject $l10n;
 	protected IFactory&MockObject $l10nFactory;
@@ -46,6 +48,7 @@ class AdminSettingsTest extends TestCase {
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
+		$this->subscription = $this->createMock(IRegistry::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
@@ -67,6 +70,7 @@ class AdminSettingsTest extends TestCase {
 				$this->cacheFactory,
 				$this->groupManager,
 				$this->matterbridgeManager,
+				$this->subscription,
 				$this->userSession,
 				$this->l10n,
 				$this->l10nFactory
@@ -82,6 +86,7 @@ class AdminSettingsTest extends TestCase {
 				$this->cacheFactory,
 				$this->groupManager,
 				$this->matterbridgeManager,
+				$this->subscription,
 				$this->userSession,
 				$this->l10n,
 				$this->l10nFactory,

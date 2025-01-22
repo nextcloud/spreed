@@ -22,16 +22,18 @@ nav:
   - 'Overview': 'index.md'
   - 'User documentation':
       - 'User system requirements': 'user-requirements.md'
+      - 'User feature documentation ↗': 'https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html'
   - 'Administration documentation':
       - 'Server system requirements': 'system-requirements.md'
+      - 'Quick install': 'quick-install.md'
       - 'Scalability': 'scalability.md'
       - 'Call experience': 'call-experience.md'
       - 'Sample conversations': 'sample-conversations.md'
       - 'Occ commands': 'occ.md'
       - 'Bots': 'bot-list.md'
-      - 'Commands (deprecated)': 'commands.md'
       - 'Matterbridge integration': 'matterbridge.md'
   - 'Developer documentation':
+      - 'Developer setup': 'developer-setup.md'
       - 'Bots and webhooks': 'bots.md'
       - 'Constants': 'constants.md'
       - 'Capabilities': 'capabilities.md'
@@ -50,8 +52,9 @@ nav:
       - 'Bots management': 'bot-management.md'
       - 'Integration by other apps': 'integration.md'
       - 'Webinar management': 'webinar.md'
-      - 'Settings': 'settings.md'
-      - 'Signaling API': 'internal-signaling.md'
+      - 'Settings management': 'settings.md'
+      - 'Internal Signaling API': 'internal-signaling.md'
+      - 'Standalone Signaling API↗': 'https://nextcloud-spreed-signaling.readthedocs.io/en/latest/'
   - 'Configuring a TURN server':
       - 'Overview': 'TURN.md'
       - 'coTURN': 'coturn.md'

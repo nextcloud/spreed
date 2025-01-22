@@ -45,6 +45,9 @@ export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilit
 // Initial state
 export type InitialState = {
 	spreed: {
+		'has_cache_configured': boolean,
+		'has_valid_subscription': boolean,
+		'signaling_mode': string,
 		'signaling_servers': {
 			hideWarning: boolean,
 			secret: string,

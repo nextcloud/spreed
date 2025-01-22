@@ -24,6 +24,8 @@ import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChec
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import type { InitialState } from '../types/index.ts'
 
+const hasValidSubscription = loadState<InitialState['spreed']['has_valid_subscription']>('spreed', 'has_valid_subscription')
+
 const supportFederation = hasTalkFeature('local', 'federation-v1')
 
 const signalingServers = ref<InitialState['spreed']['signaling_servers']>(loadState('spreed', 'signaling_servers', {
@@ -38,7 +40,8 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 	<div>
 		<SignalingServers :servers.sync="signalingServers.servers"
 			:secret.sync="signalingServers.secret"
-			:hide-warning.sync="signalingServers.hideWarning" />
+			:hide-warning.sync="signalingServers.hideWarning"
+			:has-valid-subscription="hasValidSubscription" />
 		<HostedSignalingServer :has-signaling-servers="hasSignalingServers" />
 		<GeneralSettings :has-signaling-servers="hasSignalingServers" />
 		<AllowedGroups />

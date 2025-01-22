@@ -25,16 +25,20 @@ class SIPConfiguration implements ISetupCheck {
 	}
 
 	public function getName(): string {
-		return $this->l->t('SIP dial-in');
+		$name = $this->l->t('SIP configuration');
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			return '[skip] ' . $name;
+		}
+		return $name;
 	}
 
 	public function run(): SetupResult {
-		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
-			return SetupResult::success();
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));
 		}
 		if ($this->talkConfig->getSIPSharedSecret() === '' && $this->talkConfig->getDialInInfo() === '') {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}
-		return SetupResult::error($this->l->t('Using the SIP functionality requires a High-performance backend.'));
+		return SetupResult::success();
 	}
 }

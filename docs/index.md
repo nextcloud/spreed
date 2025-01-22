@@ -5,11 +5,12 @@
 ## User documentation
 
 * [User system requirements](user-requirements.md)
-* [User feature documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)
+* [User feature documentation ↗](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)
 
 ## Administration documentation
 
 * [Server system requirements](system-requirements.md)
+* [Quick install](quick-install.md)
 * [Configuring a TURN server](TURN.md)
 	* [Configuring coTURN](coturn.md)
 	* [Configuring eturnal](eturnal.md)
@@ -45,4 +46,4 @@
 * [Webinar management](webinar.md)
 * [Settings management](settings.md)
 * [Internal Signaling API](internal-signaling.md)
-* [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/)
+* [Standalone Signaling API ↗](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/)
