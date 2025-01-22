@@ -25,7 +25,7 @@ import {
 	updateLastReadMessage,
 	fetchMessages,
 	getMessageContext,
-	lookForNewMessages,
+	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
 } from '../services/messagesService.ts'
@@ -40,7 +40,7 @@ jest.mock('../services/messagesService', () => ({
 	updateLastReadMessage: jest.fn(),
 	fetchMessages: jest.fn(),
 	getMessageContext: jest.fn(),
-	lookForNewMessages: jest.fn(),
+	pollNewMessages: jest.fn(),
 	postNewMessage: jest.fn(),
 	postRichObjectToConversation: jest.fn(),
 }))
@@ -1199,14 +1199,14 @@ describe('messagesStore', () => {
 				},
 				payload: messages,
 			})
-			lookForNewMessages.mockResolvedValueOnce(response)
+			pollNewMessages.mockResolvedValueOnce(response)
 
 			// smaller number to make it update
 			conversationMock.mockReturnValue({
 				lastMessage: { id: 1 },
 			})
 
-			await store.dispatch('lookForNewMessages', {
+			await store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
@@ -1215,7 +1215,7 @@ describe('messagesStore', () => {
 				},
 			})
 
-			expect(lookForNewMessages).toHaveBeenCalledWith({
+			expect(pollNewMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				limit: CHAT.FETCH_LIMIT,
@@ -1251,12 +1251,12 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({
 				payload: messages,
 			})
-			lookForNewMessages.mockResolvedValueOnce(response)
+			pollNewMessages.mockResolvedValueOnce(response)
 
 			// smaller number to make it update
 			conversationMock.mockReturnValue({ lastMessage: { id: 500 } })
 
-			await store.dispatch('lookForNewMessages', {
+			await store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
@@ -1277,11 +1277,11 @@ describe('messagesStore', () => {
 			// Arrange: prepare cancelable request from previous call of the function
 			const cancelFunctionMock = jest.fn()
 			cancelFunctionMocks.push(cancelFunctionMock)
-			store.commit('setCancelLookForNewMessages', { cancelFunction: cancelFunctionMock, requestId: 'request1' })
+			store.commit('setCancelPollNewMessages', { cancelFunction: cancelFunctionMock, requestId: 'request1' })
 			console.warn = jest.fn()
 
 			// Act
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: null,
@@ -1289,11 +1289,11 @@ describe('messagesStore', () => {
 
 			// Assert
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
-			expect(lookForNewMessages).not.toHaveBeenCalled()
+			expect(pollNewMessages).not.toHaveBeenCalled()
 		})
 
 		test('cancels look for new messages', async () => {
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
@@ -1301,19 +1301,19 @@ describe('messagesStore', () => {
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 
-			store.dispatch('cancelLookForNewMessages', { requestId: 'request1' })
+			store.dispatch('cancelPollNewMessages', { requestId: 'request1' })
 
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 		})
 
 		test('cancels look for new messages when called again', async () => {
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
 
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
@@ -1323,23 +1323,23 @@ describe('messagesStore', () => {
 		})
 
 		test('cancels look for new messages call individually', async () => {
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request1',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
 
-			store.dispatch('lookForNewMessages', {
+			store.dispatch('pollNewMessages', {
 				token: TOKEN,
 				requestId: 'request2',
 				lastKnownMessageId: 100,
 			}).catch(() => {})
 
-			store.dispatch('cancelLookForNewMessages', { requestId: 'request1' })
+			store.dispatch('cancelPollNewMessages', { requestId: 'request1' })
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
 
-			store.dispatch('cancelLookForNewMessages', { requestId: 'request2' })
+			store.dispatch('cancelPollNewMessages', { requestId: 'request2' })
 			expect(cancelFunctionMocks[1]).toHaveBeenCalledWith('canceled')
 		})
 
@@ -1367,12 +1367,12 @@ describe('messagesStore', () => {
 					},
 					payload: messages,
 				})
-				lookForNewMessages.mockResolvedValueOnce(response)
+				pollNewMessages.mockResolvedValueOnce(response)
 
 				// smaller number to make it update
 				conversationMock.mockReturnValue(testConversation)
 
-				await store.dispatch('lookForNewMessages', {
+				await store.dispatch('pollNewMessages', {
 					token: TOKEN,
 					requestId: 'request1',
 					lastKnownMessageId: 100,

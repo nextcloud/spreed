@@ -273,7 +273,7 @@ export default {
 			immediate: true,
 			handler(newValue, oldValue) {
 				if (oldValue) {
-					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
+					this.$store.dispatch('cancelPollNewMessages', { requestId: oldValue })
 				}
 				this.handleStartGettingMessagesPreconditions(this.token)
 
@@ -362,7 +362,7 @@ export default {
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
 		EventBus.off('message-height-changed', this.onMessageHeightChanged)
-		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+		this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
@@ -708,27 +708,12 @@ export default {
 
 				this.isInitialisingMessages = false
 
-				// get new messages
-				await this.lookForNewMessages(token)
+				// Once the history is received, starts looking for new messages.
+				await this.pollNewMessages(token)
 
 			} else {
-				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+				this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 			}
-		},
-
-		/**
-		 * Fetches the messages of a conversation given the conversation token. Triggers
-		 * a long-polling request for new messages.
-		 * @param token token of conversation where a method was called
-		 */
-		async lookForNewMessages(token) {
-			// Once the history is received, starts looking for new messages.
-			if (this._isBeingDestroyed || this._isDestroyed) {
-				console.debug('Prevent getting new messages on a destroyed MessagesList')
-				return
-			}
-
-			await this.getNewMessages(token)
 		},
 
 		async getMessageContext(token, messageId) {
@@ -798,12 +783,13 @@ export default {
 		},
 
 		/**
-		 * Creates a long polling request for a new message.
-		 *
+		 * Fetches the messages of a conversation given the conversation token.
+		 * Creates a long polling request for new messages.
 		 * @param token token of conversation where a method was called
 		 */
-		async getNewMessages(token) {
+		async pollNewMessages(token) {
 			if (this.destroying) {
+				console.debug('Prevent polling new messages on MessagesList being destroyed')
 				return
 			}
 			// Check that the token has not changed
@@ -816,7 +802,7 @@ export default {
 				debugTimer.start(`${token} | long polling`)
 				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
-				await this.$store.dispatch('lookForNewMessages', {
+				await this.$store.dispatch('pollNewMessages', {
 					token,
 					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
 					requestId: this.chatIdentifier,
@@ -835,7 +821,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages(token)
+						this.pollNewMessages(token)
 					}, 500)
 					return
 				}
@@ -849,13 +835,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages(token)
+					this.pollNewMessages(token)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages(token)
+				this.pollNewMessages(token)
 			}, 500)
 		},
 
@@ -1230,14 +1216,12 @@ export default {
 
 		handleNetworkOffline() {
 			console.debug('Canceling message request as we are offline')
-			if (this.cancelLookForNewMessages) {
-				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
-			}
+			this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 		},
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages(this.token)
+			this.pollNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {

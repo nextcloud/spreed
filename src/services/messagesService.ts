@@ -71,7 +71,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param [data.limit=100] Number of messages to load
  * @param options options
  */
-const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse => {
+const pollNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
@@ -226,7 +226,7 @@ const summarizeChat = async function(token: string, fromMessageId: summarizeChat
 
 export {
 	fetchMessages,
-	lookForNewMessages,
+	pollNewMessages,
 	getMessageContext,
 	postNewMessage,
 	clearConversationHistory,
