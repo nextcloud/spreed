@@ -1001,6 +1001,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Придружете се на разговор во секое време, каде и да било, на кој било уред.",
     "Android app" : "Android апликација",
     "iOS app" : "iOS апликација",
+    "__language_name__" : "Македонски",
+    "Tasks" : "Задачи",
     "There are currently no commands available." : "Моментално нема достапни команди.",
     "The command does not exist" : "Комендата не постои",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Настана грешка при стартување на командата. Контактирајте го администраторот.",

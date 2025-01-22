@@ -114,6 +114,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
+    "__language_name__" : "Eesti",
+    "Tasks" : "Ülesanded",
     "Password protect" : "Parooliga kaitsmine",
     "Close" : "Sulge"
 },

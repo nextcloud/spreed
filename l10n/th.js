@@ -108,6 +108,9 @@ OC.L10N.register(
     "The password is wrong. Try again." : "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอป Android",
     "iOS app" : "แอป iOS",
+    "__language_name__" : "ไทย",
+    "Tasks" : "งาน",
+    "Notes" : "โน้ต",
     "Password protect" : "ป้องกันด้วยรหัสผ่าน",
     "Close" : "ปิด"
 },
