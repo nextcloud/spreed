@@ -1937,6 +1937,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز",
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
+    "Decisions" : "قرارات",
+    "Call summary" : "ملخص المكالمة",
     "- Moderators can now create breakout rooms (requires the external signaling server)" : "- أصبح بإمكان المشرفين الآن إنشاء غرف جانبية (يستلزم ذلك خادم خارجي للاتصال external signaling server)",
     "- Calls can now be recorded (requires the external signaling server)" : "- صار بالإمكان الآن تسجيل المكالمات (يستلزم ذلك خادوماً خارجيّاً للإشارة external signaling server)",
     "There are currently no commands available." : "لا يوجد أوامر في الوقت الحالي",

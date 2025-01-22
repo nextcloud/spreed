@@ -940,6 +940,7 @@
     "The password is wrong. Try again." : "La contraseña ye incorreuta. Volvi tentalo.",
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
+    "Call summary" : "Resume de llamaes",
     "The command does not exist" : "El comandu nun esiste",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Prodúxose un error mentanto s'executaba'l comandu. Pidi a l'alministración que compruebe los rexistros.",
     "{actor} added circle {circle}" : "{actor} amestó'l círculu «{circle}»",

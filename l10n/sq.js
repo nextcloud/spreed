@@ -269,6 +269,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Fjalëkalim i gabuar. Provojeni sërish.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
+    "__language_name__" : "Shqip",
+    "Tasks" : "Detyra",
     "Circles" : "Rrethet",
     "Password protect" : "Mbroje me fjalëkalim",
     "Close" : "Mbylleni",
