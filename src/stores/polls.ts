@@ -52,6 +52,10 @@ export const usePollsStore = defineStore('polls', {
 			return Object.values(Object(state.drafts[token]))
 		},
 
+		draftsLoaded: (state) => (token: string): boolean => {
+			return state.drafts[token] !== undefined
+		},
+
 		isNewPoll: (state) => (pollId: number) => {
 			return state.pollToastsQueue[pollId] !== undefined
 		},

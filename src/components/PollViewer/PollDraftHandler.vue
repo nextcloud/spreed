@@ -6,16 +6,18 @@
 <template>
 	<NcDialog class="drafts"
 		:name="t('spreed', 'Poll drafts')"
+		:container="container"
 		size="normal"
 		close-on-click-outside
 		v-on="$listeners"
 		@update:open="emit('close')">
 		<EmptyView v-if="!pollDrafts.length"
 			class="drafts__empty"
-			:name="t('spreed', 'No poll drafts')"
-			:description="t('spreed', 'There is no poll drafts yet saved for this conversation')">
+			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
+			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
 			<template #icon>
-				<IconPoll />
+				<IconPoll v-if="pollDraftsLoaded" />
+				<NcLoadingIcon v-else />
 			</template>
 		</EmptyView>
 		<div v-else class="drafts__wrapper">
@@ -27,7 +29,7 @@
 				draft
 				@click="openPollEditor" />
 		</div>
-		<template v-if="props.showCreateButton" #actions>
+		<template v-if="!props.editorOpened" #actions>
 			<NcButton @click="openPollEditor(null)">
 				{{ t('spreed', 'Create new poll') }}
 			</NcButton>
@@ -44,6 +46,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
@@ -53,7 +56,8 @@ import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{
 	token: string,
-	showCreateButton?: boolean,
+	editorOpened?: boolean,
+	container?: string,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -65,13 +69,14 @@ const pollsStore = usePollsStore()
  */
 pollsStore.getPollDrafts(props.token)
 const pollDrafts = computed(() => pollsStore.getDrafts(props.token))
+const pollDraftsLoaded = computed(() => pollsStore.draftsLoaded(props.token))
 
 /**
  * Opens poll editor pre-filled from the draft
  * @param id poll draft ID
  */
-function openPollEditor(id: number) {
-	EventBus.emit('poll-editor-open', id)
+function openPollEditor(id: number | null) {
+	EventBus.emit('poll-editor-open', { id, fromDrafts: !props.editorOpened, selector: props.container })
 }
 </script>
 

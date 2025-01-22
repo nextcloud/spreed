@@ -8,7 +8,8 @@
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
-		show-navigation>
+		show-navigation
+		@update:open="handleUpdateOpen">
 		<NcAppSettingsSection id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo :conversation="conversation"
@@ -290,6 +291,12 @@ export default {
 		handleHideSettings() {
 			this.showSettings = false
 			this.$store.dispatch('updateConversationSettingsToken', '')
+		},
+
+		handleUpdateOpen(value) {
+			if (!value) {
+				this.$store.dispatch('updateConversationSettingsToken', '')
+			}
 		},
 
 		setShowMediaSettings(newValue) {

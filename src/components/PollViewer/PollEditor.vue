@@ -6,6 +6,7 @@
 <template>
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
+		:container="container"
 		v-on="$listeners"
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
@@ -31,7 +32,7 @@
 				class="hidden-visually"
 				@change="importPoll">
 			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="isModerator" close-after-click @click="openPollDraftHandler">
+				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" close-after-click @click="openPollDraftHandler">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
@@ -88,13 +89,13 @@
 		</div>
 		<template #actions>
 			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="isModerator" :disabled="!isFilled" @click="createPollDraft">
+				<NcActionButton v-if="props.canCreatePollDrafts" :disabled="!isFilled" @click="createPollDraft">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
-				<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
 					<template #icon>
 						<IconFileDownload :size="20" />
 					</template>
@@ -102,7 +103,7 @@
 				</NcActionLink>
 			</NcActions>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
-				{{ t('spreed', 'Create poll') }}
+				{{ createPollLabel }}
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -140,6 +141,8 @@ import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
+	canCreatePollDrafts: boolean,
+	container?: string,
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void,
@@ -165,6 +168,12 @@ const pollForm = reactive<createPollParams>({
 })
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
+const createPollLabel = computed(() => {
+	return store.getters.getToken() !== props.token
+		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName },
+			undefined, { escape: false, sanitize: false })
+		: t('spreed', 'Create poll')
+})
 
 const isAnonymous = computed({
 	get() {
@@ -184,8 +193,6 @@ const isMultipleAnswer = computed({
 	}
 })
 
-const isModerator = computed(() => (store.getters as unknown).isModerator)
-
 const exportPollURI = computed(() => convertToJSONDataURI(pollForm))
 const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
@@ -193,7 +200,7 @@ const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
  * Remove a previously added option
  * @param index option index
  */
-function deleteOption(index) {
+function deleteOption(index: number) {
 	pollForm.options.splice(index, 1)
 }
 
@@ -223,14 +230,15 @@ async function createPoll() {
 /**
  * Pre-fills form from the draft
  * @param id poll draft ID
- * @param isAlreadyOpened poll draft ID
+ * @param fromDrafts whether editor was opened from drafts handler
  */
-function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
-	if (!isAlreadyOpened) {
+function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
+	if (fromDrafts) {
+		// Show 'Back' button, do not reset until closed
 		isOpenedFromDraft.value = true
 	}
 
-	if (pollsStore.drafts[props.token][id]) {
+	if (id && pollsStore.drafts[props.token][id]) {
 		fillPollForm(pollsStore.drafts[props.token][id])
 	}
 }
@@ -289,7 +297,7 @@ async function createPollDraft() {
  * Open a PollDraftHandler dialog
  */
 function openPollDraftHandler() {
-	EventBus.emit('poll-drafts-open')
+	EventBus.emit('poll-drafts-open', { selector: props.container })
 }
 
 /**

@@ -14,6 +14,7 @@
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
+		<PollManager />
 	</NcContent>
 </template>
 
@@ -34,6 +35,7 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
+import PollManager from './components/PollViewer/PollManager.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
@@ -63,6 +65,7 @@ export default {
 		SettingsDialog,
 		ConversationSettingsDialog,
 		MediaSettings,
+		PollManager,
 	},
 
 	setup() {
