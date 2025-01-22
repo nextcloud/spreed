@@ -296,7 +296,7 @@ export default {
 
 				// scroll to bottom if needed
 				this.scrollToBottom({ smooth: false })
-
+				console.log(`${newMessages.length} items - range ${newMessages.at(0)?.id} - ${newMessages.at(-1)?.id}`)
 				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 					this.$nextTick(() => {
 						this.updateTasksCount()
