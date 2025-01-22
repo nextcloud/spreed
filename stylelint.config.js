@@ -18,6 +18,7 @@ stylelintConfig.plugins.push('stylelint-use-logical')
 stylelintConfig.rules['csstools/use-logical'] = [
 	'always',
 	{
+		severity: 'warning',
 		// Only lint LTR-RTL properties for now
 		except: [
 			// Position properties
