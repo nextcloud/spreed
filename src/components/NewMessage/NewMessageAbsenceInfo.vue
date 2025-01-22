@@ -163,8 +163,8 @@ export default {
 
 	&__caption {
 		font-weight: bold;
-		margin: var(--default-grid-baseline) var(--default-clickable-area);
-		margin-inline-start: 0;
+		margin-block: var(--default-grid-baseline);
+		margin-inline: 0 var(--default-clickable-area);
 	}
 
 	&__replacement {

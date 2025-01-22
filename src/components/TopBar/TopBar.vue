@@ -327,16 +327,16 @@ export default {
 	border-bottom: var(--border-width) solid var(--color-border);
 
 	&--in-call {
-		right: 0;
+		inset-inline: 0;
 		border: none;
 		position: absolute;
 		top: 0;
-		left: 0;
 		background-color: transparent;
 	}
 
 	.talk-sidebar-callview & {
 		margin-inline-end: var(--default-clickable-area);
+		align-items: flex-start;
 	}
 
 	&--sidebar {

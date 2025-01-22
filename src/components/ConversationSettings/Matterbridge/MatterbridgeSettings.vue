@@ -315,20 +315,6 @@ export default {
 
 	.basic-settings {
 		margin-bottom: calc(4 * var(--default-grid-baseline));
-
-		.action {
-			list-style: none;
-		}
-		.save-changes {
-			width: 100%;
-			text-align: left;
-
-			.icon-checkmark {
-				margin-block: 0;
-				margin-inline-end: 10px;
-				margin-inline-start: 2px;
-			}
-		}
 		.icon {
 			display: inline-flex;
 			justify-content: center;
@@ -345,17 +331,6 @@ export default {
 			display: flex;
 			height: var(--default-clickable-area);
 			margin-top: 5px;
-
-			label {
-				flex-grow: 1;
-				margin-top: auto;
-				margin-bottom: auto;
-				&::before {
-					margin-block: 0;
-					margin-inline-start: 15px;
-					margin-inline-end: 10px;
-				}
-			}
 		}
 	}
 

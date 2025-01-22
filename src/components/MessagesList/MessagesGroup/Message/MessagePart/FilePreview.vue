@@ -556,8 +556,8 @@ export default {
 	&__progress {
 		position: absolute;
 		top: 50%;
-		inset-inline-end: 0;
-		transform: translate(100%, -50%);
+		inset-inline-end: calc(var(--progress-bar-height) * -1);
+		transform: translateY(-50%);
 	}
 
 	.mimeicon {
@@ -613,6 +613,7 @@ export default {
 				position: absolute;
 				height: 48px; /* for proper vertical centering */
 				top: 50%;
+				/* stylelint-disable-next-line csstools/use-logical */
 				left: 50%;
 				transform: translate(-50%, -50%);
 				opacity: 0.8;

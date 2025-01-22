@@ -250,8 +250,7 @@ export default {
 			padding: 0;
 			display: block;
 			text-align: center;
-			margin-inline-start: auto;
-			margin-inline-end: auto;
+			margin-inline: auto;
 		}
 	}
 
@@ -295,7 +294,7 @@ export default {
 .loading-avatar {
 	position: absolute;
 	top: 0;
-	left: 0;
+	inset-inline-start: 0;
 	width: 100%;
 	height: 100%;
 }

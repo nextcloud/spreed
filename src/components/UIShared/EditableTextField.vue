@@ -44,7 +44,7 @@
 					tabindex="0"
 					:title="countDownWarningText"
 					:aria-label="countDownWarningText">
-					<span>{{ charactersCountDown }}</span>
+					<span class="counter__numeric">{{ charactersCountDown }}</span>
 				</div>
 			</template>
 			<NcButton v-if="!editing && editable"
@@ -288,5 +288,9 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	&__numeric {
+		direction: ltr;
+	}
 }
 </style>

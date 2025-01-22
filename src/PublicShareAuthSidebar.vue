@@ -246,7 +246,7 @@ body .modal-wrapper * {
 	justify-content: center;
 
 	/* Unset conflicting rules from guest.css for the sidebar. */
-	text-align: left;
+	text-align: start;
 
 	& > .emptycontent {
 		/* Remove default margin-top as it is unneeded when showing only the empty
