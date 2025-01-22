@@ -123,6 +123,8 @@ OC.L10N.register(
     "Away" : "Borte",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
+    "__language_name__" : "Nynorsk",
+    "Tasks" : "Oppgåver",
     "Circles" : "Sirklar",
     "Password protect" : "Vern med passord",
     "Close" : "Lukk",

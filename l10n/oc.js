@@ -1105,6 +1105,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Participatz a las conversacion quand volètz, d’ont volètz, sus tot aparelh.",
     "Android app" : "Aplicacion Android",
     "iOS app" : "Aplicacion iOS",
+    "__language_name__" : "Occitan",
+    "Tasks" : "Prètzfaches",
     "There are currently no commands available." : "Cap de comanda pas disponibla pel moment.",
     "The command does not exist" : "La comanda existís pas",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Una error s’es producha en executant la comanda. Volgatz demandar a l’administrator de verificar los jornals.",
