@@ -855,8 +855,16 @@ const actions = {
 	 * @param {string} data.lastKnownMessageId last known message id;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
+	 * @param {number} [data.lookIntoFuture=0] direction of message fetch
 	 */
-	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible }) {
+	async fetchMessages(context, {
+		token,
+		lastKnownMessageId,
+		includeLastKnown,
+		requestOptions,
+		minimumVisible,
+		lookIntoFuture = CHAT.FETCH_OLD,
+	}) {
 		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
 
 		context.dispatch('cancelFetchMessages')
@@ -870,6 +878,7 @@ const actions = {
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
+			lookIntoFuture,
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 
@@ -903,10 +912,17 @@ const actions = {
 		})
 
 		if (response.headers['x-chat-last-given']) {
-			context.dispatch('setFirstKnownMessageId', {
-				token,
-				id: parseInt(response.headers['x-chat-last-given'], 10),
-			})
+			if (lookIntoFuture === CHAT.FETCH_NEW) {
+				context.dispatch('setLastKnownMessageId', {
+					token,
+					id: parseInt(response.headers['x-chat-last-given'], 10),
+				})
+			} else {
+				context.dispatch('setFirstKnownMessageId', {
+					token,
+					id: parseInt(response.headers['x-chat-last-given'], 10),
+				})
+			}
 		}
 
 		// For guests we also need to set the last known message id
@@ -924,12 +940,16 @@ const actions = {
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | fetch history`, 'first chunk')
+			const lastKnownMessageId = lookIntoFuture === CHAT.FETCH_NEW
+				? context.getters.getLastKnownMessageId(token)
+				: context.getters.getFirstKnownMessageId(token)
 			// There are not yet enough visible messages loaded, so fetch another chunk.
 			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
 				token,
-				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+				lastKnownMessageId,
 				includeLastKnown,
+				lookIntoFuture,
 				minimumVisible,
 			})
 		}
@@ -1021,6 +1041,7 @@ const actions = {
 				token,
 				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
 				includeLastKnown: false,
+				lookIntoFuture: CHAT.FETCH_OLD,
 				minimumVisible: minimumVisible * 2,
 			})
 		}
