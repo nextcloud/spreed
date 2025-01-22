@@ -833,6 +833,30 @@ describe('messagesStore', () => {
 		let addGuestNameAction
 		let cancelFunctionMock
 
+		const oldMessagesList = [{
+			id: 98,
+			token: TOKEN,
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		}, {
+			id: 99,
+			token: TOKEN,
+			actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+		}]
+		const originalMessagesList = [{
+			id: 100,
+			token: TOKEN,
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		}]
+		const newMessagesList = [{
+			id: 101,
+			token: TOKEN,
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		}, {
+			id: 102,
+			token: TOKEN,
+			actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+		}]
+
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(messagesStore)
 			const guestNameStore = useGuestNameStore()
@@ -851,31 +875,44 @@ describe('messagesStore', () => {
 			})
 
 			store = new Vuex.Store(testStoreConfig)
+
+			for (const index in originalMessagesList) {
+				store.commit('addMessage', { token: TOKEN, message: originalMessagesList[index] })
+				if (index === '0') {
+					store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: originalMessagesList[index].id })
+				}
+				if (index === `${originalMessagesList.length - 1}`) {
+					store.dispatch('setLastKnownMessageId', { token: TOKEN, id: originalMessagesList[index].id })
+				}
+			}
 		})
 
-		test('fetches messages from server including last known', async () => {
-			const messages = [{
-				id: 1,
-				token: TOKEN,
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			}, {
-				id: 2,
-				token: TOKEN,
-				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-			}]
+		const testCasesOld = [
+			[true, CHAT.FETCH_OLD, [...oldMessagesList, originalMessagesList.at(0)].reverse(), 98, 100],
+			[false, CHAT.FETCH_OLD, [...oldMessagesList].reverse(), 98, 100],
+			[true, CHAT.FETCH_NEW, [originalMessagesList.at(-1), ...newMessagesList], 100, 102],
+			[false, CHAT.FETCH_NEW, newMessagesList, 100, 102],
+		]
+		test.each(testCasesOld)('fetches messages from server: including last known - %s, look into future - %s', async (includeLastKnown, lookIntoFuture, payload, firstKnown, lastKnown) => {
+
 			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
-					'x-chat-last-given': '100',
+					'x-chat-last-given': payload.at(-1).id.toString(),
 				},
-				payload: messages,
+				payload,
 			})
 			fetchMessages.mockResolvedValueOnce(response)
+			const expectedMessages = lookIntoFuture
+				? [originalMessagesList[0], ...newMessagesList]
+				: [...oldMessagesList, originalMessagesList[0]]
+			const expectedMessageFromGuest = expectedMessages.find(message => message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
 
 			await store.dispatch('fetchMessages', {
 				token: TOKEN,
 				lastKnownMessageId: 100,
-				includeLastKnown: true,
+				includeLastKnown,
+				lookIntoFuture,
 				requestOptions: {
 					dummyOption: true,
 				},
@@ -885,7 +922,8 @@ describe('messagesStore', () => {
 			expect(fetchMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
-				includeLastKnown: true,
+				includeLastKnown,
+				lookIntoFuture,
 				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
@@ -894,59 +932,11 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 123 })
 
-			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
+			expect(addGuestNameAction).toHaveBeenCalledWith(expectedMessageFromGuest, { noUpdate: true })
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(100)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(2)
-		})
-
-		test('fetches messages from server excluding last known', async () => {
-			const messages = [{
-				id: 1,
-				token: TOKEN,
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			}, {
-				id: 2,
-				token: TOKEN,
-				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-			}]
-			const response = generateOCSResponse({
-				headers: {
-					'x-chat-last-common-read': '123',
-					'x-chat-last-given': '100',
-				},
-				payload: messages,
-			})
-			fetchMessages.mockResolvedValueOnce(response)
-
-			await store.dispatch('fetchMessages', {
-				token: TOKEN,
-				lastKnownMessageId: 100,
-				includeLastKnown: false,
-				requestOptions: {
-					dummyOption: true,
-				},
-				minimumVisible: 0,
-			})
-
-			expect(fetchMessages).toHaveBeenCalledWith({
-				token: TOKEN,
-				lastKnownMessageId: 100,
-				includeLastKnown: false,
-				limit: CHAT.FETCH_LIMIT,
-			}, {
-				dummyOption: true,
-			})
-
-			expect(updateLastCommonReadMessageAction)
-				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 123 })
-
-			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
-
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(100)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(null)
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual(expectedMessages)
+			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(firstKnown)
+			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(lastKnown)
 		})
 
 		test('cancels fetching messages', () => {
@@ -1111,6 +1101,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 3,
 				includeLastKnown: false,
+				lookIntoFuture: CHAT.FETCH_OLD,
 				limit: CHAT.FETCH_LIMIT,
 			}, undefined)
 
