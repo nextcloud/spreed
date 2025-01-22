@@ -283,11 +283,6 @@ export default {
 			},
 		},
 
-		token(newToken, oldToken) {
-			// Expire older messages when navigating to another conversation
-			this.$store.dispatch('easeMessageList', { token: oldToken })
-		},
-
 		messagesList: {
 			immediate: true,
 			handler(newMessages, oldMessages) {
@@ -1165,6 +1160,11 @@ export default {
 
 				let newTop
 				if (options?.force) {
+					if (this.$route?.hash?.startsWith('#message_')) {
+						// drop the hash, route change will handle scrolling
+						this.$router.replace({ ...this.$route, hash: '' })
+						return
+					}
 					newTop = this.$refs.scroller.scrollHeight
 					this.setChatScrolledToBottom(true)
 				} else if (!this.isSticky) {
@@ -1285,12 +1285,29 @@ export default {
 		},
 
 		async onRouteChange({ from, to }) {
+			if (from.name === 'conversation' && from.params.token !== to?.params?.token) {
+				// Navigate from conversation, check if chat should be eased / purged
+				this.checkMessagesListOnLeave()
+			}
+
 			if (from.name === 'conversation' && to.name === 'conversation'
 				&& from.params.token === to.params.token
 				&& from.hash !== to.hash) {
-
-				// the hash changed, need to focus/highlight another message
-				if (to.hash && to.hash.startsWith('#message_')) {
+				// Same conversation, different hash
+				if (from.hash?.startsWith('#message_') && !to.hash) {
+					// the hash is cleared
+					const lastMessageId = this.conversation.lastMessage.id
+					if (this.messagesList.find(m => m.id === lastMessageId)) {
+						this.scrollToBottom({ smooth: false })
+					} else {
+						this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+						this.$store.dispatch('purgeMessagesStore', this.token)
+						this.$nextTick(async () => {
+							await this.handleStartGettingMessagesPreconditions(this.token)
+						})
+					}
+				} else if (to.hash?.startsWith('#message_')) {
+					// the hash changed, need to focus/highlight another message
 					const focusedId = this.getMessageIdFromHash(to.hash)
 					if (this.messagesList.find(m => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
@@ -1301,19 +1318,27 @@ export default {
 							this.focusMessage(focusedId, true)
 						}, 2)
 					} else {
-						// Update environment around context to fill the gaps
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: focusedId,
+						this.isFocusingMessage = true
+						this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+						this.$store.dispatch('purgeMessagesStore', this.token)
+						this.$nextTick(async () => {
+							await this.handleStartGettingMessagesPreconditions(this.token)
+							this.setChatScrolledToBottom(false, { auto: true })
 						})
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: focusedId,
-						})
-						await this.getMessageContext(this.token, focusedId)
-						this.focusMessage(focusedId, true)
 					}
 				}
+			}
+		},
+
+		checkMessagesListOnLeave() {
+			if (this.messagesList.find(m => m.id === this.conversation.lastReadMessage)) {
+				// Last read message is loaded, no need to re-fetch chat on next join
+				// Expire older messages when navigating to another conversation
+				this.$store.dispatch('easeMessageList', { token: this.token })
+			} else {
+				// Chat was in 'history' mode, need to initialize again
+				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+				this.$store.dispatch('purgeMessagesStore', this.token)
 			}
 		},
 

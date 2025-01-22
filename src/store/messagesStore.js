@@ -413,6 +413,9 @@ const mutations = {
 		if (state.messages[token]) {
 			Vue.delete(state.messages, token)
 		}
+		if (state.loadedMessages[token]) {
+			Vue.delete(state.loadedMessages, token)
+		}
 	},
 
 	/**
