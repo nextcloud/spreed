@@ -153,6 +153,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La contraseña está equivoada. Por favor vuelve a intentarlo. ",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
+    "__language_name__" : "Español (El Salvador)",
+    "Tasks" : "Tareas",
     "Circles" : "Círculos",
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",

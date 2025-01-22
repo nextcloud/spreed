@@ -366,6 +366,11 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "__language_name__" : "Bahasa Indonesia",
+    "Call summary (%s)" : "Ringkasan panggilan ( %s )",
+    "Tasks" : "Tugas",
+    "Notes" : "Catatan",
+    "Call summary - {title}" : "Ringkasan panggilan - {judul}",
     "Password protect" : "Lindungi dengan kata sandi",
     "Close" : "Tutup"
 },
