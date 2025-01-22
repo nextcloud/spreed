@@ -278,7 +278,7 @@
 
 		<template #footer>
 			<div class="left-sidebar__settings-button-container">
-				<template v-if="supportsArchive">
+				<template v-if="!isSearching && supportsArchive">
 					<NcButton v-if="showArchived"
 						type="tertiary"
 						wide
@@ -547,7 +547,7 @@ export default {
 
 		filteredConversationsList() {
 			if (this.isFocused) {
-				return this.conversationsList
+				return this.conversationsList.filter((conversation) => shouldIncludeArchived(conversation, this.showArchived))
 			}
 
 			let validConversationsCount = 0
