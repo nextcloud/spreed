@@ -712,7 +712,7 @@ export default {
 				return
 			}
 
-			await this.getNewMessages(token)
+			await this.pollNewMessages(token)
 		},
 
 		async getMessageContext(token, messageId) {
@@ -786,7 +786,7 @@ export default {
 		 *
 		 * @param token token of conversation where a method was called
 		 */
-		async getNewMessages(token) {
+		async pollNewMessages(token) {
 			if (this.destroying) {
 				return
 			}
@@ -819,7 +819,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages(token)
+						this.pollNewMessages(token)
 					}, 500)
 					return
 				}
@@ -833,13 +833,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages(token)
+					this.pollNewMessages(token)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages(token)
+				this.pollNewMessages(token)
 			}, 500)
 		},
 
@@ -1221,7 +1221,7 @@ export default {
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages(this.token)
+			this.pollNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
