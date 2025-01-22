@@ -158,6 +158,8 @@ export default {
 
 			loadingOldMessages: false,
 
+			loadingNewMessages: false,
+
 			isInitialisingMessages: false,
 
 			isFocusingMessage: false,
@@ -696,7 +698,9 @@ export default {
 				this.isInitialisingMessages = false
 
 				// Once the history is received, starts looking for new messages.
-				await this.pollNewMessages(token)
+				if (!this.hasMoreMessagesToLoad) {
+					await this.pollNewMessages(token)
+				}
 
 			} else {
 				this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
@@ -735,7 +739,7 @@ export default {
 		},
 
 		/**
-		 * Get messages history.
+		 * Get messages history (old).
 		 *
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
@@ -747,26 +751,66 @@ export default {
 			// Make the request
 			this.loadingOldMessages = true
 			try {
-				debugTimer.start(`${this.token} | fetch history`)
+				debugTimer.start(`${this.token} | fetch history (old)`)
 				await this.$store.dispatch('fetchMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
+					lookIntoFuture: CHAT.FETCH_OLD,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
-				debugTimer.end(`${this.token} | fetch history`, 'status 200')
+				debugTimer.end(`${this.token} | fetch history (old)`, 'status 200')
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
-					debugTimer.end(`${this.token} | fetch history`, 'cancelled')
+					debugTimer.end(`${this.token} | fetch history (old)`, 'cancelled')
 					console.debug('The request has been canceled', exception)
 				}
 				if (exception?.response?.status === 304) {
 					// 304 - Not modified
-					debugTimer.end(`${this.token} | fetch history`, 'status 304')
+					debugTimer.end(`${this.token} | fetch history (old)`, 'status 304')
 					this.stopFetchingOldMessages = true
 				}
 			}
 			this.loadingOldMessages = false
+		},
+
+		/**
+		 * Get message history (new)
+		 *
+		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
+		 */
+		async getNewMessages(includeLastKnown) {
+			if (!this.hasMoreMessagesToLoad) {
+				// End of the chat reached, no more messages to load
+				return
+			}
+			// Make the request
+			this.loadingNewMessages = true
+			try {
+				debugTimer.start(`${this.token} | fetch history (new)`)
+				await this.$store.dispatch('fetchMessages', {
+					token: this.token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					includeLastKnown,
+					lookIntoFuture: CHAT.FETCH_NEW,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
+				})
+				debugTimer.end(`${this.token} | fetch history (new)`, 'status 200')
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					debugTimer.end(`${this.token} | fetch history (new)`, 'cancelled')
+					console.debug('The request has been canceled', exception)
+				}
+				if (exception?.response?.status === 304) {
+					// 304 - Not modified
+					debugTimer.end(`${this.token} | fetch history (new)`, 'status 304')
+				}
+			}
+			this.loadingNewMessages = false
+
+			if (!this.hasMoreMessagesToLoad) {
+				await this.lookForNewMessages(this.token)
+			}
 		},
 
 		/**
@@ -920,6 +964,22 @@ export default {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
 						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+					})
+				}
+				this.setChatScrolledToBottom(false, { auto: true })
+			} else if ((scrollHeight > clientHeight && (scrollHeight - clientHeight - scrollTop < 800) && this.isScrolling === 'down')
+				|| skipHeightCheck) {
+				if (this.loadingNewMessages || !this.hasMoreMessagesToLoad) {
+					// already loading, don't do it twice
+					return
+				}
+				this.displayMessagesLoader = true
+				await this.getNewMessages(false)
+				this.displayMessagesLoader = false
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					// scroll to previous position + added height
+					this.$refs.scroller.scrollTo({
+						top: scrollTop,
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
@@ -1293,6 +1353,15 @@ export default {
 				if (this.isChatBeginningReached) {
 					// Remove event listener as it needs to be triggered
 					// only when it's not confirmed that the chat beginning is reached
+					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
+					return
+				}
+
+				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else if (event.deltaY > 0) {
+				if (!this.hasMoreMessagesToLoad) {
+					// Remove event listener as it needs to be triggered
+					// only when it's not confirmed that the chat end is reached
 					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
 					return
 				}
