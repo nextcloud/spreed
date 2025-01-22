@@ -411,4 +411,7 @@ export default {
 	margin-top: 12px; // compensate margin before first header inside
 }
 
+:deep(.app-navigation-caption):not(:first-child) {
+	margin-top: 12px !important;
+}
 </style>

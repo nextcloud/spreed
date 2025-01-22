@@ -539,7 +539,7 @@ export default {
 .chat-button-unread-marker {
 	position: absolute;
 	top: 4px;
-	right: 4px;
+	inset-inline-end: 4px;
 	width: 8px;
 	height: 8px;
 	border-radius: 8px;

@@ -1056,8 +1056,4 @@ export default {
 	}
 }
 
-// Hardcode to prevent RTL affecting on user mentions
-:deep(.mention-bubble) {
-	direction: ltr;
-}
 </style>

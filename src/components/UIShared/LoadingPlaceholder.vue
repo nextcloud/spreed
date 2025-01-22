@@ -134,10 +134,8 @@ export default {
 		&__info {
 			width: 100px;
 			height: 15px;
-			margin-top: var(--default-clickable-area);
-			margin-inline-start: 8px;
-			margin-inline-end: var(--default-clickable-area);
-			margin-bottom: 0;
+			margin-block: var(--default-clickable-area) 0;
+			margin-inline: 8px var(--default-clickable-area);
 			animation-delay: 0.8s;
 		}
 	}

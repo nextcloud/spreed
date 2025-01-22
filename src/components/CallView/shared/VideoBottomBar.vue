@@ -347,8 +347,7 @@ export default {
 .participant-name {
 	color: white;
 	margin-block: 0px;
-	margin-inline-start: 8px;
-	margin-inline-end: auto;
+	margin-inline: 8px auto;
 	position: relative;
 	white-space: nowrap;
 	overflow: hidden;

@@ -259,9 +259,7 @@ export default {
 		width: 64px;
 		height: 64px;
 		opacity: 0.4;
-
-		margin-inline-start: auto;
-		margin-inline-end: auto;
+		margin-inline: auto;
 	}
 }
 

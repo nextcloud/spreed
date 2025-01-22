@@ -1010,7 +1010,6 @@ export default {
 			cursor: pointer;
 		}
 
-		// FIXME in upstream to make the status position dependent on the language direction
 		.avatardiv .avatardiv__user-status {
 			inset-inline-end: -2px !important;
 			bottom: -2px !important;

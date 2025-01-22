@@ -1330,7 +1330,7 @@ export default {
 	transition: $transition;
 
 	&--chatScrolledToBottom {
-		border-bottom-color: transparent;
+		border-block-end-color: transparent;
 	}
 
 	&__content {

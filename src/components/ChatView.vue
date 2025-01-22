@@ -218,10 +218,7 @@ export default {
 
 .dragover {
 	position: absolute;
-	top: 10%;
-	inset-inline-start: 10%;
-	width: 80%;
-	height: 80%;
+	inset: 10%;
 	background: var(--color-primary-element-light);
 	z-index: 11;
 	display: flex;

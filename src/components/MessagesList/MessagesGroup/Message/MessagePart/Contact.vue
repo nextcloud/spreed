@@ -119,7 +119,7 @@ export default {
 			text-overflow: ellipsis;
 
 			.title {
-				margin-left: 12px; // FIXME: NcRichText doesn't support RTL yet
+				margin-inline-start: 12px;
 			}
 		}
 	}
