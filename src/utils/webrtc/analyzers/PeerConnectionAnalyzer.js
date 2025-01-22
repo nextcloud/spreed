@@ -628,11 +628,19 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQuality(kind) {
+		const packets = this._packets[kind]
+		const packetsLost = this._packetsLost[kind]
+		const timestamps = this._timestamps[kind]
 		const packetsLostRatio = this._packetsLostRatio[kind]
 		const packetsPerSecond = this._packetsPerSecond[kind]
 		const roundTripTime = this._roundTripTime[kind]
 
-		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
+		// packetsLostRatio and packetsPerSecond are relative values, but they
+		// are calculated from cumulative values. Therefore, it is necessary to
+		// check if the cumulative values that are their source have enough data
+		// or not, rather than checking if the relative values themselves have
+		// enough data.
+		if (!packets.hasEnoughData() || !packetsLost.hasEnoughData() || !timestamps.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
 
