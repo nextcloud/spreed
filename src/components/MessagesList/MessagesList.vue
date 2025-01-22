@@ -1225,9 +1225,8 @@ export default {
 		},
 
 		async onRouteChange({ from, to }) {
-			if (from.name === 'conversation'
-				&& to.name === 'conversation'
-				&& from.token === to.token
+			if (from.name === 'conversation' && to.name === 'conversation'
+				&& from.params.token === to.params.token
 				&& from.hash !== to.hash) {
 
 				// the hash changed, need to focus/highlight another message
