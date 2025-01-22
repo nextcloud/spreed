@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import debounce from 'debounce'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
 
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
@@ -42,6 +42,9 @@ import {
 } from '../../../types/index.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
+const props = defineProps<{
+	isActive: boolean,
+}>()
 const emit = defineEmits<{
 	(event: 'close'): void
 }>()
@@ -88,6 +91,13 @@ const participants = computed<UserFilterObject>(() => {
 })
 const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
 const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
+
+watch(() => props.isActive, (isActive) => {
+	if (isActive) {
+		// NcAppSidebarTabs renders tabs in 2 ticks, so need to wait here
+		nextTick(() => searchBox.value!.focus())
+	}
+}, { immediate: true })
 
 onMounted(() => {
 	EventBus.on('route-change', onRouteChange)
