@@ -22,7 +22,7 @@ import {
 	editMessage,
 	updateLastReadMessage,
 	fetchMessages,
-	lookForNewMessages,
+	pollNewMessages,
 	getMessageContext,
 	postNewMessage,
 	postRichObjectToConversation,
@@ -125,11 +125,11 @@ const state = {
 	 */
 	cancelGetMessageContext: null,
 	/**
-	 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+	 * Stores the cancel function returned by `cancelablePollNewMessages`,
 	 * which allows to cancel the previous long polling request for new
 	 * messages before making another one.
 	 */
-	cancelLookForNewMessages: {},
+	cancelPollNewMessages: {},
 	/**
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
@@ -140,7 +140,7 @@ const getters = {
 	/**
 	 * Returns whether more messages can be loaded, which means that the current
 	 * message list doesn't yet contain all future messages.
-	 * If false, the next call to "lookForNewMessages" will be blocking/long-polling.
+	 * If false, the next call to "pollNewMessages" will be blocking/long-polling.
 	 *
 	 * @param {object} state the state object.
 	 * @param {object} getters the getters object.
@@ -264,11 +264,11 @@ const mutations = {
 		state.cancelGetMessageContext = cancelFunction
 	},
 
-	setCancelLookForNewMessages(state, { requestId, cancelFunction }) {
+	setCancelPollNewMessages(state, { requestId, cancelFunction }) {
 		if (cancelFunction) {
-			Vue.set(state.cancelLookForNewMessages, requestId, cancelFunction)
+			Vue.set(state.cancelPollNewMessages, requestId, cancelFunction)
 		} else {
-			Vue.delete(state.cancelLookForNewMessages, requestId)
+			Vue.delete(state.cancelPollNewMessages, requestId)
 		}
 	},
 
@@ -1072,8 +1072,8 @@ const actions = {
 	 * @param {object} data.requestOptions request options;
 	 * @param {number} data.lastKnownMessageId The id of the last message in the store.
 	 */
-	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
-		context.dispatch('cancelLookForNewMessages', { requestId })
+	async pollNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
+		context.dispatch('cancelPollNewMessages', { requestId })
 
 		if (!lastKnownMessageId) {
 			// if param is null | undefined, it won't be included in the request query
@@ -1082,17 +1082,17 @@ const actions = {
 		}
 
 		// Get a new cancelable request function and cancel function pair
-		const { request, cancel } = CancelableRequest(lookForNewMessages)
+		const { request, cancel } = CancelableRequest(pollNewMessages)
 
 		// Assign the new cancel function to our data value
-		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
+		context.commit('setCancelPollNewMessages', { cancelFunction: cancel, requestId })
 
 		const response = await request({
 			token,
 			lastKnownMessageId,
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
-		context.commit('setCancelLookForNewMessages', { requestId })
+		context.commit('setCancelPollNewMessages', { requestId })
 
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
@@ -1195,16 +1195,16 @@ const actions = {
 	},
 
 	/**
-	 * Cancels a previously running "lookForNewMessages" action if applicable.
+	 * Cancels a previously running "pollNewMessages" action if applicable.
 	 *
 	 * @param {object} context default store context;
 	 * @param {string} requestId request id
 	 * @return {boolean} true if a request got cancelled, false otherwise
 	 */
-	cancelLookForNewMessages(context, { requestId }) {
-		if (context.state.cancelLookForNewMessages[requestId]) {
-			context.state.cancelLookForNewMessages[requestId]('canceled')
-			context.commit('setCancelLookForNewMessages', { requestId })
+	cancelPollNewMessages(context, { requestId }) {
+		if (context.state.cancelPollNewMessages[requestId]) {
+			context.state.cancelPollNewMessages[requestId]('canceled')
+			context.commit('setCancelPollNewMessages', { requestId })
 			return true
 		}
 		return false
