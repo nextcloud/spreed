@@ -226,10 +226,12 @@ export default {
 .solid {
 	margin: 0;
 }
+
 .call-duration-hint {
 	display: flex;
 	padding: calc(var(--default-grid-baseline) * 2);
 }
+
 .call-time {
 	display: flex;
 	justify-content: center;

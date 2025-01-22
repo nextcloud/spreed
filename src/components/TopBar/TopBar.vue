@@ -312,7 +312,6 @@ export default {
 
 .top-bar {
 	--border-width: 1px;
-
 	display: flex;
 	flex-wrap: wrap;
 	gap: 3px;

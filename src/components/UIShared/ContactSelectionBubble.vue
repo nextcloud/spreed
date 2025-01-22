@@ -50,6 +50,3 @@ const removeLabel = computed(() => t('spreed', 'Remove participant {name}', { na
 		</template>
 	</NcChip>
 </template>
-
-<style lang="scss" scoped>
-</style>

@@ -273,6 +273,7 @@ body .modal-wrapper * {
 footer {
 	transition: width var(--animation-quick);
 }
+
 #content-vue:has(#talk-sidebar) ~ footer {
 	width: calc(100% - 2 * var(--body-container-margin) - clamp(300px, 27vw, 500px));
 }

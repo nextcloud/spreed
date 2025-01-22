@@ -246,7 +246,7 @@ export default {
 
 <style lang="scss" scoped>
 .breakout-room-item {
-	margin-top: calc(var(--default-grid-baseline)*5);
+	margin-top: calc(var(--default-grid-baseline) * 5);
 	font-weight: bold;
 
 	&__wrapper {

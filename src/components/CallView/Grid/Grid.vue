@@ -1011,7 +1011,6 @@ export default {
 		outline: 1px solid #00FF41;
 		color: #00FF41;
 	}
-
 	position: relative;
 
 	img {
