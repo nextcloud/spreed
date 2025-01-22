@@ -95,12 +95,20 @@ function newRTCStatsReport(stats) {
 describe('PeerConnectionAnalyzer', () => {
 
 	let peerConnectionAnalyzer
+	let changeConnectionQualityAudioHandler
+	let changeConnectionQualityVideoHandler
 	let peerConnection
 
 	beforeEach(() => {
 		jest.useFakeTimers()
 
 		peerConnectionAnalyzer = new PeerConnectionAnalyzer()
+
+		changeConnectionQualityAudioHandler = jest.fn()
+		peerConnectionAnalyzer.on('change:connectionQualityAudio', changeConnectionQualityAudioHandler)
+
+		changeConnectionQualityVideoHandler = jest.fn()
+		peerConnectionAnalyzer.on('change:connectionQualityVideo', changeConnectionQualityVideoHandler)
 
 		peerConnection = newRTCPeerConnection()
 	})
@@ -153,7 +161,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -162,9 +181,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 		})
 
@@ -203,7 +228,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -212,9 +248,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 		})
 
@@ -253,7 +295,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -262,9 +315,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.MEDIUM)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.MEDIUM)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.MEDIUM)
 			}
 		})
 
@@ -303,7 +362,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -312,9 +382,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.MEDIUM)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.MEDIUM)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.MEDIUM)
 			}
 		})
 
@@ -353,7 +429,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -362,9 +449,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.BAD)
 			}
 		})
 
@@ -403,7 +496,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -412,9 +516,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.BAD)
 			}
 		})
 
@@ -453,7 +563,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -462,9 +583,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -503,7 +630,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -512,9 +650,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -553,7 +697,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -562,9 +717,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -603,7 +764,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -612,9 +784,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -653,7 +831,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -662,9 +851,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -703,7 +898,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -712,9 +918,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -753,7 +965,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -762,9 +985,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
 		})
 
@@ -803,7 +1032,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -812,9 +1052,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
 		})
 
@@ -861,7 +1107,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -870,9 +1127,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
 		})
 
@@ -919,7 +1182,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -928,9 +1202,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
 		})
 
@@ -977,7 +1257,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -986,9 +1277,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 		})
 
@@ -1035,7 +1332,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1044,9 +1352,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 		})
 
@@ -1095,7 +1409,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1104,9 +1429,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -1155,7 +1486,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(7000)
+			jest.advanceTimersByTime(6000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1164,9 +1506,15 @@ describe('PeerConnectionAnalyzer', () => {
 			if (kind === 'audio') {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			} else {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
 		})
 
@@ -1221,7 +1569,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1343,7 +1702,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1465,7 +1835,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1587,7 +1968,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1702,7 +2094,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1710,6 +2113,10 @@ describe('PeerConnectionAnalyzer', () => {
 
 			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 		})
 
 		test('very bad audio quality, good video quality', async () => {
@@ -1756,7 +2163,18 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			jest.advanceTimersByTime(5000)
+			// Force the promises returning the stats to be executed.
+			await null
+
+			expect(peerConnection.getStats).toHaveBeenCalledTimes(5)
+
+			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1764,6 +2182,10 @@ describe('PeerConnectionAnalyzer', () => {
 
 			expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 		})
 	})
 })
