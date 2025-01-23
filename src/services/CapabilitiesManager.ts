@@ -11,6 +11,7 @@ import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
+import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & Partial<{ hash: string }>
@@ -136,7 +137,7 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	patchTokenMap(joinRoomResponse.data.ocs.data)
 
 	// As normal capabilities update, requires a reload to take effect
-	showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
+	showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
 		timeout: TOAST_PERMANENT_TIMEOUT,
 	})
 }

@@ -10,6 +10,7 @@ import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
 /**
  * @typedef {object} State
@@ -87,7 +88,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		checkMaintenanceMode(response) {
 			if (response?.status === 503 && !this.maintenanceWarningToast) {
 				this.maintenanceWarningToast = showError(
-					t('spreed', 'Nextcloud is in maintenance mode, please reload the page'),
+					t('spreed', 'Nextcloud is in maintenance mode.') + '\n' + messagePleaseReload,
 					{ timeout: TOAST_PERMANENT_TIMEOUT }
 				)
 			}
