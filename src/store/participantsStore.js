@@ -39,6 +39,7 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useCallViewStore } from '../stores/callView.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
 
 /**
  * Emit global event for user status update with the status from a participant
@@ -1059,7 +1060,7 @@ const actions = {
 				EventBus.emit('forbidden-route', error.response.data.ocs.data)
 			} else {
 				console.error(error)
-				showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
+				showError(t('spreed', 'Failed to join the conversation.') + '\n' + messagePleaseTryToReload)
 			}
 		}
 	},

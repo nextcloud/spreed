@@ -9,6 +9,7 @@ import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { useTalkHashStore } from '../stores/talkHash.js'
+import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
 /**
  * Check whether the conflicting session detected or not, and navigate to another page
@@ -31,7 +32,7 @@ export function useHashCheck() {
 	const showReloadWarning = () => {
 		reloadWarningShown = true
 
-		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+		showError(t('spreed', 'Nextcloud Talk was updated.') + '\n' + messagePleaseReload, {
 			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
 	}
