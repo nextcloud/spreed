@@ -5,25 +5,22 @@
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, getBaseUrl } from '@nextcloud/router'
 import type { UrlOptions } from '@nextcloud/router'
 
 /**
  * Generate a full absolute link with @nextcloud/router.generateUrl
  *
  * @param url - path
- * @param [params] parameters to be replaced into the address
- * @param [options] options for the parameter replacement
+ * @param params - parameters to be replaced into the address
+ * @param options - options for the parameter replacement
  */
-export function generateAbsoluteUrl(url: string, params?: object, options?: UrlOptions): string {
+export function generateAbsoluteUrl(url: string, params?: object, options: UrlOptions = {}): string {
 	// TODO: add this function to @nextcloud/router?
-	const fullPath = generateUrl(url, params, options)
-	if (!IS_DESKTOP) {
-		return `${window.location.protocol}//${window.location.host}${fullPath}`
-	} else {
-		// On the Desktop generateUrl creates absolute url by default
-		return fullPath
-	}
+	return generateUrl(url, params, {
+		baseURL: getBaseUrl(),
+		...options,
+	})
 }
 
 /**
