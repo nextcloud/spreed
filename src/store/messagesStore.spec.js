@@ -258,35 +258,62 @@ describe('messagesStore', () => {
 		})
 	})
 
-	test('message list', () => {
-		const message1 = {
-			id: 1,
-			token: TOKEN,
-		}
-		const message2 = {
-			id: 2,
-			token: 'token-2',
-		}
-		const message3 = {
-			id: 3,
-			token: TOKEN,
-		}
+	describe('messages list', () => {
+		test('returns messages list', () => {
+			const message1 = {
+				id: 1,
+				token: TOKEN,
+			}
+			const message2 = {
+				id: 2,
+				token: 'token-2',
+			}
+			const message3 = {
+				id: 3,
+				token: TOKEN,
+			}
 
-		store.dispatch('processMessage', { token: message1.token, message: message1 })
-		store.dispatch('processMessage', { token: message2.token, message: message2 })
-		store.dispatch('processMessage', { token: message3.token, message: message3 })
-		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
-		expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
-		expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
+			store.dispatch('processMessage', { token: message1.token, message: message1 })
+			store.dispatch('processMessage', { token: message2.token, message: message2 })
+			store.dispatch('processMessage', { token: message3.token, message: message3 })
+			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
+			expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
+			expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
 
-		// with messages getter
-		expect(store.getters.messagesList(TOKEN)).toStrictEqual([
-			message1,
-			message3,
-		])
-		expect(store.getters.messagesList('token-2')).toStrictEqual([
-			message2,
-		])
+			// with messages getter
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([
+				message1,
+				message3,
+			])
+			expect(store.getters.messagesList('token-2')).toStrictEqual([
+				message2,
+			])
+		})
+
+		const testCases = [
+			[1, 200, 1, 200],
+			[1, 400, 201, 400],
+		]
+
+		it.each(testCases)('eases messages list from %s - %s to %s - %s',
+			(oldFirst, oldLast, newFirst, newLast) => {
+			// Arrange
+				for (let id = oldFirst; id <= oldLast; id++) {
+					store.dispatch('processMessage', { token: TOKEN, message: { token: TOKEN, id } })
+				}
+				store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: oldFirst })
+				store.dispatch('setLastKnownMessageId', { token: TOKEN, id: oldLast })
+
+				// Act
+				store.dispatch('easeMessageList', { token: TOKEN })
+
+				// Assert
+				expect(store.getters.messagesList(TOKEN)).toHaveLength(200)
+				expect(store.getters.messagesList(TOKEN).at(0)).toStrictEqual({ token: TOKEN, id: newFirst })
+				expect(store.getters.messagesList(TOKEN).at(-1)).toStrictEqual({ token: TOKEN, id: newLast })
+				expect(store.getters.getFirstKnownMessageId(TOKEN)).toStrictEqual(newFirst)
+				expect(store.getters.getLastKnownMessageId(TOKEN)).toStrictEqual(newLast)
+			})
 	})
 
 	describe('delete message', () => {
