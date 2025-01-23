@@ -291,13 +291,28 @@ describe('messagesStore', () => {
 		})
 
 		const testCases = [
-			[1, 200, 1, 200],
-			[1, 400, 201, 400],
+			// Default
+			[1, 200, 1, 200, 200, undefined],
+			[1, 400, 201, 400, 200, undefined],
+			// with lastReadMessage
+			[201, 600, 401, 600, 200, 200],
+			[1, 400, 101, 300, 200, 200],
+			[1, 400, 201, 400, 200, 300],
+			// Border values
+			[1, 400, 1, 101, 101, 1],
+			[1, 400, 301, 400, 100, 400],
+			[1, 400, 1, 199, 199, 99],
+			[1, 400, 1, 200, 200, 100],
+			[1, 400, 2, 201, 200, 101],
+			[1, 400, 202, 400, 199, 301],
+			[1, 400, 201, 400, 200, 300],
+			[1, 400, 200, 399, 200, 299],
 		]
 
-		it.each(testCases)('eases messages list from %s - %s to %s - %s',
-			(oldFirst, oldLast, newFirst, newLast) => {
+		it.each(testCases)('eases list from [%s - %s] to [%s - %s] (length: %s) with lastReadMessage %s',
+			(oldFirst, oldLast, newFirst, newLast, length, lastReadMessage) => {
 			// Arrange
+				conversationMock.mockReturnValue({ lastReadMessage })
 				for (let id = oldFirst; id <= oldLast; id++) {
 					store.dispatch('processMessage', { token: TOKEN, message: { token: TOKEN, id } })
 				}
@@ -308,11 +323,14 @@ describe('messagesStore', () => {
 				store.dispatch('easeMessageList', { token: TOKEN })
 
 				// Assert
-				expect(store.getters.messagesList(TOKEN)).toHaveLength(200)
+				expect(store.getters.messagesList(TOKEN)).toHaveLength(length)
 				expect(store.getters.messagesList(TOKEN).at(0)).toStrictEqual({ token: TOKEN, id: newFirst })
 				expect(store.getters.messagesList(TOKEN).at(-1)).toStrictEqual({ token: TOKEN, id: newLast })
 				expect(store.getters.getFirstKnownMessageId(TOKEN)).toStrictEqual(newFirst)
 				expect(store.getters.getLastKnownMessageId(TOKEN)).toStrictEqual(newLast)
+				if (oldFirst < lastReadMessage && lastReadMessage < oldLast) {
+					expect(store.getters.message(TOKEN, lastReadMessage)).toBeDefined()
+				}
 			})
 	})
 
