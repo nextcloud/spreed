@@ -24,7 +24,7 @@
 		<template v-if="!showSearchMessagesTab && getUserId" #secondary-actions>
 			<NcActionButton type="tertiary"
 				:title="t('spreed', 'Search messages')"
-				@click="showSearchMessagesTab = true">
+				@click="handleShowSearch(true)">
 				<template #icon>
 					<IconMagnify :size="20" />
 				</template>
@@ -33,7 +33,7 @@
 		<template v-else-if="getUserId" #tertiary-actions>
 			<NcButton type="tertiary"
 				:title="t('spreed', 'Back')"
-				@click="showSearchMessagesTab = false">
+				@click="handleShowSearch(false)">
 				<template #icon>
 					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
@@ -48,7 +48,8 @@
 			key="search-messages"
 			:order="0"
 			:name="t('spreed', 'Search messages')">
-			<SearchMessagesTab @close="showSearchMessagesTab = false" />
+			<SearchMessagesTab :is-active="activeTab === 'search-messages'"
+				@close="handleShowSearch(false)" />
 		</NcAppSidebarTab>
 		<template v-else>
 			<NcAppSidebarTab v-if="isInCall"
@@ -461,6 +462,16 @@ export default {
 
 		handleUpdateActive(active) {
 			this.activeTab = active
+		},
+
+		handleShowSearch(value) {
+			this.showSearchMessagesTab = value
+			// FIXME upstream: NcAppSidebar should emit update:active
+			if (value) {
+				this.activeTab = 'search-messages'
+			} else {
+				this.activeTab = this.isInCall ? 'chat' : 'participants'
+			}
 		},
 
 		showSettings() {
