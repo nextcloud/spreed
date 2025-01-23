@@ -680,10 +680,13 @@ PeerConnectionAnalyzer.prototype = {
 		// quality to keep a smooth video, albeit on a lower resolution. Thus
 		// with a threshold of 10 packets issues can be detected too for videos,
 		// although only once they can not be further downscaled.
+		// Despite all of the above it has been observed that less than 10
+		// packets are sometimes sent without any connection problem (for
+		// example, when the background is blurred and the video quality is
+		// reduced due to being in a call with several participants), so for now
+		// it is only logged but not reported.
 		if (packetsPerSecond.getWeightedAverage() < 10) {
 			this._logStats(kind, 'Low packets per second: ' + packetsPerSecond.getWeightedAverage())
-
-			return CONNECTION_QUALITY.VERY_BAD
 		}
 
 		if (packetsLostRatioWeightedAverage > 0.3) {
