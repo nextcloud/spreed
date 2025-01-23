@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Circles\CirclesManager;
+use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\CachePrefix;
@@ -727,6 +728,32 @@ class ParticipantService {
 
 		$circlesManager->stopSession();
 		throw new ParticipantNotFoundException('Circle not found or not a member');
+	}
+
+	/**
+	 * @param string $circleId
+	 * @param string $userId
+	 * @return Member[]
+	 * @throws ParticipantNotFoundException
+	 */
+	public function getCircleMembers(string $circleId): array {
+		try {
+			$circlesManager = Server::get(CirclesManager::class);
+		} catch (\Exception) {
+			throw new ParticipantNotFoundException('Circle not found');
+		}
+
+		$circlesManager->startSuperSession();
+		try {
+			$circle = $circlesManager->getCircle($circleId);
+		} catch (CircleNotFoundException) {
+			throw new ParticipantNotFoundException('Circle not found');
+		}
+		$circlesManager->stopSession();
+		$members = $circle->getInheritedMembers();
+		return array_filter($members, static function (Member $member) {
+			return $member->getUserType() === Member::TYPE_USER;
+		});
 	}
 
 	/**

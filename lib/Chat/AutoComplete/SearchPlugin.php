@@ -463,8 +463,8 @@ class SearchPlugin implements ISearchPlugin {
 		return [
 			'label' => $name,
 			'value' => [
-				'shareType' => 'teams',
-				'shareWith' => 'teams/' . $actorId,
+				'shareType' => 'team',
+				'shareWith' => 'team/' . $actorId,
 			],
 		];
 	}
