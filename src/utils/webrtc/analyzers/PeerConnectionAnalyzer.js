@@ -482,12 +482,13 @@ PeerConnectionAnalyzer.prototype = {
 	 * The stats reported by the browser can sometimes stall for a second (or
 	 * more, but typically they stall only for a single report). When that
 	 * happens the stats are still reported, but with the same number of packets
-	 * as in the previous report (timestamp and round trip time are updated,
-	 * though). In that case the given stats are not added yet to the average
-	 * stats; they are kept on hold until more stats are provided by the browser
-	 * and it can be determined if the previous stats were stalled or not. If
-	 * they were stalled the previous and new stats are distributed, and if they
-	 * were not they are added as is to the average stats.
+	 * as in the previous report (timestamp and round trip time may be updated
+	 * or not, apparently depending on browser version and/or Janus version). In
+	 * that case the given stats are not added yet to the average stats; they
+	 * are kept on hold until more stats are provided by the browser and it can
+	 * be determined if the previous stats were stalled or not. If they were
+	 * stalled the previous and new stats are distributed, and if they were not
+	 * they are added as is to the average stats.
 	 *
 	 * @param {string} kind the type of the stats ("audio" or "video")
 	 * @param {number} packets the cumulative number of packets
@@ -552,6 +553,18 @@ PeerConnectionAnalyzer.prototype = {
 		let packetsLostTotal = 0
 		let timestampsTotal = 0
 
+		// If the first timestamp stalled it is assumed that all of them
+		// stalled and are thus evenly distributed based on the new timestamp.
+		if (this._stagedTimestamps[kind][0] === timestampsBase) {
+			const lastTimestamp = this._stagedTimestamps[kind][this._stagedTimestamps[kind].length - 1]
+			const timestampsTotalDifference = lastTimestamp - timestampsBase
+			const timestampsDelta = timestampsTotalDifference / this._stagedTimestamps[kind].length
+
+			for (let i = 0; i < this._stagedTimestamps[kind].length - 1; i++) {
+				this._stagedTimestamps[kind][i] += timestampsDelta * (i + 1)
+			}
+		}
+
 		for (let i = 0; i < this._stagedPackets[kind].length; i++) {
 			packetsTotal += (this._stagedPackets[kind][i] - packetsBase)
 			packetsBase = this._stagedPackets[kind][i]
@@ -578,7 +591,11 @@ PeerConnectionAnalyzer.prototype = {
 			packetsLostBase = this._stagedPacketsLost[kind][i]
 
 			// Timestamps and round trip time are not distributed, as those
-			// values are properly updated even if the stats are stalled.
+			// values may be properly updated even if the stats are stalled. In
+			// case they were not timestamps were already evenly distributed
+			// above, and round trip time can not be distributed, as it is
+			// already provided in the stats as a relative value rather than a
+			// cumulative one.
 		}
 	},
 
