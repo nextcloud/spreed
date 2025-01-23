@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-rc.1 – 2025-01-23
+### Added
+- feat(calls): Allow to zoom and pan screenshares in a call
+  [#14028](https://github.com/nextcloud/spreed/issues/14028)
+- feat(bots): Allow event based bots that don't require HTTP requests
+  [#14160](https://github.com/nextcloud/spreed/issues/14160)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- docs: Add quick install documentation for the High-performance backend
+  [#14165](https://github.com/nextcloud/spreed/issues/14165)
+
 ## 21.0.0-beta.2 – 2025-01-17
 ### Added
 - feat(search): Add message search to the right sidebar
@@ -27,7 +42,7 @@ All notable changes to this project will be documented in this file.
   [#13973](https://github.com/nextcloud/spreed/issues/13973)
 - fix(archive): Don't add asterix to title for unread messages in archived conversations
   [#14101](https://github.com/nextcloud/spreed/issues/14101)
-- 
+
 ## 20.1.2 – 2025-01-16
 ### Changed
 - Update translations
