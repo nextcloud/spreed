@@ -65,7 +65,7 @@
     "util": "^0.12.5",
     "uuid": "^11.0.5",
     "vue": "^2.7.16",
-    "vue-cropperjs": "^4.2.0",
+    "vue-cropperjs": "^5.0.0",
     "vue-draggable-resizable": "^2.3.0",
     "vue-frag": "^1.4.3",
     "vue-material-design-icons": "^5.3.1",
