@@ -1364,6 +1364,370 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 		})
 
+		describe('remote stats stalled for a second', () => {
+			test.each([
+				['stats in sync, stall and keep in sync', 'audio'],
+				['stats in sync, stall and keep in sync', 'video'],
+			])('%s, %s', async (name, kind) => {
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 50, timestamp: 10000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 100, timestamp: 11000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 150, timestamp: 11950 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 150, timestamp: 11950, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 200, timestamp: 13020, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 250, timestamp: 14010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 250, timestamp: 14010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// A sixth report is needed for the initial calculation due
+					// to the first stats report being used as the base to
+					// calculate relative values of cumulative stats.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 250, timestamp: 14010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// When the packets do not increase the analysis is kept
+					// on hold until more stat reports are received, as it
+					// is not possible to know if the packets were not
+					// transmitted or the stats temporarily stalled.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 350, timestamp: 16010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+				jest.advanceTimersByTime(6000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+				jest.advanceTimersByTime(1000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(7)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+			})
+
+			test.each([
+				['stats out of sync, sync, stall and become out of sync again', 'audio'],
+				['stats out of sync, sync, stall and become out of sync again', 'video'],
+			])('%s, %s', async (name, kind) => {
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 50, timestamp: 10000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 90, timestamp: 10800, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 150, timestamp: 11950 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 130, timestamp: 11600, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 170, timestamp: 12400, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 250, timestamp: 14010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 210, timestamp: 13200, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// A sixth report is needed for the initial calculation due
+					// to the first stats report being used as the base to
+					// calculate relative values of cumulative stats.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 300, timestamp: 14985, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 300, timestamp: 14985, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// When the packets do not increase the analysis is kept
+					// on hold until more stat reports are received, as it
+					// is not possible to know if the packets were not
+					// transmitted or the stats temporarily stalled.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 400, timestamp: 17000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 350, timestamp: 16010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+				jest.advanceTimersByTime(6000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+
+				jest.advanceTimersByTime(2000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(8)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+			})
+
+			test.each([
+				['stats out of sync, sync, stall and stay in sync', 'audio'],
+				['stats out of sync, sync, stall and stay in sync', 'video'],
+			])('%s, %s', async (name, kind) => {
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 50, timestamp: 10000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 90, timestamp: 10800, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 150, timestamp: 11950 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 130, timestamp: 11600, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 170, timestamp: 12400, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 250, timestamp: 14010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 210, timestamp: 13200, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// A sixth report is needed for the initial calculation due
+					// to the first stats report being used as the base to
+					// calculate relative values of cumulative stats.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 300, timestamp: 14985, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 300, timestamp: 14985, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// When the packets do not increase the analysis is kept
+					// on hold until more stat reports are received, as it
+					// is not possible to know if the packets were not
+					// transmitted or the stats temporarily stalled.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 400, timestamp: 17000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 400, timestamp: 17000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+				jest.advanceTimersByTime(6000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+
+				jest.advanceTimersByTime(2000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(8)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+			})
+
+			test.each([
+				['stats in sync, stall, stay in sync, stall, stay in sync', 'audio'],
+				['stats in sync, stall, stay in sync, stall, stay in sync', 'video'],
+			])('%s, %s', async (name, kind) => {
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 50, timestamp: 10000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 100, timestamp: 11000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 150, timestamp: 11950 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 150, timestamp: 11950, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 200, timestamp: 13020, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 250, timestamp: 14010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 250, timestamp: 14010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// A sixth report is needed for the initial calculation due
+					// to the first stats report being used as the base to
+					// calculate relative values of cumulative stats.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 250, timestamp: 14010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					// When the packets do not increase the analysis is kept
+					// on hold until more stat reports are received, as it
+					// is not possible to know if the packets were not
+					// transmitted or the stats temporarily stalled.
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 350, timestamp: 16010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 400, timestamp: 17000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 350, timestamp: 16010, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 450, timestamp: 17990 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 450, timestamp: 17990, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 500, timestamp: 19005 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 450, timestamp: 17990, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 550, timestamp: 20000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 550, timestamp: 20000, packetsLost: 0, roundTripTime: 0.1 }
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+				jest.advanceTimersByTime(6000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(6)
+
+				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+
+				jest.advanceTimersByTime(1000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(7)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+
+				jest.advanceTimersByTime(4000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				expect(peerConnection.getStats).toHaveBeenCalledTimes(11)
+
+				if (kind === 'audio') {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+				} else {
+					expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
+					expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
+					expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
+					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+				}
+			})
+		})
+
 		test.each([
 			['no transmitted data for two seconds', 'audio'],
 			['no transmitted data for two seconds', 'video'],
