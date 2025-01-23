@@ -115,6 +115,7 @@ import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
+import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
 export default {
 	name: 'CallButton',
@@ -288,7 +289,7 @@ export default {
 
 		startCallTitle() {
 			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call.')
+				return t('spreed', 'Nextcloud Talk was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
 			}
 
 			if (this.callViewStore.callHasJustEnded) {

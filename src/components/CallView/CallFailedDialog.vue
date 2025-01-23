@@ -14,6 +14,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import { useStore } from '../../composables/useStore.js'
+import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 
 const store = useStore()
 
@@ -45,7 +46,7 @@ const message = computed(() => {
 		return connectionFailed.value.data.error
 	}
 
-	return t('spreed', 'Please try to reload the page')
+	return messagePleaseTryToReload
 })
 
 /**
