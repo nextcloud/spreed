@@ -302,8 +302,8 @@ OC.L10N.register(
     "Yesterday" : "Gister",
     "Add participants" : "Voeg deelnemers toe",
     "Enter password" : "Voer wagwoord in",
-    "Settings" : "Instellings",
     "Send" : "Stuur",
+    "Settings" : "Instellings",
     "Join" : "Sluit aan",
     "guest" : "gas",
     "Promote to moderator" : "Bevorder na moderator",
@@ -329,6 +329,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
+    "__language_name__" : "Afrikaans",
+    "Tasks" : "Take",
     "Password protect" : "Beskerm met 'n wagwoord",
     "Close" : "Sluit"
 },
