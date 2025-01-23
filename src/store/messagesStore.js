@@ -490,25 +490,41 @@ const mutations = {
 		})
 	},
 
-	easeMessageList(state, { token }) {
+	easeMessageList(state, { token, lastReadMessage }) {
 		if (!state.messages[token]) {
 			return
 		}
 
-		const messageIds = Object.keys(state.messages[token])
+		const messageIds = Object.keys(state.messages[token]).sort((a, b) => b - a)
 		if (messageIds.length < 300) {
 			return
 		}
 
-		const messagesToRemove = messageIds.sort((a, b) => b - a).slice(199)
+		// If lastReadMessage is rendered, keep it and +- 100 messages, otherwise only newest 200 messages
+		const lastReadMessageIndex = messageIds.findIndex(id => +id === lastReadMessage)
+
+		const messagesToRemove = lastReadMessageIndex !== -1
+			? messageIds.slice(lastReadMessageIndex + 99)
+			: messageIds.slice(199)
 		const newFirstKnown = messagesToRemove.shift()
 
+		const newMessagesToRemove = (lastReadMessageIndex !== -1 && lastReadMessageIndex > 100)
+			? messageIds.slice(0, lastReadMessageIndex - 99)
+			: []
+		const newLastKnown = newMessagesToRemove.pop()
+
 		messagesToRemove.forEach((messageId) => {
+			Vue.delete(state.messages[token], messageId)
+		})
+		newMessagesToRemove.forEach((messageId) => {
 			Vue.delete(state.messages[token], messageId)
 		})
 
 		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token].toString())) {
 			Vue.set(state.firstKnown, token, +newFirstKnown)
+		}
+		if (state.lastKnown[token] && newMessagesToRemove.includes(state.lastKnown[token].toString())) {
+			Vue.set(state.lastKnown, token, +newLastKnown)
 		}
 	},
 }
@@ -1378,7 +1394,8 @@ const actions = {
 	},
 
 	async easeMessageList(context, { token }) {
-		context.commit('easeMessageList', { token })
+		const lastReadMessage = context.getters.conversation(token)?.lastReadMessage
+		context.commit('easeMessageList', { token, lastReadMessage })
 	},
 
 	loadedMessagesOfConversation(context, { token }) {
