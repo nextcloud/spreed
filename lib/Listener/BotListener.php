@@ -93,6 +93,11 @@ class BotListener implements IEventListener {
 			} catch (DoesNotExistException) {
 			}
 
+			$features = $event->getFeatures();
+			if (str_starts_with($event->getUrl(), Bot::URL_APP_PREFIX)) {
+				$features &= ~Bot::FEATURE_WEBHOOK;
+			}
+
 			$bot = new BotServer();
 			$bot->setName($event->getName());
 			$bot->setDescription($event->getDescription());
@@ -100,7 +105,7 @@ class BotListener implements IEventListener {
 			$bot->setUrl($event->getUrl());
 			$bot->setUrlHash(sha1($event->getUrl()));
 			$bot->setState(Bot::STATE_ENABLED);
-			$bot->setFeatures($event->getFeatures());
+			$bot->setFeatures($features);
 			$this->botServerMapper->insert($bot);
 		}
 	}
