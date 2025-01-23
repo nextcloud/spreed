@@ -30,6 +30,31 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
         See [Poll data](#poll-data)
 
+# Edit a draft poll in a conversation
+
+* Required capability: `edit-draft-poll`
+* Method: `POST`
+* Endpoint: `/poll/{token}/draft/{pollId}`
+* Data:
+
+| field        | type         | Description                                                                                                                                                                                                                    |
+|--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `question`   | string       | The question of the poll                                                                                                                                                                                                       |
+| `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
+| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` Modifying poll is not possible
+		+ `403 Forbidden` No permission to modify this poll
+		+ `404 Not Found` When the draft poll could not be found
+		
+	- Data:
+
+	  See [Poll data](#poll-data)
+
 ## Get state or result of a poll
 
 * Federation capability: `federation-v1`
