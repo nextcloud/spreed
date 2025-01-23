@@ -16,6 +16,7 @@ import {
 
 import CancelableRequest from './cancelableRequest.js'
 import Encryption from './e2ee/encryption.js'
+import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
 import { PARTICIPANT } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -543,7 +544,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					}
 
 					// Giving up after 5 minutes
-					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
+					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server.') + '\n' + messagePleaseTryToReload, {
 						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 					return
