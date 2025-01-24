@@ -168,7 +168,7 @@ const participantsInitialised = computed(() => store.getters.participantsInitial
 const filteredParticipants = computed(() => participants.value.filter((participant: Participant) => {
 	return isMatch(participant.displayName)
 		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.USERS && isMatch(participant.actorId))
-		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && isMatch(participant.invitedActorId))
+		|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && participant.invitedActorId && isMatch(participant.invitedActorId))
 }))
 const selectedParticipants = computed(() => participants.value
 	.filter((participant: Participant) => selectedAttendeeIds.value.includes(participant.attendeeId))
