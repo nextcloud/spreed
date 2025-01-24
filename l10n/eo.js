@@ -348,14 +348,14 @@ OC.L10N.register(
     "Audio" : "Sonaĵo",
     "Other" : "Alia",
     "Group" : "Grupo",
+    "Please reload the page." : "Bonvolu reŝargi la paĝon.",
     "Default" : "Defaŭlta",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
-    "Circles" : "Rondoj",
-    "Password protect" : "Protekti per pasvorto",
-    "Close" : "Malfermi"
+    "Close" : "Malfermi",
+    "Password protect" : "Protekti per pasvorto"
 },
 "nplurals=2; plural=(n != 1);");

@@ -125,6 +125,7 @@
     "Audio" : "Audio",
     "Other" : "Otro",
     "Group" : "Grupo",
+    "Please reload the page." : "Favor de volver a cargar la página.",
     "Do not disturb" : "No molestar",
     "Away" : "Lejos",
     "Default" : "Predeterminado",
@@ -140,10 +141,8 @@
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
-    "Circles" : "Círculos",
-    "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
-    "Start a conversation" : "Iniciar una conversación",
+    "Password protect" : "Proteger con contraseña",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
