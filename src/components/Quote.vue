@@ -70,7 +70,7 @@ import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/D
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
 import { useMessageInfo } from '../composables/useMessageInfo.js'
-import { ATTENDEE, AVATAR } from '../constants.js'
+import { ATTENDEE, AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 

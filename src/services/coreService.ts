@@ -7,7 +7,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
-import { SHARE } from '../constants.js'
+import { SHARE } from '../constants.ts'
 import type {
 	TaskProcessingResponse,
 	UnifiedSearchResponse,

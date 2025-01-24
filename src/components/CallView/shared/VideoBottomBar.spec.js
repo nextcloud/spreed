@@ -19,7 +19,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import VideoBottomBar from './VideoBottomBar.vue'
 
-import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useCallViewStore } from '../../../stores/callView.js'
 import { findNcButton } from '../../../test-helpers.js'

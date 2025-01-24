@@ -97,7 +97,7 @@ import {
 	sharedItemsWithPreviewLimit,
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'

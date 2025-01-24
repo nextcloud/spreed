@@ -198,7 +198,7 @@ import Quote from '../Quote.vue'
 
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
-import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
+import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'

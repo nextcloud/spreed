@@ -15,7 +15,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import Reactions from './Reactions.vue'
 
-import { ATTENDEE } from '../../../../../constants.js'
+import { ATTENDEE } from '../../../../../constants.ts'
 import {
 	addReactionToMessage,
 	removeReactionFromMessage,

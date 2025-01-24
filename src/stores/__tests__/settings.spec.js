@@ -6,7 +6,7 @@ import { setActivePinia, createPinia } from 'pinia'
 
 import { loadState } from '@nextcloud/initial-state'
 
-import { PRIVACY } from '../../constants.js'
+import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'

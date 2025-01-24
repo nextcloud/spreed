@@ -32,7 +32,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import Hint from './UIShared/Hint.vue'
 
-import { ATTENDEE, AVATAR } from '../constants.js'
+import { ATTENDEE, AVATAR } from '../constants.ts'
 
 export default {
 	name: 'SelectPhoneNumber',

@@ -15,7 +15,7 @@ import {
 	CONVERSATION,
 	PARTICIPANT,
 	WEBINAR,
-} from '../constants.js'
+} from '../constants.ts'
 import {
 	setConversationAvatar,
 	setConversationEmojiAvatar,

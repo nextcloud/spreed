@@ -132,7 +132,7 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 
-import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
+import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 

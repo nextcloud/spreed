@@ -31,7 +31,7 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE } from '../../../constants.ts'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import type {

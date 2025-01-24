@@ -5,7 +5,7 @@
 
 import { defineStore } from 'pinia'
 
-import { CONVERSATION } from '../constants.js'
+import { CONVERSATION } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 
 export const useCallViewStore = defineStore('callView', {

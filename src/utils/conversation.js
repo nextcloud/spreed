@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { CONVERSATION, PARTICIPANT } from '../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')

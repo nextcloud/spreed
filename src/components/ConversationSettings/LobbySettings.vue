@@ -93,7 +93,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 
-import { WEBINAR } from '../../constants.js'
+import { WEBINAR } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { futureRelativeTime } from '../../utils/formattedTime.ts'

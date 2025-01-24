@@ -5,7 +5,7 @@
 import flushPromises from 'flush-promises'
 import { setActivePinia, createPinia } from 'pinia'
 
-import { ATTENDEE } from '../../constants.js'
+import { ATTENDEE } from '../../constants.ts'
 import {
 	createPoll,
 	createPollDraft,

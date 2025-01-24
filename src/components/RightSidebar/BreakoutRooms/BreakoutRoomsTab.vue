@@ -42,7 +42,7 @@ import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 import Participant from '../Participants/Participant.vue'
 
-import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
 
 export default {

@@ -8,7 +8,7 @@ import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
-import { SESSION } from '../constants.js'
+import { SESSION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 

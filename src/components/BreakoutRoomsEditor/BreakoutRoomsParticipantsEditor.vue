@@ -107,7 +107,7 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import SelectableParticipant from './SelectableParticipant.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 
 export default {

@@ -161,7 +161,7 @@ import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
-import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 

@@ -36,7 +36,7 @@ import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { useStore } from '../composables/useStore.js'
-import { ATTENDEE } from '../constants.js'
+import { ATTENDEE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import type { Conversation, Participant } from '../types/index.ts'

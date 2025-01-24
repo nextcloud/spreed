@@ -125,7 +125,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.j
 
 import ConversationIcon from '../ConversationIcon.vue'
 
-import { AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.ts'
 
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'

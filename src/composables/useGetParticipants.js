@@ -10,7 +10,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
-import { CONVERSATION } from '../constants.js'
+import { CONVERSATION } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 
 /**

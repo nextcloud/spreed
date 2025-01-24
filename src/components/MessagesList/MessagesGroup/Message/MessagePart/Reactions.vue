@@ -88,7 +88,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import ReactionsList from './ReactionsList.vue'
 
-import { ATTENDEE } from '../../../../../constants.js'
+import { ATTENDEE } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'

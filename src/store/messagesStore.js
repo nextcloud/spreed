@@ -13,7 +13,7 @@ import {
 	CHAT,
 	CONVERSATION,
 	MESSAGE,
-} from '../constants.js'
+} from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.ts'

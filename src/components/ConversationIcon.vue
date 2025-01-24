@@ -62,7 +62,7 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
-import { AVATAR, CONVERSATION } from '../constants.js'
+import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getPreloadedUserStatus } from '../utils/userStatus.ts'

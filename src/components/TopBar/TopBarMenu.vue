@@ -186,7 +186,7 @@ import {
 	disableFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.js'

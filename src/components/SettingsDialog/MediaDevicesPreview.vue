@@ -87,7 +87,7 @@ import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
-import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 

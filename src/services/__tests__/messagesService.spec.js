@@ -5,7 +5,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { CHAT } from '../../constants.js'
+import { CHAT } from '../../constants.ts'
 import {
 	fetchMessages,
 	getMessageContext,
