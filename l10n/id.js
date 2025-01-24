@@ -360,6 +360,7 @@ OC.L10N.register(
     "Other" : "Lainnya",
     "Show all files" : "Tampilkan semua berkas",
     "Group" : "Grup",
+    "Please reload the page." : "Silakan muat ulang halaman.",
     "Do not disturb" : "Jangan diganggu",
     "Away" : "Jauh",
     "Default" : "Bawaan",
@@ -371,7 +372,7 @@ OC.L10N.register(
     "Tasks" : "Tugas",
     "Notes" : "Catatan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Password protect" : "Lindungi dengan kata sandi",
-    "Close" : "Tutup"
+    "Close" : "Tutup",
+    "Password protect" : "Lindungi dengan kata sandi"
 },
 "nplurals=1; plural=0;");
