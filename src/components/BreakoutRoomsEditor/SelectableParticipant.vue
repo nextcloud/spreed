@@ -120,7 +120,7 @@ export default {
 
 		participantStatus() {
 			if (this.actorType === ATTENDEE.ACTOR_TYPE.EMAILS) {
-				return this.participant.invitedActorId
+				return this.participant.invitedActorId ?? ''
 			}
 			return this.participant.shareWithDisplayNameUnique
 				?? getStatusMessage(this.participant)
