@@ -15,7 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, UnwrapNestedRefs } from 'vue'
+import { computed } from 'vue'
+import type { UnwrapNestedRefs } from 'vue'
 
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 

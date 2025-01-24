@@ -157,8 +157,8 @@ const store = useStore()
 const pollsStore = usePollsStore()
 
 const isOpenedFromDraft = ref(false)
-const pollOption = ref(null)
-const pollImport = ref(null)
+const pollOption = ref<InstanceType<typeof NcTextField>[] | null>(null)
+const pollImport = ref<HTMLInputElement | null>(null)
 
 const pollForm = reactive<createPollParams>({
 	question: '',
@@ -210,7 +210,7 @@ function deleteOption(index: number) {
 function addOption() {
 	pollForm.options.push('')
 	nextTick(() => {
-		pollOption.value.at(-1).focus()
+		pollOption.value!.at(-1).focus()
 	})
 }
 
@@ -247,7 +247,7 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
  * Call native input[type='file'] to import a file
  */
 function triggerImport() {
-	pollImport.value.click()
+	pollImport.value!.click()
 }
 
 /**
@@ -255,7 +255,8 @@ function triggerImport() {
  * @param event import event
  */
 function importPoll(event: Event) {
-	if (!(event.target as HTMLInputElement).files?.[0]) {
+	const file = (event.target as HTMLInputElement).files?.[0]
+	if (!file) {
 		return
 	}
 
@@ -270,7 +271,7 @@ function importPoll(event: Event) {
 		}
 	}
 
-	reader.readAsText((event.target as HTMLInputElement).files[0])
+	reader.readAsText(file)
 }
 
 /**

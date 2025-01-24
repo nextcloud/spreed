@@ -30,7 +30,7 @@ const STATUS_ERRORS = {
 	403: t('spreed', 'This conversation is read-only'),
 	404: t('spreed', 'Conversation not found or not joined'),
 	412: t('spreed', "Lobby is still active and you're not a moderator"),
-}
+} as const
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
 const connectionFailedDialogId = `connection-failed-${props.token}`
 const message = computed(() => {
@@ -38,8 +38,8 @@ const message = computed(() => {
 		return ''
 	}
 
-	const statusCode = connectionFailed.value?.meta?.statuscode
-	if (STATUS_ERRORS[statusCode]) {
+	const statusCode: keyof typeof STATUS_ERRORS | undefined = connectionFailed.value.meta?.statuscode
+	if (statusCode && STATUS_ERRORS[statusCode]) {
 		return STATUS_ERRORS[statusCode]
 	}
 	if (connectionFailed.value?.data?.error) {

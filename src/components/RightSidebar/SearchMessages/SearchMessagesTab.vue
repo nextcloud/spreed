@@ -34,11 +34,12 @@ import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.js'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import {
+import type {
 	CoreUnifiedSearchResultEntry,
 	UserFilterObject,
 	SearchMessagePayload,
 	UnifiedSearchResponse,
+	Participant,
 } from '../../../types/index.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
@@ -49,7 +50,7 @@ const emit = defineEmits<{
 	(event: 'close'): void
 }>()
 
-const searchBox = ref(null)
+const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
 {
@@ -79,7 +80,7 @@ const token = computed(() => store.getters.getToken())
 const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)
-		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
+		.filter(({ actorType }: Participant) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
 		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
 			id: actorId,
 			displayName,
@@ -162,7 +163,7 @@ type SearchMessageCancelableRequest = {
  * @param [isNew=true] Is it a new search (search parameters changed)?
  * Fetch the search results from the server
  */
-async function fetchSearchResults(isNew = true) {
+async function fetchSearchResults(isNew = true): Promise<void> {
 	const term = searchText.value.trim()
 	// Don't search if the search text is empty
 	if (term.length === 0) {
@@ -191,8 +192,9 @@ async function fetchSearchResults(isNew = true) {
 		const response = await request({
 			term,
 			person: fromUser.value?.id,
-			since: !isNaN(sinceDate.value) ? sinceDate.value?.toISOString() : null,
-			until: !isNaN(untilDate.value) ? untilDate.value?.toISOString() : null,
+			// FIXME: this might be invalid date. Remove after vue-lib bump: https://github.com/nextcloud-libraries/nextcloud-vue/pull/6387
+			since: sinceDate.value?.toISOString(),
+			until: untilDate.value?.toISOString(),
 			limit: searchLimit.value,
 			cursor: searchCursor.value || null,
 			from: `/call/${token.value}`,

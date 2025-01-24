@@ -7,11 +7,12 @@ import mitt from 'mitt'
 import type { Emitter, EventType, Handler, WildcardHandler } from 'mitt'
 import type { Route } from 'vue-router'
 
-import type { ChatMessage, Conversation, Participant } from '../types/index.ts'
+import type { ChatMessage, Conversation, Participant, SignalingSettings } from '../types/index.ts'
 import type { components } from '../types/openapi/openapi-full.ts'
 
 // List of used events across the app
-export type Events = Record<EventType, unknown> & {
+export type Events = {
+	[key: EventType]: unknown,
 	'audio-player-ended': number,
 	'conversations-received': { singleConversation: boolean },
 	'deleted-session-detected': void,
@@ -36,6 +37,7 @@ export type Events = Record<EventType, unknown> & {
 	'signaling-join-room': [string],
 	'signaling-participant-list-changed': void,
 	'signaling-recording-status-changed': [string, number],
+	'signaling-settings-updated': [SignalingSettings],
 	'signaling-users-changed': [(Partial<Participant> & ({ sessionId: string } | { nextcloudSessionId: string }))[]],
 	'signaling-users-in-room': [{ sessionId: string, userId: string }[]],
 	'smart-picker-open': void,
@@ -49,8 +51,10 @@ export type Events = Record<EventType, unknown> & {
 // Extended types for mitt() library
 type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Events>
 type ExtendedEmitter = Emitter<Events> & {
-	once<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
-	once(type: '*', handler: WildcardHandler<Events>): void
+	once: {
+		<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
+		(type: '*', handler: WildcardHandler<Events>): void
+	}
 	_onceHandlers: Map<keyof Events | '*', Map<GenericEventHandler, GenericEventHandler>>
 }
 

@@ -2,6 +2,8 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import type { AxiosError } from '@nextcloud/axios'
+
 import type { components, operations } from './openapi/openapi-full.ts'
 import { TASK_PROCESSING } from '../constants.js'
 
@@ -16,6 +18,13 @@ type ApiResponseUnwrapped<T> = Promise<{
 			meta: components['schemas']['OCSMeta']
 			data: T
 		}
+	}
+}>
+
+export type ApiErrorResponse<T = null> = AxiosError<{
+	ocs: {
+		meta: components['schemas']['OCSMeta']
+		data: T
 	}
 }>
 
