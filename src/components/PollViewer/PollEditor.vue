@@ -135,7 +135,7 @@ import { POLL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
-import type { createPollParams } from '../../types/index.ts'
+import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 
@@ -238,8 +238,18 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
 		isOpenedFromDraft.value = true
 	}
 
-	if (id && pollsStore.drafts[props.token][id]) {
-		fillPollForm(pollsStore.drafts[props.token][id])
+	if (id === null) {
+		return
+	}
+
+	const draft = pollsStore.drafts[props.token][id]
+	if (draft) {
+		fillPollForm({
+			question: draft.question,
+			options: [...draft.options],
+			resultMode: draft.resultMode,
+			maxVotes: draft.maxVotes,
+		})
 	}
 }
 
@@ -278,10 +288,8 @@ function importPoll(event: Event) {
  * Insert data into form fields
  * @param payload data to fill with
  */
-function fillPollForm(payload: createPollParams) {
-	for (const key of Object.keys(pollForm)) {
-		pollForm[key] = payload[key]
-	}
+function fillPollForm(payload: requiredPollParams) {
+	Object.assign(pollForm, payload)
 }
 
 /**
