@@ -17,7 +17,7 @@ import type { Events } from '../../services/EventBus.ts'
 
 const store = useStore()
 
-const pollEditorRef = ref(null)
+const pollEditorRef = ref<InstanceType<typeof PollEditor> | null>(null)
 
 const showPollEditor = ref(false)
 const showPollDraftHandler = ref(false)
