@@ -10,7 +10,7 @@ import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import AvatarWrapper from './AvatarWrapper.vue'
 
-import { ATTENDEE, AVATAR } from '../../constants.js'
+import { ATTENDEE, AVATAR } from '../../constants.ts'
 
 describe('AvatarWrapper.vue', () => {
 	const USER_ID = 'user-id'

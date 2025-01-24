@@ -128,7 +128,7 @@ import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { PARTICIPANT } from '../../constants.js'
+import { PARTICIPANT } from '../../constants.ts'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import { callAnalyzer } from '../../utils/webrtc/index.js'
 import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner.js'

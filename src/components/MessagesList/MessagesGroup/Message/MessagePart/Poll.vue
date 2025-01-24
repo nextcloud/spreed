@@ -58,7 +58,7 @@ import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import { POLL } from '../../../../../constants.js'
+import { POLL } from '../../../../../constants.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 
 export default {

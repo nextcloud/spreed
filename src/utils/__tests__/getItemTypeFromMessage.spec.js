@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { SHARED_ITEM } from '../../constants.js'
+import { SHARED_ITEM } from '../../constants.ts'
 import { getItemTypeFromMessage } from '../getItemTypeFromMessage.ts'
 
 describe('getItemTypeFromMessage', () => {

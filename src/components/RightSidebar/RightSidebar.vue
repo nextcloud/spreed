@@ -154,7 +154,7 @@ import SipSettings from './SipSettings.vue'
 import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
+import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 

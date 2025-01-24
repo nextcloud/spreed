@@ -12,7 +12,7 @@ import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
-import { SHARED_ITEM } from '../constants.js'
+import { SHARED_ITEM } from '../constants.ts'
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.ts'
 import {

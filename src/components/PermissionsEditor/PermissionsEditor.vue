@@ -71,7 +71,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import { useId } from '../../composables/useId.ts'
-import { PARTICIPANT } from '../../constants.js'
+import { PARTICIPANT } from '../../constants.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 

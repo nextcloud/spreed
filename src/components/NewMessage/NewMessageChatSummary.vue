@@ -67,7 +67,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import { useStore } from '../../composables/useStore.js'
-import { TASK_PROCESSING } from '../../constants.js'
+import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import type { TaskProcessingResponse, SummarizeChatTask } from '../../types/index.ts'

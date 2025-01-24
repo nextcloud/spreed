@@ -11,7 +11,7 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
-import { ATTENDEE, PARTICIPANT } from '../constants.js'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
 	joinCall,

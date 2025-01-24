@@ -25,7 +25,7 @@ import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import Participant from './Participant.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.js'
+import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 

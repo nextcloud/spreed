@@ -14,7 +14,7 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
 
-import { CONVERSATION } from '../constants.js'
+import { CONVERSATION } from '../constants.ts'
 import { generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('@nextcloud/axios', () => ({

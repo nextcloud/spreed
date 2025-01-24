@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { BOT } from '../constants.js'
+import { BOT } from '../constants.ts'
 import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.ts'
 import type { Bot } from '../types/index.ts'
 

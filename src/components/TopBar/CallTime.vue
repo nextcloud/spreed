@@ -70,7 +70,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
-import { CALL } from '../../constants.js'
+import { CALL } from '../../constants.ts'
 import { formattedTime } from '../../utils/formattedTime.ts'
 
 const ONE_HOUR_MS = 60 * 60 * 1000

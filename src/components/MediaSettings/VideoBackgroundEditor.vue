@@ -83,7 +83,7 @@ import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
-import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'

@@ -44,7 +44,7 @@ import { t } from '@nextcloud/l10n'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE } from '../../constants.js'
+import { ATTENDEE } from '../../constants.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.ts'
 
 export default {

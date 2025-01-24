@@ -5,7 +5,7 @@
 import type { AxiosError } from '@nextcloud/axios'
 
 import type { components, operations } from './openapi/openapi-full.ts'
-import { TASK_PROCESSING } from '../constants.js'
+import { TASK_PROCESSING } from '../constants.ts'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>

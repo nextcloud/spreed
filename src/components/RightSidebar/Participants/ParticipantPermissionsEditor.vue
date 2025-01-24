@@ -18,7 +18,7 @@ import { t } from '@nextcloud/l10n'
 
 import PermissionEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 
-import { PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT } from '../../../constants.ts'
 
 export default {
 	name: 'ParticipantPermissionsEditor',

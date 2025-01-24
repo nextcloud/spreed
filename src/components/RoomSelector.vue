@@ -60,7 +60,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
 
-import { CONVERSATION } from '../constants.js'
+import { CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
 

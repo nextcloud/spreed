@@ -41,7 +41,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import { BOT } from '../../constants.js'
+import { BOT } from '../../constants.ts'
 import { useBotsStore } from '../../stores/bots.ts'
 
 export default {

@@ -88,7 +88,7 @@ import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
-import { BOT } from '../../constants.js'
+import { BOT } from '../../constants.ts'
 import { getAllBots } from '../../services/botsService.ts'
 
 export default {

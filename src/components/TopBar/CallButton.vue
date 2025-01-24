@@ -105,7 +105,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'

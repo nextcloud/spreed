@@ -52,7 +52,7 @@ import { t } from '@nextcloud/l10n'
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'
 
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../constants.ts'
 import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')

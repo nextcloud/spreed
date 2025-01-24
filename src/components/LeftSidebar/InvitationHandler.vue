@@ -83,7 +83,7 @@ import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import ConversationIcon from '../ConversationIcon.vue'
 import Mention from '../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
 
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../constants.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 
 export default {

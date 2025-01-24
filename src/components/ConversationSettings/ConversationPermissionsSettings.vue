@@ -87,7 +87,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 
-import { PARTICIPANT } from '../../constants.js'
+import { PARTICIPANT } from '../../constants.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 

@@ -10,7 +10,7 @@ import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
 import { useStore } from './useStore.js'
-import { ATTENDEE, CONVERSATION } from '../constants.js'
+import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'

@@ -131,7 +131,7 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { useStore } from '../../composables/useStore.js'
-import { POLL } from '../../constants.js'
+import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'

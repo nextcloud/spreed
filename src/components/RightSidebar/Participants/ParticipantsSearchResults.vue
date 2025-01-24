@@ -94,7 +94,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import ParticipantsList from './ParticipantsList.vue'
 import Hint from '../../UIShared/Hint.vue'
 
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE } from '../../../constants.ts'
 import { useIntegrationsStore } from '../../../stores/integrations.js'
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')

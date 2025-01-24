@@ -100,7 +100,7 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 
-import { SIGNALING } from '../../constants.js'
+import { SIGNALING } from '../../constants.ts'
 import type { InitialState } from '../../types/index.ts'
 
 const isCacheConfigured = loadState('spreed', 'has_cache_configured')
