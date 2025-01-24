@@ -9,7 +9,7 @@
     "dev": "node --max-old-space-size=4096 ./node_modules/webpack/bin/webpack.js --node-env development --progress",
     "watch": "node --max-old-space-size=4096 ./node_modules/webpack/bin/webpack.js --node-env development --progress --watch",
     "serve": "node --max-old-space-size=4096 ./node_modules/webpack/bin/webpack.js serve --node-env development --progress --allowed-hosts all",
-    "typescript:check": "tsc --noEmit",
+    "typescript:check": "vue-tsc --noEmit",
     "typescript:generate": "npx openapi-typescript -t",
     "test": "jest",
     "test:watch": "jest --watch",
