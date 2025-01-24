@@ -118,14 +118,13 @@
     "Client ID" : "Klient-ID",
     "Other" : "Anna",
     "Group" : "Gruppe",
+    "Please reload the page." : "Ver venleg og last sida på nytt.",
     "Away" : "Borte",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
-    "Circles" : "Sirklar",
-    "Password protect" : "Vern med passord",
     "Close" : "Lukk",
-    "Remove circle and members" : "Eksterne sirklar og medlemmar"
+    "Password protect" : "Vern med passord"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -364,6 +364,7 @@ OC.L10N.register(
     "Other" : "Outro",
     "Group" : "Grupo",
     "Error while sharing file" : "Erro ao partilhar ficheiro",
+    "Please reload the page." : "Por favor, recarregue a página.",
     "Do not disturb" : "Não incomodar",
     "Away" : "Ausente",
     "Default" : "Predefinida",
@@ -379,9 +380,7 @@ OC.L10N.register(
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
     "Reports" : "Relatórios",
-    "Circles" : "Círculos",
-    "Password protect" : "Proteger com palavra-passe",
     "Close" : "Fechar",
-    "Start a conversation" : "Iniciar uma conversação"
+    "Password protect" : "Proteger com palavra-passe"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

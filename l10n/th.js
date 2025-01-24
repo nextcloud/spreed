@@ -102,6 +102,7 @@ OC.L10N.register(
     "Audio" : "เสียง",
     "Other" : "อื่น ๆ",
     "Group" : "กลุ่ม",
+    "Please reload the page." : "โปรดโหลดหน้าเว็บใหม่",
     "Do not disturb" : "ห้ามรบกวน",
     "Away" : "ไม่อยู่",
     "Default" : "ค่าเริ่มต้น",
@@ -111,7 +112,7 @@ OC.L10N.register(
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
     "Notes" : "โน้ต",
-    "Password protect" : "ป้องกันด้วยรหัสผ่าน",
-    "Close" : "ปิด"
+    "Close" : "ปิด",
+    "Password protect" : "ป้องกันด้วยรหัสผ่าน"
 },
 "nplurals=1; plural=0;");
