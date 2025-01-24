@@ -140,6 +140,7 @@ OC.L10N.register(
     "Audio" : "აუდიო",
     "Other" : "სხვა",
     "Group" : "ჯგუფი",
+    "Please reload the page." : "გთხოვთ გადატვირთოთ გვერდი.",
     "Default" : "საწყისი",
     "Access to microphone & camera is only possible with HTTPS" : "წვდომა მიკროფონთან და კამერასთან მხარდაჭერილია მხოლოდ HTTPS პროტოკოლით",
     "Access to microphone & camera was denied" : "წვდომა მიკროფონზე და კამერაზე აიკრძალა",
@@ -152,9 +153,8 @@ OC.L10N.register(
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
     "Notes" : "ჩანაწერები",
-    "Circles" : "წრეები",
-    "Password protect" : "პაროლით დაცვა",
     "Close" : "დახურვა",
+    "Password protect" : "პაროლით დაცვა",
     "TURN server" : "TURN სერვერი",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი."

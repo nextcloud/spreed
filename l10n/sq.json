@@ -258,6 +258,7 @@
     "Audio" : "Audio",
     "Other" : "Tjetër",
     "Group" : "Grup",
+    "Please reload the page." : "Ju lutemi, ringarkoni faqen.",
     "Default" : "E paracaktuar",
     "Access to microphone & camera is only possible with HTTPS" : "Aksesi në mikrofon & kamera është i mundur vetëm me HTTPS",
     "Access to microphone & camera was denied" : "Aksesi tek mikrofoni & kamera u mohua",
@@ -269,10 +270,8 @@
     "iOS app" : "Aplikacion iOS",
     "__language_name__" : "Shqip",
     "Tasks" : "Detyra",
-    "Circles" : "Rrethet",
-    "Password protect" : "Mbroje me fjalëkalim",
     "Close" : "Mbylleni",
-    "Start a conversation" : "Filloni një bisedë",
+    "Password protect" : "Mbroje me fjalëkalim",
     "TURN server" : "Serveri TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

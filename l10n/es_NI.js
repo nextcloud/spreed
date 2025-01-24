@@ -132,6 +132,7 @@ OC.L10N.register(
     "Audio" : "Audio",
     "Other" : "Otro",
     "Group" : "Grupo",
+    "Please reload the page." : "Por favor vuelve a cargar la página.",
     "Default" : "Predeterminado",
     "Access to microphone & camera is only possible with HTTPS" : "El acceso al micrófono & cámara sólo es posible mediante HTTPS",
     "Access to microphone & camera was denied" : "El acceso al micrófono & cámara fue denegado",
@@ -143,9 +144,8 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (Nicaragua)",
     "Tasks" : "Tareas",
-    "Circles" : "Círculos",
-    "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
+    "Password protect" : "Proteger con contraseña",
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. "

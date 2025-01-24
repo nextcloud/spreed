@@ -108,6 +108,7 @@ OC.L10N.register(
     "Audio" : "Helid",
     "Other" : "Muu",
     "Group" : "Grupp",
+    "Please reload the page." : "Palun laadi leht uuesti.",
     "Do not disturb" : "Mitte segada",
     "Away" : "Eemal",
     "Default" : "Vaikeväärtus",
@@ -116,7 +117,7 @@ OC.L10N.register(
     "iOS app" : "iOS-i rakendus",
     "__language_name__" : "Eesti",
     "Tasks" : "Ülesanded",
-    "Password protect" : "Parooliga kaitsmine",
-    "Close" : "Sulge"
+    "Close" : "Sulge",
+    "Password protect" : "Parooliga kaitsmine"
 },
 "nplurals=2; plural=(n != 1);");
