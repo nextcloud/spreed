@@ -80,7 +80,7 @@
 					:menu-container="containerElement"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
-					dir="auto"
+					:dir="text ? 'auto' : undefined"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
