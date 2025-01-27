@@ -177,3 +177,4 @@
 * `config => conversations => description-length` (local) - The maximum length for conversation descriptions, currently 2000. Before this config was added the implicit limit was 500, since the existance of the feature capability `room-description`.
 * `call-end-to-end-encryption` - Signaling support of the server for the end-to-end encryption of calls
 * `config => call => end-to-end-encryption` - Whether calls should be end-to-end encrypted (currently off by default, until all Talk mobile clients support it)
++ `edit-draft-poll` - Whether moderators can edit draft polls

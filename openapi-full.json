@@ -9517,6 +9517,279 @@
                                                             "enum": [
                                                                 "draft",
                                                                 "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/draft/{pollId}": {
+            "post": {
+                "operationId": "poll-update-draft-poll",
+                "summary": "Modify a draft poll",
+                "description": "Required capability: `edit-draft-poll`",
+                "tags": [
+                    "poll"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "question",
+                                    "options",
+                                    "resultMode",
+                                    "maxVotes"
+                                ],
+                                "properties": {
+                                    "question": {
+                                        "type": "string",
+                                        "description": "Question of the poll"
+                                    },
+                                    "options": {
+                                        "type": "array",
+                                        "description": "Options of the poll",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "resultMode": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Mode how the results will be shown"
+                                    },
+                                    "maxVotes": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Number of maximum votes per voter"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "pollId",
+                        "in": "path",
+                        "description": "The poll id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Draft modified successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PollDraft"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Modifying poll is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No permission to modify this poll",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No draft poll exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
                                                                 "question",
                                                                 "room"
                                                             ]
@@ -10143,7 +10416,14 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -10181,7 +10461,14 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -10219,7 +10506,14 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "poll",
+                                                                "question",
+                                                                "room"
+                                                            ]
                                                         }
                                                     }
                                                 }
