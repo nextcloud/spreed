@@ -15,6 +15,7 @@
 
 	ul,
 	ol {
+		/* stylelint-disable-next-line csstools/use-logical */
 		padding-left: 0;
 		padding-inline-start: 15px;
 
@@ -54,8 +55,10 @@
 	}
 
 	blockquote {
+		/* stylelint-disable-next-line csstools/use-logical */
 		padding-left: 0;
 		padding-inline-start: 13px;
+		/* stylelint-disable-next-line csstools/use-logical */
 		border-left: none;
 		border-inline-start: 4px solid var(--color-border);
 	}

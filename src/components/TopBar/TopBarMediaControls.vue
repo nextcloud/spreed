@@ -535,7 +535,7 @@ export default {
 .hint {
 	padding: 12px;
 	max-width: 300px;
-	text-align: left;
+	text-align: start;
 	&__actions {
 		display: flex;
 		flex-direction: row-reverse;

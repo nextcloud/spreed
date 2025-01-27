@@ -218,10 +218,7 @@ export default {
 
 .dragover {
 	position: absolute;
-	top: 10%;
-	left: 10%;
-	width: 80%;
-	height: 80%;
+	inset: 10%;
 	background: var(--color-primary-element-light);
 	z-index: 11;
 	display: flex;
@@ -247,7 +244,7 @@ export default {
 	&__button {
 		position: absolute !important;
 		bottom: 8px;
-		right: 24px;
+		inset-inline-end: 24px;
 		z-index: 2;
 	}
 }

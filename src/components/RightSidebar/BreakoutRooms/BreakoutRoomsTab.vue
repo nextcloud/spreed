@@ -180,10 +180,4 @@ export default {
 :deep(.app-navigation-entry__title) {
 	font-weight: bold !important;
 }
-
-// TODO: upstream collapse icon position fix
-:deep(.icon-collapse) {
-	position: absolute !important;
-	left: 0;
-}
 </style>

@@ -1330,7 +1330,7 @@ export default {
 	transition: $transition;
 
 	&--chatScrolledToBottom {
-		border-bottom-color: transparent;
+		border-block-end-color: transparent;
 	}
 
 	&__content {
@@ -1347,7 +1347,7 @@ export default {
 		&-element {
 			position: absolute;
 			top: 0;
-			left: calc(2 * var(--default-grid-baseline));
+			inset-inline-start: calc(2 * var(--default-grid-baseline));
 		}
 	}
 }
@@ -1372,7 +1372,7 @@ export default {
 		display: grid;
 		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
 		z-index: 2;
-		margin-left: calc($messages-avatar-width);
+		margin-inline-start: calc($messages-avatar-width);
 		margin-bottom: 5px;
 		padding-inline: var(--default-grid-baseline);
 		pointer-events: none;

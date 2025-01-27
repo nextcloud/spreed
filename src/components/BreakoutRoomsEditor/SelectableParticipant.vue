@@ -199,7 +199,7 @@ export default {
 	&__checkbox {
 		position: absolute;
 		top: 0;
-		left: 0;
+		inset-inline-start: 0;
 		z-index: -1;
 		opacity: 0;
 	}
@@ -220,7 +220,7 @@ export default {
 
 	&__check-icon {
 		display: none;
-		margin-left: auto;
+		margin-inline-start: auto;
 		width: var(--default-clickable-area);
 		flex-shrink: 0;
 	}

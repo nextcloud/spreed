@@ -327,29 +327,29 @@ export default {
 	border-bottom: var(--border-width) solid var(--color-border);
 
 	&--in-call {
-		right: 0;
+		inset-inline: 0;
 		border: none;
 		position: absolute;
 		top: 0;
-		left: 0;
 		background-color: transparent;
 	}
 
 	.talk-sidebar-callview & {
-		margin-right: var(--default-clickable-area);
+		margin-inline-end: var(--default-clickable-area);
+		align-items: flex-start;
 	}
 
 	&--sidebar {
 		padding: calc(2 * var(--default-grid-baseline));
 
 		.conversation-icon {
-			margin-left: 0;
+			margin-inline-start: 0;
 		}
 	}
 
-	&--authorised {
+	&--authorised:not(.top-bar--sidebar) {
 		.conversation-icon {
-			margin-left: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+			margin-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 		}
 	}
 }
@@ -376,7 +376,7 @@ export default {
 		display: flex;
 		flex-direction:column;
 		flex-grow: 1;
-		margin-left: 8px;
+		margin-inline-start: 8px;
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;

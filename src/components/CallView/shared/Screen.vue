@@ -204,7 +204,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+/* stylelint-disable csstools/use-logical */
 .screenContainer {
 	width: 100%;
 	height: 100%;

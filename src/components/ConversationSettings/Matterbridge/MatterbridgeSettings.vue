@@ -262,7 +262,7 @@ export default {
 .icon-multiselect-service {
 	width: 16px !important;
 	height: 16px !important;
-	margin-right: 10px;
+	margin-inline-end: 10px;
 	filter: var(--background-invert-if-dark);
 }
 
@@ -315,18 +315,6 @@ export default {
 
 	.basic-settings {
 		margin-bottom: calc(4 * var(--default-grid-baseline));
-
-		.action {
-			list-style: none;
-		}
-		.save-changes {
-			width: 100%;
-			text-align: left;
-
-			.icon-checkmark {
-				margin: 0 10px 0 2px;
-			}
-		}
 		.icon {
 			display: inline-flex;
 			justify-content: center;
@@ -343,15 +331,6 @@ export default {
 			display: flex;
 			height: var(--default-clickable-area);
 			margin-top: 5px;
-
-			label {
-				flex-grow: 1;
-				margin-top: auto;
-				margin-bottom: auto;
-				&::before {
-					margin: 0 10px 0 15px;
-				}
-			}
 		}
 	}
 

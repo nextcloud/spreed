@@ -221,8 +221,8 @@ export default {
 		&-desc {
 			display: flex;
 			flex-direction: column;
-			margin-right: auto;
-			padding-left: 4px;
+			margin-inline-end: auto;
+			padding-inline-start: 4px;
 
 			&__name {
 				line-height: 20px;

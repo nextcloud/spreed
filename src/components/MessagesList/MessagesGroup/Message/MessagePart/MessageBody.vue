@@ -516,7 +516,7 @@ export default {
 			.message-copy-code {
 				position: absolute;
 				top: 0;
-				right: calc(4px + var(--default-clickable-area));
+				inset-inline-end: calc(4px + var(--default-clickable-area));
 				margin-top: 4px;
 				background-color: var(--color-background-dark);
 			}
@@ -548,7 +548,7 @@ export default {
 			}
 
 			&:last-child {
-				margin-right: var(--clickable-area-small, 24px);
+				margin-inline-end: var(--clickable-area-small, 24px);
 			}
 		}
 	}
@@ -566,9 +566,8 @@ export default {
 	}
 }
 
-// Hardcode to prevent RTL affecting on user mentions
-:deep(.rich-text--component) {
-	direction: ltr;
+:deep(.rich-text--wrapper) {
+	direction: inherit;
 }
 
 // Hardcode to restrict size of message images for the chat

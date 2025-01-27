@@ -135,7 +135,7 @@ export default {
 	}
 
 	&__other {
-		padding-left: 8px;
+		padding-inline-start: 8px;
 
 		a {
 			text-decoration: underline;
