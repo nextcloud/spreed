@@ -6,8 +6,7 @@
 <template>
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<template #search>
-			<div class="new-conversation"
-				:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
+			<div class="new-conversation">
 				<div class="conversations-search"
 					:class="{'conversations-search--expanded': isFocused}">
 					<SearchBox ref="searchBox"
@@ -473,8 +472,6 @@ export default {
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
-			// Keeps track of whether the conversation list is scrolled to the top or not
-			isScrolledToTop: true,
 			refreshTimer: null,
 			/**
 			 * @type {number|null}
@@ -964,7 +961,6 @@ export default {
 		// Checks whether the conversations list is scrolled all the way to the top
 		// or not
 		handleScroll() {
-			this.isScrolledToTop = this.$refs.scroller.$el.scrollTop === 0
 			this.handleUnreadMention()
 		},
 
@@ -1054,11 +1050,6 @@ export default {
 	display: flex;
 	margin: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
-	border-bottom: 1px solid transparent;
-
-	&--scrolled-down {
-		border-bottom-color: var(--color-placeholder-dark);
-	}
 
 	.filters {
 		position: absolute;
