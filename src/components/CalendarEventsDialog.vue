@@ -350,126 +350,127 @@ async function submitNewMeeting() {
 			</template>
 		</NcPopover>
 
-		<NcDialog v-if="canScheduleMeeting"
-			id="calendar-meeting"
-			:open.sync="isFormOpen"
-			class="calendar-meeting"
-			:name="t('spreed', 'Schedule a meeting')"
-			size="normal"
-			close-on-click-outside
-			:container="container">
-			<NcTextField v-model="newMeetingTitle"
-				:label="t('spreed', 'Meeting title')"
-				label-visible />
-			<NcTextArea v-model="newMeetingDescription"
-				:label="t('spreed', 'Description')"
-				resize="vertical"
-				label-visible />
-			<div class="calendar-meeting__flex-wrapper">
-				<NcDateTimePickerNative id="schedule_meeting_input"
-					v-model="selectedDateTimeStart"
-					:class="{ 'invalid-time': invalid === 'start' }"
-					:min="new Date()"
-					:step="300"
-					:label="t('spreed', 'From')"
-					type="datetime-local" />
-				<NcDateTimePickerNative id="schedule_meeting_input"
-					v-model="selectedDateTimeEnd"
-					:class="{ 'invalid-time': invalid === 'end' }"
-					:min="new Date()"
-					:step="300"
-					:label="t('spreed', 'To')"
-					type="datetime-local" />
-			</div>
-			<NcSelect id="schedule_meeting_select"
-				v-model="selectedCalendar"
-				:options="calendarOptions"
-				:input-label="t('spreed', 'Calendar')">
-				<template #selected-option="option">
-					<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
-					{{ option.label }}
-				</template>
-				<template #option="option">
-					<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
-					{{ option.label }}
-				</template>
-			</NcSelect>
-			<h5 class="calendar-meeting__header">
-				{{ t('spreed', 'Attendees') }}
-			</h5>
-			<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
-				{{ t('spreed', 'Invite all users and emails') }}
-			</NcCheckboxRadioSwitch>
-			<NcButton type="tertiary" @click="isSelectorOpen = true">
-				<template #icon>
-					<IconAccountPlus :size="20" />
-				</template>
-				{{ t('spreed', 'Add attendees') }}
-			</NcButton>
-			<p>{{ attendeeHint }}</p>
-
-			<template #actions>
-				<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
-					{{ invalidHint }}
-				</p>
-				<NcButton type="primary"
-					:disabled="!selectedCalendar || submitting || !!invalid"
-					@click="submitNewMeeting">
-					<template #icon>
-						<NcLoadingIcon v-if="submitting" :size="20" />
-						<IconCheck v-else :size="20" />
+		<template v-if="canScheduleMeeting">
+			<NcDialog id="calendar-meeting"
+				:open.sync="isFormOpen"
+				class="calendar-meeting"
+				:name="t('spreed', 'Schedule a meeting')"
+				size="normal"
+				close-on-click-outside
+				:container="container">
+				<NcTextField v-model="newMeetingTitle"
+					:label="t('spreed', 'Meeting title')"
+					label-visible />
+				<NcTextArea v-model="newMeetingDescription"
+					:label="t('spreed', 'Description')"
+					resize="vertical"
+					label-visible />
+				<div class="calendar-meeting__flex-wrapper">
+					<NcDateTimePickerNative id="schedule_meeting_input"
+						v-model="selectedDateTimeStart"
+						:class="{ 'invalid-time': invalid === 'start' }"
+						:min="new Date()"
+						:step="300"
+						:label="t('spreed', 'From')"
+						type="datetime-local" />
+					<NcDateTimePickerNative id="schedule_meeting_input"
+						v-model="selectedDateTimeEnd"
+						:class="{ 'invalid-time': invalid === 'end' }"
+						:min="new Date()"
+						:step="300"
+						:label="t('spreed', 'To')"
+						type="datetime-local" />
+				</div>
+				<NcSelect id="schedule_meeting_select"
+					v-model="selectedCalendar"
+					:options="calendarOptions"
+					:input-label="t('spreed', 'Calendar')">
+					<template #selected-option="option">
+						<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
+						{{ option.label }}
 					</template>
-					{{ t('spreed', 'Save') }}
-				</NcButton>
-			</template>
-		</NcDialog>
-
-		<NcDialog v-if="canScheduleMeeting"
-			:open.sync="isSelectorOpen"
-			:name="t('spreed', 'Add attendees')"
-			class="calendar-meeting"
-			close-on-click-outside
-			container="#calendar-meeting">
-			<SearchBox class="calendar-meeting__searchbox"
-				:value.sync="searchText"
-				is-focused
-				:placeholder-text="t('spreed', 'Search participants')"
-				@abort-search="searchText = ''" />
-			<!-- Selected results -->
-			<TransitionWrapper v-if="selectedAttendeeIds.length"
-				class="calendar-meeting__attendees-selected"
-				name="zoom"
-				tag="div"
-				group>
-				<ContactSelectionBubble v-for="participant in selectedParticipants"
-					:key="participant.actorType + participant.actorId"
-					:participant="participant"
-					@update="removeSelectedParticipant" />
-			</TransitionWrapper>
-			<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
-				<SelectableParticipant v-for="participant in filteredParticipants"
-					:key="participant.attendeeId"
-					:checked.sync="selectedAttendeeIds"
-					:participant="participant"
-					@update:checked="checkSelection" />
-			</ul>
-			<NcEmptyContent v-else
-				class="calendar-meeting__empty-content"
-				:name="!participantsInitialised ? t('spreed', 'Loading …') :t('spreed', 'No results')">
-				<template #icon>
-					<NcLoadingIcon v-if="!participantsInitialised" />
-					<IconAccountSearch v-else />
-				</template>
-			</NcEmptyContent>
-			<template #actions>
-				<NcButton type="primary" @click="isSelectorOpen = false">
-					<template #icon>
-						<IconCheck :size="20" />
+					<template #option="option">
+						<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
+						{{ option.label }}
 					</template>
-					{{ t('spreed', 'Done') }}
+				</NcSelect>
+				<h5 class="calendar-meeting__header">
+					{{ t('spreed', 'Attendees') }}
+				</h5>
+				<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
+					{{ t('spreed', 'Invite all users and emails') }}
+				</NcCheckboxRadioSwitch>
+				<NcButton type="tertiary" @click="isSelectorOpen = true">
+					<template #icon>
+						<IconAccountPlus :size="20" />
+					</template>
+					{{ t('spreed', 'Add attendees') }}
 				</NcButton>
-			</template>
-		</NcDialog>
+				<p>{{ attendeeHint }}</p>
+
+				<template #actions>
+					<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
+						{{ invalidHint }}
+					</p>
+					<NcButton type="primary"
+						:disabled="!selectedCalendar || submitting || !!invalid"
+						@click="submitNewMeeting">
+						<template #icon>
+							<NcLoadingIcon v-if="submitting" :size="20" />
+							<IconCheck v-else :size="20" />
+						</template>
+						{{ t('spreed', 'Save') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+
+			<NcDialog v-if="isSelectorOpen"
+				:open.sync="isSelectorOpen"
+				:name="t('spreed', 'Add attendees')"
+				class="calendar-meeting"
+				close-on-click-outside
+				container="#calendar-meeting">
+				<SearchBox class="calendar-meeting__searchbox"
+					:value.sync="searchText"
+					is-focused
+					:placeholder-text="t('spreed', 'Search participants')"
+					@abort-search="searchText = ''" />
+				<!-- Selected results -->
+				<TransitionWrapper v-if="selectedAttendeeIds.length"
+					class="calendar-meeting__attendees-selected"
+					name="zoom"
+					tag="div"
+					group>
+					<ContactSelectionBubble v-for="participant in selectedParticipants"
+						:key="participant.actorType + participant.actorId"
+						:participant="participant"
+						@update="removeSelectedParticipant" />
+				</TransitionWrapper>
+				<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
+					<SelectableParticipant v-for="participant in filteredParticipants"
+						:key="participant.attendeeId"
+						:checked.sync="selectedAttendeeIds"
+						:participant="participant"
+						@update:checked="checkSelection" />
+				</ul>
+				<NcEmptyContent v-else
+					class="calendar-meeting__empty-content"
+					:name="!participantsInitialised ? t('spreed', 'Loading …') :t('spreed', 'No results')">
+					<template #icon>
+						<NcLoadingIcon v-if="!participantsInitialised" />
+						<IconAccountSearch v-else />
+					</template>
+				</NcEmptyContent>
+				<template #actions>
+					<NcButton type="primary" @click="isSelectorOpen = false">
+						<template #icon>
+							<IconCheck :size="20" />
+						</template>
+						{{ t('spreed', 'Done') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+		</template>
 	</div>
 </template>
 
