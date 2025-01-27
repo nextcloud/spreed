@@ -258,35 +258,80 @@ describe('messagesStore', () => {
 		})
 	})
 
-	test('message list', () => {
-		const message1 = {
-			id: 1,
-			token: TOKEN,
-		}
-		const message2 = {
-			id: 2,
-			token: 'token-2',
-		}
-		const message3 = {
-			id: 3,
-			token: TOKEN,
-		}
+	describe('messages list', () => {
+		test('returns messages list', () => {
+			const message1 = {
+				id: 1,
+				token: TOKEN,
+			}
+			const message2 = {
+				id: 2,
+				token: 'token-2',
+			}
+			const message3 = {
+				id: 3,
+				token: TOKEN,
+			}
 
-		store.dispatch('processMessage', { token: message1.token, message: message1 })
-		store.dispatch('processMessage', { token: message2.token, message: message2 })
-		store.dispatch('processMessage', { token: message3.token, message: message3 })
-		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
-		expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
-		expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
+			store.dispatch('processMessage', { token: message1.token, message: message1 })
+			store.dispatch('processMessage', { token: message2.token, message: message2 })
+			store.dispatch('processMessage', { token: message3.token, message: message3 })
+			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
+			expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
+			expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
 
-		// with messages getter
-		expect(store.getters.messagesList(TOKEN)).toStrictEqual([
-			message1,
-			message3,
-		])
-		expect(store.getters.messagesList('token-2')).toStrictEqual([
-			message2,
-		])
+			// with messages getter
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([
+				message1,
+				message3,
+			])
+			expect(store.getters.messagesList('token-2')).toStrictEqual([
+				message2,
+			])
+		})
+
+		const testCases = [
+			// Default
+			[1, 200, 1, 200, 200, undefined],
+			[1, 400, 201, 400, 200, undefined],
+			// with lastReadMessage
+			[201, 600, 401, 600, 200, 200],
+			[1, 400, 101, 300, 200, 200],
+			[1, 400, 201, 400, 200, 300],
+			// Border values
+			[1, 400, 1, 101, 101, 1],
+			[1, 400, 301, 400, 100, 400],
+			[1, 400, 1, 199, 199, 99],
+			[1, 400, 1, 200, 200, 100],
+			[1, 400, 2, 201, 200, 101],
+			[1, 400, 202, 400, 199, 301],
+			[1, 400, 201, 400, 200, 300],
+			[1, 400, 200, 399, 200, 299],
+		]
+
+		it.each(testCases)('eases list from [%s - %s] to [%s - %s] (length: %s) with lastReadMessage %s',
+			(oldFirst, oldLast, newFirst, newLast, length, lastReadMessage) => {
+			// Arrange
+				conversationMock.mockReturnValue({ lastReadMessage })
+				for (let id = oldFirst; id <= oldLast; id++) {
+					store.dispatch('processMessage', { token: TOKEN, message: { token: TOKEN, id } })
+				}
+				store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: oldFirst })
+				store.dispatch('setLastKnownMessageId', { token: TOKEN, id: oldLast })
+
+				// Act
+				store.dispatch('easeMessageList', { token: TOKEN })
+
+				// Assert
+				expect(store.getters.messagesList(TOKEN)).toHaveLength(length)
+				expect(store.getters.messagesList(TOKEN).at(0)).toStrictEqual({ token: TOKEN, id: newFirst })
+				expect(store.getters.messagesList(TOKEN).at(-1)).toStrictEqual({ token: TOKEN, id: newLast })
+				expect(store.getters.getFirstKnownMessageId(TOKEN)).toStrictEqual(newFirst)
+				expect(store.getters.getLastKnownMessageId(TOKEN)).toStrictEqual(newLast)
+				if (oldFirst < lastReadMessage && lastReadMessage < oldLast) {
+					expect(store.getters.message(TOKEN, lastReadMessage)).toBeDefined()
+				}
+			})
 	})
 
 	describe('delete message', () => {
