@@ -86,7 +86,7 @@ const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeabl
 	color: calendar.color ?? usernameToColor(calendar.uri).color
 })))
 const canScheduleMeeting = computed(() => {
-	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length
+	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
@@ -291,6 +291,7 @@ async function submitNewMeeting() {
 	<div>
 		<NcPopover :container="container"
 			:popper-hide-triggers="hideTriggers"
+			:focus-trap="canScheduleMeeting || upcomingEvents.length !== 0"
 			popup-role="dialog">
 			<template #trigger>
 				<NcButton class="upcoming-meeting"
@@ -316,6 +317,7 @@ async function submitNewMeeting() {
 								:class="{ 'calendar-events__item--thumb': !event.href }"
 								:href="event.href"
 								:title="t('spreed', 'Open Calendar')"
+								:tabindex="0"
 								target="_blank">
 								<span class="calendar-badge" :style="{ backgroundColor: event.color }" />
 								<span class="calendar-events__content">
@@ -540,6 +542,7 @@ async function submitNewMeeting() {
 	&__empty-content {
 		min-width: 150px;
 		margin-top: calc(var(--default-grid-baseline) * 3);
+		padding: var(--default-grid-baseline);
 	}
 
 	&__buttons {
