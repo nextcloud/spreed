@@ -6,23 +6,21 @@
 <template>
 	<!-- Poll card -->
 	<div v-if="draft" class="poll-card" @click="openDraft">
-		<span class="poll-card__header">
-			<IconPoll :size="20" />
-			<span>{{ name }}</span>
+		<span class="poll-card__header poll-card__header--draft">
+			<IconPoll class="poll-card__header-icon" :size="20" />
+			<span class="poll-card__header-name">{{ name }}</span>
+			<NcButton type="tertiary"
+				:title="t('spreed', 'Delete poll draft')"
+				:aria-label="t('spreed', 'Delete poll draft')"
+				@click.stop="deleteDraft">
+				<template #icon>
+					<IconDelete :size="20" />
+				</template>
+			</NcButton>
 		</span>
 		<span class="poll-card__footer">
 			{{ pollFooterText }}
 		</span>
-
-		<NcButton class="poll-card__delete-draft"
-			type="tertiary"
-			:title="t('spreed', 'Delete poll draft')"
-			:aria-label="t('spreed', 'Delete poll draft')"
-			@click.stop="deleteDraft">
-			<template #icon>
-				<IconDelete :size="20" />
-			</template>
-		</NcButton>
 	</div>
 	<a v-else-if="!showAsButton"
 		v-intersection-observer="getPollData"
@@ -31,8 +29,8 @@
 		role="button"
 		@click="openPoll">
 		<span class="poll-card__header">
-			<IconPoll :size="20" />
-			<span>{{ name }}</span>
+			<IconPoll class="poll-card__header-icon" :size="20" />
+			<span class="poll-card__header-name">{{ name }}</span>
 		</span>
 		<span class="poll-card__footer">
 			{{ pollFooterText }}
@@ -186,14 +184,23 @@ export default {
 	&__header {
 		display: flex;
 		align-items: flex-start;
-		gap: 8px;
+		gap: calc(2 * var(--default-grid-baseline));
 		margin-bottom: 16px;
 		font-weight: bold;
 		white-space: normal;
 		word-wrap: anywhere;
-		margin-inline-end: var(--default-clickable-area);
 
-		:deep(.material-design-icon) {
+		&--draft {
+			gap: var(--default-grid-baseline);
+		}
+
+		&-name {
+			margin-inline-end: auto;
+			align-self: center;
+		}
+
+		&-icon {
+			height: var(--default-clickable-area);
 			margin-bottom: auto;
 		}
 	}
@@ -201,12 +208,6 @@ export default {
 	&__footer {
 		color: var(--color-text-maxcontrast);
 		white-space: normal;
-	}
-
-	& &__delete-draft {
-		position: absolute;
-		top: var(--default-grid-baseline);
-		inset-inline-end: var(--default-grid-baseline);
 	}
 }
 
