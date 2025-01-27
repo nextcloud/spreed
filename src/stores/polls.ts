@@ -12,6 +12,7 @@ import { t } from '@nextcloud/l10n'
 import {
 	createPoll,
 	createPollDraft,
+	updatePollDraft,
 	getPollDrafts,
 	getPollData,
 	submitVote,
@@ -22,6 +23,7 @@ import type {
 	ChatMessage,
 	createPollParams,
 	votePollParams,
+	updatePollDraftParams,
 	Poll,
 	PollDraft,
 } from '../types/index.ts'
@@ -144,6 +146,19 @@ export const usePollsStore = defineStore('polls', {
 		async createPollDraft({ token, form }: { token: string, form: createPollParams }) {
 			try {
 				const response = await createPollDraft({ token, ...form })
+				this.addPollDraft({ token, draft: response.data.ocs.data })
+
+				showSuccess(t('spreed', 'Poll draft has been saved'))
+				return response.data.ocs.data
+			} catch (error) {
+				showError(t('spreed', 'An error occurred while saving the draft'))
+				console.error(error)
+			}
+		},
+
+		async updatePollDraft({ token, pollId, form }: { token: string, pollId: number, form: updatePollDraftParams }) {
+			try {
+				const response = await updatePollDraft({ token, pollId, ...form })
 				this.addPollDraft({ token, draft: response.data.ocs.data })
 
 				showSuccess(t('spreed', 'Poll draft has been saved'))
