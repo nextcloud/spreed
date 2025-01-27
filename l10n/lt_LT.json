@@ -598,6 +598,7 @@
     "Password copied to clipboard" : "Slaptažodis nukopijuotas į iškarpinę",
     "Password could not be copied" : "Nepavyko nukopijuoti slaptažodžio",
     "Open conversation" : "Atverti pokalbį",
+    "This conversation is open to registered users" : "Šis pokalbis yra atviras registruotiems naudotojams",
     "Start time (optional)" : "Pradžios laikas (nebūtinas)",
     "Start time: {date}" : "Pradžios laikas: {date}",
     "Start time has been updated" : "Pradžios laikas atnaujintas",
