@@ -4,39 +4,57 @@
 -->
 
 <template>
-	<NcButton :title="audioButtonTitle"
-		:type="type"
-		:aria-label="audioButtonAriaLabel"
-		:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
-		:disabled="!isAudioAllowed"
-		@click.stop="toggleAudio">
-		<template #icon>
-			<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
-				:audio-enabled="showMicrophoneOn"
-				:current-volume="model.attributes.currentVolume"
-				:volume-threshold="model.attributes.volumeThreshold"
-				overlay-muted-color="#888888" />
+	<NcPopover ref="popover"
+		:boundary="boundaryElement"
+		:show-triggers="[]"
+		:hide-triggers="['click']"
+		:auto-hide="false"
+		:focus-trap="false"
+		:shown="popupShown">
+		<template #trigger>
+			<NcButton :title="audioButtonTitle"
+				:type="type"
+				:aria-label="audioButtonAriaLabel"
+				:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+				:disabled="!isAudioAllowed"
+				@click.stop="toggleAudio">
+				<template #icon>
+					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+						:audio-enabled="showMicrophoneOn"
+						:current-volume="model.attributes.currentVolume"
+						:volume-threshold="model.attributes.volumeThreshold"
+						overlay-muted-color="#888888" />
+				</template>
+			</NcButton>
 		</template>
-	</NcButton>
+		<div class="popover-hint">
+			<span>{{ speakingWhileMutedWarner?.message }}</span>
+		</div>
+	</NcPopover>
 </template>
 
 <script>
+import { onBeforeUnmount, ref, watch } from 'vue'
+
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'
+import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
 	name: 'LocalAudioControlButton',
 
 	components: {
 		NcButton,
+		NcPopover,
 		VolumeIndicator,
 	},
 
@@ -56,6 +74,11 @@ export default {
 			default: OCP.Accessibility.disableKeyboardShortcuts(),
 		},
 
+		disableMutedWarning: {
+			type: Boolean,
+			default: false,
+		},
+
 		type: {
 			type: String,
 			default: 'tertiary-no-background',
@@ -65,6 +88,45 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup(props) {
+		const boundaryElement = document.querySelector('.main-view')
+
+		const popover = ref(null)
+		const popupShown = ref(false)
+		const speakingWhileMutedWarner = !props.disableMutedWarning
+			? ref(new SpeakingWhileMutedWarner(props.model))
+			: ref(null)
+
+		if (!props.disableMutedWarning) {
+			watch(() => speakingWhileMutedWarner.value.showPopup, (newValue) => {
+				popupShown.value = newValue && isVisible(popover.value?.$el)
+			})
+
+			onBeforeUnmount(() => {
+				speakingWhileMutedWarner.value.destroy()
+			})
+		}
+
+		/**
+		 * Check if component is visible and not obstructed by others
+		 * @param element HTML element
+		 */
+		function isVisible(element) {
+			if (!element) {
+				return false // Element doesn't exist, therefore - not visible
+			}
+			const rect = element.getBoundingClientRect()
+			return document.elementsFromPoint(rect.left, rect.top)?.[0] === element
+		}
+
+		return {
+			boundaryElement,
+			popover,
+			popupShown,
+			speakingWhileMutedWarner,
+		}
 	},
 
 	computed: {
@@ -151,5 +213,11 @@ export default {
 <style scoped>
 .no-audio-available {
 	opacity: .7;
+}
+
+.popover-hint {
+	padding: calc(3 * var(--default-grid-baseline));
+	max-width: 300px;
+	text-align: left;
 }
 </style>

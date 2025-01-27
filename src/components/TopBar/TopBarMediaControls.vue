@@ -131,7 +131,6 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../constants.js'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import { callAnalyzer } from '../../utils/webrtc/index.js'
-import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
 
@@ -395,14 +394,6 @@ export default {
 				this.qualityWarningInGracePeriodTimeout = null
 			}, 10000)
 		},
-	},
-
-	mounted() {
-		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model)
-	},
-
-	beforeDestroy() {
-		this.speakingWhileMutedWarner.destroy()
 	},
 
 	methods: {
