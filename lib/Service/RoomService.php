@@ -169,7 +169,7 @@ class RoomService {
 			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
 		}
 
-		if ($type !== Room::TYPE_PUBLIC) {
+		if ($type !== Room::TYPE_PUBLIC || $password === '') {
 			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
 		} else {
 			$event = new ValidatePasswordPolicyEvent($password);
