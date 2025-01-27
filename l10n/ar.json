@@ -74,6 +74,9 @@
     "- Summarize call recordings and unread messages in chats with the Nextcloud Assistant" : "- تلخيص تسجيلات المكالمات والرسائل غير المقروءة في الدردشات باستخدام \"مساعد\" نكست كلاود.",
     "- Improved meetings with recognizing guests invited via their email address, import of participant lists, drafts for polls and downloading call participant lists" : "- تحسين الاجتماعات من خلال التعرف على الضيوف المدعوين عبر عناوين بريدهم الإلكتروني، واستيراد قوائم المشاركين، ومسودات الاستطلاعات، وتنزيل قوائم المشاركين في المكالمات",
     "- Archive conversations to stay focused" : "- أرشفة المحادثات للمحافظة على التركيز",
+    "- Schedule a meeting into your calendar from within a conversation" : "- جدولة اجتماع في تقويمك من داخل المحادثة",
+    "- Search for messages of the current conversation directly in the right sidebar" : "- البحث عن رسائل المحادثة الحالية مباشرة في الشريط الجانبي الأيمن",
+    "- See more conversations on a first glance with the new compact list (enable in the Talk settings)" : "- يمكنك رؤية المزيد من المحادثات بنظرة واحدة باستخدام القائمة المدمجة الجديدة (يمكنك تمكينها في إعدادات المحادثة)",
     "_All %n participant_::_All %n participants_" : ["كل الـ%n مشارك","كل الـ%n مشارك","كل الـ %n مشاركين","كل الـ%n مشاركين","كل الـ%n مشارك","كل الـ%n مشارك"],
     "Talk updates ✅" : "تحديثات التحدث  ✅",
     "Reaction deleted by author" : "تم حذف تفاعل من قبل الكاتب",
@@ -440,6 +443,15 @@
     "A place for your private notes, thoughts and ideas" : "مكان لتسجيل ملاحظاتك و خططك و أفكارك",
     "Transcript is AI generated and may contain mistakes" : "النص تمّ توليده بواسطة الذكاء الاصطناعي؛ لذا يُحتمل أنه يحتوي على أخطاء",
     "Summary is AI generated and may contain mistakes" : "الملخص تمّ توليده بواسطة الذكاء الاصطناعي؛ لذا يُحتمل أنه يحتوي على أخطاء",
+    "Let´s get started!" : "لنبدإ الآن!",
+    "**Nextcloud Talk** is a secure, self-hosted communication platform that integrates seamlessly with the Nextcloud ecosystem.\n\n#### Key Features of Nextcloud Talk:\n\n* Chat and messaging in private and group chats\n* Voice and video calls\n* File sharing and integration with other Nextcloud apps\n* Customizable conversation settings, moderation and privacy controls\n* Web, desktop and mobile (iOS and Android)\n* Private & secure communication\n\n Find out more in the [user documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)." : "تطبيق \"المحادثة\" من نكست كلاود **Nextcloud Talk** هو عبارة عن منصة اتصال آمنة ذاتية الاستضافة تتكامل بسلاسة مع بيئة نكست كلاود. \n\n#### الميزات الرئيسية: \n* الدردشة والمراسلة في الدردشات الخاصة والجماعية \n* مكالمات صوتية وفيديو \n* مشاركة الملفات والتكامل مع تطبيقات نكست كلاود الأخرى \n* إعدادات محادثة قابلة للتخصيص، والتحكم في الخصوصية، والتنسيق \n* الويب وسطح المكتب والهاتف النقال (iOS وAndroid) \n* اتصالات خاصة وآمنة \n\nتعرف على المزيد في [وثائق المُستخدِم](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html).",
+    "# Welcome to Nextcloud Talk\n\nNextcloud Talk is a private and powerful messaging app that integrates with Nextcloud. Chat in private or group conversations, collaborate over voice and video calls, organize webinars and events, customize your conversations and more." : "# مرحبًا بك في تطبيق \"المحادثة\" من نكست كلاود Nextcloud Talk \n\nهذا التطبيق هو تطبيق مراسلة خاص وقوي يتكامل مع بيئة نكست كلاود. \nيمكنك الدردشة في محادثات خاصة أو جماعية والتعاون عبر مكالمات الصوت والفيديو وتنظيم الندوات عبر الإنترنت واللقاءات وتخصيص محادثاتك؛ والمزيد المزيد.",
+    "## 🎨 Format texts to create rich messages\n\nIn Nextcloud Talk, you can use Markdown syntax to format your messages. For example, apply **bold** or *italic* formatting, or `highlight texts as code`. You can even create tables and add headings to your text.\n\nNeed to fix a typo or change formatting? Edit your message by clicking \"Edit message\" in the message menu." : "## 🎨 تنسيق النصوص لإنشاء رسائل غنية \n\nفي تطبيق \"المحادثة\" من نكست كلاود Nextcloud Talk يمكنك استخدام صيغة Markdown لتنسيق رسائلك. على سبيل المثال، يمكنك تطبيق التنسيق **الغامق** أو *المائل*، أو \"تمييز النصوص ككود برمجي\". يمكنك أيضاً إنشاء جداول وإضافة عناوين إلى نصِّك. \n\nهل تحتاج إلى تصحيح خطأ مطبعي أو تغيير التنسيق؟ عدّل رسالتك بكل بساطة بالنقر فوق \"تعديل الرسالة\" في قائمة الرسائل.",
+    "## 🔗 Add attachments and links\n\nAttach files from your Nextcloud Hub using the \"+\" button. Share items from Files and various Nextcloud apps. Some apps even support interactive widgets, for example, the Text app." : "## 🔗 أضِف المُرفقات والروابط \n\nيمكنك إرفاق الملفات من نكست كلاود هَبْ  Hub باستعمال الزر \"+\". شارك العناصر من الملفات وتطبيقات نكست كلاود المتنوعة. تدعم بعض التطبيقات أيضاً عناصر واجهة المستخدم التفاعلية، على سبيل المثال، تطبيق \"الكتابة\" Text.",
+    "## 💭 Let the conversations flow: mention users, react to messages and more\n\nYou can mention everybody in a the conversation @all or mention specific participants by typing \"@\" and picking their name from the list." : "## 💭 دع المحادثات تتدفق: أشِر إلى المُستخدِمين، وتفاعل مع الرسائل؛ والمزيد. \n\nيمكنك الإشارة إلى جميع المُشارِكين في المحادثة باستعمال الرمز @all أو الإشارة إلى مُشارِكين مُحدَّدِين عن طريق كتابة \"@\" واختيار الاسم من القائمة.",
+    "You can reply to messages, forward them to other chats and people, or copy message content." : "يمكنك الرّد على الرسائل أو إعادة توجيهها إلى دردشات أو أشخاص آخرين أو نسخ محتوى الرسالة.",
+    "## ✨ Do more with Smart Picker\n\nSimply type \"/\" or go to the \"+\" menu to open the Smart Picker where you can attach various content to your messages. You can configure the Smart Picker to be able to add items from Nextcloud apps, GIFs, map locations, AI generated content and much more." : "## ✨ افعل المزيد باستخدام \"اللاقط الذكي\" Smart Picker \n\nما عليك سوى كتابة \"/\" أو الانتقال إلى قائمة \"+\" لفتح \"اللاقط الذكي\"؛ حيث يمكنك إرفاق محتوىً متنوع مع رسائلك. يمكنك تهيئة اللاقط الذكي لتتمكن من إضافة عناصر من تطبيقات نكست كلاود وصور GIF ومواقع الخرائط والمحتوى الذي تم إنشاؤه بواسطة الذكاء الاصطناعي وغير ذلك كثير.",
+    "## ⚙️ Manage conversation settings\n\nIn the conversation menu, you can access various settings to manage your conversations, such as:\n* Edit conversation info\n* Manage notifications\n* Apply numerous moderation rules\n* Configure access and security\n* Enable bots\n* and more!" : "## ⚙️ إدارة إعدادات المحادثة \n\nفي قائمة المحادثة، يمكنك الوصول إلى إعدادات مختلفة لإدارة محادثاتك، مثل: \n* تحرير معلومات المحادثة \n* إدارة الإشعارات \n* تطبيق قواعد تعديل متعددة \n* إعدادات حق الوصول والأمان \n* تمكين روبوتات الردود الآلية bot\n* والمزيد!",
     "Andorra" : "أندورا",
     "United Arab Emirates" : "الإمارات العربية المتحدة",
     "Afghanistan" : "أفغانستان",
@@ -701,6 +713,7 @@
     "No High-performance backend configured - Running Nextcloud Talk without the High-performance backend only scales for very small calls (max. 2-3 participants). Please set up the High-performance backend to ensure calls with multiple participants work seamlessly." : "لم يتم تكوين واجهة خلفية عالية الأداء لتشغيل تطبيق \"المحادثة\" Talk من نكست كلاود. بدون واجهة خلفية عالية الأداء لا يمكن التعامل إلا مع عدد محدود من المكالمات (بحد أقصى 2-3 مشاركين). يُرجى إعداد الواجهة الخلفية عالية الأداء لضمان عمل المكالمات التي تضم أعداداً أكبر من المشاركين.\n\n\n ",
     "Running the High-performance backend \"conversation_cluster\" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead." : "وضع \"conversation_cluster\" في الواجهة الخلفية عالية الأداء صار قديمًا ولن يتم دعمه بعد الآن في الإصدارات القادمة. الواجهة الخلفية عالية الأداء تدعم التجميع الحقيقي real-clustering في الوقت الحالي والذي يجب استخدامه بدلاً من ذلك.",
     "Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings." : "لقد أصبح تحديد العديد من الخوادم الخلفية عالية الأداء غير مستحسن ولن يتم دعمه بعد الآن في الإصدارات القادمة. و بدلاً من ذلك، يجب إعداد موازن التحميل load balancer مع خوادم الإشارات المجمعة وتكوينه في إعدادات تطبيق \"المحادثة\" Talk.",
+    "High-performance backend not configured correctly" : "خلفية الأداء العالي HP backend ليست مُهيّأةً بالطريقة الصحيحة",
     "Error: Cannot connect to server" : "خطأ: لا يمكن الاتصال بالخادم",
     "Error: Server did not respond with proper JSON" : "خطأ: الخادم لم يجب جيدا JSON",
     "Error: Certificate expired" : "خطأ: انتهت صلاحية الشهادة",
@@ -783,7 +796,10 @@
     "Integration into other apps" : "الربط مع تطبيقات آخرى",
     "Allow conversations on files" : "السماح بالمحادثات على الملفات",
     "Allow conversations on public shares for files" : "السماح للمحادثات عبر مشاركة الملفات العامة",
+    "End-to-end encrypted calls" : "محادثات مشفرة من الحدّ للحدّ",
     "Enable encryption" : "تمكين التشفير",
+    "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "تتطلب المكالمات المشفرة من الحد للحد باستخدام جسر SIP مُهيّإٍ إصداراً أحدث من الواجهة الخلفية للأداء العالي وجسر SIP.",
+    "Mobile clients do not support end-to-end encrypted calls at the moment." : "الهواتف النقالة العميلة لا تدعم المكالمات المشفرة من الحد للحد في الوقت الحاضر.",
     "All messages" : "كافة الرسائل",
     "@-mentions only" : "@-إشارة فقط",
     "Off" : "إيقاف",
@@ -863,9 +879,12 @@
     "Nextcloud Talk setup not complete" : "تهيئة \"المحادثة\" Talk من نكست كلاود لم تكتمل بعدُ.",
     "Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices." : "يرجى ملاحظة أنه في المكالمات التي يكون فيها عدد المشاركين أكثر من 2 دون استخدام خلفية الأداء العالي، فمن المرجح أن يواجه المشاركون مشكلات في الاتصال قد يسبب تحميلًا عاليًا على الأجهزة المشاركة.",
     "Install the High-performance backend to ensure calls with multiple participants work seamlessly." : "قُم بتثبيت خلفية الأداء العالي لضمان العمل بسلاسة لمكالمات متعددة المتشاركين.",
+    "Nextcloud portal" : "بوابة نكست كلاود",
+    "Quick installation guide" : "دليل التثبيت السريع",
     "The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices." : "خلفية الأداء العالي لازمة لإجراء مكالمات ومحادثات فيها متشاركون عديدون. وبدون هذه الخلفية، يتعين على جميع المشاركين تحميل مقاطع الفيديو الخاصة بهم بشكل فردي لكل مشارك آخر؛ الأمر الذي قد يتسبب في حدوث مشكلات في الاتصال وزيادة الحمل على الأجهزة المشاركة.",
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend." : "يوصى بشدة بإعداد ذاكرة تخزين مؤقتة موزعة distriburted cache عند استخدام \"المحادثة\" Talk من نكست كلاود مع خلفية للأداء العالي.",
     "Add High-performance backend server" : "إضافة خادوم خلفية الأداء العالي",
+    "Warn about connectivity issues in calls with more than 2 participants" : "تحذير حول إشكاليات في الاتصال بالنسبة للمكالمات التي فيها أكثر من 2 مُشَارِكَيْن.",
     "Missing High-performance backend warning hidden" : "التحذير من عدم وجود خلفية للأداء العالي لن يتم إظهاره",
     "High-performance backend settings saved" : "تم حفظ إعدادات الواجهة الخلفية عالية الأداء",
     "STUN server URL" : "عنوان URL لخادم STUN",
@@ -920,7 +939,13 @@
     "Room {roomNumber}" : "غرفة {roomNumber}",
     "Add participant \"{user}\"" : "إضافة مشارك \"{user}\"",
     "Now" : "الآن",
+    "Invalid calendar selected" : "التقويم الذي تمّ تحديده غير صحيح",
+    "Invalid start time selected" : "وقت البداية الذي تمّ تحديده غير صحيح",
+    "Invalid end time selected" : "وقت الانتهاء الذي تمّ تحديده غير صحيح",
+    "Unknown error occurred" : "حدث خطأ غير معروف",
     "Sending no invitations" : "لم يتم إرسال أي دعوات",
+    "{participant0} will receive an invitation" : "{participant0} سوف يستلم دعوةً",
+    "{participant0} and {participant1} will receive invitations" : "{participant0} و {participant1} سوف يستلمان دعوةً",
     "Meeting created" : "تمّ إنشاء الاجتماع",
     "Upcoming meetings" : "الاجتماعات القادمة",
     "Next meeting" : "الاجتماع التالي",
@@ -933,10 +958,13 @@
     "To" : "إلى :",
     "Calendar" : "الجدول الزمني",
     "Attendees" : "المشاركون",
+    "Invite all users and emails" : "قُم بدعوة كل الأشخاص والإيميلات ",
+    "Add attendees" : "إضافة إلى الحُضُور",
     "Save" : "حفظ",
     "Search participants" : "البحث عن مشاركين",
     "No results" : "دون أية نتيجة",
     "Done" : "تمّ",
+    "_{participant0}, {participant1} and %n other will receive invitations_::_{participant0}, {participant1} and %n others will receive invitations_" : ["{participant0}, {participant1} و %n آخرون سيستلمون دعواتٍ","{participant0}, {participant1} و %n آخرون سيستلمون دعواتٍ","{participant0}, {participant1} و %n آخرين سيستلمون دعواتٍ","{participant0}, {participant1} و%n آخرين سوف يستلمون دعواتٍ","{participant0}, {participant1} و %n آخرين سوف يستلمون دعواتٍ","{participant0}, {participant1} و %n آخرين سوف يستلمون دعواتٍ"],
     "Recording consent is required" : "إذن التسجيل مطلوب",
     "This conversation is read-only" : "هذه المحادثة للقراءة فقط",
     "Conversation not found or not joined" : "المحادثة غير موجودة أو لم يتم الانضمام إليها",
@@ -1450,6 +1478,7 @@
     "Multiple answers" : "إجابات متعددة",
     "Save as draft" : "إحفَظ كمسودة",
     "Export draft to file" : "تصدير مسودة إلى ملف",
+    "Create poll in {name}" : "إنشاء تصويت في {name}",
     "Create poll" : "صَوّت، رجاءً",
     "Error while importing poll" : "خطأ أثناء استيراد الاستبيان",
     "You voted for this option" : "أنت صوَّتَّ على هذا الخيار",
@@ -1559,13 +1588,19 @@
     "Search or add participants" : "بحث او اضافة مشاركين",
     "Invitation was sent to {actorId}" : "تمّ إرسال الدعوة إلى {actId}",
     "An error occurred while adding the participants" : "حدث خطأ اثناء إضافة المشاركين",
+    "Search messages" : "البحث في الرسائل",
     "Chat" : "الدردشة",
     "Details" : "التفاصيل",
     "Shared items" : "عناصر مُشارَكة",
     "Participants ({count})" : "المشاركون ({count})",
     "Open chat" : "دردشة مفتوحة",
+    "Search in {name}" : "البحث في {name}",
     "You have new unread messages in the chat." : "لديك رسائل جديدة غير مقروءة فى الدردشة.",
     "You have been mentioned in the chat." : "أشار إليك أحدهم في الدردشة",
+    "Search messages …" : "البحث في الرسائل ...",
+    "Search options" : "خيارات البحث",
+    "From User" : "من مُستخدِم",
+    "Since" : "منذ",
     "Until" : "حتى",
     "No results found" : "لا توجد أي نتائج",
     "Load more results" : "تحميل المزيد من النتائج",
@@ -1622,6 +1657,8 @@
     "Space bar" : "فاصل مسافة",
     "Push to talk or push to mute" : "اضغط للتحدث او اضغط لكتم الصوت",
     "Raise or lower hand" : "رفع أو خفض اليد ",
+    "Mouse wheel" : "عجلة الفارة",
+    "Zoom-in / zoom-out a screen share" : "تكبير/تصغير شاشة مُشارَكة",
     "Choose the folder in which attachments should be saved." : "اختر مجلد ليتم فيه حفظ المرفقات.",
     "Error while setting attachment folder" : "خطأ اثناء تحديد مجلد المرفقات",
     "Your privacy setting has been saved" : "تم حفظ إعدادات الخصوصية الخاصة بك ",
@@ -1638,6 +1675,7 @@
     "Start call silently" : "بدء اتصال صامت",
     "Start call" : "ابدء مكالمة",
     "End call" : "إقطَع المكالمة",
+    "Nextcloud Talk was updated, you cannot start or join a call." : "تمّ تحديث \"المحادثة\" من نكست كلاود. لايمكنك البدء في أو الانضمام إلى محادثة.",
     "This call has just ended" : "المكالمة انتهت للتّو",
     "You will be able to join the call only after a moderator starts it." : "لن تتمكن من الانضمام إلى المكالمة إلا بعد أن يبدأها المشرف.",
     "The call has been running for one hour." : "المكالمة ما زالت مستمرة منذ حوالي الساعة.",
@@ -1834,6 +1872,7 @@
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مساهمين آخرين كمشرفين","لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مساهمين آخرين كمشرفين","لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مساهمين آخرين كمشرفين","لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مساهمين آخرين كمشرفين","لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مساهمين آخرين كمشرفين","لقد قام {actor} بإلغاء ترقية {user0} و {user1} و %n مشاركين آخرين كمشرفين"],
     "You: {lastMessage}" : "أنت: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Nextcloud Talk was updated." : "تمّ تحديث \"المحادثة\" من نكست كلاود.",
     "(edited)" : "(معدّلة)",
     "(edited by you)" : "(معدّلة بواسطتك)",
     "(edited by a deleted user)" : "(تمّ تحريرها من قِبَل مُستخدِم محذوف)",
@@ -1843,6 +1882,7 @@
     "Location has been posted to {conversation}" : "تم نشر الموقع في {conversation}",
     "In conversation" : "في المحادثة ...",
     "Search in conversation: {conversation}" : "البحث في المحادثة: {conversation}",
+    "Nextcloud Talk Federation was updated." : "تمّ تحديث \"المحادثة الاتحادية\" Talk Federation من نكست كلاود.",
     "Error while sharing file" : "خطأ اثناء مشاركة ملف",
     "Your requests are throttled at the moment due to brute force protection" : "يتم تقييد طلباتك في الوقت الحالي كإجراء تحسبي للحماية من هجمات القوة الغاشمة",
     "Error while clearing conversation history" : "خطأ أثناء مسح محفوظات المحادثة",
@@ -1867,6 +1907,7 @@
     "Could not send invitation to {actorId}" : "تعذر إرسال دعوة إلى {actorId} ",
     "Invitations sent" : "تم إرسال الدعوات ",
     "Error occurred when sending invitations" : "حدث خطأ أثناء إرسال الدعوات ",
+    "Failed to join the conversation." : "تعذّر الانضمام إلى المحادثة.",
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "انضممت لمحادثة آخرى في نافذة او جهاز آخر. هذه الخاصية غير مدعومة سيتم اغلاق هذه الجلسة من قبل نكست كلاود التحدث. ماذا تريد ان تفعل؟",
     "Join here" : "انضم لهذا",
     "Leave this page" : "مغادرة هذه الصفحة",
@@ -1890,6 +1931,7 @@
     "Poll \"{name}\" was created by {user}. Click to vote" : "الاستفتاء \"{name}\" أنشأه {user}. أنقُر للتصويت",
     "Failed to add reaction" : "فشل في إضافة تفاعل",
     "Failed to remove reaction" : "فشل في إزالة تفاعل",
+    "Nextcloud is in maintenance mode." : "نكست كلاود في وضعية الصيانة.",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "تستخدم متصفح غير مدعوم بالكامل من قبل نكست كلاود التحدث. استخدم اخر اصدار من فايرفوكس، مايكروسوفت ادج، قوقل كروم أو ابل سفاري.",
     "_In %n hour_::_In %n hours_" : ["في %n ساعة","في %n ساعة","في %n ساعة","في %n ساعات","في %n ساعة","في %n ساعة"],
     "_%n minute _::_%n minutes_" : ["%n دقيقة","%n دقيقة","%n دقيقة","%n دقائق","%n دقيقة","%n دقيقة"],
@@ -1900,10 +1942,15 @@
     "Error while parsing a PROPFIND error" : "حدث خطأ أثناء تحليل PROFIND",
     "Sending signaling message has failed" : "فشل إرسال رسالة الإشارة",
     "Lost connection to signaling server. Trying to reconnect." : "انقطع الاتصال بخادم التشوير. حاول معاودة الاتصال.",
+    "Lost connection to signaling server." : "فُقِد الاتصال بخادوم الإشارة.",
     "Establishing signaling connection is taking longer than expected …" : "يستغرق إنشاء اتصال التشوير وقتًا أطول من المتوقع ...",
     "Failed to establish signaling connection. Retrying …" : "فشل في إنشاء التشوير. جارٍ إعادة المحاولة... ",
     "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "فشل في إنشاء التشوير. قد يكون هناك خطأ ما في تكوين خادم التشوير",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. يرجى الاتصال بإدارتك.",
+    "Please restart the app." : "يُرجى إعادة تشغيل التطبيق.",
+    "Please reload the page." : "رجاء أعد تحميل الصفحة.",
+    "Please try to restart the app." : "حاول رجاءً إعادة تشغيل التطبيق.",
+    "Please try to reload the page." : "حاول رجاءً إعادة تحميل الصفحة.",
     "Do not disturb" : "عدم الازعاج",
     "Away" : "بالخارج",
     "Default" : "افتراضي",
@@ -1927,6 +1974,7 @@
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
     "__language_name__" : "__اسم اللغة__",
+    "Webhook Demo" : "عرض توضيحي demo لخطّاف الوِب Webhook",
     "Call summary (%s)" : "ملخص المكالمة (%s)",
     "The call summary bot posts an overview message after the call listing all participants and outlining tasks" : "يقوم روبوت \"ملخص المكالمة\"بنشر رسالة عامة بعد المكالمة يسرد فيها جميع المشاركين و يحدد المهام",
     "Tasks" : "المهام",
