@@ -24,7 +24,7 @@ export type Events = Record<EventType, unknown> & {
 	'joined-conversation': { token: string },
 	'message-height-changed': { heightDiff: number },
 	'poll-drafts-open': { selector?: string },
-	'poll-editor-open': { id: number | null, fromDrafts: boolean, selector?: string },
+	'poll-editor-open': { id: number | null, fromDrafts: boolean, action?: string, selector?: string },
 	'refresh-peer-list': void,
 	'retry-message': number,
 	'route-change': { from: Route, to: Route },
