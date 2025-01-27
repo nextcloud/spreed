@@ -188,6 +188,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$lastNotifications = [];
 		self::$phoneNumberToActorId = [];
 		self::$modifiedSince = [];
+		self::$botNameToId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];

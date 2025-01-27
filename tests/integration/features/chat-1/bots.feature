@@ -2,32 +2,32 @@ Feature: chat/bots
   Background:
     Given user "participant1" exists
 
-  Scenario: Installing the call summary bot
+  Scenario: Installing the Webhook Demo bot
     Given invoking occ with "talk:bot:list"
     Then the command was successful
     And the command output is empty
-    Given invoking occ with "app:disable call_summary_bot"
+    Given invoking occ with "app:disable talk_webhook_demo"
     And the command was successful
-    And invoking occ with "app:enable call_summary_bot"
+    And invoking occ with "app:enable talk_webhook_demo"
     And the command was successful
     When invoking occ with "talk:bot:list"
     Then the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
     And read bot ids from OCC
-    And set state no-setup for bot "Call summary" via OCC
+    And set state no-setup for bot "Webhook Demo" via OCC
       | feature  |
       | webhook  |
       | response |
 
-  Scenario: Simple call summary bot run
+  Scenario: Simple Webhook Demo bot run
     # Populate default options again
-    And invoking occ with "app:disable call_summary_bot"
+    And invoking occ with "app:disable talk_webhook_demo"
     And the command was successful
-    And invoking occ with "app:enable call_summary_bot"
+    And invoking occ with "app:enable talk_webhook_demo"
     And the command was successful
     And invoking occ with "talk:bot:list"
     And the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
 
     # Set up in room
     Given invoking occ with "talk:bot:list room-name:room"
@@ -37,13 +37,13 @@ Feature: chat/bots
       | roomType | 2 |
       | roomName | room |
     And read bot ids from OCC
-    And setup bot "Call summary" for room "room" via OCC
+    And setup bot "Webhook Demo" for room "room" via OCC
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
 
-    # Call summary
-    Given the following call_summary_bot app config is set
+    # Webhook Demo
+    Given the following talk_webhook_demo app config is set
       | min-length | -1 |
     And user "participant1" sends message "- [ ] Before call" to room "room" with 201
     And wait for 2 seconds
@@ -52,15 +52,15 @@ Feature: chat/bots
       | flags | 1 |
     And user "participant1" sends message "- [ ] Task 1" to room "room" with 201
     And user "participant1" sends message "- [ ] Task 2\n- [ ] Task 3" to room "room" with 201
-    And set state enabled for bot "Call summary" via OCC
+    And set state enabled for bot "Webhook Demo" via OCC
       | feature  |
       | webhook  |
     And user "participant1" sends message "- [ ] Received but no reaction permission" to room "room" with 201
-    And set state enabled for bot "Call summary" via OCC
+    And set state enabled for bot "Webhook Demo" via OCC
       | feature  |
       | none     |
     And user "participant1" sends message "- [ ] Not received due to permission" to room "room" with 201
-    And set state enabled for bot "Call summary" via OCC
+    And set state enabled for bot "Webhook Demo" via OCC
       | feature  |
       | webhook  |
       | response |
@@ -75,7 +75,7 @@ Feature: chat/bots
     Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId           | actorDisplayName         | message                                        | messageParameters |
-      | room | bots      | BOT(Call summary) | Call summary (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3\n- [ ] Received but no reaction permission | []                |
+      | room | bots      | BOT(Webhook Demo) | Webhook Demo (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3\n- [ ] Received but no reaction permission | []                |
       | room | users     | participant1      | participant1-displayname | - [ ] Not received due to permission           | []                |
       | room | users     | participant1      | participant1-displayname | - [ ] Received but no reaction permission      | []                |
       | room | users     | participant1      | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                     | []                |
@@ -85,10 +85,10 @@ Feature: chat/bots
       | actorType | actorId           | actorDisplayName   | reaction |
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Task 1" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
-      | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
+      | bots      | BOT(Webhook Demo) | Webhook Demo (Bot) | 👍       |
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Task 2\n- [ ] Task 3" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
-      | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
+      | bots      | BOT(Webhook Demo) | Webhook Demo (Bot) | 👍       |
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Received but no reaction permission" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Not received due to permission" in room "room" with 200
@@ -96,36 +96,36 @@ Feature: chat/bots
 
     # Different states bot
     # Already enabled
-    And user "participant1" sets up bot "Call summary" for room "room" with 200 (v1)
+    And user "participant1" sets up bot "Webhook Demo" for room "room" with 200 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
     # Disabling
-    And user "participant1" removes bot "Call summary" for room "room" with 200 (v1)
+    And user "participant1" removes bot "Webhook Demo" for room "room" with 200 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
     # Enabling
-    And user "participant1" sets up bot "Call summary" for room "room" with 201 (v1)
+    And user "participant1" sets up bot "Webhook Demo" for room "room" with 201 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
 
     # No-setup
-    And set state no-setup for bot "Call summary" via OCC
+    And set state no-setup for bot "Webhook Demo" via OCC
 
     ## Failed removing
-    And user "participant1" removes bot "Call summary" for room "room" with 400 (v1)
+    And user "participant1" removes bot "Webhook Demo" for room "room" with 400 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
-    And the command output contains the text "Call summary"
+    And the command output contains the text "Webhook Demo"
 
     ## Failed adding
-    And remove bot "Call summary" for room "room" via OCC
+    And remove bot "Webhook Demo" for room "room" via OCC
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
-    And user "participant1" sets up bot "Call summary" for room "room" with 400 (v1)
+    And user "participant1" sets up bot "Webhook Demo" for room "room" with 400 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
@@ -356,4 +356,3 @@ Feature: chat/bots
     When invoking occ with "talk:bot:uninstall --url=https://example.tld"
     Then the command failed with exit code 1
     And the command output contains the text "Bot not found"
-

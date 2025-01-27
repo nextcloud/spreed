@@ -5,7 +5,6 @@ PROCESS_ID=$$
 APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
-CSB_BRANCH="main"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -63,23 +62,24 @@ echo -e "\033[0;36m# Setting up apps\033[0m"
 echo -e "\033[0;36m#\033[0m"
 cp -R ./spreedcheats ../../../spreedcheats
 ${ROOT_DIR}/occ app:getpath spreedcheats
+cp -R ./talk_webhook_demo ../../../talk_webhook_demo
+${ROOT_DIR}/occ app:getpath talk_webhook_demo
 
 # Add apps to the parent directory of "spreed" (unless they are
 # already there or in "apps").
 ${ROOT_DIR}/occ app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 ${ROOT_DIR}/occ app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
-${ROOT_DIR}/occ app:getpath call_summary_bot || (cd ../../../ && git clone --depth 1 --branch ${CSB_BRANCH} https://github.com/nextcloud/call_summary_bot)
 
 ${ROOT_DIR}/occ app:enable spreed || exit 1
 ${ROOT_DIR}/occ app:enable --force spreedcheats || exit 1
+${ROOT_DIR}/occ app:enable --force talk_webhook_demo || exit 1
 ${ROOT_DIR}/occ app:enable --force notifications || exit 1
 ${ROOT_DIR}/occ app:enable --force guests || exit 1
-${ROOT_DIR}/occ app:enable --force call_summary_bot || exit 1
 
 ${ROOT_DIR}/occ app:list | grep spreed
+${ROOT_DIR}/occ app:list | grep talk_webhook_demo
 ${ROOT_DIR}/occ app:list | grep notifications
 ${ROOT_DIR}/occ app:list | grep guests
-${ROOT_DIR}/occ app:list | grep call_summary_bot
 
 echo ''
 echo -e "\033[0;36m#\033[0m"
@@ -125,11 +125,13 @@ echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Reverting configuration changes and disabling spreedcheats\033[0m"
 echo -e "\033[0;36m#\033[0m"
 ${ROOT_DIR}/occ app:disable spreedcheats
+${ROOT_DIR}/occ app:disable talk_webhook_demo
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value $OVERWRITE_CLI_URL
 if [[ "$SKELETON_DIR" ]]; then
 	${ROOT_DIR}/occ config:system:set skeletondirectory --value "$SKELETON_DIR"
 fi
 rm -rf ../../../spreedcheats
+rm -rf ../../../talk_webhook_demo
 
 wait $PHPPID1
 wait $PHPPID2

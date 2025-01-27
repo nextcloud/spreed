@@ -56,7 +56,6 @@ jobs:
         php-versions: ['8.2']
         server-versions: ['stable29']
         guests-versions: ['stable29']
-        call-summary-bot-versions: ['main']
         notifications-versions: ['stable29']
 
     services:
@@ -97,13 +96,6 @@ jobs:
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: apps/${{ env.APP_NAME }}
-
-      - name: Checkout call_summary_bot app
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          repository: nextcloud/call_summary_bot
-          path: apps/call_summary_bot
-          ref: ${{ matrix.call-summary-bot-versions }}
 
       - name: Checkout guests app
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -147,7 +139,6 @@ jobs:
           ./occ config:system:set debug --value=true --type=boolean
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ app:enable --force ${{ env.APP_NAME }}
-          ./occ app:enable --force call_summary_bot
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
 
