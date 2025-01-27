@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { showWarning, TOAST_PERMANENT_TIMEOUT, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
+import { TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 /**
@@ -35,7 +35,9 @@ export default function SpeakingWhileMutedWarner(LocalMediaModel) {
 	this._startedSpeakingTimeout = undefined
 	this._startedShowWarningTimeout = undefined
 
-	this._toast = null
+	/** Public properties to use in Vue components */
+	this.message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you')
+	this.showPopup = false
 
 	this._handleSpeakingWhileMutedChangeBound = this._handleSpeakingWhileMutedChange.bind(this)
 
@@ -74,18 +76,16 @@ SpeakingWhileMutedWarner.prototype = {
 	},
 
 	_showWarning() {
-		const message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you')
-
 		if (!document.hidden) {
-			this._showNotification(message)
+			this.showPopup = true
 		} else {
 			this._pendingBrowserNotification = true
 
-			this._showBrowserNotification(message).catch(function() {
+			this._showBrowserNotification().catch(function() {
 				if (this._pendingBrowserNotification) {
 					this._pendingBrowserNotification = false
 
-					this._showNotification(message)
+					this.showPopup = true
 				}
 			}.bind(this))
 		}
@@ -97,23 +97,7 @@ SpeakingWhileMutedWarner.prototype = {
 		}.bind(this), TOAST_DEFAULT_TIMEOUT)
 	},
 
-	_showNotification(message) {
-		if (this._toast) {
-			return
-		}
-
-		this._toast = showWarning(message, {
-			timeout: TOAST_PERMANENT_TIMEOUT,
-			onClick: () => {
-				this._toast.hideToast()
-			},
-			onRemove: () => {
-				this._toast = null
-			}
-		})
-	},
-
-	_showBrowserNotification(message) {
+	_showBrowserNotification() {
 		return new Promise(function(resolve, reject) {
 			if (this._browserNotification) {
 				resolve()
@@ -136,7 +120,7 @@ SpeakingWhileMutedWarner.prototype = {
 
 			if (Notification.permission === 'granted') {
 				this._pendingBrowserNotification = false
-				this._browserNotification = new Notification(message)
+				this._browserNotification = new Notification(this.message)
 				resolve()
 
 				return
@@ -146,7 +130,7 @@ SpeakingWhileMutedWarner.prototype = {
 				if (permission === 'granted') {
 					if (this._pendingBrowserNotification) {
 						this._pendingBrowserNotification = false
-						this._browserNotification = new Notification(message)
+						this._browserNotification = new Notification(this.message)
 					}
 					resolve()
 				} else {
@@ -159,8 +143,8 @@ SpeakingWhileMutedWarner.prototype = {
 	_hideWarning() {
 		this._pendingBrowserNotification = false
 
-		if (this._toast) {
-			this._toast.hideToast()
+		if (this.showPopup) {
+			this.showPopup = false
 		}
 
 		if (this._browserNotification) {
