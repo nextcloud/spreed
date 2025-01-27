@@ -23,6 +23,7 @@ class Bot {
 	public const FEATURE_LABEL_WEBHOOK = 'webhook';
 	public const FEATURE_LABEL_RESPONSE = 'response';
 	public const FEATURE_LABEL_EVENT = 'event';
+	public const URL_APP_PREFIX = 'nextcloudapp://';
 
 	public const FEATURE_MAP = [
 		self::FEATURE_NONE => self::FEATURE_LABEL_NONE,

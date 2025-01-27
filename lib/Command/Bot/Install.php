@@ -81,10 +81,10 @@ class Install extends Base {
 
 		if (!empty($input->getOption('feature'))) {
 			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
-			if (str_starts_with($url, 'nextcloudapp://')) {
+			if (str_starts_with($url, Bot::URL_APP_PREFIX)) {
 				$featureFlags &= ~Bot::FEATURE_WEBHOOK;
 			}
-		} elseif (str_starts_with($url, 'nextcloudapp://')) {
+		} elseif (str_starts_with($url, Bot::URL_APP_PREFIX)) {
 			$featureFlags = Bot::FEATURE_EVENT;
 		} else {
 			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
