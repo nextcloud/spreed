@@ -67,8 +67,8 @@ const participants = computed<UserFilterObject>(() => {
 // initialize navigation
 const searchMessagesTab = ref(null)
 const searchBox = ref(null)
-
 const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
+
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
 {
@@ -248,6 +248,16 @@ async function fetchSearchResults(isNew = true) {
 }
 
 const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
+
+watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
+
+watch(searchText, (value) => {
+	if (value.trim().length === 0) {
+		searchResults.value = []
+		searchCursor.value = 0
+		isSearchExhausted.value = false
+	}
+})
 </script>
 
 <template>
@@ -258,8 +268,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:placeholder-text="t('spreed', 'Search messages …')"
-						:is-focused.sync="isFocused"
-						@input="debounceFetchSearchResults" />
+						:is-focused.sync="isFocused" />
 					<NcButton :pressed.sync="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
@@ -277,8 +286,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:placeholder="t('spreed', 'From User')"
 							user-select
 							:loading="!participantsInitialised"
-							:options="participants"
-							@update:modelValue="debounceFetchSearchResults" />
+							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
 								v-model="sinceDate"
@@ -288,8 +296,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:step="1"
 								:max="new Date()"
 								:aria-label="t('spreed', 'Since')"
-								:label="t('spreed', 'Since')"
-								@update:modelValue="debounceFetchSearchResults" />
+								:label="t('spreed', 'Since')" />
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
 								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
@@ -298,8 +305,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:max="new Date()"
 								:aria-label="t('spreed', 'Until')"
 								:label="t('spreed', 'Until')"
-								:minute-step="1"
-								@update:modelValue="debounceFetchSearchResults" />
+								:minute-step="1" />
 						</div>
 					</div>
 				</TransitionWrapper>
