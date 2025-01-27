@@ -9,6 +9,15 @@
 		<span class="poll-card__header poll-card__header--draft">
 			<IconPoll class="poll-card__header-icon" :size="20" />
 			<span class="poll-card__header-name">{{ name }}</span>
+			<NcButton v-if="canEditPollDraft"
+				type="tertiary"
+				:title="t('spreed', 'Edit poll draft')"
+				:aria-label="t('spreed', 'Edit poll draft')"
+				@click.stop="editDraft">
+				<template #icon>
+					<IconPencil :size="20" />
+				</template>
+			</NcButton>
 			<NcButton type="tertiary"
 				:title="t('spreed', 'Delete poll draft')"
 				:aria-label="t('spreed', 'Delete poll draft')"
@@ -50,6 +59,7 @@
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 
 import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconPencil from 'vue-material-design-icons/Pencil.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t, n } from '@nextcloud/l10n'
@@ -57,6 +67,7 @@ import { t, n } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { POLL } from '../../../../../constants.ts'
+import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 
 export default {
@@ -65,6 +76,7 @@ export default {
 	components: {
 		NcButton,
 		IconDelete,
+		IconPencil,
 		IconPoll,
 	},
 
@@ -127,6 +139,10 @@ export default {
 					: t('spreed', 'Poll')
 			}
 		},
+
+		canEditPollDraft() {
+			return this.draft && hasTalkFeature(this.token, 'edit-draft-poll')
+		}
 	},
 
 	methods: {
@@ -142,7 +158,11 @@ export default {
 		},
 
 		openDraft() {
-			this.$emit('click', this.id)
+			this.$emit('click', { id: this.id, action: 'fill' })
+		},
+
+		editDraft() {
+			this.$emit('click', { id: this.id, action: 'edit' })
 		},
 
 		deleteDraft() {
