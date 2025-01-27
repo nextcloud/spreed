@@ -17,7 +17,7 @@ class BotInstallEvent extends Event {
 		protected string $secret,
 		protected string $url,
 		protected string $description = '',
-		protected int $features = Bot::FEATURE_WEBHOOK | Bot::FEATURE_RESPONSE,
+		protected ?int $features = null,
 	) {
 		parent::__construct();
 	}
@@ -39,6 +39,12 @@ class BotInstallEvent extends Event {
 	}
 
 	public function getFeatures(): int {
-		return $this->features;
+		if ($this->features !== null) {
+			return $this->features;
+		}
+		if (str_starts_with($this->url, Bot::URL_APP_PREFIX)) {
+			return Bot::FEATURE_EVENT;
+		}
+		return Bot::FEATURE_WEBHOOK | Bot::FEATURE_RESPONSE;
 	}
 }
