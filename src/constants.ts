@@ -119,6 +119,7 @@ export const ATTENDEE = {
 		EMAILS: 'emails',
 		GROUPS: 'groups',
 		CIRCLES: 'circles',
+		TEAMS: 'teams',
 		BOTS: 'bots',
 		BRIDGED: 'bridged',
 		FEDERATED_USERS: 'federated_users',
@@ -325,9 +326,11 @@ export const MENTION = {
 		GUEST: 'guest',
 		EMAIL: 'email',
 		USERGROUP: 'user-group',
+		CIRCLE: 'circle',
 		// Parsed to another types
 		FEDERATED_USER: 'federated_user',
 		GROUP: 'group',
+		TEAM: 'team',
 	},
 }
 
