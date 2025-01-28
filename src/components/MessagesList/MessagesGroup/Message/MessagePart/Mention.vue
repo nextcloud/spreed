@@ -75,6 +75,9 @@ export default {
 		isGroupMention() {
 			return [MENTION.TYPE.USERGROUP, MENTION.TYPE.GROUP].includes(this.type)
 		},
+		isTeamMention() {
+			return [MENTION.TYPE.CIRCLE, MENTION.TYPE.TEAM].includes(this.type)
+		},
 		isMentionToGuest() {
 			return this.type === MENTION.TYPE.GUEST || this.type === MENTION.TYPE.EMAIL
 		},
@@ -105,9 +108,15 @@ export default {
 			return this.isGroupMention
 				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
 		},
+		isCurrentUserTeam() {
+			// FIXME need backend support here
+			return this.isTeamMention && false
+		},
 		primary() {
-			return this.isMentionToAll || this.isCurrentUser
-				|| (this.isGroupMention && this.isCurrentUserGroup)
+			return this.isMentionToAll
+				|| this.isCurrentUser
+				|| this.isCurrentUserGroup
+				|| this.isCurrentUserTeam
 				|| (this.isMentionToGuest && this.isCurrentGuest)
 		},
 		avatarUrl() {
@@ -117,6 +126,8 @@ export default {
 					: 'icon-user-forced-white'
 			} else if (this.isGroupMention) {
 				return 'icon-group-forced-white'
+			} else if (this.isTeamMention) {
+				return 'icon-team-forced-white'
 			} else if (this.isMentionToGuest) {
 				return 'icon-user-forced-white'
 			} else if (!this.isMentionToAll) {
