@@ -79,6 +79,11 @@ Feature: chat/mentions
       | roomName | room |
     And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" adds circle "1234" to room "group room" with 200 (v4)
+#    And user "participant1" sees the following attendees in room "group room" with 200 (v4)
+#      | actorType       | actorId                    |
+#      | users           | participant2               |
+#      | federated_users | participant2@{$REMOTE_URL} |
     Then user "participant1" gets the following candidate mentions in room "group room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
@@ -91,6 +96,15 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant1" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source | mentionId    |
+      | 1234         | 1234                     | teams  | teams/1234   |
+    And user "participant2" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source | mentionId    |
+      | 1234         | 1234                     | teams  | teams/1234   |
+    And user "participant3" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source | mentionId    |
+      | 1234         | 1234                     | teams  | teams/1234   |
 
   Scenario: get unmatched mentions in a group room
     When user "participant1" creates room "group room" (v4)
