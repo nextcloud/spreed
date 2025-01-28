@@ -5232,7 +5232,4 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
 	}
-
-
-
 }

@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Circles\CirclesManager;
-use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\CachePrefix;
