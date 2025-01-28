@@ -412,6 +412,19 @@ PeerConnectionAnalyzer.prototype = {
 				packetsLost[kind] = this._packetsLost[kind].getLastRawValue()
 			}
 
+			// In some (also strange) cases a newer stat may report a lower
+			// value than a previous one (it happens sometimes with garbage
+			// remote reports in simulcast video that cause the values to
+			// overflow, although it was also seen with a small value regression
+			// when enabling video). If that happens the stats are reset to
+			// prevent distorting the analysis with negative packet counts; note
+			// that in this case the previous value is not kept because it is
+			// not just an isolated wrong value, all the following stats
+			// increase from the regressed value.
+			if (packets[kind] >= 0 && packets[kind] < this._packets[kind].getLastRawValue()) {
+				this._resetStats(kind)
+			}
+
 			this._addStats(kind, packets[kind], packetsLost[kind], timestamp[kind], roundTripTime[kind])
 		}
 	},
