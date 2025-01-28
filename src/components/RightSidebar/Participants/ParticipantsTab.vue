@@ -411,35 +411,7 @@ export default {
 	margin-top: 12px; // compensate margin before first header inside
 }
 
-/** TODO: fix these in the nextcloud-vue library **/
-
-:deep(.app-sidebar-header__menu) {
-	top: 6px !important;
-	margin-top: 0 !important;
-	right: 54px !important;
-}
-
-:deep(.app-sidebar__close) {
-	top: 6px !important;
-	right: 6px !important;
-}
-
 :deep(.app-navigation-caption):not(:first-child) {
 	margin-top: 12px !important;
 }
-
-:deep(.app-navigation-caption__name) {
-	margin: 0 !important;
-}
-
-/*
- * The field will fully overlap the top of the sidebar content so
- * that elements will scroll behind it
- */
-.app-navigation-search {
-	top: -10px;
-	margin: -10px;
-	padding: 10px;
-}
-
 </style>

@@ -208,7 +208,7 @@ export default {
 	}
 
 	&__emojis {
-		margin-left: auto;
+		margin-inline-start: auto;
 		max-width: 180px;
 		direction: rtl;
 		display: -webkit-box;

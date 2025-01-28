@@ -628,6 +628,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .not-connected {
 	video,
 	.avatar-container {

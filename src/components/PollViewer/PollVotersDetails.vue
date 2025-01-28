@@ -91,7 +91,7 @@ export default {
 
 .poll-voters-details {
 	max-width: 30%;
-	margin-right: 8px;
+	margin-inline-end: 8px;
 
 	& &__button,
 	&__button :deep(.button-vue__icon) {
@@ -112,8 +112,8 @@ export default {
 	}
 
 	&__display-name {
-			margin-left: 4px;
-		}
+		margin-inline-start: 4px;
+	}
 
 	&__list-item {
 		display: flex;

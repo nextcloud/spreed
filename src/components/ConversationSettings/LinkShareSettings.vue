@@ -96,11 +96,11 @@
 				:disabled="isSendingInvitations"
 				@click="handleResendInvitations">
 				<template #icon>
-					<IconEmail />
+					<NcLoadingIcon v-if="isSendingInvitations" />
+					<IconEmail v-else />
 				</template>
 				{{ t('spreed', 'Resend invitations') }}
 			</NcButton>
-			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
 	</div>
 </template>
@@ -116,6 +116,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
@@ -132,6 +133,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcPasswordField,
 		NcNoteCard,
+		NcLoadingIcon,
 		// Icons
 		IconClipboardTextOutline,
 		IconContentCopy,
@@ -268,16 +270,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button > .material-design-icon {
-	display: inline-block;
-	vertical-align: middle;
-	margin-right: 7px;
-}
-
-.spinner {
-	margin-left: 24px;
-}
-
 .password-form {
 	display: flex;
 	gap: 8px;

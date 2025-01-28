@@ -41,6 +41,6 @@ const ariaLabel = computed(() => {
 
 <style scoped>
 #talk-sidebar-trigger {
-	margin-left: var(--default-grid-baseline);
+	margin-inline-start: var(--default-grid-baseline);
 }
 </style>

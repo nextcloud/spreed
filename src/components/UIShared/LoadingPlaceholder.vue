@@ -111,7 +111,7 @@ export default {
 	margin: auto;
 
 	.placeholder-item {
-		padding-right: 8px;
+		padding-inline-end: 8px;
 		&__avatar {
 			width: 48px;
 			padding: 20px 8px 0;
@@ -134,7 +134,8 @@ export default {
 		&__info {
 			width: 100px;
 			height: 15px;
-			margin: var(--default-clickable-area) var(--default-clickable-area) 0 8px;
+			margin-block: var(--default-clickable-area) 0;
+			margin-inline: 8px var(--default-clickable-area);
 			animation-delay: 0.8s;
 		}
 	}

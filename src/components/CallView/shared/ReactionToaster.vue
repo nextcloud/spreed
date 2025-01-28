@@ -216,6 +216,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .toaster {
 	position: absolute;
 	bottom: 20px;

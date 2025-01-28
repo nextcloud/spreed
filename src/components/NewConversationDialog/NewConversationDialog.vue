@@ -409,7 +409,7 @@ export default {
 	}
 
 	&__button {
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 
 	:deep(.modal-wrapper) {

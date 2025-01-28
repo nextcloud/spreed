@@ -152,7 +152,7 @@ export default {
 
 	&__author {
 		max-width: $messages-text-max-width;
-		padding-left: var(--default-grid-baseline);
+		padding-inline-start: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
 		flex-shrink: 0;
 		white-space: nowrap;

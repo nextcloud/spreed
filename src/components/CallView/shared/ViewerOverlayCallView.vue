@@ -242,6 +242,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .viewer-overlay-ghost {
 	position: absolute;
 	bottom: 8px;

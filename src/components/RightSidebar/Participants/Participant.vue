@@ -1010,9 +1010,8 @@ export default {
 			cursor: pointer;
 		}
 
-		// FIXME clean up after nextcloud/vue release
 		.avatardiv .avatardiv__user-status {
-			right: -2px !important;
+			inset-inline-end: -2px !important;
 			bottom: -2px !important;
 		}
 	}

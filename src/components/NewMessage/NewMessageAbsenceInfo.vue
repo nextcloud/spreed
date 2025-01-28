@@ -163,8 +163,8 @@ export default {
 
 	&__caption {
 		font-weight: bold;
-		margin: var(--default-grid-baseline) var(--default-clickable-area);
-		margin-left: 0;
+		margin-block: var(--default-grid-baseline);
+		margin-inline: 0 var(--default-clickable-area);
 	}
 
 	&__replacement {
@@ -193,7 +193,7 @@ export default {
 	&__button {
 		position: absolute !important;
 		top: 4px;
-		right: 20px;
+		inset-inline-end: 20px;
 
 		& .icon {
 			transition: $transition;

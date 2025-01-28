@@ -57,6 +57,7 @@
 
 			<!-- Edit advanced permissions -->
 			<NcButton v-show="showEditButton"
+				class="edit-button"
 				type="tertiary"
 				:aria-label="t('spreed', 'Edit permissions')"
 				@click="showPermissionsEditor = true">
@@ -248,13 +249,12 @@ export default {
 		&--advanced {
 			display: flex;
 			justify-content: flex-start;
-
-			// Edit button
-			button {
-				margin-left: 16px;
-			}
 		}
 	}
+}
+
+.edit-button {
+	margin-inline-start: 16px;
 }
 
 .conversation-permissions-editor__hint {

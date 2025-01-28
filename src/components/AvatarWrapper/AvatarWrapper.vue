@@ -241,7 +241,7 @@ export default {
 		}
 
 		&.bot {
-			padding-left: 5px;
+			padding-inline-start: 5px;
 			background-color: var(--color-background-darker);
 		}
 
@@ -250,15 +250,14 @@ export default {
 			padding: 0;
 			display: block;
 			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
+			margin-inline: auto;
 		}
 	}
 
 	&--condensed {
 		width: unset;
 		height: unset;
-		margin-left: calc(var(--condensed-overlap) * -1px);
+		margin-inline-start: calc(var(--condensed-overlap) * -1px);
 		display: flex;
 
 		& > .icon,
@@ -282,7 +281,7 @@ export default {
 
 	&__user-status {
 		position: absolute;
-		right: -4px;
+		inset-inline-end: -4px;
 		bottom: -4px;
 		height: 18px;
 		width: 18px;
@@ -295,7 +294,7 @@ export default {
 .loading-avatar {
 	position: absolute;
 	top: 0;
-	left: 0;
+	inset-inline-start: 0;
 	width: 100%;
 	height: 100%;
 }

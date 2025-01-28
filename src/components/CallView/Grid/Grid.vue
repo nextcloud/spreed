@@ -958,6 +958,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .grid-main-wrapper {
 	--navigation-position: calc(var(--default-grid-baseline) * 2);
 	position: relative;

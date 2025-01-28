@@ -263,7 +263,7 @@ export default {
 
 	&__type {
 		position: absolute;
-		right: -2px;
+		inset-inline-end: -2px;
 		bottom: -2px;
 		display: flex;
 		align-content: center;
@@ -279,7 +279,7 @@ export default {
 	.overlap-icon {
 		position: absolute;
 		top: 0;
-		left: calc(var(--icon-size) - 12px);
+		inset-inline-start: calc(var(--icon-size) - 12px);
 		line-height: 100%;
 		display: inline-block;
 		vertical-align: middle;

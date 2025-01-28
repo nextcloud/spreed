@@ -1071,13 +1071,13 @@ export default {
 	.filters {
 		position: absolute;
 		top: 0;
-		right: calc(var(--default-grid-baseline) + var(--default-clickable-area));
+		inset-inline-end: calc(var(--default-grid-baseline) + var(--default-clickable-area));
 	}
 
 	.actions {
 		position: absolute;
 		top: 0;
-		right: 0;
+		inset-inline-end: 0;
 	}
 }
 
@@ -1086,7 +1086,7 @@ export default {
 	margin-block: var(--default-grid-baseline);
 
 	:deep(.app-navigation-entry-link) {
-		padding-left: var(--default-grid-baseline);
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
 	:deep(.app-navigation-entry-icon) {
@@ -1094,13 +1094,14 @@ export default {
 	}
 
 	:deep(.app-navigation-entry__name) {
-		padding-left: calc(2 * var(--default-grid-baseline));
+		padding-inline-start: calc(2 * var(--default-grid-baseline));
 		font-weight: 500;
 	}
 }
 
 .unread-mention-button {
 	position: absolute !important;
+	/* stylelint-disable-next-line csstools/use-logical */
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 100;
@@ -1150,9 +1151,8 @@ export default {
 	overflow: hidden;
 	outline-offset: -2px;
 
-	// FIXME clean up after nextcloud/vue release
 	.avatardiv .avatardiv__user-status {
-		right: -2px !important;
+		inset-inline-end: -2px !important;
 		bottom: -2px !important;
 		min-height: 11px !important;
 		min-width: 11px !important;

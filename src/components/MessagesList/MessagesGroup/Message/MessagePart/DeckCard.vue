@@ -109,7 +109,7 @@ export default {
 		text-overflow: ellipsis;
 
 		.title {
-			margin-left: 8px;
+			margin-inline-start: 8px;
 		}
 	}
 

@@ -139,7 +139,7 @@ export default {
 
 .indicator {
 	width: 100%;
-	padding-right: 12px;
+	padding-inline-end: 12px;
 	margin-bottom: 4px;
 
 	&__wrapper {
@@ -159,12 +159,12 @@ export default {
 		flex-direction: row-reverse;
 		flex-shrink: 0;
 		width: 52px;
-		padding-left: 8px;
+		padding-inline-start: 8px;
 	}
 
 	&__main {
 		width: 100%;
-		padding-left: 8px;
+		padding-inline-start: 8px;
 	}
 }
 </style>

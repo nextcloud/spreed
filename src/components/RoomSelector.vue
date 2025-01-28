@@ -214,12 +214,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
-/* Styles to be applied outside of Talk (Deck plugin, e.t.c) */
-:deep(.modal-wrapper *) {
-	box-sizing: border-box;
-}
-
 :deep(.modal-wrapper .modal-container) {
 	height: 700px;
 }
@@ -251,7 +245,7 @@ export default {
 
 	&__action {
 		flex-shrink: 0;
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 }
 </style>

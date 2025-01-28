@@ -471,7 +471,7 @@ export default {
 
 		.percentage {
 			white-space: nowrap;
-			margin-left: 16px;
+			margin-inline-start: 16px;
 		}
 	}
 }

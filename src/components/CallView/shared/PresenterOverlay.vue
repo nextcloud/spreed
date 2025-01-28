@@ -150,6 +150,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .presenter-overlay {
 	position: absolute;
 	top: 0;

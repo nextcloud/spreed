@@ -311,18 +311,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(button.icon) {
-	height: 32px;
-	width: 32px;
-	display: inline-block;
-	margin-left: 5px;
-	vertical-align: middle;
-}
-
-:deep(.modal-container) {
-	display: flex !important;
-}
-
 :deep(.app-settings-section__hint) {
 	color: var(--color-text-maxcontrast);
 	padding: 8px 0;
@@ -335,11 +323,7 @@ export default {
 	margin: calc(var(--default-grid-baseline) * 4) 0 var(--default-grid-baseline) 0;
 }
 
-:deep(.app-settings-subsection) {
+:deep(.app-settings-subsection:not(:first-child)) {
 	margin-top: 25px;
-
-	&:first-child {
-		margin-top: 0;
-	}
 }
 </style>
