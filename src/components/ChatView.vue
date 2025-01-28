@@ -9,26 +9,24 @@
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
 		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
-		<TransitionWrapper name="slide-up" mode="out-in">
-			<div v-show="isDraggingOver"
-				class="dragover">
-				<div class="drop-hint">
-					<div class="drop-hint__icon"
-						:class="{
-							'icon-upload' : !isGuest && !isReadOnly,
-							'icon-user' : isGuest,
-							'icon-error' : isReadOnly}" />
-					<h2 class="drop-hint__text">
-						{{ dropHintText }}
-					</h2>
-				</div>
-			</div>
-		</TransitionWrapper>
-		<MessagesList role="region"
-			:aria-label="t('spreed', 'Conversation messages')"
-			:token="token"
-			:is-chat-scrolled-to-bottom.sync="isChatScrolledToBottom"
-			:is-visible="isVisible" />
+		<div class="messages-list-dragover-wrapper">
+			<TransitionWrapper name="slide-up" mode="out-in">
+				<NcEmptyContent v-show="isDraggingOver"
+					:name="dropHintText"
+					class="dragover">
+					<template #icon>
+						<IconTrayArrowUp v-if="!isGuest && !isReadOnly" />
+						<IconAccount v-else-if="isGuest" />
+						<IconAlertOctagon v-else-if="isReadOnly" />
+					</template>
+				</NcEmptyContent>
+			</TransitionWrapper>
+			<MessagesList role="region"
+				:aria-label="t('spreed', 'Conversation messages')"
+				:token="token"
+				:is-chat-scrolled-to-bottom.sync="isChatScrolledToBottom"
+				:is-visible="isVisible" />
+		</div>
 
 		<div class="scroll-to-bottom">
 			<TransitionWrapper name="fade">
@@ -39,7 +37,7 @@
 					class="scroll-to-bottom__button"
 					@click="scrollToBottom">
 					<template #icon>
-						<ChevronDoubleDown :size="20" />
+						<IconChevronDoubleDown :size="20" />
 					</template>
 				</NcButton>
 			</TransitionWrapper>
@@ -57,11 +55,15 @@
 </template>
 
 <script>
-import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
+import IconAccount from 'vue-material-design-icons/Account.vue'
+import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
+import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
+import IconTrayArrowUp from 'vue-material-design-icons/TrayArrowUp.vue'
 
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
@@ -80,12 +82,17 @@ export default {
 
 	components: {
 		NcButton,
-		ChevronDoubleDown,
+		NcEmptyContent,
 		MessagesList,
 		NewMessage,
 		NewMessageUploadEditor,
 		TransitionWrapper,
 		GuestWelcomeWindow,
+		// icons
+		IconAccount,
+		IconAlertOctagon,
+		IconChevronDoubleDown,
+		IconTrayArrowUp,
 	},
 
 	props: {
@@ -216,9 +223,17 @@ export default {
 	min-height: 0;
 }
 
+.messages-list-dragover-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	min-height: 0;
+}
+
 .dragover {
 	position: absolute;
-	inset: 10%;
+	inset: 5%;
 	background: var(--color-primary-element-light);
 	z-index: 11;
 	display: flex;
@@ -226,15 +241,6 @@ export default {
 	border-radius: var(--border-radius);
 	opacity: 90%;
 	pointer-events: none;
-}
-
-.drop-hint {
-	margin: auto;
-	&__icon {
-		background-size: 48px;
-		height: 48px;
-		margin-bottom: 16px;
-	}
 }
 
 .scroll-to-bottom {
