@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcDialog :name="t('spreed', 'Create new poll')"
+	<NcDialog :name="dialogName"
 		:close-on-click-outside="!isFilled"
 		:container="container"
 		v-on="$listeners"
@@ -102,7 +102,7 @@
 					{{ t('spreed', 'Export draft to file') }}
 				</NcActionLink>
 			</NcActions>
-			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
+			<NcButton type="primary" :disabled="!isFilled" @click="handleSubmit">
 				{{ createPollLabel }}
 			</NcButton>
 		</template>
@@ -157,6 +157,7 @@ const store = useStore()
 const pollsStore = usePollsStore()
 
 const isOpenedFromDraft = ref(false)
+const editingDraftId = ref<number | null>(null)
 const pollOption = ref(null)
 const pollImport = ref(null)
 
@@ -168,7 +169,14 @@ const pollForm = reactive<createPollParams>({
 })
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
+const dialogName = computed(() => {
+	return editingDraftId.value ? t('spreed', 'Edit poll draft') : t('spreed', 'Create new poll')
+})
 const createPollLabel = computed(() => {
+	if (editingDraftId.value) {
+		return t('spreed', 'Save')
+	}
+
 	return store.getters.getToken() !== props.token
 		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName },
 			undefined, { escape: false, sanitize: false })
@@ -217,7 +225,20 @@ function addOption() {
 /**
  * Post a poll into conversation
  */
-async function createPoll() {
+async function handleSubmit() {
+	if (editingDraftId.value) {
+		await pollsStore.updatePollDraft({
+			token: props.token,
+			pollId: editingDraftId.value,
+			form: pollForm,
+		})
+		openPollDraftHandler()
+		nextTick(() => {
+			emit('close')
+		})
+		return
+	}
+
 	const poll = await pollsStore.createPoll({
 		token: props.token,
 		form: pollForm,
@@ -231,11 +252,16 @@ async function createPoll() {
  * Pre-fills form from the draft
  * @param id poll draft ID
  * @param fromDrafts whether editor was opened from drafts handler
+ * @param action required action ('fill' from draft or 'edit' draft)
  */
-function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
+function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean, action?: string) {
 	if (fromDrafts) {
 		// Show 'Back' button, do not reset until closed
 		isOpenedFromDraft.value = true
+	}
+	if (action === 'edit') {
+		// Show Edit interface
+		editingDraftId.value = id
 	}
 
 	if (id && pollsStore.drafts[props.token][id]) {

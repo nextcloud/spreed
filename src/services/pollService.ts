@@ -16,9 +16,12 @@ import type {
 	getPollResponse,
 	votePollParams,
 	votePollResponse,
+	updatePollDraftParams,
+	updatePollDraftResponse,
 } from '../types/index.ts'
 
 type createPollPayload = { token: string } & createPollParams
+type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraftParams
 
 /**
  * @param payload The payload
@@ -54,6 +57,24 @@ const createPollDraft = async ({ token, question, options, resultMode, maxVotes 
 		maxVotes,
 		draft: true,
 	} as createPollParams)
+}
+
+/**
+ * @param payload The payload
+ * @param payload.token The conversation token
+ * @param payload.pollId The id of poll draft
+ * @param payload.question The question of the poll
+ * @param payload.options The options participants can vote for
+ * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
+ */
+const updatePollDraft = async ({ token, pollId, question, options, resultMode, maxVotes }: updatePollDraftPayload): updatePollDraftResponse => {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}/draft/{pollId}', { token, pollId }), {
+		question,
+		options,
+		resultMode,
+		maxVotes,
+	} as updatePollDraftParams)
 }
 
 /**
@@ -100,6 +121,7 @@ const deletePollDraft = async (token: string, pollId: string): deletePollDraftRe
 export {
 	createPoll,
 	createPollDraft,
+	updatePollDraft,
 	getPollDrafts,
 	getPollData,
 	submitVote,
