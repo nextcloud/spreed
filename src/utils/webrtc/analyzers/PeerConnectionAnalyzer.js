@@ -396,6 +396,19 @@ PeerConnectionAnalyzer.prototype = {
 				packetsLost[kind] = this._packetsLost[kind].getLastRawValue()
 			}
 
+			// In some (also strange) cases a newer stat may report a lower
+			// value than a previous one (it happens sometimes with garbage
+			// remote reports in simulcast video that cause the values to
+			// overflow, although it was also seen with a small value regression
+			// when enabling video). If that happens the stats are reset to
+			// prevent distorting the analysis with negative packet counts; note
+			// that in this case the previous value is not kept because it is
+			// not just an isolated wrong value, all the following stats
+			// increase from the regressed value.
+			if (packets[kind] >= 0 && packets[kind] < this._packets[kind].getLastRawValue()) {
+				this._resetStats(kind)
+			}
+
 			this._addStats(kind, packets[kind], packetsLost[kind], timestamp[kind], roundTripTime[kind])
 		}
 	},
@@ -466,12 +479,13 @@ PeerConnectionAnalyzer.prototype = {
 	 * The stats reported by the browser can sometimes stall for a second (or
 	 * more, but typically they stall only for a single report). When that
 	 * happens the stats are still reported, but with the same number of packets
-	 * as in the previous report (timestamp and round trip time are updated,
-	 * though). In that case the given stats are not added yet to the average
-	 * stats; they are kept on hold until more stats are provided by the browser
-	 * and it can be determined if the previous stats were stalled or not. If
-	 * they were stalled the previous and new stats are distributed, and if they
-	 * were not they are added as is to the average stats.
+	 * as in the previous report (timestamp and round trip time may be updated
+	 * or not, apparently depending on browser version and/or Janus version). In
+	 * that case the given stats are not added yet to the average stats; they
+	 * are kept on hold until more stats are provided by the browser and it can
+	 * be determined if the previous stats were stalled or not. If they were
+	 * stalled the previous and new stats are distributed, and if they were not
+	 * they are added as is to the average stats.
 	 *
 	 * @param {string} kind the type of the stats ("audio" or "video")
 	 * @param {number} packets the cumulative number of packets
@@ -536,6 +550,18 @@ PeerConnectionAnalyzer.prototype = {
 		let packetsLostTotal = 0
 		let timestampsTotal = 0
 
+		// If the first timestamp stalled it is assumed that all of them
+		// stalled and are thus evenly distributed based on the new timestamp.
+		if (this._stagedTimestamps[kind][0] === timestampsBase) {
+			const lastTimestamp = this._stagedTimestamps[kind][this._stagedTimestamps[kind].length - 1]
+			const timestampsTotalDifference = lastTimestamp - timestampsBase
+			const timestampsDelta = timestampsTotalDifference / this._stagedTimestamps[kind].length
+
+			for (let i = 0; i < this._stagedTimestamps[kind].length - 1; i++) {
+				this._stagedTimestamps[kind][i] += timestampsDelta * (i + 1)
+			}
+		}
+
 		for (let i = 0; i < this._stagedPackets[kind].length; i++) {
 			packetsTotal += (this._stagedPackets[kind][i] - packetsBase)
 			packetsBase = this._stagedPackets[kind][i]
@@ -562,7 +588,11 @@ PeerConnectionAnalyzer.prototype = {
 			packetsLostBase = this._stagedPacketsLost[kind][i]
 
 			// Timestamps and round trip time are not distributed, as those
-			// values are properly updated even if the stats are stalled.
+			// values may be properly updated even if the stats are stalled. In
+			// case they were not timestamps were already evenly distributed
+			// above, and round trip time can not be distributed, as it is
+			// already provided in the stats as a relative value rather than a
+			// cumulative one.
 		}
 	},
 
@@ -612,11 +642,19 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_calculateConnectionQuality(kind) {
+		const packets = this._packets[kind]
+		const packetsLost = this._packetsLost[kind]
+		const timestamps = this._timestamps[kind]
 		const packetsLostRatio = this._packetsLostRatio[kind]
 		const packetsPerSecond = this._packetsPerSecond[kind]
 		const roundTripTime = this._roundTripTime[kind]
 
-		if (!packetsLostRatio.hasEnoughData() || !packetsPerSecond.hasEnoughData()) {
+		// packetsLostRatio and packetsPerSecond are relative values, but they
+		// are calculated from cumulative values. Therefore, it is necessary to
+		// check if the cumulative values that are their source have enough data
+		// or not, rather than checking if the relative values themselves have
+		// enough data.
+		if (!packets.hasEnoughData() || !packetsLost.hasEnoughData() || !timestamps.hasEnoughData()) {
 			return CONNECTION_QUALITY.UNKNOWN
 		}
 
@@ -655,10 +693,13 @@ PeerConnectionAnalyzer.prototype = {
 		// quality to keep a smooth video, albeit on a lower resolution. Thus
 		// with a threshold of 10 packets issues can be detected too for videos,
 		// although only once they can not be further downscaled.
+		// Despite all of the above it has been observed that less than 10
+		// packets are sometimes sent without any connection problem (for
+		// example, when the background is blurred and the video quality is
+		// reduced due to being in a call with several participants), so for now
+		// it is only logged but not reported.
 		if (packetsPerSecond.getWeightedAverage() < 10) {
 			this._logStats(kind, 'Low packets per second: ' + packetsPerSecond.getWeightedAverage())
-
-			return CONNECTION_QUALITY.VERY_BAD
 		}
 
 		if (packetsLostRatioWeightedAverage > 0.3) {
