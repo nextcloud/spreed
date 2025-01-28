@@ -130,7 +130,7 @@ import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
-import { useSidebarStore } from '../../stores/sidebar.js'
+import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 

@@ -18,7 +18,7 @@ import './init.js'
 import router from './router/router.js'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
-import { useSidebarStore } from './stores/sidebar.js'
+import { useSidebarStore } from './stores/sidebar.ts'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
