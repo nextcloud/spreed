@@ -3,42 +3,58 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { createPollParams } from '../types/index.ts'
+import type { requiredPollParams } from '../types/index.ts'
 
-type requiredPollParams = Omit<createPollParams, 'draft'>
-const pollFormExample = {
-	question: '',
-	options: ['', ''],
-	resultMode: 0,
-	maxVotes: 0,
+const REQUIRED_KEYS = ['question', 'options', 'resultMode', 'maxVotes'] as const
+
+/**
+ * Type guard for options array
+ * @param payload payload to check
+ */
+function isStringArray(payload: unknown): payload is string[] {
+	return Array.isArray(payload) && payload.every(opt => typeof opt === 'string')
 }
-const REQUIRED_KEYS: Array<keyof requiredPollParams> = Object.keys(pollFormExample) as Array<keyof requiredPollParams>
 
 /**
  * Parses a given JSON object and validates with required poll form object.
  * Throws an error if parsed object doesn't match
  * @param jsonObject The object to validate
  */
-function validatePollForm(jsonObject: requiredPollParams): requiredPollParams {
-	if (typeof jsonObject !== 'object') {
+function validatePollForm(jsonObject: unknown): requiredPollParams {
+	if (typeof jsonObject !== 'object' || !jsonObject) {
 		throw new Error('Invalid parsed object')
 	}
 
+	const typedObject = jsonObject as Record<keyof requiredPollParams, unknown>
+
 	for (const key of REQUIRED_KEYS) {
-		if (jsonObject[key] === undefined) {
+		if (typedObject[key] === undefined) {
 			throw new Error('Missing required key')
-		}
-
-		if (typeof pollFormExample[key] !== typeof jsonObject[key]) {
-			throw new Error('Invalid parsed value')
-		}
-
-		if (key === 'options' && jsonObject[key]?.some((opt: unknown) => typeof opt !== 'string')) {
-			throw new Error('Invalid parsed option values')
 		}
 	}
 
-	return jsonObject
+	if (typeof typedObject.question !== 'string') {
+		throw new Error('Invalid parsed value: question')
+	}
+
+	if (typeof typedObject.resultMode !== 'number' || !(typedObject.resultMode === 0 || typedObject.resultMode === 1)) {
+		throw new Error('Invalid parsed value: resultMode')
+	}
+
+	if (typeof typedObject.maxVotes !== 'number') {
+		throw new Error('Invalid parsed value: maxVotes')
+	}
+
+	if (!isStringArray(typedObject.options)) {
+		throw new Error('Invalid parsed value: options')
+	}
+
+	return {
+		question: typedObject.question,
+		options: [...typedObject.options],
+		resultMode: typedObject.resultMode,
+		maxVotes: typedObject.maxVotes,
+	}
 }
 
 export {

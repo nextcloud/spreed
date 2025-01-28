@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 
 import MessagesSystemGroup from './MessagesSystemGroup.vue'
 
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 
 describe('MessagesSystemGroup.vue', () => {

@@ -17,6 +17,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { importEmails } from '../services/participantsService.js'
+import type { ApiErrorResponse } from '../types/index.ts'
 
 const loading = ref(false)
 const listImport = ref<HTMLInputElement | null>(null)
@@ -80,7 +81,7 @@ async function testList(file: File) {
 		const response = await importEmails(props.token, file, true)
 		uploadResult.value = response.data.ocs.data
 	} catch (error) {
-		uploadResult.value = error?.response?.data?.ocs?.data
+		uploadResult.value = (error as ApiErrorResponse).response?.data?.ocs?.data ?? null
 	} finally {
 		loading.value = false
 	}

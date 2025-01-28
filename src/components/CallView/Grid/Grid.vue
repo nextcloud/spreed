@@ -161,9 +161,9 @@ import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
-import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
-import { useSidebarStore } from '../../../stores/sidebar.js'
+import { useSidebarStore } from '../../../stores/sidebar.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0

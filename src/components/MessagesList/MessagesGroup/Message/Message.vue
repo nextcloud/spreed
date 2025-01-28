@@ -119,7 +119,7 @@ import MessageBody from './MessagePart/MessageBody.vue'
 import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
 
-import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.js'
+import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'

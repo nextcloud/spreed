@@ -52,7 +52,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.j
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.ts'
 
 export default {
 	name: 'NewMessageAbsenceInfo',

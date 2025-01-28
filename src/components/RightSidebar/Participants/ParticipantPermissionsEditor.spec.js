@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 
-import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 
 describe('ParticipantPermissionsEditor.vue', () => {

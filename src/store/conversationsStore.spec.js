@@ -16,7 +16,7 @@ import {
 	WEBINAR,
 	PARTICIPANT,
 	ATTENDEE,
-} from '../constants.js'
+} from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	makeConversationPublic,

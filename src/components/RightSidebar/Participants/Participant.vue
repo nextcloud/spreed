@@ -347,7 +347,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../constants.ts'
 import {
 	callSIPDialOut,
 	callSIPHangupPhone,

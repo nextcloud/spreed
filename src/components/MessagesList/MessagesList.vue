@@ -78,7 +78,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.js'
+import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'

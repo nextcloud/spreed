@@ -123,7 +123,7 @@ import LoadingComponent from '../LoadingComponent.vue'
 
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { addParticipant } from '../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'

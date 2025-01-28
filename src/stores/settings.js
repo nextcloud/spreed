@@ -8,7 +8,7 @@ import Vue from 'vue'
 
 import { loadState } from '@nextcloud/initial-state'
 
-import { PRIVACY } from '../constants.js'
+import { PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {

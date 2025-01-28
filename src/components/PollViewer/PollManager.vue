@@ -10,14 +10,14 @@ import PollDraftHandler from './PollDraftHandler.vue'
 import PollEditor from './PollEditor.vue'
 
 import { useStore } from '../../composables/useStore.js'
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import type { Events } from '../../services/EventBus.ts'
 
 const store = useStore()
 
-const pollEditorRef = ref(null)
+const pollEditorRef = ref<InstanceType<typeof PollEditor> | null>(null)
 
 const showPollEditor = ref(false)
 const showPollDraftHandler = ref(false)

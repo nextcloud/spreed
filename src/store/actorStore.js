@@ -10,7 +10,7 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import { ATTENDEE, PARTICIPANT } from '../constants.js'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 
 const state = {
 	userId: null,

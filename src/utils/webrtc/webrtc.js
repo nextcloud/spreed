@@ -11,7 +11,7 @@ import {
 import { t } from '@nextcloud/l10n'
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
-import { PARTICIPANT } from '../../constants.js'
+import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
 

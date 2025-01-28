@@ -27,7 +27,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 
-import { PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {

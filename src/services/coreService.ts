@@ -7,7 +7,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
-import { SHARE } from '../constants.js'
+import { SHARE } from '../constants.ts'
 import type {
 	TaskProcessingResponse,
 	UnifiedSearchResponse,
@@ -18,11 +18,12 @@ const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
 	&& getTalkConfig('local', 'federation', 'enabled')
 	&& getTalkConfig('local', 'federation', 'outgoing-enabled')
 
+type ShareType = typeof SHARE.TYPE[keyof typeof SHARE.TYPE]
 type SearchPayload = {
 	searchText: string
 	token?: string | 'new'
 	onlyUsers?: boolean
-	forceTypes?: typeof SHARE.TYPE[keyof typeof SHARE.TYPE][]
+	forceTypes?: ShareType[]
 }
 
 /**
@@ -36,15 +37,15 @@ type SearchPayload = {
  * @param options options
  */
 const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers = false, forceTypes = [] }: SearchPayload, options: object) {
-	const shareTypes = onlyUsers
-		? [SHARE.TYPE.USER].concat(forceTypes)
+	const shareTypes: ShareType[] = onlyUsers
+		? [SHARE.TYPE.USER]
 		: [
 			SHARE.TYPE.USER,
 			SHARE.TYPE.GROUP,
 			SHARE.TYPE.CIRCLE,
-			token !== 'new' ? SHARE.TYPE.EMAIL : null,
-			canInviteToFederation ? SHARE.TYPE.REMOTE : null,
-		].filter(type => type !== null).concat(forceTypes)
+			...(token !== 'new' ? [SHARE.TYPE.EMAIL] : []),
+			...(canInviteToFederation ? [SHARE.TYPE.REMOTE] : []),
+		]
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {
 		...options,
@@ -52,7 +53,7 @@ const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers 
 			search: searchText,
 			itemType: 'call',
 			itemId: token,
-			shareTypes,
+			shareTypes: shareTypes.concat(forceTypes),
 		},
 	})
 }

@@ -25,7 +25,7 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 import Conversation from './Conversation.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
-import { AVATAR } from '../../../constants.js'
+import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 

@@ -14,7 +14,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 
 const store = useStore()

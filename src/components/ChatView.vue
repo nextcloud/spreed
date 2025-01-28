@@ -69,7 +69,7 @@ import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
-import { CONVERSATION, PARTICIPANT } from '../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'

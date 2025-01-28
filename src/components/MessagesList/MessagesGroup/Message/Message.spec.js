@@ -24,7 +24,7 @@ import MessageBody from './MessagePart/MessageBody.vue'
 import Quote from '../../../Quote.vue'
 
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 

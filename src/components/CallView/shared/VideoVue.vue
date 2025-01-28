@@ -99,7 +99,7 @@ import VideoBottomBar from './VideoBottomBar.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
-import { ATTENDEE, AVATAR } from '../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'

@@ -49,7 +49,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.ts'
 import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 
 export default {

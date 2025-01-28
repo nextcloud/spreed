@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
 
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 

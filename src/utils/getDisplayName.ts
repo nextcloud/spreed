@@ -4,7 +4,7 @@
  */
 import { t } from '@nextcloud/l10n'
 
-import { ATTENDEE } from '../constants.js'
+import { ATTENDEE } from '../constants.ts'
 
 export const getDisplayNameWithFallback = function(displayName: string, source: string): string {
 	if (displayName?.trim()) {

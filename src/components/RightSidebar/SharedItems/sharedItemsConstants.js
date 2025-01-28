@@ -4,7 +4,7 @@
  */
 import { t } from '@nextcloud/l10n'
 
-import { SHARED_ITEM } from '../../../constants.js'
+import { SHARED_ITEM } from '../../../constants.ts'
 
 export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.FILE,

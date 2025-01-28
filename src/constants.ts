@@ -9,7 +9,7 @@ export const CONFIG = {
 		REQUIRED: 1,
 		OPTIONAL: 2,
 	},
-}
+} as const
 
 export const SIGNALING = {
 	MODE: {
@@ -17,19 +17,19 @@ export const SIGNALING = {
 		EXTERNAL: 'external',
 		CLUSTER_CONVERSATION: 'conversation_cluster',
 	},
-}
+} as const
 
 export const SESSION = {
 	STATE: {
 		INACTIVE: 0,
 		ACTIVE: 1,
 	},
-}
+} as const
 
 export const CHAT = {
 	FETCH_LIMIT: 100,
 	MINIMUM_VISIBLE: 5,
-}
+} as const
 
 export const CALL = {
 	RECORDING: {
@@ -44,7 +44,7 @@ export const CALL = {
 		DISABLED: 0,
 		ENABLED: 1,
 	},
-}
+} as const
 
 export const CONVERSATION = {
 	START_CALL: {
@@ -110,7 +110,7 @@ export const CONVERSATION = {
 	},
 
 	MAX_NAME_LENGTH: 255,
-}
+} as const
 
 export const ATTENDEE = {
 	ACTOR_TYPE: {
@@ -132,12 +132,12 @@ export const ATTENDEE = {
 
 	CHANGELOG_BOT_ID: 'changelog',
 	SAMPLE_BOT_ID: 'sample',
-}
+} as const
 
 export const MESSAGE = {
 	CHAT_BEGIN_ID: -2,
 	CHAT_MIGRATION_ID: -1,
-}
+} as const
 
 export const PARTICIPANT = {
 	CALL_FLAG: {
@@ -195,7 +195,7 @@ export const PARTICIPANT = {
 		MAX_DEFAULT: 254,
 		MAX_CUSTOM: 255,
 	},
-}
+} as const
 
 export const SHARED_ITEM = {
 	TYPES: {
@@ -216,7 +216,7 @@ export const SHARED_ITEM = {
 		'image/png',
 		'image/webp',
 	],
-}
+} as const
 
 export const WEBINAR = {
 	LOBBY: {
@@ -229,7 +229,7 @@ export const WEBINAR = {
 		ENABLED: 1,
 		ENABLED_NO_PIN: 2,
 	},
-}
+} as const
 
 export const SHARE = {
 	TYPE: {
@@ -239,7 +239,7 @@ export const SHARE = {
 		REMOTE: 6,
 		CIRCLE: 7,
 	},
-}
+} as const
 
 export const FLOW = {
 	MESSAGE_MODES: {
@@ -247,7 +247,7 @@ export const FLOW = {
 		SELF_MENTION: 2,
 		ROOM_MENTION: 3,
 	},
-}
+} as const
 
 export const POLL = {
 	STATUS: {
@@ -265,18 +265,18 @@ export const POLL = {
 		MULTIPLE: 0,
 		SINGLE: 1,
 	},
-}
+} as const
 
 export const PRIVACY = {
 	PUBLIC: 0,
 	PRIVATE: 1,
-}
+} as const
 
 export const SIMULCAST = {
 	LOW: 0,
 	MEDIUM: 1,
 	HIGH: 2,
-}
+} as const
 
 export const VIRTUAL_BACKGROUND = {
 	BACKGROUND_TYPE: {
@@ -288,7 +288,7 @@ export const VIRTUAL_BACKGROUND = {
 	BLUR_STRENGTH: {
 		DEFAULT: 10,
 	},
-}
+} as const
 
 export const BOT = {
 	STATE: {
@@ -296,7 +296,7 @@ export const BOT = {
 		ENABLED: 1,
 		NO_SETUP: 2,
 	},
-}
+} as const
 
 export const AVATAR = {
 	SIZE: {
@@ -309,14 +309,14 @@ export const AVATAR = {
 		EXTRA_LARGE: 180,
 		FULL: 512,
 	},
-}
+} as const
 
 export const FEDERATION = {
 	STATE: {
 		PENDING: 0,
 		ACCEPTED: 1,
 	},
-}
+} as const
 
 export const MENTION = {
 	TYPE: {

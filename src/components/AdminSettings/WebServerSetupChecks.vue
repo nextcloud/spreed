@@ -42,7 +42,7 @@ import { generateFilePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
-import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 

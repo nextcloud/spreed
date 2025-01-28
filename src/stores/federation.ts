@@ -10,7 +10,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getBaseUrl } from '@nextcloud/router'
 
-import { FEDERATION } from '../constants.js'
+import { FEDERATION } from '../constants.ts'
 import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
 import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
