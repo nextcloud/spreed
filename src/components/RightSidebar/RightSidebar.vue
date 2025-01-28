@@ -156,7 +156,7 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useSidebarStore } from '../../stores/sidebar.js'
+import { useSidebarStore } from '../../stores/sidebar.ts'
 
 export default {
 	name: 'RightSidebar',

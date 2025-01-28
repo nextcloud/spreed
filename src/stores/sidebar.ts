@@ -14,9 +14,9 @@ export const useSidebarStore = defineStore('sidebar', {
 	}),
 
 	actions: {
-		showSidebar({ activeTab, cache = true } = {}) {
+		showSidebar({ activeTab = '', cache = true }: { activeTab?: string, cache?: boolean } = {}) {
 			this.show = true
-			if (activeTab && typeof activeTab === 'string') {
+			if (activeTab) {
 				emit('spreed:select-active-sidebar-tab', activeTab)
 			}
 			if (cache) {
@@ -24,7 +24,7 @@ export const useSidebarStore = defineStore('sidebar', {
 			}
 		},
 
-		hideSidebar({ cache = true } = {}) {
+		hideSidebar({ cache = true }: { cache?: boolean } = {}) {
 			this.show = false
 			if (cache) {
 				BrowserStorage.setItem('sidebarOpen', 'false')

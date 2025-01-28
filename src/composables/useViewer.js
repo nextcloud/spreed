@@ -7,7 +7,7 @@ import { nextTick, ref } from 'vue'
 
 import { useIsInCall } from './useIsInCall.js'
 import { useCallViewStore } from '../stores/callView.js'
-import { useSidebarStore } from '../stores/sidebar.js'
+import { useSidebarStore } from '../stores/sidebar.ts'
 
 /**
  * @callback OpenViewer
