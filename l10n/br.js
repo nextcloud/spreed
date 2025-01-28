@@ -690,6 +690,7 @@ OC.L10N.register(
     "Lost connection to signaling server. Trying to reconnect." : "Kenstagadenn gant ar servijour arhent kollet. O klask adkemprenn.",
     "Establishing signaling connection is taking longer than expected …" : "Lakaat an arhent kenstagañ a zo hiroc'h eget gortozet ...",
     "Failed to establish signaling connection. Retrying …" : "C'hwitet da lakaat an arhent kemprenn. O klask en dro ...",
+    "Please reload the page." : "Mar-plij adkargit ar bajenn",
     "Do not disturb" : "Na rannit ket",
     "Away" : "Pell",
     "Default" : "Dre ziouer",
