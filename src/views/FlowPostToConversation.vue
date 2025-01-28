@@ -26,7 +26,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
-import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
+import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 const supportFederationV1 = hasTalkFeature('local', 'federation-v1')

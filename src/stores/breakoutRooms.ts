@@ -9,7 +9,7 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import { useSidebarStore } from './sidebar.js'
+import { useSidebarStore } from './sidebar.ts'
 import {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,

@@ -12,7 +12,7 @@ import NcChip from '@nextcloud/vue/dist/Components/NcChip.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.ts'
 import type { Participant, ParticipantSearchResult } from '../../types/index.ts'
 
 const props = defineProps<{

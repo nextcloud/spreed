@@ -5,7 +5,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
 import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.js'
-import { SHARED_ITEM } from '../../constants.js'
+import { SHARED_ITEM } from '../../constants.ts'
 import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useSharedItemsStore } from '../sharedItems.js'

@@ -7,7 +7,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { emit } from '@nextcloud/event-bus'
 
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { useSidebarStore } from '../sidebar.js'
+import { useSidebarStore } from '../sidebar.ts'
 
 jest.mock('@nextcloud/event-bus', () => ({
 	emit: jest.fn(),

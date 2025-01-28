@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { AVATAR } from '../../constants.js'
+import { AVATAR } from '../../constants.ts'
 
 export default {
 	name: 'LoadingPlaceholder',

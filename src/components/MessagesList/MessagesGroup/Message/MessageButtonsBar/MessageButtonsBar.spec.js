@@ -14,7 +14,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'

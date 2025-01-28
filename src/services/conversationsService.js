@@ -7,7 +7,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { hasTalkFeature } from './CapabilitiesManager.ts'
-import { ATTENDEE, CONVERSATION } from '../constants.js'
+import { ATTENDEE, CONVERSATION } from '../constants.ts'
 
 /**
  * Fetches the conversations from the server.

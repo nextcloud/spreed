@@ -30,7 +30,7 @@ import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../constants.ts'
 
 export default {
 	name: 'LockingSettings',

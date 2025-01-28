@@ -135,7 +135,7 @@ import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
 

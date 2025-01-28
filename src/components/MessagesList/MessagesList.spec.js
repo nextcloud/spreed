@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 
 import MessagesList from './MessagesList.vue'
 
-import { ATTENDEE } from '../../constants.js'
+import { ATTENDEE } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
 
 const fakeTimestamp = (value) => new Date(value).getTime() / 1000

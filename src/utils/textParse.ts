@@ -5,7 +5,7 @@
 
 import { getBaseUrl } from '@nextcloud/router'
 
-import { MENTION } from '../constants.js'
+import { MENTION } from '../constants.ts'
 import type { ChatMessage, Mention } from '../types/index.ts'
 
 /**

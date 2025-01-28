@@ -11,7 +11,7 @@ import { generateUrl } from '@nextcloud/router'
 
 import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
-import { ATTENDEE } from '../constants.js'
+import { ATTENDEE } from '../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../services/avatarService.ts'
 import { searchPossibleMentions } from '../services/mentionsService.ts'
 import type { ChatMention } from '../types/index.ts'

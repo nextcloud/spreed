@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const dialInInfo = ref(t('spreed', 'Loading …'))
 const meetingId = computed(() => readableNumber(props.conversation.token))
-const attendeePin = computed(() => readableNumber(props.conversation.attendeePin))
+const attendeePin = computed(() => readableNumber(props.conversation.attendeePin!))
 
 onMounted(() => {
 	EventBus.on('signaling-settings-updated', setDialInInfoFromSettings)

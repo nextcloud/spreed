@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
 import actorStore from './actorStore.js'
-import { PARTICIPANT } from '../constants.js'
+import { PARTICIPANT } from '../constants.ts'
 
 describe('actorStore', () => {
 	let localVue = null

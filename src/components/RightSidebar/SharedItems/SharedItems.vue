@@ -51,7 +51,7 @@ import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/Fi
 import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
 import Poll from '../../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
 
-import { SHARED_ITEM } from '../../../constants.js'
+import { SHARED_ITEM } from '../../../constants.ts'
 
 export default {
 	name: 'SharedItems',

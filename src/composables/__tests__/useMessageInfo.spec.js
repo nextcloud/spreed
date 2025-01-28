@@ -5,7 +5,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
 
-import { ATTENDEE, CONVERSATION } from '../../constants.js'
+import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'

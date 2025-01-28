@@ -15,7 +15,7 @@ import storeConfig from './storeConfig.js'
 import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE, CHAT,
-} from '../constants.js'
+} from '../constants.ts'
 import {
 	fetchNoteToSelfConversation,
 } from '../services/conversationsService.js'

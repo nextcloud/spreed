@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { Component } from 'vue'
+import type { CSSProperties, Component } from 'vue'
 
 import { isRTL } from '@nextcloud/l10n'
 
@@ -45,6 +45,12 @@ const enableTransition = ref(false)
 
 /** Index of the active tab for the transition effect */
 const activeIndex = computed(() => props.tabs.findIndex(tab => tab.id === props.active))
+/** Inline styles to shift tabs */
+const tabStyles = computed<CSSProperties | undefined>(() => {
+	return activeIndex.value !== -1
+		? { transform: `translateX(${(isRTLDirection ? 1 : -1) * activeIndex.value * 100}%)` }
+		: undefined
+})
 
 /**
  * Whether the tab is active
@@ -130,7 +136,7 @@ function handleTabsAfterClosed() {
 					:inert="!isActive(tab.id)"
 					:aria-hidden="!isActive(tab.id)"
 					:aria-labelledby="getRefId('tab', tab.id)"
-					:style="activeIndex !== -1 ? `transform: translateX(${(isRTLDirection ? 1 : -1) * activeIndex * 100}%)` : ''">
+					:style="tabStyles">
 					<slot :name="`tab-panel:${tab.id}`" />
 				</div>
 			</div>

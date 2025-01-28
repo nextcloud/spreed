@@ -12,7 +12,7 @@ import {
 	generateOcsUrl,
 } from '@nextcloud/router'
 
-import { PARTICIPANT } from '../constants.js'
+import { PARTICIPANT } from '../constants.ts'
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,

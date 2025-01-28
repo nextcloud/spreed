@@ -55,7 +55,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, AVATAR } from '../../../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 

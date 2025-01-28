@@ -2,8 +2,10 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import type { AxiosError } from '@nextcloud/axios'
+
 import type { components, operations } from './openapi/openapi-full.ts'
-import { TASK_PROCESSING } from '../constants.js'
+import { TASK_PROCESSING } from '../constants.ts'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>
@@ -16,6 +18,13 @@ type ApiResponseUnwrapped<T> = Promise<{
 			meta: components['schemas']['OCSMeta']
 			data: T
 		}
+	}
+}>
+
+export type ApiErrorResponse<T = null> = AxiosError<{
+	ocs: {
+		meta: components['schemas']['OCSMeta']
+		data: T
 	}
 }>
 
@@ -222,6 +231,8 @@ export type votePollParams = Required<operations['poll-vote-poll']>['requestBody
 export type votePollResponse = ApiResponse<operations['poll-vote-poll']['responses'][200]['content']['application/json']>
 export type closePollResponse = ApiResponse<operations['poll-close-poll']['responses'][200]['content']['application/json']>
 export type deletePollDraftResponse = ApiResponse<operations['poll-close-poll']['responses'][202]['content']['application/json']>
+
+export type requiredPollParams = Omit<createPollParams, 'draft'>
 
 // Mentions
 export type ChatMention = components['schemas']['ChatMentionSuggestion']

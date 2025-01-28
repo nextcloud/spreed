@@ -54,7 +54,7 @@ import LoadingComponent from '../../LoadingComponent.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
-import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { callSIPDialOut } from '../../../services/callsService.js'
 import { createPrivateConversation } from '../../../services/conversationsService.js'
 import { addParticipant } from '../../../services/participantsService.js'

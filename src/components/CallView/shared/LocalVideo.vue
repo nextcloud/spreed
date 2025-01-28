@@ -73,7 +73,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../../constants.js'
+import { AVATAR } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'

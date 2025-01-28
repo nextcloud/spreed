@@ -29,7 +29,7 @@ import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
-import { PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {

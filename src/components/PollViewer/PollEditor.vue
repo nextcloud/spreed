@@ -131,11 +131,11 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { useStore } from '../../composables/useStore.js'
-import { POLL } from '../../constants.js'
+import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
-import type { createPollParams } from '../../types/index.ts'
+import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 
@@ -157,8 +157,8 @@ const store = useStore()
 const pollsStore = usePollsStore()
 
 const isOpenedFromDraft = ref(false)
-const pollOption = ref(null)
-const pollImport = ref(null)
+const pollOption = ref<InstanceType<typeof NcTextField>[] | null>(null)
+const pollImport = ref<HTMLInputElement | null>(null)
 
 const pollForm = reactive<createPollParams>({
 	question: '',
@@ -210,7 +210,7 @@ function deleteOption(index: number) {
 function addOption() {
 	pollForm.options.push('')
 	nextTick(() => {
-		pollOption.value.at(-1).focus()
+		pollOption.value!.at(-1).focus()
 	})
 }
 
@@ -238,8 +238,18 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
 		isOpenedFromDraft.value = true
 	}
 
-	if (id && pollsStore.drafts[props.token][id]) {
-		fillPollForm(pollsStore.drafts[props.token][id])
+	if (id === null) {
+		return
+	}
+
+	const draft = pollsStore.drafts[props.token][id]
+	if (draft) {
+		fillPollForm({
+			question: draft.question,
+			options: [...draft.options],
+			resultMode: draft.resultMode,
+			maxVotes: draft.maxVotes,
+		})
 	}
 }
 
@@ -247,7 +257,7 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean) {
  * Call native input[type='file'] to import a file
  */
 function triggerImport() {
-	pollImport.value.click()
+	pollImport.value!.click()
 }
 
 /**
@@ -255,7 +265,8 @@ function triggerImport() {
  * @param event import event
  */
 function importPoll(event: Event) {
-	if (!(event.target as HTMLInputElement).files?.[0]) {
+	const file = (event.target as HTMLInputElement).files?.[0]
+	if (!file) {
 		return
 	}
 
@@ -270,17 +281,15 @@ function importPoll(event: Event) {
 		}
 	}
 
-	reader.readAsText((event.target as HTMLInputElement).files[0])
+	reader.readAsText(file)
 }
 
 /**
  * Insert data into form fields
  * @param payload data to fill with
  */
-function fillPollForm(payload: createPollParams) {
-	for (const key of Object.keys(pollForm)) {
-		pollForm[key] = payload[key]
-	}
+function fillPollForm(payload: requiredPollParams) {
+	Object.assign(pollForm, payload)
 }
 
 /**

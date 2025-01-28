@@ -17,7 +17,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import Conversation from './Conversation.vue'
 
 import router from '../../../__mocks__/router.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcButton } from '../../../test-helpers.js'
