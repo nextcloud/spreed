@@ -323,6 +323,7 @@ OC.L10N.register(
     "Audio" : "Oudio",
     "Other" : "Ander",
     "Group" : "Groep",
+    "Please reload the page." : "Herlaai asseblief die bladsy.",
     "Do not disturb" : "Moenie pla nie",
     "Away" : "Weg",
     "Default" : "Verstek",
