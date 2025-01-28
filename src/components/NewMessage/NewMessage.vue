@@ -80,7 +80,7 @@
 					:menu-container="containerElement"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
-					dir="auto"
+					:dir="text ? 'auto' : undefined"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
@@ -1000,7 +1000,7 @@ export default {
 	&__emoji-picker {
 		position: absolute;
 		bottom: var(--border-width-input-focused, 2px);
-		left: var(--border-width-input-focused, 2px);
+		inset-inline-start: var(--border-width-input-focused, 2px);
 		z-index: 1;
 
 		:deep(.button-vue) {
@@ -1056,8 +1056,4 @@ export default {
 	}
 }
 
-// Hardcode to prevent RTL affecting on user mentions
-:deep(.mention-bubble) {
-	direction: ltr;
-}
 </style>

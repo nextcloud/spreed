@@ -44,7 +44,7 @@
 					tabindex="0"
 					:title="countDownWarningText"
 					:aria-label="countDownWarningText">
-					<span>{{ charactersCountDown }}</span>
+					<span class="counter__numeric">{{ charactersCountDown }}</span>
 				</div>
 			</template>
 			<NcButton v-if="!editing && editable"
@@ -250,7 +250,7 @@ export default {
 	align-items: flex-end;
 
 	&__edit {
-		margin-left: var(--default-clickable-area);
+		margin-inline-start: var(--default-clickable-area);
 	}
 
 	&__output {
@@ -273,7 +273,7 @@ export default {
 .spinner {
 	width: var(--default-clickable-area);
 	height: var(--default-clickable-area);
-	margin-left: var(--default-clickable-area);
+	margin-inline-start: var(--default-clickable-area);
 	flex-shrink: 0;
 }
 
@@ -284,9 +284,13 @@ export default {
 	border-radius: var(--border-radius-pill);
 	position: absolute;
 	top: 0;
-	right: 0;
+	inset-inline-end: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	&__numeric {
+		direction: ltr;
+	}
 }
 </style>

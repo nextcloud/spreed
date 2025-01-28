@@ -258,7 +258,7 @@ export default {
 	padding: 0;
 	&--system {
 		flex-direction: column;
-		padding-left: calc($messages-avatar-width);
+		padding-inline-start: calc($messages-avatar-width);
 	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);

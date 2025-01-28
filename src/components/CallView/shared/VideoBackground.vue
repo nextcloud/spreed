@@ -40,6 +40,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable csstools/use-logical */
 .video-background {
 	position: absolute;
 	left: 0;

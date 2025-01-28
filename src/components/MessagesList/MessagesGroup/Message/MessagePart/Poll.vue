@@ -191,7 +191,7 @@ export default {
 		font-weight: bold;
 		white-space: normal;
 		word-wrap: anywhere;
-		margin-right: var(--default-clickable-area);
+		margin-inline-end: var(--default-clickable-area);
 
 		:deep(.material-design-icon) {
 			margin-bottom: auto;
@@ -206,7 +206,7 @@ export default {
 	& &__delete-draft {
 		position: absolute;
 		top: var(--default-grid-baseline);
-		right: var(--default-grid-baseline);
+		inset-inline-end: var(--default-grid-baseline);
 	}
 }
 
