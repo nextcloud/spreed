@@ -157,6 +157,8 @@ export default {
 
 			loadingOldMessages: false,
 
+			loadingNewMessages: false,
+
 			isInitialisingMessages: false,
 
 			isFocusingMessage: false,
@@ -281,11 +283,6 @@ export default {
 			},
 		},
 
-		token(newToken, oldToken) {
-			// Expire older messages when navigating to another conversation
-			this.$store.dispatch('easeMessageList', { token: oldToken })
-		},
-
 		messagesList: {
 			immediate: true,
 			handler(newMessages, oldMessages) {
@@ -299,7 +296,7 @@ export default {
 
 				// scroll to bottom if needed
 				this.scrollToBottom({ smooth: false })
-
+				console.log(`${newMessages.length} items - range ${newMessages.at(0)?.id} - ${newMessages.at(-1)?.id}`)
 				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 					this.$nextTick(() => {
 						this.updateTasksCount()
@@ -692,8 +689,9 @@ export default {
 
 				this.isInitialisingMessages = false
 
-				// get new messages
-				await this.lookForNewMessages(token)
+				if (!this.hasMoreMessagesToLoad) {
+					await this.lookForNewMessages(token)
+				}
 
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
@@ -712,7 +710,7 @@ export default {
 				return
 			}
 
-			await this.getNewMessages(token)
+			await this.pollNewMessages(token)
 		},
 
 		async getMessageContext(token, messageId) {
@@ -747,7 +745,7 @@ export default {
 		},
 
 		/**
-		 * Get messages history.
+		 * Get messages history (backward).
 		 *
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
@@ -759,22 +757,23 @@ export default {
 			// Make the request
 			this.loadingOldMessages = true
 			try {
-				debugTimer.start(`${this.token} | fetch history`)
+				debugTimer.start(`${this.token} | fetch history (backward)`)
 				await this.$store.dispatch('fetchMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
+					lookIntoFuture: CHAT.FETCH_OLD,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
-				debugTimer.end(`${this.token} | fetch history`, 'status 200')
+				debugTimer.end(`${this.token} | fetch history (backward)`, 'status 200')
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
-					debugTimer.end(`${this.token} | fetch history`, 'cancelled')
+					debugTimer.end(`${this.token} | fetch history (backward)`, 'cancelled')
 					console.debug('The request has been canceled', exception)
 				}
 				if (exception?.response?.status === 304) {
 					// 304 - Not modified
-					debugTimer.end(`${this.token} | fetch history`, 'status 304')
+					debugTimer.end(`${this.token} | fetch history (backward)`, 'status 304')
 					this.stopFetchingOldMessages = true
 				}
 			}
@@ -782,11 +781,51 @@ export default {
 		},
 
 		/**
+		 * Get message history (forward)
+		 *
+		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
+		 */
+		async getNewMessages(includeLastKnown) {
+			if (!this.hasMoreMessagesToLoad) {
+				// End of the chat reached, no more messages to load
+				return
+			}
+			// Make the request
+			this.loadingNewMessages = true
+			try {
+				debugTimer.start(`${this.token} | fetch history (forward)`)
+				await this.$store.dispatch('fetchMessages', {
+					token: this.token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					includeLastKnown,
+					lookIntoFuture: CHAT.FETCH_NEW,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
+				})
+				debugTimer.end(`${this.token} | fetch history (forward)`, 'status 200')
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					debugTimer.end(`${this.token} | fetch history (forward)`, 'cancelled')
+					console.debug('The request has been canceled', exception)
+				}
+				if (exception?.response?.status === 304) {
+					// 304 - Not modified
+					debugTimer.end(`${this.token} | fetch history (forward)`, 'status 304')
+					this.stopFetchingOldMessages = true
+				}
+			}
+			this.loadingNewMessages = false
+
+			if (!this.hasMoreMessagesToLoad) {
+				await this.lookForNewMessages(this.token)
+			}
+		},
+
+		/**
 		 * Creates a long polling request for a new message.
 		 *
 		 * @param token token of conversation where a method was called
 		 */
-		async getNewMessages(token) {
+		async pollNewMessages(token) {
 			if (this.destroying) {
 				return
 			}
@@ -819,7 +858,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages(token)
+						this.pollNewMessages(token)
 					}, 500)
 					return
 				}
@@ -833,13 +872,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages(token)
+					this.pollNewMessages(token)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages(token)
+				this.pollNewMessages(token)
 			}, 500)
 		},
 
@@ -931,6 +970,22 @@ export default {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
 						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+					})
+				}
+				this.setChatScrolledToBottom(false, { auto: true })
+			} else if ((scrollHeight > clientHeight && (scrollHeight - clientHeight - scrollTop < 800) && this.isScrolling === 'down')
+				|| skipHeightCheck) {
+				if (this.loadingNewMessages || !this.hasMoreMessagesToLoad) {
+					// already loading, don't do it twice
+					return
+				}
+				this.displayMessagesLoader = true
+				await this.getNewMessages(false)
+				this.displayMessagesLoader = false
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					// scroll to previous position + added height
+					this.$refs.scroller.scrollTo({
+						top: scrollTop,
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
@@ -1105,6 +1160,11 @@ export default {
 
 				let newTop
 				if (options?.force) {
+					if (this.$route?.hash?.startsWith('#message_')) {
+						// drop the hash, route change will handle scrolling
+						this.$router.replace({ ...this.$route, hash: '' })
+						return
+					}
 					newTop = this.$refs.scroller.scrollHeight
 					this.setChatScrolledToBottom(true)
 				} else if (!this.isSticky) {
@@ -1221,16 +1281,33 @@ export default {
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages(this.token)
+			this.pollNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
+			if (from.name === 'conversation' && from.params.token !== to?.params?.token) {
+				// Navigate from conversation, check if chat should be eased / purged
+				this.checkMessagesListOnLeave()
+			}
+
 			if (from.name === 'conversation' && to.name === 'conversation'
 				&& from.params.token === to.params.token
 				&& from.hash !== to.hash) {
-
-				// the hash changed, need to focus/highlight another message
-				if (to.hash && to.hash.startsWith('#message_')) {
+				// Same conversation, different hash
+				if (from.hash?.startsWith('#message_') && !to.hash) {
+					// the hash is cleared
+					const lastMessageId = this.conversation.lastMessage.id
+					if (this.messagesList.find(m => m.id === lastMessageId)) {
+						this.scrollToBottom({ smooth: false })
+					} else {
+						this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+						this.$store.dispatch('purgeMessagesStore', this.token)
+						this.$nextTick(async () => {
+							await this.handleStartGettingMessagesPreconditions(this.token)
+						})
+					}
+				} else if (to.hash?.startsWith('#message_')) {
+					// the hash changed, need to focus/highlight another message
 					const focusedId = this.getMessageIdFromHash(to.hash)
 					if (this.messagesList.find(m => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
@@ -1241,19 +1318,27 @@ export default {
 							this.focusMessage(focusedId, true)
 						}, 2)
 					} else {
-						// Update environment around context to fill the gaps
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: focusedId,
+						this.isFocusingMessage = true
+						this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+						this.$store.dispatch('purgeMessagesStore', this.token)
+						this.$nextTick(async () => {
+							await this.handleStartGettingMessagesPreconditions(this.token)
+							this.setChatScrolledToBottom(false, { auto: true })
 						})
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: focusedId,
-						})
-						await this.getMessageContext(this.token, focusedId)
-						this.focusMessage(focusedId, true)
 					}
 				}
+			}
+		},
+
+		checkMessagesListOnLeave() {
+			if (this.messagesList.find(m => m.id === this.conversation.lastReadMessage)) {
+				// Last read message is loaded, no need to re-fetch chat on next join
+				// Expire older messages when navigating to another conversation
+				this.$store.dispatch('easeMessageList', { token: this.token })
+			} else {
+				// Chat was in 'history' mode, need to initialize again
+				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+				this.$store.dispatch('purgeMessagesStore', this.token)
 			}
 		},
 
@@ -1306,6 +1391,15 @@ export default {
 				if (this.isChatBeginningReached) {
 					// Remove event listener as it needs to be triggered
 					// only when it's not confirmed that the chat beginning is reached
+					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
+					return
+				}
+
+				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else if (event.deltaY > 0) {
+				if (!this.hasMoreMessagesToLoad) {
+					// Remove event listener as it needs to be triggered
+					// only when it's not confirmed that the chat end is reached
 					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
 					return
 				}
