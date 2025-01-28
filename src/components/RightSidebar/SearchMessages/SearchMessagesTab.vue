@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import debounce from 'debounce'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import type { Route } from 'vue-router'
 
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
@@ -29,6 +29,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
+import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.js'
@@ -49,7 +50,25 @@ const emit = defineEmits<{
 	(event: 'close'): void
 }>()
 
+const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
+const participants = computed<UserFilterObject>(() => {
+	return store.getters.participantsList(token.value)
+		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
+		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
+			id: actorId,
+			displayName,
+			isNoUser: actorType !== 'users',
+			user: actorId,
+			disableMenu: true,
+			showUserStatus: false,
+		}))
+})
+
+// initialize navigation
+const searchMessagesTab = ref(null)
 const searchBox = ref(null)
+const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
+
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
 {
@@ -76,19 +95,6 @@ const store = useStore()
 const isInCall = useIsInCall()
 
 const token = computed(() => store.getters.getToken())
-const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
-const participants = computed<UserFilterObject>(() => {
-	return store.getters.participantsList(token.value)
-		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
-			id: actorId,
-			displayName,
-			isNoUser: actorType !== 'users',
-			user: actorId,
-			disableMenu: true,
-			showUserStatus: false,
-		}))
-})
 const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
 const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
 
@@ -172,8 +178,9 @@ async function fetchSearchResults(isNew = true) {
 	isFetchingResults.value = true
 
 	try {
-		// cancel the previous search request
+		// cancel the previous search request and reset the navigation
 		cancelSearchFn()
+		resetNavigation()
 
 		const { request, cancel } = CancelableRequest(searchMessages) as SearchMessageCancelableRequest
 		cancelSearchFn = cancel
@@ -227,6 +234,7 @@ async function fetchSearchResults(isNew = true) {
 				}
 			})
 			)
+			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
 		if (CancelableRequest.isCancel(exception)) {
@@ -240,18 +248,27 @@ async function fetchSearchResults(isNew = true) {
 }
 
 const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
+
+watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
+
+watch(searchText, (value) => {
+	if (value.trim().length === 0) {
+		searchResults.value = []
+		searchCursor.value = 0
+		isSearchExhausted.value = false
+	}
+})
 </script>
 
 <template>
-	<div class="search-messages-tab">
+	<div ref="searchMessagesTab" class="search-messages-tab">
 		<div class="search-form">
 			<div class="search-form__main">
 				<div class="search-form__search-box-wrapper">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:placeholder-text="t('spreed', 'Search messages …')"
-						:is-focused.sync="isFocused"
-						@input="debounceFetchSearchResults" />
+						:is-focused.sync="isFocused" />
 					<NcButton :pressed.sync="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
@@ -269,8 +286,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:placeholder="t('spreed', 'From User')"
 							user-select
 							:loading="!participantsInitialised"
-							:options="participants"
-							@update:modelValue="debounceFetchSearchResults" />
+							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
 								v-model="sinceDate"
@@ -280,8 +296,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:step="1"
 								:max="new Date()"
 								:aria-label="t('spreed', 'Since')"
-								:label="t('spreed', 'Since')"
-								@update:modelValue="debounceFetchSearchResults" />
+								:label="t('spreed', 'Since')" />
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
 								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
@@ -290,8 +305,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:max="new Date()"
 								:aria-label="t('spreed', 'Until')"
 								:label="t('spreed', 'Until')"
-								:minute-step="1"
-								@update:modelValue="debounceFetchSearchResults" />
+								:minute-step="1" />
 						</div>
 					</div>
 				</TransitionWrapper>
