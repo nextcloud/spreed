@@ -560,12 +560,12 @@ describe('messagesStore', () => {
 	})
 
 	describe('temporary messages', () => {
-		let mockDate
-
 		beforeEach(() => {
-			mockDate = new Date('2020-01-01 20:00:00')
-			jest.spyOn(global, 'Date')
-				.mockImplementation(() => mockDate)
+			jest.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
+		})
+
+		afterEach(() => {
+			jest.useRealTimers()
 		})
 
 		test('adds temporary message to the list', () => {
