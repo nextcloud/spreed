@@ -658,9 +658,7 @@ describe('Message.vue', () => {
 			store = new Store(testStoreConfig)
 
 			// need to mock the date to be within 6h
-			const mockDate = new Date('2020-05-07 10:00:00')
-			jest.spyOn(global.Date, 'now')
-				.mockImplementation(() => mockDate)
+			jest.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -694,6 +692,8 @@ describe('Message.vue', () => {
 
 			expect(wrapper.vm.isDeleting).toBe(false)
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
+
+			jest.useRealTimers()
 		})
 	})
 

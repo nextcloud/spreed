@@ -975,9 +975,7 @@ describe('conversationsStore', () => {
 
 		test('updates last activity', () => {
 			const mockDate = new Date('2020-01-01')
-
-			jest.spyOn(global, 'Date')
-				.mockImplementation(() => mockDate)
+			jest.useFakeTimers().setSystemTime(mockDate)
 
 			testConversation.lastActivity = 1200300
 

@@ -23,8 +23,13 @@ describe('formattedTime', () => {
 })
 
 describe('futureRelativeTime', () => {
-	const fixedDate = new Date('2024-01-01T00:00:00Z')
-	jest.spyOn(Date, 'now').mockImplementation(() => fixedDate.getTime())
+	beforeEach(() => {
+		jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00Z'))
+	})
+
+	afterEach(() => {
+		jest.useRealTimers()
+	})
 
 	it('should return the correct string for time in hours', () => {
 		const timeInFuture = Date.now() + (2 * 60 * 60 * 1000) // 2 hours from now

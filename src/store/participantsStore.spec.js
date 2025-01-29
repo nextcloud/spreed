@@ -866,6 +866,8 @@ describe('participantsStore', () => {
 				restoreConsole = mockConsole(['error', 'debug'])
 			})
 			afterEach(() => {
+				jest.useRealTimers()
+
 				expect(testStoreConfig.actions.setCurrentParticipant).not.toHaveBeenCalled()
 				expect(testStoreConfig.actions.addConversation).not.toHaveBeenCalled()
 				expect(sessionStorage.setItem).not.toHaveBeenCalled()
@@ -883,8 +885,7 @@ describe('participantsStore', () => {
 				participantData.lastPing = mockDate.getTime() / 1000 - lastPingAge
 				participantData.inCall = inCall
 
-				jest.spyOn(global, 'Date')
-					.mockImplementation(() => mockDate)
+				jest.useFakeTimers().setSystemTime(mockDate)
 
 				const error = generateOCSErrorResponse({ payload: participantData, status: 409 })
 				joinConversation.mockRejectedValue(error)
