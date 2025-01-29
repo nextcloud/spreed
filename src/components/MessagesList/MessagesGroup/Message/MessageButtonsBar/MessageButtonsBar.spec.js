@@ -267,9 +267,8 @@ describe('MessageButtonsBar.vue', () => {
 		describe('delete action', () => {
 			test('emits delete event', async () => {
 				// need to mock the date to be within 6h
-				const mockDate = new Date('2020-05-07 10:00:00')
-				jest.spyOn(global.Date, 'now')
-					.mockImplementation(() => mockDate)
+				jest.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
+
 				useMessageInfoSpy.mockReturnValue({
 					isDeleteable: computed(() => true),
 				})
@@ -289,6 +288,8 @@ describe('MessageButtonsBar.vue', () => {
 				await actionButton.find('button').trigger('click')
 
 				expect(wrapper.emitted().delete).toBeTruthy()
+
+				jest.useRealTimers()
 			})
 
 			/**
