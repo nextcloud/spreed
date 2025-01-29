@@ -3,37 +3,41 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { showWarning, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 /**
-	* Helper to warn the user if they are talking while muted.
-	*
-	* The WebRTC helper emits events when it detects that the user is speaking
-	* while muted; this helper shows a warning to the user based on those
-	* events.
-	*
-	* The warning is not immediately shown, though; the WebRTC helper flags
-	* even short sounds as "speaking" (provided they are strong enough), so to
-	* prevent unnecesary warnings the user has to speak for a few seconds for
-	* the warning to be shown. On the other hand, the warning is hidden as soon
-	* as the WebRTC helper detects that the speaking has stopped; in this case
-	* there is no delay, as the helper itself has a delay before emitting the
-	* event.
-	*
-	* The way of warning the user changes depending on whether Talk is visible
-	* or not; if it is visible the warning is shown in the Talk UI, but if it
-	* is not it is shown using a browser notification, which will be visible
-	* to the user even if the browser window is not in the foreground (provided
-	* the user granted the permissions to receive notifications from the site).
-	*
-	* @param {object} LocalMediaModel the model that emits "speakingWhileMuted"
-	* events.
-	* "setSpeakingWhileMutedNotification" method.
-	*/
+ * Helper to warn the user if they are talking while muted.
+ *
+ * The WebRTC helper emits events when it detects that the user is speaking
+ * while muted; this helper shows a warning to the user based on those
+ * events.
+ *
+ * The warning is not immediately shown, though; the WebRTC helper flags
+ * even short sounds as "speaking" (provided they are strong enough), so to
+ * prevent unnecessary warnings the user has to speak for a few seconds for
+ * the warning to be shown. On the other hand, the warning is hidden as soon
+ * as the WebRTC helper detects that the speaking has stopped; in this case
+ * there is no delay, as the helper itself has a delay before emitting the
+ * event.
+ *
+ * The way of warning the user changes depending on whether Talk is visible
+ * or not; if it is visible the warning is shown in the Talk UI, but if it
+ * is not it is shown using a browser notification, which will be visible
+ * to the user even if the browser window is not in the foreground (provided
+ * the user granted the permissions to receive notifications from the site).
+ *
+ * @param {object} LocalMediaModel the model that emits "speakingWhileMuted"
+ * events.
+ */
 export default function SpeakingWhileMutedWarner(LocalMediaModel) {
 	this._model = LocalMediaModel
-	this._toast = null
+	this._startedSpeakingTimeout = undefined
+	this._startedShowWarningTimeout = undefined
+
+	/** Public properties to use in Vue components */
+	this.message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you')
+	this.showPopup = false
 
 	this._handleSpeakingWhileMutedChangeBound = this._handleSpeakingWhileMutedChange.bind(this)
 
@@ -42,6 +46,7 @@ export default function SpeakingWhileMutedWarner(LocalMediaModel) {
 SpeakingWhileMutedWarner.prototype = {
 
 	destroy() {
+		this._hideWarning()
 		this._model.off('change:speakingWhileMuted', this._handleSpeakingWhileMutedChangeBound)
 	},
 
@@ -71,40 +76,28 @@ SpeakingWhileMutedWarner.prototype = {
 	},
 
 	_showWarning() {
-		const message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you')
-
 		if (!document.hidden) {
-			this._showNotification(message)
+			this.showPopup = true
 		} else {
 			this._pendingBrowserNotification = true
 
-			this._showBrowserNotification(message).catch(function() {
+			this._showBrowserNotification().catch(function() {
 				if (this._pendingBrowserNotification) {
 					this._pendingBrowserNotification = false
 
-					this._showNotification(message)
+					this.showPopup = true
 				}
 			}.bind(this))
 		}
+
+		this._startedShowWarningTimeout = setTimeout(function() {
+			delete this._startedShowWarningTimeout
+
+			this._hideWarning()
+		}.bind(this), TOAST_DEFAULT_TIMEOUT)
 	},
 
-	_showNotification(message) {
-		if (this._toast) {
-			return
-		}
-
-		this._toast = showWarning(message, {
-			timeout: TOAST_PERMANENT_TIMEOUT,
-			onClick: () => {
-				this._toast.hideToast()
-			},
-			onRemove: () => {
-				this._toast = null
-			}
-		})
-	},
-
-	_showBrowserNotification(message) {
+	_showBrowserNotification() {
 		return new Promise(function(resolve, reject) {
 			if (this._browserNotification) {
 				resolve()
@@ -127,7 +120,7 @@ SpeakingWhileMutedWarner.prototype = {
 
 			if (Notification.permission === 'granted') {
 				this._pendingBrowserNotification = false
-				this._browserNotification = new Notification(message)
+				this._browserNotification = new Notification(this.message)
 				resolve()
 
 				return
@@ -137,7 +130,7 @@ SpeakingWhileMutedWarner.prototype = {
 				if (permission === 'granted') {
 					if (this._pendingBrowserNotification) {
 						this._pendingBrowserNotification = false
-						this._browserNotification = new Notification(message)
+						this._browserNotification = new Notification(this.message)
 					}
 					resolve()
 				} else {
@@ -150,14 +143,19 @@ SpeakingWhileMutedWarner.prototype = {
 	_hideWarning() {
 		this._pendingBrowserNotification = false
 
-		if (this._toast) {
-			this._toast.hideToast()
+		if (this.showPopup) {
+			this.showPopup = false
 		}
 
 		if (this._browserNotification) {
 			this._browserNotification.close()
 
 			this._browserNotification = null
+		}
+
+		if (this._startedShowWarningTimeout) {
+			clearTimeout(this._startedShowWarningTimeout)
+			delete this._startedShowWarningTimeout
 		}
 	},
 
