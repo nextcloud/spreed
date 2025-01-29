@@ -10,7 +10,7 @@
 		:resizable="false"
 		:h="presenterOverlaySize"
 		:w="presenterOverlaySize"
-		:x="10"
+		:x="isRTL ? parentWidth - presenterOverlaySize - 10 : 10"
 		:y="10"
 		@dragging="isDragging = true"
 		@dragstop="isDragging = false">
@@ -50,11 +50,12 @@
 
 <script>
 
+import { ref } from 'vue'
 import VueDraggableResizable from 'vue-draggable-resizable'
 
 import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 
-import { t } from '@nextcloud/l10n'
+import { t, isRTL } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -106,6 +107,14 @@ export default {
 
 	emits: ['click'],
 
+	setup() {
+		const parentWidth = ref(document.getElementById('videos').getBoundingClientRect().width)
+		return {
+			parentWidth,
+			isRTL,
+		}
+	},
+
 	data() {
 		return {
 			resizeObserver: null,
@@ -150,10 +159,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .presenter-overlay {
 	position: absolute;
 	top: 0;
+	/* stylelint-disable-next-line csstools/use-logical */
 	left: 0;
 }
 
@@ -181,7 +190,7 @@ export default {
 	position: absolute !important;
 	opacity: .7;
 	bottom: 48px;
-	right: 0;
+	inset-inline-end: 0;
 
 	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
