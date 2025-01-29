@@ -8,10 +8,7 @@
 		<Portal>
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
-				:style="{
-					right: position.right + 'px',
-					bottom: position.bottom + 'px'
-				}">
+				:style="computedStyle">
 				<div class="viewer-overlay__collapse"
 					:class="{ collapsed: isCollapsed }">
 					<NcButton type="secondary"
@@ -105,7 +102,7 @@ import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
-import { t } from '@nextcloud/l10n'
+import { t, isRTL } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -194,6 +191,7 @@ export default {
 			observer: null,
 			position: {
 				right: 0,
+				left: 0,
 				bottom: 0,
 			},
 		}
@@ -210,6 +208,13 @@ export default {
 
 		showLocalScreen() {
 			return this.hasLocalScreen && this.screens[0] === localCallParticipantModel.attributes.peerId
+		},
+
+		computedStyle() {
+			return {
+				[isRTL() ? 'left' : 'right']: this.position[isRTL() ? 'left' : 'right'] + 'px',
+				bottom: this.position.bottom + 'px'
+			}
 		},
 	},
 
@@ -233,8 +238,12 @@ export default {
 		},
 
 		updatePosition() {
-			const { right, bottom } = this.$refs.ghost.getBoundingClientRect()
-			this.position.right = window.innerWidth - right
+			const { left, right, bottom } = this.$refs.ghost.getBoundingClientRect()
+			if (isRTL()) {
+				this.position.left = left
+			} else {
+				this.position.right = window.innerWidth - right
+			}
 			this.position.bottom = window.innerHeight - bottom
 		},
 	},
@@ -242,12 +251,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .viewer-overlay-ghost {
 	position: absolute;
 	bottom: 8px;
-	right: 8px;
-	left: 0;
+	inset-inline: 0 8px;
 }
 
 .viewer-overlay {
@@ -270,7 +277,7 @@ export default {
 .viewer-overlay__collapse {
 	position: absolute;
 	top: 8px;
-	right: 8px;
+	inset-inline-end: 8px;
 	z-index: 100;
 }
 
@@ -286,7 +293,7 @@ export default {
 .video-overlay__top-bar {
 	position: absolute;
 	top: 8px;
-	left: 8px;
+	inset-inline-start: 8px;
 	z-index: 100;
 }
 
@@ -309,13 +316,13 @@ export default {
 	max-height: calc(var(--max-width) * var(--aspect-ratio));
 	/* Note: because of transition it always has position absolute on animation */
 	bottom: 0;
-	right: 0;
+	inset-inline-end: 0;
 }
 
 .viewer-overlay__local-video {
 	position: absolute;
 	bottom: 8px;
-	right: 8px;
+	inset-inline-end: 8px;
 	width: 25%;
 	height: 25%;
 	overflow: hidden;

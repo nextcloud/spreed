@@ -806,7 +806,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
-/* stylelint-disable csstools/use-logical */
+
 #call-container {
 	width: 100%;
 	height: 100%;
@@ -867,7 +867,7 @@ export default {
 
 .local-video {
 	position: absolute;
-	right: 0;
+	inset-inline-end: 0;
 	bottom: 0;
 	width: 300px;
 	height: 250px;

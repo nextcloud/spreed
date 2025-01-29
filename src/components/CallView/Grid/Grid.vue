@@ -12,10 +12,10 @@
 			:aria-label="stripeButtonTitle"
 			@click="handleClickStripeCollapse">
 			<template #icon>
-				<ChevronDown v-if="stripeOpen"
+				<IconChevronDown v-if="stripeOpen"
 					fill-color="#ffffff"
 					:size="20" />
-				<ChevronUp v-else
+				<IconChevronUp v-else
 					fill-color="#ffffff"
 					:size="20" />
 			</template>
@@ -29,7 +29,8 @@
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
 						<template #icon>
-							<ChevronLeft fill-color="#ffffff"
+							<IconChevronLeft class="bidirectional-icon"
+								fill-color="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
@@ -90,7 +91,8 @@
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
 						<template #icon>
-							<ChevronRight fill-color="#ffffff"
+							<IconChevronRight class="bidirectional-icon"
+								fill-color="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
@@ -111,7 +113,10 @@
 						aria-label="Toggle screenshot mode"
 						@click="screenshotMode = !screenshotMode">
 						<template #icon>
-							<ChevronLeft v-if="!screenshotMode" fill-color="#00FF41" :size="20" />
+							<IconChevronLeft v-if="!screenshotMode"
+								class="bidirectional-icon"
+								fill-color="#00FF41"
+								:size="20" />
 						</template>
 					</NcButton>
 					<div v-if="!screenshotMode" class="dev-mode__data">
@@ -143,10 +148,10 @@
 import debounce from 'debounce'
 import { inject, ref } from 'vue'
 
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
-import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
-import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -179,10 +184,10 @@ export default {
 		NcButton,
 		TransitionWrapper,
 		VideoBottomBar,
-		ChevronRight,
-		ChevronLeft,
-		ChevronUp,
-		ChevronDown,
+		IconChevronDown,
+		IconChevronLeft,
+		IconChevronRight,
+		IconChevronUp,
 	},
 
 	props: {
@@ -958,7 +963,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .grid-main-wrapper {
 	--navigation-position: calc(var(--default-grid-baseline) * 2);
 	position: relative;
@@ -978,7 +982,7 @@ export default {
 	display: flex;
 	position: relative;
 	bottom: 0;
-	left: 0;
+	inset-inline-start: 0;
 }
 
 .grid {
@@ -1028,6 +1032,7 @@ export default {
 
 .dev-mode__title {
 	position: absolute;
+	/* stylelint-disable-next-line csstools/use-logical */
 	left: var(--default-clickable-area);
 	color: #00FF41;
 	z-index: 100;
@@ -1040,14 +1045,17 @@ export default {
 
 .dev-mode__toggle {
 	position: fixed !important;
+	/* stylelint-disable-next-line csstools/use-logical */
 	left: 20px;
 	top: calc(2 * var(--header-height));
 }
 
 .dev-mode__data {
+	direction: ltr;
 	font-family: monospace;
 	position: fixed;
 	color: #00FF41;
+	/* stylelint-disable-next-line csstools/use-logical */
 	left: 20px;
 	top: calc(2 * var(--header-height) + 40px);
 	padding: 5px;
@@ -1082,11 +1090,11 @@ export default {
 		top: calc(50% - var(--default-clickable-area) / 2);
 
 		&__previous {
-			left: calc(var(--default-grid-baseline) * 2);
+			inset-inline-start: calc(var(--default-grid-baseline) * 2);
 		}
 
 		&__next {
-			right: calc(var(--default-grid-baseline) * 2);
+			inset-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
 
@@ -1095,11 +1103,11 @@ export default {
 		top: calc(var(--navigation-position) + var(--grid-gap));
 
 		&__previous {
-			left: var(--navigation-position);
+			inset-inline-start: var(--navigation-position);
 		}
 
 		&__next {
-			right: calc(var(--navigation-position) + var(--grid-gap));
+			inset-inline-end: calc(var(--navigation-position) + var(--grid-gap));
 		}
 	}
 }
@@ -1107,7 +1115,7 @@ export default {
 .stripe--collapse {
 	position: absolute !important;
 	top: calc(-1 * (var(--default-clickable-area) + var(--navigation-position) / 2));
-	right: calc(var(--navigation-position) / 2) ;
+	inset-inline-end: calc(var(--navigation-position) / 2) ;
 }
 
 .stripe--collapse,
