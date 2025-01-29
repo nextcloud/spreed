@@ -38,7 +38,7 @@ const uploadResultCaption = computed(() => {
 		: { class: 'import-list__caption--success', label: t('spreed', 'Uploaded file is verified') }
 })
 
-const importListDescription = t('spreed', 'Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>"email","name"</samp> or just <samp>"email"</samp><br/>- One entry per line (e.g. <samp>"John Doe","john@example.tld"</samp>)',
+const importListDescription = t('spreed', 'Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>"name","email"</samp> or just <samp>"email"</samp><br/>- One entry per line (e.g. <samp>"John Doe","john@example.tld"</samp>)',
 	undefined,
 	undefined, {
 		escape: true,
