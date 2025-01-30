@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-rc.2 – 2025-01-30
+### Added
+- feat(chat): Support mentioning teams
+  [#14259](https://github.com/nextcloud/spreed/issues/14259)
+  [#14260](https://github.com/nextcloud/spreed/issues/14260)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(UI): Fix multiple right-to-left issues
+  [#14235](https://github.com/nextcloud/spreed/issues/14235)
+  [#14256](https://github.com/nextcloud/spreed/issues/14256)
+- fix(meetings): Allow creating conversations when password policy app is enabled
+  [#14227](https://github.com/nextcloud/spreed/issues/14227)
+- fix(calls): Fix multiple false-positives when showing the connection warning
+  [#14252](https://github.com/nextcloud/spreed/issues/14252)
+- fix(bots): Fix installing PHP event bots via an event
+  [#14231](https://github.com/nextcloud/spreed/issues/14231)
+
 ## 21.0.0-rc.1 – 2025-01-23
 ### Added
 - feat(calls): Allow to zoom and pan screenshares in a call
