@@ -25,17 +25,92 @@ describe('AverageStatValue', () => {
 		})
 	})
 
-	test('returns whether there are enough values for a meaningful calculation', () => {
-		const testValues = [100, 200, 150, 123, 30, 50, 22, 33]
-		const stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
-		const stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
+	describe('returns whether there are enough values for a meaningful calculation', () => {
+		test('after creating', () => {
+			const testValues = [100, 200, 150, 123, 30, 50, 22, 33]
+			const stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
+			const stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
 
-		testValues.forEach((val, index) => {
-			stat.add(val)
-			expect(stat.hasEnoughData()).toBe(index >= 2)
+			testValues.forEach((val, index) => {
+				stat.add(val)
+				expect(stat.hasEnoughData()).toBe(index >= 3)
 
-			stat2.add(val)
-			expect(stat2.hasEnoughData()).toBe(index >= 2)
+				stat2.add(val)
+				expect(stat2.hasEnoughData()).toBe(index >= 2)
+			})
+		})
+
+		describe('resetting', () => {
+			let stat
+			let stat2
+
+			const addValues = (values) => {
+				values.forEach(val => {
+					stat.add(val)
+					stat2.add(val)
+				})
+			}
+
+			beforeEach(() => {
+				stat = new AverageStatValue(3, STAT_VALUE_TYPE.CUMULATIVE, 3)
+				stat2 = new AverageStatValue(3, STAT_VALUE_TYPE.RELATIVE, 3)
+			})
+
+			test('before having enough values', () => {
+				addValues([100, 200])
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(false)
+
+				stat.reset()
+				stat2.reset()
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(false)
+
+				addValues([150, 123])
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(false)
+
+				addValues([30])
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(true)
+
+				addValues([50])
+
+				expect(stat.hasEnoughData()).toBe(true)
+				expect(stat2.hasEnoughData()).toBe(true)
+			})
+
+			test('after having enough values', () => {
+				addValues([100, 200, 150, 123])
+
+				expect(stat.hasEnoughData()).toBe(true)
+				expect(stat2.hasEnoughData()).toBe(true)
+
+				stat.reset()
+				stat2.reset()
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(false)
+
+				addValues([30, 50])
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(false)
+
+				addValues([22])
+
+				expect(stat.hasEnoughData()).toBe(false)
+				expect(stat2.hasEnoughData()).toBe(true)
+
+				addValues([33])
+
+				expect(stat.hasEnoughData()).toBe(true)
+				expect(stat2.hasEnoughData()).toBe(true)
+			})
 		})
 	})
 
