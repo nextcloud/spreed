@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "الدخول",
     "Error while verifying uploaded file" : "خطأ أثناء التحقق من الملف المرفوع",
     "Uploaded file is verified" : "تمّ التحقق من الملف المرفوع",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "تنسيق المحتوى هو عبارة عن (CSV) بيانات مفصولٌ بينها بفاصلة:<br/>- سطر الترويسة مطلوب ويجب ان يتطابق مع <samp>\"الإيميل\"،\"الاسم\"</samp> أو فقط <samp>\"الإيميل\"</samp><br/>- إدخالية واحدة في كل سطر (مثال: <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "تمّت إضافة المشاركين بنجاحٍ",
     "Error while adding participants" : "خطأ أثناء إضافة المشاركين",
     "Import a file" : "إستيراد ملف",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "الاتصال الهاتفي SIP ",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "لا تقم بالتنبيه لمشاكل في الأداء في المكالمات التي يزيد عدد المشاركين فيها عن 2",
     "Please try to reload the page" : "رجاءً، قم بتحديد مكان الصفحة",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "تنسيق المحتوى هو عبارة عن (CSV) بيانات مفصولٌ بينها بفاصلة:<br/>- سطر الترويسة مطلوب ويجب ان يتطابق مع <samp>\"الإيميل\"،\"الاسم\"</samp> أو فقط <samp>\"الإيميل\"</samp><br/>- إدخالية واحدة في كل سطر (مثال: <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Next call" : "المكالمة التالية",
     "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة عبر السحابة الموحدة لنكست كلاود. رجاءً، أعِد تحميل الصفحة"
 },

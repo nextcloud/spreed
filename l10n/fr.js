@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "S’identifier",
     "Error while verifying uploaded file" : "Erreur lors de la vérification du fichier téléversé",
     "Uploaded file is verified" : "Le fichier téléversé est vérifié",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Le format du contenu est séparé par des virgules (CSV): <br/>- La ligne d'entête est requise et doit correspondre à <samp> \"email\",\"name\"</samp> ou juste <samp> \"email\" </samp><br/>- Une entrée par ligne  (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Les participants ont été ajoutés avec succès",
     "Error while adding participants" : "Erreur lors de l'ajout des participants",
     "Import a file" : "Importer un fichier",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP connexion ",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Ne pas avertir au sujet des problèmes de latence dans les appels avec plus de 2 participants",
     "Please try to reload the page" : "Essayez de recharger la page",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Le format du contenu est séparé par des virgules (CSV): <br/>- La ligne d'entête est requise et doit correspondre à <samp> \"email\",\"name\"</samp> ou juste <samp> \"email\" </samp><br/>- Une entrée par ligne  (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Next call" : "Prochain appel",
     "Nextcloud Talk Federation was updated, please reload the page" : "La fédération Nextcloud Talk a été mise à jour, merci de recharger la page"
 },
