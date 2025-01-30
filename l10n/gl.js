@@ -1193,7 +1193,6 @@ OC.L10N.register(
     "Login" : "Acceder",
     "Error while verifying uploaded file" : "Produciuse un erro ao verificar o ficheiro enviado",
     "Uploaded file is verified" : "O ficheiro enviado foi verificado",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "O formato de contido é valores separados por comas (CSV):<br/>– A liña de cabeceira é necesaria e debe coincidir con <samp>\"correo\",\"nome\"</samp> ou só <samp>\"correo\"</samp><br/>– Unha entrada por liña (p. ex., <samp>\"Xan Carallás\",\"xan@example.tld\"</samp>)",
     "Participants added successfully" : "Os participantes foron engadidos correctamente",
     "Error while adding participants" : "Produciuse un erro ao engadir os participantes",
     "Import a file" : "Importar un ficheiro",
@@ -2028,6 +2027,7 @@ OC.L10N.register(
     "SIP dial-in" : "Marcación SIP",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Non avisar sobre problemas de conectividade nas chamadas con máis de 2 participantes",
     "Please try to reload the page" : "Tente volver cargar a páxina",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "O formato de contido é valores separados por comas (CSV):<br/>– A liña de cabeceira é necesaria e debe coincidir con <samp>\"correo\",\"nome\"</samp> ou só <samp>\"correo\"</samp><br/>– Unha entrada por liña (p. ex., <samp>\"Xan Carallás\",\"xan@example.tld\"</samp>)",
     "Next call" : "Seguinte chamada",
     "Nextcloud Talk Federation was updated, please reload the page" : "Actualizouse a federación de Parlar de Nextcloud, volva cargar a páxina"
 },

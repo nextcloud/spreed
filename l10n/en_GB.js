@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "Login",
     "Error while verifying uploaded file" : "Error while verifying uploaded file",
     "Uploaded file is verified" : "Uploaded file is verified",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Participants added successfully",
     "Error while adding participants" : "Error while adding participants",
     "Import a file" : "Import a file",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP dial-in",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Don't warn about connectivity issues in calls with more than 2 participants",
     "Please try to reload the page" : "Please try to reload the page",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Next call" : "Next call",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation was updated, please reload the page"
 },
