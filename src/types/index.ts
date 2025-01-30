@@ -177,6 +177,10 @@ export type getBotsAdminResponse = ApiResponse<operations['bot-admin-list-bots']
 export type enableBotResponse = ApiResponse<operations['bot-enable-bot']['responses'][201]['content']['application/json']>
 export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['responses'][200]['content']['application/json']>
 
+// Certificate
+export type certificateExpirationParams = operations['certificate-get-certificate-expiration']['parameters']['query']
+export type certificateExpirationResponse = ApiResponse<operations['certificate-get-certificate-expiration']['responses'][200]['content']['application/json']>
+
 // Federations
 export type FederationInvite = components['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
