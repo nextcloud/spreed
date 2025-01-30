@@ -36,7 +36,7 @@ const STAT_VALUE_TYPE = {
  *
  * The number of items to keep track of must be set when the AverageStatValue is
  * created. Once N items have been added adding a new one will discard the
- * oldest value. "hasEnoughData()" can be used to check if at least N items have
+ * oldest value. "hasEnoughData()" can be used to check if enough items have
  * been added already and the average is reliable.
  *
  * An RTCStatsReport value can be cumulative since the creation of the
@@ -50,6 +50,10 @@ const STAT_VALUE_TYPE = {
  * however, that the first value added to a cumulative AverageStatValue after
  * creating or resetting it will be treated as 0 in the average calculation,
  * as it will be the base from which the rest of relative values are calculated.
+ * Therefore, if the values added to an AverageStatValue are relative,
+ * "hasEnoughData()" will not return true until at least N items were added,
+ * but if the values are cumulative, it will not return true until at least N+1
+ * items were added.
  *
  * Besides the weighted average it is possible to "peek" the last value, either
  * the raw value that was added or the relative one after the conversion (which,
@@ -70,15 +74,25 @@ function AverageStatValue(count, type = STAT_VALUE_TYPE.CUMULATIVE, lastValueWei
 
 	this._rawValues = []
 	this._relativeValues = []
+
+	this._hasEnoughData = false
 }
 AverageStatValue.prototype = {
 
 	reset() {
 		this._rawValues = []
 		this._relativeValues = []
+
+		this._hasEnoughData = false
 	},
 
 	add(value) {
+		if ((this._type === STAT_VALUE_TYPE.CUMULATIVE && this._rawValues.length === this._count)
+			|| (this._type === STAT_VALUE_TYPE.RELATIVE && this._rawValues.length >= (this._count - 1))
+		) {
+			this._hasEnoughData = true
+		}
+
 		if (this._rawValues.length === this._count) {
 			this._rawValues.shift()
 			this._relativeValues.shift()
@@ -113,7 +127,7 @@ AverageStatValue.prototype = {
 	},
 
 	hasEnoughData() {
-		return this._rawValues.length === this._count
+		return this._hasEnoughData
 	},
 
 	getWeightedAverage() {
