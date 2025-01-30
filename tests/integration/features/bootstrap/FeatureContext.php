@@ -3965,7 +3965,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expectedNotifications = array_map(function (array $expectedNotification): array {
 			if (str_contains($expectedNotification['object_id'], '/')) {
-				[$roomToken, $message] = explode('/', $expectedNotification['object_id']);
+				[$roomToken, $message] = explode('/', $expectedNotification['object_id'], 2);
 				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $message, $matches);
 				if ($result) {
 					$message = str_replace($matches[0], 'team/' . self::$createdTeams[$this->currentServer][$matches[1]], $message);
