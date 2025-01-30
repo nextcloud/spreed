@@ -74,11 +74,14 @@ Feature: chat/mentions
       | participant2 | participant2-displayname | users  | participant2 |
 
   Scenario: get matched mentions in a group room
+    Given team "1234" exists
+    Given add user "participant1" to team "1234"
+    Given add user "participant3" to team "1234"
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
-    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" adds team "1234" to room "group room" with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "group room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
@@ -91,6 +94,15 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant1" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source  | mentionId    |
+      | 1234         | 1234                     | teams   | team/1234    |
+    And user "participant2" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source  | mentionId    |
+      | 1234         | 1234                     | teams   | team/1234    |
+    And user "participant3" gets the following candidate mentions in room "group room" for "1234" with 200
+      | id           | label                    | source  | mentionId    |
+      | 1234         | 1234                     | teams   | team/1234    |
 
   Scenario: get unmatched mentions in a group room
     When user "participant1" creates room "group room" (v4)

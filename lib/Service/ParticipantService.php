@@ -719,14 +719,41 @@ class ParticipantService {
 
 		$circlesManager->startSession($federatedUser);
 		try {
-			$circle = $circlesManager->getCircle($circleId);
-			$circlesManager->stopSession();
-			return $circle;
+			return $circlesManager->getCircle($circleId);
 		} catch (\Exception $e) {
+		} finally {
+			$circlesManager->stopSession();
 		}
 
-		$circlesManager->stopSession();
 		throw new ParticipantNotFoundException('Circle not found or not a member');
+	}
+
+	/**
+	 * @param string $circleId
+	 * @param string $userId
+	 * @return Member[]
+	 * @throws ParticipantNotFoundException
+	 */
+	public function getCircleMembers(string $circleId): array {
+		try {
+			$circlesManager = Server::get(CirclesManager::class);
+		} catch (\Exception) {
+			throw new ParticipantNotFoundException('Circle not found');
+		}
+
+		$circlesManager->startSuperSession();
+		try {
+			$circle = $circlesManager->getCircle($circleId);
+		} catch (\Exception) {
+			throw new ParticipantNotFoundException('Circle not found');
+		} finally {
+			$circlesManager->stopSession();
+		}
+
+		$members = $circle->getInheritedMembers();
+		return array_filter($members, static function (Member $member) {
+			return $member->getUserType() === Member::TYPE_USER;
+		});
 	}
 
 	/**

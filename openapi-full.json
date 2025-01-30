@@ -13791,7 +13791,8 @@
                                             "circles",
                                             "emails",
                                             "federated_users",
-                                            "phones"
+                                            "phones",
+                                            "teams"
                                         ],
                                         "description": "Source of the participant"
                                     }

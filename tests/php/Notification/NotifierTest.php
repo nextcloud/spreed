@@ -26,6 +26,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudIdManager;
@@ -49,6 +50,7 @@ class NotifierTest extends TestCase {
 	protected IFactory&MockObject $lFactory;
 	protected IURLGenerator&MockObject $url;
 	protected Config&MockObject $config;
+	protected IAppManager&MockObject $appManager;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
 	protected GuestManager&MockObject $guestManager;
@@ -75,6 +77,7 @@ class NotifierTest extends TestCase {
 		$this->lFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->config = $this->createMock(Config::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
@@ -98,6 +101,7 @@ class NotifierTest extends TestCase {
 			$this->lFactory,
 			$this->url,
 			$this->config,
+			$this->appManager,
 			$this->userManager,
 			$this->groupManager,
 			$this->guestManager,
