@@ -4,7 +4,9 @@
 -->
 
 <template>
-	<div :id="screenContainerId" class="screenContainer">
+	<div :id="screenContainerId"
+		class="screenContainer"
+		@dblclick.capture="onDoubleClick">
 		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
 			ref="screen"
 			:disablePictureInPicture="!isBig ? 'true' : 'false'"
@@ -32,6 +34,10 @@ import VideoBottomBar from './VideoBottomBar.vue'
 
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
+
+const ZOOM_MIN = 1
+const ZOOM_FACTOR = 4
+const ZOOM_MAX = 8
 
 export default {
 
@@ -88,8 +94,8 @@ export default {
 		onMounted(() => {
 			if (props.isBig) {
 				instance.value = panzoom(screen.value, {
-					minZoom: 1,
-					maxZoom: 8,
+					minZoom: ZOOM_MIN,
+					maxZoom: ZOOM_MAX,
 					bounds: true,
 					boundsPadding: 1,
 				})
@@ -108,10 +114,38 @@ export default {
 			instance.value?.dispose()
 		})
 
+		/**
+		 * Overriding method to handle double click event on screen share
+		 * @param event Double click event
+		 */
+		function onDoubleClick(event) {
+			if (!instance.value) {
+				return
+			}
+
+			// panzoom library puts a listener on parent element
+			event.preventDefault()
+			event.stopPropagation()
+
+			// Calculate the offset of the click event from the top left corner of screen container
+			const screenContainerRect = event.currentTarget.getBoundingClientRect()
+			const offsetX = event.clientX - screenContainerRect.left
+			const offsetY = event.clientY - screenContainerRect.top
+
+			if (instanceTransform.value.scale === 1) {
+				// Zoom in the click point with specified zoom factor
+				instance.value.smoothZoom(offsetX, offsetY, ZOOM_FACTOR)
+			} else {
+				// Zoom out (0 is set to ensure the zoom is reset to 1)
+				instance.value.smoothZoomAbs(offsetX, offsetY, 0)
+			}
+		}
+
 		return {
 			guestNameStore,
 			screen,
 			screenClass,
+			onDoubleClick,
 		}
 	},
 
