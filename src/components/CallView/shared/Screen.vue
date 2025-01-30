@@ -204,7 +204,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .screenContainer {
 	width: 100%;
 	height: 100%;
@@ -215,7 +214,7 @@ export default {
 	height: 100%;
 	position: absolute;
 	top: 0;
-	left: 0;
+	inset-inline-start: 0;
 	&--fit {
 		object-fit: contain;
 	}

@@ -360,7 +360,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .not-connected {
 	video,
 	.avatar-container {
@@ -422,7 +421,7 @@ export default {
 .video-loading {
 	position: absolute;
 	top: 0;
-	right: 0;
+	inset-inline-end: 0;
 	height: 100%;
 	width: 100%;
 }
@@ -451,7 +450,7 @@ export default {
 	height: 100%;
 	width: 100%;
 	top: 0;
-	left: 0;
+	inset-inline-start: 0;
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
@@ -508,7 +507,7 @@ export default {
 .presenter-icon__hide {
 	position: absolute;
 	color: white;
-	left: calc(50% - var(--default-clickable-area) / 2);
+	inset-inline-start: calc(50% - var(--default-clickable-area) / 2);
 	top: calc(100% - var(--default-grid-baseline) - var(--default-clickable-area));
 	opacity: 0.7;
 	background-color: rgba(0, 0, 0, 0.5);

@@ -218,6 +218,6 @@ export default {
 .popover-hint {
 	padding: calc(3 * var(--default-grid-baseline));
 	max-width: 300px;
-	text-align: left;
+	text-align: start;
 }
 </style>
