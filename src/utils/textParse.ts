@@ -28,6 +28,9 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 		} else if (key.startsWith('mention-group')
 			&& [MENTION.TYPE.USERGROUP, MENTION.TYPE.GROUP].includes(value.type)) {
 			mention = `@"group/${value.id}"`
+		} else if (key.startsWith('mention-team')
+			&& [MENTION.TYPE.CIRCLE, MENTION.TYPE.TEAM].includes(value.type)) {
+			mention = `@"team/${value.id}"`
 		} else if (key.startsWith('mention-guest') && value.type === MENTION.TYPE.GUEST) {
 			mention = `@"${value.id}"`
 		} else if (key.startsWith('mention-email') && value.type === MENTION.TYPE.EMAIL) {

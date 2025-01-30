@@ -229,7 +229,7 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -247,7 +247,7 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
