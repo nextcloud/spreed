@@ -1194,7 +1194,6 @@ OC.L10N.register(
     "Login" : "Вход",
     "Error while verifying uploaded file" : "Ошибка при проверке загруженного файла",
     "Uploaded file is verified" : "Загруженный файл проверен",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Содержимое в формате «сomma-separated values» (CSV):<br/>- Строка заголовка обязательна и должна совпадать с <samp>\"email\",\"name\"</samp> или только <samp>\"email\"</samp><br/>- Один участник на одну линию (например, <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Участники успешно добавлены",
     "Error while adding participants" : "Ошибка при добавлении участников",
     "Import a file" : "Импортировать файл",
@@ -2010,6 +2009,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP-дозвон",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Не предупреждать о проблемах со связью в вызовах с более чем 2 участниками",
     "Please try to reload the page" : "Обновите страницу",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Содержимое в формате «сomma-separated values» (CSV):<br/>- Строка заголовка обязательна и должна совпадать с <samp>\"email\",\"name\"</samp> или только <samp>\"email\"</samp><br/>- Один участник на одну линию (например, <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Next call" : "Следующий вызов",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Федерация была обновлена, пожалуйста обновите страницу"
 },

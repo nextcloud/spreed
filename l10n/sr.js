@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "Пријава",
     "Error while verifying uploaded file" : "Грешка током провере отпремљеног фајла",
     "Uploaded file is verified" : "Отпремљени фајл је проверен",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Формат садржаја су вредности раздвојене запетом (CSV):<br/>- Линија заглавља је потребна и мора да се подудара са <samp>\"email\",\"name\"</samp> или само <samp>\"email\"</samp><br/>- Једна ставка по линији (нпр. <samp>\"Петар Петровић\",\"pera@primer.tld\"</samp>)",
     "Participants added successfully" : "Учесници су успешно додати",
     "Error while adding participants" : "Грешка приликом додавања учесника",
     "Import a file" : "Увези фајл",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP приступ",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Не упозоравај на проблеме са конекцијом у разговорима са више од 2 учесника",
     "Please try to reload the page" : "Молимо вас, покушајте поново да учитате страницу",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Формат садржаја су вредности раздвојене запетом (CSV):<br/>- Линија заглавља је потребна и мора да се подудара са <samp>\"email\",\"name\"</samp> или само <samp>\"email\"</samp><br/>- Једна ставка по линији (нпр. <samp>\"Петар Петровић\",\"pera@primer.tld\"</samp>)",
     "Next call" : "Наредни позив",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу"
 },

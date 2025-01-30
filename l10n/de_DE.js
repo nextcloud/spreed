@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "Anmeldung",
     "Error while verifying uploaded file" : "Fehler bei der Überprüfung der hochgeladenen Datei",
     "Uploaded file is verified" : "Hochgeladene Datei wurde überprüft",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV): <br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"email“,\"name“</samp> oder nur <samp>„email“</samp> übereinstimmen. <br/> - Ein Eintrag pro Zeile (z. B. <samp>„Max Mustermann“, „max@example.tld“</samp>)",
     "Participants added successfully" : "Teilnehmer hinzugefügt",
     "Error while adding participants" : "Fehler beim Hinzufügen von Teilnehmern",
     "Import a file" : "Eine Datei importieren",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP-Einwahl",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nicht vor Verbindungsproblemen bei Anrufen mit mehr als 2 Teilnehmern warnen",
     "Please try to reload the page" : "Bitte versuchen, die Seite neu zu laden",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV): <br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"email“,\"name“</samp> oder nur <samp>„email“</samp> übereinstimmen. <br/> - Ein Eintrag pro Zeile (z. B. <samp>„Max Mustermann“, „max@example.tld“</samp>)",
     "Next call" : "Nächster Anruf",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Federation wurde aktualisiert, bitte laden Sie die Seite neu"
 },

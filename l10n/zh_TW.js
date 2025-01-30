@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "帳號",
     "Error while verifying uploaded file" : "驗證上傳的檔案時發生錯誤",
     "Uploaded file is verified" : "已驗證上傳的檔案",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "內容格式為逗號分隔值 (CSV)：<br/>- 標題行為必填，且必須符合 <samp>\"email\",\"name\"</samp> 或 <samp>\"email\"</samp><br/>- 一個條目一行（例如 <samp>\"John Doe\",\"john@example.tld\"</samp>）",
     "Participants added successfully" : "參與者新增成功",
     "Error while adding participants" : "新增參與者時發生錯誤",
     "Import a file" : "匯入檔案",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP 撥入",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請嘗試重新載入頁面",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "內容格式為逗號分隔值 (CSV)：<br/>- 標題行為必填，且必須符合 <samp>\"email\",\"name\"</samp> 或 <samp>\"email\"</samp><br/>- 一個條目一行（例如 <samp>\"John Doe\",\"john@example.tld\"</samp>）",
     "Next call" : "下個通話",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面"
 },
