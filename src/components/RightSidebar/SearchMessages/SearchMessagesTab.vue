@@ -29,6 +29,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
+import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.ts'
@@ -50,7 +51,10 @@ const emit = defineEmits<{
 	(event: 'close'): void
 }>()
 
+const searchMessagesTab = ref<HTMLElement | null>(null)
 const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
+const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
+
 const isFocused = ref(false)
 const searchResults = ref<(CoreUnifiedSearchResultEntry &
 {
@@ -173,8 +177,9 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 	isFetchingResults.value = true
 
 	try {
-		// cancel the previous search request
+		// cancel the previous search request and reset the navigation
 		cancelSearchFn()
+		resetNavigation()
 
 		const { request, cancel } = CancelableRequest(searchMessages) as SearchMessageCancelableRequest
 		cancelSearchFn = cancel
@@ -229,6 +234,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 				}
 			})
 			)
+			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
 		if (CancelableRequest.isCancel(exception)) {
@@ -242,18 +248,19 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 }
 
 const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
+
+watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 </script>
 
 <template>
-	<div class="search-messages-tab">
+	<div ref="searchMessagesTab" class="search-messages-tab">
 		<div class="search-form">
 			<div class="search-form__main">
 				<div class="search-form__search-box-wrapper">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:placeholder-text="t('spreed', 'Search messages …')"
-						:is-focused.sync="isFocused"
-						@input="debounceFetchSearchResults" />
+						:is-focused.sync="isFocused" />
 					<NcButton :pressed.sync="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
@@ -271,8 +278,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:placeholder="t('spreed', 'From User')"
 							user-select
 							:loading="!participantsInitialised"
-							:options="participants"
-							@update:modelValue="debounceFetchSearchResults" />
+							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
 								v-model="sinceDate"
@@ -282,8 +288,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:step="1"
 								:max="new Date()"
 								:aria-label="t('spreed', 'Since')"
-								:label="t('spreed', 'Since')"
-								@update:modelValue="debounceFetchSearchResults" />
+								:label="t('spreed', 'Since')" />
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
 								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
@@ -292,8 +297,7 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 								:max="new Date()"
 								:aria-label="t('spreed', 'Until')"
 								:label="t('spreed', 'Until')"
-								:minute-step="1"
-								@update:modelValue="debounceFetchSearchResults" />
+								:minute-step="1" />
 						</div>
 					</div>
 				</TransitionWrapper>
