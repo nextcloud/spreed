@@ -1200,7 +1200,6 @@ OC.L10N.register(
     "Login" : "Logáil isteach",
     "Error while verifying uploaded file" : "Earráid agus an comhad uaslódáilte á fhíorú",
     "Uploaded file is verified" : "Tá an comhad uaslódáilte fíoraithe",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Is éard atá i bhformáid an ábhair ná luachanna camóg dheighilte (CSV): <br/>- Tá líne ceanntásca ag teastáil agus ní mór í a mheaitseáil le <samp> \"ríomhphost\",,\"ainm\"</samp> nó <samp>\"ríomhphost\"</samp><br/>- Iontráil amháin in aghaidh na líne (m.sh. <samp>\"John Doe\",,\" john@example.tld\"</samp>)",
     "Participants added successfully" : "D'éirigh leis na rannpháirtithe a chur leis",
     "Error while adding participants" : "Earráid agus rannpháirtithe á gcur leis",
     "Import a file" : "Iompórtáil comhad",
@@ -2035,6 +2034,7 @@ OC.L10N.register(
     "SIP dial-in" : "SIP dhiailiú-i",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Ná tabhair rabhadh faoi cheisteanna nascachta i nglaonna le níos mó ná 2 rannpháirtí",
     "Please try to reload the page" : "Déan iarracht an leathanach a athlódáil",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Is éard atá i bhformáid an ábhair ná luachanna camóg dheighilte (CSV): <br/>- Tá líne ceanntásca ag teastáil agus ní mór í a mheaitseáil le <samp> \"ríomhphost\",,\"ainm\"</samp> nó <samp>\"ríomhphost\"</samp><br/>- Iontráil amháin in aghaidh na líne (m.sh. <samp>\"John Doe\",,\" john@example.tld\"</samp>)",
     "Next call" : "An chéad ghlao eile",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nuashonraíodh Nextcloud Talk Federation, athlódáil an leathanach le do thoil"
 },

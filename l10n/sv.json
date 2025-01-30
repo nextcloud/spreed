@@ -1198,7 +1198,6 @@
     "Login" : "Logga in",
     "Error while verifying uploaded file" : "Fel vid verifiering av uppladdad fil",
     "Uploaded file is verified" : "Uppladdad fil är verifierad",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Innehållsformatet är kommaseparerade värden (CSV):<br/>- Rubrikrad krävs och måste matcha <samp>\"e-post\",\"namn\"</samp> eller bara <samp>\"e-post\"</samp><br/>- En post per rad (t.ex. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Deltagare har lagts till",
     "Error while adding participants" : "Det gick inte att lägga till deltagare",
     "Import a file" : "Importera en fil",
@@ -2033,6 +2032,7 @@
     "SIP dial-in" : "SIP-uppringning",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Varna inte om anslutningsproblem i samtal med fler än 2 deltagare",
     "Please try to reload the page" : "Försök att ladda om sidan",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Innehållsformatet är kommaseparerade värden (CSV):<br/>- Rubrikrad krävs och måste matcha <samp>\"e-post\",\"namn\"</samp> eller bara <samp>\"e-post\"</samp><br/>- En post per rad (t.ex. <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Next call" : "Nästa samtal",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation uppdaterades, ladda om sidan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
