@@ -216,11 +216,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable csstools/use-logical */
 .toaster {
 	position: absolute;
 	bottom: 20px;
-	left: 0;
+	inset-inline-start: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -231,7 +230,7 @@ export default {
 .toast {
 	position: absolute;
 	bottom: 0;
-	left: var(--horizontal-offset, 0);
+	inset-inline-start: var(--horizontal-offset, 0);
 	display: flex;
 	align-items: center;
 	gap: 8px;
