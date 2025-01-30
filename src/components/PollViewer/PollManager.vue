@@ -57,13 +57,14 @@ function openPollDraftHandler({ selector }: Events['poll-drafts-open']) {
  * @param payload event payload
  * @param payload.id poll draft ID to fill form with (null for empty form)
  * @param payload.fromDrafts whether editor was opened from PollDraftHandler dialog
+ * @param payload.action required action ('fill' from draft or 'edit' draft)
  * @param [payload.selector] selector to mount dialog to (body by default)
  */
-function openPollEditor({ id, fromDrafts, selector }: Events['poll-editor-open']) {
+function openPollEditor({ id, fromDrafts, action, selector }: Events['poll-editor-open']) {
 	container.value = selector
 	showPollEditor.value = true
 	nextTick(() => {
-		pollEditorRef.value?.fillPollEditorFromDraft(id, fromDrafts)
+		pollEditorRef.value?.fillPollEditorFromDraft(id, fromDrafts, action)
 		// Wait for editor to be mounted and filled before unmounting drafts dialog to avoid issues when inserting nodes
 		showPollDraftHandler.value = false
 	})
