@@ -17,6 +17,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Federation\ICloudId;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class UserMentionTest extends TestCase {
+	protected IAppManager&MockObject $appManager;
 	protected ICommentsManager&MockObject $commentsManager;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
@@ -42,6 +44,7 @@ class UserMentionTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
@@ -52,6 +55,7 @@ class UserMentionTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 
 		$this->parser = new UserMention(
+			$this->appManager,
 			$this->commentsManager,
 			$this->userManager,
 			$this->groupManager,

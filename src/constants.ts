@@ -328,6 +328,7 @@ export const MENTION = {
 		// Parsed to another types
 		FEDERATED_USER: 'federated_user',
 		GROUP: 'group',
+		TEAM: 'team',
 	},
 }
 

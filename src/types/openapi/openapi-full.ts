@@ -7227,7 +7227,7 @@ export interface operations {
                      * @default users
                      * @enum {string}
                      */
-                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones";
+                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "teams";
                 };
             };
         };

@@ -1970,7 +1970,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle|federated_user|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
@@ -1988,6 +1988,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			} else {
 				$newId = str_replace('REMOTE', $this->remoteServerUrl, $newId);
 			}
+		}
+
+		if ($newType === 'circle' || $newType === 'team') {
+			$newId = self::$createdTeams[$this->currentServer][$newId];
 		}
 
 		$this->sendRequest(
@@ -2309,6 +2313,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$message = str_replace('{$LOCAL_URL}', $this->localServerUrl, $message);
 		$message = str_replace('{$LOCAL_REMOTE_URL}', $this->localRemoteServerUrl, $message);
 		$message = str_replace('{$REMOTE_URL}', $this->remoteServerUrl, $message);
+		if (str_contains($message, '@"TEAM_ID(')) {
+			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $message, $matches);
+			if ($result) {
+				$message = str_replace($matches[0], 'team/' . self::$createdTeams[$this->currentServer][$matches[1]], $message);
+			}
+		}
 
 		if ($message === '413 Payload Too Large') {
 			$message .= "\n" . str_repeat('1', 32000);
@@ -3499,6 +3509,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (str_ends_with($row['mentionId'], '@{$REMOTE_URL}')) {
 				$row['mentionId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $row['mentionId']);
 			}
+			if ($row['source'] === 'teams') {
+				[, $teamId] = explode('/', $row['mentionId'], 2);
+				$row['id'] = $row['mentionId'] = 'team/' . self::getTeamIdForLabel($this->currentServer, $teamId);
+			}
 			if (array_key_exists('avatar', $row)) {
 				Assert::assertMatchesRegularExpression('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
 				unset($row['avatar']);
@@ -3948,10 +3962,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	private function assertNotifications($notifications, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match:' . "\n" . json_encode($notifications, JSON_PRETTY_PRINT));
-		Assert::assertEquals($formData->getHash(), array_map(function ($notification, $expectedNotification) {
+
+		$expectedNotifications = array_map(function (array $expectedNotification): array {
+			if (str_contains($expectedNotification['object_id'], '/')) {
+				[$roomToken, $message] = explode('/', $expectedNotification['object_id'], 2);
+				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $message, $matches);
+				if ($result) {
+					$message = str_replace($matches[0], 'team/' . self::$createdTeams[$this->currentServer][$matches[1]], $message);
+				}
+				$expectedNotification['object_id'] = $roomToken . '/' . $message;
+			}
+			return $expectedNotification;
+		}, $formData->getHash());
+
+		Assert::assertEquals($expectedNotifications, array_map(function ($notification, $expectedNotification) {
 			$data = [];
 			if (isset($expectedNotification['object_id'])) {
-				if (strpos($notification['object_id'], '/') !== false) {
+				if (str_contains($notification['object_id'], '/')) {
 					[$roomToken, $message] = explode('/', $notification['object_id']);
 					$messageText = self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
 
@@ -3976,6 +4003,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if ($result && isset(self::$identifierToToken[$matches[1]])) {
 					$data['message'] = str_replace(self::$identifierToToken[$matches[1]], $matches[0], $data['message']);
 				}
+				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $expectedNotification['message'], $matches);
+				if ($result) {
+					$data['message'] = str_replace($matches[0], self::$createdTeams[$this->currentServer][$matches[1]], $data['message']);
+				}
 			}
 			if (isset($expectedNotification['object_type'])) {
 				$data['object_type'] = (string)$notification['object_type'];
@@ -3985,7 +4016,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 
 			return $data;
-		}, $notifications, $formData->getHash()), json_encode($notifications, JSON_PRETTY_PRINT));
+		}, $notifications, $expectedNotifications), json_encode($notifications, JSON_PRETTY_PRINT));
 	}
 
 	/**
@@ -5232,7 +5263,4 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
 	}
-
-
-
 }
