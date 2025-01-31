@@ -271,7 +271,7 @@
 					<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
 					<Hint :hint="t('spreed', 'No search results')" />
 				</template>
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading …')" />
 			</ul>
 		</template>
 
