@@ -19,7 +19,10 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 		const value: Mention = parameters[key] as Mention
 		let mention = ''
 
-		if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
+		if (value['mention-id']) {
+			// it is safer to always wrap id in double quotes
+			mention = `@"${value['mention-id']}"`
+		} else if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
 			mention = '@all'
 		} else if (key.startsWith('mention-federated-user') && value.type === MENTION.TYPE.FEDERATED_USER) {
 			mention = `@"federated_user/${value.id}@${value!.server}"`
@@ -34,11 +37,12 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 			&& [MENTION.TYPE.CIRCLE, MENTION.TYPE.TEAM].includes(value.type)) {
 			mention = `@"team/${value.id}"`
 		} else if (key.startsWith('mention-guest') && value.type === MENTION.TYPE.GUEST) {
+			// id and mention-id are both prefixed with "guest/"
 			mention = `@"${value.id}"`
 		} else if (key.startsWith('mention-email') && value.type === MENTION.TYPE.EMAIL) {
 			mention = `@"email/${value.id}"`
 		} else if (key.startsWith('mention-user') && value.type === MENTION.TYPE.USER) {
-			mention = value.id.includes(' ') ? `@"${value.id}"` : `@${value.id}`
+			mention = `@"${value.id}"`
 		}
 
 		if (mention) {
