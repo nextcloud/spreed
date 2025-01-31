@@ -1743,6 +1743,7 @@ OC.L10N.register(
     "Show all audio" : "Mostrar todo o áudio",
     "Show all other" : "Mostrar todos os outros",
     "Group" : "Grupo",
+    "Team" : "Equipe",
     "You reconnected to the call" : "Você se reconectou à chamada",
     "{actor} reconnected to the call" : "{actor} reconectado à chamada",
     "You added {user0} and {user1}" : "Você adicionou {user0} e {user1}",

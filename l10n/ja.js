@@ -1565,6 +1565,7 @@ OC.L10N.register(
     "Show all audio" : "全ての音声を表示",
     "Show all other" : "そのほか全てを表示",
     "Group" : "グループ",
+    "Team" : "チーム",
     "You reconnected to the call" : "通話に再接続しました",
     "{actor} reconnected to the call" : "{actor} が通話に再接続しました",
     "You added {user0} and {user1}" : "{user0} と {user1} を追加しました",

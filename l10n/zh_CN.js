@@ -1536,6 +1536,7 @@ OC.L10N.register(
     "Show all audio" : "显示所有音频",
     "Show all other" : "显示所有其他",
     "Group" : "群组",
+    "Team" : "团队",
     "You reconnected to the call" : "你重新连接到通话",
     "{actor} reconnected to the call" : "{actor} 重新连接到通话",
     "You added {user0} and {user1}" : "你添加了 {user0} 和 {user1}",

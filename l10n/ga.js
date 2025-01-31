@@ -1821,6 +1821,7 @@ OC.L10N.register(
     "Show all audio" : "Taispeáin gach fuaime",
     "Show all other" : "Taispeáin gach ceann eile",
     "Group" : "Grúpa",
+    "Team" : "Foireann",
     "You reconnected to the call" : "D'athcheangail tú leis an nglao",
     "{actor} reconnected to the call" : "D'athcheangail {actor} leis an nglao",
     "You added {user0} and {user1}" : "Chuir tú {user0} agus {user1} leis",

@@ -1500,6 +1500,7 @@ OC.L10N.register(
     "Show all audio" : "Pokaži vse zvočne posnetke",
     "Show all other" : "Pokaži vse ostalo",
     "Group" : "Skupina",
+    "Team" : "Skupina",
     "You: {lastMessage}" : "Jaz: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "(edited)" : "(spremenjeno)",

@@ -1814,6 +1814,7 @@ OC.L10N.register(
     "Show all audio" : "Zobrazit všechno audio",
     "Show all other" : "Zobrazit všechno ostatní",
     "Group" : "Skupina",
+    "Team" : "Tým",
     "You reconnected to the call" : "Připojili jste se zpět k hovoru",
     "{actor} reconnected to the call" : "{actor} se připojil(a) zpět k hovoru",
     "You added {user0} and {user1}" : "Přidali jste {user0} a {user1}",

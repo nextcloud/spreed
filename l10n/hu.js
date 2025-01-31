@@ -1456,6 +1456,7 @@ OC.L10N.register(
     "Show all audio" : "Összes hang megjelenítése",
     "Show all other" : "Összes egyéb megtekintése",
     "Group" : "Csoport",
+    "Team" : "Csapat",
     "You reconnected to the call" : "Újracsatlakozott a híváshoz",
     "{actor} reconnected to the call" : "{actor} újracsatlakozott a híváshoz",
     "You added {user0} and {user1}" : "Hozááadta {user0} -t és {user1} -t",
