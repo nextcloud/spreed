@@ -225,8 +225,7 @@ export default {
 
 .messages-list-dragover-wrapper {
 	position: relative;
-	width: 100%;
-	height: 100%;
+	flex: 1 0;
 	display: flex;
 	min-height: 0;
 }
