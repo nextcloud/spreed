@@ -1647,6 +1647,7 @@
     "Show all audio" : "Vis all lyd",
     "Show all other" : "Vi alt annet",
     "Group" : "Gruppe",
+    "Team" : "Lag",
     "You reconnected to the call" : "Du koblet til samtalen på nytt",
     "{actor} reconnected to the call" : "{actor} koblet til samtalen på nytt",
     "You added {user0} and {user1}" : "Du la til {user0} og {user1}",

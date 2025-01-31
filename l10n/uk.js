@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Other" : "Інші",
     "Show all media" : "Показати всі медіа",
     "Group" : "Група",
+    "Team" : "Команда",
     "The recording failed. Please contact your administrator." : "Запис не відбувся. Зверніться до адміністратора.",
     "Error while sharing file" : "Помилка під час надання спільного доступу до файлу",
     "Error while clearing conversation history" : "Помилка під час очищення історії розмов",

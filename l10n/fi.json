@@ -1236,6 +1236,7 @@
     "Show all audio" : "Näytä kaikki ääni",
     "Show all other" : "Näytä kaikki muu",
     "Group" : "Ryhmä",
+    "Team" : "Tiimi",
     "You reconnected to the call" : "Yhdistit uudelleen puheluun",
     "{actor} reconnected to the call" : "{actor} yhdisti uudelleen puheluun",
     "You added {user0} and {user1}" : "Lisäsit käyttäjät {user0} ja {user1}",
