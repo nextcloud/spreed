@@ -1820,6 +1820,7 @@ OC.L10N.register(
     "Show all audio" : "Mostrar todos los audios",
     "Show all other" : "Mostrar todos los demás",
     "Group" : "Grupo",
+    "Team" : "Equipo",
     "You reconnected to the call" : "Se ha reconectado a la llamada",
     "{actor} reconnected to the call" : "{actor} se ha reconectado a la llamada",
     "You added {user0} and {user1}" : "Añadió a {user0} y {user1}",

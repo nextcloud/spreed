@@ -1676,6 +1676,7 @@ OC.L10N.register(
     "Show all audio" : "بارلىق ئاۋازنى كۆرسەت",
     "Show all other" : "باشقىلىرىنى كۆرسەت",
     "Group" : "Group",
+    "Team" : "Team",
     "You reconnected to the call" : "سىز تېلېفونغا قايتا ئۇلاندىڭىز",
     "{actor} reconnected to the call" : "{actor} تېلېفونغا قايتا ئۇلاندى",
     "You added {user0} and {user1}" : "سىز {user0} ۋە {user1} added نى قوشتىڭىز",

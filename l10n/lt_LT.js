@@ -894,6 +894,7 @@ OC.L10N.register(
     "Show all media" : "Rodyti visą mediją",
     "Show all files" : "Rodyti visus failus",
     "Group" : "Grupė",
+    "Team" : "Komanda",
     "You: {lastMessage}" : "Jūs: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Error while sharing file" : "Klaida bendrinant failą",

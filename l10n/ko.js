@@ -1517,6 +1517,7 @@ OC.L10N.register(
     "Show all audio" : "모든 오디오 표시",
     "Show all other" : "다른 모든 항목 표시",
     "Group" : "그룹",
+    "Team" : "팀",
     "You reconnected to the call" : "통화에 다시 연결했습니다.",
     "{actor} reconnected to the call" : "{actor}님이 통화에 다시 연결했습니다.",
     "You and {user0} left the call" : "당신과 {user0}님이 통화를 떠났습니다.",

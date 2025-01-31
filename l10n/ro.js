@@ -837,6 +837,7 @@ OC.L10N.register(
     "Show all audio" : "Arată audio",
     "Show all other" : "Arată celelalte",
     "Group" : "Grup",
+    "Team" : "Echipă",
     "You reconnected to the call" : "V-ați reconectat",
     "{actor} reconnected to the call" : "{actor} s-a reconectat",
     "You added {user0} and {user1}" : "Ați adăugat pe {user0} și {user1}",

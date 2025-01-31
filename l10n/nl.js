@@ -1591,6 +1591,7 @@ OC.L10N.register(
     "Show all audio" : "Toon alle audio",
     "Show all other" : "Toon alle anderen",
     "Group" : "Groep",
+    "Team" : "Team",
     "You: {lastMessage}" : "Jij: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "(edited)" : "(bewerkt)",

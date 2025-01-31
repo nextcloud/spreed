@@ -1654,6 +1654,7 @@ OC.L10N.register(
     "Show all audio" : "Pokaż wszystkie audio",
     "Show all other" : "Pokaż wszystkie inne",
     "Group" : "Grupa",
+    "Team" : "Zespół",
     "You reconnected to the call" : "Ponownie połączyłeś się z połączeniem",
     "{actor} reconnected to the call" : "{actor} ponownie połączył się z połączeniem",
     "You added {user0} and {user1}" : "Dodałeś {user0} i {user1}",

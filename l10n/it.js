@@ -1137,6 +1137,7 @@ OC.L10N.register(
     "Show all audio" : "Mostra tutto l'audio",
     "Show all other" : "Mostra tutti gli altri",
     "Group" : "Gruppo",
+    "Team" : "Team",
     "You: {lastMessage}" : "Tu: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Error while sharing file" : "Errore durante la condivisione del file",
