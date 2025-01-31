@@ -104,7 +104,7 @@ Feature: chat/file-share
     And user "participant1" deletes message "shared::file::welcome.txt" from room "public room" with 200
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | public room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
   Scenario: Can not delete a share file message without chat permission
     Given user "participant1" creates room "public room" (v4)

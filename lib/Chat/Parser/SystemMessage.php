@@ -911,6 +911,7 @@ class SystemMessage implements IEventListener {
 			'type' => 'user',
 			'id' => $uid,
 			'name' => $this->displayNames[$uid],
+			'mention-id' => $uid,
 		];
 	}
 
@@ -928,6 +929,7 @@ class SystemMessage implements IEventListener {
 			'id' => $cloudId->getUser(),
 			'name' => $displayName,
 			'server' => $cloudId->getRemote(),
+			'mention-id' => 'federated_user/' . $cloudId->getUser() . '@' . $cloudId->getRemote(),
 		];
 	}
 
@@ -949,6 +951,7 @@ class SystemMessage implements IEventListener {
 			'type' => 'group',
 			'id' => $gid,
 			'name' => $this->groupNames[$gid],
+			'mention-id' => 'user-group/' . $gid,
 		];
 	}
 
@@ -1029,6 +1032,7 @@ class SystemMessage implements IEventListener {
 			'type' => 'guest',
 			'id' => 'guest/' . $actorId,
 			'name' => $this->guestNames[$key],
+			'mention-id' => ($actorType === Attendee::ACTOR_GUESTS ? 'guest/' : 'email/') . $actorId,
 		];
 	}
 

@@ -101,9 +101,15 @@ class UserConverter {
 		if ($parameter['type'] === 'user') { // RichObjectDefinition, not Attendee::ACTOR_USERS
 			if (!isset($parameter['server'])) {
 				$parameter['server'] = $room->getRemoteServer();
+				if (!isset($parameter['mention-id'])) {
+					$parameter['mention-id'] = $parameter['id'];
+				}
 			} elseif ($parameter['server']) {
 				$localParticipants = $this->getLocalParticipants($room);
 				$cloudId = $this->createCloudIdFromUserIdAndFullServerUrl($parameter['id'], $parameter['server']);
+				if (!isset($parameter['mention-id'])) {
+					$parameter['mention-id'] = 'federated_user/' . $parameter['id'] . '@' . $parameter['server'];
+				}
 				if (isset($localParticipants[$cloudId])) {
 					unset($parameter['server']);
 					$parameter['name'] = $localParticipants[$cloudId]['displayName'];
@@ -112,6 +118,21 @@ class UserConverter {
 		} elseif ($parameter['type'] === 'call' && $parameter['id'] === $room->getRemoteToken()) {
 			$parameter['id'] = $room->getToken();
 			$parameter['icon-url'] = $this->avatarService->getAvatarUrl($room);
+			if (!isset($parameter['mention-id'])) {
+				$parameter['mention-id'] = 'all';
+			}
+		} elseif ($parameter['type'] === 'circle') {
+			if (!isset($parameter['mention-id'])) {
+				$parameter['mention-id'] = 'team/' . $parameter['id'];
+			}
+		} elseif ($parameter['type'] === 'user-group') {
+			if (!isset($parameter['mention-id'])) {
+				$parameter['mention-id'] = 'group/' . $parameter['id'];
+			}
+		} elseif ($parameter['type'] === 'email' || $parameter['type'] === 'guest') {
+			if (!isset($parameter['mention-id'])) {
+				$parameter['mention-id'] = $parameter['type'] . '/' . $parameter['id'];
+			}
 		}
 		return $parameter;
 	}

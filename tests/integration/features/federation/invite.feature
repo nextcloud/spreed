@@ -79,9 +79,9 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
-      | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     # Remove a remote user after they joined
     When user "participant1" removes remote "participant2" from room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
@@ -91,10 +91,10 @@ Feature: federation/invite
       | users           | participant1 | 1               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_removed  | You removed {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | federated_user_removed  | You removed {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
   Scenario: Invite user with wrong casing
     Given the following "spreed" app config is set
@@ -190,9 +190,9 @@ Feature: federation/invite
       | users           | participant1 | 1               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
-      | room | federated_users | participant2@http://localhost:8180 | federated_user_removed | {federated_user} declined the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | federated_users | participant2@http://localhost:8180 | federated_user_removed | {federated_user} declined the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
   Scenario: Remove remote user before they accept
     Given the following "spreed" app config is set
@@ -225,9 +225,9 @@ Feature: federation/invite
       | users           | participant1 | 1               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_removed  | You removed {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | federated_user_removed  | You removed {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
   Scenario: User leaves after accepting
     Given the following "spreed" app config is set

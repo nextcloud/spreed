@@ -11,7 +11,7 @@ Feature: chat/note-to-self
       | participant1-note-to-self | 6    | Note to self  |
     Then user "participant1" sees the following system messages in room "participant1-note-to-self" with 200
       | room                      | actorType | actorId      | actorDisplayName         | message                        | messageParameters                                                               | systemMessage        |
-      | participant1-note-to-self | users     | participant1 | participant1-displayname | You created the conversation   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} | conversation_created |
+      | participant1-note-to-self | users     | participant1 | participant1-displayname | You created the conversation   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} | conversation_created |
 
 
   Scenario: Created automatically when fetching the room list

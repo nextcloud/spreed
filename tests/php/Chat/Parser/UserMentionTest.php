@@ -147,7 +147,8 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => 'testUser',
-				'name' => 'testUser display name'
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
 			]
 		];
 
@@ -186,7 +187,8 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => 'testUser',
-				'name' => 'testUser display name'
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
 			]
 		];
 
@@ -254,12 +256,14 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => $longerId,
-				'name' => $longerId . ' display name'
+				'name' => $longerId . ' display name',
+				'mention-id' => $longerId,
 			],
 			'mention-user2' => [
 				'type' => 'user',
 				'id' => $baseId,
-				'name' => $baseId . ' display name'
+				'name' => $baseId . ' display name',
+				'mention-id' => $baseId,
 			],
 		];
 
@@ -306,17 +310,20 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => 'testUser1',
-				'name' => 'testUser1 display name'
+				'name' => 'testUser1 display name',
+				'mention-id' => 'testUser1',
 			],
 			'mention-user2' => [
 				'type' => 'user',
 				'id' => 'testUser2',
-				'name' => 'testUser2 display name'
+				'name' => 'testUser2 display name',
+				'mention-id' => 'testUser2',
 			],
 			'mention-user3' => [
 				'type' => 'user',
 				'id' => 'testUser3',
-				'name' => 'testUser3 display name'
+				'name' => 'testUser3 display name',
+				'mention-id' => 'testUser3',
 			]
 		];
 
@@ -358,7 +365,8 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => 'testUser',
-				'name' => 'testUser display name'
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
 			]
 		];
 
@@ -396,7 +404,8 @@ class UserMentionTest extends TestCase {
 			'mention-user1' => [
 				'type' => 'user',
 				'id' => 'testUser',
-				'name' => ''
+				'name' => '',
+				'mention-id' => 'testUser',
 			]
 		];
 
@@ -441,6 +450,7 @@ class UserMentionTest extends TestCase {
 				'name' => 'name',
 				'call-type' => 'group',
 				'icon-url' => 'getAvatarUrl',
+				'mention-id' => 'all',
 			]
 		];
 
@@ -482,6 +492,7 @@ class UserMentionTest extends TestCase {
 				'id' => 'testUser',
 				'name' => 'Display Id',
 				'server' => 'example.tld',
+				'mention-id' => 'federated_user/testUser@example.tld',
 			]
 		];
 
@@ -521,6 +532,7 @@ class UserMentionTest extends TestCase {
 				'type' => 'guest',
 				'id' => 'guest/123456',
 				'name' => 'Guest',
+				'mention-id' => 'guest/123456',
 			]
 		];
 
@@ -560,6 +572,7 @@ class UserMentionTest extends TestCase {
 				'type' => 'guest',
 				'id' => 'guest/123456',
 				'name' => 'Guest',
+				'mention-id' => 'guest/123456',
 			]
 		];
 
@@ -607,6 +620,7 @@ class UserMentionTest extends TestCase {
 				'type' => 'guest',
 				'id' => 'guest/abcdef',
 				'name' => 'Name',
+				'mention-id' => 'guest/abcdef',
 			]
 		];
 
