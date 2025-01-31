@@ -1821,6 +1821,7 @@ OC.L10N.register(
     "Show all audio" : "Tüm sesleri görüntüle",
     "Show all other" : "Tüm diğerlerini görüntüle",
     "Group" : "Grup",
+    "Team" : "Takım",
     "You reconnected to the call" : "Çağrı ile yeniden bağlantı kurdunuz",
     "{actor} reconnected to the call" : "{actor} çağrı ile yeniden bağlantı kurdu",
     "You added {user0} and {user1}" : "{user0} ve {user1} kullanıcılarını eklediniz",

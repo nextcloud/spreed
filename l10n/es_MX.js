@@ -491,6 +491,7 @@ OC.L10N.register(
     "Other" : "Otro",
     "Show all files" : "Mostrar todos los archivos",
     "Group" : "Grupo",
+    "Team" : "Equipo",
     "Error while sharing file" : "Error al compartir el archivo",
     "Error while parsing a PROPFIND error" : "Error al analizar un error PROPFIND",
     "Please reload the page." : "Por favor vuelve a cargar la página.",

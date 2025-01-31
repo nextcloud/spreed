@@ -1406,6 +1406,7 @@ OC.L10N.register(
     "Show all audio" : "Show all audio",
     "Show all other" : "Show all other",
     "Group" : "گروه",
+    "Team" : "تیم",
     "You reconnected to the call" : "You reconnected to the call",
     "{actor} reconnected to the call" : "{actor} reconnected to the call",
     "You added {user0} and {user1}" : "You added {user0} and {user1}",

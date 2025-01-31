@@ -1517,6 +1517,7 @@ OC.L10N.register(
     "Show all audio" : "Erakutsi audio guztia",
     "Show all other" : "Erakutsi beste guztiak",
     "Group" : "Taldea",
+    "Team" : "Lantaldea",
     "You reconnected to the call" : "Deira berriro konektatu zara",
     "You added {user0} and {user1}" : "{user0} eta {user1} gehitu dituzu",
     "An administrator added you and {user0}" : "Administratzaile batek zu eta {user0} gehitu zaituzte",

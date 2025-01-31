@@ -1811,6 +1811,7 @@ OC.L10N.register(
     "Show all audio" : "Показать все аудио",
     "Show all other" : "Показать все остальное",
     "Group" : "Группа",
+    "Team" : "Команда",
     "You reconnected to the call" : "Вы переподключились к вызову",
     "{actor} reconnected to the call" : "{actor} переподключился(лась) к вызову",
     "You added {user0} and {user1}" : "Вы добавили {user0} и {user1}",

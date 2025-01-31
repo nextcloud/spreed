@@ -958,6 +958,7 @@ OC.L10N.register(
     "Show all audio" : "Прикажи ги сите звуци",
     "Show all other" : "Прикажи ги сите останати",
     "Group" : "Група",
+    "Team" : "Тим",
     "You: {lastMessage}" : "Ти: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Error while sharing file" : "Грешка при споделување на датотека",

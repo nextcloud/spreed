@@ -1200,6 +1200,7 @@ OC.L10N.register(
     "Login" : "الدخول",
     "Error while verifying uploaded file" : "خطأ أثناء التحقق من الملف المرفوع",
     "Uploaded file is verified" : "تمّ التحقق من الملف المرفوع",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"name\",\"email\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "تنسيق المحتوى عبارة عن قيم مفصولة بفاصلة (CSV) :<br/>-  سطر الترويسة لازم ويجب أن يكون مُطابقاً <samp> الاسم، \"الإيميل\"</samp> أو فقط <samp>\"الإيميل\"\"</samp><br/>- إدخالية واحدة فقط لكل سطر (مثل: <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "تمّت إضافة المشاركين بنجاحٍ",
     "Error while adding participants" : "خطأ أثناء إضافة المشاركين",
     "Import a file" : "إستيراد ملف",
