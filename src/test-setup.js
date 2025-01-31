@@ -109,6 +109,12 @@ global.BroadcastChannel = jest.fn(() => ({
 	addEventListener: jest.fn(),
 }))
 
+global.ResizeObserver = jest.fn(() => ({
+	observe: jest.fn(),
+	unobserve: jest.fn(),
+	disconnect: jest.fn(),
+}))
+
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721
 window.URL.createObjectURL = jest.fn()

@@ -14,12 +14,6 @@ import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
 import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-	observe: jest.fn(),
-	unobserve: jest.fn(),
-	disconnect: jest.fn(),
-}))
-
 describe('VideoVue.vue', () => {
 	let localVue
 	let store
