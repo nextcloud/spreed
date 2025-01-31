@@ -341,6 +341,10 @@ export default {
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
 
+		window.addEventListener('resize', this.updateSize)
+		this.resizeObserver = new ResizeObserver(this.updateSize)
+		this.resizeObserver.observe(this.$refs.scroller)
+
 		/**
 		 * Every 30 seconds we remove expired messages from the store
 		 */
@@ -364,6 +368,11 @@ export default {
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
 
+		window.removeEventListener('resize', this.updateSize)
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
+
 		if (this.expirationInterval) {
 			clearInterval(this.expirationInterval)
 			this.expirationInterval = null
@@ -373,6 +382,14 @@ export default {
 	methods: {
 		t,
 		n,
+		updateSize() {
+			if (this.isChatScrolledToBottom) {
+				this.$refs.scroller.scrollTo({
+					top: this.$refs.scroller.scrollHeight,
+				})
+			}
+		},
+
 		prepareMessagesGroups(messages) {
 			let prevGroupMap = null
 			const groupsByDate = {}
