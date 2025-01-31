@@ -21,10 +21,12 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 
 		if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
 			mention = '@all'
-		} else if (key.startsWith('mention-federated-user')
-			&& [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(value.type)) {
-			const server = (value?.server ?? getBaseUrl()).replace('https://', '')
-			mention = `@"federated_user/${value.id}@${server}"`
+		} else if (key.startsWith('mention-federated-user') && value.type === MENTION.TYPE.FEDERATED_USER) {
+			mention = `@"federated_user/${value.id}@${value!.server}"`
+		} else if (key.startsWith('mention-federated-user') && value.type === MENTION.TYPE.USER) {
+			// Current user and mention user are both from the same federated server,
+			// so parameter is translated. HTTPS protocol is default and therefore omitted.
+			mention = `@"federated_user/${value.id}@${getBaseUrl().replace('https://', '')}"`
 		} else if (key.startsWith('mention-group')
 			&& [MENTION.TYPE.USERGROUP, MENTION.TYPE.GROUP].includes(value.type)) {
 			mention = `@"group/${value.id}"`
