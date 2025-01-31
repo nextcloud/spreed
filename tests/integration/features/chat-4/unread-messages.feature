@@ -228,8 +228,8 @@ Feature: chat-2/unread-messages
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                      | silent | messageParameters |
-      | room | users         | participant1 | user_added           | You added {user}             | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | user_added           | You added {user}             | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | unreadMessages | lastReadMessage      |
       | room | 1              | conversation_created |
@@ -245,7 +245,7 @@ Feature: chat-2/unread-messages
       | roomName | room |
     And user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                      | silent | messageParameters |
-      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | unreadMessages | lastReadMessage      |
       | room | 0              | conversation_created |

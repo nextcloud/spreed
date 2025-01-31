@@ -1244,6 +1244,7 @@ class SystemMessageTest extends TestCase {
 			'type' => 'guest',
 			'id' => $expected,
 			'name' => 'name',
+			'mention-id' => $expected,
 		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 
 		// Cached call: no call to getGuestName() again
@@ -1251,6 +1252,7 @@ class SystemMessageTest extends TestCase {
 			'type' => 'guest',
 			'id' => $expected,
 			'name' => 'name',
+			'mention-id' => $expected,
 		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 	}
 
