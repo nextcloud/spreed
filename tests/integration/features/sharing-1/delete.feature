@@ -386,4 +386,4 @@ Feature: delete
       | recording | 0 |
     And user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | *You shared a file which is no longer available* | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | public room | users     | participant1 | participant1-displayname | *You shared a file which is no longer available* | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |

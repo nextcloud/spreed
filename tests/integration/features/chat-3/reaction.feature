@@ -180,7 +180,7 @@ Feature: chat-2/reaction
     Then user "participant1" deletes message "Message 1" from room "room" with 200 (v1)
     And user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                | messageParameters                                                               | reactions |
-      | room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} | []        |
+      | room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} | []        |
 
   Scenario: Deleting a user neutralizes their details
     Given user "participant1" creates room "room" (v4)
