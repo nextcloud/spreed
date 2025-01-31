@@ -100,7 +100,7 @@ Feature: chat-1/edit-message
     And user "participant2" edits message "Message 1" in room "room" to "Message 1 - Edit @participant1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                          | messageParameters |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id                            | subject                                                      |
       | spreed | chat        | room/Message 1 - Edit {mention-user1} | participant2-displayname mentioned you in conversation room |
@@ -160,7 +160,7 @@ Feature: chat-1/edit-message
     And user "participant2" sends message "Message 1 - @participant1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                     | messageParameters                                                                       |
-      | room | users     | participant2 | participant2-displayname | Message 1 - {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users     | participant2 | participant2-displayname | Message 1 - {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id                            | subject                                                      |
       | spreed | chat        | room/Message 1 - {mention-user1} | participant2-displayname mentioned you in conversation room |
@@ -180,7 +180,7 @@ Feature: chat-1/edit-message
     And user "participant2" edits message "Message 1 - @participant1" in room "room" to "Message 1 - Edit @participant1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                          | messageParameters |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id                            | subject                                                      |
       | spreed | chat        | room/Message 1 - Edit {mention-user1} | participant2-displayname mentioned you in conversation room |
@@ -209,7 +209,7 @@ Feature: chat-1/edit-message
     And user "participant2" edits message "Message 1 - @all" in room "room" to "Message 1 - Edit @participant1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                          | messageParameters |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit {mention-user1} | {"mention-user1":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id                        | subject                                                          |
       | spreed | chat        | room/Message 1 - Edit {mention-user1} | participant2-displayname mentioned everyone in conversation room |
