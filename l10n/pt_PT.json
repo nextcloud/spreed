@@ -291,7 +291,7 @@
     "Edit" : "Editar",
     "Delete" : "Apagar",
     "Notifications" : "Notificações",
-    "Login" : "Iniciar sessão",
+    "Log in" : "Iniciar sessão",
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
     "Create a new conversation" : "Criar nova conversa",
@@ -300,7 +300,6 @@
     "Users" : "Utilizadores",
     "Groups" : "Grupos",
     "Teams" : "Grupos",
-    "Loading" : "A carregar",
     "Talk settings" : "Definições do Falar",
     "None" : "Nenhum",
     "Upload" : "Enviar",
@@ -354,6 +353,7 @@
     "User" : "Utilizador",
     "Password" : "Palavra-passe",
     "API token" : "Token de API",
+    "Login" : "Iniciar sessão",
     "Nickname" : "Alcunha",
     "Client ID" : "Id. do Cliente",
     "Media" : "Media",
@@ -378,6 +378,7 @@
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
     "Reports" : "Relatórios",
+    "Loading" : "A carregar",
     "Close" : "Fechar",
     "Password protect" : "Proteger com palavra-passe"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
