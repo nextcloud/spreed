@@ -296,7 +296,7 @@
     "Edit" : "Sunting",
     "Delete" : "Hapus",
     "Notifications" : "Pemberitahuan",
-    "Login" : "Log masuk",
+    "Log in" : "Masuk",
     "Mark as read" : "tandai sudah dibaca",
     "Mark as unread" : "Tandai belum dibaca",
     "Remove from favorites" : "Remove from favorites",
@@ -305,7 +305,6 @@
     "Users" : "Pengguna",
     "Groups" : "Grup",
     "No search results" : "Tidak ada hasil pencarian",
-    "Loading" : "Memuat",
     "None" : "Tidak ada",
     "Upload" : "Unggah",
     "Files" : "Berkas",
@@ -350,6 +349,7 @@
     "User" : "Pengguna",
     "Password" : "Kata kunci",
     "API token" : "Token API",
+    "Login" : "Log masuk",
     "Nickname" : "Nama panggilan",
     "Client ID" : "ID Klien",
     "Media" : "Media",
@@ -370,6 +370,7 @@
     "Tasks" : "Tugas",
     "Notes" : "Catatan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
+    "Loading" : "Memuat",
     "Close" : "Tutup",
     "Password protect" : "Lindungi dengan kata sandi"
 },"pluralForm" :"nplurals=1; plural=0;"
