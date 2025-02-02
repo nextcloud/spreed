@@ -562,6 +562,7 @@ OC.L10N.register(
     "More information" : "Muioc'h a ditouroù",
     "Delete" : "Lemel",
     "Notifications" : "Kemennadennoù",
+    "Log in" : "Kennaskañ",
     "Remove from favorites" : "Diverkañañ eus ar pennrolloù",
     "Add to favorites" : "Ouzhpennañ er pennrolloù",
     "You need to promote a new moderator before you can leave the conversation." : "Ret eo deoc'h lakaat unan bennak da moderatour a-rao kuitaat an diviz.",

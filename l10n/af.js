@@ -284,6 +284,7 @@ OC.L10N.register(
     "Edit" : "Wysig",
     "Delete" : "Skrap",
     "Notifications" : "Kennisgewings",
+    "Log in" : "Teken Aan",
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
     "Users" : "Gebruikers",
