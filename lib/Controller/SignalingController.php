@@ -622,7 +622,7 @@ class SignalingController extends OCSController {
 	 * @return string
 	 */
 	protected function getInputStream(): string {
-		return file_get_contents('php://input');
+		return (string)file_get_contents('php://input');
 	}
 
 	/**
