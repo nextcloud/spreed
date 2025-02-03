@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+<files psalm-version="6.2.0@814dfde37b43a1fe6d9b0996e08b19661af53bc5">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -44,6 +44,26 @@
       <code><![CDATA[$return['num_rooms']]]></code>
     </InvalidArrayAccess>
   </file>
+  <file src="lib/Model/Poll.php">
+    <LessSpecificReturnStatement>
+      <code><![CDATA[[
+			'id' => $this->getId(),
+			// The room id is not needed on the API level but only internally for optimising database queries
+			// 'roomId' => $this->getRoomId(),
+			'question' => $this->getQuestion(),
+			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
+			'actorType' => $this->getActorType(),
+			'actorId' => $this->getActorId(),
+			'actorDisplayName' => $this->getDisplayName(),
+			'status' => $this->getStatus(),
+			'resultMode' => $this->getResultMode(),
+			'maxVotes' => $this->getMaxVotes(),
+		]]]></code>
+    </LessSpecificReturnStatement>
+    <MoreSpecificReturnType>
+      <code><![CDATA[TalkPollDraft]]></code>
+    </MoreSpecificReturnType>
+  </file>
   <file src="lib/Notification/Notifier.php">
     <InvalidPropertyAssignmentValue>
       <code><![CDATA[$this->participants]]></code>
@@ -68,6 +88,30 @@
     <UndefinedClass>
       <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Service/BotService.php">
+    <InvalidArgument>
+      <code><![CDATA[[
+			'type' => 'Activity',
+			'actor' => [
+				'type' => 'Person',
+				'id' => $message->getActorType() . '/' . $message->getActorId(),
+				'name' => $message->getActorDisplayName(),
+			],
+			'object' => [
+				'type' => 'Note',
+				'id' => $event->getComment()->getId(),
+				'name' => $message->getMessageRaw(),
+				'content' => json_encode($messageData),
+				'mediaType' => 'text/markdown',
+			],
+			'target' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			]
+		]]]></code>
+    </InvalidArgument>
   </file>
   <file src="lib/Service/RecordingService.php">
     <LessSpecificReturnStatement>
