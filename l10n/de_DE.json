@@ -1199,6 +1199,7 @@
     "Enter your name" : "Geben Sie Ihren Namen ein",
     "Submit name and join" : "Name übermitteln und beitreten",
     "Do you already have an account?" : "Haben Sie bereits ein Konto?",
+    "Log in" : "Anmelden",
     "Error while verifying uploaded file" : "Fehler bei der Überprüfung der hochgeladenen Datei",
     "Uploaded file is verified" : "Hochgeladene Datei wurde überprüft",
     "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"name\",\"email\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV):<br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"Name\",\"E-Mail\"</samp> oder nur <samp>\"E-Mail\"</samp> übereinstimmen. <br/>- Ein Eintrag pro Zeile (z. B. <samp>\"Max Mustermann\", \"max@beispiel.de\"</samp>)",
