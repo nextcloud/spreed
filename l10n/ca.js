@@ -1025,6 +1025,7 @@ OC.L10N.register(
     "Error occurred when disabling SIP dial-in" : "S'ha produït un error en desactivar el telèfon d'entrada SIP",
     "Enter your name" : "Introdueix el teu nom",
     "Submit name and join" : "Envia el nom i uneix-te",
+    "Log in" : "Inicia la sessió",
     "Call a phone number" : "Trucada a un número de telèfon",
     "Search participants or phone numbers" : "Cerca participants o números de telèfon",
     "Creating the conversation …" : "Creació de la conversa …",
