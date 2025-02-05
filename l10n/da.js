@@ -372,6 +372,7 @@ OC.L10N.register(
     "Confirm" : "Bekræft",
     "Reset" : "Nulstil",
     "Now" : "Nu",
+    "Loading …" : "Indlæser …",
     "No upcoming events" : "Ingen kommende begivenheder",
     "From" : "Fra",
     "To" : "Til",
