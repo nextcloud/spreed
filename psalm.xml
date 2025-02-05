@@ -67,21 +67,6 @@
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
 			</errorLevel>
 		</UndefinedDocblockClass>
-		<UndefinedInterfaceMethod>
-			<errorLevel type="suppress">
-				<referencedMethod name="OCP\IDBConnection::getInner" />
-			</errorLevel>
-		</UndefinedInterfaceMethod>
-		<InvalidThrow>
-			<errorLevel type="suppress">
-				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
-			</errorLevel>
-		</InvalidThrow>
-		<UnimplementedInterfaceMethod>
-			<errorLevel type="suppress">
-				<file name="lib/Chat/CommentsManager.php" />
-			</errorLevel>
-		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
 		<file name="tests/stubs/oc_comments_comment.php" />
