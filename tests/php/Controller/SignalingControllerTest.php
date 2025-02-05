@@ -140,6 +140,231 @@ class SignalingControllerTest extends TestCase {
 		);
 	}
 
+	public static function dataGetSettingsStunServer(): array {
+		return [
+			[
+				[
+					'stun.nextcloud.com:443',
+				],
+				[
+					[
+						'urls' => [
+							'stun:stun.nextcloud.com:443',
+						]
+					],
+				],
+			],
+			[
+				[
+					'stun.nextcloud.com:443',
+					'stun.other.com:3478',
+				],
+				[
+					[
+						'urls' => [
+							'stun:stun.nextcloud.com:443',
+							'stun:stun.other.com:3478',
+						],
+					],
+				],
+			],
+			[
+				[
+					'',
+				],
+				[
+				],
+			],
+			[
+				[
+				],
+				[
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetSettingsStunServer
+	 */
+	public function testGetSettingsStunServer(array $stunServersConfig, array $expectedStunServers): void {
+		$this->config = $this->createMock(Config::class);
+		$this->recreateSignalingController();
+
+		$this->config->expects($this->once())
+			->method('getStunServers')
+			->willReturn($stunServersConfig);
+
+		$settings = $this->controller->getSettings()->getData();
+
+		// "stunservers" is always returned, even if empty
+		$this->assertArrayHasKey('stunservers', $settings);
+		$this->assertSame($expectedStunServers, $settings['stunservers']);
+	}
+
+	public static function dataGetSettingsTurnServer(): array {
+		return [
+			[
+				[
+					[
+						'schemes' => 'turn',
+						'server' => 'turn.example.org:3478',
+						'username' => 'theUserName',
+						'password' => 'thePassword',
+						'protocols' => 'udp',
+					],
+				],
+				[
+					[
+						'urls' => [
+							'turn:turn.example.org:3478?transport=udp',
+						],
+						'username' => 'theUserName',
+						'credential' => 'thePassword',
+					],
+				],
+			],
+			[
+				[
+					[
+						'schemes' => 'turn,turns',
+						'server' => 'turn.example.org:3478',
+						'username' => 'theUserName',
+						'password' => 'thePassword',
+						'protocols' => 'udp,tcp',
+					],
+				],
+				[
+					[
+						'urls' => [
+							'turn:turn.example.org:3478?transport=udp',
+							'turn:turn.example.org:3478?transport=tcp',
+							'turns:turn.example.org:3478?transport=udp',
+							'turns:turn.example.org:3478?transport=tcp',
+						],
+						'username' => 'theUserName',
+						'credential' => 'thePassword',
+					],
+				],
+			],
+			[
+				[
+					[
+						'schemes' => 'turn',
+						'server' => 'turn.example.org:3478',
+						'username' => 'theUserName1',
+						'password' => 'thePassword1',
+						'protocols' => 'udp,tcp',
+					],
+					[
+						'schemes' => 'turns',
+						'server' => 'turn.other.org:443',
+						'username' => 'theUserName2',
+						'password' => 'thePassword2',
+						'protocols' => 'tcp',
+					],
+					[
+						'schemes' => 'turn,turns',
+						'server' => 'turn.another.org:443',
+						'username' => 'theUserName3',
+						'password' => 'thePassword3',
+						'protocols' => 'udp',
+					],
+				],
+				[
+					[
+						'urls' => [
+							'turn:turn.example.org:3478?transport=udp',
+							'turn:turn.example.org:3478?transport=tcp',
+						],
+						'username' => 'theUserName1',
+						'credential' => 'thePassword1',
+					],
+					[
+						'urls' => [
+							'turns:turn.other.org:443?transport=tcp',
+						],
+						'username' => 'theUserName2',
+						'credential' => 'thePassword2',
+					],
+					[
+						'urls' => [
+							'turn:turn.another.org:443?transport=udp',
+							'turns:turn.another.org:443?transport=udp',
+						],
+						'username' => 'theUserName3',
+						'credential' => 'thePassword3',
+					],
+				],
+			],
+			[
+				// This would never happen, as the scheme is forced by
+				// "getTurnSettings" if empty, but it is added for completeness.
+				[
+					[
+						'schemes' => '',
+						'server' => 'turn.example.org:3478',
+						'username' => 'theUserName',
+						'password' => 'thePassword',
+						'protocols' => 'udp',
+					],
+				],
+				[
+				],
+			],
+			[
+				[
+					[
+						'schemes' => 'turn',
+						'server' => '',
+						'username' => 'theUserName',
+						'password' => 'thePassword',
+						'protocols' => 'udp',
+					],
+				],
+				[
+				],
+			],
+			[
+				[
+					[
+						'schemes' => 'turn',
+						'server' => 'turn.example.org:3478',
+						'username' => 'theUserName',
+						'password' => 'thePassword',
+						'protocols' => '',
+					],
+				],
+				[
+				],
+			],
+			[
+				[
+				],
+				[
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetSettingsTurnServer
+	 */
+	public function testGetSettingsTurnServer(array $turnServersConfig, array $expectedTurnServers): void {
+		$this->config = $this->createMock(Config::class);
+		$this->recreateSignalingController();
+
+		$this->config->expects($this->once())
+			->method('getTurnSettings')
+			->willReturn($turnServersConfig);
+
+		$settings = $this->controller->getSettings()->getData();
+
+		// "turnservers" is always returned, even if empty
+		$this->assertArrayHasKey('turnservers', $settings);
+		$this->assertSame($expectedTurnServers, $settings['turnservers']);
+	}
+
 	public static function dataIsTryingToPublishMedia(): array {
 		// For simplicity the SDP contains only the relevant fields and it is
 		// not a valid SDP

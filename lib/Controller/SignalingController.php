@@ -164,15 +164,25 @@ class SignalingController extends OCSController {
 		$stunUrls = [];
 		$stunServers = $this->talkConfig->getStunServers();
 		foreach ($stunServers as $stunServer) {
+			if (empty($stunServer)) {
+				continue;
+			}
+
 			$stunUrls[] = 'stun:' . $stunServer;
 		}
-		$stun[] = [
-			'urls' => $stunUrls
-		];
+		if (!empty($stunUrls)) {
+			$stun[] = [
+				'urls' => $stunUrls
+			];
+		}
 
 		$turn = [];
 		$turnSettings = $this->talkConfig->getTurnSettings();
 		foreach ($turnSettings as $turnServer) {
+			if (empty($turnServer['schemes']) || empty($turnServer['server']) || empty($turnServer['protocols'])) {
+				continue;
+			}
+
 			$turnUrls = [];
 			$schemes = explode(',', $turnServer['schemes']);
 			$protocols = explode(',', $turnServer['protocols']);
