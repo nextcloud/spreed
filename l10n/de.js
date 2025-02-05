@@ -1201,7 +1201,7 @@ OC.L10N.register(
     "Enter your name" : "Gib deinen Namen ein",
     "Submit name and join" : "Namen übermitteln und beitreten",
     "Do you already have an account?" : "Hast du bereits ein Konto?",
-    "Log in" : "Anmelden",
+    "Log in" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
     "Error while verifying uploaded file" : "Fehler bei der Überprüfung der hochgeladenen Datei",
     "Uploaded file is verified" : "Hochgeladene Datei wurde überprüft",
     "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"name\",\"email\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV):<br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"Name\",\"E-Mail\"</samp> oder nur <samp>\"E-Mail\"</samp> übereinstimmen. <br/>- Ein Eintrag pro Zeile (z. B. <samp>\"Max Mustermann\", \"max@beispiel.de\"</samp>)",
