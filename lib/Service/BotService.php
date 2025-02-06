@@ -46,6 +46,8 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type InvocationData from BotInvokeEvent
  */
 class BotService {
+	private ActivityPubHelper $activityPubHelper;
+
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
 		protected BotConversationMapper $botConversationMapper,
@@ -62,37 +64,22 @@ class BotService {
 		protected ICertificateManager $certificateManager,
 		protected IEventDispatcher $dispatcher,
 	) {
+		$this->activityPubHelper = new ActivityPubHelper();
 	}
 
 	public function afterBotEnabled(BotEnabledEvent $event): void {
 		$this->invokeBots([$event->getBotServer()], $event->getRoom(), null, [
 			'type' => 'Join',
-			'actor' => [
-				'type' => 'Application',
-				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
-				'name' => $event->getBotServer()->getName(),
-			],
-			'object' => [
-				'type' => 'Collection',
-				'id' => $event->getRoom()->getToken(),
-				'name' => $event->getRoom()->getName(),
-			],
+			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
+			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 		]);
 	}
 
 	public function afterBotDisabled(BotDisabledEvent $event): void {
 		$this->invokeBots([$event->getBotServer()], $event->getRoom(), null, [
 			'type' => 'Leave',
-			'actor' => [
-				'type' => 'Application',
-				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
-				'name' => $event->getBotServer()->getName(),
-			],
-			'object' => [
-				'type' => 'Collection',
-				'id' => $event->getRoom()->getToken(),
-				'name' => $event->getRoom()->getName(),
-			],
+			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
+			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 		]);
 	}
 
@@ -106,6 +93,28 @@ class BotService {
 		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK | Bot::FEATURE_EVENT);
 		if (empty($bots)) {
 			return;
+		}
+
+		$inReplyTo = null;
+		$parent = $event->getParent();
+		if ($parent instanceof IComment) {
+			$parentMessage = $messageParser->createMessage(
+				$event->getRoom(),
+				$event->getParticipant(),
+				$parent,
+				$this->l10nFactory->get('spreed', 'en', 'en')
+			);
+			$messageParser->parseMessage($parentMessage);
+			$parentMessageData = [
+				'message' => $parentMessage->getMessage(),
+				'parameters' => $parentMessage->getMessageParameters(),
+			];
+
+			$inReplyTo = [
+				'type' => 'Note',
+				'actor' => $this->activityPubHelper->generatePersonFromMessageActor($parentMessage),
+				'object' => $this->activityPubHelper->generateNote($parent, $parentMessageData, 'message'),
+			];
 		}
 
 		$message = $messageParser->createMessage(
@@ -124,24 +133,9 @@ class BotService {
 
 		$this->invokeBots($botServers, $event->getRoom(), $event->getComment(), [
 			'type' => 'Create',
-			'actor' => [
-				'type' => 'Person',
-				'id' => $attendee->getActorType() . '/' . $attendee->getActorId(),
-				'name' => $attendee->getDisplayName(),
-				'talkParticipantType' => (string)$attendee->getParticipantType(),
-			],
-			'object' => [
-				'type' => 'Note',
-				'id' => $event->getComment()->getId(),
-				'name' => 'message',
-				'content' => json_encode($messageData, JSON_THROW_ON_ERROR),
-				'mediaType' => 'text/markdown', // FIXME or text/plain when markdown is disabled
-			],
-			'target' => [
-				'type' => 'Collection',
-				'id' => $event->getRoom()->getToken(),
-				'name' => $event->getRoom()->getName(),
-			]
+			'actor' => $this->activityPubHelper->generatePersonFromAttendee($attendee),
+			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, 'message', $inReplyTo),
+			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 		]);
 	}
 
@@ -167,23 +161,9 @@ class BotService {
 
 		$this->invokeBots($botServers, $event->getRoom(), $event->getComment(), [
 			'type' => 'Activity',
-			'actor' => [
-				'type' => 'Person',
-				'id' => $message->getActorType() . '/' . $message->getActorId(),
-				'name' => $message->getActorDisplayName(),
-			],
-			'object' => [
-				'type' => 'Note',
-				'id' => $event->getComment()->getId(),
-				'name' => $message->getMessageRaw(),
-				'content' => json_encode($messageData),
-				'mediaType' => 'text/markdown',
-			],
-			'target' => [
-				'type' => 'Collection',
-				'id' => $event->getRoom()->getToken(),
-				'name' => $event->getRoom()->getName(),
-			]
+			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, $message->getMessageRaw()),
+			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 		]);
 	}
 

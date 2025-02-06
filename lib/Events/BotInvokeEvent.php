@@ -11,20 +11,36 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 /**
+ * @psalm-type ChatMessageParentData = array{
+ *     type: 'Note',
+ *     actor: array{
+ *         type: 'Person',
+ *         id: non-empty-string,
+ *         name: non-empty-string,
+ *     },
+ *     object: array{
+ *         type: 'Note',
+ *         id: numeric-string,
+ *         name: string,
+ *         content: non-empty-string,
+ *         mediaType: 'text/markdown'|'text/plain',
+ *     },
+ * }
  * @psalm-type ChatMessageData = array{
  *     type: 'Activity'|'Create',
  *     actor: array{
  *         type: 'Person',
  *         id: non-empty-string,
  *         name: non-empty-string,
- *         talkParticipantType: non-empty-string,
+ *         talkParticipantType: numeric-string,
  *     },
  *     object: array{
  *         type: 'Note',
- *         id: non-empty-string,
+ *         id: numeric-string,
  *         name: string,
  *         content: non-empty-string,
  *         mediaType: 'text/markdown'|'text/plain',
+ *         inReplyTo?: ChatMessageParentData,
  *     },
  *     target: array{
  *         type: 'Collection',
