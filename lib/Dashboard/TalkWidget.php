@@ -142,12 +142,12 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				return false;
 			}
 
-			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-				return true;
-			}
-
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
+
+			if (!$attendee->isArchived() && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+				return true;
+			}
 
 			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
 				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
@@ -186,14 +186,18 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 				continue;
 			}
-			$rooms[] = $room;
 
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
-			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-				// Call in progress
-				$mentions[] = $room;
-				continue;
+
+			if (!$attendee->isArchived()) {
+				$rooms[] = $room;
+
+				if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+					// Call in progress
+					$mentions[] = $room;
+					continue;
+				}
 			}
 
 			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
