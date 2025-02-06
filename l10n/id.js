@@ -371,6 +371,7 @@ OC.L10N.register(
     "Call summary (%s)" : "Ringkasan panggilan ( %s )",
     "Tasks" : "Tugas",
     "Notes" : "Catatan",
+    "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
     "Loading" : "Memuat",
     "Close" : "Tutup",

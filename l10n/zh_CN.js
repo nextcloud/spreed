@@ -1076,6 +1076,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "您当前正在大厅等待。",
     "The meeting will start soon" : "会议不久后开始",
     "This meeting is scheduled for {startTime}" : "此会议定于 {startTime} 开始",
+    "Select a device" : "选择设备",
     "No microphone available" : "麦克风不可用",
     "Select microphone" : "选择麦克风",
     "No camera available" : "摄像头不可用",
