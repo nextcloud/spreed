@@ -89,30 +89,6 @@
       <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/Service/BotService.php">
-    <InvalidArgument>
-      <code><![CDATA[[
-			'type' => 'Activity',
-			'actor' => [
-				'type' => 'Person',
-				'id' => $message->getActorType() . '/' . $message->getActorId(),
-				'name' => $message->getActorDisplayName(),
-			],
-			'object' => [
-				'type' => 'Note',
-				'id' => $event->getComment()->getId(),
-				'name' => $message->getMessageRaw(),
-				'content' => json_encode($messageData),
-				'mediaType' => 'text/markdown',
-			],
-			'target' => [
-				'type' => 'Collection',
-				'id' => $event->getRoom()->getToken(),
-				'name' => $event->getRoom()->getName(),
-			]
-		]]]></code>
-    </InvalidArgument>
-  </file>
   <file src="lib/Service/RecordingService.php">
     <LessSpecificReturnStatement>
       <code><![CDATA[$recordingFolder]]></code>
