@@ -130,14 +130,14 @@ Feature: federation/chat
     And user "participant2" deletes message "Message 1-1 - Edit 1" from room "LOCAL::room" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType       | actorId                          | actorDisplayName         | message                   | messageParameters | parentMessage          |
-      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$LOCAL_REMOTE_URL}"}} | Message deleted by you |
-      | room | users           | participant1                     | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                          |                        |
+      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$LOCAL_REMOTE_URL}","mention-id":"federated_user\/participant2@{$LOCAL_REMOTE_URL}"}} | Message deleted by you |
+      | room | users           | participant1                     | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                          |                        |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
       | room        | actorType       | actorId                   | actorDisplayName         | message                   | messageParameters | parentMessage             |
-      | LOCAL::room | users           | participant2              | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
-      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$LOCAL_URL}"}} |                           |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"federated_user\/participant2@{$LOCAL_REMOTE_URL}"}}                        | Message deleted by author |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1","server":"{$LOCAL_URL}"}} |                           |
     # Disabled due to https://github.com/nextcloud/spreed/issues/12957
     # Then user "participant2" is participant of the following rooms (v4)
     # | id          | type | lastMessage |
