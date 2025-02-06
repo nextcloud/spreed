@@ -523,6 +523,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['listable'])) {
 				$data['listable'] = (string)$room['listable'];
 			}
+			if (isset($expectedRoom['isArchived'])) {
+				$data['isArchived'] = (int)$room['isArchived'];
+			}
 			if (isset($expectedRoom['participantType'])) {
 				$data['participantType'] = (string)$room['participantType'];
 			}
@@ -5167,12 +5170,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^user "([^"]*)" (unarchives|archives) room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
-	 * @param string $identifier
 	 * @param string $action
+	 * @param string $identifier
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userArchivesConversation(string $user, string $identifier, string $action, int $statusCode, string $apiVersion): void {
+	public function userArchivesConversation(string $user, string $action, string $identifier, int $statusCode, string $apiVersion): void {
 		$httpMethod = 'POST';
 
 		if ($action === 'unarchives') {
@@ -5182,22 +5185,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$httpMethod, '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/archive',
-		);
-		$this->assertStatusCode($this->response, $statusCode);
-	}
-
-	/**
-	 * @When /^user "([^"]*)" unarchives room "([^"]*)" with (\d+) \((v4)\)$/
-	 *
-	 * @param string $user
-	 * @param string $identifier
-	 * @param int $statusCode
-	 * @param string $apiVersion
-	 */
-	public function userUnarchivesConversation(string $user, string $identifier, int $statusCode, string $apiVersion): void {
-		$this->setCurrentUser($user);
-		$this->sendRequest(
-			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/archive',
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
