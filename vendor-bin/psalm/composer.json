@@ -1,11 +1,11 @@
 {
 	"config": {
 		"platform": {
-			"php": "8.1"
+			"php": "8.1.17"
 		},
 		"sort-packages": true
 	},
 	"require-dev": {
-		"vimeo/psalm": "^5.26.0"
+		"vimeo/psalm": "^6.2.0"
 	}
 }
