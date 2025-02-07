@@ -128,7 +128,7 @@ Feature: conversation/avatar
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
     Then user "participant1" sees the following shared other in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":"{VALIDATE_ICON_URL_PATTERN}"}} |
+      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":"{VALIDATE_ICON_URL_PATTERN}"}} |
 
   Scenario: User sets emoji as avatar
     Given user "participant1" creates room "room" (v4)

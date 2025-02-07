@@ -11,7 +11,7 @@ Feature: chat/note-to-self
       | participant1-note-to-self | 6    | Note to self  |
     Then user "participant1" sees the following system messages in room "participant1-note-to-self" with 200
       | room                      | actorType | actorId      | actorDisplayName         | message                        | messageParameters                                                               | systemMessage        |
-      | participant1-note-to-self | users     | participant1 | participant1-displayname | You created the conversation   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} | conversation_created |
+      | participant1-note-to-self | users     | participant1 | participant1-displayname | You created the conversation   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} | conversation_created |
 
 
   Scenario: Created automatically when fetching the room list
@@ -21,7 +21,7 @@ Feature: chat/note-to-self
       | Note to self | 6    | Note to self  |
     Then user "participant1" sees the following system messages in room "Note to self" with 200
       | room         | actorType | actorId | actorDisplayName | message                         | messageParameters                                              | systemMessage        |
-      | Note to self | guests    | system  |                  | System created the conversation | {"actor":{"type":"guest","id":"guest\/system","name":"Guest"}} | conversation_created |
+      | Note to self | guests    | system  |                  | System created the conversation | {"actor":{"type":"guest","id":"guest\/system","name":"Guest","mention-id":"guest\/system"}} | conversation_created |
 
   Scenario: Edit messages forever in note-to-self room
     When user "participant1" creates note-to-self (v4)
@@ -37,4 +37,3 @@ Feature: chat/note-to-self
     Then user "participant1" sees the following messages in room "participant1-note-to-self" with 200
       | room                      | actorType | actorId      | actorDisplayName         | message                | messageParameters | lastEditActorType | lastEditActorId | lastEditActorDisplayName |
       | participant1-note-to-self | users     | participant1 | participant1-displayname | Edited after 24 hours  | []                | users             | participant1    | participant1-displayname |
-      
