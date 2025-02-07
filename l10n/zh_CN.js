@@ -1626,6 +1626,7 @@ OC.L10N.register(
     "_In %n minute_::_In %n minutes_" : ["%n 分钟内"],
     "Conversation link copied to clipboard" : "对话链接已复制到剪贴板。",
     "The link could not be copied" : "无法复制链接。",
+    "Error while parsing a PROPFIND error" : "解析 PROPFIND 错误时出错",
     "Sending signaling message has failed" : "发送信令消息失败",
     "Lost connection to signaling server. Trying to reconnect." : "与信令服务器失去连接。正尝试重新连接",
     "Establishing signaling connection is taking longer than expected …" : "建立信令连接的时长超出预期..……",
