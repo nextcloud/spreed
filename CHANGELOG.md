@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-rc.3 – 2025-02-07
+### Added
+- feat(bots): Let bots know when a message was a reply
+  [#14310](https://github.com/nextcloud/spreed/issues/14310)
+
+### Changed
+- Update translations
+- Update dependencies
+- fix(calls): Adjust double-click behaviour when zooming screenshares
+  [#14284](https://github.com/nextcloud/spreed/issues/14284)
+
+### Fixed
+- fix(chat): Fix double scroll bar
+  [#14265](https://github.com/nextcloud/spreed/issues/14265)
+- fix(chat): Keep chat position at the bottom when the chat list height expends
+  [#14268](https://github.com/nextcloud/spreed/issues/14268)
+- fix(chat): Fix missing "Copy code" in some cases
+  [#14308](https://github.com/nextcloud/spreed/issues/14308)
+- fix(archive): Hide archived conversations from dashboard unless mentioned
+  [#14299](https://github.com/nextcloud/spreed/issues/14299)
+- fix(chat): Add mention-id to simplify editing messages with mentions
+  [#14311](https://github.com/nextcloud/spreed/issues/14311)
+
 ## 21.0.0-rc.2 – 2025-01-30
 ### Added
 - feat(chat): Support mentioning teams
