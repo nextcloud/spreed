@@ -42,6 +42,7 @@
 <script>
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
@@ -142,6 +143,16 @@ export default {
 		},
 
 		async openConversationWithReplacementUser() {
+			if (this.userAbsence.replacementUserId === getCurrentUser().uid) {
+				// Don't open a chat with one-self
+				return
+			}
+
+			if (this.userAbsence.replacementUserId === this.userAbsence.userId) {
+				// Don't recursively go to the current chat
+				return
+			}
+
 			this.$router.push({
 				name: 'root',
 				query: {
