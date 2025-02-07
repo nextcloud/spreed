@@ -19,7 +19,9 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 		const value: Mention = parameters[key] as Mention
 		let mention = ''
 
-		if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
+		if (value['mention-id']) {
+			mention = `@"${value['mention-id']}"`
+		} else if (key.startsWith('mention-call') && value.type === MENTION.TYPE.CALL) {
 			mention = '@all'
 		} else if (key.startsWith('mention-federated-user')
 			&& [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(value.type)) {
