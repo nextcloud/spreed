@@ -10,6 +10,39 @@ jest.mock('@nextcloud/router', () => ({
 
 describe('textParse', () => {
 	describe('parseMentions', () => {
+		it('replaces mentions correctly if mention-id is available', () => {
+			const input = 'test {mention-call1} test {mention-user1} test {mention-group1} test {mention-federated-user1}'
+			const output = 'test @"all" test @"alice" test @"group/talk" test @"federated_user/alice@server2.com"'
+			const parameters = {
+				'mention-call1': {
+					id: 'room-id',
+					name: 'Room Display Name',
+					type: 'call',
+					'mention-id': 'all',
+				},
+				'mention-user1': {
+					id: 'alice',
+					name: 'Just Alice',
+					type: 'user',
+					'mention-id': 'alice',
+				},
+				'mention-group1': {
+					id: 'talk',
+					name: 'Talk Group',
+					type: 'user-group',
+					'mention-id': 'group/talk',
+				},
+				'mention-federated-user1': {
+					id: 'alice',
+					name: 'Feder Alice',
+					type: 'user',
+					server: 'https://server2.com',
+					'mention-id': 'federated_user/alice@server2.com',
+				}
+			}
+			expect(parseMentions(input, parameters)).toBe(output)
+		})
+
 		it('replaces {mention-call} correctly', () => {
 			const input = 'test {mention-call1}'
 			const output = 'test @all'

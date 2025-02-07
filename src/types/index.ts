@@ -127,7 +127,7 @@ export type importEmailsParams = Required<operations['room-import-emails-as-part
 export type importEmailsResponse = ApiResponse<operations['room-import-emails-as-participants']['responses'][200]['content']['application/json']>
 
 // Chats
-export type Mention = RichObject<'server'|'call-type'|'icon-url'>
+export type Mention = RichObject<'server'|'call-type'|'icon-url'> & { 'mention-id'?: string }
 export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
 	'etag': string,
 	'permissions': string,
