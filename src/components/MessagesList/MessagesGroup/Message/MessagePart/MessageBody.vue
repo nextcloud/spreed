@@ -222,7 +222,6 @@ export default {
 		return {
 			isEditing: false,
 			showReloadButton: false,
-			codeBlocks: null,
 			currentCodeBlock: null,
 			copyButtonOffset: 0,
 			isVisible: false,
@@ -334,12 +333,6 @@ export default {
 		if (this.isEditable) {
 			EventBus.on('editing-message-processing', this.setIsEditing)
 		}
-
-		if (!this.containsCodeBlocks) {
-			return
-		}
-
-		this.codeBlocks = Array.from(this.$refs.messageMain?.querySelectorAll('pre'))
 	},
 
 	beforeDestroy() {
@@ -348,15 +341,24 @@ export default {
 
 	methods: {
 		t,
-		handleMarkdownMouseOver(event) {
+
+		getCodeBlocks() {
 			if (!this.containsCodeBlocks) {
-				return
+				return null
 			}
 
-			const index = this.codeBlocks.findIndex(item => item.contains(event.target))
+			return Array.from(this.$refs.messageMain?.querySelectorAll('pre'))
+		},
+
+		handleMarkdownMouseOver(event) {
+			const codeBlocks = this.getCodeBlocks()
+			if (!codeBlocks) {
+				return
+			}
+			const index = codeBlocks.findIndex(item => item.contains(event.target))
 			if (index !== -1) {
 				this.currentCodeBlock = index
-				const el = this.codeBlocks[index]
+				const el = codeBlocks[index]
 				this.copyButtonOffset = `${el.offsetTop}px`
 			}
 		},
@@ -367,8 +369,8 @@ export default {
 		},
 
 		async copyCodeBlock() {
-			const code = this.codeBlocks[this.currentCodeBlock].textContent
 			try {
+				const code = this.getCodeBlocks()[this.currentCodeBlock].textContent
 				await navigator.clipboard.writeText(code)
 				showSuccess(t('spreed', 'Code block copied to clipboard'))
 			} catch (error) {
