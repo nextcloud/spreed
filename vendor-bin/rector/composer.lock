@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4fd0d8ea52a4455421cdcc6e40f8449",
+    "content-hash": "6702e54cbe2ecf3870fab48055513100",
     "packages": [],
     "packages-dev": [
         {
             "name": "nextcloud/rector",
-            "version": "v0.2.1",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-libraries/rector.git",
-                "reference": "d73ab086700564f675eda9a834b6b08410a1da7e"
+                "reference": "25e71025c3acdf346f2d26034d3edd8e17e4596e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-libraries/rector/zipball/d73ab086700564f675eda9a834b6b08410a1da7e",
-                "reference": "d73ab086700564f675eda9a834b6b08410a1da7e",
+                "url": "https://api.github.com/repos/nextcloud-libraries/rector/zipball/25e71025c3acdf346f2d26034d3edd8e17e4596e",
+                "reference": "25e71025c3acdf346f2d26034d3edd8e17e4596e",
                 "shasum": ""
             },
             "require": {
@@ -34,12 +34,12 @@
                 "captainhook": {
                     "force-install": true
                 },
+                "ramsey/devtools": {
+                    "memory-limit": "-1",
+                    "command-prefix": "dev"
+                },
                 "ramsey/conventional-commits": {
                     "configFile": "conventional-commits.json"
-                },
-                "ramsey/devtools": {
-                    "command-prefix": "dev",
-                    "memory-limit": "-1"
                 }
             },
             "autoload": {
@@ -65,9 +65,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nextcloud-libraries/rector/issues",
-                "source": "https://github.com/nextcloud-libraries/rector/tree/v0.2.1"
+                "source": "https://github.com/nextcloud-libraries/rector/tree/v0.3.1"
             },
-            "time": "2024-10-01T12:24:08+00:00"
+            "time": "2025-02-06T09:32:20+00:00"
         },
         {
             "name": "phpstan/phpstan",
