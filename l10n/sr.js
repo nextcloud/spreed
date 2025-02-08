@@ -957,7 +957,7 @@ OC.L10N.register(
     "Next meeting" : "Наредни састанак",
     "Open Calendar" : "Отвори Календар",
     "Loading …" : "Учитавање…",
-    "No upcoming events" : "Нема догађаја у блиској будућности",
+    "No upcoming events" : "Нема предстојећих догађаја",
     "Schedule a meeting" : "Закажи састанак",
     "Meeting title" : "Наслов састанка",
     "From" : "Од",
