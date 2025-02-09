@@ -177,5 +177,36 @@ describe('CapabilitiesManager', () => {
 			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).toBeTruthy()
 			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(1)
 		})
+
+		it('should reset dirty proxy hash after second fetch and negative check for changes', async () => {
+			const joinRoomResponseMock = generateOCSResponse({
+				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}003` },
+				payload: { token, remoteServer }
+			})
+			const joinRoomResponseMock2 = generateOCSResponse({
+				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}004` },
+				payload: { token, remoteServer }
+			})
+			const responseMock = generateOCSResponse({
+				payload: {
+					...mockedCapabilities.spreed,
+					features: [...mockedCapabilities.spreed.features, 'new-feature', 'new-feature-2'],
+				}
+			})
+			const responseMock2 = generateOCSResponse({
+				payload: {
+					...mockedCapabilities.spreed,
+					features: [...mockedCapabilities.spreed.features, 'new-feature', 'new-feature-2'],
+				}
+			})
+			getRemoteCapabilities.mockReturnValueOnce(responseMock).mockReturnValueOnce(responseMock2)
+			await setRemoteCapabilities(joinRoomResponseMock)
+			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).toBeTruthy()
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(1)
+
+			await setRemoteCapabilities(joinRoomResponseMock2)
+			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).not.toBeDefined()
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(2)
+		})
 	})
 })

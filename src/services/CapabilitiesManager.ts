@@ -4,14 +4,11 @@
  */
 
 import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
 
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
-import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & { hash?: string }
@@ -113,16 +110,18 @@ function getRemoteCapability(token: string): RemoteCapability | null {
  * @param joinRoomResponse server response
  */
 export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
+	const talkHashStore = useTalkHashStore()
+
 	const token = joinRoomResponse.data.ocs.data.token
 	const remoteServer = joinRoomResponse.data.ocs.data.remoteServer!
 
 	// Check if remote capabilities have not changed since last check
 	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[remoteServer]?.hash) {
+		talkHashStore.resetTalkProxyHashDirty(token)
 		return
 	}
 
 	// Mark the hash as dirty to prevent any activity in the conversation
-	const talkHashStore = useTalkHashStore()
 	talkHashStore.setTalkProxyHashDirty(token)
 
 	const response = await getRemoteCapabilities(token)
@@ -142,9 +141,9 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 
 	if (shouldShowWarning) {
 		// As normal capabilities update, requires a reload to take effect
-		showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
-			timeout: TOAST_PERMANENT_TIMEOUT,
-		})
+		talkHashStore.showTalkProxyHashDirtyToast()
+	} else {
+		talkHashStore.resetTalkProxyHashDirty(token)
 	}
 }
 
