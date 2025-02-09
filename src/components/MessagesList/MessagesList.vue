@@ -386,6 +386,9 @@ export default {
 				this.$refs.scroller.scrollTo({
 					top: this.$refs.scroller.scrollHeight,
 				})
+			} else if (this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
+				// chat is not scrollable
+				this.setChatScrolledToBottom(true)
 			}
 		},
 
@@ -930,9 +933,9 @@ export default {
 				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
 				return
+			} else if (scrollHeight > clientHeight) {
+				this.setChatScrolledToBottom(false)
 			}
-
-			this.setChatScrolledToBottom(false)
 
 			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
 				|| skipHeightCheck) {
