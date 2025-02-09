@@ -32,6 +32,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		isNextcloudTalkHashDirty: false,
 		isNextcloudTalkProxyHashDirty: {},
 		maintenanceWarningToast: null,
+		proxyHashDirtyToast: null,
 	}),
 
 	actions: {
@@ -58,6 +59,20 @@ export const useTalkHashStore = defineStore('talkHash', {
 		setTalkProxyHashDirty(token) {
 			console.debug('X-Nextcloud-Talk-Proxy-Hash marked dirty: ', token)
 			Vue.set(this.isNextcloudTalkProxyHashDirty, token, true)
+		},
+
+		/**
+		 * Clear the current Talk Federation dirty hash marker (as it is irrelevant after reload or leaving)
+		 *
+		 * @param {string} token federated conversation token
+		 */
+		resetTalkProxyHashDirty(token) {
+			Vue.delete(this.isNextcloudTalkProxyHashDirty, token)
+
+			if (this.proxyHashDirtyToast) {
+				this.proxyHashDirtyToast.hideToast()
+				this.proxyHashDirtyToast = null
+			}
 		},
 
 		/**
@@ -103,6 +118,15 @@ export const useTalkHashStore = defineStore('talkHash', {
 				this.maintenanceWarningToast.hideToast()
 				this.maintenanceWarningToast = null
 			}
+		},
+
+		/**
+		 * Show a toast message when Talk Federation requires rejoining
+		 */
+		showTalkProxyHashDirtyToast() {
+			this.proxyHashDirtyToast = showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
 		},
 	}
 })
