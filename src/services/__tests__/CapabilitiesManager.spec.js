@@ -12,6 +12,7 @@ import {
 	hasTalkFeature,
 	getTalkConfig,
 	setRemoteCapabilities,
+	setRemoteCapabilitiesIfEmpty,
 } from '../CapabilitiesManager.ts'
 import { getRemoteCapabilities } from '../federationService.ts'
 
@@ -207,6 +208,41 @@ describe('CapabilitiesManager', () => {
 			await setRemoteCapabilities(joinRoomResponseMock2)
 			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).not.toBeDefined()
 			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(2)
+		})
+	})
+
+	describe('setRemoteCapabilitiesIfEmpty', () => {
+		const token = 'TOKEN8FED4'
+		const remoteServer = 'https://nextcloud4.local'
+
+		it('should early return if already has capabilities', async () => {
+			const [remoteServer, remoteCapabilities] = Object.entries(mockedRemotes)[0]
+			const token = remoteCapabilities.tokens[0]
+			const acceptShareResponseMock = generateOCSResponse({
+				payload: { token, remoteServer },
+			})
+			await setRemoteCapabilitiesIfEmpty(acceptShareResponseMock)
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(0)
+		})
+
+		it('should early return if no capabilities received from server', async () => {
+			const acceptShareResponseMock = generateOCSResponse({
+				payload: { token, remoteServer },
+			})
+			const responseMock = generateOCSResponse({ payload: {} })
+			getRemoteCapabilities.mockReturnValue(responseMock)
+			await setRemoteCapabilitiesIfEmpty(acceptShareResponseMock)
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(0)
+		})
+
+		it('should set capabilities for new server', async () => {
+			const acceptShareResponseMock = generateOCSResponse({
+				payload: { token, remoteServer },
+			})
+			const responseMock = generateOCSResponse({ payload: mockedCapabilities.spreed })
+			getRemoteCapabilities.mockReturnValue(responseMock)
+			await setRemoteCapabilitiesIfEmpty(acceptShareResponseMock)
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(1)
 		})
 	})
 })

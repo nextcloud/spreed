@@ -8,7 +8,7 @@ import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
+import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & { hash?: string }
@@ -145,6 +145,31 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	} else {
 		talkHashStore.resetTalkProxyHashDirty(token)
 	}
+}
+
+/**
+ * Fetch new capabilities if remote server is not yet known
+ * @param acceptShareResponse server response
+ */
+export async function setRemoteCapabilitiesIfEmpty(acceptShareResponse: Awaited<acceptShareResponse>): Promise<void> {
+	const token = acceptShareResponse.data.ocs.data.token
+	const remoteServer = acceptShareResponse.data.ocs.data.remoteServer!
+
+	// Check if remote capabilities already exists
+	if (remoteCapabilities[remoteServer]) {
+		return
+	}
+
+	const response = await getRemoteCapabilities(token)
+	const newRemoteCapabilities = response.data.ocs.data as Capabilities['spreed']
+	if (!Object.keys(newRemoteCapabilities).length) {
+		// data: {} received from server, nothing to update with
+		return
+	}
+
+	remoteCapabilities[remoteServer] = { spreed: newRemoteCapabilities }
+	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
+	patchTokenMap(acceptShareResponse.data.ocs.data)
 }
 
 /**
