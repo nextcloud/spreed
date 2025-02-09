@@ -126,15 +126,11 @@ export default {
 	},
 
 	mounted() {
-		window.addEventListener('resize', this.updateSize)
-
 		this.resizeObserver = new ResizeObserver(this.updateSize)
 		this.resizeObserver.observe(this.$refs.presenterOverlay.$el.parentElement)
 	},
 
 	beforeDestroy() {
-		window.removeEventListener('resize', this.updateSize)
-
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}
