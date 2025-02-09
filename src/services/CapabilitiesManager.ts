@@ -14,7 +14,7 @@ import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types/
 import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
 type Config = Capabilities['spreed']['config']
-type RemoteCapability = Capabilities & Partial<{ hash: string }>
+type RemoteCapability = Capabilities & { hash?: string }
 type RemoteCapabilities = Record<string, RemoteCapability>
 type TokenMap = Record<string, string|undefined|null>
 
@@ -114,7 +114,7 @@ function getRemoteCapability(token: string): RemoteCapability | null {
  */
 export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
 	const token = joinRoomResponse.data.ocs.data.token
-	const remoteServer = joinRoomResponse.data.ocs.data.remoteServer as string
+	const remoteServer = joinRoomResponse.data.ocs.data.remoteServer!
 
 	// Check if remote capabilities have not changed since last check
 	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[remoteServer]?.hash) {
@@ -126,20 +126,61 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	talkHashStore.setTalkProxyHashDirty(token)
 
 	const response = await getRemoteCapabilities(token)
-	if (!Object.keys(response.data.ocs.data).length) {
+	const newRemoteCapabilities = response.data.ocs.data as Capabilities['spreed']
+	if (!Object.keys(newRemoteCapabilities).length) {
 		// data: {} received from server, nothing to update with
 		return
 	}
 
-	remoteCapabilities[remoteServer] = { spreed: (response.data.ocs.data as Capabilities['spreed']) }
-	remoteCapabilities[remoteServer].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
+	const shouldShowWarning = checkRemoteCapabilitiesHasChanged(newRemoteCapabilities, remoteCapabilities[remoteServer]?.spreed)
+	remoteCapabilities[remoteServer] = {
+		spreed: newRemoteCapabilities,
+		hash: joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'],
+	}
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 	patchTokenMap(joinRoomResponse.data.ocs.data)
 
-	// As normal capabilities update, requires a reload to take effect
-	showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
-		timeout: TOAST_PERMANENT_TIMEOUT,
-	})
+	if (shouldShowWarning) {
+		// As normal capabilities update, requires a reload to take effect
+		showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
+			timeout: TOAST_PERMANENT_TIMEOUT,
+		})
+	}
+}
+
+/**
+ * Deep comparison of remote capabilities, whether there are actual changes that require reload
+ * @param newObject new remote capabilities
+ * @param oldObject old remote capabilities
+ */
+function checkRemoteCapabilitiesHasChanged(newObject: Capabilities['spreed'], oldObject: Capabilities['spreed']): boolean {
+	if (!newObject || !oldObject) {
+		return true
+	}
+
+	/**
+	 * Returns remote config without local-only properties
+	 * @param object remote capabilities object
+	 */
+	function getStrippedCapabilities(object: Capabilities['spreed']): { config: Partial<Config>, features: string[] } {
+		const config = structuredClone(object.config)
+
+		for (const key1 of Object.keys(object['config-local']) as Array<keyof Config>) {
+			const keys2 = object['config-local'][key1]
+			for (const key2 of keys2 as Array<keyof Config[keyof Config]>) {
+				delete config[key1][key2]
+			}
+			if (!Object.keys(config[key1]).length) {
+				delete config[key1]
+			}
+		}
+
+		const features = object.features.filter(feature => !object['features-local'].includes(feature)).sort()
+
+		return { config, features }
+	}
+
+	return JSON.stringify(getStrippedCapabilities(newObject)) !== JSON.stringify(getStrippedCapabilities(oldObject))
 }
 
 /**

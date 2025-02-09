@@ -146,12 +146,32 @@ describe('CapabilitiesManager', () => {
 			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(0)
 		})
 
+		it('should set capabilities for new server and mark talk proxy hash as dirty', async () => {
+			const token = 'TOKEN7FED3'
+			const remoteServer = 'https://nextcloud3.local'
+			const remoteHash = 'abc123'
+			const joinRoomResponseMock = generateOCSResponse({
+				headers: { 'x-nextcloud-talk-proxy-hash': remoteHash },
+				payload: { token, remoteServer }
+			})
+			const responseMock = generateOCSResponse({ payload: mockedCapabilities.spreed })
+			getRemoteCapabilities.mockReturnValue(responseMock)
+			await setRemoteCapabilities(joinRoomResponseMock)
+			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).toBeTruthy()
+			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(1)
+		})
+
 		it('should update capabilities from server response and mark talk proxy hash as dirty', async () => {
 			const joinRoomResponseMock = generateOCSResponse({
 				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}002` },
 				payload: { token, remoteServer }
 			})
-			const responseMock = generateOCSResponse({ payload: mockedCapabilities.spreed })
+			const responseMock = generateOCSResponse({
+				payload: {
+					...mockedCapabilities.spreed,
+					features: [...mockedCapabilities.spreed.features, 'new-feature'],
+				}
+			})
 			getRemoteCapabilities.mockReturnValue(responseMock)
 			await setRemoteCapabilities(joinRoomResponseMock)
 			expect(talkHashStore.isNextcloudTalkProxyHashDirty[token]).toBeTruthy()
