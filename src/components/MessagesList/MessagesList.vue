@@ -7,7 +7,6 @@
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
-		:key="token"
 		class="scroller messages-list__scroller"
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
 			'scroller--isScrolling': isScrolling}"
