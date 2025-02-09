@@ -10,7 +10,7 @@
 		:resizable="false"
 		:h="presenterOverlaySize"
 		:w="presenterOverlaySize"
-		:x="isRTL ? parentWidth - presenterOverlaySize - 10 : 10"
+		:x="isDirectionRTL ? parentWidth - presenterOverlaySize - 10 : 10"
 		:y="10"
 		@dragging="isDragging = true"
 		@dragstop="isDragging = false">
@@ -62,6 +62,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'
 
+const isDirectionRTL = isRTL()
+
 export default {
 	name: 'PresenterOverlay',
 
@@ -111,7 +113,7 @@ export default {
 		const parentWidth = ref(document.getElementById('videos').getBoundingClientRect().width)
 		return {
 			parentWidth,
-			isRTL,
+			isDirectionRTL,
 		}
 	},
 
@@ -147,6 +149,7 @@ export default {
 			// FIXME: inner method should be triggered to re-parent element
 			this.$refs.presenterOverlay.checkParentSize()
 			// FIXME: if it stays out of bounds (right and bottom), bring it back
+			// FIXME: should consider RTL
 			if (this.$refs.presenterOverlay.right < 0) {
 				this.$refs.presenterOverlay.moveHorizontally(this.$refs.presenterOverlay.parentWidth - this.presenterOverlaySize)
 			}
