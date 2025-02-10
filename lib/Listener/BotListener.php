@@ -15,6 +15,8 @@ use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversationMapper;
@@ -63,6 +65,14 @@ class BotListener implements IEventListener {
 
 		if ($event instanceof ChatMessageSentEvent) {
 			$this->botService->afterChatMessageSent($event, $messageParser);
+			return;
+		}
+		if ($event instanceof ReactionAddedEvent) {
+			$this->botService->afterReactionAdded($event, $messageParser);
+			return;
+		}
+		if ($event instanceof ReactionRemovedEvent) {
+			$this->botService->afterReactionRemoved($event, $messageParser);
 			return;
 		}
 		if ($event instanceof SystemMessageSentEvent) {

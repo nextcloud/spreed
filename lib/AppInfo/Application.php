@@ -59,6 +59,8 @@ use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -194,6 +196,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, BotListener::class);
+		$context->registerEventListener(ReactionAddedEvent::class, BotListener::class);
+		$context->registerEventListener(ReactionRemovedEvent::class, BotListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
 
 		// Chat listeners
