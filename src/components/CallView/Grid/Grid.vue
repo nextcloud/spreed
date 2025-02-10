@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -153,7 +153,6 @@ import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -168,7 +167,6 @@ import VideoVue from '../shared/VideoVue.vue'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
-import { useSidebarStore } from '../../../stores/sidebar.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
@@ -259,7 +257,6 @@ export default {
 			videosCap,
 			videosCapEnforced,
 			callViewStore: useCallViewStore(),
-			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -277,6 +274,7 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
+			resizeObserver: null,
 			debounceMakeGrid: () => {},
 			debounceHandleWheelEvent: () => {},
 			tempPromotedModels: [],
@@ -477,10 +475,6 @@ export default {
 			return this.videosCount > this.slots
 		},
 
-		sidebarStatus() {
-			return this.sidebarStore.show
-		},
-
 		wrapperStyle() {
 			if (this.isStripe) {
 				return 'height: 250px'
@@ -600,11 +594,6 @@ export default {
 			this.rebuildGrid()
 		},
 
-		sidebarStatus() {
-			// Handle the resize after the sidebar animation has completed
-			setTimeout(this.handleResize, 500)
-		},
-
 		numberOfPages() {
 			if (this.currentPage >= this.numberOfPages) {
 				this.currentPage = Math.max(0, this.numberOfPages - 1)
@@ -634,19 +623,21 @@ export default {
 	mounted() {
 		this.debounceMakeGrid = debounce(this.makeGrid, 200)
 		this.debounceHandleWheelEvent = debounce(this.handleWheelEvent, 50)
-		window.addEventListener('resize', this.handleResize)
-		subscribe('navigation-toggled', this.handleResize)
+		this.resizeObserver = new ResizeObserver(this.handleResize)
+		this.resizeObserver.observe(this.$refs.gridWrapper)
 		this.makeGrid()
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
+
 	beforeDestroy() {
 		this.debounceMakeGrid.clear?.()
 		this.debounceHandleWheelEvent.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
-		window.removeEventListener('resize', this.handleResize)
-		unsubscribe('navigation-toggled', this.handleResize)
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	methods: {
