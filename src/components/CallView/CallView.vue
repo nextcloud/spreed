@@ -721,7 +721,12 @@ export default {
 				return
 			}
 			this.callViewStore.setSelectedVideoPeerId(peerId)
-			this.callViewStore.startPresentation(this.token)
+			this.callViewStore.setCallViewMode({
+				token: this.token,
+				isGrid: false,
+				isStripeOpen: false,
+				clearLast: false,
+			})
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
@@ -730,7 +735,12 @@ export default {
 			}
 			// Deselect possible selected video
 			this.callViewStore.setSelectedVideoPeerId('local')
-			this.callViewStore.startPresentation(this.token)
+			this.callViewStore.setCallViewMode({
+				token: this.token,
+				isGrid: false,
+				isStripeOpen: false,
+				clearLast: false,
+			})
 		},
 
 		async fetchPeers() {
