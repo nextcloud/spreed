@@ -189,7 +189,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
-import { useCallViewStore } from '../../stores/callView.js'
+import { useCallViewStore } from '../../stores/callView.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 

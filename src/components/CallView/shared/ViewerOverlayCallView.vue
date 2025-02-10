@@ -114,7 +114,7 @@ import Screen from './Screen.vue'
 import VideoVue from './VideoVue.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 
 export default {

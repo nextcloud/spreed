@@ -167,7 +167,7 @@ import VideoVue from '../shared/VideoVue.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
