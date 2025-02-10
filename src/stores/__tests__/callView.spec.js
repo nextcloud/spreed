@@ -87,7 +87,7 @@ describe('callViewStore', () => {
 			})
 			expect(callViewStore.isGrid).toBeTruthy()
 			expect(callViewStore.isStripeOpen).toBeFalsy()
-			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, true)
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, 'true')
 
 			callViewStore.setCallViewMode({
 				token: TOKEN,
@@ -96,7 +96,7 @@ describe('callViewStore', () => {
 			})
 			expect(callViewStore.isGrid).toBeFalsy()
 			expect(callViewStore.isStripeOpen).toBeTruthy()
-			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, false)
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, 'false')
 		})
 
 		it('start presentation switches off grid view and restores when it ends', () => {
