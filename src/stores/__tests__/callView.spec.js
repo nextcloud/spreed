@@ -7,7 +7,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import vuexStore from '../../store/index.js'
-import { useCallViewStore } from '../callView.js'
+import { useCallViewStore } from '../callView.ts'
 
 jest.mock('../../services/BrowserStorage.js', () => ({
 	getItem: jest.fn().mockReturnValue(null),

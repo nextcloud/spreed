@@ -105,7 +105,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { PARTICIPANT } from '../../../constants.ts'
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
