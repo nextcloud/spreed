@@ -447,11 +447,6 @@ export default {
 			}
 		},
 
-		// TODO: rebuild the grid to have optimal for last page
-		// isLastPage() {
-		// return !this.hasNextPage
-		// },
-
 		// Computed css to reactively style the grid
 		gridStyle() {
 			let columns = this.columns
@@ -566,22 +561,7 @@ export default {
 		'videos.length'() {
 			this.makeGrid()
 		},
-		// TODO: rebuild the grid to have optimal for last page
-		// Exception for when navigating in and away from the last page of the
-		// grid
-		/**
-		isLastPage(newValue, oldValue) {
-			 if (this.hasPagination) {
-				 // If navigating into last page, make grid for last page
-				if (newValue && this.currentPage !== 0) {
-					this.makeGridForLastPage()
-				} else if (!newValue) {
-				// TODO: make a proper grid for when navigating away from last page
-					this.makeGrid()
-				}
-			 }
-		 },
-		 */
+
 		isStripe() {
 			this.rebuildGrid()
 
@@ -619,11 +599,10 @@ export default {
 		},
 	},
 
-	// bind event handlers to the `handleResize` method
 	mounted() {
 		this.debounceMakeGrid = debounce(this.makeGrid, 200)
 		this.debounceHandleWheelEvent = debounce(this.handleWheelEvent, 50)
-		this.resizeObserver = new ResizeObserver(this.handleResize)
+		this.resizeObserver = new ResizeObserver(this.debounceMakeGrid)
 		this.resizeObserver.observe(this.$refs.gridWrapper)
 		this.makeGrid()
 
@@ -688,18 +667,17 @@ export default {
 			this.screenshotMode = false
 			this.devMode = false
 		},
-		// whenever the document is resized, re-set the 'clientWidth' variable
-		handleResize(event) {
+
+		// Find the right size if the grid in rows and columns (we already know the size in px).
+		makeGrid() {
 			// TODO: properly handle resizes when not on first page:
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-			this.debounceMakeGrid()
-		},
-
-		// Find the right size if the grid in rows and columns (we already know
-		// the size in px).
-		makeGrid() {
+			// TODO: rebuild the grid to have optimal for last page:
+			// Exception for when navigating in and away from the last page of the grid
+			// The last grid page is very likely not to have the same number of elements
+			// as the previous pages so the grid needs to be tweaked accordingly
 			if (!this.$refs.grid) {
 				return
 			}
@@ -814,17 +792,6 @@ export default {
 			this.columns = currentColumns
 			this.rows = currentRows
 		},
-
-		// The last grid page is very likely not to have the same number of
-		// elements as the previous pages so the grid needs to be tweaked
-		// accordingly
-		// makeGridForLastPage() {
-		// this.columns = this.columnsMax
-		// this.rows = this.rowsMax
-		// // The displayed videos for the last page have already been set
-		// // in `handleClickNext`
-		// this.shrinkGrid(this.displayedVideos.length)
-		// },
 
 		handleWheelEvent(event) {
 			if (this.gridWidth <= 0) {
