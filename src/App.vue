@@ -217,10 +217,6 @@ export default {
 			this.$store.dispatch('joinConversation', { token: this.$route.params.token })
 		}
 
-		window.addEventListener('resize', this.onResize)
-
-		this.onResize()
-
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
@@ -537,10 +533,6 @@ export default {
 
 		refreshCurrentConversation() {
 			this.fetchSingleConversation(this.token)
-		},
-
-		onResize() {
-			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
 		},
 
 		preventUnload(event) {
