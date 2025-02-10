@@ -75,6 +75,10 @@ export const useCallViewStore = defineStore('callView', {
 				this.lastIsGrid = this.isGrid
 				BrowserStorage.setItem(`callprefs-${token}-isgrid`, isGrid)
 				this.isGrid = isGrid
+
+				if (isGrid) {
+					this.setSelectedVideoPeerId(null)
+				}
 			}
 
 			if (isStripeOpen !== null) {
