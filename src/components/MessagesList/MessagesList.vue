@@ -341,7 +341,6 @@ export default {
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
 
-		window.addEventListener('resize', this.updateSize)
 		this.resizeObserver = new ResizeObserver(this.updateSize)
 		this.resizeObserver.observe(this.$refs.scroller)
 
@@ -368,7 +367,6 @@ export default {
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
 
-		window.removeEventListener('resize', this.updateSize)
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}
