@@ -48,6 +48,44 @@ use OCP\EventDispatcher\Event;
  *         name: non-empty-string,
  *     },
  * }
+ * @psalm-type ReactionMessageData = array{
+ *     type: 'Like',
+ *     actor: array{
+ *         type: 'Person',
+ *         id: non-empty-string,
+ *         name: non-empty-string,
+ *         talkParticipantType: numeric-string,
+ *     },
+ *     object: array{
+ *         type: 'Note',
+ *         id: numeric-string,
+ *         name: string,
+ *         content: non-empty-string,
+ *         mediaType: 'text/markdown'|'text/plain',
+ *         inReplyTo?: ChatMessageParentData,
+ *     },
+ *     target: array{
+ *         type: 'Collection',
+ *         id: non-empty-string,
+ *         name: non-empty-string,
+ *     },
+ *     content: string,
+ * }
+ * @psalm-type UndoReactionMessageData = array{
+ *     type: 'Undo',
+ *     actor: array{
+ *         type: 'Person',
+ *         id: non-empty-string,
+ *         name: non-empty-string,
+ *         talkParticipantType: numeric-string,
+ *     },
+ *     object: ReactionMessageData,
+ *     target: array{
+ *         type: 'Collection',
+ *         id: non-empty-string,
+ *         name: non-empty-string,
+ *     },
+ * }
  * @psalm-type BotManagementData = array{
  *     type: 'Join'|'Leave',
  *     actor: array{
@@ -61,7 +99,7 @@ use OCP\EventDispatcher\Event;
  *         name: non-empty-string,
  *     },
  * }
- * @psalm-type InvocationData = ChatMessageData|BotManagementData
+ * @psalm-type InvocationData = ChatMessageData|ReactionMessageData|UndoReactionMessageData|BotManagementData
  */
 class BotInvokeEvent extends Event {
 	/** @var list<string> */

@@ -169,7 +169,7 @@ In the conversation menu, you can access various settings to manage your convers
 			$previous = $this->chatManager->postSampleMessage($room, $message, $replyTo);
 
 			foreach ($reactions as $reaction) {
-				$this->reactionManager->addReactionMessage($room, Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SAMPLE, (int)$previous->getId(), $reaction);
+				$this->reactionManager->addReactionMessage($room, Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SAMPLE, '', (int)$previous->getId(), $reaction);
 			}
 		}
 	}

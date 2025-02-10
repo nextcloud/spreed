@@ -186,6 +186,18 @@ listen to the `OCA\Talk\Events\SystemMessagesMultipleSentEvent` event instead.
 * Since: 18.0.0
 * Since: 19.0.0 - Method `getParent()` was added
 
+### Reaction added
+
+* Before event: `OCA\Talk\Events\BeforeReactionAddedEvent`
+* After event: `OCA\Talk\Events\ReactionAddedEvent`
+* Since: 21.0.0
+
+### Reaction removed
+
+* Before event: `OCA\Talk\Events\BeforeReactionRemovedEvent`
+* After event: `OCA\Talk\Events\ReactionRemovedEvent`
+* Since: 21.0.0
+
 ## Other events
 
 ### Turn servers get
