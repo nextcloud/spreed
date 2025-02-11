@@ -2040,7 +2040,6 @@
     "SIP dial-in" : "SIP-Einwahl",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
     "Please try to reload the page" : "Bitte versuche, die Seite neu zu laden",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Das Inhaltsformat besteht aus kommagetrennten Werten (CSV):<br/>- Eine Kopfzeile ist erforderlich und muss mit <samp>\"Name\",\"E-Mail\"</samp> oder nur <samp>\"E-Mail\"</samp> übereinstimmen. <br/>- Ein Eintrag pro Zeile (z. B. <samp>\"Max Mustermann\", \"max@beispiel.de\"</samp>)",
     "Next call" : "Nächster Anruf",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Federation wurde aktualisiert, bitte lade die Seite neu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
