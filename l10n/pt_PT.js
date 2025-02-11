@@ -256,6 +256,7 @@ OC.L10N.register(
     "TURN server protocols" : "Protocolos do servidor TURN",
     "OK" : "Ok",
     "Checking …" : "A verificar...",
+    "Federated user" : "Utilizador federado",
     "Back" : "Anterior",
     "Cancel" : "Cancelar",
     "Confirm" : "Confirmar",
