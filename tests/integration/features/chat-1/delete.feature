@@ -18,10 +18,10 @@ Feature: chat/delete
     And user "participant1" deletes message "Message 1" from room "group room" with 200
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant1 | participant1-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -40,10 +40,10 @@ Feature: chat/delete
     And user "participant2" deletes message "Message 1" from room "group room" with 200
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -75,10 +75,10 @@ Feature: chat/delete
     And user "participant1" deletes message "Message 1" from room "group room" with 200
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -101,11 +101,11 @@ Feature: chat/delete
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by you     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by {actor}     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -128,11 +128,11 @@ Feature: chat/delete
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by author     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by you     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -155,11 +155,11 @@ Feature: chat/delete
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by you     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant2" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message deleted by {actor}     |
-      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |               |
+      | group room | users     | participant2 | participant2-displayname | Message deleted by {actor}   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
     Then user "participant1" received a system messages in room "group room" to delete "Message 1"
     Then user "participant2" received a system messages in room "group room" to delete "Message 1"
 
@@ -187,12 +187,12 @@ Feature: chat/delete
     And user "participant2" deletes message "Message 2" from room "room1" with 200
     Then user "participant1" sees the following messages in room "room1" with 200
       | room  | actorType | actorId      | actorDisplayName         | message                      | messageParameters                                                               |
-      | room1 | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room1 | users     | participant1 | participant1-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room1 | users     | participant2 | participant2-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room1 | users     | participant1 | participant1-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant2" sees the following messages in room "room1" with 200
       | room  | actorType | actorId      | actorDisplayName         | message                      | messageParameters                                                               |
-      | room1 | users     | participant2 | participant2-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room1 | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room1 | users     | participant2 | participant2-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room1 | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
   Scenario: Clear chat history as a moderator
     Given user "participant1" creates room "room1" (v4)

@@ -34,9 +34,9 @@ Feature: callapi/notifications
     Then user "participant2" checks call notification for "room" with 200 (v4)
     Then user "participant2" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | call_started         | {actor} started a call           | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | call_started         | {actor} started a call           | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant2" has the following notifications
       | app    | object_type | object_id | subject                          |
       | spreed | call        | room      | A group call has started in room |
@@ -57,9 +57,9 @@ Feature: callapi/notifications
       | silent | true |
     Then user "participant2" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | call_started         | {actor} started a silent call    | true   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | call_started         | {actor} started a silent call    | true   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
     Given user "participant1" leaves call "room" with 200 (v4)

@@ -153,6 +153,7 @@ class UserMention implements IEventListener {
 					'name' => $chatMessage->getRoom()->getDisplayName($userId, true),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
 					'icon-url' => $this->avatarService->getAvatarUrl($chatMessage->getRoom()),
+					'mention-id' => $search,
 				];
 			} elseif ($mention['type'] === 'guest') {
 				try {
@@ -166,6 +167,7 @@ class UserMention implements IEventListener {
 					'type' => $mention['type'],
 					'id' => $mention['id'],
 					'name' => $displayName,
+					'mention-id' => $search,
 				];
 			} elseif ($mention['type'] === 'email') {
 				try {
@@ -179,6 +181,7 @@ class UserMention implements IEventListener {
 					'type' => $mention['type'],
 					'id' => $mention['id'],
 					'name' => $displayName,
+					'mention-id' => $search,
 				];
 			} elseif ($mention['type'] === 'federated_user') {
 				try {
@@ -198,7 +201,8 @@ class UserMention implements IEventListener {
 					'type' => 'user',
 					'id' => $cloudId->getUser(),
 					'name' => $displayName,
-					'server' => $cloudId->getRemote()
+					'server' => $cloudId->getRemote(),
+					'mention-id' => $search,
 				];
 			} elseif ($mention['type'] === 'group') {
 				$group = $this->groupManager->get($mention['id']);
@@ -212,6 +216,7 @@ class UserMention implements IEventListener {
 					'type' => 'user-group',
 					'id' => $mention['id'],
 					'name' => $displayName,
+					'mention-id' => $search,
 				];
 			} else {
 				try {
@@ -226,6 +231,7 @@ class UserMention implements IEventListener {
 					'type' => $mention['type'],
 					'id' => $mention['id'],
 					'name' => $displayName,
+					'mention-id' => $search,
 				];
 			}
 		}
