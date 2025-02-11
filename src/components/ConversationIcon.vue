@@ -18,7 +18,8 @@
 				:width="size"
 				:height="size"
 				:alt="item.displayName"
-				class="avatar icon">
+				class="avatar icon"
+				@error="onError">
 			<span v-if="!hideUserStatus && conversationType"
 				class="conversation-icon__type"
 				role="img"
@@ -52,6 +53,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
@@ -136,8 +139,19 @@ export default {
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
 
+		const failed = ref(false)
+
+		/**
+		 * If avatar image failed to load, toggle value to provide a fallback
+		 */
+		function onError() {
+			failed.value = true
+		}
+
 		return {
 			isDarkTheme,
+			failed,
+			onError,
 		}
 	},
 
@@ -164,8 +178,9 @@ export default {
 				return this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
 			}
 
-			if (!supportsAvatar) {
-				if (this.item.objectType === CONVERSATION.OBJECT_TYPE.FILE) {
+			if (!supportsAvatar || this.failed) {
+				if (this.item.objectType === CONVERSATION.OBJECT_TYPE.FILE
+					|| this.item.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 					return 'icon-file'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION) {
 					return 'icon-password'
@@ -255,6 +270,10 @@ export default {
 		&.icon-changelog {
 			background-size: cover !important;
 		}
+	}
+
+	img.avatar.icon {
+		background-color: transparent;
 	}
 
 	&--dark .avatar.icon {
