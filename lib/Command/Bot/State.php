@@ -46,6 +46,8 @@ class State extends Base {
 				'Specify the list of features for the bot' . "\n"
 				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
 				. ' - response: The bot can post messages and reactions as a response' . "\n"
+				. ' - event: The bot reads posted messages from local events' . "\n"
+				. ' - reaction: The bot is notified about adding and removing of reactions' . "\n"
 				. ' - none: When all features should be disabled for the bot'
 			)
 		;
