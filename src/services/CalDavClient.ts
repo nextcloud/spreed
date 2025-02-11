@@ -14,8 +14,13 @@ import type {
 } from '../types/index.ts'
 
 /**
- * Copied from https://github.com/nextcloud/calendar/blob/main/src/services/caldavService.js
- * Modified for TS usage
+ * Copied from:
+ * - https://github.com/nextcloud/calendar/blob/main/src/services/caldavService.js
+ * - https://github.com/nextcloud/server/blob/master/core/src/OC/xhr-error.js
+ * Modified for usage in Talk and Talk Desktop:
+ * - migrated to TypeScript
+ * - removed jQuery dependency
+ * - dropped Ajax Error processing via OC.registerXHRForErrorProcessing
  */
 const clients: Record<string, DavClient> = {}
 
@@ -51,8 +56,17 @@ const getClient = (headers: object = {}) => {
 			return result
 		}
 
-		// @ts-expect-error: Vue: Cannot find name OC
-		OC.registerXHRForErrorProcessing(xhr) // eslint-disable-line no-undef
+		xhr.onload = (event: ProgressEvent) => {
+			if (xhr.readyState !== 4) {
+				return
+			} else if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+				return
+			}
+			console.error(event)
+		}
+		xhr.onerror = (event: ProgressEvent) => {
+			console.error(event)
+		}
 		return xhr
 	})
 
