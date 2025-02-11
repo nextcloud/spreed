@@ -861,5 +861,5 @@ Feature: chat-2/poll
       | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
     Then user "participant2" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
