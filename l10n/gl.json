@@ -2040,7 +2040,6 @@
     "SIP dial-in" : "Marcación SIP",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Non avisar sobre problemas de conectividade nas chamadas con máis de 2 participantes",
     "Please try to reload the page" : "Tente volver cargar a páxina",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "O formato de contido é valores separados por comas (CSV):<br/>– A liña de cabeceira é necesaria e debe coincidir con <samp>«correo»,«nome»</samp> ou só <samp>«correo»</samp><br/>– Unha entrada por liña (p. ex., <samp>«Xan Carallás»,«xan@example.tld»</samp>)",
     "Next call" : "Seguinte chamada",
     "Nextcloud Talk Federation was updated, please reload the page" : "Actualizouse a federación de Parladoiro de Nextcloud, volva cargar a páxina"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
