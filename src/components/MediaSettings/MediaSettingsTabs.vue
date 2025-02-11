@@ -37,12 +37,6 @@ const isRTLDirection = isRTL()
 const randomId = Math.random().toString(36).substring(7)
 const getRefId = (scope: 'tab' | 'panel', key: string) => `tab-${randomId}-${scope}-${key}`
 
-/**
- * Whether the tab panel horizontal transition is enabled.
- * Used to prevent the panel switch transition when the tab is first rendered.
- */
-const enableTransition = ref(false)
-
 /** Index of the active tab for the transition effect */
 const activeIndex = computed(() => props.tabs.findIndex(tab => tab.id === props.active))
 /** Inline styles to shift tabs */
@@ -84,22 +78,12 @@ function handleTabClick(tabId: string) {
 }
 
 /**
- * Handle the tab panel opening transition finish
- */
-function handleTabsAfterOpen() {
-	// Enable horizontal slide transition only after the tab panel is fully open
-	// Otherwise it slides to the active tab during opening
-	enableTransition.value = true
-}
-
-/**
  * Handle the tab panel closing transition finish
  */
 function handleTabsAfterClosed() {
 	// Emit tab change to none only when the tab panel is fully closed
 	// Otherwise visually open tab disappears with transition during closing
 	emit('update:active', undefined)
-	enableTransition.value = false
 }
 </script>
 
@@ -124,14 +108,12 @@ function handleTabsAfterClosed() {
 
 		<TransitionExpand :show="isOpen"
 			direction="vertical"
-			@after-enter="handleTabsAfterOpen"
 			@after-leave="handleTabsAfterClosed">
 			<div class="tab-panels-container">
 				<div v-for="tab in tabs"
 					:id="getRefId('panel', tab.id)"
 					:key="tab.id"
 					class="tab-panel"
-					:class="{ 'tab-panel--with-transition': enableTransition }"
 					role="tabpanel"
 					:inert="!isActive(tab.id)"
 					:aria-hidden="!isActive(tab.id)"
@@ -162,10 +144,6 @@ function handleTabsAfterClosed() {
 .tab-panel {
 	width: 100%;
 	flex: 1 0 100%;
-	transition: none;
-
-	&--with-transition {
-		transition: transform ease var(--animation-slow);
-	}
+	transition: transform ease var(--animation-slow);
 }
 </style>
