@@ -177,6 +177,13 @@
 * `1` Enabled
 * `2` No setup - The bot can neither be enabled nor disabled by a moderator
 
+### Bot features
+* `0` (none) - Bot is not functional at the moment
+* `1` (webhook) - Bot is receive webhooks
+* `2` (response) - Bot is sending webhooks
+* `4` (event) - Bot is invoked via PHP event `OCA\Talk\Events\BotInvokeEvent`
+* `8` (reaction) - Bot is receiving webhooks or is invoked via PHP event for adding and removing reactions
+
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used
