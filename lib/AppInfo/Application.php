@@ -29,6 +29,8 @@ namespace OCA\Talk\AppInfo;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
+use OCA\Circles\Events\CircleEditedEvent;
+use OCA\Circles\Events\EditingCircleEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
@@ -95,6 +97,7 @@ use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\BotListener;
 use OCA\Talk\Listener\CircleDeletedListener;
+use OCA\Talk\Listener\CircleEditedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\DisplayNameListener;
@@ -262,6 +265,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(UserAddedEvent::class, GroupMembershipListener::class);
 		$context->registerEventListener(UserRemovedEvent::class, GroupMembershipListener::class);
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
+		$context->registerEventListener(EditingCircleEvent::class, CircleEditedListener::class);
+		$context->registerEventListener(CircleEditedEvent::class, CircleEditedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
