@@ -1033,7 +1033,7 @@ class SystemMessage implements IEventListener {
 			'type' => 'guest',
 			'id' => 'guest/' . $actorId,
 			'name' => $this->guestNames[$key],
-			'mention-id' => ($actorType === Attendee::ACTOR_GUESTS ? 'guest/' : 'email/') . $actorId,
+			'mention-id' => 'guest/' . $actorId,
 		];
 	}
 
