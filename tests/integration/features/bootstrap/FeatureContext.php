@@ -3479,12 +3479,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userGetsTheFollowingCollaboratorSuggestions($user, $identifier, $search, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null) {
+	public function userGetsTheFollowingCollaboratorSuggestions($user, $identifier, $search, $statusCode, ?TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/core/autocomplete/get?search=' . $search . '&itemType=call&itemId=' . self::$identifierToToken[$identifier] . '&shareTypes[]=0&shareTypes[]=1&shareTypes[]=7&shareTypes[]=4');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$mentions = $this->getDataFromResponse($this->response);
+		$mentions = array_map(static function (array $mention): array {
+			unset($mention['icon']);
+			unset($mention['status']);
+			unset($mention['subline']);
+			unset($mention['shareWithDisplayNameUnique']);
+			return $mention;
+		}, $this->getDataFromResponse($this->response));
 
 		if ($formData === null) {
 			Assert::assertEmpty($mentions);
@@ -3500,7 +3506,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $a['source'] <=> $b['source'];
 		});
 
-		$expected = $formData->getHash();
+		$expected = array_map(function (array $mention): array {
+			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $mention['id'], $matches);
+			if ($result) {
+				$mention['id'] = self::$createdTeams[$this->currentServer][$matches[1]];
+			}
+			return $mention;
+		}, $formData->getHash());
+
 		usort($expected, function ($a, $b) {
 			if ($a['source'] === $b['source']) {
 				return $a['label'] <=> $b['label'];
@@ -3508,13 +3521,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $a['source'] <=> $b['source'];
 		});
 
-		foreach ($expected as $key => $row) {
-			unset($mentions[$key]['icon']);
-			unset($mentions[$key]['status']);
-			unset($mentions[$key]['subline']);
-			unset($mentions[$key]['shareWithDisplayNameUnique']);
-			Assert::assertEquals($row, $mentions[$key]);
-		}
+		Assert::assertEquals($expected, $mentions);
 	}
 
 	/**
