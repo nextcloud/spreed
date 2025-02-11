@@ -67,6 +67,7 @@ class Install extends Base {
 				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
 				. ' - response: The bot can post messages and reactions as a response' . "\n"
 				. ' - event: The bot reads posted messages from local events' . "\n"
+				. ' - reaction: The bot is notified about adding and removing of reactions' . "\n"
 				. ' - none: When all features should be disabled for the bot'
 			)
 		;
