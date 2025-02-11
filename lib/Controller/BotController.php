@@ -217,6 +217,7 @@ class BotController extends AEnvironmentAwareOCSController {
 				$room,
 				$actorType,
 				$actorId,
+				$bot->getBotServer()->getName(),
 				$messageId,
 				$reaction
 			);
@@ -270,6 +271,7 @@ class BotController extends AEnvironmentAwareOCSController {
 				$room,
 				$actorType,
 				$actorId,
+				$bot->getBotServer()->getName(),
 				$messageId,
 				$reaction
 			);

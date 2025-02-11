@@ -16,6 +16,8 @@ use OCA\Talk\Events\BotDisabledEvent;
 use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\BotInvokeEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
@@ -167,6 +169,69 @@ class BotService {
 		]);
 	}
 
+	public function afterReactionAdded(ReactionAddedEvent $event, MessageParser $messageParser): void {
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_REACTION);
+		if (empty($bots)) {
+			return;
+		}
+
+		$message = $messageParser->createMessage(
+			$event->getRoom(),
+			null,
+			$event->getMessage(),
+			$this->l10nFactory->get('spreed', 'en', 'en')
+		);
+		$messageParser->parseMessage($message);
+		$messageData = [
+			'message' => $message->getMessage(),
+			'parameters' => $message->getMessageParameters(),
+		];
+
+		$botServers = array_map(static fn (Bot $bot): BotServer => $bot->getBotServer(), $bots);
+
+		$this->invokeBots($botServers, $event->getRoom(), $event->getMessage(), [
+			'type' => 'Like',
+			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+			'object' => $this->activityPubHelper->generateNote($event->getMessage(), $messageData, $message->getMessageRaw()),
+			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'content' => $event->getReaction(),
+		]);
+	}
+
+	public function afterReactionRemoved(ReactionRemovedEvent $event, MessageParser $messageParser): void {
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_REACTION);
+		if (empty($bots)) {
+			return;
+		}
+
+		$message = $messageParser->createMessage(
+			$event->getRoom(),
+			null,
+			$event->getMessage(),
+			$this->l10nFactory->get('spreed', 'en', 'en')
+		);
+		$messageParser->parseMessage($message);
+		$messageData = [
+			'message' => $message->getMessage(),
+			'parameters' => $message->getMessageParameters(),
+		];
+
+		$botServers = array_map(static fn (Bot $bot): BotServer => $bot->getBotServer(), $bots);
+
+		$this->invokeBots($botServers, $event->getRoom(), $event->getMessage(), [
+			'type' => 'Undo',
+			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+			'object' => [
+				'type' => 'Like',
+				'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+				'object' => $this->activityPubHelper->generateNote($event->getMessage(), $messageData, $message->getMessageRaw()),
+				'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+				'content' => $event->getReaction(),
+			],
+			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+		]);
+	}
+
 	/**
 	 * @param BotServer[] $bots
 	 * @param InvocationData $body
@@ -188,6 +253,7 @@ class BotService {
 									$room,
 									Attendee::ACTOR_BOTS,
 									Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
+									$bot->getName(),
 									(int)$comment->getId(),
 									$reaction
 								);

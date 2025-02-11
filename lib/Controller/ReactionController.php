@@ -68,6 +68,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 				$this->getRoom(),
 				$this->getParticipant()->getAttendee()->getActorType(),
 				$this->getParticipant()->getAttendee()->getActorId(),
+				$this->getParticipant()->getAttendee()->getDisplayName(),
 				$messageId,
 				$reaction
 			);
@@ -113,6 +114,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 				$this->getRoom(),
 				$this->getParticipant()->getAttendee()->getActorType(),
 				$this->getParticipant()->getAttendee()->getActorId(),
+				$this->getParticipant()->getAttendee()->getDisplayName(),
 				$messageId,
 				$reaction
 			);
