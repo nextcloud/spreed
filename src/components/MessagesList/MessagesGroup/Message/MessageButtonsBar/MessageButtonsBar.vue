@@ -523,7 +523,7 @@ export default {
 
 		isEditable() {
 			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-					|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
+					|| ((!this.$store.getters.isModerator || this.isOneToOne) && !(this.isMyMsg || this.isBotInOneToOne))) {
 				return false
 			}
 
@@ -582,6 +582,12 @@ export default {
 		isMyMsg() {
 			return this.actorId === this.$store.getters.getActorId()
 				&& this.actorType === this.$store.getters.getActorType()
+		},
+
+		isBotInOneToOne() {
+			return this.actorId.startsWith(ATTENDEE.BOT_PREFIX)
+				&& this.actorType === ATTENDEE.ACTOR_TYPE.BOTS
+				&& this.isOneToOne
 		},
 
 		isConversationReadOnly() {
