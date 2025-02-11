@@ -65,6 +65,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $modifiedSince;
 	/** @var array */
 	protected static array $createdTeams = [];
+	/** @var array */
+	protected static array $renamedTeams = [];
 	/** @var array<string, int> */
 	protected static array $userToBanId;
 
@@ -128,7 +130,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	public static function getTeamIdForLabel(string $server, string $label): string {
-		return self::$createdTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
+		return self::$createdTeams[$server][$label] ?? self::$renamedTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
 	}
 
 	public static function getMessageIdForText(string $text): int {
@@ -220,6 +222,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->createdUsers[$server] = [];
 			$this->createdGroups[$server] = [];
 			self::$createdTeams[$server] = [];
+			self::$renamedTeams[$server] = [];
 			$this->createdGuestAccountUsers[$server] = [];
 		}
 
@@ -246,14 +249,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->usingServer($server);
 
+			foreach (self::$createdTeams[$server] as $team => $id) {
+				$this->deleteTeam($team);
+			}
 			foreach ($this->createdUsers[$server] as $user) {
 				$this->deleteUser($user);
 			}
 			foreach ($this->createdGroups[$server] as $group) {
 				$this->deleteGroup($group);
-			}
-			foreach (self::$createdTeams[$server] as $team => $id) {
-				$this->deleteTeam($team);
 			}
 			foreach ($this->createdGuestAccountUsers[$server] as $user) {
 				$this->deleteGuestUser($user);
@@ -912,6 +915,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users' && !str_contains($attendee['actorId'], '@')) {
 					$attendee['actorId'] .= '@' . rtrim($this->localRemoteServerUrl, '/');
+				}
+
+				if (isset($attendee['actorId']) && preg_match('/TEAM_ID\(([^)]+)\)/', $attendee['actorId'], $matches)) {
+					$attendee['actorId'] = self::getTeamIdForLabel($this->currentServer, $matches[1]);
 				}
 
 				if (isset($attendee['sessionIds']) && str_contains($attendee['sessionIds'], '@{$LOCAL_URL}')) {
@@ -1973,7 +1980,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
@@ -1993,8 +2000,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		if ($newType === 'circle' || $newType === 'team') {
-			$newId = self::$createdTeams[$this->currentServer][$newId];
+		if ($newType === 'team') {
+			$newId = self::getTeamIdForLabel($this->currentServer, $newId);
 		}
 
 		$this->sendRequest(
@@ -2319,7 +2326,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (str_contains($message, '@"TEAM_ID(')) {
 			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $message, $matches);
 			if ($result) {
-				$message = str_replace($matches[0], 'team/' . self::$createdTeams[$this->currentServer][$matches[1]], $message);
+				$message = str_replace($matches[0], 'team/' . self::getTeamIdForLabel($this->currentServer, $matches[1]), $message);
 			}
 		}
 
@@ -3570,7 +3577,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$expected = array_map(function (array $mention): array {
 			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $mention['id'], $matches);
 			if ($result) {
-				$mention['id'] = self::$createdTeams[$this->currentServer][$matches[1]];
+				$mention['id'] = self::getTeamIdForLabel($this->currentServer, $matches[1]);
 			}
 			return $mention;
 		}, $formData->getHash());
@@ -3978,7 +3985,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				[$roomToken, $message] = explode('/', $expectedNotification['object_id'], 2);
 				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $message, $matches);
 				if ($result) {
-					$message = str_replace($matches[0], 'team/' . self::$createdTeams[$this->currentServer][$matches[1]], $message);
+					$message = str_replace($matches[0], 'team/' . self::getTeamIdForLabel($this->currentServer, $matches[1]), $message);
 				}
 				$expectedNotification['object_id'] = $roomToken . '/' . $message;
 			}
@@ -4015,7 +4022,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $expectedNotification['message'], $matches);
 				if ($result) {
-					$data['message'] = str_replace($matches[0], self::$createdTeams[$this->currentServer][$matches[1]], $data['message']);
+					$data['message'] = str_replace($matches[0], self::getTeamIdForLabel($this->currentServer, $matches[1]), $data['message']);
 				}
 			}
 			if (isset($expectedNotification['object_type'])) {
@@ -4287,6 +4294,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$data = json_decode($output, true);
 
 		self::$createdTeams[$this->currentServer][$team] = $data['id'];
+	}
+
+	/**
+	 * @Given /^User "([^"]*)" creates team "([^"]*)"$/
+	 */
+	public function createTeamAsUser(string $owner, string $team): void {
+		$this->runOcc(['circles:manage:create', '--type', '1', '--output', 'json', $owner, $team]);
+		$this->theCommandWasSuccessful();
+
+		$output = $this->getLastStdOut();
+		$data = json_decode($output, true);
+
+		self::$createdTeams[$this->currentServer][$team] = $data['id'];
+	}
+
+	/**
+	 * @Given /^team "([^"]*)" is renamed to "([^"]*)"$/
+	 */
+	public function assureTeamRenamed(string $team, string $newName): void {
+		$id = self::$createdTeams[$this->currentServer][$team];
+		$this->runOcc(['circles:manage:edit', $id, 'displayName', $newName]);
+		$this->theCommandWasSuccessful();
+		self::$renamedTeams[$this->currentServer][$newName] = $id;
 	}
 
 	/**
