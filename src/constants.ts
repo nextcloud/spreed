@@ -129,6 +129,7 @@ export const ATTENDEE = {
 		REMOTES: 'remotes',
 	},
 
+	BOT_PREFIX: 'bot-',
 	BRIDGE_BOT_ID: 'bridge-bot',
 
 	CHANGELOG_BOT_ID: 'changelog',

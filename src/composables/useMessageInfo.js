@@ -33,6 +33,7 @@ export function useMessageInfo(message = ref({})) {
 			isEditable: computed(() => false),
 			isDeleteable: computed(() => false),
 			isCurrentUserOwnMessage: computed(() => false),
+			isBotInOneToOne: computed(() => false),
 			isObjectShare: computed(() => false),
 			isConversationModifiable: computed(() => false),
 			isConversationReadOnly: computed(() => false),
@@ -57,10 +58,14 @@ export function useMessageInfo(message = ref({})) {
 		message.value.actorId === currentActorId
 		&& message.value.actorType === currentActorType
 	)
+	const isBotInOneToOne = computed(() =>
+		message.value.actorId.startsWith(ATTENDEE.BOT_PREFIX)
+		&& message.value.actorType === ATTENDEE.ACTOR_TYPE.BOTS
+	)
 
 	const isEditable = computed(() => {
 		if (!hasTalkFeature(message.value.token, 'edit-messages') || !isConversationModifiable.value || isObjectShare.value || message.value.systemMessage
-			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !isCurrentUserOwnMessage.value)) {
+			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !(isCurrentUserOwnMessage.value || isBotInOneToOne.value))) {
 			return false
 		}
 
