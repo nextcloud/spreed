@@ -1692,7 +1692,6 @@ OC.L10N.register(
     "Signaling servers" : "Signaling servers",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Een externe signaling server kan optioneel worden gebruikt voor grotere installaties. Leeg laten om de interne signaling server te gebruiken.",
     "SIP dial-in" : "SIP inbelfunctie",
-    "Please try to reload the page" : "Probeer deze pagina te herladen a.u.b.",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Inhoudsformaat is komma-gescheiden waarden (CSV):<br/>- Kopregel is vereist en moet overeenkomen met <samp>\"email\",\"name\"</samp> of slechts <samp>\"email\"</samp><br/>- Eén invoer per regel (bijv. <samp>\"John Doe\",\"john@example.tld\"</samp>)"
+    "Please try to reload the page" : "Probeer deze pagina te herladen a.u.b."
 },
 "nplurals=2; plural=(n != 1);");

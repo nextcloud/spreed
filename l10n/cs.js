@@ -2035,7 +2035,6 @@ OC.L10N.register(
     "SIP dial-in" : "Volání do prostřednictvím SIP",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nevarovat před problémy s konektivitou u volání s více než 2 účastníky",
     "Please try to reload the page" : "Zkuste prosím stránku znovu načíst",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Formát obsahu jsou hodnoty oddělované čárkami (CSV):<br/>- Řádek se záhlavím je vyžadován a je třeba, aby se shodoval s <samp>\"email\",\"name\"</samp> nebo pouze <samp>\"email\"</samp><br/>- Každou položku na zvlášť řádek (např. <samp>\"Jan Novák\",\"jan@priklad.tld\"</samp>)",
     "Next call" : "Následující volání",
     "Nextcloud Talk Federation was updated, please reload the page" : "Federování Nextcloud Talk bylo zaktualizováno – načtěte stránku znovu"
 },

@@ -2040,7 +2040,6 @@
     "SIP dial-in" : "SIP çevirme",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "2 kişiden fazla katılımcısı olan çağrılarda bağlantı sorunları uyarısı görüntülenmesin",
     "Please try to reload the page" : "Lütfen sayfayı yeniden yüklemeyi deneyin",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "İçerik biçimi virgül ile ayrılmış değerlerdir (CSV):<br/>- Başlık satırı zorunlludur ve <samp>\"email\",\"name\"</samp> veya yalnızca <samp>\"email\"</samp> ile eşleşmelidir<br/>- Her satıra yalnızca bir kayıt yazılmalıdır (örneğin <samp>\"Ali Kaya\",\"alikaya@ornek.tld\"</samp>)",
     "Next call" : "Sonraki çağrı",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Konuş Birlik güncellendi. Lütfen sayfayı yeniden yükleyin"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

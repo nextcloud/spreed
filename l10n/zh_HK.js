@@ -2042,7 +2042,6 @@ OC.L10N.register(
     "SIP dial-in" : "SIP 撥入",
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請重新加載頁面",
-    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"email\",\"name\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "內容格式為逗號分隔值 (CSV)：<br/>- 標題行為必填，且必須符合 <samp>\"email\",\"name\"</samp> 或 <samp>\"email\"</samp><br/>- 一個條目一行（例如 <samp>\"John Doe\",\"john@example.tld\"</samp>）",
     "Next call" : "下一通話",
     "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新加載頁面"
 },
