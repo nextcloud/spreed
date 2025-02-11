@@ -989,7 +989,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// Special case for if the message is a bridged message, then the message is the bridge bot's message.
 		$isOwnMessage = $isOwnMessage || ($comment->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
-		if (!$isOwnMessage
+		$isBotInOneToOne = $comment->getActorType() === Attendee::ACTOR_BOTS
+			&& str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)
+			&& ($this->room->getType() === Room::TYPE_ONE_TO_ONE
+				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER);
+		if (!($isOwnMessage || $isBotInOneToOne)
 			&& (!$this->participant->hasModeratorPermissions(false)
 				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE
 				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
