@@ -134,6 +134,13 @@ class Listener implements IEventListener {
 			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterParticipantUserResult']);
 		}
 
+		if (!empty($results['circles'])) {
+			$results['circles'] = array_filter($results['circles'], [$this, 'filterParticipantTeamResult']);
+		}
+		if (!empty($results['exact']['circles'])) {
+			$results['exact']['circles'] = array_filter($results['exact']['circles'], [$this, 'filterParticipantTeamResult']);
+		}
+
 		return $results;
 	}
 
@@ -161,6 +168,17 @@ class Listener implements IEventListener {
 
 		try {
 			$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_GROUPS, $groupId);
+			return false;
+		} catch (ParticipantNotFoundException $e) {
+			return true;
+		}
+	}
+
+	protected function filterParticipantTeamResult(array $result): bool {
+		$circleId = $result['value']['shareWith'];
+
+		try {
+			$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_CIRCLES, $circleId);
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return true;

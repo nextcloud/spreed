@@ -160,6 +160,22 @@ Feature: conversation/add-participant
       | source | id           | label                    |
       | users  | participant2 | participant2-displayname |
 
+  Scenario: Filter out already added entries
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And group "Filtered group" exists
+    And team "Filtered team" exists
+    And add user "participant1" to team "Filtered team"
+    When user "participant1" gets the following collaborator suggestions in room "room" for "Filtered" with 200
+      | source  | id                     | label          |
+      | circles | TEAM_ID(Filtered team) | Filtered team  |
+      | groups  | Filtered group         | Filtered group |
+    And user "participant1" adds group "Filtered group" to room "room" with 200 (v4)
+    And user "participant1" adds team "Filtered team" to room "room" with 200 (v4)
+    When user "participant1" gets the following collaborator suggestions in room "room" for "Filtered" with 200
+      | source  | id           | label                    |
+
   Scenario: Getting participant suggestions in a public room
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
