@@ -18,11 +18,13 @@ class Bot {
 	public const FEATURE_WEBHOOK = 1;
 	public const FEATURE_RESPONSE = 2;
 	public const FEATURE_EVENT = 4;
+	public const FEATURE_REACTION = 8;
 
 	public const FEATURE_LABEL_NONE = 'none';
 	public const FEATURE_LABEL_WEBHOOK = 'webhook';
 	public const FEATURE_LABEL_RESPONSE = 'response';
 	public const FEATURE_LABEL_EVENT = 'event';
+	public const FEATURE_LABEL_REACTION = 'reaction';
 	public const URL_APP_PREFIX = 'nextcloudapp://';
 
 	public const FEATURE_MAP = [
@@ -30,6 +32,7 @@ class Bot {
 		self::FEATURE_WEBHOOK => self::FEATURE_LABEL_WEBHOOK,
 		self::FEATURE_RESPONSE => self::FEATURE_LABEL_RESPONSE,
 		self::FEATURE_EVENT => self::FEATURE_LABEL_EVENT,
+		self::FEATURE_REACTION => self::FEATURE_LABEL_REACTION,
 	];
 
 	public function __construct(
