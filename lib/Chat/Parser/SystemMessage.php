@@ -985,6 +985,7 @@ class SystemMessage implements IEventListener {
 			'id' => $circleId,
 			'name' => $this->circleNames[$circleId],
 			'url' => $this->circleLinks[$circleId],
+			'mention-id' => 'team/' . $circleId,
 		];
 	}
 

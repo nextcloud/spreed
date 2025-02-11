@@ -26,7 +26,7 @@ Feature: federation/poll
       | maxVotes   | unlimited |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | {object} | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"},"object":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | {object} | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180","mention-id":"federated_user\/participant2@http:\/\/localhost:8180"},"object":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
     Then user "participant2" sees poll "What is the question?" in room "LOCAL::room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |

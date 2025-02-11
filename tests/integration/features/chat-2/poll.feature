@@ -804,4 +804,4 @@ Feature: chat-2/poll
     And user "participant1" sees the following messages in room "room" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
