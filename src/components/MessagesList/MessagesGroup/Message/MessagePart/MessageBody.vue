@@ -147,7 +147,7 @@ import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT } from '../../../../../constants.js'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../../constants.js'
 import { EventBus } from '../../../../../services/EventBus.js'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -329,6 +329,12 @@ export default {
 				&& this.actorType === this.$store.getters.getActorType()
 		},
 
+		isBotInOneToOne() {
+			return this.actorId.startsWith(ATTENDEE.BOT_PREFIX)
+				&& this.actorType === ATTENDEE.ACTOR_TYPE.BOTS
+				&& this.isOneToOne
+		},
+
 		isOneToOne() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
@@ -336,7 +342,7 @@ export default {
 
 		isEditable() {
 			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-				|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
+				|| ((!this.$store.getters.isModerator || this.isOneToOne) && !(this.isMyMsg || this.isBotInOneToOne))) {
 				return false
 			}
 
