@@ -9,6 +9,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { SHARE } from '../constants.ts'
 import type {
+	AutocompleteParams,
+	AutocompleteResponse,
 	TaskProcessingResponse,
 	UnifiedSearchResponse,
 	SearchMessagePayload,
@@ -36,7 +38,12 @@ type SearchPayload = {
  * @param [payload.forceTypes] Whether to force some types to be included in query
  * @param options options
  */
-const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers = false, forceTypes = [] }: SearchPayload, options: object) {
+const autocompleteQuery = async function({
+	searchText,
+	token = 'new',
+	onlyUsers = false,
+	forceTypes = [],
+}: SearchPayload, options: object): AutocompleteResponse {
 	const shareTypes: ShareType[] = onlyUsers
 		? [SHARE.TYPE.USER]
 		: [
@@ -54,7 +61,7 @@ const autocompleteQuery = async function({ searchText, token = 'new', onlyUsers 
 			itemType: 'call',
 			itemId: token,
 			shareTypes: shareTypes.concat(forceTypes),
-		},
+		} as AutocompleteParams,
 	})
 }
 
