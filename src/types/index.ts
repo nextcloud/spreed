@@ -4,8 +4,8 @@
  */
 import type { AxiosError } from '@nextcloud/axios'
 
+import type { AutocompleteResult } from './openapi/core/index.ts'
 import type { components, operations } from './openapi/openapi-full.ts'
-import { TASK_PROCESSING } from '../constants.ts'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>
@@ -113,13 +113,7 @@ export type ParticipantStatus = {
 	clearAt?: number | null,
 }
 export type Participant = components['schemas']['Participant']
-export type ParticipantSearchResult = {
-	id: string,
-	label: string,
-	icon: string,
-	source: string,
-	subline: string,
-	shareWithDisplayNameUnique: string,
+export type ParticipantSearchResult = AutocompleteResult & {
 	status: ParticipantStatus | '',
 }
 
@@ -246,24 +240,9 @@ export type getMentionsParams = operations['chat-mentions']['parameters']['query
 export type getMentionsResponse = ApiResponse<operations['chat-mentions']['responses'][200]['content']['application/json']>
 
 // AI Summary
-export type TaskProcessingResponse = ApiResponseUnwrapped<{
-	task: {
-		id: number,
-		lastUpdated: number,
-		type: string,
-		status: typeof TASK_PROCESSING.STATUS[keyof typeof TASK_PROCESSING.STATUS],
-		userId: string,
-		appId: string,
-		input: Record<string, unknown>,
-		output: Record<string, unknown> | null,
-		customId: string,
-		completionExpectedAt: number,
-		progress: number,
-		scheduledAt: number,
-		startedAt: number,
-		endedAt: number
-	}
-}>
+export type {
+	TaskProcessingResponse,
+} from './openapi/core/index.ts'
 
 // Teams (circles)
 export type TeamProbe = {
@@ -281,78 +260,25 @@ export type TeamProbe = {
 }
 export type getTeamsProbeResponse = ApiResponseUnwrapped<TeamProbe[]>
 
-// Groupware
-export type DavPrincipal = {
-	calendarHomes: string[],
-	calendarUserType: string,
-	displayname: string,
-	email: string,
-	language: string,
-	principalScheme: string,
-	principalUrl: string,
-	scheduleDefaultCalendarUrl: string,
-	scheduleInbox: string,
-	scheduleOutbox: string,
-	url: string,
-	userId: string,
-	[key: string]: unknown,
-}
-export type DavCalendar = {
-	displayname: string,
-	color?: string,
-	components: string[],
-	allowedSharingModes: string[],
-	currentUserPrivilegeSet: string[],
-	enabled?: boolean,
-	order: number,
-	owner: string,
-	resourcetype: string[],
-	timezone?: string,
-	transparency: string,
-	url: string,
-	[key: string]: unknown,
-	isWriteable: () => boolean,
-}
-export type DavCalendarHome = {
-	displayname: string,
-	url: string,
-	findAllCalendars: () => Promise<DavCalendar[]>,
-}
-
-// Upcoming events response
-// From https://github.com/nextcloud/server/blob/master/apps/dav/lib/CalDAV/UpcomingEvent.php
-export type UpcomingEvent = {
-	uri: string,
-	calendarUri: string,
-	/** Format: int64 */
-	start: number | null,
-	summary: string | null,
-	location: string | null,
-	recurrenceId?: number | null,
-	calendarAppUrl?: string | null,
-};
-export type UpcomingEventsResponse = ApiResponseUnwrapped<{ events: UpcomingEvent[] }>
-
-// Out of office response
-// From https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-out-of-office-api.html
-export type OutOfOfficeResult = {
-	id: string,
-	userId: string,
-	startDate: number,
-	endDate: number,
-	shortMessage: string,
-	message: string,
-	replacementUserId?: string|null,
-	replacementUserDisplayName?: string|null,
-}
-export type OutOfOfficeResponse = ApiResponseUnwrapped<OutOfOfficeResult>
+// Groupware | DAV API
+export type {
+	DavCalendar,
+	DavCalendarHome,
+	DavPrincipal,
+	OutOfOfficeResult,
+	OutOfOfficeResponse,
+	UpcomingEvent,
+	UpcomingEventsResponse,
+} from './openapi/core/index.ts'
 
 export type scheduleMeetingParams = Required<operations['room-schedule-meeting']>['requestBody']['content']['application/json']
 export type scheduleMeetingResponse = ApiResponse<operations['room-schedule-meeting']['responses'][200]['content']['application/json']>
 
 // User preferences response
-// from https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-user-preferences-api.html
-export type UserPreferencesResponse = ApiResponseUnwrapped<unknown>
+export type {
+	UserPreferencesParams,
+	UserPreferencesResponse,
+} from './openapi/core/index.ts'
 
 // Settings
 export type setSipSettingsParams = Required<operations['settings-setsip-settings']>['requestBody']['content']['application/json']
@@ -360,25 +286,7 @@ export type setSipSettingsResponse = ApiResponse<operations['settings-setsip-set
 export type setUserSettingsParams = Required<operations['settings-set-user-setting']>['requestBody']['content']['application/json']
 export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-setting']['responses'][200]['content']['application/json']>
 
-// Unified Search
-export type MessageSearchResultAttributes = {
-	conversation: string,
-	messageId: string,
-	actorType: string,
-	actorId: string,
-	timestamp: string,
-}
-
-export type CoreUnifiedSearchResultEntry = {
-	thumbnailUrl: string,
-	title: string,
-	subline: string,
-	resourceUrl: string,
-	icon: string,
-	rounded: boolean,
-	attributes: MessageSearchResultAttributes,
-}
-
+// Payload for NcSelect with `user-select`
 export type UserFilterObject = {
 	id: string,
 	displayName: string,
@@ -388,20 +296,16 @@ export type UserFilterObject = {
 	showUserStatus: boolean,
 }
 
-export type CoreUnifiedSearchResult = {
-	name: string,
-	isPaginated: boolean,
-	entries: CoreUnifiedSearchResultEntry[],
-	cursor: number | string | null,
-}
-export type UnifiedSearchResponse = ApiResponseUnwrapped<CoreUnifiedSearchResult>
+// Autocomplete API
+export type {
+	AutocompleteResult,
+	AutocompleteParams,
+	AutocompleteResponse,
+} from './openapi/core/index.ts'
 
-export type SearchMessagePayload = {
-	term: string,
-	person?: string,
-	since?: string | null,
-	until?: string | null,
-	cursor?: number | string | null,
-	limit?: number,
-	from?: string
-}
+// Unified Search API
+export type {
+	SearchMessagePayload,
+	UnifiedSearchResultEntry,
+	UnifiedSearchResponse,
+} from './openapi/core/index.ts'
