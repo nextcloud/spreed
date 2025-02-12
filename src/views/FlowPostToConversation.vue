@@ -9,13 +9,13 @@
 			:options="roomOptions"
 			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
-			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': currentMode.id, 't': newValue.token }))" />
+			@input="newValue => emitEvents(currentMode.id, newValue.token)" />
 
 		<NcSelect :model-value="currentMode"
 			:options="modeOptions"
 			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"
-			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': newValue.id, 't': currentRoom.token }))" />
+			@input="newValue => emitEvents(newValue.id, currentRoom.token)" />
 	</div>
 </template>
 
@@ -35,13 +35,18 @@ export default {
 	name: 'FlowPostToConversation',
 	components: { NcSelect },
 	props: {
+		modelValue: {
+			default: '',
+			type: String,
+		},
+		// keep "value" for backwards compatibility, up to NC 31
 		value: {
 			default: JSON.stringify({ m: '0', t: '' }),
 			type: String,
 		},
 	},
 
-	emits: ['input'],
+	emits: ['input', 'update:model-value'],
 
 	data() {
 		return {
@@ -64,10 +69,10 @@ export default {
 	},
 	computed: {
 		currentRoom() {
-			if (this.value === '') {
+			if (this.modelValue === '' && this.value === '') {
 				return ''
 			}
-			const selectedRoom = JSON.parse(this.value).t
+			const selectedRoom = JSON.parse(this.modelValue || this.value).t
 			const newValue = this.roomOptions.find(option => option.token === selectedRoom)
 			if (typeof newValue === 'undefined') {
 				return ''
@@ -75,10 +80,10 @@ export default {
 			return newValue
 		},
 		currentMode() {
-			if (this.value === '') {
+			if (this.modelValue === '' && this.value === '') {
 				return this.modeOptions[0]
 			}
-			const selectedMode = JSON.parse(this.value).m
+			const selectedMode = JSON.parse(this.modelValue || this.value).m
 			const newValue = this.modeOptions.find(option => option.id === selectedMode)
 			if (typeof newValue === 'undefined') {
 				return this.modeOptions[0]
@@ -100,6 +105,13 @@ export default {
 				})
 			})
 		},
+		emitEvents(mode, token) {
+			if (mode === null || token === null) {
+				return
+			}
+			this.$emit('input', JSON.stringify({ m: mode, t: token }))
+			this.$emit('update:model-value', JSON.stringify({ m: mode, t: token }))
+		}
 	},
 }
 
