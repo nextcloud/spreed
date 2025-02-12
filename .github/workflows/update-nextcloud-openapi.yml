@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Update nextcloud/openapi
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 4 * * 0"
+
+jobs:
+  update-nextcloud-openapi:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        branches: ['main', 'master', 'stable31', 'stable30']
+
+    name: Update Nextcloud OpenAPI types from core
+
+    steps:
+      - name: Set app env
+        run: |
+          # Split and keep last
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: Checkout server
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          submodules: true
+          repository: nextcloud/server
+          ref: ${{ matrix.server-versions }}
+
+      - name: Checkout app
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          path: apps/${{ env.APP_NAME }}
+          ref: ${{ matrix.branches }}
+
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4 # v3
+        id: versions
+        with:
+          fallbackNode: '^20'
+          fallbackNpm: '^10'
+
+      - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+
+      - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
+        run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
+
+      - name: Install dependencies & generate types
+        working-directory: apps/${{ env.APP_NAME }}
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+        run: |
+          npm ci
+          npm run typescript:generate-core-types --if-present
+
+      - name: Create Pull Request
+        if: steps.checkout.outcome == 'success'
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
+        with:
+          token: ${{ secrets.COMMAND_BOT_PAT }}
+          commit-message: 'chore(ts): update OpenAPI types from core'
+          committer: GitHub <noreply@github.com>
+          author: nextcloud-command <nextcloud-command@users.noreply.github.com>
+          signoff: true
+          branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-openapi'
+          title: '[${{ matrix.branches }}] Update Nextcloud OpenAPI types'
+          body: |
+            Auto-generated update of Nextcloud OpenAPI types
+          labels: |
+            dependencies
+            3. to review
