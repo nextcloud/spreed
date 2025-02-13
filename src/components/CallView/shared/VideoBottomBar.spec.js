@@ -21,7 +21,7 @@ import VideoBottomBar from './VideoBottomBar.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 

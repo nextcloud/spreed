@@ -7,9 +7,30 @@ import { defineStore } from 'pinia'
 
 import { CONVERSATION } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
+import type { Conversation } from '../types/index.ts'
+
+type State = {
+	forceCallView: boolean,
+	isViewerOverlay: boolean,
+	isGrid: boolean,
+	isStripeOpen: boolean,
+	isEmptyCallView: boolean,
+	lastIsGrid: boolean | null,
+	lastIsStripeOpen: boolean | null,
+	presentationStarted: boolean,
+	selectedVideoPeerId: string | null,
+	callEndedTimeout: NodeJS.Timeout | number | undefined,
+}
+
+type CallViewModePayload = {
+	token: string,
+	isGrid?: boolean | null,
+	isStripeOpen?: boolean | null,
+	clearLast?: boolean,
+}
 
 export const useCallViewStore = defineStore('callView', {
-	state: () => ({
+	state: (): State => ({
 		forceCallView: false,
 		isViewerOverlay: false,
 		isGrid: false,
@@ -19,7 +40,7 @@ export const useCallViewStore = defineStore('callView', {
 		lastIsStripeOpen: null,
 		presentationStarted: false,
 		selectedVideoPeerId: null,
-		callEndedTimeout: null,
+		callEndedTimeout: undefined,
 	}),
 
 	getters: {
@@ -27,23 +48,23 @@ export const useCallViewStore = defineStore('callView', {
 	},
 
 	actions: {
-		setForceCallView(value) {
+		setForceCallView(value: boolean) {
 			this.forceCallView = value
 		},
 
-		setIsViewerOverlay(value) {
+		setIsViewerOverlay(value: boolean) {
 			this.isViewerOverlay = value
 		},
 
-		setIsEmptyCallView(value) {
+		setIsEmptyCallView(value: boolean) {
 			this.isEmptyCallView = value
 		},
 
-		setSelectedVideoPeerId(value) {
+		setSelectedVideoPeerId(value: string | null) {
 			this.selectedVideoPeerId = value
 		},
 
-		handleJoinCall(conversation) {
+		handleJoinCall(conversation: Conversation) {
 			if (!conversation) {
 				return
 			}
@@ -59,25 +80,29 @@ export const useCallViewStore = defineStore('callView', {
 		 * Sets the current call view mode and saves it in preferences.
 		 * If clearLast is false, also remembers it in separate properties.
 		 *
-		 * @param {object} data the wrapping object;
-		 * @param {string} data.token current conversation token;
-		 * @param {boolean|null} [data.isGrid=null] true for enabled grid mode, false for speaker view;
-		 * @param {boolean|null} [data.isStripeOpen=null] true for visible striped mode, false for speaker view;
-		 * @param {boolean} [data.clearLast=true] set false to not reset last temporary remembered state;
+		 * @param data the wrapping object;
+		 * @param data.token current conversation token;
+		 * @param data.isGrid true for enabled grid mode, false for speaker view;
+		 * @param data.isStripeOpen true for visible striped mode, false for speaker view;
+		 * @param data.clearLast set false to not reset last temporary remembered state;
 		 */
-		setCallViewMode({ token, isGrid = null, isStripeOpen = null, clearLast = true }) {
+		setCallViewMode({ token, isGrid = null, isStripeOpen = null, clearLast = true }: CallViewModePayload) {
 			if (clearLast) {
 				this.lastIsGrid = null
 				this.lastIsStripeOpen = null
 			}
 
-			if (isGrid !== null) {
+			if (isGrid !== null && isGrid !== undefined) {
 				this.lastIsGrid = this.isGrid
-				BrowserStorage.setItem(`callprefs-${token}-isgrid`, isGrid)
+				BrowserStorage.setItem(`callprefs-${token}-isgrid`, isGrid.toString())
 				this.isGrid = isGrid
+
+				if (isGrid) {
+					this.setSelectedVideoPeerId(null)
+				}
 			}
 
-			if (isStripeOpen !== null) {
+			if (isStripeOpen !== null && isStripeOpen !== undefined) {
 				this.lastIsStripeOpen = this.isStripeOpen
 				this.isStripeOpen = isStripeOpen
 			}
@@ -88,9 +113,9 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Switches off grid mode and closes the stripe.
 		 * Remembers the call view state for after the end of the presentation.
-		 * @param {string} token current conversation token.
+		 * @param token current conversation token.
 		 */
-		startPresentation(token) {
+		startPresentation(token: string) {
 			// don't start twice, this would prevent multiple screen shares to clear the last call view state
 			if (this.presentationStarted) {
 				return
@@ -105,9 +130,9 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Restores call view state from before starting the presentation,
 		 * given that the last state was not cleared manually.
-		 * @param {string} token current conversation token.
+		 * @param token current conversation token.
 		 */
-		stopPresentation(token) {
+		stopPresentation(token: string) {
 			if (!this.presentationStarted) {
 				return
 			}
@@ -122,9 +147,9 @@ export const useCallViewStore = defineStore('callView', {
 		/**
 		 * Checks the time difference between the current time and the call end time.
 		 * Then, disable the CallButton for the remaining time until 10 seconds after the call ends.
-		 * @param {number} timestamp timestamp of callEnded message (in seconds)
+		 * @param timestamp timestamp of callEnded message (in seconds)
 		 */
-		setCallHasJustEnded(timestamp) {
+		setCallHasJustEnded(timestamp: number) {
 			const timeDiff = Math.abs(Date.now() - timestamp * 1000)
 			if (10000 - timeDiff < 0) {
 				return
@@ -137,7 +162,7 @@ export const useCallViewStore = defineStore('callView', {
 
 		resetCallHasJustEnded() {
 			clearTimeout(this.callEndedTimeout)
-			this.callEndedTimeout = null
+			this.callEndedTimeout = undefined
 		}
 	},
 })

@@ -101,7 +101,7 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'

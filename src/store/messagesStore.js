@@ -27,7 +27,7 @@ import {
 	postNewMessage,
 	postRichObjectToConversation,
 } from '../services/messagesService.ts'
-import { useCallViewStore } from '../stores/callView.js'
+import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
 import { useReactionsStore } from '../stores/reactions.js'
