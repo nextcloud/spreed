@@ -5,6 +5,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.4 – 2025-02-13
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(bots): Allow users to edit messages of bots in one-to-one conversations
+  [#14352](https://github.com/nextcloud/spreed/issues/14352)
+- fix(calls): Address some false positives when showing the connection warning
+  [#14251](https://github.com/nextcloud/spreed/issues/14251)
+- fix(dashboard): Hide archived conversations from dashboard unless mentioned
+  [#14298](https://github.com/nextcloud/spreed/issues/14298)
+- fix(conversation): Don't suggest teams that are already added to the conversation
+  [#14348](https://github.com/nextcloud/spreed/issues/14348)
+- fix(chat): Fix missing "Copy code" button when syntax is used
+  [#14309](https://github.com/nextcloud/spreed/issues/14309)
+
+## 19.0.13 – 2025-02-13
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(bots): Allow users to edit messages of bots in one-to-one conversations
+  [#14360](https://github.com/nextcloud/spreed/issues/14360)
+- fix(calls): Address some false positives when showing the connection warning
+  [#14250](https://github.com/nextcloud/spreed/issues/14250)
+- fix(conversation): Don't suggest teams that are already added to the conversation
+  [#14347](https://github.com/nextcloud/spreed/issues/14347)
+
 ## 21.0.0-rc.3 – 2025-02-07
 ### Added
 - feat(bots): Let bots know when a message was a reply
@@ -87,7 +117,7 @@ All notable changes to this project will be documented in this file.
 - fix(archive): Don't add asterix to title for unread messages in archived conversations
   [#14101](https://github.com/nextcloud/spreed/issues/14101)
 
-## 20.1.2 – 2025-01-16
+## 20.1.3 – 2025-01-17
 ### Changed
 - Update translations
 - Update dependencies
