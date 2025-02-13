@@ -74,7 +74,7 @@ import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../../constants.ts'
-import { useCallViewStore } from '../../../stores/callView.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import { placeholderImage } from '../Grid/gridPlaceholders.ts'

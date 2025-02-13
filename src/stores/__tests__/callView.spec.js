@@ -7,7 +7,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import vuexStore from '../../store/index.js'
-import { useCallViewStore } from '../callView.js'
+import { useCallViewStore } from '../callView.ts'
 
 jest.mock('../../services/BrowserStorage.js', () => ({
 	getItem: jest.fn().mockReturnValue(null),
@@ -87,7 +87,7 @@ describe('callViewStore', () => {
 			})
 			expect(callViewStore.isGrid).toBeTruthy()
 			expect(callViewStore.isStripeOpen).toBeFalsy()
-			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, true)
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, 'true')
 
 			callViewStore.setCallViewMode({
 				token: TOKEN,
@@ -96,7 +96,7 @@ describe('callViewStore', () => {
 			})
 			expect(callViewStore.isGrid).toBeFalsy()
 			expect(callViewStore.isStripeOpen).toBeTruthy()
-			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, false)
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, 'false')
 		})
 
 		it('start presentation switches off grid view and restores when it ends', () => {

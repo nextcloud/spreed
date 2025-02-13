@@ -36,7 +36,7 @@ import {
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
-import { useCallViewStore } from '../stores/callView.js'
+import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'

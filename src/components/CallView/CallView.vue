@@ -156,7 +156,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { useCallViewStore } from '../../stores/callView.js'
+import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
@@ -721,7 +721,12 @@ export default {
 				return
 			}
 			this.callViewStore.setSelectedVideoPeerId(peerId)
-			this.callViewStore.startPresentation(this.token)
+			this.callViewStore.setCallViewMode({
+				token: this.token,
+				isGrid: false,
+				isStripeOpen: false,
+				clearLast: false,
+			})
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
@@ -730,7 +735,12 @@ export default {
 			}
 			// Deselect possible selected video
 			this.callViewStore.setSelectedVideoPeerId('local')
-			this.callViewStore.startPresentation(this.token)
+			this.callViewStore.setCallViewMode({
+				token: this.token,
+				isGrid: false,
+				isStripeOpen: false,
+				clearLast: false,
+			})
 		},
 
 		async fetchPeers() {
