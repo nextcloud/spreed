@@ -146,10 +146,10 @@ export default {
 			this.$refs.presenterOverlay.checkParentSize()
 			// FIXME: if it stays out of bounds (right and bottom), bring it back
 			// FIXME: should consider RTL
-			if (this.$refs.presenterOverlay.right < 0) {
+			if (this.$refs.presenterOverlay.right < 0 && this.$refs.presenterOverlay.parentWidth > this.presenterOverlaySize) {
 				this.$refs.presenterOverlay.moveHorizontally(this.$refs.presenterOverlay.parentWidth - this.presenterOverlaySize)
 			}
-			if (this.$refs.presenterOverlay.bottom < 0) {
+			if (this.$refs.presenterOverlay.bottom < 0 && this.$refs.presenterOverlay.parentHeight > this.presenterOverlaySize) {
 				this.$refs.presenterOverlay.moveVertically(this.$refs.presenterOverlay.parentHeight - this.presenterOverlaySize)
 			}
 		},
