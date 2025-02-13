@@ -11,6 +11,7 @@ import { t } from '@nextcloud/l10n'
 import { getBaseUrl } from '@nextcloud/router'
 
 import { FEDERATION } from '../constants.ts'
+import { setRemoteCapabilitiesIfEmpty } from '../services/CapabilitiesManager.ts'
 import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
 import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
@@ -109,6 +110,7 @@ export const useFederationStore = defineStore('federation', {
 			try {
 				Vue.set(this.pendingShares[id], 'loading', 'accept')
 				const response = await acceptShare(id)
+				await setRemoteCapabilitiesIfEmpty(response)
 				this.markInvitationAccepted(id, response.data.ocs.data)
 				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				return response.data.ocs.data

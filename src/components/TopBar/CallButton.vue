@@ -353,8 +353,9 @@ export default {
 	},
 
 	watch: {
-		token() {
+		token(newValue, oldValue) {
 			this.callViewStore.resetCallHasJustEnded()
+			this.talkHashStore.resetTalkProxyHashDirty(oldValue)
 		}
 	},
 

@@ -4,7 +4,8 @@
  */
 import { setActivePinia, createPinia } from 'pinia'
 
-import { getShares, acceptShare, rejectShare } from '../../services/federationService.ts'
+import { mockedCapabilities } from '../../__mocks__/capabilities.ts'
+import { getShares, acceptShare, rejectShare, getRemoteCapabilities } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useFederationStore } from '../federation.ts'
 
@@ -12,6 +13,7 @@ jest.mock('../../services/federationService', () => ({
 	getShares: jest.fn(),
 	acceptShare: jest.fn(),
 	rejectShare: jest.fn(),
+	getRemoteCapabilities: jest.fn(),
 }))
 
 describe('federationStore', () => {
@@ -186,6 +188,9 @@ describe('federationStore', () => {
 		}
 		const acceptResponse = generateOCSResponse({ payload: room })
 		acceptShare.mockResolvedValueOnce(acceptResponse)
+
+		const responseMock = generateOCSResponse({ payload: mockedCapabilities.spreed })
+		getRemoteCapabilities.mockReturnValue(responseMock)
 
 		// Act: accept invite
 		const conversation = await federationStore.acceptShare(invites[0].id)
