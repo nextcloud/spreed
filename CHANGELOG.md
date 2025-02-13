@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.13 – 2025-02-13
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(bots): Allow users to edit messages of bots in one-to-one conversations
+  [#14360](https://github.com/nextcloud/spreed/issues/14360)
+- fix(calls): Address some false positives when showing the connection warning
+  [#14250](https://github.com/nextcloud/spreed/issues/14250)
+- fix(conversation): Don't suggest teams that are already added to the conversation
+  [#14347](https://github.com/nextcloud/spreed/issues/14347)
+
 ## 19.0.12 – 2025-01-16
 ### Changed
 - Update translations
