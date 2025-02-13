@@ -42,6 +42,7 @@
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
 						:close-on-select="false"
+						:set-return-focus="getContenteditable"
 						@select="addEmoji">
 						<NcButton :disabled="disabled"
 							type="tertiary"
@@ -86,6 +87,8 @@
 					@keydown.meta.up="handleEditLastMessage"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
+					@focus="restoreSelectionRange"
+					@blur="preserveSelectionRange"
 					@submit="handleSubmit" />
 			</div>
 
@@ -167,7 +170,7 @@
 
 <script>
 import debounce from 'debounce'
-import { toRefs, ref } from 'vue'
+import { toRefs, nextTick } from 'vue'
 
 import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
@@ -207,6 +210,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
+import { getCurrentSelectionRange, selectRange, insertTextInElement } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {
@@ -317,7 +321,8 @@ export default {
 			clipboardTimeStamp: null,
 			typingInterval: null,
 			wasTypingWithinInterval: false,
-			debouncedUpdateChatInput: debounce(this.updateChatInput, 200)
+			debouncedUpdateChatInput: debounce(this.updateChatInput, 200),
+			preservedSelectionRange: null,
 		}
 	},
 
@@ -577,6 +582,11 @@ export default {
 
 	methods: {
 		t,
+
+		getContenteditable() {
+			return this.$refs.richContenteditable.$refs.contenteditable
+		},
+
 		handleTyping() {
 			// Enable signal sending, only if indicator for this input is on
 			if (!this.showTypingStatus) {
@@ -832,54 +842,23 @@ export default {
 			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
 
+		preserveSelectionRange() {
+			this.preservedSelectionRange = getCurrentSelectionRange(this.getContenteditable())
+		},
+
+		restoreSelectionRange() {
+			selectRange(this.preservedSelectionRange, this.getContenteditable())
+			this.preservedSelectionRange = null
+		},
+
 		/**
-		 * Add selected emoji to text input area
-		 *
-		 * The emoji will be added at the current caret position, and any text
-		 * currently selected will be replaced by the emoji. If the input area
-		 * does not have the focus there will be no caret or selection; in that
-		 * case the emoji will be added at the end.
-		 *
-		 * @param {string} emoji Emoji object
+		 * Add selected emoji to the cursor position
+		 * @param {string} emoji - Selected emoji
 		 */
 		addEmoji(emoji) {
-			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
-			const temp = document.createElement('textarea')
-
-			const selection = document.getSelection()
-
-			const contentEditable = this.$refs.richContenteditable.$refs.contenteditable
-
-			// There is no select, or current selection does not start in the
-			// content editable element, so just append the emoji at the end.
-			if (!contentEditable.isSameNode(selection.anchorNode) && !contentEditable.contains(selection.anchorNode)) {
-				// Browsers add a "<br>" element as soon as some rich text is
-				// written in a content editable div (for example, if a new line
-				// is added the div content will be "<br><br>"), so the emoji
-				// has to be added before the last "<br>" (if any).
-				if (this.text.endsWith('<br>')) {
-					temp.innerHTML = this.text.slice(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
-				} else {
-					temp.innerHTML = this.text + emoji
-				}
-				this.text = temp.value
-				return
-			}
-
-			// Although due to legacy reasons the API allows several ranges the
-			// specification requires the selection to always have a single range.
-			// https://developer.mozilla.org/en-US/docs/Web/API/Selection#Multiple_ranges_in_a_selection
-			const range = selection.getRangeAt(0)
-
-			// Deleting the contents also collapses the range to the start.
-			range.deleteContents()
-
-			const emojiTextNode = document.createTextNode(emoji)
-			range.insertNode(emojiTextNode)
-
-			this.text = contentEditable.innerHTML
-
-			range.setStartAfter(emojiTextNode)
+			insertTextInElement(emoji, this.getContenteditable(), this.preservedSelectionRange)
+			// FIXME: add a method to NcRichContenteditable to handle manual update
+			this.$refs.richContenteditable.updateValue(this.getContenteditable().innerHTML)
 		},
 
 		handleAudioFile(payload) {
@@ -890,13 +869,13 @@ export default {
 			this.isRecordingAudio = payload
 		},
 
-		focusInput() {
+		async focusInput() {
 			if (this.isMobileDevice) {
 				return
 			}
-			this.$nextTick().then(() => {
-				this.$refs.richContenteditable.focus()
-			})
+			await nextTick()
+			this.$refs.richContenteditable.focus()
+			this.restoreSelectionRange()
 		},
 
 		blurInput() {
