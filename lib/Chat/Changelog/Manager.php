@@ -140,6 +140,10 @@ class Manager {
 			. $this->l->t('- Summarize call recordings and unread messages in chats with the Nextcloud Assistant') . "\n"
 			. $this->l->t('- Improved meetings with recognizing guests invited via their email address, import of participant lists, drafts for polls and downloading call participant lists') . "\n"
 			. $this->l->t('- Archive conversations to stay focused'),
+			$this->l->t('## New in Talk %s', ['21']) . "\n"
+			. $this->l->t('- Schedule a meeting into your calendar from within a conversation') . "\n"
+			. $this->l->t('- Search for messages of the current conversation directly in the right sidebar') . "\n"
+			. $this->l->t('- See more conversations on a first glance with the new compact list (enable in the Talk settings)'),
 		];
 	}
 }
