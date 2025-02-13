@@ -44,7 +44,7 @@
 				<span> {{ t('spreed', 'Do you already have an account?') }}</span>
 				<NcButton type="secondary"
 					:href="getLoginUrl()">
-					{{ t('spreed', 'Login') }}
+					{{ t('spreed', 'Log in') }}
 				</NcButton>
 			</div>
 		</div>
