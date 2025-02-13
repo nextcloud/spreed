@@ -5,7 +5,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 20.1.3 – 2025-02-13
+## 20.1.4 – 2025-02-13
 ### Changed
 - Update translations
 - Update dependencies
@@ -117,7 +117,7 @@ All notable changes to this project will be documented in this file.
 - fix(archive): Don't add asterix to title for unread messages in archived conversations
   [#14101](https://github.com/nextcloud/spreed/issues/14101)
 
-## 20.1.2 – 2025-01-16
+## 20.1.3 – 2025-01-17
 ### Changed
 - Update translations
 - Update dependencies
