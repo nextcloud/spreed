@@ -1204,6 +1204,7 @@ OC.L10N.register(
     "Log in" : "Se connecter",
     "Error while verifying uploaded file" : "Erreur lors de la vérification du fichier téléversé",
     "Uploaded file is verified" : "Le fichier téléversé est vérifié",
+    "Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>\"name\",\"email\"</samp> or just <samp>\"email\"</samp><br/>- One entry per line (e.g. <samp>\"John Doe\",\"john@example.tld\"</samp>)" : "Le format du contenu est constitué de valeurs séparées par des virgules (CSV):<br/>- La ligne d'en-tête est obligatoire et doit correspondre à <samp>\"name\",\"email\"</samp> ou juste <samp>\"email\"</samp><br/>- Une entrée par ligne (ex : <samp>\"John Doe\",\"john@example.tld\"</samp>)",
     "Participants added successfully" : "Les participants ont été ajoutés avec succès",
     "Error while adding participants" : "Erreur lors de l'ajout des participants",
     "Import a file" : "Importer un fichier",
