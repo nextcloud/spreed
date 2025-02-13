@@ -5,6 +5,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-rc.4 – 2025-02-13
+### Added
+- feat(bots): Allow bots to get invoked for reactions
+  [#14336](https://github.com/nextcloud/spreed/issues/14336)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(bots): Allow users to edit messages of bots in one-to-one conversations
+  [#14353](https://github.com/nextcloud/spreed/issues/14353)
+- fix(conversation): Correctly update team names after being edited
+  [#14358](https://github.com/nextcloud/spreed/issues/14358)
+- fix(conversation): Don't suggest teams that are already added to the conversation
+  [#14349](https://github.com/nextcloud/spreed/issues/14349)
+- fix(meetings): Fix calendar integration for Desktop client
+  [#14379](https://github.com/nextcloud/spreed/issues/14379)
+- fix(calls): Fix issues with presenter overlay
+  [#14330](https://github.com/nextcloud/spreed/issues/14330)
+  [#14371](https://github.com/nextcloud/spreed/issues/14371)
+
 ## 20.1.4 – 2025-02-13
 ### Changed
 - Update translations
