@@ -3437,6 +3437,51 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer._stagedRoundTripTime[kind]).toEqual([])
 		})
 
+		test.each([
+			['packet count repeated two times', 'audio'],
+			['packet count repeated two times', 'video'],
+		])('%s, %s', (name, kind) => {
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+
+			expect(peerConnectionAnalyzer._packets[kind]._relativeValues).toEqual([0, 0, 0])
+			expect(peerConnectionAnalyzer._packetsLost[kind]._relativeValues).toEqual([0, 0, 0])
+			expect(peerConnectionAnalyzer._packetsLostRatio[kind]._relativeValues).toEqual([1.5, 1.5, 1.5])
+			expect(peerConnectionAnalyzer._timestamps[kind]._relativeValues).toEqual([0, 0])
+			expect(peerConnectionAnalyzer._timestampsForLogs[kind]._relativeValues).toEqual([0, 0, 0])
+			expect(peerConnectionAnalyzer._packetsPerSecond[kind]._relativeValues).toEqual([NaN, NaN, NaN])
+			expect(peerConnectionAnalyzer._roundTripTime[kind]._relativeValues).toEqual([0.2, 0.2, 0.2])
+
+			expect(peerConnectionAnalyzer._stagedPackets[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedPacketsLost[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedTimestamps[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedRoundTripTime[kind]).toEqual([])
+		})
+
+		test.each([
+			['packet count repeated two times then changed', 'audio'],
+			['packet count repeated two times then changed', 'video'],
+		])('%s, %s', (name, kind) => {
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 300, 70, 13750, 0.3)
+
+			expect(peerConnectionAnalyzer._packets[kind]._relativeValues).toEqual([0, 0, 0, 150])
+			expect(peerConnectionAnalyzer._packetsLost[kind]._relativeValues).toEqual([0, 0, 0, 30])
+			expect(peerConnectionAnalyzer._packetsLostRatio[kind]._relativeValues).toEqual([1.5, 1.5, 1.5, 0.2])
+			expect(peerConnectionAnalyzer._timestamps[kind]._relativeValues).toEqual([0, 3750])
+			expect(peerConnectionAnalyzer._timestampsForLogs[kind]._relativeValues).toEqual([0, 0, 0, 3750])
+			expect(peerConnectionAnalyzer._packetsPerSecond[kind]._relativeValues).toEqual([NaN, NaN, NaN, 40])
+			expect(peerConnectionAnalyzer._roundTripTime[kind]._relativeValues).toEqual([0.2, 0.2, 0.2, 0.3])
+
+			expect(peerConnectionAnalyzer._stagedPackets[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedPacketsLost[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedTimestamps[kind]).toEqual([])
+			expect(peerConnectionAnalyzer._stagedRoundTripTime[kind]).toEqual([])
+		})
+
 		describe('distribute staged stats', () => {
 
 			const expectRelativeStagedStats = (kind, index, expectedPackets, expectedPacketsLost, expectedTimestamps, expectedRoundTripTime) => {
@@ -3500,6 +3545,20 @@ describe('PeerConnectionAnalyzer', () => {
 
 				expectRelativeStagedStats(kind, 0, 150, 40, 11000, 0.2)
 				expectRelativeStagedStats(kind, 1, 150, 40, 14000, 0.2)
+			})
+
+			test.each([
+				['two sets of fully repeated values', 'audio'],
+				['two sets of fully repeated values', 'video'],
+			])('%s, %s', (name, kind) => {
+				peerConnectionAnalyzer._commitStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+
+				peerConnectionAnalyzer._distributeStagedStats(kind)
+
+				expectRelativeStagedStats(kind, 0, 150, 40, 10000, 0.2)
+				expectRelativeStagedStats(kind, 1, 150, 40, 10000, 0.2)
 			})
 
 			test.each([
@@ -3572,6 +3631,24 @@ describe('PeerConnectionAnalyzer', () => {
 				expectRelativeStagedStats(kind, 1, 150, 40, 15000, 0.2)
 				expectRelativeStagedStats(kind, 2, 150, 40, 17500, 0.2)
 				expectRelativeStagedStats(kind, 3, 150, 40, 20000, 0.2)
+			})
+
+			test.each([
+				['several sets of fully repeated values', 'audio'],
+				['several sets of fully repeated values', 'video'],
+			])('%s, %s', (name, kind) => {
+				peerConnectionAnalyzer._commitStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+				peerConnectionAnalyzer._stageStats(kind, 150, 40, 10000, 0.2)
+
+				peerConnectionAnalyzer._distributeStagedStats(kind)
+
+				expectRelativeStagedStats(kind, 0, 150, 40, 10000, 0.2)
+				expectRelativeStagedStats(kind, 1, 150, 40, 10000, 0.2)
+				expectRelativeStagedStats(kind, 2, 150, 40, 10000, 0.2)
+				expectRelativeStagedStats(kind, 3, 150, 40, 10000, 0.2)
 			})
 		})
 	})
