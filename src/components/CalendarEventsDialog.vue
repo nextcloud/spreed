@@ -271,8 +271,8 @@ async function submitNewMeeting() {
 		submitting.value = true
 		await groupwareStore.scheduleMeeting(props.token, {
 			calendarUri: selectedCalendar.value.value,
-			start: selectedDateTimeStart.value.getTime() / 1000,
-			end: selectedDateTimeEnd.value.getTime() / 1000,
+			start: convertToUnix(selectedDateTimeStart.value),
+			end: convertToUnix(selectedDateTimeEnd.value),
 			title: newMeetingTitle.value || null,
 			description: newMeetingDescription.value || null,
 			attendeeIds: selectAll.value ? null : selectedAttendeeIds.value,

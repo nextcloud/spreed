@@ -24,9 +24,10 @@ function formattedTime(time: number, condensed: boolean = false): string {
 		return condensed ? '--:--' : '-- : --'
 	}
 
-	const seconds = Math.floor((time / 1000) % 60)
-	const minutes = Math.floor((time / (1000 * 60)) % 60)
-	const hours = Math.floor((time / (1000 * 60 * 60)) % 24)
+	const timeInSec = convertToUnix(time)
+	const seconds = timeInSec % 60
+	const minutes = Math.floor(timeInSec / 60) % 60
+	const hours = Math.floor(timeInSec / 3600) % 24
 
 	return [
 		hours,
