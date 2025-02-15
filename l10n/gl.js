@@ -70,7 +70,7 @@ OC.L10N.register(
     "- Unsent message drafts are now saved in your browser" : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador",
     "- Text chatting can now be done in a federated way with other Talk servers" : "– A parola de texto agora pódese facer de xeito federado con outros servidores de Parladoiro",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "– Agora os moderadores poden prohibir contas e convidados para evitar que se reincorporen a unha conversa",
-    "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "– As próximas chamadas de eventos de calendario vinculados e as substitucións fóra da oficina agora amosanse nas conversas",
+    "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "– As próximas chamadas de eventos de calendario vinculados e as substitucións «fóra da oficina» agora amosanse nas conversas",
     "- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "– As chamadas agora pódense facer de xeito federado con outros servidores de Parladoiro (precisa dunha infraestrutura de alto rendemento)",
     "- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux: %s" : "– Presentación do cliente de escritorio Parladoiro de Nextcloud para Windows, macOS e Linux: %s",
     "- Summarize call recordings and unread messages in chats with the Nextcloud Assistant" : "– Resume as gravacións de chamadas e as mensaxes non lidas nas parolas co Asistente de Nextcloud",
