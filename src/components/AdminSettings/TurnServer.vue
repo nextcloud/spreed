@@ -90,6 +90,7 @@ import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { isCertificateValid } from '../../services/certificateService.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'TurnServer',
@@ -259,7 +260,7 @@ export default {
 				}
 			}
 
-			const expires = Math.round((new Date()).getTime() / 1000) + (5 * 60)
+			const expires = convertToUnix(Date.now()) + 5 * 60
 			const username = expires + ':turn-test-user'
 			const password = Base64.stringify(hmacSHA1(username, this.secret))
 

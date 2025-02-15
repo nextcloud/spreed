@@ -66,6 +66,7 @@ import { useFederationStore } from '../stores/federation.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
+import { convertToUnix } from '../utils/formattedTime.ts'
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
@@ -740,7 +741,7 @@ const actions = {
 		}
 
 		const conversation = Object.assign({}, getters.conversations[token], {
-			lastActivity: (new Date().getTime()) / 1000,
+			lastActivity: convertToUnix(Date.now()),
 		})
 
 		commit('addConversation', conversation)
@@ -775,7 +776,7 @@ const actions = {
 
 		const conversation = Object.assign({}, getters.conversations[token])
 		if (conversation.lastMessage?.id === parseInt(messageId, 10)
-			|| conversation.lastMessage?.timestamp >= Date.parse(notification.datetime) / 1000) {
+			|| conversation.lastMessage?.timestamp >= convertToUnix(new Date(notification.datetime))) {
 			// Already updated from other source, skipping
 			return
 		}
@@ -794,7 +795,7 @@ const actions = {
 			actorDisplayName: actor.name,
 			message: notification.messageRich,
 			messageParameters: notification.messageRichParameters,
-			timestamp: (new Date(notification.datetime)).getTime() / 1000,
+			timestamp: convertToUnix(new Date(notification.datetime)),
 
 			// Inaccurate but best effort from here on:
 			expirationTimestamp: 0,
@@ -843,7 +844,7 @@ const actions = {
 			return
 		}
 
-		const activeSince = (new Date(notification.datetime)).getTime() / 1000
+		const activeSince = convertToUnix(new Date(notification.datetime))
 
 		// Check if notification information is older than in known conversation object
 		if (activeSince < getters.conversations[token].lastActivity) {
