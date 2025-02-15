@@ -114,8 +114,8 @@ export default {
 				return ''
 			}
 			return t('spreed', 'Absence period: {startDate} - {endDate}', {
-				startDate: moment.unix(this.userAbsence.startDate).format('ll'),
-				endDate: moment.unix(this.userAbsence.endDate).format('ll'),
+				startDate: moment(this.userAbsence.startDate * 1000).format('ll'),
+				endDate: moment(this.userAbsence.endDate * 1000).format('ll'),
 			})
 		},
 	},
