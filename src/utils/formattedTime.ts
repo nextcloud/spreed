@@ -5,6 +5,15 @@
 import { t, n } from '@nextcloud/l10n'
 
 /**
+ * Converts the given time to UNIX timestamp
+ *
+ * @param time given time in ms or Date object
+ */
+function convertToUnix(time: number | Date): number {
+	return Math.floor(+time / 1000)
+}
+
+/**
  * Calculates the stopwatch string given the time (ms)
  *
  * @param time the time in ms
@@ -53,6 +62,7 @@ function futureRelativeTime(time: number): string {
 }
 
 export {
+	convertToUnix,
 	formattedTime,
 	futureRelativeTime,
 }
