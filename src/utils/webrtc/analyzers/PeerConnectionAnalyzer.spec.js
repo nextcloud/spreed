@@ -730,8 +730,8 @@ describe('PeerConnectionAnalyzer', () => {
 		})
 
 		test.each([
-			['good quality even with low packets if no packet loss, missing remote packet count', 'audio'],
-			['good quality even with low packets if no packet loss, missing remote packet count', 'video'],
+			['very bad quality with low packets and packet loss, missing remote packet count', 'audio'],
+			['very bad quality with low packets and packet loss, missing remote packet count', 'video'],
 		])('%s, %s', async (name, kind) => {
 			peerConnection.getStats
 				.mockResolvedValueOnce(newRTCStatsReport([
