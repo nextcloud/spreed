@@ -19,7 +19,11 @@
  *
  */
 
-import { PEER_DIRECTION, PeerConnectionAnalyzer } from './PeerConnectionAnalyzer.js'
+import {
+	PEER_DIRECTION,
+	PEER_TYPE,
+	PeerConnectionAnalyzer
+} from './PeerConnectionAnalyzer.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
 /**
@@ -217,7 +221,7 @@ ParticipantAnalyzer.prototype = {
 
 	_startListeningToScreenChanges() {
 		if (this._localMediaModel) {
-			this._senderScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.SENDER)
+			this._senderScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.SENDER, PEER_TYPE.SCREEN)
 
 			this._senderScreenPeerConnectionAnalyzer.on('change:connectionQualityVideo', this._handleConnectionQualityScreenChangeBound)
 
@@ -226,7 +230,7 @@ ParticipantAnalyzer.prototype = {
 		}
 
 		if (this._callParticipantModel) {
-			this._receiverScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.RECEIVER)
+			this._receiverScreenPeerConnectionAnalyzer.setPeerConnection(this._screenPeer.pc, PEER_DIRECTION.RECEIVER, PEER_TYPE.SCREEN)
 
 			this._receiverScreenPeerConnectionAnalyzer.on('change:connectionQualityVideo', this._handleConnectionQualityScreenChangeBound)
 
