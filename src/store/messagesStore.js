@@ -34,6 +34,7 @@ import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { debugTimer } from '../utils/debugTimer.ts'
+import { convertToUnix } from '../utils/formattedTime.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -480,7 +481,7 @@ const mutations = {
 			return
 		}
 
-		const timestamp = (new Date()) / 1000
+		const timestamp = convertToUnix(Date.now())
 		const messageIds = Object.keys(state.messages[token])
 		messageIds.forEach((messageId) => {
 			if (state.messages[token][messageId].expirationTimestamp

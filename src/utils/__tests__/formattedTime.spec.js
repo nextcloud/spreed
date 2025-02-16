@@ -2,9 +2,22 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { formattedTime, futureRelativeTime } from '../formattedTime.ts'
+import {
+	convertToUnix,
+	formattedTime,
+	futureRelativeTime,
+} from '../formattedTime.ts'
 
 const TIME = (61 * 60 + 5) * 1000 // 1 hour, 1 minute, 5 seconds in ms
+
+describe('convertToUnix', () => {
+	it('should return the correct UNIX timestamp for given time in ms', () => {
+		expect(convertToUnix(1704067200269)).toBe(1704067200)
+	})
+	it('should return the correct UNIX timestamp for given Date object', () => {
+		expect(convertToUnix(new Date('2024-01-01T00:00:00Z'))).toBe(1704067200)
+	})
+})
 
 describe('formattedTime', () => {
 	it('should return the formatted time with optional spacing and padded minutes / seconds', () => {

@@ -16,6 +16,7 @@ import {
 
 import CancelableRequest from './cancelableRequest.js'
 import Encryption from './e2ee/encryption.js'
+import { convertToUnix } from './formattedTime.ts'
 import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
 import { PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -1279,7 +1280,7 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		// of joined room so it gets sorted to the top.
 		this.roomCollection.forEach(function(room) {
 			if (room.get('token') === token) {
-				room.set('lastPing', (new Date()).getTime() / 1000)
+				room.set('lastPing', convertToUnix(Date.now()))
 			}
 		})
 		this.roomCollection.sort()

@@ -85,7 +85,7 @@ export default {
 		},
 
 		timerInMoment() {
-			return moment.unix(this.countdown)
+			return moment(this.countdown * 1000)
 		},
 
 		startTime() {

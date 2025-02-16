@@ -39,6 +39,7 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import { convertToUnix } from '../utils/formattedTime.ts'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
 
 /**
@@ -1045,7 +1046,7 @@ const actions = {
 		} catch (error) {
 			if (error?.response?.status === 409 && error?.response?.data?.ocs?.data) {
 				const responseData = error.response.data.ocs.data
-				let maxLastPingAge = new Date().getTime() / 1000 - 40
+				let maxLastPingAge = convertToUnix(Date.now()) - 40
 				if (responseData.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 					// When the user is/was in a call, we accept 20 seconds more delay
 					maxLastPingAge -= 20
