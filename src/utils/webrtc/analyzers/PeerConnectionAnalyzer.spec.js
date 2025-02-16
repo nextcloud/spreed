@@ -121,9 +121,23 @@ describe('PeerConnectionAnalyzer', () => {
 
 	describe('analyze sender connection', () => {
 
+		let logStatsMock
+
+		let expectLogStatsToHaveBeenCalled
+
 		beforeEach(() => {
+			logStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logStats').mockImplementation(() => {})
+
+			expectLogStatsToHaveBeenCalled = false
+
 			peerConnection._setIceConnectionState('connected')
 			peerConnection._setConnectionState('connected')
+		})
+
+		afterEach(() => {
+			if (!expectLogStatsToHaveBeenCalled) {
+				expect(logStatsMock).not.toHaveBeenCalled()
+			}
 		})
 
 		test.each([
@@ -573,6 +587,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -593,6 +608,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 		})
 
 		test.each([
@@ -640,6 +658,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -660,6 +679,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 		})
 
 		test.each([
@@ -707,6 +729,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -727,6 +750,10 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
+			expect(logStatsMock).toHaveBeenNthCalledWith(1, kind, 'Low packets per second: 5.025140924550664')
+			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.4')
 		})
 
 		test.each([
@@ -774,6 +801,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -794,6 +822,10 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
+			expect(logStatsMock).toHaveBeenNthCalledWith(1, kind, 'Low packets per second: 5.025140924550664')
+			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.4')
 		})
 
 		test.each([
@@ -841,6 +873,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -861,6 +894,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'Low packets per second: 5.025140924550664')
 		})
 
 		test.each([
@@ -908,6 +944,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -928,6 +965,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'Low packets per second: 5.025140924550664')
 		})
 
 		test.each([
@@ -975,6 +1015,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -995,6 +1036,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High round trip time: 1.5133333333333334')
 		})
 
 		test.each([
@@ -1042,6 +1086,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1062,6 +1107,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High round trip time: 1.5133333333333334')
 		})
 
 		test.each([
@@ -1109,6 +1157,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1129,6 +1178,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'No transmitted data, packet lost ratio: 1')
 		})
 
 		test.each([
@@ -1176,6 +1228,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1196,6 +1249,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'No transmitted data, packet lost ratio: 1')
 		})
 
 		test.each([
@@ -1251,6 +1307,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1271,6 +1328,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'No transmitted data, packet lost ratio: 1.35')
 		})
 
 		test.each([
@@ -1326,6 +1386,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1346,6 +1407,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'No transmitted data, packet lost ratio: 1.35')
 		})
 
 		test.each([
@@ -1917,6 +1981,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -1937,6 +2002,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.825')
 		})
 
 		test.each([
@@ -1994,6 +2062,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2014,6 +2083,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.825')
 		})
 
 		test.each([
@@ -2808,6 +2880,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2822,6 +2895,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.32')
 		})
 
 		test.each([
@@ -2885,6 +2961,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2899,6 +2976,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2913,6 +2991,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2927,6 +3006,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2941,6 +3021,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -2955,6 +3036,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.32')
 		})
 
 		test.each([
@@ -3018,6 +3102,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3032,6 +3117,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3046,6 +3134,8 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
+			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.325')
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3060,6 +3150,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3074,6 +3165,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3088,6 +3180,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
 		})
 
 		test.each([
@@ -3151,6 +3244,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3165,6 +3259,9 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3193,6 +3290,8 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.BAD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
+			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.325')
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3207,6 +3306,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3221,6 +3321,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityAudio()).toBe(CONNECTION_QUALITY.UNKNOWN)
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
+			expect(logStatsMock).toHaveBeenCalledTimes(2)
 		})
 
 		test('good audio quality, very bad video quality', async () => {
@@ -3277,6 +3378,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3290,6 +3392,9 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith('video', 'High packet lost ratio: 0.31')
 		})
 
 		test('very bad audio quality, good video quality', async () => {
@@ -3346,6 +3451,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.UNKNOWN)
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
+			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
 			jest.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
@@ -3359,6 +3465,9 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.VERY_BAD)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
+			expectLogStatsToHaveBeenCalled = true
+			expect(logStatsMock).toHaveBeenCalledTimes(1)
+			expect(logStatsMock).toHaveBeenCalledWith('audio', 'High packet lost ratio: 0.31')
 		})
 	})
 
