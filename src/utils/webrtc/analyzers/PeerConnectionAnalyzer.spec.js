@@ -6,6 +6,7 @@
 import {
 	CONNECTION_QUALITY,
 	PEER_DIRECTION,
+	PEER_TYPE,
 	PeerConnectionAnalyzer,
 } from './PeerConnectionAnalyzer.js'
 
@@ -3759,6 +3760,63 @@ describe('PeerConnectionAnalyzer', () => {
 				expectRelativeStagedStats(kind, 2, 150, 40, 10000, 0.2)
 				expectRelativeStagedStats(kind, 3, 150, 40, 10000, 0.2)
 			})
+		})
+	})
+
+	describe('log stats', () => {
+
+		let consoleDebugMock
+
+		beforeEach(() => {
+			consoleDebugMock = jest.spyOn(console, 'debug')
+		})
+
+		test.each([
+			['video peer', 'audio'],
+			['video peer', 'video'],
+		])('%s, %s', (name, kind) => {
+			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 200, 50, 11250, 0.3)
+			peerConnectionAnalyzer._addStats(kind, 260, 56, 12250, 0.4)
+
+			peerConnectionAnalyzer._logStats(kind, 'Message to log')
+
+			const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+
+			expect(consoleDebugMock).toHaveBeenCalledTimes(7)
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + 'Message to log')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + 'Packets: [0, 50, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + 'Packets lost: [0, 10, 6]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + 'Packets lost ratio: [1.5, 0.2, 0.1]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
+		})
+
+		test.each([
+			['screen peer', 'audio'],
+			['screen peer', 'video'],
+		])('%s, %s', (name, kind) => {
+			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER, PEER_TYPE.SCREEN)
+
+			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
+			peerConnectionAnalyzer._addStats(kind, 200, 50, 11250, 0.3)
+			peerConnectionAnalyzer._addStats(kind, 260, 56, 12250, 0.4)
+
+			peerConnectionAnalyzer._logStats(kind, 'Message to log')
+
+			const tag = 'PeerConnectionAnalyzer: ' + kind + ' (screen): '
+
+			expect(consoleDebugMock).toHaveBeenCalledTimes(7)
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + 'Message to log')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + 'Packets: [0, 50, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + 'Packets lost: [0, 10, 6]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + 'Packets lost ratio: [1.5, 0.2, 0.1]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
 		})
 	})
 })
