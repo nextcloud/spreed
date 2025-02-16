@@ -96,9 +96,7 @@ import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 import { WEBINAR } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { convertToUnix, futureRelativeTime } from '../../utils/formattedTime.ts'
-
-const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
+import { ONE_DAY_IN_MS, convertToUnix, futureRelativeTime } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'LobbySettings',

@@ -570,7 +570,7 @@ export default {
 				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
 		},
 
-		getRelativePrefix(date, diffDays) {
+		getRelativePrefix(diffDays) {
 			switch (diffDays) {
 			case 0:
 				return t('spreed', 'Today')
@@ -596,7 +596,7 @@ export default {
 			if (diffDays <= 7) {
 				// TRANSLATORS: <Today>, <March 18th, 2024>
 				return t('spreed', '{relativeDate}, {absoluteDate}', {
-					relativeDate: this.getRelativePrefix(date, diffDays),
+					relativeDate: this.getRelativePrefix(diffDays),
 					// 'LL' formats a localized date including day of month, month
 					// name and year
 					absoluteDate: date.format('LL'),
