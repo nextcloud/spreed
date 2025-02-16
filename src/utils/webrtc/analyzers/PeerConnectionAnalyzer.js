@@ -20,6 +20,11 @@ const PEER_DIRECTION = {
 	RECEIVER: 1,
 }
 
+const PEER_TYPE = {
+	VIDEO: 0,
+	SCREEN: 1,
+}
+
 /**
  * Analyzer for the quality of the connection of an RTCPeerConnection.
  *
@@ -114,6 +119,7 @@ function PeerConnectionAnalyzer() {
 
 	this._peerConnection = null
 	this._peerDirection = null
+	this._peerType = null
 
 	this._getStatsInterval = null
 
@@ -154,7 +160,7 @@ PeerConnectionAnalyzer.prototype = {
 		this._trigger('change:connectionQualityVideo', [connectionQualityVideo])
 	},
 
-	setPeerConnection(peerConnection, peerDirection = null) {
+	setPeerConnection(peerConnection, peerDirection = null, peerType = PEER_TYPE.VIDEO) {
 		if (this._peerConnection) {
 			this._peerConnection.removeEventListener('iceconnectionstatechange', this._handleIceConnectionStateChangedBound)
 			this._peerConnection.removeEventListener('connectionstatechange', this._handleConnectionStateChangedBound)
@@ -163,6 +169,7 @@ PeerConnectionAnalyzer.prototype = {
 
 		this._peerConnection = peerConnection
 		this._peerDirection = peerDirection
+		this._peerType = peerType
 
 		this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
 		this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
@@ -724,8 +731,17 @@ PeerConnectionAnalyzer.prototype = {
 		return CONNECTION_QUALITY.GOOD
 	},
 
+	_getLogTag(kind) {
+		let type = kind
+		if (this._peerType === PEER_TYPE.SCREEN) {
+			type += ' (screen)'
+		}
+
+		return 'PeerConnectionAnalyzer: ' + type + ': '
+	},
+
 	_logStats(kind, message) {
-		const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+		const tag = this._getLogTag(kind)
 
 		if (message) {
 			console.debug(tag + message)
@@ -746,5 +762,6 @@ EmitterMixin.apply(PeerConnectionAnalyzer.prototype)
 export {
 	CONNECTION_QUALITY,
 	PEER_DIRECTION,
+	PEER_TYPE,
 	PeerConnectionAnalyzer,
 }
