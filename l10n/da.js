@@ -491,6 +491,7 @@ OC.L10N.register(
     "Devices" : "Enhed",
     "No audio" : "Ingen lyd",
     "No camera" : "Intet kamera",
+    "Blur" : "Slør",
     "Upload" : "Send",
     "Files" : "Filer",
     "Select a file" : "Vælg en fil",
