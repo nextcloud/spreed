@@ -91,8 +91,8 @@ const canScheduleMeeting = computed(() => {
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
-const selectedDateTimeStart = ref(new Date(moment().add(1, 'hours').startOf('hour')))
-const selectedDateTimeEnd = ref(new Date(moment().add(2, 'hours').startOf('hour')))
+const selectedDateTimeStart = ref(getCurrentDateInStartOfNthHour(1))
+const selectedDateTimeEnd = ref(getCurrentDateInStartOfNthHour(2))
 const newMeetingTitle = ref('')
 const newMeetingDescription = ref('')
 const invalid = ref<string | null>(null)
@@ -197,8 +197,8 @@ watch(isFormOpen, (value) => {
 
 	// Reset the default form values
 	selectedCalendar.value = calendarOptions.value.find(o => o.value === groupwareStore.defaultCalendarUri) ?? null
-	selectedDateTimeStart.value = new Date(moment().add(1, 'hours').startOf('hour'))
-	selectedDateTimeEnd.value = new Date(moment().add(2, 'hours').startOf('hour'))
+	selectedDateTimeStart.value = getCurrentDateInStartOfNthHour(1)
+	selectedDateTimeEnd.value = getCurrentDateInStartOfNthHour(2)
 	newMeetingTitle.value = ''
 	newMeetingDescription.value = ''
 	selectedAttendeeIds.value = participants.value.map((participant: Participant) => participant.attendeeId)
@@ -216,6 +216,16 @@ watch(participants, (value) => {
 		selectedAttendeeIds.value = value.map((participant: Participant) => participant.attendeeId)
 	}
 })
+
+/**
+ * Returns Date object with N hours from now at the start of hour
+ * @param hours amount of hours to add
+ */
+function getCurrentDateInStartOfNthHour(hours: number) {
+	const date = new Date()
+	date.setHours(date.getHours() + hours, 0, 0, 0)
+	return date
+}
 
 /**
  * Toggle selected attendees
