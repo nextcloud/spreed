@@ -1410,6 +1410,7 @@ OC.L10N.register(
     "Add users" : "Toevoegen gebruikers",
     "Add groups" : "Toevoegen groepen",
     "Add emails" : "Toevoegen e-mailadressen",
+    "Add teams" : "Teams toevoegen",
     "Integrations" : "Integraties",
     "Add federated users" : "Voeg gefedereerde gebruikers toe",
     "Searching …" : "Zoeken ...",
