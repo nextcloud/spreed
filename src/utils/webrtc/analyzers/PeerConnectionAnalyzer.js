@@ -61,6 +61,11 @@ const PEER_TYPE = {
 function PeerConnectionAnalyzer() {
 	this._superEmitterMixin()
 
+	this._rtcStats = {
+		audio: [],
+		video: [],
+	}
+
 	this._packets = {
 		audio: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
 		video: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
@@ -289,6 +294,17 @@ PeerConnectionAnalyzer.prototype = {
 			return
 		}
 
+		// Although the last five stats are analyzed a few more RTC stats are
+		// kept to provide an extended context in the logs.
+		const NUMBER_OF_RTC_STATS_TO_KEEP = 7
+
+		for (const kind of ['audio', 'video']) {
+			if (this._rtcStats[kind].length === NUMBER_OF_RTC_STATS_TO_KEEP) {
+				this._rtcStats[kind].shift()
+			}
+			this._rtcStats[kind].push([])
+		}
+
 		if (this._peerDirection === PEER_DIRECTION.SENDER) {
 			this._processSenderStats(stats)
 		} else if (this._peerDirection === PEER_DIRECTION.RECEIVER) {
@@ -360,6 +376,8 @@ PeerConnectionAnalyzer.prototype = {
 			}
 
 			if (stat.type === 'outbound-rtp') {
+				this._rtcStats[stat.kind].at(-1).push(stat)
+
 				if ('packetsSent' in stat && 'kind' in stat) {
 					packetsSent[stat.kind] = (packetsSent[stat.kind] === -1) ? stat.packetsSent : packetsSent[stat.kind] + stat.packetsSent
 
@@ -368,6 +386,8 @@ PeerConnectionAnalyzer.prototype = {
 					}
 				}
 			} else if (stat.type === 'remote-inbound-rtp') {
+				this._rtcStats[stat.kind].at(-1).push(stat)
+
 				if ('packetsReceived' in stat && 'kind' in stat) {
 					packetsReceived[stat.kind] = (packetsReceived[stat.kind] === -1) ? stat.packetsReceived : packetsReceived[stat.kind] + stat.packetsReceived
 
@@ -448,6 +468,8 @@ PeerConnectionAnalyzer.prototype = {
 			}
 
 			if (stat.type === 'inbound-rtp') {
+				this._rtcStats[stat.kind].at(-1).push(stat)
+
 				if ('packetsReceived' in stat && 'kind' in stat) {
 					packetsReceived[stat.kind] = stat.packetsReceived
 				}
@@ -457,6 +479,10 @@ PeerConnectionAnalyzer.prototype = {
 				if ('timestamp' in stat && 'kind' in stat) {
 					timestamp[stat.kind] = stat.timestamp
 				}
+			} else if (stat.type === 'remote-outbound-rtp') {
+				// Even if the stat is not used in calculations it is logged for
+				// additional context.
+				this._rtcStats[stat.kind].at(-1).push(stat)
 			}
 		}
 
@@ -753,7 +779,22 @@ PeerConnectionAnalyzer.prototype = {
 		console.debug(tag + 'Packets per second: ' + this._packetsPerSecond[kind].toString())
 		console.debug(tag + 'Round trip time: ' + this._roundTripTime[kind].toString())
 		console.debug(tag + 'Timestamps: ' + this._timestampsForLogs[kind].toString())
+
+		this._logRtcStats(tag, kind)
 	},
+
+	_logRtcStats(tag, kind) {
+		for (const rtcStats of this._rtcStats[kind]) {
+			if (!rtcStats.length) {
+				console.debug(tag + 'no matching type')
+				continue
+			}
+
+			for (const rtcStat of rtcStats) {
+				console.debug(tag + JSON.stringify(rtcStat))
+			}
+		}
+	}
 
 }
 
