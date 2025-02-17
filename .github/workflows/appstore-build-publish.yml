@@ -12,6 +12,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -32,9 +35,21 @@ jobs:
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          persist-credentials: false
           path: ${{ env.APP_NAME }}
+
+      - name: Get app version number
+        id: app-version
+        uses: skjnldsv/xpath-action@7e6a7c379d0e9abc8acaef43df403ab4fc4f770c # master
+        with:
+          filename: ${{ env.APP_NAME }}/appinfo/info.xml
+          expression: "//info//version/text()"
+
+      - name: Validate app version against tag
+        run: |
+          [ "${{ env.APP_VERSION }}" = "v${{ fromJSON(steps.app-version.outputs.result).version }}" ]
 
       - name: Get appinfo data
         id: appinfo
@@ -56,7 +71,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -134,9 +149,10 @@ jobs:
           unzip latest-$NCVERSION.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         if: ${{ steps.server-checkout.outcome != 'success' }}
         with:
+          persist-credentials: false
           submodules: true
           repository: nextcloud/server
           path: nextcloud
