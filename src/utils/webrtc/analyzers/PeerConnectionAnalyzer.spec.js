@@ -3775,6 +3775,8 @@ describe('PeerConnectionAnalyzer', () => {
 			['video peer', 'audio'],
 			['video peer', 'video'],
 		])('%s, %s', (name, kind) => {
+			const logRtcStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
+
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
 			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
@@ -3793,12 +3795,16 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
+			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
+			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
 		})
 
 		test.each([
 			['screen peer', 'audio'],
 			['screen peer', 'video'],
 		])('%s, %s', (name, kind) => {
+			const logRtcStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
+
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER, PEER_TYPE.SCREEN)
 
 			peerConnectionAnalyzer._addStats(kind, 150, 40, 10000, 0.2)
@@ -3817,6 +3823,166 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
+			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
+			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
+		})
+
+		describe('log RTC stats', () => {
+
+			beforeEach(() => {
+				peerConnection._setIceConnectionState('connected')
+				peerConnection._setConnectionState('connected')
+			})
+
+			test.each([
+				['sender', 'audio'],
+				['sender', 'video'],
+			])('%s, %s', async (name, kind) => {
+				// Different reports contain different types and values in each
+				// type (and some of them not really applicable for a sender),
+				// even if in a real world scenario they would be consistent
+				// between reports.
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 45, timestamp: 10000, packetsLost: 5, roundTripTime: 0.1 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 90, timestamp: 11000, packetsLost: 10, roundTripTime: 0.2 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, id: '67890', packetsSent: 150, timestamp: 11950, rid: 'h' },
+						{ type: 'outbound-rtp', kind, id: 'abcde', packetsSent: 80, timestamp: 11950, rid: 'm' },
+						{ type: 'remote-inbound-rtp', kind, localId: '67890', packetsReceived: 135, timestamp: 11950, packetsLost: 15, roundTripTime: 0.1 },
+						{ type: 'remote-inbound-rtp', kind, localId: 'abcde', packetsReceived: 72, timestamp: 11950, packetsLost: 8, roundTripTime: 0.1 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 180, timestamp: 13020, packetsLost: 20, roundTripTime: 0.15, jitter: 0.007 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'local-candidate', candidateType: 'host', protocol: 'udp' },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 270, timestamp: 14985, packetsLost: 30, roundTripTime: 0.3 },
+						{ type: 'inbound-rtp', kind, packetsReceived: 26, timestamp: 14985, packetsLost: 2 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 28, timestamp: 14985 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'candidate-pair', byteReceived: 2120, bytesSent: 63820, timestamp: 16010 },
+						{ type: 'outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 315, timestamp: 16010, packetsLost: 35, roundTripTime: 0.25 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, bytesSent: 64042, packetsSent: 400, timestamp: 17000 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 360, timestamp: 17000, packetsLost: 40, roundTripTime: 0.15 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'outbound-rtp', kind, packetsSent: 450, timestamp: 17990, codecId: '123456' },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 405, timestamp: 17990, packetsLost: 45, roundTripTime: 0.2 },
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
+
+				jest.advanceTimersByTime(9000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+
+				peerConnectionAnalyzer._logRtcStats(tag, kind)
+
+				expect(consoleDebugMock).toHaveBeenCalledTimes(15)
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + '{"type":"outbound-rtp","kind":"' + kind + '","id":"67890","packetsSent":150,"timestamp":11950,"rid":"h"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + '{"type":"outbound-rtp","kind":"' + kind + '","id":"abcde","packetsSent":80,"timestamp":11950,"rid":"m"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15,"roundTripTime":0.1}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"abcde","packetsReceived":72,"timestamp":11950,"packetsLost":8,"roundTripTime":0.1}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"roundTripTime":0.15,"jitter":0.007}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'no matching type')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30,"roundTripTime":0.3}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35,"roundTripTime":0.25}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, tag + '{"type":"outbound-rtp","kind":"' + kind + '","bytesSent":64042,"packetsSent":400,"timestamp":17000}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(13, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":360,"timestamp":17000,"packetsLost":40,"roundTripTime":0.15}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(14, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990,"codecId":"123456"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(15, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"roundTripTime":0.2}')
+			})
+
+			test.each([
+				['receiver', 'audio'],
+				['receiver', 'video'],
+			])('%s, %s', async (name, kind) => {
+				// Different reports contain different types and values in each
+				// type (and some of them not really applicable for a receiver),
+				// even if in a real world scenario they would be consistent
+				// between reports.
+				peerConnection.getStats
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, packetsReceived: 45, timestamp: 10000, packetsLost: 5 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 50, timestamp: 10000 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, packetsReceived: 90, timestamp: 11000, packetsLost: 10 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 100, timestamp: 11000 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, id: '67890', packetsReceived: 135, timestamp: 11950, packetsLost: 15 },
+						{ type: 'remote-outbound-rtp', kind, localId: '67890', packetsSent: 150, timestamp: 11950 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, packetsReceived: 180, timestamp: 13020, packetsLost: 20, jitter: 0.007 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 200, timestamp: 13020 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'local-candidate', candidateType: 'host', protocol: 'udp' },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, packetsReceived: 270, timestamp: 14985, packetsLost: 30 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 300, timestamp: 14985 },
+						{ type: 'outbound-rtp', kind, packetsSent: 28, timestamp: 14985 },
+						{ type: 'remote-inbound-rtp', kind, packetsReceived: 26, timestamp: 14985, packetsLost: 2, roundTripTime: 0.3 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'candidate-pair', byteReceived: 2120, bytesSent: 63820, timestamp: 16010 },
+						{ type: 'inbound-rtp', kind, packetsReceived: 315, timestamp: 16010, packetsLost: 35 },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 350, timestamp: 16010 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, bytesReceived: 64042, packetsReceived: 400, timestamp: 17000 },
+					]))
+					.mockResolvedValueOnce(newRTCStatsReport([
+						{ type: 'inbound-rtp', kind, packetsReceived: 405, timestamp: 17990, packetsLost: 45, codecId: '123456' },
+						{ type: 'remote-outbound-rtp', kind, packetsSent: 450, timestamp: 17990 },
+					]))
+
+				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.RECEIVER)
+
+				jest.advanceTimersByTime(9000)
+				// Force the promises returning the stats to be executed.
+				await null
+
+				const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+
+				peerConnectionAnalyzer._logRtcStats(tag, kind)
+
+				expect(consoleDebugMock).toHaveBeenCalledTimes(12)
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + '{"type":"inbound-rtp","kind":"' + kind + '","id":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","localId":"67890","packetsSent":150,"timestamp":11950}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"jitter":0.007}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'no matching type')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, tag + '{"type":"inbound-rtp","kind":"' + kind + '","bytesReceived":64042,"packetsReceived":400,"timestamp":17000}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"codecId":"123456"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990}')
+			})
 		})
 	})
 })
