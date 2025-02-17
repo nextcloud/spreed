@@ -96,7 +96,7 @@ import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 import { WEBINAR } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { futureRelativeTime } from '../../utils/formattedTime.ts'
+import { convertToUnix, futureRelativeTime } from '../../utils/formattedTime.ts'
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -240,7 +240,7 @@ export default {
 			try {
 				await this.$store.dispatch('setLobbyTimer', {
 					token: this.token,
-					timestamp: timestamp ? (timestamp / 1000) : 0,
+					timestamp: timestamp ? convertToUnix(timestamp) : 0,
 				})
 				showSuccess(t('spreed', 'Start time has been updated'))
 			} catch (e) {

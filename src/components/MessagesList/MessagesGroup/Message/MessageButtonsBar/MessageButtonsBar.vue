@@ -309,6 +309,7 @@ import { getMessageReminder, removeMessageReminder, setMessageReminder } from '.
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
+import { convertToUnix } from '../../../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -734,7 +735,7 @@ export default {
 
 		async setReminder(timestamp) {
 			try {
-				await setMessageReminder(this.message.token, this.message.id, timestamp / 1000)
+				await setMessageReminder(this.message.token, this.message.id, convertToUnix(timestamp))
 				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
 					datetime: moment(timestamp).format('LLL'),
 				}))

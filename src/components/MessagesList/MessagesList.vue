@@ -82,6 +82,7 @@ import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 
@@ -253,7 +254,7 @@ export default {
 		},
 
 		currentDay() {
-			return moment().startOf('day').unix()
+			return convertToUnix(new Date().setHours(0, 0, 0, 0))
 		},
 
 		isChatBeginningReached() {
@@ -401,7 +402,7 @@ export default {
 						// This is a temporary message, the timestamp is today
 						dateTimestamp = this.currentDay
 					} else {
-						dateTimestamp = moment(message.timestamp * 1000).startOf('day').unix()
+						dateTimestamp = convertToUnix(new Date(message.timestamp * 1000).setHours(0, 0, 0, 0))
 					}
 
 					if (!this.dateSeparatorLabels[dateTimestamp]) {
@@ -585,11 +586,11 @@ export default {
 		/**
 		 * Generate the date header between the messages
 		 *
-		 * @param {number} dateTimestamp The day and year timestamp
+		 * @param {number} dateTimestamp The day and year timestamp (in UNIX format)
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
 		generateDateSeparator(dateTimestamp) {
-			const date = moment.unix(dateTimestamp).startOf('day')
+			const date = moment(dateTimestamp * 1000).startOf('day')
 			const diffDays = moment().startOf('day').diff(date, 'days')
 			// Relative date is only shown up to a week ago (inclusive)
 			if (diffDays <= 7) {
@@ -613,14 +614,14 @@ export default {
 		 *
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
-		 * @param {number} message.timestamp Timestamp of the message
+		 * @param {number} message.timestamp Timestamp of the message (in UNIX format)
 		 * @return {object} MomentJS object
 		 */
 		getDateOfMessage(message) {
 			if (message.id.toString().startsWith('temp-')) {
 				return moment()
 			}
-			return moment.unix(message.timestamp)
+			return moment(message.timestamp * 1000)
 		},
 
 		getMessageIdFromHash(hash = undefined) {

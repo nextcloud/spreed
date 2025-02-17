@@ -40,6 +40,7 @@ import { ATTENDEE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import type { Conversation, Participant } from '../types/index.ts'
+import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
@@ -66,7 +67,7 @@ const submitting = ref(false)
 
 const calendars = computed(() => groupwareStore.calendars)
 const upcomingEvents = computed(() => {
-	const now = moment().unix()
+	const now = convertToUnix(Date.now())
 	return groupwareStore.getAllEvents(props.token)
 		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
 		.map(event => {
@@ -270,8 +271,8 @@ async function submitNewMeeting() {
 		submitting.value = true
 		await groupwareStore.scheduleMeeting(props.token, {
 			calendarUri: selectedCalendar.value.value,
-			start: selectedDateTimeStart.value.getTime() / 1000,
-			end: selectedDateTimeEnd.value.getTime() / 1000,
+			start: convertToUnix(selectedDateTimeStart.value),
+			end: convertToUnix(selectedDateTimeEnd.value),
 			title: newMeetingTitle.value || null,
 			description: newMeetingDescription.value || null,
 			attendeeIds: selectAll.value ? null : selectedAttendeeIds.value,
