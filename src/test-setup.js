@@ -115,6 +115,8 @@ global.ResizeObserver = jest.fn(() => ({
 	disconnect: jest.fn(),
 }))
 
+global.structuredClone = jest.fn((val) => JSON.parse(JSON.stringify(val)))
+
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721
 window.URL.createObjectURL = jest.fn()
