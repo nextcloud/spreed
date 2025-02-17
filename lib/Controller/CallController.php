@@ -166,12 +166,12 @@ class CallController extends AEnvironmentAwareOCSController {
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$email = $this->userManager->get($participant->getAttendee()->getActorId())?->getEMailAddress() ?? '';
 			}
-			fputcsv($output, [
+			fputcsv($output, array_map([$this, 'escapeFormulae'], [
 				$participant->getAttendee()->getDisplayName(),
 				$email,
 				$participant->getAttendee()->getActorType(),
 				$participant->getAttendee()->getActorId(),
-			], escape: '');
+			]), escape: '');
 		}
 
 		fseek($output, 0);
@@ -196,6 +196,13 @@ class CallController extends AEnvironmentAwareOCSController {
 		$fileName = $cleanedRoomName . ' ' . $date . '.csv';
 
 		return new DataDownloadResponse(stream_get_contents($output), $fileName, 'text/csv');
+	}
+
+	protected function escapeFormulae(string $value): string {
+		if (preg_match('/^[=+\-@\t\r]/', $value)) {
+			return "'" . $value;
+		}
+		return $value;
 	}
 
 	/**
