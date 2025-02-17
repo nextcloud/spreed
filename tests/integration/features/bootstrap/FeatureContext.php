@@ -3835,6 +3835,39 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" has room capability "([^"]*)" set to ("[^"]*"|\d) on room "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $capability
+	 * @param string $value
+	 */
+	public function userCheckCapabilityFromRoomApi($user, $capability, $value, $identifier) {
+		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
+			$value = substr($value, 1, -1);
+		} else {
+			$value = (int)$value;
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/spreed/api/v4/room/' . self::$identifierToToken[$identifier] . '/capabilities'
+		);
+
+
+		$capabilities = $this->getDataFromResponse($this->response);
+
+		$keys = explode('=>', $capability);
+		$finalKey = array_pop($keys);
+		$cur = $capabilities;
+
+		foreach ($keys as $key) {
+			Assert::assertArrayHasKey($key, $cur);
+			$cur = $cur[$key];
+		}
+		Assert::assertEquals($value, $cur[$finalKey]);
+	}
+
+	/**
 	 * Parses the JSON answer to get the array of users returned.
 	 * @param ResponseInterface $response
 	 * @return array
