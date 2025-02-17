@@ -353,8 +353,8 @@ Feature: federation/call
       | remoteServerUrl | remoteToken | state | inviterCloudId    | inviterDisplayName       |
       | LOCAL           | room       | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id          | name  | type | remoteServer | remoteToken |
-      | LOCAL::room | room | 2    | LOCAL        | room       |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 400 (v4)
@@ -381,8 +381,8 @@ Feature: federation/call
       | remoteServerUrl | remoteToken | state | inviterCloudId    | inviterDisplayName       |
       | LOCAL           | room       | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id          | name  | type | remoteServer | remoteToken |
-      | LOCAL::room | room | 2    | LOCAL        | room       |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200 (v4)
@@ -404,8 +404,8 @@ Feature: federation/call
       | remoteServerUrl | remoteToken | state | inviterCloudId    | inviterDisplayName       |
       | LOCAL           | room       | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id          | name  | type | remoteServer | remoteToken |
-      | LOCAL::room | room | 2    | LOCAL        | room       |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200 (v4)
@@ -431,8 +431,8 @@ Feature: federation/call
       | remoteServerUrl | remoteToken | state | inviterCloudId    | inviterDisplayName       |
       | LOCAL           | room       | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id          | name  | type | remoteServer | remoteToken |
-      | LOCAL::room | room | 2    | LOCAL        | room       |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200 (v4)
