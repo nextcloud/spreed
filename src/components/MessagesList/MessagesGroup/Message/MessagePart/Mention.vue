@@ -106,8 +106,7 @@ export default {
 			return this.isGroupMention && this.$store.getters.isActorMemberOfGroup(this.id)
 		},
 		isCurrentUserTeam() {
-			// FIXME need backend support here
-			return this.isTeamMention && false
+			return this.isTeamMention && this.$store.getters.isActorMemberOfTeam(this.id)
 		},
 		primary() {
 			return this.isMentionToAll
