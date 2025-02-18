@@ -934,24 +934,25 @@ export default {
 				return
 			}
 
-			this.setChatScrolledToBottom(false)
-
-			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
-				|| skipHeightCheck) {
-				if (this.loadingOldMessages || this.isChatBeginningReached) {
-					// already loading, don't do it twice
-					return
-				}
-				this.displayMessagesLoader = true
-				await this.getOldMessages(false)
-				this.displayMessagesLoader = false
-				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
-					// scroll to previous position + added height
-					this.$refs.scroller.scrollTo({
-						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
-					})
-				}
+			if (this.isScrolling === 'up' && (skipHeightCheck || scrollHeight > clientHeight)) {
 				this.setChatScrolledToBottom(false, { auto: true })
+
+				if (scrollTop < 800) {
+					if (this.loadingOldMessages || this.isChatBeginningReached) {
+						// already loading, don't do it twice
+						return
+					}
+					this.displayMessagesLoader = true
+					await this.getOldMessages(false)
+					this.displayMessagesLoader = false
+					if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+						// scroll to previous position + added height
+						this.$refs.scroller.scrollTo({
+							top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+						})
+					}
+					this.setChatScrolledToBottom(false, { auto: true })
+				}
 			}
 
 			this.debounceUpdateReadMarkerPosition()
@@ -1328,6 +1329,7 @@ export default {
 					return
 				}
 
+				this.isScrolling = 'up'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
