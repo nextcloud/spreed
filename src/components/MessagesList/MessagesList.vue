@@ -385,6 +385,9 @@ export default {
 				this.$refs.scroller.scrollTo({
 					top: this.$refs.scroller.scrollHeight,
 				})
+			} else if (this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
+				// chat is not scrollable
+				this.setChatScrolledToBottom(true)
 			}
 		},
 
