@@ -10,6 +10,8 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
+import { loadState } from '@nextcloud/initial-state'
+
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 
 const state = {
@@ -19,6 +21,7 @@ const state = {
 	actorId: null,
 	actorType: null,
 	displayName: '',
+	actorGroups: loadState('spreed', 'user_group_ids', []),
 }
 
 const getters = {
@@ -42,6 +45,9 @@ const getters = {
 	},
 	isActorGuest: (state) => () => {
 		return state.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+	},
+	isActorMemberOfGroup: (state) => (groupId) => {
+		return state.actorGroups.includes(groupId)
 	},
 	getDisplayName: (state) => () => {
 		return state.displayName
