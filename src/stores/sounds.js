@@ -40,6 +40,7 @@ export const useSoundsStore = defineStore('sounds', {
 			leave: null,
 			wait: null,
 		},
+		audioOutputSinkId: null,
 	}),
 
 	actions: {
@@ -52,14 +53,23 @@ export const useSoundsStore = defineStore('sounds', {
 			this.shouldPlaySounds = value
 		},
 
-		playAudio(key) {
+		async playAudio(key) {
 			if (!this.audioObjectsCreated) {
 				this.initAudioObjects()
 			}
-			this.audioObjectsPromises[key] = this.audioObjects[key].play()
-			this.audioObjectsPromises[key].catch(error => {
-				console.error(error)
-			})
+			if (this.audioOutputSinkId) {
+				this.audioObjects[key].setSinkId(this.audioOutputSinkId).then(() => {
+					this.audioObjectsPromises[key] = this.audioObjects[key].play()
+					this.audioObjectsPromises[key].catch(error => {
+						console.error(error)
+					})
+				})
+			} else {
+				this.audioObjectsPromises[key] = this.audioObjects[key].play()
+				this.audioObjectsPromises[key].catch(error => {
+					console.error(error)
+				})
+			}
 		},
 
 		pauseAudio(key) {
