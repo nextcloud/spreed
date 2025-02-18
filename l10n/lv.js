@@ -403,7 +403,7 @@ OC.L10N.register(
     "Disable" : "Deaktivēt",
     "Enable" : "Iespējot",
     "The file must be a PNG or JPG" : "Failam jābūt PNG vai JPG",
-    "Choose" : "Izvēlies",
+    "Choose" : "Izvēlēties",
     "Restricted" : "Ierobežota",
     "Personal" : "Personīgs",
     "Setup overview" : "Uzstādīšanas pārskats",
