@@ -10,7 +10,10 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
+import { loadState } from '@nextcloud/initial-state'
+
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { getTeams } from '../services/teamsService.ts'
 
 const state = {
 	userId: null,
@@ -19,6 +22,8 @@ const state = {
 	actorId: null,
 	actorType: null,
 	displayName: '',
+	actorGroups: loadState('spreed', 'user_group_ids', []),
+	actorTeams: [],
 }
 
 const getters = {
@@ -42,6 +47,12 @@ const getters = {
 	},
 	isActorGuest: (state) => () => {
 		return state.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+	},
+	isActorMemberOfGroup: (state) => (groupId) => {
+		return state.actorGroups.includes(groupId)
+	},
+	isActorMemberOfTeam: (state) => (teamId) => {
+		return state.actorTeams.includes(teamId)
 	},
 	getDisplayName: (state) => () => {
 		return state.displayName
@@ -112,6 +123,15 @@ const mutations = {
 	setActorType(state, actorType) {
 		state.actorType = actorType
 	},
+	/**
+	 * Set the user teams ids
+	 *
+	 * @param {object} state current store state;
+	 * @param {Array} teams Teams ids of the current user
+	 */
+	setCurrentUserTeams(state, teams) {
+		state.actorTeams = teams
+	},
 }
 
 const actions = {
@@ -161,6 +181,24 @@ const actions = {
 	 */
 	setDisplayName(context, displayName) {
 		context.commit('setDisplayName', displayName)
+	},
+	/**
+	 * Sets current user teams, if circles app enabled
+	 *
+	 * @param {object} context default store context;
+	 */
+	async getCurrentUserTeams(context) {
+		if (!loadState('spreed', 'circles_enabled', false)) {
+			return
+		}
+
+		try {
+			const response = await getTeams()
+			const teams = response.data.ocs.data.map(team => team.id)
+			context.commit('setCurrentUserTeams', teams)
+		} catch (error) {
+			console.error(error)
+		}
 	},
 }
 
