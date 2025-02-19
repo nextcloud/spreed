@@ -1299,6 +1299,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Deel bestanden binnen het gesprek",
     "Upload from device" : "Uploaden vanaf apparaat",
     "Create new poll" : "Nieuwe peiling aanmaken",
+    "Smart picker" : "Smart picker",
     "Share from Files" : "Delen vanuit Bestanden",
     "Record voice message" : "Opnemen gesproken bericht",
     "End recording and send" : "Beëindigen opname en versturen",
