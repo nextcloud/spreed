@@ -462,7 +462,7 @@ class RoomService {
 
 	/**
 	 * @param Room $room
-	 * @param integer $status 0 none|1 video|2 audio
+	 * @psalm-param Room::RECORDING_* $status
 	 * @param Participant|null $participant the Participant that changed the
 	 *                                      state, null for the current user
 	 * @throws CallRecordingException
