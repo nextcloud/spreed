@@ -31,17 +31,6 @@ echo -e "Running on process ID: \033[1;35m$PHPPID1\033[0m"
 # Output filtered php server logs
 tail -f phpserver.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
 
-PORT_FED=8180
-export PORT_FED
-
-echo "" > phpserver_fed.log
-PHP_CLI_SERVER_WORKERS=3 php -S localhost:${PORT_FED} -t ${ROOT_DIR} &> phpserver_fed.log &
-PHPPID2=$!
-echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
-
-# Output filtered federated php server logs
-tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
-
 occ_host() {
 	NEXTCLOUD_CONFIG_DIR=${MAIN_SERVER_CONFIG_DIR} ${ROOT_DIR}/occ "$@"
 }
@@ -100,14 +89,13 @@ echo -e "Running on process ID: \033[1;35m$PHPPID3\033[0m"
 tail -f phpserver_fed_real.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
 
 # Kill all sub-processes in case of ctrl+c
-trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PHPPID3; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID2; wait $PHPPID3;' INT TERM
+trap 'pkill -P $PHPPID1; pkill -P $PHPPID3; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID3;' INT TERM
 
 export NEXTCLOUD_HOST_ROOT_DIR=${ROOT_DIR}
 export NEXTCLOUD_HOST_CONFIG_DIR=${MAIN_SERVER_CONFIG_DIR}
 export NEXTCLOUD_REMOTE_ROOT_DIR=${REMOTE_ROOT_DIR}
 export NEXTCLOUD_REMOTE_CONFIG_DIR=${REAL_FEDERATED_SERVER_CONFIG_DIR}
 export TEST_SERVER_URL="http://localhost:8080/"
-export TEST_LOCAL_REMOTE_URL="http://localhost:8180/"
 export TEST_REMOTE_URL="http://localhost:8280/"
 
 export NEXTCLOUD_CONFIG_DIR="$MAIN_SERVER_CONFIG_DIR"
@@ -204,12 +192,10 @@ echo -e "\033[0;36m#\033[0m"
 
 # Kill child PHP processes
 pkill -P $PHPPID1;
-pkill -P $PHPPID2;
 pkill -P $PHPPID3;
 
 # Kill parent PHP processes
 kill -TERM $PHPPID1;
-kill -TERM $PHPPID2;
 kill -TERM $PHPPID3;
 
 # Kill child processes of this script (e.g. tail)
@@ -248,7 +234,6 @@ rm -rf ${REMOTE_ROOT_DIR}/apps/spreedcheats
 rm -rf ${REMOTE_ROOT_DIR}/apps/talk_webhook_demo
 
 wait $PHPPID1
-wait $PHPPID2
 wait $PHPPID3
 
 echo ''

@@ -2,27 +2,23 @@ Feature: federation/reminder
   Background:
     Given using server "REMOTE"
     And user "participant2" exists
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
     And using server "LOCAL"
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
 
   Scenario: Get mention suggestions (translating local users to federated users)
-    Given using server "REMOTE"
-    And the following "spreed" app config is set
-      | federation_enabled | yes |
-    And using server "LOCAL"
-    And the following "spreed" app config is set
-      | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" sends message "Message 1" to room "room" with 201
-    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
@@ -65,22 +61,15 @@ Feature: federation/reminder
       | app | object_type | object_id | subject |
 
   Scenario: Deleting reminder before the job is executed never triggers a notification
-    Given using server "REMOTE"
-    And the following "spreed" app config is set
-      | federation_enabled | yes |
-    And using server "LOCAL"
-    And the following "spreed" app config is set
-      | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" sends message "Message 1" to room "room" with 201
-    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
-    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
