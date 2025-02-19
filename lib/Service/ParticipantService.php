@@ -927,10 +927,10 @@ class ParticipantService {
 				$participant = $this->getParticipant($room, $user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
 
-				$attendees[] = $participant->getAttendee();
 				if ($participantType === Participant::USER) {
 					// Only remove normal users, not moderators/admins
 					$this->removeAttendee($room, $participant, $reason, true);
+					$attendees[] = $participant->getAttendee();
 				}
 			} catch (ParticipantNotFoundException $e) {
 			}
@@ -990,10 +990,10 @@ class ParticipantService {
 				$participant = $this->getParticipant($room, $user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
 
-				$attendees[] = $participant->getAttendee();
 				if ($participantType === Participant::USER) {
 					// Only remove normal users, not moderators/admins
 					$this->removeAttendee($room, $participant, $reason, true);
+					$attendees[] = $participant->getAttendee();
 				}
 			} catch (ParticipantNotFoundException $e) {
 			}
