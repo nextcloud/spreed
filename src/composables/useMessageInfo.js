@@ -75,7 +75,7 @@ export function useMessageInfo(message = ref({})) {
 			return true
 		}
 
-		return (Date.now() - message.value.timestamp * 1000 <= ONE_DAY_IN_MS)
+		return (Date.now() - message.value.timestamp * 1000 < ONE_DAY_IN_MS)
 	})
 
 	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('file')))
@@ -83,7 +83,7 @@ export function useMessageInfo(message = ref({})) {
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
 	const isDeleteable = computed(() =>
-		(hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 <= 6 * ONE_HOUR_IN_MS))
+		(hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
 		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)

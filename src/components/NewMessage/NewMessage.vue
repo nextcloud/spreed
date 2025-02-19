@@ -901,7 +901,7 @@ export default {
 				return message.actorId === this.$store.getters.getUserId()
 					&& message.actorType === this.$store.getters.getActorType()
 					&& !message.isTemporary && !message.systemMessage
-					&& (Date.now() - message.timestamp * 1000 <= ONE_DAY_IN_MS)
+					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})
 
 			if (!lastMessageByCurrentUser) {
