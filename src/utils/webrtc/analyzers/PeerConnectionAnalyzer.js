@@ -522,11 +522,10 @@ PeerConnectionAnalyzer.prototype = {
 
 		this._stageStats(kind, packets, packetsLost, timestamp, roundTripTime)
 
-		// If the packets have changed now it is assumed that the previous stats
-		// were stalled.
-		if (packets > 0) {
-			this._distributeStagedStats(kind)
-		}
+		// Distributing the stats has no effect if the stats were not stalled
+		// (that is, if the values are still unchanged, so it is probably an
+		// actual connection problem rather than a stalled report).
+		this._distributeStagedStats(kind)
 
 		while (this._stagedPackets[kind].length > 0) {
 			const stagedPackets = this._stagedPackets[kind].shift()
@@ -565,6 +564,12 @@ PeerConnectionAnalyzer.prototype = {
 		let packetsTotal = 0
 		let packetsLostTotal = 0
 		let timestampsTotal = 0
+
+		// If the last timestamp is still stalled there is nothing to
+		// distribute.
+		if (this._stagedTimestamps[kind][this._stagedTimestamps[kind].length - 1] === timestampsBase) {
+			return
+		}
 
 		// If the first timestamp stalled it is assumed that all of them
 		// stalled and are thus evenly distributed based on the new timestamp.
