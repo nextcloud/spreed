@@ -88,9 +88,11 @@ class Room {
 	protected ?Participant $participant = null;
 
 	/**
-	 * @psalm-param Room::TYPE_* $type
+	 * @psalm-param self::TYPE_* $type
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
 	 * @psalm-param int-mask-of<self::HAS_FEDERATION_*> $hasFederation
+	 * @psalm-param self::RECORDING_* $callRecording
+	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
 	 */
 	public function __construct(
 		private Manager $manager,
@@ -529,10 +531,16 @@ class Room {
 		$this->breakoutRoomStatus = $status;
 	}
 
+	/**
+	 * @psalm-return self::RECORDING_*
+	 */
 	public function getCallRecording(): int {
 		return $this->callRecording;
 	}
 
+	/**
+	 * @psalm-param self::RECORDING_* $callRecording
+	 */
 	public function setCallRecording(int $callRecording): void {
 		$this->callRecording = $callRecording;
 	}
@@ -567,10 +575,16 @@ class Room {
 		$this->hasFederation = $hasFederation;
 	}
 
+	/**
+	 * @psalm-return self::MENTION_PERMISSIONS_*
+	 */
 	public function getMentionPermissions(): int {
 		return $this->mentionPermissions;
 	}
 
+	/**
+	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
+	 */
 	public function setMentionPermissions(int $mentionPermissions): void {
 		$this->mentionPermissions = $mentionPermissions;
 	}

@@ -687,7 +687,15 @@
                     },
                     "callRecording": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
                     },
                     "callStartTime": {
                         "type": "integer",
@@ -764,7 +772,11 @@
                     },
                     "mentionPermissions": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1
+                        ]
                     },
                     "messageExpiration": {
                         "type": "integer",

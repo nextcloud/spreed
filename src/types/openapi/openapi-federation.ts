@@ -322,8 +322,11 @@ export type components = {
             callFlag: number;
             /** Format: int64 */
             callPermissions: number;
-            /** Format: int64 */
-            callRecording: number;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            callRecording: 0 | 1 | 2 | 3 | 4 | 5;
             /** Format: int64 */
             callStartTime: number;
             canDeleteConversation: boolean;
@@ -355,8 +358,11 @@ export type components = {
             lobbyState: number;
             /** Format: int64 */
             lobbyTimer: number;
-            /** Format: int64 */
-            mentionPermissions: number;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            mentionPermissions: 0 | 1;
             /** Format: int64 */
             messageExpiration: number;
             name: string;
