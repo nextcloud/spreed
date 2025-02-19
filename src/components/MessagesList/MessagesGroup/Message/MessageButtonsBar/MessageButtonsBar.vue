@@ -521,10 +521,10 @@ export default {
 			nextDay.setDate(currentDate.getDate() + 1)
 
 			const nextSaturday = new Date()
-			nextSaturday.setDate(currentDate.getDate() + (currentDayOfWeek === 6 ? 7 : ((6 + 7 - currentDayOfWeek) % 7)))
+			nextSaturday.setDate(currentDate.getDate() + ((6 + 7 - currentDayOfWeek) % 7 || 7))
 
 			const nextMonday = new Date()
-			nextMonday.setDate(currentDate.getDate() + (currentDayOfWeek === 0 ? 1 : (1 + 7 - currentDayOfWeek)))
+			nextMonday.setDate(currentDate.getDate() + ((1 + 7 - currentDayOfWeek) % 7 || 7))
 
 			// Same day 18:00 PM (hidden if after 17:00 PM now)
 			const laterTodayTime = (currentDate.getHours() < 17)
