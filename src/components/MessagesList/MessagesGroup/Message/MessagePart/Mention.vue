@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
-
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
 
@@ -105,12 +103,10 @@ export default {
 				&& this.id === this.$store.getters.getUserId()
 		},
 		isCurrentUserGroup() {
-			return this.isGroupMention
-				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
+			return this.isGroupMention && this.$store.getters.isActorMemberOfGroup(this.id)
 		},
 		isCurrentUserTeam() {
-			// FIXME need backend support here
-			return this.isTeamMention && false
+			return this.isTeamMention && this.$store.getters.isActorMemberOfTeam(this.id)
 		},
 		primary() {
 			return this.isMentionToAll

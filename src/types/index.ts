@@ -265,6 +265,22 @@ export type TaskProcessingResponse = ApiResponseUnwrapped<{
 	}
 }>
 
+// Teams (circles)
+export type TeamProbe = {
+	id: string,
+	name: string,
+	displayName: string,
+	sanitizedName: string,
+	source: number,
+	population: number,
+	config: number,
+	description: string,
+	url: string,
+	creation: number,
+	initiator: null
+}
+export type getTeamsProbeResponse = ApiResponseUnwrapped<TeamProbe[]>
+
 // Groupware
 export type DavPrincipal = {
 	calendarHomes: string[],

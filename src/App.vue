@@ -388,6 +388,7 @@ export default {
 		if (getCurrentUser()) {
 			console.debug('Setting current user')
 			this.$store.dispatch('setCurrentUser', getCurrentUser())
+			this.$store.dispatch('getCurrentUserTeams')
 		} else {
 			console.debug('Can not set current user because it\'s a guest')
 		}
