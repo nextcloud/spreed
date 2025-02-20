@@ -85,6 +85,11 @@
 						:device-id="videoInputId"
 						@refresh="updateDevices"
 						@update:deviceId="handleVideoInputIdChange" />
+					<MediaDevicesSelector kind="audiooutput"
+						:devices="devices"
+						:device-id="soundsStore.audioOutputSinkId"
+						@refresh="updateDevices"
+						@update:deviceId="handleAudioOutputIdChange" />
 					<MediaDevicesSpeakerTest />
 				</template>
 
@@ -210,6 +215,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
+import { useSoundsStore } from '../../stores/sounds.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
@@ -251,6 +257,7 @@ export default {
 		const video = ref(null)
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
+		const soundsStore = useSoundsStore()
 		const settingsStore = useSettingsStore()
 		const dialogHeaderId = `media-settings-header-${useId()}`
 
@@ -288,6 +295,7 @@ export default {
 			isInCall,
 			guestNameStore,
 			settingsStore,
+			soundsStore,
 			video,
 			// useDevices
 			devices,
@@ -705,6 +713,10 @@ export default {
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
 			this.updatePreferences('audioinput')
+		},
+
+		handleAudioOutputIdChange(audioOutputId) {
+			this.soundsStore.audioOutputSinkId = audioOutputId
 		},
 
 		handleVideoInputIdChange(videoInputId) {

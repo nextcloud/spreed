@@ -32,6 +32,7 @@
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconRefresh from 'vue-material-design-icons/Refresh.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -48,12 +49,13 @@ export default {
 		IconMicrophone,
 		IconRefresh,
 		IconVideo,
+		IconVolumeHigh,
 	},
 
 	props: {
 		kind: {
 			validator(value) {
-				return ['audioinput', 'videoinput'].includes(value)
+				return ['audioinput', 'audiooutput', 'videoinput'].includes(value)
 			},
 			required: true,
 		},
@@ -87,6 +89,7 @@ export default {
 		deviceIcon() {
 			switch (this.kind) {
 			case 'audioinput': return IconMicrophone
+			case 'audiooutput': return IconVolumeHigh
 			case 'videoinput': return IconVideo
 			default: return null
 			}
@@ -97,47 +100,38 @@ export default {
 		},
 
 		deviceSelectorPlaceholder() {
-			if (this.kind === 'audioinput') {
-				return this.audioInputSelectorPlaceholder
+			switch (this.kind) {
+			case 'audioinput': return this.audioInputSelectorPlaceholder
+			case 'audiooutput': return this.audioOutputSelectorPlaceholder
+			case 'videoinput': return this.videoInputSelectorPlaceholder
+			default: return null
 			}
-
-			if (this.kind === 'videoinput') {
-				return this.videoInputSelectorPlaceholder
-			}
-
-			return null
 		},
 
 		audioInputSelectorPlaceholder() {
-			if (!this.deviceOptionsAvailable) {
-				return t('spreed', 'No microphone available')
-			}
+			return this.deviceOptionsAvailable
+				? t('spreed', 'Select microphone')
+				: t('spreed', 'No microphone available')
+		},
 
-			return t('spreed', 'Select microphone')
+		audioOutputSelectorPlaceholder() {
+			return this.deviceOptionsAvailable
+				? t('spreed', 'Select speaker')
+				: t('spreed', 'No speaker available')
 		},
 
 		videoInputSelectorPlaceholder() {
-			if (!this.deviceOptionsAvailable) {
-				return t('spreed', 'No camera available')
-			}
-
-			return t('spreed', 'Select camera')
+			return this.deviceOptionsAvailable
+				? t('spreed', 'Select camera')
+				: t('spreed', 'No camera available')
 		},
 
 		deviceOptions() {
-			const options = this.devices.filter(device => device.kind === this.kind).map(device => {
-				return {
-					id: device.deviceId,
-					label: device.label ? device.label : device.fallbackLabel,
-				}
-			})
-
-			options.push({
-				id: null,
-				label: t('spreed', 'None'),
-			})
-
-			return options
+			return [
+				{ id: null, label: t('spreed', 'None') },
+				...this.devices.filter(device => device.kind === this.kind)
+					.map(device => ({ id: device.deviceId, label: device.label ? device.label : device.fallbackLabel }))
+			]
 		},
 
 		deviceSelectedOptionFromDeviceId() {
