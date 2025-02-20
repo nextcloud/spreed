@@ -205,14 +205,26 @@ class SystemMessage implements IEventListener {
 			if ($silentCall) {
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You started a silent call');
+					if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+						$parsedMessage = $this->l->t('Outgoing silent call');
+					}
 				} else {
 					$parsedMessage = $this->l->t('{actor} started a silent call');
+					if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+						$parsedMessage = $this->l->t('Incoming silent call');
+					}
 				}
 			} else {
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You started a call');
+					if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+						$parsedMessage = $this->l->t('Outgoing call');
+					}
 				} else {
 					$parsedMessage = $this->l->t('{actor} started a call');
+					if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+						$parsedMessage = $this->l->t('Incoming call');
+					}
 				}
 			}
 		} elseif ($message === 'call_joined') {
@@ -1072,7 +1084,7 @@ class SystemMessage implements IEventListener {
 	protected function parseMissedCall(Room $room, array $parameters, ?string $currentActorId): array {
 		if ($parameters['users'][0] !== $currentActorId) {
 			return [
-				$this->l->t('You missed a call from {user}'),
+				$this->l->t('Missed call'),
 				[
 					'user' => $this->getUser($parameters['users'][0]),
 				],
@@ -1083,7 +1095,7 @@ class SystemMessage implements IEventListener {
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			// Can happen if a user was remove from a one-to-one room.
 			return [
-				$this->l->t('You tried to call {user}'),
+				$this->l->t('Missed call'),
 				[
 					'user' => [
 						'type' => 'highlight',
@@ -1104,7 +1116,7 @@ class SystemMessage implements IEventListener {
 		}
 
 		return [
-			$this->l->t('You tried to call {user}'),
+			$this->l->t('Missed call'),
 			[
 				'user' => $this->getUser($other),
 			],
@@ -1117,6 +1129,15 @@ class SystemMessage implements IEventListener {
 		$actorIsSystem = $params['actor']['type'] === 'guest' && $params['actor']['id'] === 'guest/' . Attendee::ACTOR_ID_SYSTEM;
 		$maxDuration = $this->appConfig->getAppValueInt('max_call_duration');
 		$maxDurationWasReached = $message === 'call_ended_everyone' && $actorIsSystem && $maxDuration > 0 && $parameters['duration'] > $maxDuration;
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			$subject = $this->l->t('Call ended (Duration {duration})');
+			$subject = str_replace('{duration}', $this->getDuration($parameters['duration']), $subject);
+			return [
+				$subject,
+				$params,
+			];
+		}
 
 		if ($message === 'call_ended_everyone') {
 			if ($params['actor']['type'] === 'user') {
