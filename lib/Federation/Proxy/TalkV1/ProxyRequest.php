@@ -40,7 +40,6 @@ class ProxyRequest {
 				'config' => [
 					'chat' => [
 						'read-privacy',
-						'typing-privacy',
 					],
 					'call' => [
 						'blur-virtual-background',
