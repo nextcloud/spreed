@@ -73,10 +73,10 @@ class Listener implements IEventListener {
 		$numGuests += $this->participantService->getActorsCountByType($room, Attendee::ACTOR_EMAILS, $activeSince->getTimestamp());
 
 		$message = 'call_ended';
-		if ($event instanceof CallEndedForEveryoneEvent) {
-			$message = 'call_ended_everyone';
-		} elseif (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) && \count($userIds) === 1) {
+		if (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) && \count($userIds) === 1) {
 			$message = 'call_missed';
+		} elseif ($event instanceof CallEndedForEveryoneEvent) {
+			$message = 'call_ended_everyone';
 		}
 
 		if ($actor instanceof Participant) {
