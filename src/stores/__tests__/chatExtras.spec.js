@@ -128,8 +128,8 @@ describe('chatExtrasStore', () => {
 		it('should render mentions properly when editing message', () => {
 			// Arrange
 			const parameters = {
-				'mention-call1': { type: 'call', name: 'Conversation101' },
-				'mention-user1': { type: 'user', name: 'Alice Joel', id: 'alice' },
+				'mention-call1': { type: 'call', name: 'Conversation101', 'mention-id': 'all' },
+				'mention-user1': { type: 'user', name: 'Alice Joel', id: 'alice', 'mention-id': 'alice' },
 			}
 			// Act
 			chatExtrasStore.setChatEditInput({
@@ -138,7 +138,7 @@ describe('chatExtrasStore', () => {
 				parameters
 			})
 			// Assert
-			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @all and @alice')
+			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @"all" and @"alice"')
 		})
 
 		it('should store chat input without escaping special symbols', () => {
