@@ -14,7 +14,7 @@
 				{{ t('spreed', 'You are currently waiting in the lobby') }}
 			</p>
 
-			<p v-if="countdown"
+			<p v-if="lobbyTimer"
 				class="lobby__countdown">
 				{{ message }} -
 				<span class="lobby__countdown relative-timestamp"
@@ -72,24 +72,19 @@ export default {
 			return this.conversation ? this.conversation.displayName : ''
 		},
 
-		countdown() {
-			return this.conversation.lobbyTimer
+		lobbyTimer() {
+			return this.conversation.lobbyTimer * 1000
 		},
 
 		relativeDate() {
-			const diff = moment().diff(this.timerInMoment)
-			if (diff > -45000 && diff < 45000) {
+			if (Math.abs(Date.now() - this.lobbyTimer) < 45000) {
 				return t('spreed', 'The meeting will start soon')
 			}
-			return futureRelativeTime(this.timerInMoment.valueOf())
-		},
-
-		timerInMoment() {
-			return moment(this.countdown * 1000)
+			return futureRelativeTime(this.lobbyTimer)
 		},
 
 		startTime() {
-			return this.timerInMoment.format('LLL')
+			return moment(this.lobbyTimer).format('LLL')
 		},
 
 		message() {

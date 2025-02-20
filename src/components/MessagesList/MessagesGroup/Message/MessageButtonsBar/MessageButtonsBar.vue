@@ -437,7 +437,7 @@ export default {
 			frequentlyUsedEmojis: [],
 			submenu: null,
 			currentReminder: null,
-			customReminderTimestamp: moment().add(2, 'hours').minute(0).second(0).valueOf(),
+			customReminderTimestamp: new Date().setHours(new Date().getHours() + 2, 0, 0, 0),
 		}
 	},
 
@@ -514,49 +514,60 @@ export default {
 		},
 
 		reminderOptions() {
-			const currentDateTime = moment()
+			const currentDate = new Date()
+			const currentDayOfWeek = currentDate.getDay()
+
+			const nextDay = new Date()
+			nextDay.setDate(currentDate.getDate() + 1)
+
+			const nextSaturday = new Date()
+			nextSaturday.setDate(currentDate.getDate() + ((6 + 7 - currentDayOfWeek) % 7 || 7))
+
+			const nextMonday = new Date()
+			nextMonday.setDate(currentDate.getDate() + ((1 + 7 - currentDayOfWeek) % 7 || 7))
 
 			// Same day 18:00 PM (hidden if after 17:00 PM now)
-			const laterTodayTime = (currentDateTime.hour() < 17)
-				? moment().hour(18)
+			const laterTodayTime = (currentDate.getHours() < 17)
+				? new Date().setHours(18, 0, 0, 0)
 				: null
 
 			// Tomorrow 08:00 AM
-			const tomorrowTime = moment().add(1, 'days').hour(8)
+			const tomorrowTime = nextDay.setHours(8, 0, 0, 0)
 
 			// Saturday 08:00 AM (hidden if Friday, Saturday or Sunday now)
-			const thisWeekendTime = (currentDateTime.day() > 0 && currentDateTime.day() < 5)
-				? moment().day(6).hour(8)
+			const thisWeekendTime = (![0, 5, 6].includes(currentDayOfWeek))
+				? nextSaturday.setHours(8, 0, 0, 0)
 				: null
 
 			// Next Monday 08:00 AM (hidden if Sunday now)
-			const nextWeekTime = (currentDateTime.day() !== 0)
-				? moment().add(1, 'weeks').day(1).hour(8)
+			// TODO: use getFirstDay from nextcloud/l10n
+			const nextWeekTime = (currentDayOfWeek !== 0)
+				? nextMonday.setHours(8, 0, 0, 0)
 				: null
 
 			return [
 				{
 					key: 'laterToday',
-					timestamp: this.getTimestamp(laterTodayTime),
-					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: laterTodayTime?.format('LT') }),
+					timestamp: laterTodayTime,
+					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: moment(laterTodayTime).format('LT') }),
 					ariaLabel: t('spreed', 'Set reminder for later today'),
 				},
 				{
 					key: 'tomorrow',
-					timestamp: this.getTimestamp(tomorrowTime),
-					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: tomorrowTime?.format('ddd LT') }),
+					timestamp: tomorrowTime,
+					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: moment(tomorrowTime).format('ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for tomorrow'),
 				},
 				{
 					key: 'thisWeekend',
-					timestamp: this.getTimestamp(thisWeekendTime),
-					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: thisWeekendTime?.format('ddd LT') }),
+					timestamp: thisWeekendTime,
+					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: moment(thisWeekendTime).format('ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for this weekend'),
 				},
 				{
 					key: 'nextWeek',
-					timestamp: this.getTimestamp(nextWeekTime),
-					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: nextWeekTime?.format('ddd LT') }),
+					timestamp: nextWeekTime,
+					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: moment(nextWeekTime).format('ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for next week'),
 				},
 			].filter(option => option.timestamp !== null)
@@ -708,10 +719,6 @@ export default {
 
 		updateFrequentlyUsedEmojis() {
 			this.frequentlyUsedEmojis = emojiSearch('', 5).map(emoji => emoji.native)
-		},
-
-		getTimestamp(momentObject) {
-			return momentObject?.minute(0).second(0).millisecond(0).valueOf() || null
 		},
 
 		async getReminder() {
