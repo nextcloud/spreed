@@ -17,7 +17,9 @@
 				:label="t('spreed', 'Search conversations or users')"
 				:show-trailing-button="searchText !==''"
 				@trailing-button-click="clearText">
-				<Magnify :size="16" />
+				<template #icon>
+					<Magnify :size="16" />
+				</template>
 			</NcTextField>
 
 			<!-- Conversations list-->

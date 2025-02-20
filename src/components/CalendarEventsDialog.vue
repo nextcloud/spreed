@@ -613,17 +613,8 @@ async function submitNewMeeting() {
 		width: calc(50% - var(--default-grid-baseline));
 		margin-bottom: var(--default-grid-baseline);
 
-		label {
-			margin-bottom: 2px;
-		}
-
-		input {
-			margin: 0;
-			border-width: 1px;
-		}
-
 		&.invalid-time input {
-			border-width: 2px;
+			--border-width-input: 2px;
 			border-color: var(--color-error);
 		}
 	}

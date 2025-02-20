@@ -197,7 +197,6 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 		const response = await request({
 			term,
 			person: fromUser.value?.id,
-			// FIXME: this might be invalid date. Remove after vue-lib bump: https://github.com/nextcloud-libraries/nextcloud-vue/pull/6387
 			since: sinceDate.value?.toISOString(),
 			until: untilDate.value?.toISOString(),
 			limit: searchLimit.value,
