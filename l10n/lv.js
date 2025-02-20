@@ -468,7 +468,7 @@ OC.L10N.register(
     "Start call" : "Sākt zvanu",
     "Show your screen" : "Rādīt savu ekrānu",
     "Stop screensharing" : "Apturēt ekrāna koplietošanu",
-    "Screensharing options" : "Ekrāna koplietošanas opcijas",
+    "Screensharing options" : "Ekrāna kopīgošanas iespējas",
     "Enable screensharing" : "Iespējot ekrāna koplietošanu",
     "Screensharing requires the page to be loaded through HTTPS." : "Lai koplietotu ekrānu, lapa jāielādē, izmantojot HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekrāna koplietošana darbojas tikai ar Firefox 52. vai jaunāku versiju.",
