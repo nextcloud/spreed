@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0-rc.5 – 2025-02-21
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Mark mentions of teams you are a part of primary
+  [#14455](https://github.com/nextcloud/spreed/issues/14455)
+- fix(federation): Fix "remote server was updated" shown too frequently
+  [#14389](https://github.com/nextcloud/spreed/issues/14389)
+
 ## 21.0.0-rc.4 – 2025-02-13
 ### Added
 - feat(bots): Allow bots to get invoked for reactions
