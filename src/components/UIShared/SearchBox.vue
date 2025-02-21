@@ -17,7 +17,9 @@
 		@blur="handleBlur"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
-		<IconMagnify :size="16" />
+		<template #icon>
+			<IconMagnify :size="16" />
+		</template>
 	</NcTextField>
 </template>
 
