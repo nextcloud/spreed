@@ -300,11 +300,14 @@ export default {
 				// scroll to bottom if needed
 				this.scrollToBottom({ smooth: false })
 
-				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
-					this.$nextTick(() => {
+				this.$nextTick(() => {
+					this.checkChatNotScrollable()
+
+					if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 						this.updateTasksCount()
-					})
-				}
+					}
+				})
+
 			},
 		},
 
@@ -320,8 +323,7 @@ export default {
 				this.$nextTick(() => {
 					this.checkSticky()
 					// setting wheel event for non-scrollable chat
-					const isScrollable = this.$refs.scroller.scrollHeight > this.$refs.scroller.clientHeight
-					if (!this.isChatBeginningReached && !isScrollable) {
+					if (!this.isChatBeginningReached && this.checkChatNotScrollable()) {
 						this.$refs.scroller.addEventListener('wheel', this.handleWheelEvent, { passive: true })
 					}
 				})
@@ -385,6 +387,8 @@ export default {
 				this.$refs.scroller.scrollTo({
 					top: this.$refs.scroller.scrollHeight,
 				})
+			} else {
+				this.checkChatNotScrollable()
 			}
 		},
 
@@ -1161,10 +1165,7 @@ export default {
 				this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 			}
 
-			if (this.$refs.scroller && this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
-				// chat is not scrollable
-				this.setChatScrolledToBottom(true)
-			}
+			this.checkChatNotScrollable()
 
 			if (highlightAnimation && scrollElement === element) {
 				// element is visible, highlight it
@@ -1284,6 +1285,18 @@ export default {
 			const tasksDoneCount = this.$refs.scroller.querySelectorAll('.checkbox-content__icon--checked')?.length
 			const tasksCount = this.$refs.scroller.querySelectorAll('.task-list-item')?.length
 			this.chatExtrasStore.setTasksCounters({ tasksCount, tasksDoneCount })
+		},
+
+		checkChatNotScrollable() {
+			const isNotScrollable = this.$refs.scroller
+				? this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight
+				: false
+
+			if (isNotScrollable && !this.isChatScrolledToBottom) {
+				this.setChatScrolledToBottom(true)
+			}
+
+			return isNotScrollable
 		},
 
 		handleWheelEvent(event) {
