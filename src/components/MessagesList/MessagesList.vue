@@ -898,17 +898,20 @@ export default {
 			}
 
 			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
-			const scrollOffset = scrollHeight - scrollTop
+			const scrollOffsetFromTop = scrollHeight - scrollTop
+			const scrollOffsetFromBottom = Math.abs(scrollOffsetFromTop - clientHeight)
 
 			// For chats that are scrolled to bottom and not fitted in one screen
-			if (Math.abs(scrollOffset - clientHeight) < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
+			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
 				return
 			}
 
-			this.setChatScrolledToBottom(false)
+			if (scrollOffsetFromBottom >= SCROLL_TOLERANCE) {
+				this.setChatScrolledToBottom(false)
+			}
 
 			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
 				|| skipHeightCheck) {
@@ -1309,6 +1312,7 @@ export default {
 					return
 				}
 
+				this.isScrolling = 'up'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
