@@ -909,7 +909,9 @@ export default {
 				return
 			}
 
-			this.setChatScrolledToBottom(false)
+			if (scrollHeight > clientHeight && this.isScrolling === 'up') {
+				this.setChatScrolledToBottom(false)
+			}
 
 			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
 				|| skipHeightCheck) {
@@ -1310,6 +1312,7 @@ export default {
 					return
 				}
 
+				this.isScrolling = 'up'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
