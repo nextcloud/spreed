@@ -4,6 +4,9 @@
  */
 import { t, n } from '@nextcloud/l10n'
 
+const ONE_HOUR_IN_MS = 3600000
+const ONE_DAY_IN_MS = 86400000
+
 /**
  * Converts the given time to UNIX timestamp
  *
@@ -43,8 +46,8 @@ function formattedTime(time: number, condensed: boolean = false): string {
  */
 function futureRelativeTime(time: number): string {
 	const diff = time - Date.now()
-	const hours = Math.floor(diff / (60 * 60 * 1000))
-	const minutes = Math.floor((diff - hours * 60 * 60 * 1000) / (60 * 1000))
+	const hours = Math.floor(diff / ONE_HOUR_IN_MS)
+	const minutes = Math.floor((diff - hours * ONE_HOUR_IN_MS) / (60 * 1000))
 	if (hours >= 1) {
 		if (minutes === 0) {
 			// TRANSLATORS: hint for the time when the meeting starts (only hours)
@@ -63,6 +66,8 @@ function futureRelativeTime(time: number): string {
 }
 
 export {
+	ONE_HOUR_IN_MS,
+	ONE_DAY_IN_MS,
 	convertToUnix,
 	formattedTime,
 	futureRelativeTime,

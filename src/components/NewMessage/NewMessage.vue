@@ -181,7 +181,6 @@ import SendIcon from 'vue-material-design-icons/Send.vue'
 import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -210,6 +209,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
+import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCurrentSelectionRange, selectRange, insertTextInElement } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
@@ -901,7 +901,7 @@ export default {
 				return message.actorId === this.$store.getters.getUserId()
 					&& message.actorType === this.$store.getters.getActorType()
 					&& !message.isTemporary && !message.systemMessage
-					&& (moment(message.timestamp * 1000).add(1, 'd')) > moment()
+					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})
 
 			if (!lastMessageByCurrentUser) {
