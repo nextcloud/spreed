@@ -307,12 +307,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "6e597101481226c5d2518d98596301f2efc692d1"
+                "reference": "5d4e0489bad530d511c988afacf336ed087fa765"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/6e597101481226c5d2518d98596301f2efc692d1",
-                "reference": "6e597101481226c5d2518d98596301f2efc692d1",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/5d4e0489bad530d511c988afacf336ed087fa765",
+                "reference": "5d4e0489bad530d511c988afacf336ed087fa765",
                 "shasum": ""
             },
             "require": {
@@ -348,7 +348,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2025-02-14T00:43:30+00:00"
+            "time": "2025-02-22T00:42:30+00:00"
         },
         {
             "name": "psr/clock",
@@ -559,10 +559,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
