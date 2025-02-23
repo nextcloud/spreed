@@ -2,11 +2,29 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
+import { t, n, getCanonicalLocale } from '@nextcloud/l10n'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
+
+const locale = getCanonicalLocale()
+const absoluteTimeFormat = {
+	LT: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric' }),
+	LTS: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric', second: 'numeric' }),
+	L: new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }),
+	l: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'numeric', day: 'numeric' }),
+	LL: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }),
+	ll: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }),
+	LLL: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }),
+	lll: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }),
+	LLLL: new Intl.DateTimeFormat(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }),
+	llll: new Intl.DateTimeFormat(locale, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }),
+	ddd: new Intl.DateTimeFormat(locale, { weekday: 'short' }),
+	dddd: new Intl.DateTimeFormat(locale, { weekday: 'long' }),
+	MMM: new Intl.DateTimeFormat(locale, { month: 'short' }),
+	MMMM: new Intl.DateTimeFormat(locale, { month: 'long' }),
+} as const
+const availableFormats = Object.keys(absoluteTimeFormat) as Array<keyof typeof absoluteTimeFormat>
 
 /**
  * Converts the given time to UNIX timestamp
@@ -70,11 +88,27 @@ function futureRelativeTime(time: number): string {
  * Converts the given time to human-readable formats. Supported formats:
  * - combination of datetime numeric representations, like 'YYYYMMDD_HHmmss'
  * - localized formats aligned with moment.js for easier migration: https://momentjs.com/docs/#/displaying/format/
+ * @see {@link absoluteTimeFormat}
  * @param time time in ms or Date object
  * @param format format to use
  */
 function formatDateTime(time: Date | number, format: string): string {
-	return moment(time).format(format)
+	const dateTime = new Date(time)
+
+	return format
+		.split(' ')
+		.map(part => availableFormats.includes(part)
+			? absoluteTimeFormat[part as keyof typeof absoluteTimeFormat].format(dateTime)
+			: part
+		)
+		.join(' ')
+		.replace('DD', dateTime.getDate().toString().padStart(2, '0'))
+		.replace('MM', (dateTime.getMonth() + 1).toString().padStart(2, '0'))
+		.replace('YYYY', dateTime.getFullYear().toString())
+		.replace('YY', dateTime.getFullYear().toString().slice(-2))
+		.replace('HH', dateTime.getHours().toString().padStart(2, '0'))
+		.replace('mm', dateTime.getMinutes().toString().padStart(2, '0'))
+		.replace('ss', dateTime.getSeconds().toString().padStart(2, '0'))
 }
 
 export {

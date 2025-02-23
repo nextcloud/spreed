@@ -80,10 +80,10 @@ describe('formatDateTime', () => {
 		['l', '2/15/2025'], // 'M/D/YYYY'
 		['LL', 'February 15, 2025'], // 'MMMM Do YYYY'
 		['ll', 'Feb 15, 2025'], // 'MMM D YYYY'
-		['LLL', 'February 15, 2025 8:30 PM'], // 'MMMM Do YYYY LT'
-		['lll', 'Feb 15, 2025 8:30 PM'], // 'MMM D YYYY LT'
-		['LLLL', 'Saturday, February 15, 2025 8:30 PM'], // 'dddd, MMMM Do YYYY LT'
-		['llll', 'Sat, Feb 15, 2025 8:30 PM'], // 'ddd, MMM D YYYY L'
+		['LLL', 'February 15, 2025 at 8:30 PM'], // 'MMMM Do YYYY LT'
+		['lll', 'Feb 15, 2025, 8:30 PM'], // 'MMM D YYYY LT'
+		['LLLL', 'Saturday, February 15, 2025 at 8:30 PM'], // 'dddd, MMMM Do YYYY LT'
+		['llll', 'Sat, Feb 15, 2025, 8:30 PM'], // 'ddd, MMM D YYYY L'
 		['ll LTS', 'Feb 15, 2025 8:30:00 PM'], // 'MMM D YYYY LTS'
 		['DD-MM-YYYY HH:mm:ss', '15-02-2025 20:30:00'], // as passed
 	]
