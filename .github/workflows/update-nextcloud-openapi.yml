@@ -32,13 +32,16 @@ jobs:
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
 
-      - name: Checkout app
+      - id: checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
+          persist-credentials: false
           path: apps/${{ env.APP_NAME }}
           ref: ${{ matrix.branches }}
+        continue-on-error: true
 
       - name: Read package.json node and npm engines version
+        if: steps.checkout.outcome == 'success'
         uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4 # v3
         id: versions
         with:
@@ -46,14 +49,17 @@ jobs:
           fallbackNpm: '^10'
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
+        if: steps.checkout.outcome == 'success'
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
+        if: steps.checkout.outcome == 'success'
         run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
 
       - name: Install dependencies & generate types
+        if: steps.checkout.outcome == 'success'
         working-directory: apps/${{ env.APP_NAME }}
         env:
           CYPRESS_INSTALL_BINARY: 0
