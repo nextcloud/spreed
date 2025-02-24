@@ -73,7 +73,7 @@ export default {
 			Talk: OCA.Talk,
 			sidebarState: OCA.Files.Sidebar.state,
 			/**
-			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+			 * Stores the cancel function returned by `cancelablePollNewMessages`,
 			 */
 			cancelGetFileConversation: () => {},
 			isTalkSidebarSupportedForFile: undefined,

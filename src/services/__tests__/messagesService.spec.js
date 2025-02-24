@@ -9,7 +9,7 @@ import { CHAT } from '../../constants.ts'
 import {
 	fetchMessages,
 	getMessageContext,
-	lookForNewMessages,
+	pollNewMessages,
 	postNewMessage,
 	deleteMessage,
 	editMessage,
@@ -106,8 +106,8 @@ describe('messagesService', () => {
 		)
 	})
 
-	test('lookForNewMessages calls the chat API endpoint excluding last known', () => {
-		lookForNewMessages({
+	test('pollNewMessages calls the chat API endpoint excluding last known', () => {
+		pollNewMessages({
 			token: 'XXTOKENXX',
 			lastKnownMessageId: 1234,
 		}, {
