@@ -5,6 +5,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.0 – 2025-02-25
+### Added
+- feat(meetings): Schedule a meeting directly from within the conversation
+- feat(chat): Support mentioning teams in the chat
+- feat(chat): Add message search to the right sidebar
+- feat(bots): Allow bots to get invoked for reactions
+- feat(bots): Let bots know the original message in case a message was a reply
+- feat(bots): Allow event based bots that don't require HTTP requests
+- feat(calls): Add end-to-end encryption for calls with the High-performance backend
+- feat(calls): Allow to zoom and pan screenshares in a call
+- feat(conversations): Add sample conversation mechanism
+
+### Changed
+- Update translations
+- Update dependencies
+- Require Nextcloud 31 / Hub 10
+
+### Fixed
+- fix(UI): Fix various issues for right-to-left languages
+
 ## 21.0.0-rc.5 – 2025-02-21
 ### Changed
 - Update translations
