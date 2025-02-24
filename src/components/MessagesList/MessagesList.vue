@@ -663,6 +663,7 @@ export default {
 			if (token && this.isParticipant && !this.isInLobby) {
 				// prevent sticky mode before we have loaded anything
 				this.isInitialisingMessages = true
+				this.previousScrollTopValue = null
 				const focusMessageId = this.getMessageIdFromHash()
 
 				this.$store.dispatch('setVisualLastReadMessageId', { token, id: this.conversation.lastReadMessage })
@@ -855,7 +856,12 @@ export default {
 			if (this.isScrolling) {
 				clearTimeout(this.endScrollTimeout)
 			}
-			this.isScrolling = this.previousScrollTopValue > event.target.scrollTop ? 'up' : 'down'
+			if (this.previousScrollTopValue === null) {
+				// Chat is just opened, we do not know direction yet
+				this.isScrolling = null
+			} else {
+				this.isScrolling = this.previousScrollTopValue > event.target.scrollTop ? 'up' : 'down'
+			}
 			this.previousScrollTopValue = event.target.scrollTop
 			this.endScrollTimeout = setTimeout(this.endScroll, 3000)
 			// handle sticky date
@@ -908,7 +914,7 @@ export default {
 				return
 			}
 
-			if (scrollHeight > clientHeight && this.isScrolling === 'up') {
+			if (scrollHeight > clientHeight && this.isScrolling !== 'down') {
 				this.setChatScrolledToBottom(false)
 			}
 
