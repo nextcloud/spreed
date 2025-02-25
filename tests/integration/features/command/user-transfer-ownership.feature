@@ -1,4 +1,4 @@
-Feature: command/user-remove
+Feature: command/user-transfer-ownership
 
   Background:
     Given user "participant1" exists
