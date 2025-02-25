@@ -546,11 +546,13 @@ class RoomService {
 		$room->setType($newType);
 
 		if ($oldType === Room::TYPE_PUBLIC) {
-			// Kick all guests and users that were not invited
+			// Kick all guests that are not email invited
+			// and all users that joined the public link
 			$delete = $this->db->getQueryBuilder();
 			$delete->delete('talk_attendees')
 				->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
+				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)))
+				->andWhere($delete->expr()->neq('actor_type', $delete->createNamedParameter(Attendee::ACTOR_EMAILS, IQueryBuilder::PARAM_INT)));
 			$delete->executeStatement();
 		}
 
