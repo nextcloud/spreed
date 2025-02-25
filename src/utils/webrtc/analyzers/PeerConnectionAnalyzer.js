@@ -20,6 +20,11 @@ const PEER_DIRECTION = {
 	RECEIVER: 1,
 }
 
+const PEER_TYPE = {
+	VIDEO: 0,
+	SCREEN: 1,
+}
+
 /**
  * Analyzer for the quality of the connection of an RTCPeerConnection.
  *
@@ -55,6 +60,11 @@ const PEER_DIRECTION = {
  */
 function PeerConnectionAnalyzer() {
 	this._superEmitterMixin()
+
+	this._rtcStats = {
+		audio: [],
+		video: [],
+	}
 
 	this._packets = {
 		audio: new AverageStatValue(5, STAT_VALUE_TYPE.CUMULATIVE),
@@ -114,6 +124,7 @@ function PeerConnectionAnalyzer() {
 
 	this._peerConnection = null
 	this._peerDirection = null
+	this._peerType = null
 
 	this._getStatsInterval = null
 
@@ -154,7 +165,7 @@ PeerConnectionAnalyzer.prototype = {
 		this._trigger('change:connectionQualityVideo', [connectionQualityVideo])
 	},
 
-	setPeerConnection(peerConnection, peerDirection = null) {
+	setPeerConnection(peerConnection, peerDirection = null, peerType = PEER_TYPE.VIDEO) {
 		if (this._peerConnection) {
 			this._peerConnection.removeEventListener('iceconnectionstatechange', this._handleIceConnectionStateChangedBound)
 			this._peerConnection.removeEventListener('connectionstatechange', this._handleConnectionStateChangedBound)
@@ -163,6 +174,7 @@ PeerConnectionAnalyzer.prototype = {
 
 		this._peerConnection = peerConnection
 		this._peerDirection = peerDirection
+		this._peerType = peerType
 
 		this._setConnectionQualityAudio(CONNECTION_QUALITY.UNKNOWN)
 		this._setConnectionQualityVideo(CONNECTION_QUALITY.UNKNOWN)
@@ -297,6 +309,17 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_processSenderStats(stats) {
+		// Although the last five stats are analyzed a few more RTC stats are
+		// kept to provide an extended context in the logs.
+		const NUMBER_OF_RTC_STATS_TO_KEEP = 7
+
+		for (const kind of ['audio', 'video']) {
+			if (this._rtcStats[kind].length === NUMBER_OF_RTC_STATS_TO_KEEP) {
+				this._rtcStats[kind].shift()
+			}
+			this._rtcStats[kind].push([])
+		}
+
 		// Packets are calculated as "packetsReceived + packetsLost" or as
 		// "packetsSent" depending on the browser (see below).
 		const packets = {
@@ -353,6 +376,8 @@ PeerConnectionAnalyzer.prototype = {
 			}
 
 			if (stat.type === 'outbound-rtp') {
+				this._rtcStats[stat.kind][this._rtcStats[stat.kind].length - 1].push(stat)
+
 				if ('packetsSent' in stat && 'kind' in stat) {
 					packetsSent[stat.kind] = (packetsSent[stat.kind] === -1) ? stat.packetsSent : packetsSent[stat.kind] + stat.packetsSent
 
@@ -361,6 +386,8 @@ PeerConnectionAnalyzer.prototype = {
 					}
 				}
 			} else if (stat.type === 'remote-inbound-rtp') {
+				this._rtcStats[stat.kind][this._rtcStats[stat.kind].length - 1].push(stat)
+
 				if ('packetsReceived' in stat && 'kind' in stat) {
 					packetsReceived[stat.kind] = (packetsReceived[stat.kind] === -1) ? stat.packetsReceived : packetsReceived[stat.kind] + stat.packetsReceived
 
@@ -724,8 +751,17 @@ PeerConnectionAnalyzer.prototype = {
 		return CONNECTION_QUALITY.GOOD
 	},
 
+	_getLogTag(kind) {
+		let type = kind
+		if (this._peerType === PEER_TYPE.SCREEN) {
+			type += ' (screen)'
+		}
+
+		return 'PeerConnectionAnalyzer: ' + type + ': '
+	},
+
 	_logStats(kind, message) {
-		const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+		const tag = this._getLogTag(kind)
 
 		if (message) {
 			console.debug(tag + message)
@@ -737,7 +773,24 @@ PeerConnectionAnalyzer.prototype = {
 		console.debug(tag + 'Packets per second: ' + this._packetsPerSecond[kind].toString())
 		console.debug(tag + 'Round trip time: ' + this._roundTripTime[kind].toString())
 		console.debug(tag + 'Timestamps: ' + this._timestampsForLogs[kind].toString())
+
+		this._logRtcStats(kind)
 	},
+
+	_logRtcStats(kind) {
+		const tag = this._getLogTag(kind)
+
+		for (const rtcStats of this._rtcStats[kind]) {
+			if (!rtcStats.length) {
+				console.debug(tag + 'no matching type')
+				continue
+			}
+
+			for (const rtcStat of rtcStats) {
+				console.debug(tag + JSON.stringify(rtcStat))
+			}
+		}
+	}
 
 }
 
@@ -746,5 +799,6 @@ EmitterMixin.apply(PeerConnectionAnalyzer.prototype)
 export {
 	CONNECTION_QUALITY,
 	PEER_DIRECTION,
+	PEER_TYPE,
 	PeerConnectionAnalyzer,
 }
