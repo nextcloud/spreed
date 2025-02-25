@@ -73,7 +73,7 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('One-to-one rooms always need to show the other users avatar'));
 		}
 
-		if ($this->getFirstCombinedEmoji($emoji) !== $emoji) {
+		if ($this->roomService->getFirstCombinedEmoji($emoji) !== $emoji) {
 			throw new InvalidArgumentException($this->l->t('Invalid emoji character'));
 		}
 
@@ -211,7 +211,7 @@ class AvatarService {
 			return new InMemoryFile(
 				$token,
 				$this->getEmojiAvatar(
-					$this->getFirstCombinedEmoji(
+					$this->roomService->getFirstCombinedEmoji(
 						$room->getName()),
 					$darkTheme ? self::THEMING_DARK_BACKGROUND : self::THEMING_BRIGHT_BACKGROUND
 				)
@@ -249,26 +249,6 @@ class AvatarService {
 				"'Noto Sans'",
 			]),
 		], $this->svgTemplate);
-	}
-
-	/**
-	 * Get the first combined full emoji (including gender, skin tone, job, …)
-	 *
-	 * @param string $roomName
-	 * @param int $length
-	 * @return string
-	 */
-	protected function getFirstCombinedEmoji(string $roomName, int $length = 0): string {
-		if (!$this->emojiHelper->doesPlatformSupportEmoji() || mb_strlen($roomName) === $length) {
-			return '';
-		}
-
-		$attempt = mb_substr($roomName, 0, $length + 1);
-		if ($this->emojiHelper->isValidSingleEmoji($attempt)) {
-			$longerAttempt = $this->getFirstCombinedEmoji($roomName, $length + 1);
-			return $longerAttempt ?: $attempt;
-		}
-		return '';
 	}
 
 	public function isCustomAvatar(Room $room): bool {
@@ -336,7 +316,7 @@ class AvatarService {
 			return $version;
 		}
 		if ($this->emojiHelper->doesPlatformSupportEmoji() && $this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
-			return substr(md5($this->getEmojiAvatar($this->getFirstCombinedEmoji($room->getName()), self::THEMING_BRIGHT_BACKGROUND)), 0, 8);
+			return substr(md5($this->getEmojiAvatar($this->roomService->getFirstCombinedEmoji($room->getName()), self::THEMING_BRIGHT_BACKGROUND)), 0, 8);
 		}
 		$avatarPath = $this->getAvatarPath($room);
 		return substr(md5($avatarPath), 0, 8);

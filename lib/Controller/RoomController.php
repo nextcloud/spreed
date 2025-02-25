@@ -505,6 +505,99 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Create a conversation with all available options
+	 *
+	 * @param non-empty-string $name Name of the newly created conversation
+	 * @param 1|2|3 $type Type of the room (Default 2 - group conversation). In case the type is 1 (one-to-one), various options are ignored and only a single participant of type users is allowed.
+	 * @psalm-param Room::TYPE_ONE_TO_ONE|Room::TYPE_GROUP|Room::TYPE_PUBLIC $type
+	 * @param 0|1 $readOnly Read only state of the conversation (Default writable)
+	 * @psalm-param Room::READ_* $readOnly
+	 * @param 0|1|2 $listable Scope where the conversation is listable (Default not listable for anyone)
+	 * @psalm-param Room::LISTABLE_* $listable
+	 * @param int $messageExpiration Seconds after which messages will disappear, 0 disables expiration (Default 0)
+	 * @psalm-param non-negative-int $messageExpiration
+	 * @param 0|1 $lobbyState Lobby state of the conversation (Default lobby is disabled)
+	 * @psalm-param Webinary::LOBBY_* $lobbyState
+	 * @param int|null $lobbyTimer Timer when the lobby will be removed (Default null, will not be disabled automatically)
+	 * @psalm-param non-negative-int|null $lobbyTimer
+	 * @param 0|1|2 $sipEnabled Whether SIP dial-in shall be enabled
+	 * @psalm-param Webinary::SIP_* $sipEnabled
+	 * @param int<0, 255> $permissions Default permissions for participants
+	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
+	 * @param 0|1 $recordingConsent Whether participants need to agree to a recording before joining a call
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
+	 * @param 0|1 $mentionPermissions Who can mention at-all in the chat
+	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
+	 * @param string $description Description for the conversation (limited to 2.000 characters)
+	 * @param ?non-empty-string $password Password is only considered for type 3 - public conversation. Conversation password has to match the configured password policy if the app is enabled and can be required with an administration setting.
+	 * @param ?non-empty-string $objectType Type of the object this conversation is related to. When provided objectId must also be a non-empty string. Some internal types are not allowed, e.g. {@see Room::OBJECT_TYPE_FILE} and it's siblings
+	 * @param ?non-empty-string $objectId ID of the object this conversation is related to. When provided objectType must also be a non-empty string.
+	 * @param ?non-empty-string $emoji Emoji for the avatar of the conversation
+	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided)
+	 * @param array<string, list<string>> $participants List of participants to add grouped by type
+	 * @psalm-param array<'users'|'federated_users'|'groups'|'emails'|'phones'|'teams', list<string>> $participants
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'invite'|'mode'|'object'|'password'|'permissions'|'room'|'type', message?: string}, array{}>
+	 *
+	 * 200: Room already existed
+	 * 201: Room created successfully
+	 * 400: Room type invalid or missing or invalid password
+	 * 403: Missing permissions to create room
+	 * 404: User, group or other target to invite was not found
+	 */
+	#[NoAdminRequired]
+	public function createRoomV2(
+		string $name,
+		int $type = Room::TYPE_GROUP,
+		int $readOnly = Room::READ_WRITE,
+		int $listable = Room::LISTABLE_NONE,
+		int $messageExpiration = 0,
+		int $lobbyState = Webinary::LOBBY_NONE,
+		?int $lobbyTimer = null,
+		int $sipEnabled = Webinary::SIP_DISABLED,
+		int $permissions = Attendee::PERMISSIONS_DEFAULT,
+		int $recordingConsent = RecordingService::CONSENT_REQUIRED_NO,
+		int $mentionPermissions = Room::MENTION_PERMISSIONS_EVERYONE,
+		string $description = '',
+		?string $password = null,
+		?string $objectType = null,
+		?string $objectId = null,
+		?string $emoji = null,
+		?string $avatarColor = null,
+		array $participants = [],
+	): DataResponse {
+		// FIXME one-to-one
+		if ($type === Room::TYPE_ONE_TO_ONE) {
+			$room = $this->roomService->createOneToOneConversation();
+			return new DataResponse();
+		}
+		// Validate object type differently
+		$room = $this->roomService->createConversation(
+			$type,
+			$name,
+			null,
+			$objectType,
+			$objectId,
+			$password ?? '',
+			$readOnly,
+			$listable,
+			$messageExpiration,
+			$lobbyState,
+			$lobbyTimer,
+			$sipEnabled,
+			$permissions,
+			$recordingConsent,
+			$mentionPermissions,
+			$description,
+			$emoji,
+			$avatarColor,
+			$participants,
+			allowInternalTypes: false,
+		);
+
+		return new DataResponse();
+	}
+
+	/**
 	 * Create a room with a user, a group or a circle
 	 *
 	 * @param int $roomType Type of the room
@@ -2300,7 +2393,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Update the lobby state for a room
 	 *
-	 * @param int $state New state
+	 * @param 0|1 $state New state
 	 * @psalm-param Webinary::LOBBY_* $state
 	 * @param int|null $timer Timer when the lobby will be removed
 	 * @psalm-param non-negative-int|null $timer
