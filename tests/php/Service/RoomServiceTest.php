@@ -18,6 +18,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -29,6 +30,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\Security\IHasher;
+use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -48,6 +50,7 @@ class RoomServiceTest extends TestCase {
 	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l10n;
+	protected EmojiService $emojiService;
 	protected ?RoomService $service = null;
 
 	public function setUp(): void {
@@ -63,6 +66,7 @@ class RoomServiceTest extends TestCase {
 		$this->jobList = $this->createMock(IJobList::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->emojiService = Server::get(EmojiService::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -73,6 +77,7 @@ class RoomServiceTest extends TestCase {
 			$this->hasher,
 			$this->dispatcher,
 			$this->jobList,
+			$this->emojiService,
 			$this->logger,
 			$this->l10n,
 		);
@@ -220,8 +225,8 @@ class RoomServiceTest extends TestCase {
 
 	public static function dataCreateConversationInvalidObjects(): array {
 		return [
-			[str_repeat('a', 65), 'a', 'object_type'],
-			['a', str_repeat('a', 65), 'object_id'],
+			[str_repeat('a', 65), 'a', 'object-type'],
+			['a', str_repeat('a', 65), 'object-id'],
 			['a', '', 'object'],
 			['', 'b', 'object'],
 		];
@@ -242,9 +247,10 @@ class RoomServiceTest extends TestCase {
 	public static function dataCreateConversation(): array {
 		return [
 			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', '', ''],
-			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456', ''],
-			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456', 'AGoodPassword123?'],
-			[Room::TYPE_CHANGELOG, 'Talk updates ✅', 'test1', 'changelog', 'conversation', ''],
+			[Room::TYPE_PUBLIC, 'Public conversation', '', 'file', '123456', ''],
+			[Room::TYPE_PUBLIC, 'Public conversation', '', 'file', '123456', 'AGoodPassword123?'],
+			[Room::TYPE_CHANGELOG, 'Talk updates ✅', 'test1', '', '', ''],
+			[Room::TYPE_GROUP, 'Let\'s get started!', 'test1', 'sample', 'test1', ''],
 		];
 	}
 
@@ -336,6 +342,7 @@ class RoomServiceTest extends TestCase {
 			$this->hasher,
 			$dispatcher,
 			$this->jobList,
+			$this->emojiService,
 			$this->logger,
 			$this->l10n,
 		);

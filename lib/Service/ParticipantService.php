@@ -46,10 +46,12 @@ use OCA\Talk\Exceptions\ParticipantProperty\PermissionsException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\InvitationList;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
@@ -474,6 +476,65 @@ class ParticipantService {
 		return $participant;
 	}
 
+	public function addInvitationList(Room $room, InvitationList $invitationList, ?IUser $addedBy = null): void {
+		$participantsToAdd = [];
+		foreach ($invitationList->getUsers() as $user) {
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			];
+		}
+
+		foreach ($invitationList->getFederatedUsers() as $cloudId) {
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
+				'actorId' => $cloudId->getId(),
+				'displayName' => $cloudId->getDisplayId(),
+			];
+		}
+
+		foreach ($invitationList->getPhoneNumbers() as $phoneNumber) {
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_PHONES,
+				'actorId' => sha1($phoneNumber . '#' . $this->timeFactory->getTime()),
+				'displayName' => substr($phoneNumber, 0, -4) . '…', // FIXME Allow the UI to hand in a name (when selected from contacts?)
+				'phoneNumber' => $phoneNumber,
+			];
+		}
+
+		$existingParticipants = [];
+		if (!empty($participantsToAdd)) {
+			$attendees = $this->addUsers($room, $participantsToAdd, $addedBy);
+			$existingParticipants = array_map(static fn (Attendee $attendee): Participant => new Participant($room, $attendee, null), $attendees);
+		}
+
+		$emails = $invitationList->getEmails();
+		if (!empty($emails)) {
+			$guestManager = Server::get(GuestManager::class);
+			foreach ($emails as $email) {
+				$actorId = hash('sha256', $email);
+				try {
+					$this->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $actorId);
+				} catch (ParticipantNotFoundException) {
+					$participant = $this->inviteEmailAddress($room, $actorId, $email);
+					try {
+						$guestManager->sendEmailInvitation($room, $participant);
+					} catch (\InvalidArgumentException) {
+					}
+				}
+			}
+		}
+
+		foreach ($invitationList->getGroup() as $group) {
+			$this->addGroup($room, $group, $existingParticipants);
+		}
+
+		foreach ($invitationList->getTeams() as $team) {
+			$this->addCircle($room, $team, $existingParticipants);
+		}
+	}
+
 	/**
 	 * @param Room $room
 	 * @param array $participants
@@ -640,9 +701,9 @@ class ParticipantService {
 	/**
 	 * @param Room $room
 	 * @param IGroup $group
-	 * @param Participant[] $existingParticipants
+	 * @param Participant[] &$existingParticipants
 	 */
-	public function addGroup(Room $room, IGroup $group, array $existingParticipants = []): void {
+	public function addGroup(Room $room, IGroup $group, array &$existingParticipants = []): void {
 		$usersInGroup = $group->getUsers();
 
 		if (empty($existingParticipants)) {
@@ -699,7 +760,10 @@ class ParticipantService {
 			$this->dispatcher->dispatchTyped($attendeeEvent);
 		}
 
-		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
+		$attendees = $this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
+		if (!empty($attendees)) {
+			$existingParticipants = array_merge(array_map(static fn (Attendee $attendee): Participant => new Participant($room, $attendee, null), $attendees), $existingParticipants);
+		}
 	}
 
 	/**
@@ -759,9 +823,9 @@ class ParticipantService {
 	/**
 	 * @param Room $room
 	 * @param Circle $circle
-	 * @param Participant[] $existingParticipants
+	 * @param Participant[] &$existingParticipants
 	 */
-	public function addCircle(Room $room, Circle $circle, array $existingParticipants = []): void {
+	public function addCircle(Room $room, Circle $circle, array &$existingParticipants = []): void {
 		$membersInCircle = $circle->getInheritedMembers();
 
 		if (empty($existingParticipants)) {
@@ -834,7 +898,10 @@ class ParticipantService {
 			$this->dispatcher->dispatchTyped($attendeeEvent);
 		}
 
-		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
+		$attendees = $this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
+		if (!empty($attendees)) {
+			$existingParticipants = array_merge(array_map(static fn (Attendee $attendee): Participant => new Participant($room, $attendee, null), $attendees), $existingParticipants);
+		}
 	}
 
 	public function inviteEmailAddress(Room $room, string $actorId, string $email, ?string $name = null): Participant {

@@ -178,3 +178,6 @@
 * `call-end-to-end-encryption` - Signaling support of the server for the end-to-end encryption of calls
 * `config => call => end-to-end-encryption` - Whether calls should be end-to-end encrypted (currently off by default, until all Talk mobile clients support it)
 + `edit-draft-poll` - Whether moderators can edit draft polls
+
+## 21.1
+* `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
