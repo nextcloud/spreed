@@ -205,6 +205,37 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message1])
 		})
 
+		test('updates last read message when replacing matching temporary message', () => {
+			conversationMock.mockReturnValueOnce({
+				token: TOKEN,
+				lastReadMessage: 100,
+				lastMessage: {
+					id: 123,
+				},
+			})
+			const response = generateOCSResponse({ payload: conversation })
+			updateLastReadMessage.mockResolvedValueOnce(response)
+
+			const temporaryMessage = {
+				id: 'temp-1',
+				referenceId: 'reference-1',
+				token: TOKEN,
+			}
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
+
+			const message1 = {
+				id: 123,
+				token: TOKEN,
+				actorId: 'actor-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				referenceId: 'reference-1',
+			}
+
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message1])
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, message1.id)
+		})
+
 		test('replaces existing message', () => {
 			const message1 = {
 				id: 1,
