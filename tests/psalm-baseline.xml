@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.2.0@814dfde37b43a1fe6d9b0996e08b19661af53bc5">
+<files psalm-version="6.5.0@38fc8444edf0cebc9205296ee6e30e906ade783b">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -32,6 +32,11 @@
     <InvalidArgument>
       <code><![CDATA[$fileId]]></code>
     </InvalidArgument>
+  </file>
+  <file src="lib/Listener/CalDavEventListener.php">
+    <UndefinedClass>
+      <code><![CDATA[Reader]]></code>
+    </UndefinedClass>
   </file>
   <file src="lib/Listener/CircleEditedListener.php">
     <UndefinedClass>
