@@ -586,9 +586,21 @@ const actions = {
 
 		if (message.referenceId) {
 			const tempMessages = context.getters.getTemporaryReferences(token, message.referenceId)
-			tempMessages.forEach(tempMessage => {
-				context.commit('deleteMessage', { token, id: tempMessage.id })
-			})
+			if (tempMessages.length > 0) {
+				// Replacing temporary placeholder message with posted message / file share
+				const conversation = context.getters.conversation(token)
+
+				if (conversation
+					&& message.actorId === context.getters.getActorId()
+					&& message.actorType === context.getters.getActorType()
+					&& message.id > conversation.lastReadMessage) {
+					context.dispatch('updateLastReadMessage', { token, id: message.id, updateVisually: true })
+				}
+
+				tempMessages.forEach(tempMessage => {
+					context.commit('deleteMessage', { token, id: tempMessage.id })
+				})
+			}
 		}
 
 		if (message.systemMessage === 'poll_voted') {
