@@ -35,6 +35,7 @@
 			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"
+			:key="token"
 			class="h-100"
 			:participants="participants"
 			:loading="!participantsInitialised" />
