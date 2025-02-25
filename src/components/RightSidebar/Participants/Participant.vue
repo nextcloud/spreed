@@ -628,7 +628,7 @@ export default {
 		},
 
 		isSelf() {
-			return this.sessionIds.length && this.sessionIds.includes(this.currentParticipant.sessionId)
+			return this.participant.actorType === this.$store.getters.getActorType() && this.participant.actorId === this.$store.getters.getActorId()
 		},
 
 		selfIsModerator() {
