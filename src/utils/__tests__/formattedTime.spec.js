@@ -4,6 +4,7 @@
  */
 import {
 	convertToUnix,
+	formatDateTime,
 	formattedTime,
 	futureRelativeTime,
 } from '../formattedTime.ts'
@@ -66,5 +67,29 @@ describe('futureRelativeTime', () => {
 		const timeInFuture = Date.now() + (60 * 60 * 1000) + (15 * 60 * 1000) // 1 hour and 15 minutes from now
 		const result = futureRelativeTime(timeInFuture)
 		expect(result).toBe('In 1 hour and 15 minutes')
+	})
+})
+
+describe('formatDateTime', () => {
+	const TIME = new Date('2025-02-15T20:30:00Z')
+
+	const LOCALIZED_TEST_CASES = [
+		['LT', '8:30 PM'], // 'h:mm A'
+		['LTS', '8:30:00 PM'], // 'h:mm:ss A'
+		['L', '02/15/2025'], // 'MM/DD/YYYY'
+		['l', '2/15/2025'], // 'M/D/YYYY'
+		['LL', 'February 15, 2025'], // 'MMMM Do YYYY'
+		['ll', 'Feb 15, 2025'], // 'MMM D YYYY'
+		['LLL', 'February 15, 2025 at 8:30 PM'], // 'MMMM Do YYYY LT'
+		['lll', 'Feb 15, 2025, 8:30 PM'], // 'MMM D YYYY LT'
+		['LLLL', 'Saturday, February 15, 2025 at 8:30 PM'], // 'dddd, MMMM Do YYYY LT'
+		['llll', 'Sat, Feb 15, 2025, 8:30 PM'], // 'ddd, MMM D YYYY L'
+		['ll LTS', 'Feb 15, 2025 8:30:00 PM'], // 'MMM D YYYY LTS'
+		['DD-MM-YYYY HH:mm:ss', '15-02-2025 20:30:00'], // as passed
+	]
+
+	it.each(LOCALIZED_TEST_CASES)('should return datetime with specified format %s', (format, output) => {
+		const result = formatDateTime(TIME, format)
+		expect(result).toBe(output)
 	})
 })
