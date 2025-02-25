@@ -32,6 +32,7 @@
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconRefresh from 'vue-material-design-icons/Refresh.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 
 import { t } from '@nextcloud/l10n'
 
@@ -48,12 +49,13 @@ export default {
 		IconMicrophone,
 		IconRefresh,
 		IconVideo,
+		IconVolumeHigh,
 	},
 
 	props: {
 		kind: {
 			validator(value) {
-				return ['audioinput', 'videoinput'].includes(value)
+				return ['audioinput', 'audiooutput', 'videoinput'].includes(value)
 			},
 			required: true,
 		},
@@ -87,6 +89,7 @@ export default {
 		deviceIcon() {
 			switch (this.kind) {
 			case 'audioinput': return IconMicrophone
+			case 'audiooutput': return IconVolumeHigh
 			case 'videoinput': return IconVideo
 			default: return null
 			}
@@ -97,15 +100,12 @@ export default {
 		},
 
 		deviceSelectorPlaceholder() {
-			if (this.kind === 'audioinput') {
-				return this.audioInputSelectorPlaceholder
+			switch (this.kind) {
+			case 'audioinput': return this.audioInputSelectorPlaceholder
+			case 'audiooutput': return this.audioOutputSelectorPlaceholder
+			case 'videoinput': return this.videoInputSelectorPlaceholder
+			default: return null
 			}
-
-			if (this.kind === 'videoinput') {
-				return this.videoInputSelectorPlaceholder
-			}
-
-			return null
 		},
 
 		audioInputSelectorPlaceholder() {
@@ -114,6 +114,14 @@ export default {
 			}
 
 			return t('spreed', 'Select microphone')
+		},
+
+		audioOutputSelectorPlaceholder() {
+			if (!this.deviceOptionsAvailable) {
+				return t('spreed', 'No speaker available')
+			}
+
+			return t('spreed', 'Select speaker')
 		},
 
 		videoInputSelectorPlaceholder() {
