@@ -267,7 +267,7 @@
 		</template>
 
 		<template #extra>
-			<ParticipantPermissionsEditor v-if="permissionsEditor"
+			<ParticipantPermissionsEditor v-if="showPermissionsOptions && permissionsEditor"
 				:actor-id="participant.actorId"
 				close-after-click
 				:participant="participant"
@@ -275,7 +275,7 @@
 				@close="permissionsEditor = false" />
 
 			<!-- Confirmation required to remove participant -->
-			<NcDialog v-if="isRemoveDialogOpen"
+			<NcDialog v-if="canBeModerated && isRemoveDialogOpen"
 				:open.sync="isRemoveDialogOpen"
 				:name="removeParticipantLabel">
 				<p> {{ removeDialogMessage }} </p>
@@ -788,7 +788,16 @@ export default {
 			if (!value || !(value === 'ringing' || value === 'accepted')) {
 				this.disabled = false
 			}
-		}
+		},
+
+		participantNavigationId() {
+			// FIXME: as RecycleScroller reuses item components, we need to reset the state,
+			// if participant object has been replaced by another one
+			this.permissionsEditor = false
+			this.isRemoveDialogOpen = false
+			this.isBanParticipant = false
+			this.internalNote = ''
+		},
 	},
 
 	methods: {
