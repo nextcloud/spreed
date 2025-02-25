@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { useSoundsStore } from '../../stores/sounds.js'
 import attachMediaStream from '../attachmediastream.js'
 
 /**
@@ -31,8 +32,18 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 
 	this._mixAudio = mixAudio
 
+	this._soundsStore = useSoundsStore()
+
 	if (this._mixAudio) {
 		this._audioContext = new (window.AudioContext || window.webkitAudioContext)()
+
+		// TODO: mixer works only on Safari, where sinkId is not supported
+		if (this._soundsStore.audioOutputSinkId) {
+			this._audioContext.setSinkId(this._soundsStore.audioOutputSinkId).then(() => {
+				console.info('Set audio output device on mixer', this._soundsStore.audioOutputSinkId)
+			})
+		}
+
 		this._audioDestination = this._audioContext.createMediaStreamDestination()
 		this._audioElement = attachMediaStream(this._audioDestination.stream, null, { audio: true })
 		this._audioNodes = new Map()
@@ -142,6 +153,11 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 
 		audioElement = attachMediaStream(stream, null, { audio: true })
+		if (this._soundsStore.audioOutputSinkId) {
+			audioElement.setSinkId(this._soundsStore.audioOutputSinkId).then(() => {
+				console.info('Set audio output device to non-default speaker', this._soundsStore.audioOutputSinkId)
+			})
+		}
 		if (mute) {
 			audioElement.muted = true
 		}
