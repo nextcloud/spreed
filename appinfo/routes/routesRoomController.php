@@ -23,6 +23,8 @@ return [
 		['name' => 'Room#getListedRooms', 'url' => '/api/{apiVersion}/listed-room', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RoomController::createRoom() */
 		['name' => 'Room#createRoom', 'url' => '/api/{apiVersion}/room', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RoomController::createRoomV2() */
+		['name' => 'Room#createRoomV2', 'url' => '/api/{apiVersion}/room/advanced', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RoomController::getNoteToSelfConversation() */
 		['name' => 'Room#getNoteToSelfConversation', 'url' => '/api/{apiVersion}/room/note-to-self', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RoomController::getSingleRoom() */
