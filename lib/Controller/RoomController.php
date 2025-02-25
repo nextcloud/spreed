@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Circles\Model\Circle;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -20,6 +21,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\ParticipantProperty\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\CreationException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
@@ -55,6 +57,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
+use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -95,7 +98,9 @@ use Psr\Log\LoggerInterface;
 /**
  * @psalm-import-type TalkCapabilities from ResponseDefinitions
  * @psalm-import-type TalkParticipant from ResponseDefinitions
+ * @psalm-import-type TalkInvitationList from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
+ * @psalm-import-type TalkRoomWithInvalidInvitations from ResponseDefinitions
  */
 class RoomController extends AEnvironmentAwareOCSController {
 	protected array $commonReadMessages = [];
@@ -112,6 +117,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected RoomService $roomService,
 		protected BreakoutRoomService $breakoutRoomService,
 		protected NoteToSelfService $noteToSelfService,
+		protected InvitationService $invitationService,
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
 		protected GuestManager $guestManager,
@@ -507,57 +513,180 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Create a room with a user, a group or a circle
 	 *
+	 * With the `conversation-creation-all` capability a lot of new options where
+	 * introduced.
+	 * Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId`
+	 * were supported all the time, and `$password` with the
+	 * `conversation-creation-password` capability
+	 * In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite`
+	 * or `$participants` parameter is supported.
+	 *
 	 * @param int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
-	 * @param string $invite User, group, … ID to invite
-	 * @param string $roomName Name of the room
-	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.)
-	 * @param string $objectType Type of the object
-	 * @param string $objectId ID of the object
-	 * @param string $password The room password (only available with `conversation-creation-password` capability)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'invite'|'mode'|'object'|'password'|'permissions'|'room'|'type', message?: string}, array{}>
+	 * @param string $invite User, group, … ID to invite **Deprecated** Use the `$participants` array instead
+	 * @param string $roomName Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
+	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead
+	 * @param string $objectType Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
+	 * @param string $objectId ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
+	 * @param string $password The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})
+	 * @param 0|1 $readOnly Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
+	 * @psalm-param Room::READ_* $readOnly
+	 * @param 0|1|2 $listable Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
+	 * @psalm-param Room::LISTABLE_* $listable
+	 * @param int $messageExpiration Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
+	 * @psalm-param non-negative-int $messageExpiration
+	 * @param 0|1 $lobbyState Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
+	 * @psalm-param Webinary::LOBBY_* $lobbyState
+	 * @param int|null $lobbyTimer Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
+	 * @psalm-param non-negative-int|null $lobbyTimer
+	 * @param 0|1|2 $sipEnabled Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
+	 * @psalm-param Webinary::SIP_* $sipEnabled
+	 * @param int<0, 255> $permissions Default permissions for participants (only available with `conversation-creation-all` capability)
+	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
+	 * @param 0|1 $recordingConsent Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
+	 * @param 0|1 $mentionPermissions Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
+	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
+	 * @param string $description Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)
+	 * @param ?non-empty-string $emoji Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)
+	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
+	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
+	 * @psalm-param TalkInvitationList $participants
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
+	 * 202: Room created successfully but not all participants could be added
 	 * 400: Room type invalid or missing or invalid password
 	 * 403: Missing permissions to create room
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
 	public function createRoom(
-		int $roomType,
-		string $invite = '',
+		int $roomType = Room::TYPE_GROUP,
+		string $invite = '', /* @deprecated */
 		string $roomName = '',
-		string $source = '',
+		string $source = '', /* @deprecated */
 		string $objectType = '',
 		string $objectId = '',
 		string $password = '',
+		int $readOnly = Room::READ_WRITE,
+		int $listable = Room::LISTABLE_NONE,
+		int $messageExpiration = 0,
+		int $lobbyState = Webinary::LOBBY_NONE,
+		?int $lobbyTimer = null,
+		int $sipEnabled = Webinary::SIP_DISABLED,
+		int $permissions = Attendee::PERMISSIONS_DEFAULT,
+		int $recordingConsent = RecordingService::CONSENT_REQUIRED_NO,
+		int $mentionPermissions = Room::MENTION_PERMISSIONS_EVERYONE,
+		string $description = '',
+		?string $emoji = null,
+		?string $avatarColor = null,
+		array $participants = [],
 	): DataResponse {
-		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
-			/** @var IUser $user */
-			$user = $this->userManager->get($this->userId);
+		if ($roomType === Room::TYPE_ONE_TO_ONE) {
+			if ($invite === ''
+				&& isset($participants['users'][0])
+				&& is_string($participants['users'][0])) {
+				$invite = $participants['users'][0];
+			}
 
-			if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
-				return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
+			return $this->createOneToOneRoom($invite);
+		}
+
+		/** @var IUser $user */
+		$user = $this->userManager->get($this->userId);
+
+		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
+			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($invite !== '') {
+			// Legacy fallback for creating a conversation directly with a group or team
+			if ($source === 'circles') {
+				$sourceV2 = 'teams';
+			} else {
+				$sourceV2 = 'groups';
+			}
+			if (!isset($participants[$sourceV2])) {
+				$participants[$sourceV2] = [];
+			}
+			$participants[$sourceV2][] = $invite;
+			$participants[$sourceV2] = array_values(array_unique($participants[$sourceV2]));
+		}
+
+		if ($roomName === '') {
+			// Legacy fallback for creating a conversation without a name
+			$roomName = $this->roomService->prepareConversationName($invite ?: '---');
+			if ($source === 'circles') {
+				try {
+					$circle = $this->participantService->getCircle($invite, $this->userId);
+					$roomName = $this->roomService->prepareConversationName($circle->getName());
+				} catch (\Exception) {
+				}
+			} else {
+				$targetGroup = $this->groupManager->get($invite);
+				if ($targetGroup instanceof IGroup) {
+					$roomName = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
+				}
 			}
 		}
 
-		switch ($roomType) {
-			case Room::TYPE_ONE_TO_ONE:
-				return $this->createOneToOneRoom($invite);
-			case Room::TYPE_GROUP:
-				if ($invite === '') {
-					return $this->createEmptyRoom($roomName, false, $objectType, $objectId);
-				}
-				if ($source === 'circles') {
-					return $this->createCircleRoom($invite);
-				}
-				return $this->createGroupRoom($invite);
-			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName, true, $objectType, $objectId, $password);
+		if ($roomType !== Room::TYPE_PUBLIC) {
+			// Force empty password for non-public conversations
+			$password = '';
 		}
 
-		return new DataResponse(['error' => 'type'], Http::STATUS_BAD_REQUEST);
+		$invitationList = $this->invitationService->validateInvitations($participants, $user);
+		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
+			// FIXME add the list of failed invitations?
+			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!empty($invitationList->getEmails())) {
+			$roomType = Room::TYPE_PUBLIC;
+		}
+
+		try {
+			$room = $this->roomService->createConversation(
+				$roomType,
+				$roomName,
+				$user,
+				$objectType,
+				$objectId,
+				$password,
+				$readOnly,
+				$listable,
+				$messageExpiration,
+				$lobbyState,
+				$lobbyTimer,
+				$sipEnabled,
+				$permissions,
+				$recordingConsent,
+				$mentionPermissions,
+				$description,
+				$emoji,
+				$avatarColor,
+				allowInternalTypes: false,
+			);
+		} catch (CreationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		} catch (PasswordException $e) {
+			return new DataResponse(['error' => 'password', 'message' => $e->getHint()], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($invitationList->hasValidInvitations()) {
+			$this->participantService->addInvitationList($room, $invitationList, $user);
+		}
+
+		if (!$invitationList->hasInvalidInvitations()) {
+			return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId, false)), Http::STATUS_CREATED);
+		}
+
+		$data = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId, false));
+		$data['invalidParticipants'] = $invitationList->getInvalidList();
+
+		return new DataResponse($data, Http::STATUS_ACCEPTED);
 	}
 
 	/**
@@ -607,139 +736,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse(['error' => 'invite'], Http::STATUS_FORBIDDEN);
 		}
-	}
-
-	/**
-	 * Initiates a group video call from the selected group
-	 *
-	 * @param string $targetGroupName
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'invite'}, array{}>
-	 */
-	#[NoAdminRequired]
-	protected function createGroupRoom(string $targetGroupName): DataResponse {
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			// Should never happen, basically an internal server error so we reuse another error
-			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
-		}
-
-		$targetGroup = $this->groupManager->get($targetGroupName);
-		if (!$targetGroup instanceof IGroup) {
-			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
-		}
-
-		// Create the room
-		$name = $this->roomService->prepareConversationName($targetGroup->getDisplayName());
-		$room = $this->roomService->createConversation(Room::TYPE_GROUP, $name, $currentUser);
-		$this->participantService->addGroup($room, $targetGroup);
-
-		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)), Http::STATUS_CREATED);
-	}
-
-	/**
-	 * Initiates a group video call from the selected circle
-	 *
-	 * @param string $targetCircleId
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'invite'}, array{}>
-	 */
-	#[NoAdminRequired]
-	protected function createCircleRoom(string $targetCircleId): DataResponse {
-		if (!$this->appManager->isEnabledForUser('circles')) {
-			return new DataResponse(['error' => 'invite'], Http::STATUS_BAD_REQUEST);
-		}
-
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			// Should never happen, basically an internal server error so we reuse another error
-			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
-		}
-
-		try {
-			$circle = $this->participantService->getCircle($targetCircleId, $this->userId);
-		} catch (\Exception $e) {
-			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
-		}
-
-		// Create the room
-		$name = $this->roomService->prepareConversationName($circle->getName());
-		$room = $this->roomService->createConversation(Room::TYPE_GROUP, $name, $currentUser);
-		$this->participantService->addCircle($room, $circle);
-
-		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)), Http::STATUS_CREATED);
-	}
-
-	/**
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'invite'|'mode'|'object'|'password'|'permissions'|'room', message?: string}, array{}>
-	 */
-	#[NoAdminRequired]
-	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = '', string $password = ''): DataResponse {
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			// Should never happen, basically an internal server error so we reuse another error
-			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
-		}
-
-		$roomType = $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP;
-		/** @var Room|null $parentRoom */
-		$parentRoom = null;
-
-		if ($objectType === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			try {
-				$parentRoom = $this->manager->getRoomForUserByToken($objectId, $this->userId);
-				$parentRoomParticipant = $this->participantService->getParticipant($parentRoom, $this->userId);
-
-				if (!$parentRoomParticipant->hasModeratorPermissions()) {
-					return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
-				}
-				if ($parentRoom->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
-					return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
-				}
-
-				// Overwriting the type with the parent type.
-				$roomType = $parentRoom->getType();
-			} catch (RoomNotFoundException $e) {
-				return new DataResponse(['error' => 'room'], Http::STATUS_BAD_REQUEST);
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
-			}
-		} elseif ($objectType === Room::OBJECT_TYPE_PHONE) {
-			// Ignoring any user input on this one
-			$objectId = $objectType;
-		} elseif ($objectType === Room::OBJECT_TYPE_EVENT) {
-			// Allow event rooms in future versions without breaking in older talk versions that the same calendar version supports
-			$objectType = '';
-			$objectId = '';
-		} elseif ($objectType !== '') {
-			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
-		}
-
-		// Create the room
-		try {
-			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId, $password);
-		} catch (PasswordException $e) {
-			return new DataResponse(['error' => 'password', 'message' => $e->getHint()], Http::STATUS_BAD_REQUEST);
-		} catch (\InvalidArgumentException $e) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$currentParticipant = $this->participantService->getParticipant($room, $currentUser->getUID(), false);
-		if ($objectType === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			// Enforce the lobby state when breakout rooms are disabled
-			if ($parentRoom instanceof Room && $parentRoom->getBreakoutRoomStatus() === BreakoutRoom::STATUS_STOPPED) {
-				$this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null, false, false);
-			}
-
-			$participants = $this->participantService->getParticipantsForRoom($parentRoom);
-			$moderators = array_filter($participants, static function (Participant $participant) use ($currentParticipant) {
-				return $participant->hasModeratorPermissions()
-					&& $participant->getAttendee()->getId() !== $currentParticipant->getAttendee()->getId();
-			});
-			if (!empty($moderators)) {
-				$this->breakoutRoomService->addModeratorsToBreakoutRooms([$room], $moderators);
-			}
-		}
-
-		return new DataResponse($this->formatRoom($room, $currentParticipant), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -2304,7 +2300,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Update the lobby state for a room
 	 *
-	 * @param int $state New state
+	 * @param 0|1 $state New state
 	 * @psalm-param Webinary::LOBBY_* $state
 	 * @param int|null $timer Timer when the lobby will be removed
 	 * @psalm-param non-negative-int|null $timer

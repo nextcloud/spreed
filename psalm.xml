@@ -62,6 +62,7 @@
 				<referencedClass name="OC\DB\ConnectionAdapter" />
 				<referencedClass name="OC\User\NoUserException" />
 				<referencedClass name="OCA\Circles\CirclesManager" />
+				<referencedClass name="OCA\Circles\Model\Circle" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />

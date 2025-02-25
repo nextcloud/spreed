@@ -1102,16 +1102,32 @@ class Manager {
 		return $room;
 	}
 
-	/**
-	 * @param int $type
-	 * @param string $name
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @param string $password
-	 * @return Room
-	 */
-	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = '', string $password = ''): Room {
+	public function createRoom(
+		int $type,
+		string $name = '',
+		string $objectType = '',
+		string $objectId = '',
+		string $password = '',
+		?int $readOnly = null,
+		?int $listable = null,
+		?int $messageExpiration = null,
+		?int $lobbyState = null,
+		?\DateTime $lobbyTimer = null,
+		?int $sipEnabled = null,
+		?int $permissions = null,
+		?int $recordingConsent = null,
+		?int $mentionPermissions = null,
+		?string $description = null,
+	): Room {
 		$token = $this->getNewToken();
+		$row = [
+			'name' => $name,
+			'type' => $type,
+			'token' => $token,
+			'object_type' => $objectType,
+			'object_id' => $objectId,
+			'password' => $password,
+		];
 
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert('talk_rooms')
@@ -1129,17 +1145,50 @@ class Manager {
 				->setValue('object_id', $insert->createNamedParameter($objectId));
 		}
 
+		if ($readOnly !== null) {
+			$insert->setValue('read_only', $insert->createNamedParameter($readOnly, IQueryBuilder::PARAM_INT));
+			$row['read_only'] = $readOnly;
+		}
+		if ($listable !== null) {
+			$insert->setValue('listable', $insert->createNamedParameter($listable, IQueryBuilder::PARAM_INT));
+			$row['listable'] = $listable;
+		}
+		if ($messageExpiration !== null) {
+			$insert->setValue('message_expiration', $insert->createNamedParameter($messageExpiration, IQueryBuilder::PARAM_INT));
+			$row['message_expiration'] = $messageExpiration;
+		}
+		if ($lobbyState !== null) {
+			$insert->setValue('lobby_state', $insert->createNamedParameter($lobbyState, IQueryBuilder::PARAM_INT));
+			$row['lobby_state'] = $lobbyState;
+			if ($lobbyTimer !== null) {
+				$insert->setValue('lobby_timer', $insert->createNamedParameter($lobbyTimer, IQueryBuilder::PARAM_DATETIME_MUTABLE));
+				$row['lobby_timer'] = $lobbyTimer->format(\DATE_ATOM);
+			}
+		}
+		if ($sipEnabled !== null) {
+			$insert->setValue('sip_enabled', $insert->createNamedParameter($sipEnabled, IQueryBuilder::PARAM_INT));
+			$row['sip_enabled'] = $sipEnabled;
+		}
+		if ($permissions !== null) {
+			$insert->setValue('default_permissions', $insert->createNamedParameter($permissions, IQueryBuilder::PARAM_INT));
+			$row['default_permissions'] = $permissions;
+		}
+		if ($recordingConsent !== null) {
+			$insert->setValue('recording_consent', $insert->createNamedParameter($recordingConsent, IQueryBuilder::PARAM_INT));
+			$row['recording_consent'] = $recordingConsent;
+		}
+		if ($mentionPermissions !== null) {
+			$insert->setValue('mention_permissions', $insert->createNamedParameter($mentionPermissions, IQueryBuilder::PARAM_INT));
+			$row['mention_permissions'] = $mentionPermissions;
+		}
+		if ($description !== null) {
+			$insert->setValue('description', $insert->createNamedParameter($description));
+			$row['description'] = $description;
+		}
+
 		$insert->executeStatement();
-		$roomId = $insert->getLastInsertId();
-		$room = $this->createRoomObjectFromData([
-			'r_id' => $roomId,
-			'name' => $name,
-			'type' => $type,
-			'token' => $token,
-			'object_type' => $objectType,
-			'object_id' => $objectId,
-			'password' => $password
-		]);
+		$row['r_id'] = $insert->getLastInsertId();
+		$room = $this->createRoomObjectFromData($row);
 
 		$event = new RoomCreatedEvent($room);
 		$this->dispatcher->dispatchTyped($event);
