@@ -2547,7 +2547,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$data['config']['chat']['read-privacy'] = Participant::PRIVACY_PRIVATE;
 			}
 			if (isset($data['config']['chat']['typing-privacy'])) {
-				$data['config']['chat']['typing-privacy'] = Participant::PRIVACY_PRIVATE;
+				$data['config']['chat']['typing-privacy'] = $this->talkConfig->getUserTypingPrivacy($this->userId);
 			}
 			if (isset($data['config']['call']['start-without-media'])) {
 				$data['config']['call']['start-without-media'] = $this->talkConfig->getCallsStartWithoutMedia($this->userId);
