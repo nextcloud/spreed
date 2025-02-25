@@ -30,7 +30,7 @@ In each of the languages you can have a unique set of sample Markdown files.
 The first section of the Markdown files must contain the following information, prefixed with the matching keyword:
 
 ```
-NAME: Let´s get started!
+NAME: Let's get started!
 EMOJI: 💡
 COLOR: #0082c9
 ---

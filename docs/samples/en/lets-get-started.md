@@ -1,4 +1,4 @@
-NAME: Let´s get started!
+NAME: Let's get started!
 EMOJI: 💡
 COLOR: #0082c9
 ---
