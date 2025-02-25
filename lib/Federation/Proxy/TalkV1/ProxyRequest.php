@@ -36,7 +36,7 @@ class ProxyRequest {
 	}
 
 	public function overwrittenRemoteTalkHash(string $hash): string {
-		$typingIndicator = $this->config->getUserValue($this->userSession->getUser(), Application::APP_ID, 'typing_privacy', Participant::PRIVACY_PRIVATE);
+		$typingIndicator = $this->config->getUserValue($this->userSession->getUser()?->getUID(), Application::APP_ID, 'typing_privacy', Participant::PRIVACY_PRIVATE);
 		return sha1(json_encode([
 			'remoteHash' => $hash,
 			'manipulated' => [
