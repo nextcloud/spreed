@@ -707,7 +707,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$objectId = $objectType;
 		} elseif($objectType === Room::OBJECT_TYPE_EVENT) {
 			// We don't have a UUID for this (yet)
-			$objectId = $objectType;
+			$objectId = sha1($this->userId . $this->timeFactory->getTime());
 		} elseif ($objectType !== '') {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}

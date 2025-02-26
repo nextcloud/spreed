@@ -37,7 +37,7 @@ class RoomEvent extends Entity {
 	}
 
 	/**
-	 * @return TalkPollVote
+	 * @return TalkRoomEvent
 	 */
 	public function asArray(): array {
 		return [
