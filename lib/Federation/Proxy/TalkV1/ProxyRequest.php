@@ -12,8 +12,10 @@ namespace OCA\Talk\Federation\Proxy\TalkV1;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use OC\Http\Client\Response;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RemoteClientException;
+use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
@@ -34,13 +36,14 @@ class ProxyRequest {
 	}
 
 	public function overwrittenRemoteTalkHash(string $hash): string {
+		$typingIndicator = $this->config->getUserValue($this->userSession->getUser()?->getUID(), Application::APP_ID, 'typing_privacy', Participant::PRIVACY_PRIVATE);
 		return sha1(json_encode([
 			'remoteHash' => $hash,
 			'manipulated' => [
 				'config' => [
 					'chat' => [
 						'read-privacy',
-						'typing-privacy',
+						'typing-privacy' => $typingIndicator,
 					],
 					'call' => [
 						'blur-virtual-background',

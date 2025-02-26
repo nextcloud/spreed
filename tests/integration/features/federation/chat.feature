@@ -501,3 +501,31 @@ Feature: federation/chat
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
       | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | 🚀       |
+
+
+  Scenario: Typing indicator
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type |
+      | LOCAL::room | 2    |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "LOCAL::room" with 200 (v4)
+    Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    When user "participant1" sets setting "typing_privacy" to 1 with 200 (v1)
+    Then user "participant1" has capability "spreed=>config=>chat=>typing-privacy" set to 1
+    Then user "participant1" has room capability "config=>chat=>typing-privacy" set to 1 on room "room"
+    # Public
+    When user "participant1" sets setting "typing_privacy" to 0 with 200 (v1)
+    Then user "participant1" has capability "spreed=>config=>chat=>typing-privacy" set to 0
+    Then user "participant1" has room capability "config=>chat=>typing-privacy" set to 0 on room "room"
