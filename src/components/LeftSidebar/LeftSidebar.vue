@@ -8,7 +8,7 @@
 		<template #search>
 			<div class="new-conversation">
 				<div class="conversations-search"
-					:class="{'conversations-search--expanded': isFocused}">
+					:class="{'conversations-search--expanded': isSearching}">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
@@ -22,7 +22,7 @@
 					<NcActions v-show="searchText === ''"
 						:primary="isFiltered !== null"
 						class="filters"
-						:class="{'hidden-visually': isFocused}">
+						:class="{'hidden-visually': isSearching}">
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
@@ -60,7 +60,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<NcActions v-show="searchText === ''"
 						class="actions"
-						:class="{'hidden-visually': isFocused}">
+						:class="{'hidden-visually': isSearching}">
 						<template #icon>
 							<ChatPlus :size="20" />
 						</template>
@@ -505,7 +505,7 @@ export default {
 		},
 
 		searchResultsConversationList() {
-			if (this.searchText !== '' || this.isFocused) {
+			if (this.isSearching) {
 				const lowerSearchText = this.searchText.toLowerCase()
 				return this.conversationsList.filter(conversation =>
 					conversation.displayName.toLowerCase().includes(lowerSearchText)
