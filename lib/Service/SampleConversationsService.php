@@ -78,7 +78,7 @@ class SampleConversationsService {
 	protected function defaultSampleConversation(IUser $user): void {
 		$room = $this->roomService->createConversation(
 			Room::TYPE_GROUP,
-			$this->l->t('Let´s get started!'),
+			$this->l->t('Let\'s get started!'),
 			$user,
 			Room::OBJECT_TYPE_SAMPLE,
 			$user->getUID()
@@ -114,7 +114,7 @@ Attach files from your Nextcloud Hub using the "+" button. Share items from File
 			. "\n\n" . '{FILE:Readme.md}',
 			$this->l->t('## 💭 Let the conversations flow: mention users, react to messages and more
 
-You can mention everybody in a the conversation @all or mention specific participants by typing "@" and picking their name from the list.')
+You can mention everybody in a the conversation %s or mention specific participants by typing "@" and picking their name from the list.', ['@all'])
 			. "\n" . '{REACTION:😍}{REACTION:👍}',
 			'{REPLY}' . $this->l->t('You can reply to messages, forward them to other chats and people, or copy message content.'),
 			$this->l->t('## ✨ Do more with Smart Picker
