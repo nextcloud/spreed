@@ -682,6 +682,10 @@ class RoomController extends AEnvironmentAwareController {
 		} elseif ($objectType === Room::OBJECT_TYPE_PHONE) {
 			// Ignoring any user input on this one
 			$objectId = $objectType;
+		} elseif ($objectType === Room::OBJECT_TYPE_EVENT) {
+			// Allow event rooms in future versions without breaking in older talk versions that the same calendar version supports
+			$objectType = '';
+			$objectId = '';
 		} elseif ($objectType !== '') {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
