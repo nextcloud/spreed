@@ -14,23 +14,25 @@ use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
 /**
- * @method void setRoomId(int $roomId)
- * @method int getRoomId()
+ * @method void setRoomToken(string $roomId)
+ * @method string getRoomToken()
  * @method void setStart(int $start)
  * @method int getStart()
  * @method void setEnd(string $end)
  * @method int getEnd()
  * @method void setDescription(string $description)
  * @method string getDescription()
+ *
+ * @psalm-import-type TalkRoomEvent from ResponseDefinitions
  */
 class RoomEvent extends Entity {
-	protected int $roomId = 0;
+	protected string $roomToken = '';
 	protected int $start = 0;
 	protected int $end = 0;
 	protected ?string $description = null;
 
 	public function __construct() {
-		$this->addType('roomId', Types::BIGINT);
+		$this->addType('roomToken', Types::STRING);
 		$this->addType('start', Types::INTEGER);
 		$this->addType('end', Types::INTEGER);
 		$this->addType('description', Types::STRING);
@@ -41,7 +43,7 @@ class RoomEvent extends Entity {
 	 */
 	public function asArray(): array {
 		return [
-			'roomId' => $this->getRoomId(),
+			'roomToken' => $this->getRoomToken(),
 			'start' => $this->getStart(),
 			'end' => $this->getEnd(),
 			'description' => $this->getDescription(),

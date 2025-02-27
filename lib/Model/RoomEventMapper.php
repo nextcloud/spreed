@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -22,24 +22,24 @@ class RoomEventMapper extends QBMapper {
 	public function __construct(
 		IDBConnection $db,
 	) {
-		parent::__construct($db, 'talk_room_events', Consent::class);
+		parent::__construct($db, 'talk_room_events', RoomEvent::class);
 	}
 
 	/**
 	 * @return list<RoomEvent>
 	 */
-	public function findForRoom(int $roomId): array {
+	public function findForRoom(string $roomToken): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT));
+			->where($query->expr()->eq('room_token', $query->createNamedParameter($roomToken, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT));
 		return $this->findEntities($query);
 	}
 
-	public function deleteByRoom(int $roomId): int {
+	public function deleteByRoom(string $roomToken): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT));
+			->where($query->expr()->eq('room_token', $query->createNamedParameter($roomToken, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT));
 		return $query->executeStatement();
 	}
 }

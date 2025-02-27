@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -36,9 +36,10 @@ class Version22000Date20250224113228 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 11,
 			]);
-			$table->addColumn('room_id', Types::INTEGER, [
-				'notnull' => true,
-				'length' => 11,
+			$table->addColumn('room_token', Types::STRING, [
+				'notnull' => false,
+				'length' => 32,
+				'default' => '',
 			]);
 			$table->addColumn('start', Types::INTEGER, [
 				'notnull' => true,

@@ -196,7 +196,7 @@ namespace OCA\Talk;
  *     optionId: int,
  *  }
  * @psalm-type TalkRoomEvent = array{
- * 		roomId: int,
+ * 		roomToken: string,
  *	 	start: int,
  * 		end: int,
  * 		description: ?string,
