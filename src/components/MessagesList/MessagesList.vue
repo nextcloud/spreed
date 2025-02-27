@@ -82,7 +82,7 @@ import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
-import { convertToUnix } from '../../utils/formattedTime.ts'
+import { ONE_DAY_IN_MS, convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 
@@ -545,32 +545,19 @@ export default {
 				return false
 			}
 
-			if (this.messagesHaveDifferentDate(message1, message2)) {
+			const date1 = this.getDateOfMessage(message1)
+			const date2 = this.getDateOfMessage(message2)
+
+			if (date1.getFullYear() !== date2.getFullYear() || date1.getMonth() !== date2.getMonth() || date1.getDate() !== date2.getDate()) {
 				// Not posted on the same day
 				return false
 			}
 
 			// Only group messages within a short period of time (5 minutes), so unrelated messages are not grouped together
-			return this.getDateOfMessage(message1).diff(this.getDateOfMessage(message2)) < 300 * 1000
+			return Math.abs(date1 - date2) < 300000
 		},
 
-		/**
-		 * Check if 2 messages are from the same date
-		 *
-		 * @param {object} message1 The new message
-		 * @param {string} message1.id The ID of the new message
-		 * @param {number} message1.timestamp Timestamp of the new message
-		 * @param {null|object} message2 The previous message
-		 * @param {string} message2.id The ID of the second message
-		 * @param {number} message2.timestamp Timestamp of the second message
-		 * @return {boolean} Boolean if the messages have the same date
-		 */
-		messagesHaveDifferentDate(message1, message2) {
-			return !message2 // There is no previous message
-				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
-		},
-
-		getRelativePrefix(date, diffDays) {
+		getRelativePrefix(diffDays) {
 			switch (diffDays) {
 			case 0:
 				return t('spreed', 'Today')
@@ -590,21 +577,21 @@ export default {
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
 		generateDateSeparator(dateTimestamp) {
-			const date = moment(dateTimestamp * 1000).startOf('day')
-			const diffDays = moment().startOf('day').diff(date, 'days')
+			const startOfDay = new Date(dateTimestamp * 1000).setHours(0, 0, 0, 0)
+			const diffDays = Math.floor((Date.now() - startOfDay) / ONE_DAY_IN_MS)
 			// Relative date is only shown up to a week ago (inclusive)
 			if (diffDays <= 7) {
 				// TRANSLATORS: <Today>, <March 18th, 2024>
 				return t('spreed', '{relativeDate}, {absoluteDate}', {
-					relativeDate: this.getRelativePrefix(date, diffDays),
+					relativeDate: this.getRelativePrefix(diffDays),
 					// 'LL' formats a localized date including day of month, month
 					// name and year
-					absoluteDate: date.format('LL'),
+					absoluteDate: moment(startOfDay).format('LL'),
 				}, undefined, {
 					escape: false, // French "Today" has a ' in it
 				})
 			} else {
-				return date.format('LL')
+				return moment(startOfDay).format('LL')
 			}
 
 		},
@@ -615,13 +602,13 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {number} message.timestamp Timestamp of the message (in UNIX format)
-		 * @return {object} MomentJS object
+		 * @return {object} Date object
 		 */
 		getDateOfMessage(message) {
 			if (message.id.toString().startsWith('temp-')) {
-				return moment()
+				return new Date()
 			}
-			return moment(message.timestamp * 1000)
+			return new Date(message.timestamp * 1000)
 		},
 
 		getMessageIdFromHash(hash = undefined) {
