@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -34,6 +35,19 @@ class RoomEventMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($query->expr()->eq('room_token', $query->createNamedParameter($roomToken, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT));
 		return $this->findEntities($query);
+	}
+
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function findNextForRoom(string $roomToken, int $start): RoomEvent {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_token', $query->createNamedParameter($roomToken, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT))
+			->andWhere($query->expr()->lte('start', $query->createNamedParameter($start, IQueryBuilder::PARAM_INT)));
+		// Could this return more than one roomEvent?
+		return $this->findEntity($query);
 	}
 
 	public function deleteByRoom(string $roomToken): int {
