@@ -44,6 +44,7 @@ class Room {
 	public const OBJECT_TYPE_PHONE = 'phone';
 	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
 	public const OBJECT_TYPE_SAMPLE = 'sample';
+	public const OBJECT_TYPE_EVENT = 'event';
 
 	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;
