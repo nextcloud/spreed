@@ -34,9 +34,12 @@ const emit = defineEmits<{
 	(event: 'update:deviceId', value: string | null | undefined): void
 }>()
 
-const deviceSelectedOption = ref<NcSelectOption | null>(null)
-
-const deviceSelectorId = computed(() => 'device-selector-' + props.kind)
+const deviceOptions = computed<NcSelectOption[]>(() => ([
+	...props.devices.filter(device => device.kind === props.kind)
+		.map(device => ({ id: device.deviceId, label: device.label ? device.label : device.fallbackLabel })),
+	{ id: null, label: t('spreed', 'None') },
+]))
+const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 
 const deviceIcon = computed<InstanceType<typeof IconMicrophone> | null>(() => {
 	switch (props.kind) {
@@ -46,98 +49,50 @@ const deviceIcon = computed<InstanceType<typeof IconMicrophone> | null>(() => {
 	default: return null
 	}
 })
-
-const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
-
 const deviceSelectorPlaceholder = computed(() => {
 	switch (props.kind) {
-	case 'audioinput': return audioInputSelectorPlaceholder.value
-	case 'audiooutput': return audioOutputSelectorPlaceholder.value
-	case 'videoinput': return videoInputSelectorPlaceholder.value
-	default: return null
+	case 'audioinput': return deviceOptionsAvailable.value ? t('spreed', 'Select microphone') : t('spreed', 'No microphone available')
+	case 'audiooutput': return deviceOptionsAvailable.value ? t('spreed', 'Select speaker') : t('spreed', 'No speaker available')
+	case 'videoinput': return deviceOptionsAvailable.value ? t('spreed', 'Select camera') : t('spreed', 'No camera available')
+	default: return ''
 	}
 })
 
-const audioInputSelectorPlaceholder = computed(() => {
-	if (!deviceOptionsAvailable.value) {
-		return t('spreed', 'No microphone available')
+const deviceSelectedOption = computed<NcSelectOption | null>({
+	get: () => {
+		return deviceOptions.value.find(option => option.id === props.deviceId) ?? null
+	},
+	set: (value) => {
+		updateDeviceId(value?.id ?? null)
 	}
-
-	return t('spreed', 'Select microphone')
 })
 
-const audioOutputSelectorPlaceholder = computed(() => {
-	if (!deviceOptionsAvailable.value) {
-		return t('spreed', 'No speaker available')
-	}
-
-	return t('spreed', 'Select speaker')
-})
-
-const videoInputSelectorPlaceholder = computed(() => {
-	if (!deviceOptionsAvailable.value) {
-		return t('spreed', 'No camera available')
-	}
-
-	return t('spreed', 'Select camera')
-})
-
-const deviceOptions = computed(() => {
-	const options: NcSelectOption[] = props.devices.filter(device => device.kind === props.kind).map(device => {
-		return {
-			id: device.deviceId,
-			label: device.label ? device.label : device.fallbackLabel,
-		}
-	})
-
-	options.push({
-		id: null,
-		label: t('spreed', 'None'),
-	})
-
-	return options
-})
-
-const deviceSelectedOptionFromDeviceId = computed(() => {
-	return deviceOptions.value.find(option => option.id === props.deviceId)
-})
-
-// The watcher needs to be set as "immediate" to ensure that
-// "deviceSelectedOption" will be set when mounted.
-watch(deviceSelectedOptionFromDeviceId, (value) => {
-	deviceSelectedOption.value = value ?? null
-}, { immediate: true })
-
-// The watcher should not be set as "immediate" to prevent
-// "update:deviceId" from being emitted when mounted with the same value
-// initially passed to the component.
-watch(deviceSelectedOption, (deviceSelectedOption, previousSelectedOption) => {
+/**
+ * Update deviceId if passes required checks
+ * @param deviceId selected NcSelect option to update with
+ */
+function updateDeviceId(deviceId: NcSelectOption['id']) {
 	// The deviceSelectedOption may be the same as before yet a change
 	// could be triggered if media permissions are granted, which would
 	// update the label.
-	if (deviceSelectedOption && previousSelectedOption && deviceSelectedOption.id === previousSelectedOption.id) {
+	if (deviceId === props.deviceId) {
 		return
 	}
 
 	// The previous selected option changed due to the device being
 	// disconnected, so ignore it as it was not explicitly changed by
 	// the user.
-	if (previousSelectedOption && previousSelectedOption.id && !deviceOptions.value.find(option => option.id === previousSelectedOption.id)) {
+	if (props.deviceId && !deviceOptions.value.find(option => option.id === props.deviceId)) {
 		return
 	}
 
 	// Ignore device change on initial loading of the settings dialog.
-	if (typeof previousSelectedOption?.id === 'undefined') {
+	if (typeof props.deviceId === 'undefined') {
 		return
 	}
 
-	if (deviceSelectedOption && deviceSelectedOption.id === null) {
-		emit('update:deviceId', null)
-		return
-	}
-
-	emit('update:deviceId', deviceSelectedOption ? deviceSelectedOption.id : undefined)
-})
+	emit('update:deviceId', deviceId)
+}
 </script>
 
 <template>
@@ -148,7 +103,7 @@ watch(deviceSelectedOption, (deviceSelectedOption, previousSelectedOption) => {
 			:size="16" />
 
 		<NcSelect v-model="deviceSelectedOption"
-			:input-id="deviceSelectorId"
+			:input-id="`device-selector-${props.kind}`"
 			:options="deviceOptions"
 			label="label"
 			:aria-label-combobox="t('spreed', 'Select a device')"
