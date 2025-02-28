@@ -737,6 +737,7 @@ OC.L10N.register(
     "{user1} is typing …" : "{user1} ta escribiendo…",
     "{user1} and {user2} are typing …" : "{user1} y {user2} tán escribiendo…",
     "{user1}, {user2} and {user3} are typing …" : "{user1}, {user2} y {user3} tán escribiendo…",
+    "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}, {user2}, {user3} y %n más tán escribiendo…","{user1}, {user2}, {user3} y %n más tán escribiendo…"],
     "Add more files" : "Amestar más ficheros",
     "Send" : "Unviar",
     "In this conversation <strong>{user}</strong> can:" : "Nesta conversión, <strong>{user}</strong> pue:",

@@ -222,7 +222,6 @@ OC.L10N.register(
     "The country is invalid." : "Neteisinga šalis.",
     "Something unexpected happened. Please try again later." : "Nutiko kažkas netikėto. Vėliau bandykite dar kartą.",
     "There is no such account registered." : "Nėra tokios registruotos paskyros.",
-    "Let´s get started!" : "Pradėkime!",
     "Andorra" : "Andora",
     "United Arab Emirates" : "Jungtiniai Arabų Emyratai",
     "Afghanistan" : "Afganistanas",
