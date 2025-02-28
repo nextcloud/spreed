@@ -586,9 +586,27 @@ const actions = {
 
 		if (message.referenceId) {
 			const tempMessages = context.getters.getTemporaryReferences(token, message.referenceId)
-			tempMessages.forEach(tempMessage => {
-				context.commit('deleteMessage', { token, id: tempMessage.id })
-			})
+			if (tempMessages.length > 0) {
+				// Replacing temporary placeholder message with server response (text message / file share)
+				const conversation = context.getters.conversation(token)
+				const isOwnMessage = message.actorId === context.getters.getActorId()
+					&& message.actorType === context.getters.getActorType()
+
+				// update lastMessage and lastReadMessage (no await to make it async)
+				// do it conditionally because there could have been more messages appearing concurrently
+				if (conversation?.lastMessage && isOwnMessage && message.id > conversation.lastMessage.id) {
+					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+				}
+
+				if (conversation?.lastReadMessage && isOwnMessage && message.id > conversation.lastReadMessage) {
+					context.dispatch('updateLastReadMessage', { token, id: message.id, updateVisually: true })
+				}
+
+				// If successful, deletes the temporary message from the store
+				tempMessages.forEach(tempMessage => {
+					context.dispatch('removeTemporaryMessageFromStore', { token, id: tempMessage.id })
+				})
+			}
 		}
 
 		if (message.systemMessage === 'poll_voted') {
@@ -1263,32 +1281,7 @@ const actions = {
 				})
 			}
 
-			// If successful, deletes the temporary message from the store
-			context.dispatch('removeTemporaryMessageFromStore', { token, id: temporaryMessage.id })
-
-			const message = response.data.ocs.data
-			// And adds the complete version of the message received
-			// by the server
-			context.dispatch('processMessage', { token, message })
-
-			const conversation = context.getters.conversation(token)
-
-			// update lastMessage and lastReadMessage
-			// do it conditionally because there could have been more messages appearing concurrently
-			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
-				context.dispatch('updateConversationLastMessage', {
-					token,
-					lastMessage: message,
-				})
-			}
-			if (conversation && message.id > conversation.lastReadMessage) {
-				// no await to make it async
-				context.dispatch('updateLastReadMessage', {
-					token,
-					id: message.id,
-					updateVisually: true,
-				})
-			}
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
 
 			return response
 		} catch (error) {

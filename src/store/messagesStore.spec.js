@@ -205,6 +205,37 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message1])
 		})
 
+		test('updates last read message when replacing matching temporary message', () => {
+			conversationMock.mockReturnValueOnce({
+				token: TOKEN,
+				lastReadMessage: 100,
+				lastMessage: {
+					id: 123,
+				},
+			})
+			const response = generateOCSResponse({ payload: conversation })
+			updateLastReadMessage.mockResolvedValueOnce(response)
+
+			const temporaryMessage = {
+				id: 'temp-1',
+				referenceId: 'reference-1',
+				token: TOKEN,
+			}
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
+
+			const message1 = {
+				id: 123,
+				token: TOKEN,
+				actorId: 'actor-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				referenceId: 'reference-1',
+			}
+
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message1])
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, message1.id)
+		})
+
 		test('replaces existing message', () => {
 			const message1 = {
 				id: 1,
@@ -1606,6 +1637,8 @@ describe('messagesStore', () => {
 		let message1
 		let conversationMock
 		let getUserIdMock
+		let getActorIdMock
+		let getActorTypeMock
 		let updateLastCommonReadMessageAction
 		let updateConversationLastMessageAction
 		let cancelFunctionMocks
@@ -1619,10 +1652,14 @@ describe('messagesStore', () => {
 
 			conversationMock = jest.fn()
 			getUserIdMock = jest.fn()
+			getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
+			getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
+			testStoreConfig.getters.getActorId = getActorIdMock
+			testStoreConfig.getters.getActorType = getActorTypeMock
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			// mock this complex local action as we already tested it elsewhere
@@ -1662,17 +1699,23 @@ describe('messagesStore', () => {
 			})
 			getUserIdMock.mockReturnValue(() => 'current-user')
 
-			const temporaryMessage = {
-				id: 'temp-123',
+			const baseMessage = {
+				actorId: 'actor-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'blah',
 				token: TOKEN,
+				referenceId: 'abc123',
+			}
+
+			const temporaryMessage = {
+				...baseMessage,
+				id: 'temp-123',
 				sendingFailure: '',
 			}
 
 			const messageResponse = {
+				...baseMessage,
 				id: 200,
-				token: TOKEN,
-				message: 'blah',
 			}
 
 			const response = generateOCSResponse({

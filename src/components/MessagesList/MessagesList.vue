@@ -7,7 +7,6 @@
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
-		:key="token"
 		class="scroller messages-list__scroller"
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
 			'scroller--isScrolling': isScrolling}"
@@ -301,11 +300,14 @@ export default {
 				// scroll to bottom if needed
 				this.scrollToBottom({ smooth: false })
 
-				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
-					this.$nextTick(() => {
+				this.$nextTick(() => {
+					this.checkChatNotScrollable()
+
+					if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 						this.updateTasksCount()
-					})
-				}
+					}
+				})
+
 			},
 		},
 
@@ -321,8 +323,7 @@ export default {
 				this.$nextTick(() => {
 					this.checkSticky()
 					// setting wheel event for non-scrollable chat
-					const isScrollable = this.$refs.scroller.scrollHeight > this.$refs.scroller.clientHeight
-					if (!this.isChatBeginningReached && !isScrollable) {
+					if (!this.isChatBeginningReached && this.checkChatNotScrollable()) {
 						this.$refs.scroller.addEventListener('wheel', this.handleWheelEvent, { passive: true })
 					}
 				})
@@ -386,6 +387,8 @@ export default {
 				this.$refs.scroller.scrollTo({
 					top: this.$refs.scroller.scrollHeight,
 				})
+			} else {
+				this.checkChatNotScrollable()
 			}
 		},
 
@@ -895,17 +898,20 @@ export default {
 			}
 
 			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
-			const scrollOffset = scrollHeight - scrollTop
+			const scrollOffsetFromTop = scrollHeight - scrollTop
+			const scrollOffsetFromBottom = Math.abs(scrollOffsetFromTop - clientHeight)
 
 			// For chats that are scrolled to bottom and not fitted in one screen
-			if (Math.abs(scrollOffset - clientHeight) < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
+			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
 				return
 			}
 
-			this.setChatScrolledToBottom(false)
+			if (scrollOffsetFromBottom >= SCROLL_TOLERANCE) {
+				this.setChatScrolledToBottom(false)
+			}
 
 			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
 				|| skipHeightCheck) {
@@ -1162,10 +1168,7 @@ export default {
 				this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 			}
 
-			if (this.$refs.scroller && this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
-				// chat is not scrollable
-				this.setChatScrolledToBottom(true)
-			}
+			this.checkChatNotScrollable()
 
 			if (highlightAnimation && scrollElement === element) {
 				// element is visible, highlight it
@@ -1287,6 +1290,18 @@ export default {
 			this.chatExtrasStore.setTasksCounters({ tasksCount, tasksDoneCount })
 		},
 
+		checkChatNotScrollable() {
+			const isNotScrollable = this.$refs.scroller
+				? this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight
+				: false
+
+			if (isNotScrollable && !this.isChatScrolledToBottom) {
+				this.setChatScrolledToBottom(true)
+			}
+
+			return isNotScrollable
+		},
+
 		handleWheelEvent(event) {
 			// If messages fit in the viewport and user scrolls up, we need to trigger the loading of older messages
 			if (event.deltaY < 0) {
@@ -1297,6 +1312,7 @@ export default {
 					return
 				}
 
+				this.isScrolling = 'up'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
