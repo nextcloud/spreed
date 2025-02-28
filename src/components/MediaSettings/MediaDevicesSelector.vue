@@ -3,6 +3,98 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
+import IconRefresh from 'vue-material-design-icons/Refresh.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+
+import { t } from '@nextcloud/l10n'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+
+type NcSelectOption = { id: string | null, label: string }
+type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }
+
+const props = withDefaults(defineProps<{
+	kind: 'audioinput' | 'audiooutput' | 'videoinput',
+	devices: MediaDeviceInfoWithFallbackLabel[],
+	deviceId?: string | null,
+	enabled?: boolean,
+}>(), {
+	deviceId: undefined,
+	enabled: true,
+})
+
+const emit = defineEmits<{
+	(event: 'refresh'): void
+	(event: 'update:deviceId', value: string | null | undefined): void
+}>()
+
+const deviceOptions = computed<NcSelectOption[]>(() => ([
+	...props.devices.filter(device => device.kind === props.kind)
+		.map(device => ({ id: device.deviceId, label: device.label ? device.label : device.fallbackLabel })),
+	{ id: null, label: t('spreed', 'None') },
+]))
+const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
+
+const deviceIcon = computed<InstanceType<typeof IconMicrophone> | null>(() => {
+	switch (props.kind) {
+	case 'audioinput': return IconMicrophone
+	case 'audiooutput': return IconVolumeHigh
+	case 'videoinput': return IconVideo
+	default: return null
+	}
+})
+const deviceSelectorPlaceholder = computed(() => {
+	switch (props.kind) {
+	case 'audioinput': return deviceOptionsAvailable.value ? t('spreed', 'Select microphone') : t('spreed', 'No microphone available')
+	case 'audiooutput': return deviceOptionsAvailable.value ? t('spreed', 'Select speaker') : t('spreed', 'No speaker available')
+	case 'videoinput': return deviceOptionsAvailable.value ? t('spreed', 'Select camera') : t('spreed', 'No camera available')
+	default: return ''
+	}
+})
+
+const deviceSelectedOption = computed<NcSelectOption | null>({
+	get: () => {
+		return deviceOptions.value.find(option => option.id === props.deviceId) ?? null
+	},
+	set: (value) => {
+		updateDeviceId(value?.id ?? null)
+	}
+})
+
+/**
+ * Update deviceId if passes required checks
+ * @param deviceId selected NcSelect option to update with
+ */
+function updateDeviceId(deviceId: NcSelectOption['id']) {
+	// The deviceSelectedOption may be the same as before yet a change
+	// could be triggered if media permissions are granted, which would
+	// update the label.
+	if (deviceId === props.deviceId) {
+		return
+	}
+
+	// The previous selected option changed due to the device being
+	// disconnected, so ignore it as it was not explicitly changed by
+	// the user.
+	if (props.deviceId && !deviceOptions.value.find(option => option.id === props.deviceId)) {
+		return
+	}
+
+	// Ignore device change on initial loading of the settings dialog.
+	if (typeof props.deviceId === 'undefined') {
+		return
+	}
+
+	emit('update:deviceId', deviceId)
+}
+</script>
+
 <template>
 	<div class="media-devices-selector">
 		<component :is="deviceIcon"
@@ -11,7 +103,7 @@
 			:size="16" />
 
 		<NcSelect v-model="deviceSelectedOption"
-			:input-id="deviceSelectorId"
+			:input-id="`device-selector-${props.kind}`"
 			:options="deviceOptions"
 			label="label"
 			:aria-label-combobox="t('spreed', 'Select a device')"
@@ -27,170 +119,6 @@
 		</NcButton>
 	</div>
 </template>
-
-<script>
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconRefresh from 'vue-material-design-icons/Refresh.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-
-export default {
-
-	name: 'MediaDevicesSelector',
-
-	components: {
-		NcButton,
-		NcSelect,
-		IconMicrophone,
-		IconRefresh,
-		IconVideo,
-	},
-
-	props: {
-		kind: {
-			validator(value) {
-				return ['audioinput', 'videoinput'].includes(value)
-			},
-			required: true,
-		},
-		devices: {
-			type: Array,
-			required: true,
-		},
-		deviceId: {
-			type: String,
-			default: undefined,
-		},
-		enabled: {
-			type: Boolean,
-			default: true,
-		},
-	},
-
-	emits: ['refresh', 'update:deviceId'],
-
-	data() {
-		return {
-			deviceSelectedOption: null,
-		}
-	},
-
-	computed: {
-		deviceSelectorId() {
-			return 'device-selector-' + this.kind
-		},
-
-		deviceIcon() {
-			switch (this.kind) {
-			case 'audioinput': return IconMicrophone
-			case 'videoinput': return IconVideo
-			default: return null
-			}
-		},
-
-		deviceOptionsAvailable() {
-			return this.deviceOptions.length > 1
-		},
-
-		deviceSelectorPlaceholder() {
-			if (this.kind === 'audioinput') {
-				return this.audioInputSelectorPlaceholder
-			}
-
-			if (this.kind === 'videoinput') {
-				return this.videoInputSelectorPlaceholder
-			}
-
-			return null
-		},
-
-		audioInputSelectorPlaceholder() {
-			if (!this.deviceOptionsAvailable) {
-				return t('spreed', 'No microphone available')
-			}
-
-			return t('spreed', 'Select microphone')
-		},
-
-		videoInputSelectorPlaceholder() {
-			if (!this.deviceOptionsAvailable) {
-				return t('spreed', 'No camera available')
-			}
-
-			return t('spreed', 'Select camera')
-		},
-
-		deviceOptions() {
-			const options = this.devices.filter(device => device.kind === this.kind).map(device => {
-				return {
-					id: device.deviceId,
-					label: device.label ? device.label : device.fallbackLabel,
-				}
-			})
-
-			options.push({
-				id: null,
-				label: t('spreed', 'None'),
-			})
-
-			return options
-		},
-
-		deviceSelectedOptionFromDeviceId() {
-			return this.deviceOptions.find(option => option.id === this.deviceId)
-		},
-	},
-
-	watch: {
-		// The watcher needs to be set as "immediate" to ensure that
-		// "deviceSelectedOption" will be set when mounted.
-		deviceSelectedOptionFromDeviceId: {
-			handler(deviceSelectedOptionFromDeviceId) {
-				this.deviceSelectedOption = deviceSelectedOptionFromDeviceId
-			},
-			immediate: true,
-		},
-
-		// The watcher should not be set as "immediate" to prevent
-		// "update:deviceId" from being emitted when mounted with the same value
-		// initially passed to the component.
-		deviceSelectedOption(deviceSelectedOption, previousSelectedOption) {
-			// The deviceSelectedOption may be the same as before yet a change
-			// could be triggered if media permissions are granted, which would
-			// update the label.
-			if (deviceSelectedOption && previousSelectedOption && deviceSelectedOption.id === previousSelectedOption.id) {
-				return
-			}
-
-			// The previous selected option changed due to the device being
-			// disconnected, so ignore it as it was not explicitly changed by
-			// the user.
-			if (previousSelectedOption && previousSelectedOption.id && !this.deviceOptions.find(option => option.id === previousSelectedOption.id)) {
-				return
-			}
-
-			// Ignore device change on initial loading of the settings dialog.
-			if (typeof previousSelectedOption?.id === 'undefined') {
-				return
-			}
-
-			if (deviceSelectedOption && deviceSelectedOption.id === null) {
-				this.$emit('update:deviceId', null)
-				return
-			}
-			this.$emit('update:deviceId', deviceSelectedOption ? deviceSelectedOption.id : undefined)
-		},
-	},
-
-	methods: {
-		t,
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 .media-devices-selector {
