@@ -14,7 +14,7 @@ import { generateFilePath } from '@nextcloud/router'
 
 import Recording from './Recording.vue'
 
-import router from './router/router.js'
+import router from './router/router.ts'
 import store from './store/index.js'
 import {
 	signalingGetSettingsForRecording,
