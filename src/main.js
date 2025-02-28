@@ -15,7 +15,7 @@ import { generateFilePath } from '@nextcloud/router'
 import App from './App.vue'
 
 import './init.js'
-import router from './router/router.js'
+import router from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import { useSidebarStore } from './stores/sidebar.ts'
