@@ -646,7 +646,7 @@ OC.L10N.register(
     "Saving …" : "Збереження …",
     "Saved!" : "Збережено!",
     "Limit to groups" : "Обмежити групами",
-    "When at least one group is selected, only people of the listed groups can be part of conversations." : "Якщо вибрано хоча б одну групу, в розмовах можуть брати участь тільки люди з перелічених груп.",
+    "When at least one group is selected, only people of the listed groups can be part of conversations." : "Якщо вибрано хоча б одну групу, в розмовах можуть брати участь лише користувачі із зазначених груп.",
     "Guests can still join public conversations." : "Гості все ще можуть приєднуватися до публічних розмов.",
     "Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept." : "Користувачі, які більше не можуть користуватися чатом, залишаться в списку учасників попередніх розмов, а їхні повідомлення в чаті будуть збережені.",
     "Limit using Talk" : "Обмеження на використання Talk",
