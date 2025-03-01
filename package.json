@@ -96,7 +96,7 @@
     "jest-transform-stub": "^2.0.0",
     "openapi-typescript": "^7.4.4",
     "regenerator-runtime": "^0.14.1",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.2.6",
     "vue-template-compiler": "^2.7.16",
     "wasm-check": "^2.1.2",
     "webpack-bundle-analyzer": "^4.10.2",
