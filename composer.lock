@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.14.3",
+            "version": "1.14.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "1d75537ea0141452f65dc340e4932015592537e2"
+                "reference": "c1d2407963408aa8aea0432e8645095283f16a67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/1d75537ea0141452f65dc340e4932015592537e2",
-                "reference": "1d75537ea0141452f65dc340e4932015592537e2",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/c1d2407963408aa8aea0432e8645095283f16a67",
+                "reference": "c1d2407963408aa8aea0432e8645095283f16a67",
                 "shasum": ""
             },
             "require": {
@@ -127,7 +127,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.14.3"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.14.4"
             },
             "funding": [
                 {
@@ -135,7 +135,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-17T18:33:46+00:00"
+            "time": "2025-02-23T18:48:29+00:00"
         },
         {
             "name": "cweagans/composer-patches",
@@ -559,10 +559,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
