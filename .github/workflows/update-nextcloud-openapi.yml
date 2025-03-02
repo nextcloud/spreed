@@ -74,6 +74,7 @@ jobs:
         if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f # v7.0.5
         with:
+          path: apps/${{ env.APP_NAME }}
           token: ${{ secrets.COMMAND_BOT_PAT }}
           commit-message: 'chore(ts): update OpenAPI types from core'
           committer: GitHub <noreply@github.com>
