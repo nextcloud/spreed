@@ -184,6 +184,7 @@ export default {
 	created() {
 		window.addEventListener('beforeunload', this.preventUnload)
 		useHotKey('f', this.handleAppSearch, { ctrl: true, stop: true, prevent: true })
+		useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
 	},
 
 	beforeDestroy() {
@@ -611,7 +612,13 @@ export default {
 
 			// Breakout to breakout
 			return oldConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM && newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
-		}
+		},
+
+		openRoot() {
+			if (this.$route.name !== 'root' && !this.isInCall) {
+				this.$router.push({ name: 'root' })
+			}
+		},
 	},
 }
 </script>
