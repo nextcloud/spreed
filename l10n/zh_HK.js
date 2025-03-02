@@ -1276,6 +1276,8 @@ OC.L10N.register(
     "None" : "無",
     "Select microphone" : "選擇米高風",
     "No microphone available" : "沒有可用的米高風",
+    "Select speaker" : "選擇喇叭",
+    "No speaker available" : "沒有可用的喇叭",
     "Select camera" : "選擇相機",
     "No camera available" : "沒有可用的相機",
     "Select a device" : "選取裝置",
