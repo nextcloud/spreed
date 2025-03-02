@@ -1276,6 +1276,8 @@ OC.L10N.register(
     "None" : "Keine",
     "Select microphone" : "Mikrofon auswählen",
     "No microphone available" : "Kein Mikrofon verfügbar",
+    "Select speaker" : "Lautsprecher auswählen",
+    "No speaker available" : "Kein Lautsprecher verfügbar",
     "Select camera" : "Kamera auswählen",
     "No camera available" : "Keine Kamera verfügbar",
     "Select a device" : "Ein Gerät auswählen",
