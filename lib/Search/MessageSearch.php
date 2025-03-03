@@ -206,7 +206,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		$comments = $this->chatManager->searchForObjectsWithFilters(
 			$query->getTerm(),
 			array_keys($roomMap),
-			ChatManager::VERB_MESSAGE,
+			[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
 			$lowerTimeBoundary,
 			$upperTimeBoundary,
 			$actorType,
