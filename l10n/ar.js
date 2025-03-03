@@ -1276,6 +1276,8 @@ OC.L10N.register(
     "None" : "لا شيء",
     "Select microphone" : "اختر مايك",
     "No microphone available" : "لا يوجد مايكرفون متاح",
+    "Select speaker" : "حدِّد المُتحَدِّث",
+    "No speaker available" : "لايوجد أيّ مُتحَدِّث",
     "Select camera" : "اختر كاميرا",
     "No camera available" : "لا توجد كاميرا متاحة",
     "Select a device" : "إختَر جهازاً",
