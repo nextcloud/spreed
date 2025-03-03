@@ -6,6 +6,7 @@
 import createHark from 'hark'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 
+import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
@@ -23,6 +24,9 @@ export function useDevices(video, initializeOnMounted) {
 	let initialized = false
 	let pendingGetUserMediaAudioCount = 0
 	let pendingGetUserMediaVideoCount = 0
+
+	const soundsStore = useSoundsStore()
+
 	const hark = ref(null)
 	const videoTrackToStream = ref(null)
 	const mediaDevicesManager = reactive(mediaDevicesManagerInstance)
@@ -103,6 +107,12 @@ export function useDevices(video, initializeOnMounted) {
 		}
 	})
 
+	watch(audioOutputId, (deviceId) => {
+		if (initialized && deviceId !== undefined) {
+			soundsStore.setGeneralAudioOutput(deviceId)
+		}
+	})
+
 	watch(videoInputId, () => {
 		if (initialized) {
 			updateVideoStream()
@@ -156,6 +166,10 @@ export function useDevices(video, initializeOnMounted) {
 		mediaDevicesManager.enableDeviceEvents()
 		updateAudioStream()
 		updateVideoStream()
+
+		if (mediaDevicesManager.attributes.audioOutputId !== undefined) {
+			soundsStore.setGeneralAudioOutput(mediaDevicesManager.attributes.audioOutputId)
+		}
 	}
 
 	/**
