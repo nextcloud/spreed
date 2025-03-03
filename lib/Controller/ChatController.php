@@ -514,11 +514,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_CREATED, array{taskId: int, nextOffset?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'ai-no-provider'|'ai-error'}, array{}>|DataResponse<Http::STATUS_NO_CONTENT, null, array{}>
 	 * @throws \InvalidArgumentException
 	 *
-	 * 201: Summary was scheduled, use the returned taskId to get the status
-	 *   information and output from the TaskProcessing API:
-	 *   https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id
-	 *   If the response data contains nextOffset, not all messages could be handled in a single request.
-	 *   After receiving the response a second summary should be requested with the provided nextOffset.
+	 * 201: Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id. If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset.
 	 * 204: No messages found to summarize
 	 * 400: No AI provider available or summarizing failed
 	 */

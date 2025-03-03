@@ -460,7 +460,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>
 	 *
-	 *  200: Room returned successfully
+	 * 200: Room returned successfully
 	 */
 	#[NoAdminRequired]
 	public function getNoteToSelfConversation(): DataResponse {
@@ -1358,7 +1358,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Remove the current user from a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}> *
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}>
 	 *
 	 * 200: Participant removed successfully
 	 * 400: Removing participant is not possible
@@ -1892,11 +1892,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
 	 *
-	 *  200: Participant created successfully
-	 *  400: Phone number and details could not be confirmed
-	 *  401: SIP request invalid
-	 *  404: Phone number is not invited as a participant
-	 *  501: SIP dial-out is not configured
+	 * 200: Participant created successfully
+	 * 400: Phone number and details could not be confirmed
+	 * 401: SIP request invalid
+	 * 404: Phone number is not invited as a participant
+	 * 501: SIP dial-out is not configured
 	 */
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
