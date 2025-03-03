@@ -627,6 +627,7 @@ OC.L10N.register(
     "Post message" : "Δημοσίευση μηνύματος",
     "Favorite" : "Προσθήκη στα αγαπημένα",
     "Date:" : "Ημερομηνία:",
+    "Note:" : "Σημείωση:",
     "Hide details" : "Απόκρυψη λεπτομερειών",
     "Show details" : "Εμφάνιση λεπτομερειών",
     "Error while updating conversation description" : "Σφάλμα κατά την ενημέρωση της περιγραφής συνομιλίας",
