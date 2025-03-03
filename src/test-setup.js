@@ -32,6 +32,8 @@ jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => mockedCapabilities),
 }))
 
+HTMLAudioElement.prototype.setSinkId = jest.fn()
+
 window.IntersectionObserver = jest.fn(() => ({
 	observe: jest.fn(),
 	unobserve: jest.fn(),

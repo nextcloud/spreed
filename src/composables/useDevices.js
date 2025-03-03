@@ -63,6 +63,19 @@ export function useDevices(video, initializeOnMounted) {
 		return audioTracks.length < 1 ? null : audioTracks[0].getSettings().deviceId
 	})
 
+	const audioOutputId = computed({
+		get() {
+			return mediaDevicesManager.attributes.audioOutputId
+		},
+		set(value) {
+			mediaDevicesManager.set('audioOutputId', value)
+		},
+	})
+
+	const audioOutputSupported = computed(() => {
+		return mediaDevicesManager.isAudioOutputSelectSupported
+	})
+
 	const videoInputId = computed({
 		get() {
 			return mediaDevicesManager.attributes.videoInputId
@@ -155,7 +168,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Update preference counters for devices (audio and video)
-	 * @param {string} kind the kind of the input stream to update ('audioinput' or 'videoinput')
+	 * @param {string} kind the kind of the input stream to update ('audioinput', 'audiooutput' or 'videoinput')
 	 * @public
 	 */
 	function updatePreferences(kind) {
@@ -376,7 +389,9 @@ export function useDevices(video, initializeOnMounted) {
 		audioPreviewAvailable,
 		videoPreviewAvailable,
 		audioInputId,
+		audioOutputId,
 		videoInputId,
+		audioOutputSupported,
 		// MediaDevicesPreview only
 		audioStream,
 		audioStreamError,
