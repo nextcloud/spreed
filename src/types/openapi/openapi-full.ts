@@ -4309,7 +4309,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
+            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id. If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
             201: {
                 headers: {
                     [name: string]: unknown;
