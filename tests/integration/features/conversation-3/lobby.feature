@@ -241,25 +241,33 @@ Feature: conversation/lobby
     And user "guest2" joins room "room" with 200 (v4)
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType     | actorId      | systemMessage        |
+      | room | users         | participant1 | lobby_non_moderators |
+      | room | users         | participant1 | guest_moderator_promoted |
+      | room | users         | participant1 | user_added           |
+      | room | users         | participant1 | moderator_promoted   |
+      | room | users         | participant1 | user_added           |
+      | room | users         | participant1 | conversation_created |
     And user "participant1" sets description for room "room" to "the description" with 200 (v4)
     Then user "participant1" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage             |
-      | room | the description | 3    | 1               | You set the description |
+      | name | description     | type | participantType | lastMessage             | lastReadMessage |
+      | room | the description | 3    | 1               | You set the description | Message 1       |
     And user "participant2" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage                 |
-      | room | the description | 3    | 2               | {actor} set the description |
+      | name | description     | type | participantType | lastMessage                 | lastReadMessage      |
+      | room | the description | 3    | 2               | {actor} set the description | conversation_created |
     And user "participant3" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 3               | UNSET       |
+      | name | description     | type | participantType | lastMessage | lastReadMessage    |
+      | room | the description | 3    | 3               | UNSET       | moderator_promoted |
     And user "participant4" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 5               | UNSET       |
+      | name | description     | type | participantType | lastMessage | lastReadMessage |
+      | room | the description | 3    | 5               | UNSET       | user_added      |
     And user "guest" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage                 |
-      | room | the description | 3    | 6               | {actor} set the description |
+      | name | description     | type | participantType | lastMessage                 | lastReadMessage |
+      | room | the description | 3    | 6               | {actor} set the description | user_added      |
     And user "guest2" is participant of room "room" (v4)
-      | name | description     | type | participantType | lastMessage |
-      | room | the description | 3    | 4               | UNSET       |
+      | name | description     | type | participantType | lastMessage | lastReadMessage |
+      | room | the description | 3    | 4               | UNSET       | guest_moderator_promoted |
 
 
   # Not all the values are checked in the test, only the most relevant ones
