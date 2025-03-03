@@ -273,17 +273,6 @@ class RoomFormatter {
 			}
 		}
 
-		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
-			!$currentParticipant->hasModeratorPermissions() &&
-			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
-			// No participants and chat messages for users in the lobby.
-			$roomData['hasCall'] = false;
-			$roomData['canLeaveConversation'] = true;
-			return $roomData;
-		}
-
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig);
-
 		$currentUser = null;
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
@@ -347,6 +336,19 @@ class RoomFormatter {
 			$roomData['remoteServer'] = $room->getRemoteServer();
 			$roomData['remoteToken'] = $room->getRemoteToken();
 		}
+
+		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
+			!$currentParticipant->hasModeratorPermissions() &&
+			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+			// No participants and chat messages for users in the lobby.
+			$roomData['hasCall'] = false;
+			$roomData['unreadMessages'] = 0;
+			$roomData['unreadMention'] = false;
+			$roomData['unreadMentionDirect'] = false;
+			return $roomData;
+		}
+
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig);
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
