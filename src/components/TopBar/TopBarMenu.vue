@@ -355,6 +355,11 @@ export default {
 				return false
 			}
 
+			if (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
+				|| this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED) {
+				return false
+			}
+
 			return !!getTalkConfig(this.token, 'call', 'breakout-rooms')
 		},
 
