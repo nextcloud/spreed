@@ -21,6 +21,11 @@ declare global {
 		},
 	}
 
+	declare module '*.svg?raw' {
+		const content: string
+		export default content
+	}
+
 	// @nextcloud/webpack-vue-config build globals
 	const appName: string
 	const appVersion: string

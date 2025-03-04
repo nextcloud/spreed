@@ -22,7 +22,7 @@ Vue.use(Router)
  *
  * @return {string} Vue Router base url
  */
-function generateTalkWebBasePath() {
+function generateTalkWebBasePath(): string {
 	// if index.php is in the url AND we got this far, then it's working:
 	// let's keep using index.php in the url
 	const webRootWithIndexPHP = getRootUrl() + '/index.php'
