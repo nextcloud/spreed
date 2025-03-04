@@ -222,6 +222,15 @@ namespace OCA\Talk;
  *     timestamp: int,
  * }
  *
+ * @psalm-type TalkInvitationList = array{
+ *     users?: list<string>,
+ *     federated_users?: list<string>,
+ *     groups?: list<string>,
+ *     emails?: list<string>,
+ *     phones?: list<string>,
+ *     teams?: list<string>,
+ * }
+ *
  * @psalm-type TalkRoom = array{
  *     actorId: string,
  *     invitedActorId?: string,
@@ -282,6 +291,10 @@ namespace OCA\Talk;
  *     unreadMentionDirect: bool,
  *     unreadMessages: int,
  *     isArchived: bool,
+ * }
+ *
+ * @psalm-type TalkRoomWithInvalidInvitations = TalkRoom&array{
+ *     invalidParticipants: TalkInvitationList,
  * }
  *
  * @psalm-type TalkSignalingSession = array{

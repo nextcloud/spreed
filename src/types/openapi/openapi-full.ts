@@ -804,7 +804,10 @@ export type paths = {
         /** Get all currently existent rooms which the user has joined */
         get: operations["room-get-rooms"];
         put?: never;
-        /** Create a room with a user, a group or a circle */
+        /**
+         * Create a room with a user, a group or a circle
+         * @description With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.
+         */
         post: operations["room-create-room"];
         delete?: never;
         options?: never;
@@ -2146,6 +2149,14 @@ export type components = {
             inviterCloudId: string;
             inviterDisplayName: string;
         };
+        InvitationList: {
+            users?: string[];
+            federated_users?: string[];
+            groups?: string[];
+            emails?: string[];
+            phones?: string[];
+            teams?: string[];
+        };
         Matterbridge: {
             enabled: boolean;
             parts: components["schemas"]["MatterbridgeConfigFields"];
@@ -2374,6 +2385,9 @@ export type components = {
             isArchived: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
+        RoomWithInvalidInvitations: components["schemas"]["Room"] & {
+            invalidParticipants: components["schemas"]["InvitationList"];
+        };
         SignalingFederationSettings: {
             server: string;
             nextcloudServer: string;
@@ -6476,35 +6490,101 @@ export interface operations {
                      */
                     roomType: number;
                     /**
-                     * @description User, group, … ID to invite
+                     * @description User, group, … ID to invite **Deprecated** Use the `$participants` array instead
                      * @default
                      */
                     invite?: string;
                     /**
-                     * @description Name of the room
+                     * @description Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
                      * @default
                      */
                     roomName?: string;
                     /**
-                     * @description Source of the invite ID ('circles' to create a room with a circle, etc.)
+                     * @description Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead
                      * @default
                      */
                     source?: string;
                     /**
-                     * @description Type of the object
+                     * @description Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
                      * @default
                      */
                     objectType?: string;
                     /**
-                     * @description ID of the object
+                     * @description ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
                      * @default
                      */
                     objectId?: string;
                     /**
-                     * @description The room password (only available with `conversation-creation-password` capability)
+                     * @description The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})
                      * @default
                      */
                     password?: string;
+                    /**
+                     * Format: int64
+                     * @description Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    readOnly: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    listable: 0 | 1 | 2;
+                    /**
+                     * Format: int64
+                     * @description Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
+                     * @default 0
+                     */
+                    messageExpiration?: number;
+                    /**
+                     * Format: int64
+                     * @description Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    lobbyState: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
+                     */
+                    lobbyTimer?: number | null;
+                    /**
+                     * Format: int64
+                     * @description Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    sipEnabled: 0 | 1 | 2;
+                    /**
+                     * Format: int64
+                     * @description Default permissions for participants (only available with `conversation-creation-all` capability)
+                     */
+                    permissions: number;
+                    /**
+                     * Format: int64
+                     * @description Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    recordingConsent: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
+                     * @enum {integer}
+                     */
+                    mentionPermissions: 0 | 1;
+                    /**
+                     * @description Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)
+                     * @default
+                     */
+                    description?: string;
+                    /** @description Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability) */
+                    emoji?: string | null;
+                    /** @description Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability) */
+                    avatarColor?: string | null;
+                    /**
+                     * @description List of participants to add grouped by type (only available with `conversation-creation-all` capability)
+                     * @default []
+                     */
+                    participants?: components["schemas"]["InvitationList"];
                 };
             };
         };
@@ -6537,6 +6617,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Room created successfully but not all participants could be added */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["RoomWithInvalidInvitations"];
+                        };
+                    };
+                };
+            };
             /** @description Room type invalid or missing or invalid password */
             400: {
                 headers: {
@@ -6548,7 +6642,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -6566,7 +6660,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -6584,7 +6678,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "invite" | "mode" | "object" | "password" | "permissions" | "room" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -8298,8 +8392,9 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description New state
+                     * @enum {integer}
                      */
-                    state: number;
+                    state: 0 | 1;
                     /**
                      * Format: int64
                      * @description Timer when the lobby will be removed
