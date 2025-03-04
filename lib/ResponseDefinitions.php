@@ -195,6 +195,12 @@ namespace OCA\Talk;
  *     actorType: string,
  *     optionId: int,
  *  }
+ * @psalm-type TalkRoomEvent = array{
+ * 		roomToken: string,
+ *	 	start: int,
+ * 		end: int,
+ * 		description: ?string,
+ * }
  *
  * @psalm-type TalkPollDraft = array{
  *     actorDisplayName: string,
