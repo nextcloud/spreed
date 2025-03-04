@@ -1441,7 +1441,7 @@ OC.L10N.register(
     "Cancel editing" : "Düzenlemeyi iptal et",
     "File to share" : "Paylaşılacak dosya",
     "{user} is out of office and might not respond." : "{user} iş yeri dışında ve yanıt veremeyebilir.",
-    "Absence period: {startDate} - {endDate}" : "Bulunmayacağı zaman: {startDate} - {endDate}",
+    "Absence period: {startDate} - {endDate}" : "Bulunmama aralığı: {startDate} - {endDate}",
     "Replacement: " : "Yedek:",
     "Share from {nextcloud}" : "{nextcloud} üzerinden paylaş",
     "Share from Files" : "Dosyalar uygulamasından paylaş",
