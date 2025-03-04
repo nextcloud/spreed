@@ -7,11 +7,13 @@ type InputId = string | undefined | null
 type InputListUpdated = MediaDeviceInfo[] | null
 type InputLists = {
 	newAudioInputList: InputListUpdated,
+	newAudioOutputList: InputListUpdated,
 	newVideoInputList: InputListUpdated,
 }
 type Attributes = {
 	devices: MediaDeviceInfo[],
 	audioInputId: InputId,
+	audioOutputId: InputId,
 	videoInputId: InputId,
 }
 
@@ -34,10 +36,14 @@ type PromotePayload = {
  *
  * @param attributes MediaDeviceManager attributes
  * @param audioInputList list of registered audio devices in order of preference
+ * @param audioOutputList list of registered speaker devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
  * @return {string} preference list in readable format
  */
-function listMediaDevices(attributes: Attributes, audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]): string {
+function listMediaDevices(attributes: Attributes,
+	audioInputList: MediaDeviceInfo[],
+	audioOutputList: MediaDeviceInfo[],
+	videoInputList: MediaDeviceInfo[]): string {
 	const availableDevices = attributes.devices.map(device => device.deviceId)
 
 	const getDeviceString = (device: MediaDeviceInfo, index: number) => {
@@ -45,6 +51,8 @@ function listMediaDevices(attributes: Attributes, audioInputList: MediaDeviceInf
 		const isSelected = () => {
 			if (device.kind === DeviceKind.AudioInput) {
 				return device.deviceId === attributes.audioInputId ? ' (selected)' : ''
+			} else if (device.kind === DeviceKind.AudioOutput) {
+				return device.deviceId === attributes.audioOutputId ? ' (selected)' : ''
 			} else if (device.kind === DeviceKind.VideoInput) {
 				return device.deviceId === attributes.videoInputId ? ' (selected)' : ''
 			}
@@ -55,6 +63,9 @@ function listMediaDevices(attributes: Attributes, audioInputList: MediaDeviceInf
 	return (`Media devices:
   Audio input:
 ${audioInputList.map(getDeviceString).join('\n')}
+
+  Audio output:
+${audioOutputList.map(getDeviceString).join('\n')}
 
   Video input:
 ${videoInputList.map(getDeviceString).join('\n')}
@@ -104,7 +115,7 @@ function registerNewMediaDevice(device: MediaDeviceInfo, devicesList: MediaDevic
  * @param data.inputId id of currently selected input
  * @return {InputListUpdated} updated devices list (null, if it has not been changed)
  */
-function promoteMediaDevice({ kind, devices, inputList, inputId } : PromotePayload) : InputListUpdated {
+function promoteMediaDevice({ kind, devices, inputList, inputId }: PromotePayload): InputListUpdated {
 	if (!inputId) {
 		return null
 	}
@@ -145,11 +156,16 @@ function promoteMediaDevice({ kind, devices, inputList, inputId } : PromotePaylo
  *
  * @param devices list of available devices
  * @param audioInputList list of registered audio devices in order of preference
+ * @param audioOutputList list of registered speaker devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
  * @return {InputLists} object with updated devices lists (null, if they have not been changed)
  */
-function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]): InputLists {
+function populateMediaDevicesPreferences(devices: MediaDeviceInfo[],
+	audioInputList: MediaDeviceInfo[],
+	audioOutputList: MediaDeviceInfo[],
+	videoInputList: MediaDeviceInfo[]): InputLists {
 	let newAudioInputList = null
+	let newAudioOutputList = null
 	let newVideoInputList = null
 
 	for (const device of devices) {
@@ -157,6 +173,11 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputL
 			// Add to the list of known devices
 			if (!audioInputList.some(input => input.deviceId === device.deviceId)) {
 				newAudioInputList = registerNewMediaDevice(device, newAudioInputList ?? audioInputList)
+			}
+		} else if (device.deviceId && device.kind === DeviceKind.AudioOutput) {
+			// Add to the list of known devices
+			if (!audioOutputList.some(input => input.deviceId === device.deviceId)) {
+				newAudioOutputList = registerNewMediaDevice(device, newAudioOutputList ?? audioOutputList)
 			}
 		} else if (device.deviceId && device.kind === DeviceKind.VideoInput) {
 			// Add to the list of known devices
@@ -168,6 +189,7 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputL
 
 	return {
 		newAudioInputList,
+		newAudioOutputList,
 		newVideoInputList,
 	}
 }

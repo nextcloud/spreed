@@ -4,6 +4,7 @@
  */
 
 import attachMediaStream from '../attachmediastream.js'
+import { mediaDevicesManager } from '../webrtc/index.js'
 
 /**
  * Player for audio of call participants.
@@ -39,6 +40,7 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 	} else {
 		this._audioElements = new Map()
 	}
+	this.setGeneralAudioOutput(mediaDevicesManager.attributes.audioOutputId)
 
 	this._handleCallParticipantAddedBound = this._handleCallParticipantAdded.bind(this)
 	this._handleCallParticipantRemovedBound = this._handleCallParticipantRemoved.bind(this)
@@ -142,11 +144,42 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 
 		audioElement = attachMediaStream(stream, null, { audio: true })
+		if (!mediaDevicesManager.isNavigatorSelectAudioOutputSupported) {
+			this._setAudioElementOutput('element', mediaDevicesManager.attributes.audioOutputId, audioElement)
+		}
+
 		if (mute) {
 			audioElement.muted = true
 		}
 
 		this._audioElements.set(id, audioElement)
+	},
+
+	async setGeneralAudioOutput(deviceId) {
+		if (!mediaDevicesManager.isAudioOutputSelectSupported) {
+			console.debug('Your browser does not support audio output selecting')
+			return
+		}
+
+		if (mediaDevicesManager.isNavigatorSelectAudioOutputSupported) {
+			await navigator.mediaDevices.selectAudioOutput({ deviceId })
+		} else if (this._mixAudio && this._audioContext && mediaDevicesManager.isAudioContextSetSinkIdSupported) {
+			await this._audioContext.setSinkId(deviceId)
+		} else {
+			const promises = []
+			for (const audioElement of this._audioElements.values()) {
+				promises.push(this._setAudioElementOutput('element', deviceId, audioElement))
+			}
+			await Promise.all(promises)
+		}
+		console.debug(`Set audio output to ${deviceId} for all audio elements`)
+	},
+
+	async _setAudioElementOutput(type, deviceId, audioElement = null) {
+		if (audioElement instanceof HTMLAudioElement && mediaDevicesManager.isAudioElementSetSinkIdSupported) {
+			await audioElement.setSinkId(deviceId)
+			console.debug(`Set audio output to ${deviceId} for type ${type}`)
+		}
 	},
 
 	_handleAudioAvailableChanged(callParticipantModel, audioAvailable) {
