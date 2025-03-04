@@ -1276,6 +1276,8 @@ OC.L10N.register(
     "None" : "Ingen",
     "Select microphone" : "Välj mikrofon",
     "No microphone available" : "Ingen mikrofon tillgänglig",
+    "Select speaker" : "Välj högtalare",
+    "No speaker available" : "Ingen högtalare tillgänglig",
     "Select camera" : "Välj kamera",
     "No camera available" : "Ingen kamera tillgänglig",
     "Select a device" : "Välj en enhet",
