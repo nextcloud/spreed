@@ -15,7 +15,6 @@ import IconReload from 'vue-material-design-icons/Reload.vue'
 
 import { showSuccess } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -40,7 +39,7 @@ import { ATTENDEE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import type { Conversation, Participant } from '../types/index.ts'
-import { convertToUnix } from '../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
@@ -67,13 +66,13 @@ const submitting = ref(false)
 
 const calendars = computed(() => groupwareStore.calendars)
 const upcomingEvents = computed(() => {
-	const now = convertToUnix(Date.now())
 	return groupwareStore.getAllEvents(props.token)
 		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
 		.map(event => {
-			const start = event.start
-				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
-				: ''
+			const start = (!event.start || event.start * 1000 <= Date.now())
+				? t('spreed', 'Now')
+				: getEventStartLabel(event.start * 1000)
+
 			const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
 
 			return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
@@ -225,6 +224,40 @@ function getCurrentDateInStartOfNthHour(hours: number) {
 	const date = new Date()
 	date.setHours(date.getHours() + hours, 0, 0, 0)
 	return date
+}
+
+/**
+ * Returns human-readable string with event start
+ * @param time event start time (in ms)
+ */
+function getEventStartLabel(time: number) {
+	const daysDiff = Math.floor((new Date(time).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / ONE_DAY_IN_MS)
+
+	if (daysDiff >= 7) {
+		return formatDateTime(time, 'LL')
+	}
+
+	switch (daysDiff) {
+	case 0:
+		return t('spreed', '{relativeDate}, {absoluteDate}', {
+			relativeDate: t('spreed', 'Today'),
+			absoluteDate: formatDateTime(time, 'LT'),
+		}, undefined, { escape: false })
+	case 1:
+		return t('spreed', '{relativeDate}, {absoluteDate}', {
+			relativeDate: t('spreed', 'Tomorrow'),
+			absoluteDate: formatDateTime(time, 'LT'),
+		}, undefined, { escape: false })
+	default:
+		if (daysDiff > 1 && daysDiff < 7) {
+			return t('spreed', '{relativeDate}, {absoluteDate}', {
+				relativeDate: formatDateTime(time, 'dddd'),
+				absoluteDate: formatDateTime(time, 'LT'),
+			}, undefined, { escape: false })
+		} else {
+			return formatDateTime(time, 'LL')
+		}
+	}
 }
 
 /**

@@ -65,7 +65,6 @@ import Message from 'vue-material-design-icons/Message.vue'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -81,7 +80,7 @@ import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
-import { ONE_DAY_IN_MS, convertToUnix } from '../../utils/formattedTime.ts'
+import { ONE_DAY_IN_MS, convertToUnix, formatDateTime } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 
@@ -589,12 +588,12 @@ export default {
 					relativeDate: this.getRelativePrefix(diffDays),
 					// 'LL' formats a localized date including day of month, month
 					// name and year
-					absoluteDate: moment(startOfDay).format('LL'),
+					absoluteDate: formatDateTime(startOfDay, 'LL'),
 				}, undefined, {
 					escape: false, // French "Today" has a ' in it
 				})
 			} else {
-				return moment(startOfDay).format('LL')
+				return formatDateTime(startOfDay, 'LL')
 			}
 
 		},
