@@ -2,6 +2,56 @@
   - SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
+<script lang="ts" setup>
+import { computed, watch, watchEffect, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router/composables'
+
+import { emit } from '@nextcloud/event-bus'
+
+import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
+import CallView from '../components/CallView/CallView.vue'
+import ChatView from '../components/ChatView.vue'
+import LobbyScreen from '../components/LobbyScreen.vue'
+import PollViewer from '../components/PollViewer/PollViewer.vue'
+import TopBar from '../components/TopBar/TopBar.vue'
+
+import { useIsInCall } from '../composables/useIsInCall.js'
+import { useStore } from '../composables/useStore.js'
+
+const props = defineProps<{
+	token: string
+}>()
+
+const store = useStore()
+const isInCall = useIsInCall()
+const router = useRouter()
+const route = useRoute()
+
+const isInLobby = computed(() => store.getters.isInLobby)
+const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
+
+watch(isInLobby, (isInLobby) => {
+	// User is now blocked by the lobby
+	if (isInLobby && isInCall.value) {
+		store.dispatch('leaveCall', {
+			token: props.token,
+			participantIdentifier: store.getters.getParticipantIdentifier(),
+		})
+	}
+})
+
+onMounted(() => {
+	watchEffect(() => {
+		if (route.hash === '#direct-call') {
+			emit('talk:media-settings:show', '')
+			router.replace({ hash: '' })
+		} else if (route.hash === '#settings') {
+			emit('show-conversation-settings', { token: store.getters.getToken() })
+			router.replace({ hash: '' })
+		}
+	})
+})
+</script>
 
 <template>
 	<div class="main-view">
@@ -15,85 +65,6 @@
 		</template>
 	</div>
 </template>
-
-<script>
-import { emit } from '@nextcloud/event-bus'
-
-import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
-import CallView from '../components/CallView/CallView.vue'
-import ChatView from '../components/ChatView.vue'
-import LobbyScreen from '../components/LobbyScreen.vue'
-import PollViewer from '../components/PollViewer/PollViewer.vue'
-import TopBar from '../components/TopBar/TopBar.vue'
-
-import { useIsInCall } from '../composables/useIsInCall.js'
-import Router from '../router/router.js'
-
-export default {
-	name: 'MainView',
-	components: {
-		CallView,
-		CallFailedDialog,
-		ChatView,
-		LobbyScreen,
-		PollViewer,
-		TopBar,
-	},
-
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
-	},
-
-	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
-	},
-
-	computed: {
-		conversation() {
-			return this.$store.getters.conversation(this.token)
-		},
-
-		isInLobby() {
-			return this.$store.getters.isInLobby
-		},
-
-		connectionFailed() {
-			return this.$store.getters.connectionFailed(this.token)
-		},
-	},
-
-	watch: {
-		isInLobby(isInLobby) {
-			// User is now blocked by the lobby
-			if (isInLobby && this.isInCall) {
-				this.$store.dispatch('leaveCall', {
-					token: this.token,
-					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				})
-			}
-		},
-	},
-
-	mounted() {
-		const handleRouteHashChange = (token, route) => {
-			if (route?.hash === '#direct-call') {
-				emit('talk:media-settings:show')
-				Router.replace({ ...route, hash: '' })
-			} else if (route?.hash === '#settings') {
-				emit('show-conversation-settings', { token })
-				Router.replace({ ...route, hash: '' })
-			}
-		}
-
-		handleRouteHashChange(this.token, Router.currentRoute)
-		Router.afterEach((to) => handleRouteHashChange(this.token, to))
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 .main-view {

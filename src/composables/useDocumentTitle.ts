@@ -5,12 +5,12 @@
 
 import { computed, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router/composables'
 
 import { t } from '@nextcloud/l10n'
 
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useStore } from './useStore.js'
-import Router from '../router/router.js'
 import { EventBus } from '../services/EventBus.ts'
 import type { Conversation } from '../types/index.ts'
 import { hasUnreadMentions, hasCall } from '../utils/conversation.js'
@@ -20,6 +20,8 @@ import { hasUnreadMentions, hasCall } from '../utils/conversation.js'
  */
 export function useDocumentTitle() {
 	const store = useStore()
+	const router = useRouter()
+	const route = useRoute()
 	const isDocumentVisible = useDocumentVisibility()
 
 	const defaultPageTitle = ref<string>(getDefaultPageTitle())
@@ -49,7 +51,7 @@ export function useDocumentTitle() {
 		})
 		if (shouldShowAsterisk) {
 			showAsterisk.value = true
-			setPageTitleFromRoute(Router.currentRoute)
+			setPageTitleFromRoute(route)
 		}
 	})
 
@@ -57,7 +59,7 @@ export function useDocumentTitle() {
 		if (isDocumentVisible.value) {
 			// Remove asterisk for unread chat messages
 			showAsterisk.value = false
-			setPageTitleFromRoute(Router.currentRoute)
+			setPageTitleFromRoute(route)
 		} else {
 			// Copy the last message map to the saved version,
 			// this will be our reference to check if any chat got a new
@@ -70,13 +72,13 @@ export function useDocumentTitle() {
 	 * Adjust the page title to the conversation name once conversationsList is loaded
 	 */
 	EventBus.once('conversations-received', () => {
-		setPageTitleFromRoute(Router.currentRoute)
+		setPageTitleFromRoute(route)
 	})
 
 	/**
 	 * Change the page title after the route was changed
 	 */
-	Router.afterEach((to) => setPageTitleFromRoute(to))
+	router.afterEach((to) => setPageTitleFromRoute(to))
 
 	/**
 	 * Get a list for all last message ids
