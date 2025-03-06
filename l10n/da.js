@@ -658,6 +658,7 @@ OC.L10N.register(
     "The conversation does not exist" : "Samtalen findes ikke",
     "Join a conversation or start a new one!" : "Deltag i en samtale eller start en ny!",
     "Join a conversation or start a new one" : "Deltag i en samtale eller start en ny",
+    "Nextcloud URL" : "Nextcloud URL",
     "Talk conversation" : "Snak samtale",
     "User" : "Bruger",
     "Password" : "Adgangskode",
