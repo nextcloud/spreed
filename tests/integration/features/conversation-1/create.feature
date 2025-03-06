@@ -12,10 +12,10 @@ Feature: conversation-1/create
       | roomType | 2 |
       | roomName | room2 |
       | password | P4$$w0rd |
-    Then user "participant1" is participant of the following rooms (v4)
-      | id    | type | participantType | hasPassword |
-      | room1 | 3    | 1               | 1           |
-      | room2 | 2    | 1               |             |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id    | name  | type | participantType | hasPassword |
+      | room1 | room1 | 3    | 1               | 1           |
+      | room2 | room2 | 2    | 1               |             |
 
   Scenario: Read only during creation
     Given user "participant1" creates room "room" (v4)
@@ -86,6 +86,8 @@ Feature: conversation-1/create
       | room | 3    | 1               | CAV                |
 
   Scenario: Set recording consent during creation
+    Given recording server is started
+    Given signaling server is started
     And the following "spreed" app config is set
       | recording_consent | 2 |
     Given user "participant1" creates room "room" (v4)
