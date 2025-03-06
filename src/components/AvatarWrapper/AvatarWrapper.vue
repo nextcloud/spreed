@@ -18,7 +18,8 @@
 			:width="size"
 			:height="size"
 			:alt="name"
-			class="avatar icon">
+			class="avatar icon"
+			@error="failed = true">
 		<NcAvatar v-else
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
 			:user="id"
@@ -45,6 +46,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -136,8 +139,12 @@ export default {
 
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
+
+		const failed = ref(false)
+
 		return {
 			isDarkTheme,
+			failed,
 		}
 	},
 
@@ -150,9 +157,9 @@ export default {
 			switch (this.source) {
 			case ATTENDEE.ACTOR_TYPE.USERS:
 			case ATTENDEE.ACTOR_TYPE.BRIDGED:
-				return ''
+				return !this.failed ? '' : 'icon-user'
 			case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
-				return this.token ? '' : 'icon-user'
+				return (this.token && !this.failed) ? '' : 'icon-user'
 			case ATTENDEE.ACTOR_TYPE.EMAILS:
 				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
 			case ATTENDEE.ACTOR_TYPE.GUESTS:
@@ -204,6 +211,12 @@ export default {
 		},
 	},
 
+	watch: {
+		avatarUrl() {
+			this.failed = false
+		}
+	},
+
 	methods: {
 		t,
 	},
@@ -224,12 +237,14 @@ export default {
 	.avatar {
 		position: sticky;
 		top: 0;
+		display: block;
 		width: var(--avatar-size);
 		height: var(--avatar-size);
 		max-height: var(--avatar-size);
 		max-width: var(--avatar-size);
 		line-height: var(--avatar-size);
 		font-size: calc(var(--avatar-size) / 2);
+		overflow: hidden;
 		border-radius: 50%;
 		background-color: var(--color-text-maxcontrast-default);
 
