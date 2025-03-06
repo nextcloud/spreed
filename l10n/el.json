@@ -634,6 +634,7 @@
     "Disable" : "Απενεργοποίηση",
     "Enable" : "Ενεργοποίηση",
     "Choose" : "Επιλογή",
+    "The file must be a PNG or JPG" : "Το αρχείο πρέπει να είναι τύπου PNG ή JPG",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "Οι συμμετέχοντες έχουν δικαιώματα για έναρξη κλήσης, συμμετοχή σε κλήση, ενεργοποίηση ήχου και βίντεο και κοινή χρήση οθόνης.",
     "Restricted" : "Περιορισμένο",
     "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions." : "Οι συμμετέχοντες μπορούν να συμμετέχουν σε κλήσεις, αλλά δεν μπορούν να ενεργοποιήσουν τον ήχο ή το βίντεο ούτε να μοιραστούν την οθόνη έως ότου ένας συντονιστής τους εκχωρήσει αυτά τα δικαιώματα.",
