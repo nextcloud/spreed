@@ -74,7 +74,7 @@ class NoteToSelfService {
 			Room::TYPE_NOTE_TO_SELF,
 			$this->l->t('Note to self'),
 			$user,
-			'note_to_self',
+			Room::OBJECT_TYPE_NOTE_TO_SELF,
 			$user->getUID()
 		);
 
