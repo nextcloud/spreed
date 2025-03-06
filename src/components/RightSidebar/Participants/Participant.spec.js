@@ -66,8 +66,12 @@ describe('Participant.vue', () => {
 		}
 
 		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
+		const actorIdMock = jest.fn().mockReturnValue('user-actor-id')
+		const actorTypeMock = jest.fn().mockReturnValue(ATTENDEE.ACTOR_TYPE.USERS)
 
 		testStoreConfig = cloneDeep(storeConfig)
+		testStoreConfig.modules.actorStore.getters.getActorId = () => () => actorIdMock()
+		testStoreConfig.modules.actorStore.getters.getActorType = () => () => actorTypeMock()
 		testStoreConfig.modules.tokenStore.getters.getToken = () => () => 'current-token'
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		store = new Vuex.Store(testStoreConfig)
@@ -401,17 +405,17 @@ describe('Participant.vue', () => {
 
 			test('does not allow demoting self', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
-				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
-				participant.sessionIds = ['current-session-id', 'another-session-id']
+				participant.actorId = 'user-actor-id'
+				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				await testCannotDemote()
 			})
 
 			test('does not allow demoting self as guest', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-				participant.sessionIds = ['current-session-id']
+				participant.actorId = 'user-actor-id'
+				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				await testCannotDemote()
 			})
 
@@ -685,17 +689,17 @@ describe('Participant.vue', () => {
 
 			test('does not allow removing self', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
-				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.MODERATOR
-				participant.sessionIds = ['current-session-id']
+				participant.actorId = 'user-actor-id'
+				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				await testCannotRemove()
 			})
 
 			test('does not allow removing self as guest', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-				conversation.sessionId = 'current-session-id'
 				participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-				participant.sessionIds = ['current-session-id']
+				participant.actorId = 'user-actor-id'
+				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				await testCannotRemove()
 			})
 
