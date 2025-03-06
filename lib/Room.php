@@ -40,11 +40,12 @@ class Room {
 	public const TYPE_NOTE_TO_SELF = 6;
 
 	public const OBJECT_TYPE_EMAIL = 'emails';
-	public const OBJECT_TYPE_FILE = 'file';
-	public const OBJECT_TYPE_PHONE = 'phone';
-	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
-	public const OBJECT_TYPE_SAMPLE = 'sample';
 	public const OBJECT_TYPE_EVENT = 'event';
+	public const OBJECT_TYPE_FILE = 'file';
+	public const OBJECT_TYPE_NOTE_TO_SELF = 'note_to_self';
+	public const OBJECT_TYPE_PHONE = 'phone';
+	public const OBJECT_TYPE_SAMPLE = 'sample';
+	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
 
 	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;

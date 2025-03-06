@@ -190,8 +190,10 @@ class RoomService {
 			Room::OBJECT_TYPE_EVENT,
 		];
 		if ($allowInternalTypes) {
+			$objectTypes[] = BreakoutRoom::PARENT_OBJECT_TYPE;
 			$objectTypes[] = Room::OBJECT_TYPE_EMAIL;
 			$objectTypes[] = Room::OBJECT_TYPE_FILE;
+			$objectTypes[] = Room::OBJECT_TYPE_NOTE_TO_SELF;
 			$objectTypes[] = Room::OBJECT_TYPE_SAMPLE;
 			$objectTypes[] = Room::OBJECT_TYPE_VIDEO_VERIFICATION;
 		}
