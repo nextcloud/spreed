@@ -33,6 +33,7 @@ generate_ts_files() {
 }
 
 generate_ts_files "core" "openapi.json"
+generate_ts_files "apps/files" "openapi.json"
 generate_ts_files "apps/files_sharing" "openapi.json"
 generate_ts_files "apps/dav" "openapi.json"
 generate_ts_files "apps/provisioning_api" "openapi.json"
