@@ -172,8 +172,10 @@ export default {
 		t,
 		async fetchRooms() {
 			const response = this.listOpenConversations
-				? await searchListedConversations({ searchText: '' }, {})
-				: await fetchConversations({})
+				? await searchListedConversations('')
+				: await fetchConversations({
+					includeStatus: 1,
+				})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
 				.filter(conversation => !hasTalkFeature(this.currentRoom, 'federation-v1') || !conversation.remoteServer)

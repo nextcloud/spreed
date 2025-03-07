@@ -794,7 +794,7 @@ export default {
 				const { request, cancel } = CancelableRequest(searchListedConversations)
 				this.cancelSearchListedConversations = cancel
 
-				const response = await request({ searchText: this.searchText })
+				const response = await request(this.searchText)
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
 			} catch (exception) {
