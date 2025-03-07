@@ -54,15 +54,14 @@ async function getFileTemplates(): getFileTemplatesListResponse {
 }
 
 /**
- * Share a text file to a conversation
- *
- * @param {string} filePath The new file destination path
- * @param {string} [templatePath] The template source path
- * @param {string} [templateType] The template type e.g 'user'
- * @return { object } the file object
+ * Create a new file from the template
+ * @param payload Function payload
+ * @param payload.filePath Path of the new file
+ * @param payload.templatePath Source path of the template file
+ * @param payload.templateType Type of the template (e.g 'user')
  */
-async function createNewFile(filePath, templatePath, templateType): createFileFromTemplateResponse {
-	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
+async function createNewFile({ filePath, templatePath, templateType }: createFileFromTemplateParams): createFileFromTemplateResponse {
+	return axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
 		filePath,
 		templatePath,
 		templateType,

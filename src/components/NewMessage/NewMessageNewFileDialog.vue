@@ -189,13 +189,11 @@ export default {
 
 			let fileData
 			try {
-				const response = this.selectedTemplate.fileid === -1
-					? await createNewFile(filePath)
-					: await createNewFile(
-						filePath,
-						this.selectedTemplate?.filename,
-						this.selectedTemplate?.templateType,
-					)
+				const response = await createNewFile({
+					filePath,
+					templatePath: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.filename,
+					templateType: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.templateType,
+				})
 				fileData = response.data.ocs.data
 			} catch (error) {
 				console.error('Error while creating file', error)
