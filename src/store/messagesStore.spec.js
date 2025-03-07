@@ -18,7 +18,7 @@ import {
 } from '../constants.ts'
 import {
 	fetchNoteToSelfConversation,
-} from '../services/conversationsService.js'
+} from '../services/conversationsService.ts'
 import {
 	deleteMessage,
 	editMessage,

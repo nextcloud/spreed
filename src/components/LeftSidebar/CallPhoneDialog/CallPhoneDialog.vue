@@ -56,7 +56,7 @@ import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { callSIPDialOut } from '../../../services/callsService.js'
-import { createPrivateConversation } from '../../../services/conversationsService.js'
+import { createPrivateConversation } from '../../../services/conversationsService.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 
 export default {
