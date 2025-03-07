@@ -919,17 +919,10 @@ const actions = {
 		try {
 			talkHashStore.clearMaintenanceMode()
 			modifiedSince = modifiedSince || 0
-
-			let options = {}
-			if (modifiedSince !== 0) {
-				options = {
-					params: {
-						modifiedSince,
-					},
-				}
-			}
-
-			const response = await fetchConversations(options)
+			const response = await fetchConversations({
+				modifiedSince,
+				includeStatus: 1,
+			})
 			talkHashStore.updateTalkVersionHash(response)
 			federationStore.updatePendingSharesCount(response.headers['x-nextcloud-talk-federation-invites'])
 

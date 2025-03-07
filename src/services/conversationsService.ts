@@ -55,14 +55,14 @@ import type {
 
 /**
  * Fetches all conversations from the server.
+ * @param params parameters
  * @param options options
- * @param options.params parameters
  */
-async function fetchConversations(options: { params?: getAllConversationsParams }): getAllConversationsResponse {
-	options = options || {}
-	options.params = options.params || {}
-	options.params.includeStatus = 1
-	return axios.get(generateOcsUrl('apps/spreed/api/v4/room'), options as { params: getAllConversationsParams })
+async function fetchConversations(params: getAllConversationsParams, options?: object): getAllConversationsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room'), {
+		...options,
+		params,
+	})
 }
 
 /**
@@ -75,15 +75,14 @@ async function fetchConversation(token: string): getSingleConversationResponse {
 
 /**
  * Fetch listed conversations
- * @param payload function payload
- * @param payload.searchText The string that will be used in the search query.
+ * @param searchTerm The string that will be used in the search query.
  * @param options options
  */
-async function searchListedConversations({ searchText }: { searchText: string }, options: object): getListedConversationsResponse {
+async function searchListedConversations(searchTerm: string, options?: object): getListedConversationsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/listed-room'), {
 		...options,
 		params: {
-			searchTerm: searchText,
+			searchTerm,
 		} as getListedConversationsParams,
 	})
 }
@@ -159,11 +158,11 @@ async function setConversationPassword(token: string, password: setConversationP
 /**
  * Set a conversation's name
  * @param token the conversation's token
- * @param name the name to be set (max 255 characters)
+ * @param roomName the name to be set (max 255 characters)
  */
-async function setConversationName(token: string, name: setConversationNameParams['roomName']): setConversationNameResponse {
+async function setConversationName(token: string, roomName: setConversationNameParams['roomName']): setConversationNameResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }), {
-		roomName: name,
+		roomName,
 	} as setConversationNameParams)
 }
 
@@ -259,57 +258,57 @@ async function makeConversationPrivate(token: string): makeConversationPrivateRe
 /**
  * Change the SIP enabled
  * @param token The token of the conversation to be modified
- * @param newState The new SIP state to set
+ * @param state The new SIP state to set
  */
-async function setSIPEnabled(token: string, newState: setConversationSipParams['state']): setConversationSipResponse {
+async function setSIPEnabled(token: string, state: setConversationSipParams['state']): setConversationSipResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/sip', { token }), {
-		state: newState,
+		state,
 	} as setConversationSipParams)
 }
 
 /**
  * Change the recording consent per conversation
  * @param token The token of the conversation to be modified
- * @param newState The new recording consent state to set
+ * @param recordingConsent The new recording consent state to set
  */
-async function setRecordingConsent(token: string, newState: setConversationRecordingParams['recordingConsent']): setConversationRecordingResponse {
+async function setRecordingConsent(token: string, recordingConsent: setConversationRecordingParams['recordingConsent']): setConversationRecordingResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/recording-consent', { token }), {
-		recordingConsent: newState,
+		recordingConsent,
 	} as setConversationRecordingParams)
 }
 
 /**
  * Change the lobby state
  * @param token The token of the conversation to be modified
- * @param newState The new lobby state to set
- * @param timestamp The UNIX timestamp (in seconds) to set, if any
+ * @param state The new lobby state to set
+ * @param timer The UNIX timestamp (in seconds) to set, if any
  */
-async function changeLobbyState(token: string, newState: setConversationLobbyParams['state'], timestamp: setConversationLobbyParams['timer']): setConversationLobbyResponse {
+async function changeLobbyState(token: string, state: setConversationLobbyParams['state'], timer: setConversationLobbyParams['timer']): setConversationLobbyResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/lobby', { token }), {
-		state: newState,
-		timer: timestamp,
+		state,
+		timer,
 	} as setConversationLobbyParams)
 }
 
 /**
  * Change the read-only state
  * @param token The token of the conversation to be modified
- * @param readOnly The new read-only state to set
+ * @param state The new read-only state to set
  */
-async function changeReadOnlyState(token: string, readOnly: setConversationReadonlyParams['state']): setConversationReadonlyResponse {
+async function changeReadOnlyState(token: string, state: setConversationReadonlyParams['state']): setConversationReadonlyResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/read-only', { token }), {
-		state: readOnly,
+		state,
 	} as setConversationReadonlyParams)
 }
 
 /**
  * Change the listable scope
  * @param token The token of the conversation to be modified
- * @param listable The new listable scope to set
+ * @param scope The new listable scope to set
  */
-async function changeListable(token: string, listable: setConversationListableParams['scope']): setConversationListableResponse {
+async function changeListable(token: string, scope: setConversationListableParams['scope']): setConversationListableResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/listable', { token }), {
-		scope: listable,
+		scope,
 	} as setConversationListableParams)
 }
 
