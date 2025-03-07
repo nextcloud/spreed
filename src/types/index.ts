@@ -2,8 +2,8 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import type { AutocompleteResult } from './openapi/core/index.ts'
 import type { components, operations } from './openapi/openapi-full.ts'
-import { TASK_PROCESSING } from '../constants.js'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>
@@ -71,13 +71,7 @@ export type ParticipantStatus = {
 	clearAt?: number | null,
 }
 export type Participant = components['schemas']['Participant']
-export type ParticipantSearchResult = {
-	id: string,
-	label: string,
-	icon: string,
-	source: string,
-	subline: string,
-	shareWithDisplayNameUnique: string,
+export type ParticipantSearchResult = AutocompleteResult & {
 	status: ParticipantStatus | '',
 }
 
@@ -196,36 +190,11 @@ export type getMentionsParams = operations['chat-mentions']['parameters']['query
 export type getMentionsResponse = ApiResponse<operations['chat-mentions']['responses'][200]['content']['application/json']>
 
 // AI Summary
-export type TaskProcessingResponse = ApiResponseUnwrapped<{
-	task: {
-		id: number,
-		lastUpdated: number,
-		type: string,
-		status: typeof TASK_PROCESSING.STATUS[keyof typeof TASK_PROCESSING.STATUS],
-		userId: string,
-		appId: string,
-		input: Record<string, unknown>,
-		output: Record<string, unknown> | null,
-		customId: string,
-		completionExpectedAt: number,
-		progress: number,
-		scheduledAt: number,
-		startedAt: number,
-		endedAt: number
-	}
-}>
+export type {
+	TaskProcessingResponse,
+} from './openapi/core/index.ts'
 
 // Out of office response
-// From https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-out-of-office-api.html
-export type OutOfOfficeResponse = ApiResponseUnwrapped<{
-	task: {
-		id: string,
-		userId: string,
-		startDate: number,
-		endDate: number,
-		shortMessage: string,
-		message: string,
-		replacementUserId?: string|null,
-		replacementUserDisplayName?: string|null,
-	}
-}>
+export type {
+	OutOfOfficeResponse,
+} from './openapi/core/index.ts'
