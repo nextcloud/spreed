@@ -16,7 +16,7 @@ import storeConfig from './storeConfig.js'
 // eslint-disable-next-line import/order -- required for testing
 import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
-import { shareFile } from '../services/filesSharingServices.js'
+import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 
