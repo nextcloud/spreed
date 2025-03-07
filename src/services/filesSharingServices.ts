@@ -6,6 +6,13 @@ import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
+import type {
+	createFileFromTemplateParams,
+	createFileFromTemplateResponse,
+	createFileShareParams,
+	createFileShareResponse,
+	getFileTemplatesListResponse,
+} from '../types/index.ts'
 
 /**
  * Appends a file as a message to the messagelist.
@@ -16,7 +23,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {string} referenceId An optional reference id to recognize the message later
  * @param {string} metadata the metadata json encoded array
  */
-const shareFile = async function(path, token, referenceId, metadata) {
+const shareFile = async function(path, token, referenceId, metadata): createFileShareResponse {
 	try {
 		return await axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
@@ -26,7 +33,7 @@ const shareFile = async function(path, token, referenceId, metadata) {
 				shareWith: token,
 				referenceId,
 				talkMetaData: metadata,
-			})
+			} as createFileShareParams)
 	} catch (error) {
 		// FIXME: errors should be handled by called instead
 		if (error?.response?.data?.ocs?.meta?.message) {
@@ -39,24 +46,26 @@ const shareFile = async function(path, token, referenceId, metadata) {
 	}
 }
 
-const getFileTemplates = async () => {
-	return await axios.get(generateOcsUrl('apps/files/api/v1/templates'))
+/**
+ * List the available file templates to create per app
+ */
+async function getFileTemplates(): getFileTemplatesListResponse {
+	return axios.get(generateOcsUrl('apps/files/api/v1/templates'))
 }
 
 /**
- * Share a text file to a conversation
- *
- * @param {string} filePath The new file destination path
- * @param {string} [templatePath] The template source path
- * @param {string} [templateType] The template type e.g 'user'
- * @return { object } the file object
+ * Create a new file from the template
+ * @param payload Function payload
+ * @param payload.filePath Path of the new file
+ * @param payload.templatePath Source path of the template file
+ * @param payload.templateType Type of the template (e.g 'user')
  */
-const createNewFile = async function(filePath, templatePath, templateType) {
-	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
+async function createNewFile({ filePath, templatePath, templateType }: createFileFromTemplateParams): createFileFromTemplateResponse {
+	return axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
 		filePath,
 		templatePath,
 		templateType,
-	})
+	} as createFileFromTemplateParams)
 }
 
 export {

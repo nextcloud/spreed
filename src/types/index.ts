@@ -363,3 +363,16 @@ export type {
 	UnifiedSearchResultEntry,
 	UnifiedSearchResponse,
 } from './openapi/core/index.ts'
+
+// Files API
+export type {
+	getFileTemplatesListResponse,
+	createFileFromTemplateParams,
+	createFileFromTemplateResponse,
+} from './openapi/core/index.ts'
+
+// Files sharing API
+export type {
+	createFileShareParams,
+	createFileShareResponse,
+} from './openapi/core/index.ts'
