@@ -95,52 +95,25 @@ async function fetchNoteToSelfConversation(): getNoteToSelfConversationResponse 
 }
 
 /**
- * Create a new one to one conversation with the specified user.
- * @param userId The ID of the user with which the new conversation will be opened.
+ * Create a new conversation (with params available in legacy API only).
+ * @param params legacy API params
+ * @param params.roomType Type of the room
+ * @param params.roomName Name of the room
+ * @param params.password The conversation password
+ * @param params.objectType Type of the object
+ * @param params.objectId ID of the object
+ * @param params.invite User, group, … ID to invite
+ * @param params.source Source of the invite ID
  */
-async function createOneToOneConversation(userId: legacyCreateConversationParams['invite']): createConversationResponse {
+async function createLegacyConversation({ roomType, roomName, password, objectType, objectId, invite, source }: legacyCreateConversationParams): createConversationResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-		roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-		invite: userId,
-	} as legacyCreateConversationParams)
-}
-
-/**
- * Create a new group conversation.
- * @param invite The group/circle ID
- * @param source The source of the invite ID (defaults to groups)
- */
-async function createGroupConversation(invite: legacyCreateConversationParams['invite'], source: legacyCreateConversationParams['source']): createConversationResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-		roomType: CONVERSATION.TYPE.GROUP,
-		invite,
-		source: source || ATTENDEE.ACTOR_TYPE.GROUPS,
-	} as legacyCreateConversationParams)
-}
-
-/**
- * Create a new private conversation.
- * @param conversationName The name for the new conversation
- * @param [objectType] The conversation object type
- */
-async function createPrivateConversation(conversationName: legacyCreateConversationParams['roomName'], objectType: legacyCreateConversationParams['objectType']): createConversationResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-		roomType: CONVERSATION.TYPE.GROUP,
-		roomName: conversationName,
-		objectType,
-	} as legacyCreateConversationParams)
-}
-
-/**
- * Create a new private conversation.
- * @param conversationName The name for the new conversation
- * @param [password] The conversation password when creating a public conversation
- */
-async function createPublicConversation(conversationName: legacyCreateConversationParams['roomName'], password: legacyCreateConversationParams['password']): createConversationResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-		roomType: CONVERSATION.TYPE.PUBLIC,
-		roomName: conversationName,
+		roomType,
+		roomName,
 		password,
+		objectType,
+		objectId,
+		invite,
+		source,
 	} as legacyCreateConversationParams)
 }
 
@@ -366,10 +339,7 @@ export {
 	fetchConversation,
 	fetchNoteToSelfConversation,
 	searchListedConversations,
-	createOneToOneConversation,
-	createGroupConversation,
-	createPrivateConversation,
-	createPublicConversation,
+	createLegacyConversation,
 	deleteConversation,
 	addToFavorites,
 	removeFromFavorites,

@@ -31,7 +31,7 @@ import {
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
-	createOneToOneConversation,
+	createLegacyConversation,
 	addToFavorites,
 	removeFromFavorites,
 	archiveConversation,
@@ -47,8 +47,6 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
-	createPublicConversation,
-	createPrivateConversation,
 	setMentionPermissions,
 } from '../services/conversationsService.ts'
 import {
@@ -976,7 +974,10 @@ const actions = {
 	 */
 	async createOneToOneConversation(context, actorId) {
 		try {
-			const response = await createOneToOneConversation(actorId)
+			const response = await createLegacyConversation({
+				roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+				invite: actorId,
+			})
 			await context.dispatch('addConversation', response.data.ocs.data)
 			return response.data.ocs.data
 		} catch (error) {
@@ -1002,15 +1003,25 @@ const actions = {
 					if (!password) {
 						throw new Error('password_required')
 					}
-					response = await createPublicConversation(conversationName, password)
+					response = await createLegacyConversation({
+						roomType: CONVERSATION.TYPE.PUBLIC,
+						roomName: conversationName,
+						password,
+					})
 				} else {
-					response = await createPublicConversation(conversationName)
+					response = await createLegacyConversation({
+						roomType: CONVERSATION.TYPE.PUBLIC,
+						roomName: conversationName,
+					})
 					if (password) {
 						response = await setConversationPassword(response.data.ocs.data.token, password)
 					}
 				}
 			} else {
-				response = await createPrivateConversation(conversationName)
+				response = await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.GROUP,
+					roomName: conversationName,
+				})
 			}
 
 			const conversation = response.data.ocs.data
