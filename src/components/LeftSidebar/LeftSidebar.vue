@@ -370,7 +370,7 @@ import { ATTENDEE, AVATAR, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
-	createPrivateConversation,
+	createLegacyConversation,
 	fetchNoteToSelfConversation,
 	searchListedConversations,
 } from '../../services/conversationsService.ts'
@@ -848,9 +848,12 @@ export default {
 			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
-		async createConversation(name) {
+		async createConversation(roomName) {
 			try {
-				const response = await createPrivateConversation(name)
+				const response = await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.GROUP,
+					roomName,
+				})
 				const conversation = response.data.ocs.data
 				this.switchToConversation(conversation)
 			} catch (error) {
