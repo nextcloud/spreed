@@ -60,7 +60,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { createNewFile, shareFile } from '../../services/filesSharingServices.js'
+import { createNewFile, shareFile } from '../../services/filesSharingServices.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
