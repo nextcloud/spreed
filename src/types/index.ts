@@ -5,7 +5,15 @@
 import type { AxiosError } from '@nextcloud/axios'
 
 import type { AutocompleteResult } from './openapi/core/index.ts'
-import type { components, operations } from './openapi/openapi-full.ts'
+import type {
+	components as componentsAdmin,
+	operations as operationsAdmin,
+} from './openapi/openapi-administration.ts'
+import type {
+	components as componentsFed,
+	operations as operationsFed,
+} from './openapi/openapi-federation.ts'
+import type { components, operations } from './openapi/openapi.ts'
 
 // General
 type ApiResponse<T> = Promise<{ data: T }>
@@ -164,19 +172,19 @@ export type unbanActorResponse = ApiResponse<operations['ban-unban-actor']['resp
 
 // Bots
 export type Bot = components['schemas']['Bot']
-export type BotWithDetails = components['schemas']['BotWithDetails']
+export type BotWithDetails = componentsAdmin['schemas']['BotWithDetails']
 
 export type getBotsResponse = ApiResponse<operations['bot-list-bots']['responses'][200]['content']['application/json']>
-export type getBotsAdminResponse = ApiResponse<operations['bot-admin-list-bots']['responses'][200]['content']['application/json']>
+export type getBotsAdminResponse = ApiResponse<operationsAdmin['bot-admin-list-bots']['responses'][200]['content']['application/json']>
 export type enableBotResponse = ApiResponse<operations['bot-enable-bot']['responses'][201]['content']['application/json']>
 export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['responses'][200]['content']['application/json']>
 
 // Certificate
-export type certificateExpirationParams = operations['certificate-get-certificate-expiration']['parameters']['query']
-export type certificateExpirationResponse = ApiResponse<operations['certificate-get-certificate-expiration']['responses'][200]['content']['application/json']>
+export type certificateExpirationParams = operationsAdmin['certificate-get-certificate-expiration']['parameters']['query']
+export type certificateExpirationResponse = ApiResponse<operationsAdmin['certificate-get-certificate-expiration']['responses'][200]['content']['application/json']>
 
 // Federations
-export type FederationInvite = components['schemas']['FederationInvite']
+export type FederationInvite = componentsFed['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
 	user1: RichObject<'server'>,
 	roomName: RichObject,
@@ -184,9 +192,9 @@ type FederationInviteRichParameters = {
 }
 export type NotificationInvite = Notification<FederationInviteRichParameters>
 
-export type getSharesResponse = ApiResponse<operations['federation-get-shares']['responses'][200]['content']['application/json']>
-export type acceptShareResponse = ApiResponse<operations['federation-accept-share']['responses'][200]['content']['application/json']>
-export type rejectShareResponse = ApiResponse<operations['federation-reject-share']['responses'][200]['content']['application/json']>
+export type getSharesResponse = ApiResponse<operationsFed['federation-get-shares']['responses'][200]['content']['application/json']>
+export type acceptShareResponse = ApiResponse<operationsFed['federation-accept-share']['responses'][200]['content']['application/json']>
+export type rejectShareResponse = ApiResponse<operationsFed['federation-reject-share']['responses'][200]['content']['application/json']>
 
 // Reactions
 export type getReactionsResponse = ApiResponse<operations['reaction-get-reactions']['responses'][200]['content']['application/json']>
@@ -281,8 +289,8 @@ export type {
 } from './openapi/core/index.ts'
 
 // Settings
-export type setSipSettingsParams = Required<operations['settings-setsip-settings']>['requestBody']['content']['application/json']
-export type setSipSettingsResponse = ApiResponse<operations['settings-setsip-settings']['responses'][200]['content']['application/json']>
+export type setSipSettingsParams = Required<operationsAdmin['settings-setsip-settings']>['requestBody']['content']['application/json']
+export type setSipSettingsResponse = ApiResponse<operationsAdmin['settings-setsip-settings']['responses'][200]['content']['application/json']>
 export type setUserSettingsParams = Required<operations['settings-set-user-setting']>['requestBody']['content']['application/json']
 export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-setting']['responses'][200]['content']['application/json']>
 
