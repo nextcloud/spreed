@@ -50,7 +50,7 @@ import {
 	createPublicConversation,
 	createPrivateConversation,
 	setMentionPermissions,
-} from '../services/conversationsService.js'
+} from '../services/conversationsService.ts'
 import {
 	clearConversationHistory,
 	setConversationUnread,

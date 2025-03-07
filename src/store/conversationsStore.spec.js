@@ -36,7 +36,7 @@ import {
 	deleteConversation,
 	setConversationPermissions,
 	setCallPermissions,
-} from '../services/conversationsService.js'
+} from '../services/conversationsService.ts'
 import { updateLastReadMessage, setConversationUnread } from '../services/messagesService.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'

@@ -64,7 +64,7 @@ import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/Conv
 
 import { CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
+import { searchListedConversations, fetchConversations } from '../services/conversationsService.ts'
 
 export default {
 	name: 'RoomSelector',

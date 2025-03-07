@@ -373,7 +373,7 @@ import {
 	createPrivateConversation,
 	fetchNoteToSelfConversation,
 	searchListedConversations,
-} from '../../services/conversationsService.js'
+} from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'

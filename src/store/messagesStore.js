@@ -15,7 +15,7 @@ import {
 	MESSAGE,
 } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
+import { fetchNoteToSelfConversation } from '../services/conversationsService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
 	deleteMessage,
