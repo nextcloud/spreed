@@ -16,7 +16,9 @@ use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Model\Reminder;
 use OCA\Talk\Model\ReminderMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\Comments\IComment;
 use OCP\Notification\IManager;
+use Psr\Log\LoggerInterface;
 
 class ReminderService {
 	public function __construct(
@@ -25,6 +27,7 @@ class ReminderService {
 		protected ChatManager $chatManager,
 		protected ProxyCacheMessageService $pcmService,
 		protected Manager $manager,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -91,6 +94,7 @@ class ReminderService {
 		$messageIds = [];
 		foreach ($reminders as $reminder) {
 			if (!isset($rooms[$reminder->getToken()])) {
+				$this->logger->warning('Ignoring reminder for user ' . $reminder->getUserId() . ' as conversation ' . $reminder->getToken() . ' could not be found');
 				continue;
 			}
 
@@ -113,6 +117,10 @@ class ReminderService {
 		$messages = $this->chatManager->getMessagesById($messageIds);
 
 		foreach ($reminders as $reminder) {
+			if (!isset($rooms[$reminder->getToken()])) {
+				continue;
+			}
+
 			$room = $rooms[$reminder->getToken()];
 			if (!$room->isFederatedConversation()) {
 				$key = $reminder->getMessageId();
@@ -129,9 +137,17 @@ class ReminderService {
 			}
 
 			if (!isset($messageList[$key])) {
+				$this->logger->warning('Ignoring reminder for user ' . $reminder->getUserId() . ' as messages #' . $reminder->getMessageId() . ' could not be found for conversation ' . $reminder->getToken());
 				continue;
 			}
 			$message = $messageList[$key];
+
+			if ($message instanceof IComment
+				&& ($message->getObjectType() !== 'chat'
+					|| $room->getId() !== (int)$message->getObjectId())) {
+				$this->logger->warning('Ignoring reminder for user ' . $reminder->getUserId() . ' as messages #' . $reminder->getMessageId() . ' could not be found for conversation ' . $reminder->getToken());
+				continue;
+			}
 
 			$notification = $this->notificationManager->createNotification();
 			$notification->setApp(Application::APP_ID)
