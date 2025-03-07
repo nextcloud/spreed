@@ -42,14 +42,31 @@ Feature: integration/dashboard
     When user "participant2" creates 2 automatic breakout rooms for "breakout room parent" with 200 (v1)
     And user "participant2" starts breakout rooms in room "breakout room parent" with 200 (v1)
     And user "participant2" broadcasts message "@participant1 hello" to room "breakout room parent" with 201 (v1)
+    And wait for 1 second
+    Given user "participant2" creates room "lobby room" (v4)
+      | roomType | 2          |
+      | roomName | lobby room |
+    When user "participant2" sets lobby state for room "lobby room" to "non moderators" with 200 (v4)
+    And user "participant2" adds user "participant1" to room "lobby room" with 200 (v4)
+    And user "participant2" sends message "Lobby @all" to room "lobby room" with 201
+    Given user "participant2" creates room "lobby room with bypass" (v4)
+      | roomType | 2                      |
+      | roomName | lobby room with bypass |
+    When user "participant2" sets lobby state for room "lobby room with bypass" to "non moderators" with 200 (v4)
+    And user "participant2" adds user "participant1" to room "lobby room with bypass" with 200 (v4)
+    And user "participant2" sets permissions for "participant1" in room "lobby room with bypass" to "L" with 200 (v4)
+    And user "participant2" adds user "participant1" to room "lobby room with bypass" with 200 (v4)
+    And user "participant2" sends message "Lobby @all but with bypass" to room "lobby room with bypass" with 201
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
       | title                    | subtitle           | link            | iconUrl                                                               | sinceId | overlayIconUrl |
       | call room                | Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | lobby room with bypass   | You were mentioned | lobby room with bypass | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | group room               | You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname | Hello              | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v2)
       | title                    | subtitle           | link            | iconUrl                                                               | sinceId | overlayIconUrl |
       | call room                | Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | lobby room with bypass   | You were mentioned | lobby room with bypass | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | group room               | You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname | Hello              | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     And user "participant2" set the message expiration to 3 of room "one-to-one room" with 200 (v4)
@@ -65,8 +82,10 @@ Feature: integration/dashboard
       | call room                | Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | group room               | You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname |                    | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | lobby room with bypass   | You were mentioned | lobby room with bypass | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v2)
       | title                    | subtitle           | link            | iconUrl                                                               | sinceId | overlayIconUrl |
       | call room                | Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | group room               | You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname |                    | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | lobby room with bypass   | You were mentioned | lobby room with bypass | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |

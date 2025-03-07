@@ -31,6 +31,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -38,6 +39,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Dashboard\IAPIWidget;
@@ -160,12 +162,17 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				return false;
 			}
 
+			$participant = $this->participantService->getParticipant($room, $userId);
+			$attendee = $participant->getAttendee();
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				return false;
+			}
+
 			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 				return true;
 			}
-
-			$participant = $this->participantService->getParticipant($room, $userId);
-			$attendee = $participant->getAttendee();
 
 			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
 				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
@@ -204,10 +211,16 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 				continue;
 			}
-			$rooms[] = $room;
 
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				continue;
+			}
+
+			$rooms[] = $room;
 			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 				// Call in progress
 				$mentions[] = $room;
