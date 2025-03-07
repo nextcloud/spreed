@@ -36,7 +36,7 @@ import { ATTENDEE } from '../../../constants.ts'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import type {
-	CoreUnifiedSearchResultEntry,
+	UnifiedSearchResultEntry,
 	UserFilterObject,
 	SearchMessagePayload,
 	UnifiedSearchResponse,
@@ -56,7 +56,7 @@ const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
 const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
 
 const isFocused = ref(false)
-const searchResults = ref<(CoreUnifiedSearchResultEntry &
+const searchResults = ref<(UnifiedSearchResultEntry &
 {
 	to: {
 		name: string;
@@ -205,8 +205,8 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 		})
 
 		const data = response?.data?.ocs?.data
-		if (data?.entries.length > 0) {
-			let entries = data?.entries
+		if (data && data.entries.length > 0) {
+			let entries = data.entries as UnifiedSearchResultEntry[]
 
 			isSearchExhausted.value = entries.length < searchLimit.value
 			searchCursor.value = data.cursor
@@ -219,7 +219,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 				}
 			}
 
-			searchResults.value = searchResults.value.concat(entries.map((entry : CoreUnifiedSearchResultEntry) => {
+			searchResults.value = searchResults.value.concat(entries.map((entry: UnifiedSearchResultEntry) => {
 				return {
 					...entry,
 					to: {

@@ -12,6 +12,7 @@ import type {
 	setSipSettingsResponse,
 	setUserSettingsParams,
 	setUserSettingsResponse,
+	UserPreferencesParams,
 	UserPreferencesResponse,
 } from '../types/index.ts'
 
@@ -100,7 +101,7 @@ const setConversationsListStyle = async function(value: string) {
 const setUserConfig = async function(appId: string, configKey: string, configValue: string): UserPreferencesResponse {
 	return axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/{appId}/{configKey}', { appId, configKey }), {
 		configValue,
-	})
+	} as UserPreferencesParams)
 }
 
 export {
