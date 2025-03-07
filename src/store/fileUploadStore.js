@@ -18,7 +18,7 @@ import { EventBus } from '../services/EventBus.ts'
 import {
 	getFileTemplates,
 	shareFile,
-} from '../services/filesSharingServices.js'
+} from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
