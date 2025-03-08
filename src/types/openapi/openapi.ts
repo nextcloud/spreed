@@ -5974,7 +5974,8 @@ export interface operations {
                      */
                     roomType: number;
                     /**
-                     * @description User, group, … ID to invite **Deprecated** Use the `$participants` array instead
+                     * @deprecated
+                     * @description User, group, … ID to invite Deprecated: Use the `$participants` array instead
                      * @default
                      */
                     invite?: string;
@@ -5984,7 +5985,8 @@ export interface operations {
                      */
                     roomName?: string;
                     /**
-                     * @description Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead
+                     * @deprecated
+                     * @description Source of the invite ID ('circles' to create a room with a circle, etc.) Deprecated: Use the `$participants` array instead
                      * @default
                      */
                     source?: string;

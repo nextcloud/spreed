@@ -523,9 +523,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
-	 * @param string $invite User, group, … ID to invite **Deprecated** Use the `$participants` array instead
+	 * @param string $invite User, group, … ID to invite @deprecated Use the `$participants` array instead
 	 * @param string $roomName Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
-	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead
+	 * @param 'groups'|'circles'|'' $source Source of the invite ID ('circles' to create a room with a circle, etc.) @deprecated Use the `$participants` array instead
 	 * @param string $objectType Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
 	 * @param string $objectId ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
 	 * @param string $password The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})
