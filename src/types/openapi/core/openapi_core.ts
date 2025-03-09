@@ -1119,7 +1119,7 @@ export type components = {
         Reference: {
             richObjectType: string;
             richObject: {
-                [key: string]: Record<string, never> | null;
+                [key: string]: Record<string, never>;
             };
             openGraphObject: components["schemas"]["OpenGraphObject"];
             accessible: boolean;
@@ -1135,7 +1135,7 @@ export type components = {
         Resource: {
             richObjectType: string;
             richObject: {
-                [key: string]: Record<string, never> | null;
+                [key: string]: Record<string, never>;
             };
             openGraphObject: components["schemas"]["OpenGraphObject"];
             accessible: boolean;

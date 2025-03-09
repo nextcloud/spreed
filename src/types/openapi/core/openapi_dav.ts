@@ -380,8 +380,6 @@ export interface operations {
                     message: string;
                     /** @description User id of the replacement user */
                     replacementUserId?: string | null;
-                    /** @description Display name of the replacement user */
-                    replacementUserDisplayName?: string | null;
                 };
             };
         };
@@ -400,7 +398,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description When the first day is not before the last day */
+            /** @description When validation fails, e.g. data range error or the first day is not before the last day */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -411,7 +409,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "firstDay";
+                                error: "firstDay" | "statusLength";
                             };
                         };
                     };
