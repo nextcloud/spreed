@@ -20,7 +20,7 @@ import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.js'
-import { fetchConversation } from '../services/conversationsService.js'
+import { fetchConversation } from '../services/conversationsService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
 	promoteToModerator,

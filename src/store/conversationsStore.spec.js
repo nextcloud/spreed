@@ -26,7 +26,7 @@ import {
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
-	createOneToOneConversation,
+	createLegacyConversation,
 	setConversationName,
 	setConversationDescription,
 	setNotificationLevel,
@@ -36,7 +36,7 @@ import {
 	deleteConversation,
 	setConversationPermissions,
 	setCallPermissions,
-} from '../services/conversationsService.js'
+} from '../services/conversationsService.ts'
 import { updateLastReadMessage, setConversationUnread } from '../services/messagesService.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -49,7 +49,7 @@ jest.mock('../services/conversationsService', () => ({
 	changeLobbyState: jest.fn(),
 	changeReadOnlyState: jest.fn(),
 	changeListable: jest.fn(),
-	createOneToOneConversation: jest.fn(),
+	createLegacyConversation: jest.fn(),
 	setConversationName: jest.fn(),
 	setConversationDescription: jest.fn(),
 	setNotificationLevel: jest.fn(),
@@ -284,7 +284,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', {})
 
-			expect(fetchConversations).toHaveBeenCalledWith({})
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1 })
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
@@ -333,7 +333,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', { })
 
-			expect(fetchConversations).toHaveBeenCalledWith({ })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1 })
 			// conversationsList is actual to the response
 			expect(store.getters.conversationsList).toEqual([newConversation, oldConversation])
 			// Only old conversation with new activity should be actually replaced with new objects
@@ -529,7 +529,7 @@ describe('conversationsStore', () => {
 			expect(store.state.conversationsStore.conversations[oldConversations[1].token]).toStrictEqual(newConversations[1])
 		})
 
-		test('fetches all conversations and remove deleted conversations if without modiviedSince', async () => {
+		test('fetches all conversations and remove deleted conversations if without modifiedSince', async () => {
 			const testConversations = [
 				{
 					token: 'one_token',
@@ -553,7 +553,7 @@ describe('conversationsStore', () => {
 			store.dispatch('fetchConversations', { })
 			await flushPromises()
 
-			expect(fetchConversations).toHaveBeenCalledWith({})
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1 })
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
@@ -594,7 +594,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', { modifiedSince })
 
-			expect(fetchConversations).toHaveBeenCalledWith({ params: { modifiedSince } })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince, includeStatus: 1 })
 			// conversations are actual to the response
 			expect(store.state.conversationsStore.conversations).toEqual({
 				[newConversation1.token]: newConversation1,
@@ -1203,11 +1203,14 @@ describe('conversationsStore', () => {
 			}
 
 			const response = generateOCSResponse({ payload: newConversation })
-			createOneToOneConversation.mockResolvedValueOnce(response)
+			createLegacyConversation.mockResolvedValueOnce(response)
 
 			await store.dispatch('createOneToOneConversation', 'target-actor-id')
 
-			expect(createOneToOneConversation).toHaveBeenCalledWith('target-actor-id')
+			expect(createLegacyConversation).toHaveBeenCalledWith({
+				roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+				invite: 'target-actor-id',
+			})
 
 			const addedConversation = store.getters.conversation('new-token')
 			expect(addedConversation).toStrictEqual(newConversation)

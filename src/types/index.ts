@@ -108,6 +108,52 @@ export type SignalingSettings = components['schemas']['SignalingSettings']
 // Conversations
 export type Conversation = components['schemas']['Room']
 
+export type getAllConversationsParams = operations['room-get-rooms']['parameters']['query']
+export type getAllConversationsResponse = ApiResponse<operations['room-get-rooms']['responses'][200]['content']['application/json']>
+export type getSingleConversationResponse = ApiResponse<operations['room-get-single-room']['responses'][200]['content']['application/json']>
+export type getNoteToSelfConversationResponse = ApiResponse<operations['room-get-note-to-self-conversation']['responses'][200]['content']['application/json']>
+export type getListedConversationsParams = operations['room-get-listed-rooms']['parameters']['query']
+export type getListedConversationsResponse = ApiResponse<operations['room-get-listed-rooms']['responses'][200]['content']['application/json']>
+
+export type createConversationParams = Required<operations['room-create-room']>['requestBody']['content']['application/json']
+export type createConversationResponse = ApiResponse<operations['room-create-room']['responses'][200]['content']['application/json']>
+export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType'|'roomName'|'password'|'objectType'|'objectId'|'invite'|'source'>
+export type deleteConversationResponse = ApiResponse<operations['room-delete-room']['responses'][200]['content']['application/json']>
+
+export type setConversationNameParams = Required<operations['room-rename-room']>['requestBody']['content']['application/json']
+export type setConversationNameResponse = ApiResponse<operations['room-rename-room']['responses'][200]['content']['application/json']>
+export type setConversationPasswordParams = Required<operations['room-set-password']>['requestBody']['content']['application/json']
+export type setConversationPasswordResponse = ApiResponse<operations['room-set-password']['responses'][200]['content']['application/json']>
+export type setConversationDescriptionParams = Required<operations['room-set-description']>['requestBody']['content']['application/json']
+export type setConversationDescriptionResponse = ApiResponse<operations['room-set-description']['responses'][200]['content']['application/json']>
+export type addConversationToFavoritesResponse = ApiResponse<operations['room-add-to-favorites']['responses'][200]['content']['application/json']>
+export type removeConversationFromFavoritesResponse = ApiResponse<operations['room-remove-from-favorites']['responses'][200]['content']['application/json']>
+export type archiveConversationResponse = ApiResponse<operations['room-archive-conversation']['responses'][200]['content']['application/json']>
+export type unarchiveConversationResponse = ApiResponse<operations['room-unarchive-conversation']['responses'][200]['content']['application/json']>
+export type setConversationNotifyLevelParams = Required<operations['room-set-notification-level']>['requestBody']['content']['application/json']
+export type setConversationNotifyLevelResponse = ApiResponse<operations['room-set-notification-level']['responses'][200]['content']['application/json']>
+export type setConversationNotifyCallsParams = Required<operations['room-set-notification-calls']>['requestBody']['content']['application/json']
+export type setConversationNotifyCallsResponse = ApiResponse<operations['room-set-notification-calls']['responses'][200]['content']['application/json']>
+export type makeConversationPublicParams = Required<operations['room-make-public']>['requestBody']['content']['application/json']
+export type makeConversationPublicResponse = ApiResponse<operations['room-make-public']['responses'][200]['content']['application/json']>
+export type makeConversationPrivateResponse = ApiResponse<operations['room-make-private']['responses'][200]['content']['application/json']>
+export type setConversationSipParams = Required<operations['room-setsip-enabled']>['requestBody']['content']['application/json']
+export type setConversationSipResponse = ApiResponse<operations['room-setsip-enabled']['responses'][200]['content']['application/json']>
+export type setConversationLobbyParams = Required<operations['room-set-lobby']>['requestBody']['content']['application/json']
+export type setConversationLobbyResponse = ApiResponse<operations['room-set-lobby']['responses'][200]['content']['application/json']>
+export type setConversationRecordingParams = Required<operations['room-set-recording-consent']>['requestBody']['content']['application/json']
+export type setConversationRecordingResponse = ApiResponse<operations['room-set-recording-consent']['responses'][200]['content']['application/json']>
+export type setConversationReadonlyParams = Required<operations['room-set-read-only']>['requestBody']['content']['application/json']
+export type setConversationReadonlyResponse = ApiResponse<operations['room-set-read-only']['responses'][200]['content']['application/json']>
+export type setConversationListableParams = Required<operations['room-set-listable']>['requestBody']['content']['application/json']
+export type setConversationListableResponse = ApiResponse<operations['room-set-listable']['responses'][200]['content']['application/json']>
+export type setConversationMentionsPermissionsParams = Required<operations['room-set-mention-permissions']>['requestBody']['content']['application/json']
+export type setConversationMentionsPermissionsResponse = ApiResponse<operations['room-set-mention-permissions']['responses'][200]['content']['application/json']>
+export type setConversationPermissionsParams = Required<operations['room-set-permissions']>['requestBody']['content']['application/json']
+export type setConversationPermissionsResponse = ApiResponse<operations['room-set-permissions']['responses'][200]['content']['application/json']>
+export type setConversationMessageExpirationParams = Required<operations['room-set-message-expiration']>['requestBody']['content']['application/json']
+export type setConversationMessageExpirationResponse = ApiResponse<operations['room-set-message-expiration']['responses'][200]['content']['application/json']>
+
 export type JoinRoomFullResponse = {
 	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>,
 	data: operations['room-join-room']['responses']['200']['content']['application/json']

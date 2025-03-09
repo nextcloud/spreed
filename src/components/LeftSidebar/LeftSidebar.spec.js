@@ -15,7 +15,7 @@ import { loadState } from '@nextcloud/initial-state'
 import LeftSidebar from './LeftSidebar.vue'
 
 import router from '../../__mocks__/router.js'
-import { searchListedConversations } from '../../services/conversationsService.js'
+import { searchListedConversations } from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'

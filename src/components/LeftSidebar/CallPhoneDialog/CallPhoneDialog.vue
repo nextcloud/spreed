@@ -56,7 +56,7 @@ import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { callSIPDialOut } from '../../../services/callsService.js'
-import { createPrivateConversation } from '../../../services/conversationsService.js'
+import { createLegacyConversation } from '../../../services/conversationsService.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 
 export default {
@@ -120,7 +120,11 @@ export default {
 			let conversation
 			try {
 				this.loading = true
-				const response = await createPrivateConversation(this.participantPhoneItem.phoneNumber, CONVERSATION.OBJECT_TYPE.PHONE)
+				const response = await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.GROUP,
+					roomName: this.participantPhoneItem.phoneNumber,
+					objectType: CONVERSATION.OBJECT_TYPE.PHONE,
+				})
 				conversation = response.data.ocs.data
 				await this.$store.dispatch('addConversation', conversation)
 
