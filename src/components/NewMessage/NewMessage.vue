@@ -204,7 +204,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { shareFile } from '../../services/filesSharingServices.js'
+import { shareFile } from '../../services/filesSharingServices.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -763,13 +763,24 @@ export default {
 		},
 
 		handleFileShare(nodes) {
-			nodes.forEach(({ path }) => {
+			nodes.forEach(async ({ path }) => {
 				console.debug(`path ${path} selected for sharing`)
 				if (!path.startsWith('/')) {
 					throw new Error(t('files', 'Invalid path selected'))
 				}
 				this.focusInput()
-				return shareFile(path, this.token)
+				try {
+					await shareFile({ path, shareWith: this.token })
+				} catch (error) {
+					console.error('Error while sharing file: ', error)
+					if (error?.response?.status === 403) {
+						showError(t('spreed', 'You are not allowed to share files'))
+					} else if (error?.response?.data?.ocs?.meta?.message) {
+						showError(error.response.data.ocs.meta.message)
+					} else {
+						showError(t('spreed', 'Error while sharing file'))
+					}
+				}
 			})
 		},
 

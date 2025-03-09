@@ -60,7 +60,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { createNewFile, shareFile } from '../../services/filesSharingServices.js'
+import { createNewFile, shareFile } from '../../services/filesSharingServices.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
@@ -189,13 +189,11 @@ export default {
 
 			let fileData
 			try {
-				const response = this.selectedTemplate.fileid === -1
-					? await createNewFile(filePath)
-					: await createNewFile(
-						filePath,
-						this.selectedTemplate?.filename,
-						this.selectedTemplate?.templateType,
-					)
+				const response = await createNewFile({
+					filePath,
+					templatePath: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.filename,
+					templateType: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.templateType,
+				})
 				fileData = response.data.ocs.data
 			} catch (error) {
 				console.error('Error while creating file', error)
@@ -209,7 +207,20 @@ export default {
 				return
 			}
 
-			await shareFile(filePath, this.token, '', '')
+			try {
+				await shareFile({ path: filePath, shareWith: this.token })
+			} catch (error) {
+				console.error('Error while sharing file: ', error)
+				if (error?.response?.status === 403) {
+					showError(t('spreed', 'You are not allowed to share files'))
+				} else if (error?.response?.data?.ocs?.meta?.message) {
+					showError(error.response.data.ocs.meta.message)
+					this.newFileError = error.response.data.ocs.meta.message
+				} else {
+					showError(t('spreed', 'Error while sharing file'))
+				}
+			}
+
 			this.loading = false
 
 			this.openViewer(filePath, [fileData], fileData)
