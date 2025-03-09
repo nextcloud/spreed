@@ -1152,6 +1152,7 @@ OC.L10N.register(
     "Copy message" : "メッセージをコピー",
     "Copy message link" : "メッセージリンクのコピー",
     "Go to file" : "ファイルへ移動",
+    "Download file" : "ファイルをダウンロード",
     "Forward message" : "メッセージを転送する",
     "Translate" : "翻訳",
     "Set custom reminder" : "カスタムリマインダーを設定する",
