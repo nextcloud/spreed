@@ -32,6 +32,7 @@ import {
 	changeReadOnlyState,
 	changeListable,
 	createLegacyConversation,
+	createConversation,
 	addToFavorites,
 	removeFromFavorites,
 	archiveConversation,
@@ -68,6 +69,7 @@ import { convertToUnix } from '../utils/formattedTime.ts'
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
+const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -974,10 +976,15 @@ const actions = {
 	 */
 	async createOneToOneConversation(context, actorId) {
 		try {
-			const response = await createLegacyConversation({
-				roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-				invite: actorId,
-			})
+			const response = supportConversationCreationAll
+				? await createConversation({
+					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+					participants: { users: [actorId] },
+				})
+				: await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+					invite: actorId,
+				})
 			await context.dispatch('addConversation', response.data.ocs.data)
 			return response.data.ocs.data
 		} catch (error) {
