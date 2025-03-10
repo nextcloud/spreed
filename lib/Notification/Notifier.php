@@ -64,6 +64,7 @@ use OCP\RichObjectStrings\Definitions;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 class Notifier implements INotifier {
 
@@ -95,6 +96,7 @@ class Notifier implements INotifier {
 		protected BotServerMapper $botServerMapper,
 		protected FederationManager $federationManager,
 		protected ICloudIdManager $cloudIdManager,
+		protected LoggerInterface $logger,
 	) {
 		$this->commentManager = $commentManager;
 	}
@@ -508,7 +510,13 @@ class Notifier implements INotifier {
 
 			try {
 				$comment = $this->commentManager->get($messageParameters['commentId']);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
+				throw new AlreadyProcessedException();
+			}
+
+			if ($comment->getObjectType() !== 'chat'
+				|| $room->getId() !== (int)$comment->getObjectId()) {
+				$this->logger->warning('Ignoring ' . $notification->getSubject() . ' notification for user ' . $notification->getUser() . ' as messages #' . $comment->getId() . ' could not be found for conversation ' . $room->getToken());
 				throw new AlreadyProcessedException();
 			}
 

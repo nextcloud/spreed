@@ -56,6 +56,7 @@ use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class NotifierTest extends TestCase {
@@ -99,6 +100,7 @@ class NotifierTest extends TestCase {
 	protected $botServerMapper;
 	/** @var FederationManager|MockObject */
 	protected $federationManager;
+	protected LoggerInterface|MockObject $logger;
 	protected ICloudIdManager|MockObject $cloudIdManager;
 
 	public function setUp(): void {
@@ -125,6 +127,7 @@ class NotifierTest extends TestCase {
 		$this->botServerMapper = $this->createMock(BotServerMapper::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
@@ -148,6 +151,7 @@ class NotifierTest extends TestCase {
 			$this->botServerMapper,
 			$this->federationManager,
 			$this->cloudIdManager,
+			$this->logger,
 		);
 	}
 
@@ -970,6 +974,12 @@ class NotifierTest extends TestCase {
 		$comment->expects($this->any())
 			->method('getActorId')
 			->willReturn('random-hash');
+		$comment->expects($this->any())
+			->method('getObjectType')
+			->willReturn('chat');
+		$comment->expects($this->any())
+			->method('getObjectId')
+			->willReturn('1234');
 		$this->commentsManager->expects($this->once())
 			->method('get')
 			->with('23')
