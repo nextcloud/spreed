@@ -303,8 +303,8 @@ export default {
 				}
 
 				const conversation = await this.$store.dispatch('createGroupConversation', {
-					conversationName: this.conversationName,
-					isPublic: this.isPublic,
+					roomName: this.conversationName,
+					roomType: this.isPublic ? CONVERSATION.TYPE.PUBLIC : CONVERSATION.TYPE.GROUP,
 					password: this.password,
 					description: this.newConversation.description,
 					listable: this.listable,

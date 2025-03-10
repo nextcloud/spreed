@@ -998,8 +998,8 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} payload action payload;
-	 * @param {string} payload.conversationName displayed name for a new conversation
-	 * @param {number} payload.isPublic whether a conversation is public or private
+	 * @param {string} payload.roomName displayed name for a new conversation
+	 * @param {number} payload.roomType whether a conversation is public or private
 	 * @param {string} payload.password password for a public conversation
 	 * @param {string} payload.description description for a new conversation
 	 * @param {number} payload.listable whether a conversation is opened to registered users
@@ -1008,39 +1008,27 @@ const actions = {
 	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
-		conversationName,
-		isPublic,
+		roomName,
+		roomType,
 		password,
 		description,
 		listable,
 		participants,
 		avatar,
 	}) {
+		if (roomType === CONVERSATION.TYPE.PUBLIC && forcePasswordProtection && !password) {
+			throw new Error('password_required')
+		}
+
 		try {
 			let response
-			if (isPublic) {
-				if (supportConversationCreationPassword && forcePasswordProtection) {
-					if (!password) {
-						throw new Error('password_required')
-					}
-					response = await createLegacyConversation({
-						roomType: CONVERSATION.TYPE.PUBLIC,
-						roomName: conversationName,
-						password,
-					})
-				} else {
-					response = await createLegacyConversation({
-						roomType: CONVERSATION.TYPE.PUBLIC,
-						roomName: conversationName,
-					})
-					if (password) {
-						response = await setConversationPassword(response.data.ocs.data.token, password)
-					}
-				}
+			if (supportConversationCreationAll) {
+				// TODO
 			} else {
 				response = await createLegacyConversation({
-					roomType: CONVERSATION.TYPE.GROUP,
-					roomName: conversationName,
+					roomType,
+					roomName,
+					password: supportConversationCreationPassword ? password : undefined,
 				})
 			}
 
@@ -1059,6 +1047,10 @@ const actions = {
 
 			if (description) {
 				promises.push(context.dispatch('setConversationDescription', { token, description }))
+			}
+
+			if (password && !supportConversationCreationPassword) {
+				promises.push(setConversationPassword(token, password))
 			}
 
 			if (listable !== CONVERSATION.LISTABLE.NONE) {
