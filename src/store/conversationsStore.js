@@ -1023,7 +1023,30 @@ const actions = {
 		try {
 			let response
 			if (supportConversationCreationAll) {
-				// TODO
+				const participantsMap = participants.reduce((map, participant) => {
+					// FIXME type Record<'users'|'federated_users'|'groups'|'emails'|'phones'|'teams', string[]>
+					const source = participant.source === 'circles' ? 'teams' : participant.source
+					if (!['users', 'federated_users', 'groups', 'emails', 'phones', 'teams'].includes(source)) {
+						return map
+					}
+
+					if (!map[source]) {
+						map[source] = []
+					}
+					map[source].push(participant.id)
+					return map
+				}, {})
+
+				response = await createConversation({
+					roomType,
+					roomName,
+					password,
+					description,
+					listable,
+					emoji: avatar.emoji,
+					avatarColor: avatar.color,
+					participants: participantsMap,
+				})
 			} else {
 				response = await createLegacyConversation({
 					roomType,
@@ -1037,28 +1060,31 @@ const actions = {
 
 			const promises = []
 
+			// FIXME Both advanced and legacy API do not support picture avatar upload on creation
 			if (avatar.file) {
 				promises.push(context.dispatch('setConversationAvatarAction', { token, file: avatar.file }))
 			}
 
-			if (avatar.emoji) {
-				promises.push(context.dispatch('setConversationEmojiAvatarAction', { token, emoji: avatar.emoji, color: avatar.color }))
-			}
+			if (!supportConversationCreationAll) {
+				if (avatar.emoji) {
+					promises.push(context.dispatch('setConversationEmojiAvatarAction', { token, emoji: avatar.emoji, color: avatar.color }))
+				}
 
-			if (description) {
-				promises.push(context.dispatch('setConversationDescription', { token, description }))
-			}
+				if (description) {
+					promises.push(context.dispatch('setConversationDescription', { token, description }))
+				}
 
-			if (password && !supportConversationCreationPassword) {
-				promises.push(setConversationPassword(token, password))
-			}
+				if (password && !supportConversationCreationPassword) {
+					promises.push(setConversationPassword(token, password))
+				}
 
-			if (listable !== CONVERSATION.LISTABLE.NONE) {
-				promises.push(context.dispatch('setListable', { token, listable }))
-			}
+				if (listable !== CONVERSATION.LISTABLE.NONE) {
+					promises.push(context.dispatch('setListable', { token, listable }))
+				}
 
-			for (const participant of participants) {
-				promises.push(addParticipant(token, participant.id, participant.source))
+				for (const participant of participants) {
+					promises.push(addParticipant(token, participant.id, participant.source))
+				}
 			}
 
 			await Promise.all(promises)
