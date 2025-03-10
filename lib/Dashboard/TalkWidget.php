@@ -13,6 +13,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -20,6 +21,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Dashboard\IAPIWidget;
@@ -145,6 +147,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
 
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				return false;
+			}
+
 			if (!$attendee->isArchived() && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 				return true;
 			}
@@ -189,6 +196,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				continue;
+			}
 
 			if (!$attendee->isArchived()) {
 				$rooms[] = $room;
