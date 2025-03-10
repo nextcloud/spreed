@@ -11963,8 +11963,9 @@
                                     },
                                     "invite": {
                                         "type": "string",
+                                        "deprecated": true,
                                         "default": "",
-                                        "description": "User, group, … ID to invite **Deprecated** Use the `$participants` array instead"
+                                        "description": "User, group, … ID to invite Deprecated: Use the `$participants` array instead"
                                     },
                                     "roomName": {
                                         "type": "string",
@@ -11973,8 +11974,9 @@
                                     },
                                     "source": {
                                         "type": "string",
+                                        "deprecated": true,
                                         "default": "",
-                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead"
+                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.) Deprecated: Use the `$participants` array instead"
                                     },
                                     "objectType": {
                                         "type": "string",
