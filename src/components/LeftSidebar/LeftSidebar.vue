@@ -370,10 +370,10 @@ import { ATTENDEE, AVATAR, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
-	createPrivateConversation,
+	createLegacyConversation,
 	fetchNoteToSelfConversation,
 	searchListedConversations,
-} from '../../services/conversationsService.js'
+} from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
@@ -794,7 +794,7 @@ export default {
 				const { request, cancel } = CancelableRequest(searchListedConversations)
 				this.cancelSearchListedConversations = cancel
 
-				const response = await request({ searchText: this.searchText })
+				const response = await request(this.searchText)
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
 			} catch (exception) {
@@ -848,9 +848,12 @@ export default {
 			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
-		async createConversation(name) {
+		async createConversation(roomName) {
 			try {
-				const response = await createPrivateConversation(name)
+				const response = await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.GROUP,
+					roomName,
+				})
 				const conversation = response.data.ocs.data
 				this.switchToConversation(conversation)
 			} catch (error) {
