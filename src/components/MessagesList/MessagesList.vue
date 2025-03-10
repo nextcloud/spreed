@@ -65,7 +65,6 @@ import Message from 'vue-material-design-icons/Message.vue'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -81,7 +80,7 @@ import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
-import { ONE_DAY_IN_MS, convertToUnix } from '../../utils/formattedTime.ts'
+import { convertToUnix, formatRelativeTime } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 
@@ -409,7 +408,7 @@ export default {
 					}
 
 					if (!this.dateSeparatorLabels[dateTimestamp]) {
-						this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
+						this.$set(this.dateSeparatorLabels, dateTimestamp, formatRelativeTime(dateTimestamp * 1000, { weekPrefix: 'numeric', weekSuffix: 'LL', omitSameYear: true }))
 					}
 
 					if (!groupsByDate[dateTimestamp]) {
@@ -558,45 +557,6 @@ export default {
 
 			// Only group messages within a short period of time (5 minutes), so unrelated messages are not grouped together
 			return Math.abs(date1 - date2) < 300000
-		},
-
-		getRelativePrefix(diffDays) {
-			switch (diffDays) {
-			case 0:
-				return t('spreed', 'Today')
-			case 1:
-				return t('spreed', 'Yesterday')
-			case 7:
-				return t('spreed', 'A week ago')
-			default:
-				return n('spreed', '%n day ago', '%n days ago', diffDays)
-			}
-		},
-
-		/**
-		 * Generate the date header between the messages
-		 *
-		 * @param {number} dateTimestamp The day and year timestamp (in UNIX format)
-		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
-		 */
-		generateDateSeparator(dateTimestamp) {
-			const startOfDay = new Date(dateTimestamp * 1000).setHours(0, 0, 0, 0)
-			const diffDays = Math.floor((Date.now() - startOfDay) / ONE_DAY_IN_MS)
-			// Relative date is only shown up to a week ago (inclusive)
-			if (diffDays <= 7) {
-				// TRANSLATORS: <Today>, <March 18th, 2024>
-				return t('spreed', '{relativeDate}, {absoluteDate}', {
-					relativeDate: this.getRelativePrefix(diffDays),
-					// 'LL' formats a localized date including day of month, month
-					// name and year
-					absoluteDate: moment(startOfDay).format('LL'),
-				}, undefined, {
-					escape: false, // French "Today" has a ' in it
-				})
-			} else {
-				return moment(startOfDay).format('LL')
-			}
-
 		},
 
 		/**
@@ -1267,7 +1227,7 @@ export default {
 				this.refreshReadMarkerPosition()
 				// Regenerate relative date separators
 				Object.keys(this.dateSeparatorLabels).forEach(dateTimestamp => {
-					this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
+					this.$set(this.dateSeparatorLabels, dateTimestamp, formatRelativeTime(dateTimestamp * 1000, { weekPrefix: 'numeric', weekSuffix: 'LL', omitSameYear: true }))
 				})
 			}, 2)
 		},
@@ -1388,6 +1348,10 @@ export default {
 		color: var(--color-text-maxcontrast);
 		background-color: var(--color-background-dark);
 		border-radius: var(--border-radius-element, var(--border-radius-pill));
+
+		&::first-letter {
+			text-transform: capitalize;
+		}
 	}
 
 	&:last-child {
