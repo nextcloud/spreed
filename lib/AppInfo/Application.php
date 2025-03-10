@@ -13,6 +13,8 @@ use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleEditedEvent;
 use OCA\Circles\Events\EditingCircleEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
+use OCA\DAV\Events\CalendarObjectCreatedEvent;
+use OCA\DAV\Events\CalendarObjectUpdatedEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
@@ -83,6 +85,7 @@ use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\BotListener;
+use OCA\Talk\Listener\CalDavEventListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleEditedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
@@ -192,7 +195,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, ActivityListener::class);
-
+		
 		// Bot listeners
 		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);
 		$context->registerEventListener(BotEnabledEvent::class, BotListener::class);
@@ -226,6 +229,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class);
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class, 9999);
 		$context->registerEventListener(MessageParseEvent::class, UserMention::class, -100);
+
+		// Calendar listeners
+		$context->registerEventListener(CalendarObjectCreatedEvent::class, CalDavEventListener::class);
+		$context->registerEventListener(CalendarObjectUpdatedEvent::class, CalDavEventListener::class);
 
 		// Files integration listeners
 		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, FilesListener::class);
