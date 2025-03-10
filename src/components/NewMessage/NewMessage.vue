@@ -769,7 +769,7 @@ export default {
 					throw new Error(t('files', 'Invalid path selected'))
 				}
 				this.focusInput()
-				return shareFile(path, this.token)
+				this.$store.dispatch('shareFile', { token: this.token, path })
 			})
 		},
 

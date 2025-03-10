@@ -207,7 +207,8 @@ export default {
 				return
 			}
 
-			await shareFile(filePath, this.token, '', '')
+			await this.$store.dispatch('shareFile', { token: this.token, path: filePath })
+
 			this.loading = false
 
 			this.openViewer(filePath, [fileData], fileData)
