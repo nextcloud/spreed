@@ -202,5 +202,5 @@ After successfully starting the container, please go to the administrative setti
 
 * `turn: only`
 * TURN server URL: `signaling.domain.invalid:3478` (no protocol)
-* TURN server secret: `3333` (The generated `TURN` secret)
+* TURN server secret: `1111` (The generated `TURN` secret)
 * `UDP and TCP`
