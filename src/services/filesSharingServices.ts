@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
+
+import { SHARE } from '../constants.ts'
 import type {
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
@@ -15,35 +15,21 @@ import type {
 } from '../types/index.ts'
 
 /**
- * Appends a file as a message to the messagelist.
- *
- * @param {string} path The file path from the user's root directory
- * @param {string} token The conversation's token
- * e.g. `/myfile.txt`
- * @param {string} referenceId An optional reference id to recognize the message later
- * @param {string} metadata the metadata json encoded array
+ * Appends a file as a message to the messages list
+ * @param payload The function payload
+ * @param payload.path The file path from the user's root directory
+ * @param payload.shareWith The conversation's token
+ * @param payload.referenceId A reference id to recognize the message later
+ * @param payload.talkMetaData The metadata JSON-encoded object
  */
-const shareFile = async function(path, token, referenceId, metadata): createFileShareResponse {
-	try {
-		return await axios.post(
-			generateOcsUrl('apps/files_sharing/api/v1/shares'),
-			{
-				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
-				path,
-				shareWith: token,
-				referenceId,
-				talkMetaData: metadata,
-			} as createFileShareParams)
-	} catch (error) {
-		// FIXME: errors should be handled by called instead
-		if (error?.response?.data?.ocs?.meta?.message) {
-			console.error('Error while sharing file: ' + error.response.data.ocs.meta.message)
-			showError(error.response.data.ocs.meta.message)
-		} else {
-			console.error('Error while sharing file: Unknown error')
-			showError(t('spreed', 'Error while sharing file'))
-		}
-	}
+async function shareFile({ path, shareWith, referenceId, talkMetaData }: createFileShareParams): createFileShareResponse {
+	return axios.post(generateOcsUrl('apps/files_sharing/api/v1/shares'), {
+		shareType: SHARE.TYPE.ROOM,
+		path,
+		shareWith,
+		referenceId,
+		talkMetaData,
+	} as createFileShareParams)
 }
 
 /**

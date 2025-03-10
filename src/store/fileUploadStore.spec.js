@@ -167,7 +167,12 @@ describe('fileUploadStore', () => {
 			expect(uploadMock).toHaveBeenCalledWith(uniqueFileName, file)
 
 			expect(shareFile).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledWith(uniqueFileName, 'XXTOKENXX', referenceId, '{"caption":"text-caption","silent":true}')
+			expect(shareFile).toHaveBeenCalledWith({
+				path: uniqueFileName,
+				shareWith: 'XXTOKENXX',
+				referenceId,
+				talkMetaData: '{"caption":"text-caption","silent":true}',
+			})
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(store.getters.currentUploadId).not.toBeDefined()
@@ -214,8 +219,18 @@ describe('fileUploadStore', () => {
 			const referenceIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.referenceId)
 
 			expect(shareFile).toHaveBeenCalledTimes(2)
-			expect(shareFile).toHaveBeenNthCalledWith(1, '/Talk/' + files[0].name + 'uniq', 'XXTOKENXX', referenceIds[0], '{}')
-			expect(shareFile).toHaveBeenNthCalledWith(2, '/Talk/' + files[1].name + 'uniq', 'XXTOKENXX', referenceIds[1], '{"caption":"text-caption"}')
+			expect(shareFile).toHaveBeenNthCalledWith(1, {
+				path: '/Talk/' + files[0].name + 'uniq',
+				shareWith: 'XXTOKENXX',
+				referenceId: referenceIds[0],
+				talkMetaData: '{}',
+			})
+			expect(shareFile).toHaveBeenNthCalledWith(2, {
+				path: '/Talk/' + files[1].name + 'uniq',
+				shareWith: 'XXTOKENXX',
+				referenceId: referenceIds[1],
+				talkMetaData: '{"caption":"text-caption"}',
+			})
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(2)
 			expect(store.getters.currentUploadId).not.toBeDefined()

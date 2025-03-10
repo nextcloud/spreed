@@ -18,7 +18,11 @@ describe('filesSharingServices', () => {
 	})
 
 	test('shareFile calls the sharing API endpoint', () => {
-		shareFile('path/to/file', 'XXTOKENXX', 'the-reference-id')
+		shareFile({
+			path: 'path/to/file',
+			shareWith: 'XXTOKENXX',
+			referenceId: 'the-reference-id',
+		})
 
 		expect(axios.post).toHaveBeenCalledWith(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
