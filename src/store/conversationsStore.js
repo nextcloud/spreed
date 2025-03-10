@@ -54,6 +54,7 @@ import {
 	clearConversationHistory,
 	setConversationUnread,
 } from '../services/messagesService.ts'
+import { addParticipant } from '../services/participantsService.js'
 import {
 	startCallRecording,
 	stopCallRecording,
@@ -1000,9 +1001,21 @@ const actions = {
 	 * @param {string} payload.conversationName displayed name for a new conversation
 	 * @param {number} payload.isPublic whether a conversation is public or private
 	 * @param {string} payload.password password for a public conversation
-	 * @return {string} token of new conversation
+	 * @param {string} payload.description description for a new conversation
+	 * @param {number} payload.listable whether a conversation is opened to registered users
+	 * @param {Array} payload.participants list of participants
+	 * @param {object} payload.avatar avatar object: { emoji, color } | { file }
+	 * @return {object} new conversation object
 	 */
-	async createGroupConversation(context, { conversationName, isPublic, password }) {
+	async createGroupConversation(context, {
+		conversationName,
+		isPublic,
+		password,
+		description,
+		listable,
+		participants,
+		avatar,
+	}) {
 		try {
 			let response
 			if (isPublic) {
@@ -1031,9 +1044,34 @@ const actions = {
 				})
 			}
 
-			const conversation = response.data.ocs.data
-			context.dispatch('addConversation', conversation)
-			return conversation.token
+			const token = response.data.ocs.data.token
+			context.dispatch('addConversation', response.data.ocs.data)
+
+			const promises = []
+
+			if (avatar.file) {
+				promises.push(context.dispatch('setConversationAvatarAction', { token, file: avatar.file }))
+			}
+
+			if (avatar.emoji) {
+				promises.push(context.dispatch('setConversationEmojiAvatarAction', { token, emoji: avatar.emoji, color: avatar.color }))
+			}
+
+			if (description) {
+				promises.push(context.dispatch('setConversationDescription', { token, description }))
+			}
+
+			if (listable !== CONVERSATION.LISTABLE.NONE) {
+				promises.push(context.dispatch('setListable', { token, listable }))
+			}
+
+			for (const participant of participants) {
+				promises.push(addParticipant(token, participant.id, participant.source))
+			}
+
+			await Promise.all(promises)
+
+			return context.getters.conversation(token)
 		} catch (error) {
 			return Promise.reject(error)
 		}
