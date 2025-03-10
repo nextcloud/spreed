@@ -11,14 +11,16 @@ namespace OCA\Talk\Listener;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\DAV\Events\CalendarObjectCreatedEvent;
 use OCA\DAV\Events\CalendarObjectUpdatedEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
+use Sabre\VObject\ParseException;
 use Sabre\VObject\Property\ICalendar\Date;
 use Sabre\VObject\Property\ICalendar\DateTime;
 use Sabre\VObject\Reader;
@@ -30,8 +32,8 @@ class CalDavEventListener implements IEventListener {
 		private Manager $manager,
 		private RoomService $roomService,
 		private LoggerInterface $logger,
-		private IUserManager $userManager,
 		private TimezoneService $timezoneService,
+		private ParticipantService $participantService,
 		private string $userId,
 	) {
 
@@ -52,21 +54,40 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		$vobject = Reader::read($calData);
+		try {
+			$vobject = Reader::read($calData);
+		} catch (ParseException $e) { /** Undocumented in sabre code */
+			$this->logger->warning($e->getMessage());
+			return;
+		}
+
 		$vevent = $vobject->VEVENT;
 		// Check if the location is set and if the location string contains a call url
 		$location = $vevent->LOCATION->getValue();
 		if ($location === null || !str_contains($location, '/call/')) {
-			$this->logger->debug('No location for the event or event is not call link, skipping.');
+			$this->logger->debug('No location for the event or event is not a call link, skipping.');
 			return;
 		}
 
 		// Check if room exists and check if user is part of room
-		$roomToken = array_reverse(explode('/', $location))[0];
+		$array = explode('/', $location);
+		$roomToken = end($array);
 		try {
-			$room = $this->manager->getRoomByToken($roomToken, $this->userId);
+			$room = $this->manager->getRoomForUserByToken($roomToken, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			$this->logger->warning('Room not found: ' . $e->getMessage());
+			return;
+		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $this->userId, false);
+		} catch (ParticipantNotFoundException $e) {
+			$this->logger->debug('Participant not found: ' . $e->getMessage());
+			return;
+		}
+
+		if (!$participant->hasModeratorPermissions()) {
+			$this->logger->debug('Participant' . $this->userId . ' does not have moderator permissions');
 			return;
 		}
 
@@ -103,6 +124,5 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		$this->roomService->setObject($room, (string)$start, Room::OBJECT_TYPE_EVENT);
-
 	}
 }

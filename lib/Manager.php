@@ -398,7 +398,6 @@ class Manager {
 				$this->participantService->cacheParticipant($room, $participant);
 				$room->setParticipant($row['actor_id'], $participant);
 			}
-
 			$rooms[] = $room;
 		}
 		$result->closeCursor();
