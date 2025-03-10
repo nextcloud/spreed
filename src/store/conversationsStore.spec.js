@@ -26,7 +26,7 @@ import {
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
-	createLegacyConversation,
+	createAdvancedConversation,
 	setConversationName,
 	setConversationDescription,
 	setNotificationLevel,
@@ -50,6 +50,7 @@ jest.mock('../services/conversationsService', () => ({
 	changeReadOnlyState: jest.fn(),
 	changeListable: jest.fn(),
 	createLegacyConversation: jest.fn(),
+	createAdvancedConversation: jest.fn(),
 	setConversationName: jest.fn(),
 	setConversationDescription: jest.fn(),
 	setNotificationLevel: jest.fn(),
@@ -1203,13 +1204,13 @@ describe('conversationsStore', () => {
 			}
 
 			const response = generateOCSResponse({ payload: newConversation })
-			createLegacyConversation.mockResolvedValueOnce(response)
+			createAdvancedConversation.mockResolvedValueOnce(response)
 
 			await store.dispatch('createOneToOneConversation', 'target-actor-id')
 
-			expect(createLegacyConversation).toHaveBeenCalledWith({
+			expect(createAdvancedConversation).toHaveBeenCalledWith({
 				roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-				invite: 'target-actor-id',
+				participants: { users: ['target-actor-id'] },
 			})
 
 			const addedConversation = store.getters.conversation('new-token')
