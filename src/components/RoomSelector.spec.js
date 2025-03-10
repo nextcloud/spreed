@@ -127,7 +127,7 @@ describe('RoomSelector', () => {
 			const wrapper = await mountRoomSelector()
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/room'),
-				{ params: { includeStatus: true } }
+				{ params: { includeStatus: 1 } }
 			)
 
 			// Assert
