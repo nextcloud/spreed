@@ -125,7 +125,6 @@ import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import { addParticipant } from '../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const NEW_CONVERSATION = {
@@ -291,38 +290,28 @@ export default {
 			this.page = 2
 
 			try {
-				this.newConversation.token = await this.$store.dispatch('createGroupConversation', {
-					conversationName: this.conversationName,
-					isPublic: this.isPublic,
-					password: this.password,
-				})
-
-				// Gather all secondary requests to run in parallel
-				const promises = []
-
+				const avatar = {}
 				if (this.isAvatarEdited) {
-					promises.push(this.$refs.setupPage.$refs.conversationAvatar.saveAvatar())
+					if (this.$refs.setupPage.$refs.conversationAvatar.emojiAvatar) {
+						avatar.emoji = this.$refs.setupPage.$refs.conversationAvatar.emojiAvatar
+						avatar.color = this.$refs.setupPage.$refs.conversationAvatar.backgroundColor
+							? this.$refs.setupPage.$refs.conversationAvatar.backgroundColor.slice(1)
+							: null
+					} else {
+						avatar.file = await this.$refs.setupPage.$refs.conversationAvatar.getPictureFormData()
+					}
 				}
 
-				if (this.newConversation.description) {
-					promises.push(this.$store.dispatch('setConversationDescription', {
-						token: this.newConversation.token,
-						description: this.newConversation.description,
-					}))
-				}
-
-				if (this.listable !== CONVERSATION.LISTABLE.NONE) {
-					promises.push(this.$store.dispatch('setListable', {
-						token: this.newConversation.token,
-						listable: this.listable,
-					}))
-				}
-
-				for (const participant of this.selectedParticipants) {
-					promises.push(addParticipant(this.newConversation.token, participant.id, participant.source))
-				}
-
-				await Promise.all(promises)
+				const conversation = await this.$store.dispatch('createGroupConversation', {
+					roomName: this.conversationName,
+					roomType: this.isPublic ? CONVERSATION.TYPE.PUBLIC : CONVERSATION.TYPE.GROUP,
+					password: this.password,
+					description: this.newConversation.description,
+					listable: this.listable,
+					participants: this.selectedParticipants,
+					avatar,
+				})
+				this.newConversation.token = conversation.token
 			} catch (exception) {
 				console.error('Error creating new conversation: ', exception)
 				this.isLoading = false

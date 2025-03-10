@@ -91,6 +91,8 @@ export const mockedCapabilities: Capabilities = {
 			'conversation-creation-password',
 			'call-notification-state-api',
 			'schedule-meeting',
+			'edit-draft-poll',
+			'conversation-creation-all',
 			// Conditional features
 			'message-expiration',
 			'reactions',
