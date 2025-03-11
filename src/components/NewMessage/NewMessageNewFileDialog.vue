@@ -60,7 +60,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { createNewFile, shareFile } from '../../services/filesSharingServices.js'
+import { createNewFile, shareFile } from '../../services/filesSharingServices.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
@@ -189,13 +189,11 @@ export default {
 
 			let fileData
 			try {
-				const response = this.selectedTemplate.fileid === -1
-					? await createNewFile(filePath)
-					: await createNewFile(
-						filePath,
-						this.selectedTemplate?.filename,
-						this.selectedTemplate?.templateType,
-					)
+				const response = await createNewFile({
+					filePath,
+					templatePath: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.filename,
+					templateType: this.selectedTemplate.fileid === -1 ? undefined : this.selectedTemplate?.templateType,
+				})
 				fileData = response.data.ocs.data
 			} catch (error) {
 				console.error('Error while creating file', error)
@@ -209,7 +207,8 @@ export default {
 				return
 			}
 
-			await shareFile(filePath, this.token, '', '')
+			await this.$store.dispatch('shareFile', { token: this.token, path: filePath })
+
 			this.loading = false
 
 			this.openViewer(filePath, [fileData], fileData)

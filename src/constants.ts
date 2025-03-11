@@ -242,6 +242,14 @@ export const SHARE = {
 		EMAIL: 4,
 		REMOTE: 6,
 		CIRCLE: 7,
+		// From OC.Share.SHARE_TYPE_*, can be used by external API
+		LINK: 3,
+		GUEST: 8,
+		REMOTE_GROUP: 9,
+		ROOM: 10,
+		DECK: 12,
+		FEDERATED_GROUP: 14,
+		SCIENCEMESH: 15,
 	},
 } as const
 

@@ -18,7 +18,7 @@ import { EventBus } from '../services/EventBus.ts'
 import {
 	getFileTemplates,
 	shareFile,
-} from '../services/filesSharingServices.js'
+} from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
@@ -443,38 +443,63 @@ const actions = {
 	 * @param {object|null} data.options The share options
 	 */
 	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
-		const performShare = async (share) => {
+		const shares = context.getters.getShareableFiles(uploadId)
+		for (const share of shares) {
 			if (!share) {
-				return
+				continue
 			}
 			const [index, shareableFile] = share
 			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
 
-			const metadata = JSON.stringify(Object.assign(
+			const talkMetaData = JSON.stringify(Object.assign(
 				messageType !== 'comment' ? { messageType } : {},
 				caption && index === lastIndex ? { caption } : {},
 				options?.silent ? { silent: options.silent } : {},
 				parent ? { replyTo: parent.id } : {},
 			))
 
-			try {
-				context.dispatch('markFileAsSharing', { uploadId, index })
-				await shareFile(shareableFile.sharePath, token, referenceId, metadata)
-				context.dispatch('markFileAsShared', { uploadId, index })
-			} catch (error) {
-				if (error?.response?.status === 403) {
-					showError(t('spreed', 'You are not allowed to share files'))
-				} else {
-					showError(t('spreed', 'An error happened when trying to share your file'))
-				}
-				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
-				console.error('An error happened when trying to share your file: ', error)
-			}
+			context.dispatch('shareFile', { token, path: shareableFile.sharePath, index, uploadId, id, referenceId, talkMetaData })
 		}
+	},
 
-		const shares = context.getters.getShareableFiles(uploadId)
-		for (const share of shares) {
-			await performShare(share)
+	/**
+	 * Shares the files to the conversation
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.path The file path from the user's root directory
+	 * @param {string} [data.index] The index of uploaded file
+	 * @param {string} [data.uploadId] The unique uploadId
+	 * @param {string} [data.id] Id of temporary message
+	 * @param {string} [data.referenceId] A reference id to recognize the message later
+	 * @param {string} [data.talkMetaData] The metadata JSON-encoded object
+	 */
+	async shareFile(context, { token, path, index, uploadId, id, referenceId, talkMetaData }) {
+		try {
+			if (uploadId) {
+				context.dispatch('markFileAsSharing', { uploadId, index })
+			}
+
+			await shareFile({ path, shareWith: token, referenceId, talkMetaData })
+
+			if (uploadId) {
+				context.dispatch('markFileAsShared', { uploadId, index })
+			}
+		} catch (error) {
+			console.error('Error while sharing file: ', error)
+
+			if (error?.response?.status === 403) {
+				showError(t('spreed', 'You are not allowed to share files'))
+			} else if (error?.response?.data?.ocs?.meta?.message) {
+				showError(error.response.data.ocs.meta.message)
+			} else {
+				showError(t('spreed', 'Error while sharing file'))
+			}
+
+			if (uploadId) {
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
+			}
 		}
 	},
 
