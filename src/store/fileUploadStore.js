@@ -444,7 +444,7 @@ const actions = {
 	 */
 	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
 		const shares = context.getters.getShareableFiles(uploadId)
-		for (const share of shares) {
+		for await (const share of shares) {
 			if (!share) {
 				continue
 			}
@@ -458,7 +458,7 @@ const actions = {
 				parent ? { replyTo: parent.id } : {},
 			))
 
-			context.dispatch('shareFile', { token, path: shareableFile.sharePath, index, uploadId, id, referenceId, talkMetaData })
+			await context.dispatch('shareFile', { token, path: shareableFile.sharePath, index, uploadId, id, referenceId, talkMetaData })
 		}
 	},
 
