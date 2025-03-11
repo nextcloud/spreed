@@ -83,9 +83,11 @@
 			<div class="message-unread-marker__wrapper">
 				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
 				<NcButton v-if="shouldShowSummaryOption"
+					:disabled="loading"
 					@click="generateSummary">
 					<template #icon>
-						<IconCreation />
+						<NcLoadingIcon v-if="loading" />
+						<IconCreation v-else />
 					</template>
 					{{ t('spreed', 'Generate summary') }}
 				</NcButton>
@@ -105,6 +107,7 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
@@ -140,6 +143,7 @@ export default {
 		MessageForwarder,
 		MessageTranslateDialog,
 		NcButton,
+		NcLoadingIcon,
 		Reactions,
 	},
 
@@ -202,6 +206,7 @@ export default {
 
 	data() {
 		return {
+			loading: false,
 			isHovered: false,
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
@@ -449,7 +454,9 @@ export default {
 		},
 
 		async generateSummary() {
+			this.loading = true
 			await this.chatExtrasStore.requestChatSummary(this.message.token, this.message.id)
+			this.loading = false
 		}
 	},
 }
