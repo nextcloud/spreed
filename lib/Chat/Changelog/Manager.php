@@ -143,7 +143,7 @@ class Manager {
 			. $this->l->t('- Video of the speaker is now visible while sharing the screen and call reactions are animated'),
 			$this->l->t('## New in Talk %s', ['19']) . "\n"
 			. $this->l->t('- Messages can now be edited by logged-in authors and moderators for 6 hours') . "\n"
-			. $this->l->t('- Unsent message drafts are now saved in your browser ') . "\n"
+			. $this->l->t('- Unsent message drafts are now saved in your browser') . "\n"
 			. $this->l->t('- *Preview:* Text chatting can now be done in a federated way with other Talk servers'),
 		];
 	}
