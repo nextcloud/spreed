@@ -19,7 +19,7 @@
 		<p v-if="userAbsencePeriod">{{ userAbsencePeriod }}</p>
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
-			<p>{{ t('spreed','Replacement: ') }}</p>
+			<p>{{ t('spreed','Replacement:') }}</p>
 			<NcUserBubble :key="isDarkTheme ? 'dark' : 'light'"
 				class="absence-reminder__replacement__bubble"
 				:title="t('spreed','Open conversation')"
