@@ -6,8 +6,10 @@
 namespace OCA\DAV\CalDAV {
 
 	class TimezoneService {
-		public function getUserTimezone(string $userId): ?string {}
+		public function getUserTimezone(string $userId): ?string {
+		}
 
-		public function getDefaultTimezone(): string {}
+		public function getDefaultTimezone(): string {
+		}
 	}
 }
