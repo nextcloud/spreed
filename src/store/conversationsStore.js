@@ -32,6 +32,7 @@ import {
 	changeReadOnlyState,
 	changeListable,
 	createLegacyConversation,
+	createConversation,
 	addToFavorites,
 	removeFromFavorites,
 	archiveConversation,
@@ -53,6 +54,7 @@ import {
 	clearConversationHistory,
 	setConversationUnread,
 } from '../services/messagesService.ts'
+import { addParticipant } from '../services/participantsService.js'
 import {
 	startCallRecording,
 	stopCallRecording,
@@ -68,6 +70,7 @@ import { convertToUnix } from '../utils/formattedTime.ts'
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
+const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -974,10 +977,15 @@ const actions = {
 	 */
 	async createOneToOneConversation(context, actorId) {
 		try {
-			const response = await createLegacyConversation({
-				roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-				invite: actorId,
-			})
+			const response = supportConversationCreationAll
+				? await createConversation({
+					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+					participants: { users: [actorId] },
+				})
+				: await createLegacyConversation({
+					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+					invite: actorId,
+				})
 			await context.dispatch('addConversation', response.data.ocs.data)
 			return response.data.ocs.data
 		} catch (error) {
@@ -990,43 +998,98 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} payload action payload;
-	 * @param {string} payload.conversationName displayed name for a new conversation
-	 * @param {number} payload.isPublic whether a conversation is public or private
+	 * @param {string} payload.roomName displayed name for a new conversation
+	 * @param {number} payload.roomType whether a conversation is public or private
 	 * @param {string} payload.password password for a public conversation
-	 * @return {string} token of new conversation
+	 * @param {string} payload.description description for a new conversation
+	 * @param {number} payload.listable whether a conversation is opened to registered users
+	 * @param {Array} payload.participants list of participants
+	 * @param {object} payload.avatar avatar object: { emoji, color } | { file }
+	 * @return {object} new conversation object
 	 */
-	async createGroupConversation(context, { conversationName, isPublic, password }) {
+	async createGroupConversation(context, {
+		roomName,
+		roomType,
+		password,
+		description,
+		listable,
+		participants,
+		avatar,
+	}) {
+		if (roomType === CONVERSATION.TYPE.PUBLIC && forcePasswordProtection && !password) {
+			throw new Error('password_required')
+		}
+
 		try {
 			let response
-			if (isPublic) {
-				if (supportConversationCreationPassword && forcePasswordProtection) {
-					if (!password) {
-						throw new Error('password_required')
+			if (supportConversationCreationAll) {
+				const participantsMap = participants.reduce((map, participant) => {
+					// FIXME type Record<'users'|'federated_users'|'groups'|'emails'|'phones'|'teams', string[]>
+					const source = participant.source === 'circles' ? 'teams' : participant.source
+					if (!['users', 'federated_users', 'groups', 'emails', 'phones', 'teams'].includes(source)) {
+						return map
 					}
-					response = await createLegacyConversation({
-						roomType: CONVERSATION.TYPE.PUBLIC,
-						roomName: conversationName,
-						password,
-					})
-				} else {
-					response = await createLegacyConversation({
-						roomType: CONVERSATION.TYPE.PUBLIC,
-						roomName: conversationName,
-					})
-					if (password) {
-						response = await setConversationPassword(response.data.ocs.data.token, password)
+
+					if (!map[source]) {
+						map[source] = []
 					}
-				}
+					map[source].push(participant.id)
+					return map
+				}, {})
+
+				response = await createConversation({
+					roomType,
+					roomName,
+					password,
+					description,
+					listable,
+					emoji: avatar.emoji,
+					avatarColor: avatar.color,
+					participants: participantsMap,
+				})
 			} else {
 				response = await createLegacyConversation({
-					roomType: CONVERSATION.TYPE.GROUP,
-					roomName: conversationName,
+					roomType,
+					roomName,
+					password: supportConversationCreationPassword ? password : undefined,
 				})
 			}
 
-			const conversation = response.data.ocs.data
-			context.dispatch('addConversation', conversation)
-			return conversation.token
+			const token = response.data.ocs.data.token
+			context.dispatch('addConversation', response.data.ocs.data)
+
+			const promises = []
+
+			// FIXME Both advanced and legacy API do not support picture avatar upload on creation
+			if (avatar.file) {
+				promises.push(context.dispatch('setConversationAvatarAction', { token, file: avatar.file }))
+			}
+
+			if (!supportConversationCreationAll) {
+				if (avatar.emoji) {
+					promises.push(context.dispatch('setConversationEmojiAvatarAction', { token, emoji: avatar.emoji, color: avatar.color }))
+				}
+
+				if (description) {
+					promises.push(context.dispatch('setConversationDescription', { token, description }))
+				}
+
+				if (password && !supportConversationCreationPassword) {
+					promises.push(setConversationPassword(token, password))
+				}
+
+				if (listable !== CONVERSATION.LISTABLE.NONE) {
+					promises.push(context.dispatch('setListable', { token, listable }))
+				}
+
+				for (const participant of participants) {
+					promises.push(addParticipant(token, participant.id, participant.source))
+				}
+			}
+
+			await Promise.all(promises)
+
+			return context.getters.conversation(token)
 		} catch (error) {
 			return Promise.reject(error)
 		}

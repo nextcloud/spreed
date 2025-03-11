@@ -15,6 +15,7 @@ import type {
 	getNoteToSelfConversationResponse,
 	getListedConversationsParams,
 	getListedConversationsResponse,
+	createConversationParams,
 	createConversationResponse,
 	legacyCreateConversationParams,
 	deleteConversationResponse,
@@ -115,6 +116,14 @@ async function createLegacyConversation({ roomType, roomName, password, objectTy
 		invite,
 		source,
 	} as legacyCreateConversationParams)
+}
+
+/**
+ * Create a new conversation (with params available with 'conversation-creation-all' capability)
+ * @param params API params
+ */
+const createConversation = async function(params: createConversationParams): createConversationResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), params)
 }
 
 /**
@@ -340,6 +349,7 @@ export {
 	fetchNoteToSelfConversation,
 	searchListedConversations,
 	createLegacyConversation,
+	createConversation,
 	deleteConversation,
 	addToFavorites,
 	removeFromFavorites,

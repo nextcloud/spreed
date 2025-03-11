@@ -315,8 +315,7 @@ export default {
 			this.backgroundColor = ''
 		},
 
-		async savePictureAvatar() {
-			this.showCropper = false
+		async getPictureFormData() {
 			const canvasData = this.$refs.cropper.getCroppedCanvas()
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 
@@ -328,10 +327,16 @@ export default {
 			})
 			const formData = new FormData()
 			formData.append('file', blob)
+			return formData
+		},
+
+		async savePictureAvatar() {
+			this.showCropper = false
+			const file = await this.getPictureFormData()
 
 			await this.$store.dispatch('setConversationAvatarAction', {
 				token: this.conversation.token,
-				file: formData,
+				file,
 			})
 		},
 
