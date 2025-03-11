@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\DAV\CalDAV\TimezoneService;
-use OCP\DAV\Events\CalendarObjectCreatedEvent;
-use OCP\DAV\Events\CalendarObjectUpdatedEvent;
+use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
