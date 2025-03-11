@@ -204,7 +204,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { shareFile } from '../../services/filesSharingServices.js'
+import { shareFile } from '../../services/filesSharingServices.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -769,7 +769,7 @@ export default {
 					throw new Error(t('files', 'Invalid path selected'))
 				}
 				this.focusInput()
-				return shareFile(path, this.token)
+				this.$store.dispatch('shareFile', { token: this.token, path })
 			})
 		},
 

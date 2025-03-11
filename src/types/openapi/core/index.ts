@@ -7,6 +7,14 @@ import type {
 	operations as operationsDav,
 } from './openapi_dav.ts'
 import type {
+	components as componentsFiles,
+	operations as operationsFiles,
+} from './openapi_files.ts'
+import type {
+	components as componentsShare,
+	operations as operationsShare,
+} from './openapi_files_sharing.ts'
+import type {
 	components as componentsProv,
 	operations as operationsProv,
 } from './openapi_provisioning_api.ts'
@@ -104,3 +112,15 @@ export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-s
 		},
 	}
 }>
+
+// Files API
+export type getFileTemplatesListResponse = ApiResponse<operationsFiles['template-list']['responses'][200]['content']['application/json']>
+export type createFileFromTemplateParams = Required<operationsFiles['template-create']>['requestBody']['content']['application/json']
+export type createFileFromTemplateResponse = ApiResponse<operationsFiles['template-create']['responses'][200]['content']['application/json']>
+
+// Files sharing API
+export type createFileShareParams = Required<operationsShare['shareapi-create-share']>['requestBody']['content']['application/json'] & {
+	referenceId?: string, // unique message identifier to track in the response
+	talkMetaData?: string, // JSON-encoded object (see lib/Chat/SystemMessage/Listener.php)
+}
+export type createFileShareResponse = ApiResponse<operationsShare['shareapi-create-share']['responses'][200]['content']['application/json']>
