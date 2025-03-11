@@ -9,14 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\DAV\CalDAV\TimezoneService;
-use OCP\Calendar\Events\CalendarObjectCreatedEvent;
-use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;

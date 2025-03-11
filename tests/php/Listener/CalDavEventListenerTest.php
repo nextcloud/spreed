@@ -9,8 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Listener;
 
 use OCA\DAV\CalDAV\TimezoneService;
-use OCP\Calendar\Events\CalendarObjectCreatedEvent;
-use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCA\Talk\Events\ACallEndedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -20,6 +18,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
