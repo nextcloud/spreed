@@ -113,7 +113,7 @@ class CalDavEventListener implements IEventListener {
 			$timezone = $this->timezoneService->getUserTimezone($this->userId) ?? $this->timezoneService->getDefaultTimezone();
 			try {
 				$start = $start->getDateTime(new \DateTimeZone($timezone))->getTimestamp();
-			} catch (\DateInvalidTimeZoneException $e) {
+			} catch (\Exception $e) {
 				$this->logger->warning("Invalid date time zone for user for room $roomToken, continuing with UTC+0: " . $e->getMessage());
 				// Since this is for a full day event, we set a timestamp with UTC+0 instead
 				$start = $start->getDateTime(new \DateTimeZone('UTC'))->getTimestamp();
