@@ -20,7 +20,7 @@
 		</NcButton>
 		<template v-if="loading">
 			<p class="chat-summary__caption">
-				{{ t('spreed', 'Generating summary of unread messages ...') }}
+				{{ t('spreed', 'Generating summary of unread messages …') }}
 			</p>
 			<p>{{ t('spreed', 'This might take a moment') }}</p>
 		</template>
