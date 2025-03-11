@@ -13,8 +13,6 @@ use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleEditedEvent;
 use OCA\Circles\Events\EditingCircleEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
-use OCA\DAV\Events\CalendarObjectCreatedEvent;
-use OCA\DAV\Events\CalendarObjectUpdatedEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
@@ -132,6 +130,8 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
@@ -195,7 +195,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, ActivityListener::class);
-		
+
 		// Bot listeners
 		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);
 		$context->registerEventListener(BotEnabledEvent::class, BotListener::class);
