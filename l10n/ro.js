@@ -846,7 +846,6 @@ OC.L10N.register(
     "{actor} added {user0} and {user1}" : "{actor} a adăugat pe {user0} și pe {user1}",
     "You: {lastMessage}" : "Tu: {lastMessage}",
     "Deck card has been posted to {conversation}" : "Cardul Deck a fost postat la conversația {conversation}",
-    "Error while sharing file" : "Eroare la partajarea fișierului",
     "Error while clearing conversation history" : "Eroare la ștergerea istoricului conversației",
     "Conversation password has been saved" : "Parola conversației a fost salvată",
     "Conversation password has been removed" : "Parola conversație a fost ștearsă",
@@ -854,7 +853,7 @@ OC.L10N.register(
     "Conversation picture deleted" : "Imaginea conversației a fost ștearsă",
     "Error while uploading file \"{fileName}\"" : "Eroare la încărcarea fișierului \"{fileName}\"",
     "Not enough free space to upload file \"{fileName}\"" : "Spațiu insuficient pentru încărcarea fișierului \"{fileName}\"",
-    "An error happened when trying to share your file" : "Eroare la încercarea de partajare a fișierului",
+    "Error while sharing file" : "Eroare la partajarea fișierului",
     "Could not post message: {errorMessage}" : "Nu s-a putut posta mesajul: {errorMessage}",
     "An error occurred while fetching the participants" : "Eroare la preluarea listei de participanți",
     "Could not send invitation to {actorId}" : "Nu a fost trimisă invitația către {actorId}",
@@ -899,6 +898,7 @@ OC.L10N.register(
     "Password protect" : "Protejare cu parolă",
     "Post to conversation" : "Postare în conversație",
     "Share to conversation" : "Partajare la conversație",
+    "An error happened when trying to share your file" : "Eroare la încercarea de partajare a fișierului",
     "Failed to join the conversation. Try to reload the page." : "Eroare la încercarea de participare la conversație. Încercați să reîncărcați pagina. "
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
