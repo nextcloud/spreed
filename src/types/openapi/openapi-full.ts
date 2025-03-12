@@ -3660,7 +3660,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Download format */
-                format?: "csv" | "pdf";
+                format?: "csv";
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -3681,7 +3681,6 @@ export interface operations {
                 };
                 content: {
                     "text/csv": string;
-                    "application/pdf": string;
                 };
             };
             /** @description No call in progress */
