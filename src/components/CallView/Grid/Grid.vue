@@ -172,6 +172,9 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
 const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
 
+// Align with var(--grid-gap) in CallView
+const GRID_GAP = 8
+
 export default {
 	name: 'Grid',
 
@@ -313,10 +316,10 @@ export default {
 			return this.videos.length
 		},
 		videoWidth() {
-			return this.gridWidth / this.columns
+			return (this.gridWidth - GRID_GAP * (this.columns - 1)) / this.columns
 		},
 		videoHeight() {
-			return this.gridHeight / this.rows
+			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
 		// Array of videos that are being displayed in the grid at any given
@@ -396,10 +399,10 @@ export default {
 
 		// Max number of columns possible
 		columnsMax() {
-			// Max amount of columns that fits on screen, including gaps and paddings (8px)
-			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - 8 * this.columns) / this.dpiAwareMinWidth)
+			// Max amount of columns that fits on screen, including gaps (--grid-gap, 8px)
+			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - GRID_GAP * (this.columns - 1)) / this.dpiAwareMinWidth)
 			// Max amount of columns that fits on screen (with one more gap, as if we try to fit one more column)
-			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - 8 * (this.columns + 1)) / this.dpiAwareMinWidth)
+			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - GRID_GAP * this.columns) / this.dpiAwareMinWidth)
 			// If we about to change current columns amount, check if one more column could fit the screen
 			// This helps to avoid flickering, when resize within 8px from minimal gridWidth for current amount of columns
 			const calculatedColumnsMax = calculatedApproxColumnsMax === this.columns ? calculatedApproxColumnsMax : calculatedHypotheticalColumnsMax
@@ -409,11 +412,11 @@ export default {
 
 		// Max number of rows possible
 		rowsMax() {
-			if (Math.floor(this.gridHeight / this.dpiAwareMinHeight) < 1) {
+			if (Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight) < 1) {
 				// Return at least 1 row
 				return 1
 			} else {
-				return Math.floor(this.gridHeight / this.dpiAwareMinHeight)
+				return Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight)
 			}
 		},
 
@@ -737,12 +740,12 @@ export default {
 				const previousRows = currentRows
 
 				// Current video dimensions
-				const videoWidth = this.gridWidth / currentColumns
-				const videoHeight = this.gridHeight / currentRows
+				const videoWidth = (this.gridWidth - GRID_GAP * (currentColumns - 1)) / currentColumns
+				const videoHeight = (this.gridHeight - GRID_GAP * (currentRows - 1)) / currentRows
 
 				// Hypothetical width/height with one column/row less than current
-				const videoWidthWithOneColumnLess = this.gridWidth / (currentColumns - 1)
-				const videoHeightWithOneRowLess = this.gridHeight / (currentRows - 1)
+				const videoWidthWithOneColumnLess = (this.gridWidth - GRID_GAP * (currentColumns - 2)) / (currentColumns - 1)
+				const videoHeightWithOneRowLess = (this.gridHeight - GRID_GAP * (currentRows - 2)) / (currentRows - 1)
 
 				// Hypothetical aspect ratio with one column/row less than current
 				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
