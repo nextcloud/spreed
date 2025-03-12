@@ -107,7 +107,7 @@ export default {
 		},
 		errorText() {
 			if (this.error === 'binary_permissions') {
-				return t('spreed', 'Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in "/.../nextcloud/apps/talk_matterbridge/bin/".')
+				return t('spreed', 'Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in "/…/nextcloud/apps/talk_matterbridge/bin/".')
 			} else if (this.error === 'binary') {
 				return t('spreed', 'Matterbridge binary was not found or couldn\'t be executed.')
 			} else {
