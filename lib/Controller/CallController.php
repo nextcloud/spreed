@@ -121,8 +121,8 @@ class CallController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `download-call-participants`
 	 *
-	 * @param 'csv'|'pdf' $format Download format
-	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv'|'application/pdf', array{}>|Response<Http::STATUS_BAD_REQUEST, array{}>
+	 * @param 'csv' $format Download format
+	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv', array{}>|Response<Http::STATUS_BAD_REQUEST, array{}>
 	 *
 	 * 200: List of participants in the call downloaded in the requested format
 	 * 400: No call in progress
@@ -141,13 +141,8 @@ class CallController extends AEnvironmentAwareController {
 			return new Response(Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($format !== 'csv' && $format !== 'pdf') {
-			// Unsupported format
-			return new Response(Http::STATUS_BAD_REQUEST);
-		}
-
 		if ($format !== 'csv') {
-			// FIXME Remove once pdf was implemented.
+			// Unsupported format
 			return new Response(Http::STATUS_BAD_REQUEST);
 		}
 
