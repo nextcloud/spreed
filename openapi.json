@@ -4761,8 +4761,7 @@
                             "type": "string",
                             "default": "csv",
                             "enum": [
-                                "csv",
-                                "pdf"
+                                "csv"
                             ]
                         }
                     },
@@ -4782,12 +4781,6 @@
                         "description": "List of participants in the call downloaded in the requested format",
                         "content": {
                             "text/csv": {
-                                "schema": {
-                                    "type": "string",
-                                    "format": "binary"
-                                }
-                            },
-                            "application/pdf": {
                                 "schema": {
                                     "type": "string",
                                     "format": "binary"
