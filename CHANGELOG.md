@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.14 – 2025-03-12
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(search): Include caption messages in search results
+  [#14551](https://github.com/nextcloud/spreed/issues/14551)
+- fix(conversation): Stay in chat when removing a group or team the moderator is a member of
+  [#14395](https://github.com/nextcloud/spreed/issues/14395)
+- fix(dashboard): Hide lobbied conversations from the dashboard
+  [#14610](https://github.com/nextcloud/spreed/issues/14610)
+- fix(calls): Further improve false positives when showing the connection warning
+  [#14448](https://github.com/nextcloud/spreed/issues/14448)
+- fix(reminder): Log when generating a reminder failed
+  [#14616](https://github.com/nextcloud/spreed/issues/14616)
+
 ## 19.0.13 – 2025-02-13
 ### Changed
 - Update translations
