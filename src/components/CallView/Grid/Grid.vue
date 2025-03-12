@@ -69,7 +69,7 @@
 									:model="placeholderModel(key)"
 									:shared-data="placeholderSharedData(key)"
 									:token="token"
-									:participant-name="placeholderName(key)" />
+									:participant-name="placeholderName(key, !screenshotMode)" />
 							</div>
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
@@ -121,9 +121,13 @@
 					</NcButton>
 					<div v-if="!screenshotMode" class="dev-mode__data">
 						<span>GRID INFO</span>
-						<NcButton small @click="disableDevMode">
+						<button @click="disableDevMode">
 							Disable
-						</NcButton>
+						</button>
+						<span>Debug info</span>
+						<button @click="gridDebugInformation">
+							Log
+						</button>
 						<span>Videos (total):</span><span>{{ videosCount }}</span>
 						<span>Displayed videos:</span><span>{{ displayedVideos.length }}</span>
 						<span>Max per page:</span><span>~{{ videosCap }}</span>
@@ -609,24 +613,30 @@ export default {
 		this.resizeObserver.observe(this.$refs.gridWrapper)
 		this.makeGrid()
 
-		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
+		if (OC.debug) {
+			OCA.Talk.gridDebugInformation = this.gridDebugInformation
+			OCA.Talk.gridDevModeEnable = this.enableDevMode
+		}
 	},
 
 	beforeDestroy() {
 		this.debounceMakeGrid.clear?.()
 		this.debounceHandleWheelEvent.clear?.()
-		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
+		}
+
+		if (OC.debug) {
+			OCA.Talk.gridDebugInformation = undefined
+			OCA.Talk.gridDevModeEnable = undefined
 		}
 	},
 
 	methods: {
 		t,
 		gridDebugInformation() {
-			console.debug('Grid debug information')
-			console.debug({
+			console.info('Grid debug information', {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
@@ -665,6 +675,11 @@ export default {
 		placeholderName,
 		placeholderModel,
 		placeholderSharedData,
+
+		enableDevMode() {
+			this.screenshotMode = false
+			this.devMode = true
+		},
 
 		disableDevMode() {
 			this.screenshotMode = false
@@ -996,7 +1011,7 @@ export default {
 	/* stylelint-disable-next-line csstools/use-logical */
 	left: var(--default-clickable-area);
 	color: #00FF41;
-	z-index: 100;
+	z-index: 1;
 	line-height: 120px;
 	font-weight: 900;
 	font-size: 100px !important;
@@ -1026,7 +1041,7 @@ export default {
 	grid-template-columns: 165px 75px;
 	align-items: center;
 	justify-content: flex-start;
-	z-index: 1;
+	z-index: 2;
 
 	& span {
 		text-overflow: ellipsis;
