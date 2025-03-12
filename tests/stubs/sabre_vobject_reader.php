@@ -6,6 +6,7 @@
 namespace Sabre\VObject {
 
 	class Reader {
-		public static function read($data, $options = 0, $charset = 'UTF-8'){}
+		public static function read($data, $options = 0, $charset = 'UTF-8') {
+		}
 	}
 }
