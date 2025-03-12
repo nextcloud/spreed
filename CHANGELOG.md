@@ -5,6 +5,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.5 – 2025-03-12
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Improve call related system messages in one-to-one conversations
+  [#14468](https://github.com/nextcloud/spreed/issues/14468)
+- fix(search): Include caption messages in search results
+  [#14552](https://github.com/nextcloud/spreed/issues/14552)
+- fix(conversation): Stay in chat when removing a group or team the moderator is a member of
+  [#14396](https://github.com/nextcloud/spreed/issues/14396)
+- fix(chat): Correctly start loading the chat when the lobby is removed
+  [#14518](https://github.com/nextcloud/spreed/issues/14518)
+- fix(dashboard): Hide lobbied conversations from the dashboard
+  [#14611](https://github.com/nextcloud/spreed/issues/14611)
+- fix(calls): Further improve false positives when showing the connection warning
+  [#14449](https://github.com/nextcloud/spreed/issues/14449)
+- fix(calls): Fix guest displayname when exporting call participants
+  [#14631](https://github.com/nextcloud/spreed/issues/14631)
+- fix(reminder): Log when generating a reminder failed
+  [#14617](https://github.com/nextcloud/spreed/issues/14617)
+
+## 19.0.14 – 2025-03-12
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(search): Include caption messages in search results
+  [#14551](https://github.com/nextcloud/spreed/issues/14551)
+- fix(conversation): Stay in chat when removing a group or team the moderator is a member of
+  [#14395](https://github.com/nextcloud/spreed/issues/14395)
+- fix(dashboard): Hide lobbied conversations from the dashboard
+  [#14610](https://github.com/nextcloud/spreed/issues/14610)
+- fix(calls): Further improve false positives when showing the connection warning
+  [#14448](https://github.com/nextcloud/spreed/issues/14448)
+- fix(reminder): Log when generating a reminder failed
+  [#14616](https://github.com/nextcloud/spreed/issues/14616)
+
 ## 20.1.4 – 2025-02-13
 ### Changed
 - Update translations
