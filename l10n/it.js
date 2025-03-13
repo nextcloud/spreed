@@ -617,7 +617,6 @@ OC.L10N.register(
     "Delete the signaling server account" : "Elimina l'account del server di segnalazione",
     "_%n user_::_%n users_" : ["%n utente","%n utenti","%n utenti"],
     "Installed version: {version}" : "Versione installata: {version}",
-    "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Il binario di Matterbridge ha autorizzazioni non corrette. Assicurati che il file binario Matterbridge sia di proprietà dell'utente corretto e possa essere eseguito. Può essere trovato in \"/.../nextcloud/apps/talk_matterbridge/bin/\".",
     "Matterbridge binary was not found or couldn't be executed." : "Il binario di Matterbridge non è stato trovato o non può essere eseguito.",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Puoi impostare il percorso del binario di Matterbridge anche manualmente tramite la configurazione. Controlla la {linkstart}documentazione di integrazione di Matterbridge{linkend} per ulteriori informazioni.",
     "Downloading …" : "Scaricamento…",

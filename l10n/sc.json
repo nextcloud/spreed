@@ -561,7 +561,6 @@
     "Delete the signaling server account" : "Cantzella su contu de su serbidore de signalatzione",
     "_%n user_::_%n users_" : ["%nutente","%n utentes"],
     "Installed version: {version}" : "Versione installada: {version}",
-    "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Su binàriu de Matterbridge tenet autorizatziones non curretas. Assegura•ti chi s'archìviu binàriu de Matterbridge siat de propiedade s'utèntzia curreta e potzat èssere esecutadu. Ddu podes agatare in \"/.../nextcloud/apps/talk_matterbridge/bin/\".",
     "Matterbridge binary was not found or couldn't be executed." : "Su binàriu de Matterbridge non est istadu agatadu o non podet èssere esecutadu.",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Podes agatare su percursu de su binàriu de Matterbridge a manu puru, cun sa cunfiguratzione. Controlla sa {linkstart}Documentatzione de s'integratzione de Matterbridge{linkend} pro àteras informatziones.",
     "Downloading …" : "Iscarrighende ...",
