@@ -535,7 +535,6 @@ OC.L10N.register(
     "Send without notification" : "Send uden notifikation",
     "Add emoji" : "Tilføj emoji",
     "File to share" : "Vælg fil til deling",
-    "Replacement: " : "Erstatning:",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
     "Share from Files" : "Del fra Filer",
     "Upload from device" : "Upload fra enhed",
