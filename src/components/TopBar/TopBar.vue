@@ -112,9 +112,9 @@ import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'

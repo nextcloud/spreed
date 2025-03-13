@@ -46,9 +46,9 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 import LoadingComponent from '../../LoadingComponent.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'

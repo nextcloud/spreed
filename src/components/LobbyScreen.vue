@@ -40,7 +40,7 @@ import RoomService from 'vue-material-design-icons/RoomService.vue'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'

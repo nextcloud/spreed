@@ -10,7 +10,7 @@ import IconNetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength
 
 import { t } from '@nextcloud/l10n'
 
-import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'

@@ -68,9 +68,9 @@ import IconPencil from 'vue-material-design-icons/Pencil.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 

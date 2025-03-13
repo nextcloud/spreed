@@ -10,8 +10,8 @@ import { useRouter, useRoute } from 'vue-router/composables'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import EmptyView from '../components/EmptyView.vue'
 
