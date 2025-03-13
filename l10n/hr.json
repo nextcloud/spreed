@@ -569,7 +569,6 @@
     "Delete the signaling server account" : "Brisanje računa signalnog poslužitelja",
     "_%n user_::_%n users_" : ["%n korisnik","%n korisnika","%n korisnika"],
     "Installed version: {version}" : "Instalirana inačica: {version}",
-    "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Matterbridge ima netočna dopuštenja. Provjerite je li binarna datoteka Matterbridgea u vlasništvu točnog korisnika i može li se izvršiti. Možete je pronaći u „/.../nextcloud/apps/talk_matterbridge/bin/“.",
     "Matterbridge binary was not found or couldn't be executed." : "Binarna datoteka Matterbridge nije pronađena ili se ne može izvršiti.",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Put do binarnog programa Matterbridge također možete ručno postaviti u samoj konfiguraciji. Dodatne informacije potražite u {linkstart}dokumentaciji za integraciju Matterbridgea{linkend}.",
     "Downloading …" : "Preuzimanje…",

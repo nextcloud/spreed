@@ -301,7 +301,6 @@
     "Delete the signaling server account" : "Xóa tài khoản máy chủ báo hiệu",
     "_%n user_::_%n users_" : ["%n người dùng"],
     "Installed version: {version}" : "Phiên bản đã cài đặt: {version}",
-    "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Nhị phân Matterbridge có quyền không chính xác. Hãy đảm bảo rằng tệp nhị phân Matterbridge thuộc sở hữu của đúng người dùng và có thể được thực thi.",
     "Matterbridge binary was not found or couldn't be executed." : "Nhị phân Matterbridge không được tìm thấy hoặc không thể được thực thi",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Bạn cũng có thể đặt đường dẫn đến nhị phân Matterbridge theo cách thủ công thông qua cấu hình. Kiểm tra {linkstart} tài liệu tích hợp Matterbridge {linkend} để biết thêm thông tin.",
     "Downloading …" : "Đang tải ...",

@@ -742,7 +742,6 @@ OC.L10N.register(
     "_%n user_::_%n users_" : ["%nユーザー"],
     "Installed version: {version}" : "インストールされているバージョン: {version}",
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}Nextcloud App Store{linkend}." : "Matterbridgeをインストールすることで、Nextcloud Talkをほかのサービスにリンクできます。詳細は、{linkstart1}GitHub ページ{linkend}をご確認ください。アプリのダウンロードとインストールには時間がかかる場合があります。タイムアウトした場合は、{linkstart2}Nextcloud アプリストア{linkend}から手動でインストールしてください。",
-    "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Matterbridgeバイナリの権限が正しくありません。 Matterbridgeバイナリファイルが正しいユーザーによって所有されており、実行できることを確認してください。 \"/.../nextcloud/apps/talk_matterbridge/bin/\" にあります。",
     "Matterbridge binary was not found or couldn't be executed." : "Matterbridgeバイナリが見つからなかったか、実行できませんでした。",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "設定を使用して、Matterbridgeバイナリへのパスを手動で設定することもできます。詳細については、{linkstart} Matterbridge統合ドキュメント{linkend}を確認してください。",
     "Downloading …" : "ダウンロード中…",
