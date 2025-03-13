@@ -104,7 +104,7 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { t, isRTL } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'

@@ -12,7 +12,7 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import FilePreview from './FilePreview.vue'
 

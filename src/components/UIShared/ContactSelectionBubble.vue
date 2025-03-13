@@ -8,7 +8,7 @@ import { computed } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcChip from '@nextcloud/vue/dist/Components/NcChip.js'
+import NcChip from '@nextcloud/vue/components/NcChip'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 

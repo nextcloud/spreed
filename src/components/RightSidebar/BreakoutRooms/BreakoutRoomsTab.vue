@@ -36,7 +36,7 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'

@@ -15,7 +15,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import VideoBottomBar from './VideoBottomBar.vue'
 
