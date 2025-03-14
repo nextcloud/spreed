@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -69,7 +69,7 @@
 									:model="placeholderModel(key)"
 									:shared-data="placeholderSharedData(key)"
 									:token="token"
-									:participant-name="placeholderName(key)" />
+									:participant-name="placeholderName(key, !screenshotMode)" />
 							</div>
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
@@ -121,9 +121,13 @@
 					</NcButton>
 					<div v-if="!screenshotMode" class="dev-mode__data">
 						<span>GRID INFO</span>
-						<NcButton small @click="disableDevMode">
+						<button @click="disableDevMode">
 							Disable
-						</NcButton>
+						</button>
+						<span>Debug info</span>
+						<button @click="gridDebugInformation">
+							Log
+						</button>
 						<span>Videos (total):</span><span>{{ videosCount }}</span>
 						<span>Displayed videos:</span><span>{{ displayedVideos.length }}</span>
 						<span>Max per page:</span><span>~{{ videosCap }}</span>
@@ -153,7 +157,6 @@ import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -168,11 +171,13 @@ import VideoVue from '../shared/VideoVue.vue'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
-import { useSidebarStore } from '../../../stores/sidebar.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
 const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
+
+// Align with var(--grid-gap) in CallView
+const GRID_GAP = 8
 
 export default {
 	name: 'Grid',
@@ -259,7 +264,6 @@ export default {
 			videosCap,
 			videosCapEnforced,
 			callViewStore: useCallViewStore(),
-			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -277,6 +281,7 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
+			resizeObserver: null,
 			debounceMakeGrid: () => {},
 			debounceHandleWheelEvent: () => {},
 			tempPromotedModels: [],
@@ -315,10 +320,10 @@ export default {
 			return this.videos.length
 		},
 		videoWidth() {
-			return this.gridWidth / this.columns
+			return (this.gridWidth - GRID_GAP * (this.columns - 1)) / this.columns
 		},
 		videoHeight() {
-			return this.gridHeight / this.rows
+			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
 		// Array of videos that are being displayed in the grid at any given
@@ -398,10 +403,10 @@ export default {
 
 		// Max number of columns possible
 		columnsMax() {
-			// Max amount of columns that fits on screen, including gaps and paddings (8px)
-			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - 8 * this.columns) / this.dpiAwareMinWidth)
+			// Max amount of columns that fits on screen, including gaps (--grid-gap, 8px)
+			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - GRID_GAP * (this.columns - 1)) / this.dpiAwareMinWidth)
 			// Max amount of columns that fits on screen (with one more gap, as if we try to fit one more column)
-			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - 8 * (this.columns + 1)) / this.dpiAwareMinWidth)
+			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - GRID_GAP * this.columns) / this.dpiAwareMinWidth)
 			// If we about to change current columns amount, check if one more column could fit the screen
 			// This helps to avoid flickering, when resize within 8px from minimal gridWidth for current amount of columns
 			const calculatedColumnsMax = calculatedApproxColumnsMax === this.columns ? calculatedApproxColumnsMax : calculatedHypotheticalColumnsMax
@@ -411,11 +416,11 @@ export default {
 
 		// Max number of rows possible
 		rowsMax() {
-			if (Math.floor(this.gridHeight / this.dpiAwareMinHeight) < 1) {
+			if (Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight) < 1) {
 				// Return at least 1 row
 				return 1
 			} else {
-				return Math.floor(this.gridHeight / this.dpiAwareMinHeight)
+				return Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight)
 			}
 		},
 
@@ -449,11 +454,6 @@ export default {
 			}
 		},
 
-		// TODO: rebuild the grid to have optimal for last page
-		// isLastPage() {
-		// return !this.hasNextPage
-		// },
-
 		// Computed css to reactively style the grid
 		gridStyle() {
 			let columns = this.columns
@@ -475,10 +475,6 @@ export default {
 		// Check if there's an overflow of videos (videos that don't fit in the grid)
 		hasVideoOverflow() {
 			return this.videosCount > this.slots
-		},
-
-		sidebarStatus() {
-			return this.sidebarStore.show
 		},
 
 		wrapperStyle() {
@@ -572,22 +568,7 @@ export default {
 		'videos.length'() {
 			this.makeGrid()
 		},
-		// TODO: rebuild the grid to have optimal for last page
-		// Exception for when navigating in and away from the last page of the
-		// grid
-		/**
-		isLastPage(newValue, oldValue) {
-			 if (this.hasPagination) {
-				 // If navigating into last page, make grid for last page
-				if (newValue && this.currentPage !== 0) {
-					this.makeGridForLastPage()
-				} else if (!newValue) {
-				// TODO: make a proper grid for when navigating away from last page
-					this.makeGrid()
-				}
-			 }
-		 },
-		 */
+
 		isStripe() {
 			this.rebuildGrid()
 
@@ -598,11 +579,6 @@ export default {
 
 		stripeOpen() {
 			this.rebuildGrid()
-		},
-
-		sidebarStatus() {
-			// Handle the resize after the sidebar animation has completed
-			setTimeout(this.handleResize, 500)
 		},
 
 		numberOfPages() {
@@ -630,30 +606,37 @@ export default {
 		},
 	},
 
-	// bind event handlers to the `handleResize` method
 	mounted() {
 		this.debounceMakeGrid = debounce(this.makeGrid, 200)
 		this.debounceHandleWheelEvent = debounce(this.handleWheelEvent, 50)
-		window.addEventListener('resize', this.handleResize)
-		subscribe('navigation-toggled', this.handleResize)
+		this.resizeObserver = new ResizeObserver(this.debounceMakeGrid)
+		this.resizeObserver.observe(this.$refs.gridWrapper)
 		this.makeGrid()
 
-		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
+		if (OC.debug) {
+			OCA.Talk.gridDebugInformation = this.gridDebugInformation
+			OCA.Talk.gridDevModeEnable = this.enableDevMode
+		}
 	},
+
 	beforeDestroy() {
 		this.debounceMakeGrid.clear?.()
 		this.debounceHandleWheelEvent.clear?.()
-		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
-		window.removeEventListener('resize', this.handleResize)
-		unsubscribe('navigation-toggled', this.handleResize)
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
+
+		if (OC.debug) {
+			OCA.Talk.gridDebugInformation = undefined
+			OCA.Talk.gridDevModeEnable = undefined
+		}
 	},
 
 	methods: {
 		t,
 		gridDebugInformation() {
-			console.debug('Grid debug information')
-			console.debug({
+			console.info('Grid debug information', {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
@@ -693,22 +676,26 @@ export default {
 		placeholderModel,
 		placeholderSharedData,
 
+		enableDevMode() {
+			this.screenshotMode = false
+			this.devMode = true
+		},
+
 		disableDevMode() {
 			this.screenshotMode = false
 			this.devMode = false
 		},
-		// whenever the document is resized, re-set the 'clientWidth' variable
-		handleResize(event) {
+
+		// Find the right size if the grid in rows and columns (we already know the size in px).
+		makeGrid() {
 			// TODO: properly handle resizes when not on first page:
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-			this.debounceMakeGrid()
-		},
-
-		// Find the right size if the grid in rows and columns (we already know
-		// the size in px).
-		makeGrid() {
+			// TODO: rebuild the grid to have optimal for last page:
+			// Exception for when navigating in and away from the last page of the grid
+			// The last grid page is very likely not to have the same number of elements
+			// as the previous pages so the grid needs to be tweaked accordingly
 			if (!this.$refs.grid) {
 				return
 			}
@@ -768,12 +755,12 @@ export default {
 				const previousRows = currentRows
 
 				// Current video dimensions
-				const videoWidth = this.gridWidth / currentColumns
-				const videoHeight = this.gridHeight / currentRows
+				const videoWidth = (this.gridWidth - GRID_GAP * (currentColumns - 1)) / currentColumns
+				const videoHeight = (this.gridHeight - GRID_GAP * (currentRows - 1)) / currentRows
 
 				// Hypothetical width/height with one column/row less than current
-				const videoWidthWithOneColumnLess = this.gridWidth / (currentColumns - 1)
-				const videoHeightWithOneRowLess = this.gridHeight / (currentRows - 1)
+				const videoWidthWithOneColumnLess = (this.gridWidth - GRID_GAP * (currentColumns - 2)) / (currentColumns - 1)
+				const videoHeightWithOneRowLess = (this.gridHeight - GRID_GAP * (currentRows - 2)) / (currentRows - 1)
 
 				// Hypothetical aspect ratio with one column/row less than current
 				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
@@ -823,17 +810,6 @@ export default {
 			this.columns = currentColumns
 			this.rows = currentRows
 		},
-
-		// The last grid page is very likely not to have the same number of
-		// elements as the previous pages so the grid needs to be tweaked
-		// accordingly
-		// makeGridForLastPage() {
-		// this.columns = this.columnsMax
-		// this.rows = this.rowsMax
-		// // The displayed videos for the last page have already been set
-		// // in `handleClickNext`
-		// this.shrinkGrid(this.displayedVideos.length)
-		// },
 
 		handleWheelEvent(event) {
 			if (this.gridWidth <= 0) {
@@ -1035,7 +1011,7 @@ export default {
 	/* stylelint-disable-next-line csstools/use-logical */
 	left: var(--default-clickable-area);
 	color: #00FF41;
-	z-index: 100;
+	z-index: 1;
 	line-height: 120px;
 	font-weight: 900;
 	font-size: 100px !important;
@@ -1065,7 +1041,7 @@ export default {
 	grid-template-columns: 165px 75px;
 	align-items: center;
 	justify-content: flex-start;
-	z-index: 1;
+	z-index: 2;
 
 	& span {
 		text-overflow: ellipsis;

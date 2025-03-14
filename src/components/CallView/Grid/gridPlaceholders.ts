@@ -16,28 +16,29 @@ export function placeholderImage(i: number) {
 /**
  * Mock participant name for placeholders
  * @param i index
+ * @param showKey show key next to the name
  */
-export function placeholderName(i: number): string {
+export function placeholderName(i: number, showKey: boolean = false): string {
 	switch (i % 9) {
 	case 0:
-		return 'Sandra McKinney'
+		return 'Sandra McKinney' + (showKey ? ` | ${i}` : '')
 	case 1:
-		return 'Chris Wurst'
+		return 'Chris Wurst' + (showKey ? ` | ${i}` : '')
 	case 2:
-		return 'Edeltraut Bobb'
+		return 'Edeltraut Bobb' + (showKey ? ` | ${i}` : '')
 	case 3:
-		return 'Arthur Blitz'
+		return 'Arthur Blitz' + (showKey ? ` | ${i}` : '')
 	case 4:
-		return 'Roeland Douma'
+		return 'Roeland Douma' + (showKey ? ` | ${i}` : '')
 	case 5:
-		return 'Vanessa Steg'
+		return 'Vanessa Steg' + (showKey ? ` | ${i}` : '')
 	case 6:
-		return 'Emily Grant'
+		return 'Emily Grant' + (showKey ? ` | ${i}` : '')
 	case 7:
-		return 'Tobias Kaminsky'
+		return 'Tobias Kaminsky' + (showKey ? ` | ${i}` : '')
 	case 8:
 	default:
-		return 'Adrian Ada'
+		return 'Adrian Ada' + (showKey ? ` | ${i}` : '')
 	}
 }
 
