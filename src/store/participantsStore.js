@@ -9,7 +9,10 @@ import Vue from 'vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+
+import { spawnDialog } from '@nextcloud/vue/dist/Functions/dialog.js'
+
+import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
 
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
@@ -1070,38 +1073,27 @@ const actions = {
 		// FIXME: UI stuff doesn't belong here, should rather
 		// be triggered using a store flag and a dedicated Vue component
 
-		// Little hack to check if the close button was used which we can't disable,
-		// not listen to when it was used.
-		const interval = setInterval(function() {
-			// eslint-disable-next-line no-undef
-			if (document.getElementsByClassName('oc-dialog-dim').length === 0) {
-				clearInterval(interval)
-				EventBus.emit('duplicate-session-detected')
-				window.location = generateUrl('/apps/spreed')
-			}
-		}, 3000)
-
-		await OC.dialogs.confirmDestructive(
-			t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
-			t('spreed', 'Duplicate session'),
-			{
-				type: OC.dialogs.YES_NO_BUTTONS,
-				confirm: t('spreed', 'Join here'),
-				confirmClasses: 'error',
-				cancel: t('spreed', 'Leave this page'),
-			},
-			decision => {
-				clearInterval(interval)
-				if (!decision) {
-					// Cancel
-					EventBus.emit('duplicate-session-detected')
-					window.location = generateUrl('/apps/spreed')
-				} else {
-					// Confirm
-					context.dispatch('forceJoinConversation', { token })
+		spawnDialog(ConfirmDialog, {
+			name: t('spreed', 'Duplicate session'),
+			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+			buttons: [
+				{
+					label: t('spreed', 'Leave this page'),
+				},
+				{
+					label: t('spreed', 'Join here'),
+					type: 'primary',
+					callback: () => {
+						context.dispatch('forceJoinConversation', { token })
+						return true
+					},
 				}
+			],
+		}, (result) => {
+			if (!result) {
+				EventBus.emit('duplicate-session-detected')
 			}
-		)
+		})
 	},
 
 	async forceJoinConversation(context, { token }) {
