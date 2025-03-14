@@ -31,6 +31,7 @@ import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcContent from '@nextcloud/vue/components/NcContent'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
@@ -38,6 +39,7 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollManager from './components/PollViewer/PollManager.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
+import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
 
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
@@ -368,25 +370,24 @@ export default {
 				// Safe to navigate
 				beforeRouteChangeListener(to, from, next)
 			} else {
-				OC.dialogs.confirmDestructive(
-					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
+				spawnDialog(ConfirmDialog, {
+					name: t('spreed', 'Leave call'),
+					message: t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
 						conversation: this.currentConversation?.displayName ?? '',
 					}),
-					t('spreed', 'Leave call'),
-					{
-						type: OC.dialogs.YES_NO_BUTTONS,
-						confirm: t('spreed', 'Leave call'),
-						confirmClasses: 'error',
-						cancel: t('spreed', 'Stay in call'),
-					},
-					(decision) => {
-						if (!decision) {
-							return
+					buttons: [
+						{
+							label: t('spreed', 'Stay in call'),
+						},
+						{
+							label: t('spreed', 'Leave call'),
+							type: 'primary',
+							callback: () => {
+								beforeRouteChangeListener(to, from, next)
+							},
 						}
-
-						beforeRouteChangeListener(to, from, next)
-					}
-				)
+					],
+				})
 			}
 		})
 
