@@ -85,8 +85,8 @@ import Lock from 'vue-material-design-icons/Lock.vue'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import { BOT } from '../../constants.ts'
 import { getAllBots } from '../../services/botsService.ts'

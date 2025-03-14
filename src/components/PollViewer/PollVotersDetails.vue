@@ -44,8 +44,8 @@
 <script>
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 

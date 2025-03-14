@@ -9,7 +9,7 @@ import type { CSSProperties, Component } from 'vue'
 
 import { isRTL } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import TransitionExpand from './TransitionExpand.vue'
 

@@ -118,10 +118,10 @@ import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcColorPicker from '@nextcloud/vue/dist/Components/NcColorPicker.js'
-import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
+import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import ConversationIcon from '../ConversationIcon.vue'
 

@@ -81,7 +81,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'

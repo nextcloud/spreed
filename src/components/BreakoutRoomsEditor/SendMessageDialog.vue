@@ -25,7 +25,7 @@
 <script>
 import { t } from '@nextcloud/l10n'
 
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
 
 import NewMessage from '../NewMessage/NewMessage.vue'
 

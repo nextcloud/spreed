@@ -22,7 +22,7 @@ import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcHeaderButton from '@nextcloud/vue/dist/Components/NcHeaderButton.js'
+import NcHeaderButton from '@nextcloud/vue/components/NcHeaderButton'
 
 const props = defineProps<{
 	sidebarState: UnwrapNestedRefs<{ isOpen: boolean }>

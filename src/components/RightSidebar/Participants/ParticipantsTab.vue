@@ -70,7 +70,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
-import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
+import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 
 import ParticipantsList from './ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsListVirtual.vue'

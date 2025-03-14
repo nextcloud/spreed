@@ -64,7 +64,7 @@ import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t, n } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import { POLL } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'

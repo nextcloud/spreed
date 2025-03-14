@@ -139,8 +139,8 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import Poll from './Poll.vue'
 import Quote from '../../../../Quote.vue'

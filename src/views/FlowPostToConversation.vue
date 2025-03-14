@@ -24,7 +24,7 @@ import axios from '@nextcloud/axios'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 
 import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'

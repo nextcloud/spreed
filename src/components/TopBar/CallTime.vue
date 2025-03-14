@@ -65,9 +65,9 @@ import IconStop from 'vue-material-design-icons/Stop.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { CALL } from '../../constants.ts'

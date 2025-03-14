@@ -28,7 +28,7 @@ import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 export default {
 	name: 'SearchBox',

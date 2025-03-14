@@ -65,10 +65,10 @@
 <script>
 import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
-import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'

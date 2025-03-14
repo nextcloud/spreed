@@ -74,11 +74,11 @@ import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import ConversationIcon from '../ConversationIcon.vue'
 import Mention from '../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'

@@ -52,9 +52,9 @@ import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import { ATTENDEE, AVATAR } from '../../constants.ts'
 import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'

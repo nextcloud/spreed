@@ -72,9 +72,9 @@ import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 
 import AudioPlayer from './AudioPlayer.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'

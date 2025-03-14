@@ -9,9 +9,9 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import Reactions from './Reactions.vue'
 

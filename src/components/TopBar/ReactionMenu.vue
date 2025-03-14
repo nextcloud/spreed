@@ -33,9 +33,9 @@ import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionButtonGroup from '@nextcloud/vue/components/NcActionButtonGroup'
+import NcActions from '@nextcloud/vue/components/NcActions'
 
 export default {
 	name: 'ReactionMenu',

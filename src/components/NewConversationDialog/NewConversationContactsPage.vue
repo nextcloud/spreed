@@ -69,7 +69,7 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 import ParticipantsSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults.vue'
 import SelectPhoneNumber from '../SelectPhoneNumber.vue'

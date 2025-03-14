@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
-import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
+import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import { MENTION } from '../../../../../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'

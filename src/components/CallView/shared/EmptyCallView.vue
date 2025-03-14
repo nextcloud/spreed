@@ -32,8 +32,8 @@ import IconPhone from 'vue-material-design-icons/Phone.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'

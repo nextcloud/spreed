@@ -91,7 +91,7 @@ import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'

@@ -52,7 +52,7 @@ import Microphone from 'vue-material-design-icons/Microphone.vue'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'

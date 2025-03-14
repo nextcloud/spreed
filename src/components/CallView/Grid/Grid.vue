@@ -157,7 +157,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'

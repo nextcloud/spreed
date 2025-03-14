@@ -8,8 +8,8 @@ import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
 import Vuex, { Store } from 'vuex'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
