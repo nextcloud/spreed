@@ -13,7 +13,12 @@ function stringChop(str: string, size: number): string[] {
 	if (size <= 0) {
 		return [str]
 	}
-	return str.match(new RegExp('.{1,' + size + '}', 'g')) ?? [str]
+	const chunks: string[] = []
+	for (let i = 0; i < str.length; i += size) {
+		chunks.push(str.slice(i, i + size))
+	}
+
+	return chunks
 }
 
 /**
