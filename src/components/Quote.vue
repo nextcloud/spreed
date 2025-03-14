@@ -135,7 +135,7 @@ export default {
 		component() {
 			return this.canCancel
 				? { tag: 'div', link: undefined }
-				: { tag: 'router-link', link: { hash: this.hash, params: { skipLeaveWarning: true } } }
+				: { tag: 'router-link', link: { hash: this.hash } }
 		},
 
 		isOwnMessageQuoted() {
