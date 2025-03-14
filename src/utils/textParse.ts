@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { decodeHTML } from 'entities'
+
 import { getBaseUrl } from '@nextcloud/router'
 
 import { MENTION } from '../constants.ts'
@@ -42,6 +44,8 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 		}
 
 		if (mention) {
+			// It's server-side value, we can skip the security check
+			// nosemgrep
 			text = text.replace(new RegExp(`{${key}}`, 'g'), mention)
 		}
 	}
@@ -55,13 +59,9 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
  * @param text The string to parse
  */
 function parseSpecialSymbols(text: string): string {
-	const temp = document.createElement('textarea')
-	temp.innerHTML = text.replace(/&/gmi, '&amp;')
-	text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-		.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+	return decodeHTML(text) // decode HTML entities
 		.replace(/^\s+|\s+$/g, '') // remove trailing and leading whitespaces
 		.replace(/\r\n|\n|\r/gm, '\n') // remove line breaks
-	return text
 }
 
 export {
