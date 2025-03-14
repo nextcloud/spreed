@@ -308,7 +308,7 @@ function extractFeatureVersion(feature) {
 		}
 	}
 
-	console.error('Failed to get feature version for ' + feature, talkFeatures)
+	console.error('Failed to get feature version for %s', feature, talkFeatures)
 	throw new Error()
 }
 
