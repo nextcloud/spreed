@@ -361,7 +361,13 @@ export default {
 		 * Global before guard, this is called whenever a navigation is triggered.
 		 */
 		Router.beforeEach((to, from, next) => {
-			if (this.warnLeaving && !to.params?.skipLeaveWarning) {
+			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
+				// Navigating within the same conversation
+				beforeRouteChangeListener(to, from, next)
+			} else if (!this.warnLeaving || to.params?.skipLeaveWarning) {
+				// Safe to navigate
+				beforeRouteChangeListener(to, from, next)
+			} else {
 				OC.dialogs.confirmDestructive(
 					t('spreed', 'Navigating away from the page will leave the call in {conversation}', {
 						conversation: this.currentConversation?.displayName ?? '',
@@ -381,8 +387,6 @@ export default {
 						beforeRouteChangeListener(to, from, next)
 					}
 				)
-			} else {
-				beforeRouteChangeListener(to, from, next)
 			}
 		})
 
