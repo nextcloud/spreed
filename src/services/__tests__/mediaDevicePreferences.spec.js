@@ -32,12 +32,13 @@ describe('mediaDevicePreferences', () => {
 		videoInputDeviceDefault, videoInputDeviceA, videoInputDeviceB,
 		audioOutputDeviceDefault, audioOutputDeviceA, audioOutputDeviceB]
 	const audioInputPreferenceList = [audioInputDeviceDefault, audioInputDeviceA, audioInputDeviceB]
+	const audioOutputPreferenceList = [audioOutputDeviceDefault, audioOutputDeviceA, audioOutputDeviceB]
 	const videoInputPreferenceList = [videoInputDeviceDefault, videoInputDeviceA, videoInputDeviceB]
 
 	describe('listMediaDevices', () => {
 		it('list all input devices from preference lists', () => {
-			const attributes = { devices: allDevices, audioInputId: undefined, videoInputId: undefined }
-			const output = listMediaDevices(attributes, audioInputPreferenceList, videoInputPreferenceList)
+			const attributes = { devices: allDevices, audioInputId: undefined, audioOutputId: undefined, videoInputId: undefined }
+			const output = listMediaDevices(attributes, audioInputPreferenceList, audioOutputPreferenceList, videoInputPreferenceList)
 
 			// Assert: should show all registered devices, apart from default / outputs
 			const inputDevices = allDevices.filter(device => device.kind !== 'audiooutput' && device.deviceId !== 'default')
@@ -47,8 +48,8 @@ describe('mediaDevicePreferences', () => {
 		})
 
 		it('show selected devices from preference lists', () => {
-			const attributes = { devices: allDevices, audioInputId: audioInputDeviceA.deviceId, videoInputId: videoInputDeviceA.deviceId }
-			const output = listMediaDevices(attributes, audioInputPreferenceList, videoInputPreferenceList)
+			const attributes = { devices: allDevices, audioInputId: audioInputDeviceA.deviceId, audioOutputId: audioOutputDeviceA.deviceId, videoInputId: videoInputDeviceA.deviceId }
+			const output = listMediaDevices(attributes, audioInputPreferenceList, audioOutputPreferenceList, videoInputPreferenceList)
 
 			// Assert: should show a label next to selected registered devices
 			const selectedDeviceIds = [audioInputDeviceA.deviceId, videoInputDeviceA.deviceId]
@@ -64,7 +65,7 @@ describe('mediaDevicePreferences', () => {
 				audioInputId: undefined,
 				videoInputId: undefined,
 			}
-			const output = listMediaDevices(attributes, audioInputPreferenceList, videoInputPreferenceList)
+			const output = listMediaDevices(attributes, audioInputPreferenceList, audioOutputPreferenceList, videoInputPreferenceList)
 
 			// Assert: should show a label next to unplugged registered devices
 			unpluggedDeviceIds.forEach(deviceId => {
@@ -108,14 +109,14 @@ describe('mediaDevicePreferences', () => {
 		})
 
 		it('returns preference lists with all available devices', () => {
-			const output = populateMediaDevicesPreferences(allDevices, [], [])
+			const output = populateMediaDevicesPreferences(allDevices, [], [], [])
 
 			// Assert: should contain all available devices, apart from default / outputs
-			expect(output).toMatchObject({ newAudioInputList: audioInputPreferenceList, newVideoInputList: videoInputPreferenceList })
+			expect(output).toMatchObject({ newAudioInputList: audioInputPreferenceList, newAudioOutputList: audioOutputPreferenceList, newVideoInputList: videoInputPreferenceList })
 		})
 
 		it('returns null if preference lists were not updated', () => {
-			const output = populateMediaDevicesPreferences(allDevices, audioInputPreferenceList, videoInputPreferenceList)
+			const output = populateMediaDevicesPreferences(allDevices, audioInputPreferenceList, audioOutputPreferenceList, videoInputPreferenceList)
 
 			// Assert
 			expect(output).toMatchObject({ newAudioInputList: null, newVideoInputList: null })
