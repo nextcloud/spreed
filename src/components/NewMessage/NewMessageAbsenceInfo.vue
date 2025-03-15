@@ -44,7 +44,6 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
@@ -54,6 +53,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.j
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../constants.ts'
+import { formatDateTime } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'NewMessageAbsenceInfo',
@@ -114,8 +114,8 @@ export default {
 				return ''
 			}
 			return t('spreed', 'Absence period: {startDate} - {endDate}', {
-				startDate: moment(this.userAbsence.startDate * 1000).format('ll'),
-				endDate: moment(this.userAbsence.endDate * 1000).format('ll'),
+				startDate: formatDateTime(this.userAbsence.startDate * 1000, 'll'),
+				endDate: formatDateTime(this.userAbsence.endDate * 1000, 'll'),
 			})
 		},
 	},
