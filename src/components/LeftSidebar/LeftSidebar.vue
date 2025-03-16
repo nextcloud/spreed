@@ -164,92 +164,20 @@
 
 			<!-- Search results -->
 			<ul v-else class="scroller">
-				<RecycleScroller ref="scroller"
-					item-tag="ul"
-					:items="searchResultsVirtual"
-					type-field="type"
-					:item-size="56">
-					<template #default="{ item }">
-						<Conversation v-if="item.type === 'conversation'"
-							:key="`conversation_${item.id}`"
-							:ref="`conversation-${item.object.token}`"
-							:item="item.object"
-							:compact="isCompact"
-							@click="abortSearch" />
-						<NcListItem v-else-if="item.type === 'listItem'"
-							:name="searchText"
-							:compact="isCompact"
-							data-nav-id="conversation_create_new"
-							@click="createConversation(searchText)">
-							<template #icon>
-								<ChatPlus :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
-							</template>
-							<template v-if="!isCompact" #subname>
-								{{ t('spreed', 'New group conversation') }}
-							</template>
-						</NcListItem>
-						<Conversation v-else-if="item.type === 'open_conversation'"
-							:key="`open-conversation_${item.id}`"
-							:item="item.object"
-							is-search-result
-							:compact="isCompact"
-							@click="abortSearch" />
-						<NcAppNavigationCaption v-else-if="item.type === 'caption'" :name="item.name" />
-						<Hint v-else-if="item.type === 'hint'" :hint="item.hint" />
-						<NcListItem v-else-if="item.type === 'user'"
-							:key="`user_${item.id}`"
-							:data-nav-id="`user_${item.id}`"
-							:name="item.object.label"
-							:compact="isCompact"
-							@click="createAndJoinConversation(item.object)">
-							<template #icon>
-								<AvatarWrapper v-bind="iconData(item.object)" />
-							</template>
-							<template v-if="!isCompact" #subname>
-								{{ t('spreed', 'New private conversation') }}
-							</template>
-						</NcListItem>
-						<NcListItem v-else-if="item.type === 'group'"
-							:key="`group_${item.id}`"
-							:data-nav-id="`group_${item.id}`"
-							:name="item.object.label"
-							:compact="isCompact"
-							@click="createAndJoinConversation(item.object)">
-							<template #icon>
-								<ConversationIcon :item="iconData(item.object)" :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
-							</template>
-							<template v-if="!isCompact" #subname>
-								{{ t('spreed', 'New group conversation') }}
-							</template>
-						</NcListItem>
-						<NcListItem v-else-if="item.type === 'circle'"
-							:key="`circle_${item.id}`"
-							:data-nav-id="`circle_${item.id}`"
-							:name="item.object.label"
-							:compact="isCompact"
-							@click="createAndJoinConversation(item.object)">
-							<template #icon>
-								<ConversationIcon :item="iconData(item.object)" :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
-							</template>
-							<template v-if="!isCompact" #subname>
-								{{ t('spreed', 'New group conversation') }}
-							</template>
-						</NcListItem>
-						<NcListItem v-else-if="item.type === 'federated'"
-							:key="`federated_${item.id}`"
-							:data-nav-id="`federated_${item.id}`"
-							:name="item.object.label"
-							:compact="isCompact"
-							@click="createAndJoinConversation(item.object)">
-							<template #icon>
-								<AvatarWrapper v-bind="iconData(item.object)" />
-							</template>
-							<template v-if="!isCompact" #subname>
-								{{ t('spreed', 'New group conversation') }}
-							</template>
-						</NcListItem>
-					</template>
-				</RecycleScroller>
+				<SearchConversationsResults ref="searchResults"
+					:search-text="searchText"
+					:is-compact="isCompact"
+					:is-focused="isFocused"
+					:can-start-conversations="canStartConversations"
+					:conversations-list="conversationsList"
+					:search-results-users="searchResultsUsers"
+					:search-results-groups="searchResultsGroups"
+					:search-results-circles="searchResultsCircles"
+					:search-results-federated="searchResultsFederated"
+					:search-results-listed-conversations="searchResultsListedConversations"
+					@abort-search="abortSearch"
+					@create-new-conversation="createConversation"
+					@create-and-join-conversation="createAndJoinConversation" />
 
 				<!-- Search results: no results (yet) -->
 				<template v-if="sourcesWithoutResults">
@@ -328,16 +256,13 @@ import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
-import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
-import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-import ConversationIcon from '../ConversationIcon.vue'
+import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import Hint from '../UIShared/Hint.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
@@ -374,7 +299,6 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
-		AvatarWrapper,
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
@@ -386,14 +310,11 @@ export default {
 		SearchBox,
 		NewConversationDialog,
 		OpenConversationsList,
-		Conversation,
-		NcListItem,
-		ConversationIcon,
 		NcActions,
 		NcActionButton,
 		TransitionWrapper,
 		ConversationsListVirtual,
-		RecycleScroller,
+		SearchConversationsResults,
 		// Icons
 		AccountMultiplePlus,
 		AtIcon,
@@ -479,56 +400,8 @@ export default {
 	},
 
 	computed: {
-		searchResultsVirtual() {
-			const virtualList = []
-			virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
-			if (this.searchResultsConversationList.length === 0) {
-				virtualList.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
-			} else {
-				virtualList.push(...this.searchResultsConversationList.map((item) => ({ type: 'conversation', id: item.id, object: item })))
-			}
-			if (this.canStartConversations) {
-				virtualList.push({ type: 'listItem', id: 'new_conversation', name: this.searchText, subname: t('spreed', 'New private conversation') })
-			}
-			if (this.searchResultsListedConversations.length !== 0) {
-				virtualList.push({ type: 'caption', id: 'open_conversation_caption', name: t('spreed', 'Open conversations') })
-				virtualList.push(...this.searchResultsListedConversations.map((item) => ({ type: 'open_conversation', id: item.id, object: item })))
-			}
-			if (this.searchResultsUsers.length !== 0) {
-				virtualList.push({ type: 'caption', id: 'users_caption', name: t('spreed', 'Users') })
-				virtualList.push(...this.searchResultsUsers.map((item) => ({ type: 'user', id: item.id, object: item })))
-			}
-			if (this.canStartConversations) {
-				if (this.searchResultsGroups.length !== 0) {
-					virtualList.push({ type: 'caption', id: 'groups_caption', name: t('spreed', 'Groups') })
-					virtualList.push(...this.searchResultsGroups.map((item) => ({ type: 'group', id: item.id, object: item })))
-				}
-				if (this.searchResultsCircles.length !== 0) {
-					virtualList.push({ type: 'caption', id: 'circles_caption', name: t('spreed', 'Teams') })
-					virtualList.push(...this.searchResultsCircles.map((item) => ({ type: 'circle', id: item.id, object: item })))
-				}
-				if (this.searchResultsFederated.length !== 0) {
-					virtualList.push({ type: 'caption', id: 'federated_users_caption', name: t('spreed', 'Federated users') })
-					virtualList.push(...this.searchResultsFederated.map((item) => ({ type: 'federated', id: item.id, object: item })))
-				}
-			}
-			return virtualList
-		},
-
 		conversationsList() {
 			return this.$store.getters.conversationsList
-		},
-
-		searchResultsConversationList() {
-			if (this.isSearching) {
-				const lowerSearchText = this.searchText.toLowerCase()
-				return this.conversationsList.filter(conversation =>
-					conversation.displayName.toLowerCase().includes(lowerSearchText)
-					|| conversation.name.toLowerCase().includes(lowerSearchText)
-				)
-			} else {
-				return []
-			}
 		},
 
 		token() {
@@ -1048,26 +921,6 @@ export default {
 				})
 			}
 		},
-
-		iconData(item) {
-			if (item.source === ATTENDEE.ACTOR_TYPE.USERS
-				|| item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
-				return {
-					id: item.id,
-					name: item.label,
-					source: item.source,
-					disableMenu: true,
-					token: 'new',
-					showUserStatus: true,
-					size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
-				}
-			}
-			return {
-				type: CONVERSATION.TYPE.GROUP,
-				objectType: item.source,
-				size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
-			}
-		},
 	},
 }
 </script>
@@ -1164,10 +1017,6 @@ export default {
 	padding: 0 !important;
 }
 
-:deep(.app-navigation-caption) {
-	height: 56px;
-}
-
 // Overwrite NcListItem styles
 :deep(.list-item) {
 	overflow: hidden;
@@ -1198,5 +1047,4 @@ export default {
 :deep(.list-item--compact .list-item-content__actions) {
 	height: var(--clickable-area-small, 24px);
 }
-
 </style>
