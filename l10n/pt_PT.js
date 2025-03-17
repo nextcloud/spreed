@@ -288,6 +288,8 @@ OC.L10N.register(
     "Restricted" : "Restrito",
     "Personal" : "Pessoal",
     "Leave conversation" : "Sair da conversação",
+    "No" : "Não",
+    "Yes" : "Sim",
     "Delete conversation" : "Eliminar conversação",
     "Password protection" : "Protegido por palavra-passe",
     "Set a password" : "Definir uma palavra-passe",
