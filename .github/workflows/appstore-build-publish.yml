@@ -42,7 +42,7 @@ jobs:
 
       - name: Get app version number
         id: app-version
-        uses: skjnldsv/xpath-action@7e6a7c379d0e9abc8acaef43df403ab4fc4f770c # master
+        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # master
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
           expression: "//info//version/text()"
@@ -53,7 +53,7 @@ jobs:
 
       - name: Get appinfo data
         id: appinfo
-        uses: skjnldsv/xpath-action@7e6a7c379d0e9abc8acaef43df403ab4fc4f770c # master
+        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # master
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
           expression: "//info//dependencies//nextcloud/@min-version"
@@ -87,7 +87,7 @@ jobs:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
       - name: Set up php ${{ steps.php-versions.outputs.php-min }}
-        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
+        uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # v2.32.0
         with:
           php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
