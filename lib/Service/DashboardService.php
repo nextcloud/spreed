@@ -94,7 +94,7 @@ class DashboardService {
 				}
 
 				if ($room->getObjectType() !== Room::OBJECT_TYPE_EVENT) {
-					$this->logger->debug("Room " . $room->getToken() . " not an event room");
+					$this->logger->debug('Room ' . $room->getToken() . ' not an event room');
 					continue;
 				}
 
@@ -111,10 +111,10 @@ class DashboardService {
 			}
 		}
 
-//      Should the backend sort the rooms by their objectId (which is the timestamp for when the event starts)?
-//		usort($widgetItems, static function (WidgetItem $a, WidgetItem $b) {
-//			return (int)$a->getSinceId() - (int)$b->getSinceId();
-//		});
+		//      Should the backend sort the rooms by their objectId (which is the timestamp for when the event starts)?
+		//		usort($widgetItems, static function (WidgetItem $a, WidgetItem $b) {
+		//			return (int)$a->getSinceId() - (int)$b->getSinceId();
+		//		});
 
 		return $rooms;
 
