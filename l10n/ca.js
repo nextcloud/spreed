@@ -1129,6 +1129,7 @@ OC.L10N.register(
     "Set reminder" : "Defineix un recordatori",
     "Reply privately" : "Respon en privat",
     "Edit message" : "Edició del missatge",
+    "Copy message" : "Copia el missatge",
     "Copy message link" : "Copia l'enllaç del missatge",
     "Go to file" : "Vés al fitxer",
     "Forward message" : "Missatge de reenviament",
