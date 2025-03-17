@@ -43,7 +43,7 @@
     "@nextcloud/sharing": "^0.2.4",
     "@nextcloud/upload": "^1.9.0",
     "@nextcloud/vue": "^8.23.1",
-    "@vueuse/components": "^11.3.0",
+    "@vueuse/components": "^13.0.0",
     "@vueuse/core": "^11.2.0",
     "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
