@@ -42,6 +42,12 @@ SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
+path = "tests/integration/spreedcheats/calendars/**.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
 path = ["package.json", "package-lock.json", ".git-blame-ignore-revs", "**/package.json", "**/package-lock.json", "composer.json", "composer.patches.json", "composer.lock", "**/composer.json", "**/composer.lock", ".gitignore", ".l10nignore", "psalm.xml", "tests/psalm-baseline.xml", "vendor-bin/**/composer.json", "vendor-bin/**/composer.lock", ".tx/config", "**/phpunit.xml", "tsconfig.json", "redocly.yaml"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "none"
