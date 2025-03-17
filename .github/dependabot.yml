@@ -51,7 +51,6 @@ updates:
   commit-message:
     prefix: "build"
     include: "scope"
-  versioning-strategy: "increase"
   ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
@@ -87,6 +86,7 @@ updates:
   commit-message:
     prefix: "ci"
     include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
