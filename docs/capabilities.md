@@ -184,3 +184,4 @@
 * `sip-direct-dialin` (local) - Whether the SIP bridge can create conversations when an external participant calls a mapped phone number
 * `important-conversations` (local) - Whether important conversations are supported
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
+* `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests

@@ -8,19 +8,27 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\Controller;
 
+use OCA\SpreedCheats\Calendar\EventGenerator;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Calendar\Exceptions\CalendarException;
+use OCP\Calendar\ICreateFromString;
+use OCP\Calendar\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
+use Sabre\VObject\UUIDUtil;
 
 class ApiController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		protected IDBConnection $db,
+		private IManager $calendarManager,
+		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -104,6 +112,13 @@ class ApiController extends OCSController {
 			// Ignore
 		}
 
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('calendarobjects')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('calendarobjects_props')->executeStatement();
+
+
 		return new DataResponse();
 	}
 
@@ -161,6 +176,93 @@ class ApiController extends OCSController {
 			$update->executeStatement();
 		}
 		$result->closeCursor();
+
+		return new DataResponse();
+	}
+
+	#[NoAdminRequired]
+	public function createEventInCalendar(string $name, string $location, string $start, string $end): DataResponse {
+		if ($this->userId === null) {
+			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+		}
+
+		$calendar = null;
+		// Create a calendar event with LOCATION and time via OCP
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
+		foreach ($calendars as $c) {
+			if ($c instanceof ICreateFromString) {
+				$calendar = $c;
+			}
+		}
+
+		if ($calendar === null) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$calData = <<<EOF
+BEGIN:VCALENDAR
+PRODID:-//IDN nextcloud.com//Calendar app 5.2.0-dev.1//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VEVENT
+CREATED:20250310T171800Z
+DTSTAMP:20250310T171819Z
+LAST-MODIFIED:20250310T171819Z
+SEQUENCE:2
+UID:{{{UID}}}
+DTSTART:{{{START}}}
+DTEND:{{{END}}}
+STATUS:CONFIRMED
+SUMMARY:{{{NAME}}}
+LOCATION:{{{LOCATION}}}
+END:VEVENT
+END:VCALENDAR
+EOF;
+
+		$start = (new \DateTime())->setTimestamp((int)$start)->format('Ymd\THis');
+		$end = (new \DateTime())->setTimestamp((int)$end)->format('Ymd\THis');
+		$uid = UUIDUtil::getUUID();
+		$calData = str_replace(['{{{NAME}}}', '{{{START}}}', '{{{END}}}', '{{{UID}}}', '{{{LOCATION}}}'], [$name, $start, $end, $uid, $location], $calData);
+
+		try {
+			/** @var ICreateFromString $calendar */
+			$calendar->createFromString((string)random_int(0, 10000), $calData);
+		} catch (CalendarException) {
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+		return new DataResponse();
+	}
+
+	#[NoAdminRequired]
+	public function createDashboardEvents(string $name, string $location): DataResponse {
+		if ($this->userId === null) {
+			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+		}
+
+		$calendar = null;
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
+		foreach ($calendars as $c) {
+			if ($c instanceof ICreateFromString) {
+				$calendar = $c;
+			}
+		}
+
+		if ($calendar === null) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$start = time();
+		$end = time() + 3600;
+		$events = EventGenerator::generateEvents($name, $location, $start, $end);
+
+		foreach ($events as $event) {
+			try {
+				/** @var ICreateFromString $calendar */
+				$calendar->createFromString((string)random_int(0, 10000), $event);
+			} catch (CalendarException) {
+				return new DataResponse(null, Http::STATUS_FORBIDDEN);
+			}
+		}
 
 		return new DataResponse();
 	}
