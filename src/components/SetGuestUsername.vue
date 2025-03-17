@@ -47,8 +47,8 @@ import { getGuestNickname } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 import { useGuestNameStore } from '../stores/guestName.js'
 
