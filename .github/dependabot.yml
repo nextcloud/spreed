@@ -83,8 +83,7 @@ updates:
 
 # GitHub Actions
 - package-ecosystem: "github-actions"
-  directories:
-    - ".github/workflows"
+  directory: ".github/workflows"
   commit-message:
     prefix: "ci"
     include: "scope"
