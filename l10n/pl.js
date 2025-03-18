@@ -828,7 +828,7 @@ OC.L10N.register(
     "Email of the user" : "E-mail użytkownika",
     "Language" : "Język",
     "Country" : "Kraj",
-    "Request signaling server trial" : "Prośba o test serwera sygnalizacyjnego",
+    "Request signaling server trial" : "Poproś o próbny serwer sygnalizacyjny",
     "You can see the current status of your hosted signaling server in the following table." : "Aktualny stan hostowanego serwera sygnalizacyjnego można zobaczyć w poniższej tabeli.",
     "Status" : "Status",
     "Created at" : "Utworzono",
