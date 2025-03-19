@@ -163,29 +163,20 @@
 			</template>
 
 			<!-- Search results -->
-			<ul v-else class="scroller">
-				<SearchConversationsResults ref="searchResults"
-					:search-text="searchText"
-					:is-compact="isCompact"
-					:is-focused="isFocused"
-					:can-start-conversations="canStartConversations"
-					:conversations-list="conversationsList"
-					:search-results-users="searchResultsUsers"
-					:search-results-groups="searchResultsGroups"
-					:search-results-circles="searchResultsCircles"
-					:search-results-federated="searchResultsFederated"
-					:search-results-listed-conversations="searchResultsListedConversations"
-					@abort-search="abortSearch"
-					@create-new-conversation="createConversation"
-					@create-and-join-conversation="createAndJoinConversation" />
-
-				<!-- Search results: no results (yet) -->
-				<template v-if="sourcesWithoutResults">
-					<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
-					<Hint :hint="t('spreed', 'No search results')" />
-				</template>
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading …')" />
-			</ul>
+			<SearchConversationsResults v-else
+				ref="searchResults"
+				class="scroller"
+				:search-text="searchText"
+				:is-compact="isCompact"
+				:is-focused="isFocused"
+				:can-start-conversations="canStartConversations"
+				:contacts-loading="contactsLoading"
+				:conversations-list="conversationsList"
+				:search-results="searchResults"
+				:search-results-listed-conversations="searchResultsListedConversations"
+				@abort-search="abortSearch"
+				@create-new-conversation="createConversation"
+				@create-and-join-conversation="createAndJoinConversation" />
 		</template>
 
 		<template #footer>
@@ -251,7 +242,6 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
@@ -264,12 +254,11 @@ import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
-import Hint from '../UIShared/Hint.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
-import { ATTENDEE, AVATAR, CONVERSATION } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
@@ -302,11 +291,9 @@ export default {
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
-		NcAppNavigationCaption,
 		NcAppNavigationItem,
 		NcButton,
 		NcCounterBubble,
-		Hint,
 		SearchBox,
 		NewConversationDialog,
 		OpenConversationsList,
@@ -347,7 +334,6 @@ export default {
 		const isMobile = useIsMobile()
 
 		return {
-			AVATAR,
 			initializeNavigation,
 			resetNavigation,
 			leftSidebar,
@@ -368,14 +354,9 @@ export default {
 		return {
 			searchText: '',
 			searchResults: [],
-			searchResultsUsers: [],
-			searchResultsGroups: [],
-			searchResultsCircles: [],
-			searchResultsFederated: [],
 			searchResultsListedConversations: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
-			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
 			canStartConversations: loadState('spreed', 'start_conversations'),
 			initialisedConversations: false,
 			cancelSearchPossibleConversations: () => {},
@@ -471,40 +452,6 @@ export default {
 			return isFederationEnabled
 				? this.federationStore.pendingSharesCount
 				: 0
-		},
-
-		sourcesWithoutResults() {
-			return !this.searchResultsUsers.length
-				|| !this.searchResultsGroups.length
-				|| (this.isCirclesEnabled && !this.searchResultsCircles.length)
-		},
-
-		sourcesWithoutResultsList() {
-			const hasNoResultsUsers = !this.searchResultsUsers.length
-			const hasNoResultsGroups = !this.searchResultsGroups.length
-			const hasNoResultsCircles = this.isCirclesEnabled && !this.searchResultsCircles.length
-
-			if (hasNoResultsUsers) {
-				if (hasNoResultsGroups) {
-					return (hasNoResultsCircles)
-						? t('spreed', 'Users, groups and teams')
-						: t('spreed', 'Users and groups')
-				} else {
-					return (hasNoResultsCircles)
-						? t('spreed', 'Users and teams')
-						: t('spreed', 'Users')
-				}
-			} else {
-				if (hasNoResultsGroups) {
-					return (hasNoResultsCircles)
-						? t('spreed', 'Groups and teams')
-						: t('spreed', 'Groups')
-				} else {
-					return (hasNoResultsCircles)
-						? t('spreed', 'Teams')
-						: t('spreed', 'Other sources')
-				}
-			}
 		},
 
 		isCompact() {
@@ -652,17 +599,6 @@ export default {
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []
-				this.searchResultsUsers = this.searchResults.filter((match) => {
-					return match.source === ATTENDEE.ACTOR_TYPE.USERS
-						&& match.id !== this.$store.getters.getUserId()
-						&& !this.hasOneToOneConversationWith(match.id)
-				})
-				this.searchResultsGroups = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS)
-				this.searchResultsCircles = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
-				this.searchResultsFederated = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.REMOTES)
-					.map((item) => {
-						return { ...item, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }
-					})
 				this.contactsLoading = false
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
@@ -753,10 +689,6 @@ export default {
 			const response = await fetchNoteToSelfConversation()
 			const conversation = response.data.ocs.data
 			this.switchToConversation(conversation)
-		},
-
-		hasOneToOneConversationWith(userId) {
-			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
 
 		// Reset the search text, therefore end the search operation.
