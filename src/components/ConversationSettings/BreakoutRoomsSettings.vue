@@ -31,7 +31,7 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 

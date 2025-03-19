@@ -57,7 +57,7 @@ import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 
 import { t, isRTL } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'

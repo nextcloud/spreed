@@ -79,9 +79,9 @@ import IconPencil from 'vue-material-design-icons/Pencil.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
+import NcActions from '@nextcloud/vue/components/NcActions'
 
 export default {
 	name: 'BridgePart',

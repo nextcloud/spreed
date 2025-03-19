@@ -87,11 +87,11 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 
 import BridgePart from './BridgePart.vue'
 

@@ -44,9 +44,9 @@ import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'

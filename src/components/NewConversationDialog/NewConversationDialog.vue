@@ -113,9 +113,9 @@ import Check from 'vue-material-design-icons/Check.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcModal from '@nextcloud/vue/components/NcModal'
 
 import NewConversationContactsPage from './NewConversationContactsPage.vue'
 import NewConversationSetupPage from './NewConversationSetupPage.vue'

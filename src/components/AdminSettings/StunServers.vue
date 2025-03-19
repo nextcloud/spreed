@@ -47,7 +47,7 @@ import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import StunServer from '../../components/AdminSettings/StunServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'

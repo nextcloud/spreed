@@ -35,8 +35,8 @@
 <script>
 import debounce from 'debounce'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
 
 import SharedItems from './SharedItems.vue'
 

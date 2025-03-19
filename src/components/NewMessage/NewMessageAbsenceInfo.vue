@@ -46,10 +46,10 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
-import { useIsDarkTheme } from '@nextcloud/vue/dist/Composables/useIsDarkTheme.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 

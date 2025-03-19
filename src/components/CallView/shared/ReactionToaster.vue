@@ -36,7 +36,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 
-import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
+import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
