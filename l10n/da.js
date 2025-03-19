@@ -508,6 +508,7 @@ OC.L10N.register(
     "Reply" : "Besvar",
     "Set reminder" : "Sæt påmindelse",
     "Reply privately" : "Svar privat",
+    "Copy message" : "Kopier besked",
     "Copy message link" : "Kopier besked link",
     "Go to file" : "Gå til fil",
     "Forward message" : "Videresend besked",
