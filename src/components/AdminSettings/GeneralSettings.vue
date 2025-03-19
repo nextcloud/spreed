@@ -70,6 +70,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 
 const defaultGroupNotificationOptions = [
@@ -106,7 +107,7 @@ export default {
 			conversationsFilesPublicShares: parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
 
 			hasFeatureJoinFeatures: false,
-			isE2EECallsEnabled: false,
+			isE2EECallsEnabled: getTalkConfig('local', 'call', 'end-to-end-encryption'),
 			hasSIPBridge: !!loadState('spreed', 'sip_bridge_shared_secret'),
 		}
 	},
