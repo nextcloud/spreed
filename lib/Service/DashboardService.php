@@ -12,6 +12,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Calendar\IManager;
@@ -30,15 +31,15 @@ class DashboardService {
 
 	/**
 	 * @param string $userId
-	 * @return Room[]
+	 * @return Participant[]
 	 */
-	public function getItems(string $userId): array {
+	public function getEventRooms(string $userId): array {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $userId);
 		if (count($calendars) === 0) {
 			return [];
 		}
 		$start = $this->timeFactory->getDateTime();
-		$end = $start->add(new \DateInterval('P7D'));
+		$end = $this->timeFactory->getDateTime()->add(\DateInterval::createFromDateString('1 week'));
 		$options = [
 			'timerange' => [
 				'start' => $start,
@@ -48,7 +49,7 @@ class DashboardService {
 
 		$pattern = '/call/';
 		$searchProperties = ['LOCATION'];
-		$rooms = [];
+		$participants = [];
 		foreach ($calendars as $calendar) {
 			$searchResult = $calendar->search($pattern, $searchProperties, $options, 10);
 			foreach ($searchResult as $calendarEvent) {
@@ -57,12 +58,12 @@ class DashboardService {
 				$location = null;
 				foreach ($calendarEvent['objects'] as $object) {
 					// We do not allow recurrences
-					if ($object['RRULE'] !== null || $object['RECURRENCE-ID'] !== null) {
+					if (isset($object['RRULE']) || isset($object['RECURRENCE-ID'])) {
 						continue;
 					}
 					/** @var \DateTimeImmutable $startDate */
 					$startDate = $object['DTSTART'][0];
-					$location = $object['LOCATION'];
+					$location = $object['LOCATION'][0] ?? null;
 					if ($startDate->getTimestamp() >= $start->getTimestamp()) {
 						$recurrence = $object;
 						break;
@@ -101,13 +102,13 @@ class DashboardService {
 					$this->logger->debug("Participant $userId not found in dashboard service");
 					continue;
 				}
-				$rooms[] = $room;
+				$participants[$participant->getRoom()->getId()] = $participant;
 			}
 		}
 
-		usort($rooms, static function (Room $a, Room $b) {
-			return (int)$a->getObjectId() - (int)$b->getObjectId();
+		usort($participants, static function (Participant $a, Participant $b) {
+			return (int)$a->getRoom()->getObjectId() - (int)$b->getRoom()->getObjectId();
 		});
-		return array_slice($rooms, 0, 10);
+		return array_slice($participants, 0, 10);
 	}
 }

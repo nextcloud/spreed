@@ -528,6 +528,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/dashboard/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get rooms that have events in the next 7 days sorted by their start timestamp ascending
+         * @description Required capability: `dashboard`
+         */
+        get: operations["dashboard-get-event-rooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
         parameters: {
             query?: never;
@@ -4599,6 +4619,36 @@ export interface operations {
                             data: {
                                 [key: string]: components["schemas"]["ChatMessage"][];
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "dashboard-get-event-rooms": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A list of rooms or an empty array */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"][];
                         };
                     };
                 };

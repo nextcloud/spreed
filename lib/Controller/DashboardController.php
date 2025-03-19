@@ -9,8 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\DashboardService;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -29,6 +32,8 @@ class DashboardController extends AEnvironmentAwareOCSController {
 		protected IUserSession $userSession,
 		protected LoggerInterface $logger,
 		protected DashboardService $service,
+		protected ParticipantService $participantService,
+		protected RoomFormatter $formatter,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -46,8 +51,21 @@ class DashboardController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'dashboard#getEventRooms')]
 	public function getEventRooms(): DataResponse {
-		$user = $this->userSession->getUser()?->getUID();
-		$rooms = $this->service->getItems($user);
+		$userId = $this->userSession->getUser()?->getUID();
+		$participants = $this->service->getEventRooms($userId);
+		$rooms = [];
+		foreach ($participants as $participant) {
+			try {
+				$rooms[] = $this->formatter->formatRoom($this->getResponseFormat(),
+					[],
+					$participant->getRoom(),
+					$participant,
+				);
+			} catch (ParticipantNotFoundException) {
+				// for example in case the room was deleted concurrently,
+				// the user is not a participant anymore
+			}
+		}
 		return new DataResponse($rooms);
 	}
 }
