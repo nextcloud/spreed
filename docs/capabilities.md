@@ -181,3 +181,6 @@
 
 ## 21.1
 * `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
+
+## 22.0
+* `dashboard` - Whether Talk APIs offer functionality for Dashboard requests

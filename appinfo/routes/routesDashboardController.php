@@ -12,7 +12,7 @@ $requirements = [
 
 return [
 	'ocs' => [
-		/** @see \OCA\Talk\Controller\DashboardController::getCalendarRooms() */
-		['name' => 'Dashboard#getCalendarRooms', 'url' => '/api/{apiVersion}/dashboard/', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\DashboardController::getEventRooms() */
+		['name' => 'Dashboard#getEventRooms', 'url' => '/api/{apiVersion}/dashboard/events', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];

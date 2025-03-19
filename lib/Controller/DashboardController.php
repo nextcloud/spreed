@@ -12,6 +12,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\DashboardService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -33,15 +34,18 @@ class DashboardController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 *
 	 * Get rooms that have events in the next 7 days
+	 * sorted by their start timestamp ascending
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>|array{}, array{}>
+	 * Required capability: `dashboard`
 	 *
-	 * 200: rooms
+	 * @return DataResponse<Http::STATUS_OK, list<?TalkRoom>, array{}>
+	 *
+	 * 200: A list of rooms or an empty array
 	 */
 	#[PublicPage]
-	public function getCalendarRooms(): DataResponse {
+	#[BruteForceProtection(action: 'dashboard#getEventRooms')]
+	public function getEventRooms(): DataResponse {
 		$user = $this->userSession->getUser()?->getUID();
 		$rooms = $this->service->getItems($user);
 		return new DataResponse($rooms);
