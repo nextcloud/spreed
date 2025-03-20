@@ -138,7 +138,7 @@ class Capabilities implements IPublicCapability {
 		'chat-summary-api',
 		'call-notification-state-api',
 		'schedule-meeting',
-		'dashboard',
+		'dashboard-event-rooms',
 	];
 
 	public const LOCAL_CONFIGS = [

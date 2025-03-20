@@ -4,6 +4,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Get Event Rooms
 
+* Required capability: `dashboard-event-rooms`
 * Method: `GET`
 * Endpoint: `/dashboard/events`
 * Data: None

@@ -42,7 +42,7 @@ class DashboardController extends AEnvironmentAwareOCSController {
 	 * Get rooms that have events in the next 7 days
 	 * sorted by their start timestamp ascending
 	 *
-	 * Required capability: `dashboard`
+	 * Required capability: `dashboard-event-rooms`
 	 *
 	 * @return DataResponse<Http::STATUS_OK, list<?TalkRoom>, array{}>
 	 *

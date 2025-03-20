@@ -537,7 +537,7 @@ export type paths = {
         };
         /**
          * Get rooms that have events in the next 7 days sorted by their start timestamp ascending
-         * @description Required capability: `dashboard`
+         * @description Required capability: `dashboard-event-rooms`
          */
         get: operations["dashboard-get-event-rooms"];
         put?: never;
