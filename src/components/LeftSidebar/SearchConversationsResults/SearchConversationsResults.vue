@@ -22,6 +22,7 @@ import Conversation from '../ConversationsList/Conversation.vue'
 
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE, CONVERSATION, AVATAR } from '../../../constants.ts'
+import type { Conversation as TypeConversation, ParticipantSearchResult } from '../../../types/index.ts'
 
 const store = useStore()
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
@@ -30,11 +31,11 @@ const props = defineProps<{
     searchText: string,
     isCompact: boolean,
     isFocused: boolean,
-    conversationsList: Array<Record<string, any>>,
+    conversationsList: Array<TypeConversation>,
     contactsLoading: boolean,
     canStartConversations: boolean,
-    searchResultsListedConversations: Array<Record<string, any>>,
-    searchResults: Array<Record<string, any>>,
+    searchResultsListedConversations: Array<TypeConversation>,
+    searchResults: Array<ParticipantSearchResult>,
 
 }>()
 
@@ -55,7 +56,7 @@ const searchResultsConversationList = computed(() => {
 /**
  * Check if the user has an existing one-to-one conversation with the given user
  *
- * @param userId
+ * @param userId the user id to check
  */
 function hasOneToOneConversationWith(userId: string) {
 	return props.conversationsList.length > 0 && props.conversationsList.some((conversation) => {
@@ -103,23 +104,23 @@ function prepareSearchResultsVirtual() {
 		{
 			type: 'user',
 			caption: { type: 'caption', id: 'users_caption', name: t('spreed', 'Users') },
-			condition: (match) => match.source === ATTENDEE.ACTOR_TYPE.USERS && match.id !== store.getters.getUserId() && !hasOneToOneConversationWith(match.id),
+			condition: (match : ParticipantSearchResult) => match.source === ATTENDEE.ACTOR_TYPE.USERS && match.id !== store.getters.getUserId() && !hasOneToOneConversationWith(match.id),
 		},
 		{
 			type: 'group',
 			caption: { type: 'caption', id: 'groups_caption', name: t('spreed', 'Groups') },
-			condition: (match) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS && props.canStartConversations,
+			condition: (match: ParticipantSearchResult) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS && props.canStartConversations,
 		},
 		{
 			type: 'circle',
 			caption: { type: 'caption', id: 'circles_caption', name: t('spreed', 'Teams') },
-			condition: (match) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES && props.canStartConversations,
+			condition: (match: ParticipantSearchResult) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES && props.canStartConversations,
 		},
 		{
 			type: 'federated',
 			caption: { type: 'caption', id: 'federated_users_caption', name: t('spreed', 'Federated users') },
-			condition: (match) => match.source === ATTENDEE.ACTOR_TYPE.REMOTES && props.canStartConversations,
-			transform: (match) => ({ ...match, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }),
+			condition: (match: ParticipantSearchResult) => match.source === ATTENDEE.ACTOR_TYPE.REMOTES && props.canStartConversations,
+			transform: (match: ParticipantSearchResult) => ({ ...match, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }),
 		},
 	]
 
@@ -154,7 +155,7 @@ const searchResultsVirtual = computed(() => prepareSearchResultsVirtual())
  * Generate the props for the AvatarWrapper component
  * @param item conversation item
  */
-function iconData(item : Record<string, any>) {
+function iconData(item : ParticipantSearchResult) {
 	if (item.source === ATTENDEE.ACTOR_TYPE.USERS
         || item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
 		return {
@@ -178,7 +179,7 @@ function iconData(item : Record<string, any>) {
 const emit = defineEmits<{
 	(event: 'abort-search'): void,
     (event: 'create-new-conversation', searchText: string): void,
-    (event: 'create-and-join-conversation', item: Record<string, any>): void,
+    (event: 'create-and-join-conversation', item: TypeConversation): void,
 }>()
 
 const sourcesWithoutResults = computed(() => {
