@@ -138,7 +138,6 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
@@ -153,9 +152,6 @@ export default {
 
 	name: 'TopBarMediaControls',
 
-	directives: {
-		tooltip: Tooltip,
-	},
 	components: {
 		LocalAudioControlButton,
 		LocalVideoControlButton,

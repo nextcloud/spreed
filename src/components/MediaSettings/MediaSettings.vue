@@ -227,7 +227,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
@@ -250,10 +249,6 @@ const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-co
 
 export default {
 	name: 'MediaSettings',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		AvatarWrapper,

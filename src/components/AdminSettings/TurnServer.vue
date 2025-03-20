@@ -106,16 +106,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { isCertificateValid } from '../../services/certificateService.js'
 
 export default {
 	name: 'TurnServer',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		AlertCircle,

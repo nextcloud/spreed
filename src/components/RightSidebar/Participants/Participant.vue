@@ -362,7 +362,6 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
@@ -419,10 +418,6 @@ export default {
 		PhonePaused,
 		Tune,
 		VideoIcon,
-	},
-
-	directives: {
-		tooltip: Tooltip,
 	},
 
 	props: {
