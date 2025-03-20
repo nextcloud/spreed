@@ -221,6 +221,12 @@ const computedStyleCaption = computed(() => {
 		alignItems: props.isCompact ? 'unset' : 'self-end',
 	}
 })
+
+const computedStyleFooter = computed(() => {
+	return {
+		marginBlockStart: props.isCompact ? '0' : '18px', // 54px (item height) - 36px (current height)
+	}
+})
 </script>
 <template>
 	<RecycleScroller ref="scroller"
@@ -310,11 +316,13 @@ const computedStyleCaption = computed(() => {
 		</template>
 		<template #after>
 			<!-- Search results: no results (yet) -->
-			<template v-if="sourcesWithoutResults">
-				<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
-				<Hint :hint="t('spreed', 'No search results')" />
-			</template>
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading …')" />
+			<div :style="computedStyleFooter">
+				<template v-if="sourcesWithoutResults">
+					<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
+					<Hint :hint="t('spreed', 'No search results')" />
+				</template>
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading …')" />
+			</div>
 		</template>
 	</RecycleScroller>
 </template>
