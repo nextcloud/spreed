@@ -20,9 +20,9 @@ use Psr\Log\LoggerInterface;
 
 class DashboardService {
 	public function __construct(
+		private Manager $manager,
 		private IManager $calendarManager,
 		private ITimeFactory $timeFactory,
-		private Manager $manager,
 		private LoggerInterface $logger,
 		private ParticipantService $participantService,
 	) {
@@ -54,7 +54,7 @@ class DashboardService {
 			$searchResult = $calendar->search($pattern, $searchProperties, $options, 10);
 			foreach ($searchResult as $calendarEvent) {
 				// Find first recurrence in the future
-				$recurrence = null;
+				$event = null;
 				$location = null;
 				foreach ($calendarEvent['objects'] as $object) {
 					// We do not allow recurrences
@@ -65,12 +65,12 @@ class DashboardService {
 					$startDate = $object['DTSTART'][0];
 					$location = $object['LOCATION'][0] ?? null;
 					if ($startDate->getTimestamp() >= $start->getTimestamp()) {
-						$recurrence = $object;
+						$event = $object;
 						break;
 					}
 				}
 
-				if ($recurrence === null || $location === null) {
+				if ($event === null || $location === null) {
 					continue;
 				}
 
