@@ -111,7 +111,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import BridgePart from './BridgePart.vue'
 
@@ -120,8 +119,6 @@ import {
 	getBridge,
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
-
-Vue.directive('tooltip', Tooltip)
 
 export default {
 	name: 'MatterbridgeSettings',
@@ -134,12 +131,6 @@ export default {
 		NcModal,
 		NcTextArea,
 		Plus,
-	},
-
-	mixins: [
-	],
-
-	props: {
 	},
 
 	data() {
