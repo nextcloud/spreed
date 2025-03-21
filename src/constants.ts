@@ -98,6 +98,7 @@ export const CONVERSATION = {
 
 	OBJECT_TYPE: {
 		EMAIL: 'emails',
+		EVENT: 'event',
 		FILE: 'file',
 		PHONE: 'phone',
 		CIRCLES: 'circles',
