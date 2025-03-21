@@ -46,6 +46,18 @@
 	background-image: url(../img/icon-phone-white.svg);
 }
 
+.app-talk .icon-event,
+.modal-mask .icon-event,
+.v-popper__popper .icon-event,
+.talk-sidebar-callview .icon-event,
+#talk-panel .icon-event,
+#talk-sidebar .icon-event,
+#call-container .icon-event,
+.talkChatTab .icon-event {
+	background-image: url(../img/icon-event-white.svg);
+}
+
+
 .app-talk .icon-password,
 .modal-mask .icon-password,
 .v-popper__popper .icon-password,

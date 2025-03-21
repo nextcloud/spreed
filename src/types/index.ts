@@ -119,6 +119,7 @@ export type createConversationParams = Required<operations['room-create-room']>[
 export type createConversationResponse = ApiResponse<operations['room-create-room']['responses'][200]['content']['application/json']>
 export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType'|'roomName'|'password'|'objectType'|'objectId'|'invite'|'source'>
 export type deleteConversationResponse = ApiResponse<operations['room-delete-room']['responses'][200]['content']['application/json']>
+export type unbindConversationFromObjectResponse = ApiResponse<operations['room-unbind-room-from-object']['responses'][200]['content']['application/json']>
 
 export type setConversationNameParams = Required<operations['room-rename-room']>['requestBody']['content']['application/json']
 export type setConversationNameResponse = ApiResponse<operations['room-rename-room']['responses'][200]['content']['application/json']>

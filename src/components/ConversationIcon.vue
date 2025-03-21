@@ -190,6 +190,8 @@ export default {
 					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
 					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
 					return 'icon-phone'
+				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
+					return 'icon-event'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
 					return 'icon-team'
 				} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
