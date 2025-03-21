@@ -1281,7 +1281,10 @@ const actions = {
 				})
 			}
 
-			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			// Own message might have been added already by polling, which is more up-to-date (e.g. reactions)
+			if (!context.state.messages[token]?.[response.data.ocs.data.id]) {
+				context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			}
 
 			return response
 		} catch (error) {
