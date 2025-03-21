@@ -22,6 +22,8 @@
 
 import Vue from 'vue'
 
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
 import AdminSettings from './views/AdminSettings.vue'
 
 import '@nextcloud/dialogs/style.css'
@@ -31,6 +33,7 @@ Vue.prototype.n = n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
+Vue.directive('tooltip', Tooltip)
 
 export default new Vue({
 	el: '#admin_settings',

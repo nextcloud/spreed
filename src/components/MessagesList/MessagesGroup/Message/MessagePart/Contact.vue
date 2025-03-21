@@ -40,14 +40,8 @@
 </template>
 
 <script>
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-
 export default {
 	name: 'Contact',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	props: {
 		name: {

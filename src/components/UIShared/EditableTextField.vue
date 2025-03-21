@@ -85,7 +85,6 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
@@ -98,10 +97,6 @@ export default {
 		NcRichContenteditable,
 		NcRichText,
 		Pencil,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {

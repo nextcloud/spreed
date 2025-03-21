@@ -37,7 +37,7 @@ import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
-import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import Tooltip, { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import Recording from './Recording.vue'
 
@@ -79,6 +79,7 @@ Vue.use(VueRouter)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+Vue.directive('tooltip', Tooltip)
 
 const pinia = createPinia()
 

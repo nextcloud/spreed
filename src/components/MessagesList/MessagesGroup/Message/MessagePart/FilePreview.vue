@@ -86,7 +86,6 @@ import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
 
@@ -109,10 +108,6 @@ export default {
 		Close,
 		PlayCircleOutline,
 		NcButton,
-	},
-
-	directives: {
-		tooltip: Tooltip,
 	},
 
 	props: {

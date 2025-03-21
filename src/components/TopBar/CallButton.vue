@@ -121,7 +121,6 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -136,10 +135,6 @@ const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('feder
 
 export default {
 	name: 'CallButton',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		NcActions,

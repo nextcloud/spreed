@@ -58,7 +58,6 @@ import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
@@ -66,10 +65,6 @@ import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
 export default {
 	name: 'WebServerSetupChecks',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		AlertCircle,

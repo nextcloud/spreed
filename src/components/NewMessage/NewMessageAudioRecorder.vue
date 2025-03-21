@@ -77,7 +77,6 @@ import Microphone from 'vue-material-design-icons/Microphone.vue'
 import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
@@ -89,10 +88,6 @@ export default {
 		Close,
 		Check,
 		NcButton,
-	},
-
-	directives: {
-		tooltip: Tooltip,
 	},
 
 	props: {

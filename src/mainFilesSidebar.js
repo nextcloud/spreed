@@ -35,6 +35,8 @@ import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 
@@ -69,6 +71,7 @@ Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 Vue.use(VueObserveVisibility)
+Vue.directive('tooltip', Tooltip)
 
 const pinia = createPinia()
 
