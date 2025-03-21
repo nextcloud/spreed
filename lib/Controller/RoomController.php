@@ -2634,6 +2634,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$eventBuilder->setOrganizer($user->getEMailAddress(), $user->getDisplayName() ?: $this->userId);
 		$eventBuilder->setStartDate($startDate);
 		$eventBuilder->setEndDate($endDate);
+		$eventBuilder->setStatus('CONFIRMED');
 
 		$userAttendees = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_USERS);
 		foreach ($userAttendees as $userAttendee) {
@@ -2646,6 +2647,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				continue;
 			}
 			if ($targetUser->getEMailAddress() === null) {
+				continue;
+			}
+			// Do not add the organizer as an attendee
+			if ($targetUser->getEMailAddress() === $user->getEMailAddress()) {
 				continue;
 			}
 
