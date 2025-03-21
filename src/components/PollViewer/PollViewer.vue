@@ -10,7 +10,7 @@
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
 			<div class="poll-modal__header">
-				<PollIcon :size="20" />
+				<IconPoll :size="20" />
 				<span :id="dialogHeaderId" role="heading" aria-level="2">
 					{{ name }}
 				</span>
@@ -38,7 +38,7 @@
 					class="results__option">
 					<div class="results__option-title">
 						<p>{{ option }}</p>
-						<p class="percentage">
+						<p v-if="hasVotesToDisplay" class="percentage">
 							{{ votePercentage[index] + '%' }}
 						</p>
 					</div>
@@ -48,10 +48,12 @@
 							:token="token"
 							:details="getFilteredDetails(index)" />
 						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+							<IconCheck :size="16" />
 							{{ t('spreed', 'You voted for this option') }}
 						</p>
 					</div>
-					<NcProgressBar class="results__option-progress"
+					<NcProgressBar v-if="hasVotesToDisplay"
+						class="results__option-progress"
 						:value="votePercentage[index]"
 						size="medium" />
 				</div>
@@ -87,7 +89,7 @@
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
-							<FileLock :size="20" />
+							<IconFileLock :size="20" />
 						</template>
 					</NcActionButton>
 				</NcActions>
@@ -116,10 +118,11 @@
 <script>
 import { computed, ref } from 'vue'
 
+import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import FileLock from 'vue-material-design-icons/FileLock.vue'
-import PollIcon from 'vue-material-design-icons/Poll.vue'
+import IconFileLock from 'vue-material-design-icons/FileLock.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t, n } from '@nextcloud/l10n'
 
@@ -157,10 +160,11 @@ export default {
 		NcProgressBar,
 		PollVotersDetails,
 		// icons
-		FileLock,
+		IconCheck,
+		IconFileLock,
 		IconFileDownload,
 		IconFileEdit,
-		PollIcon,
+		IconPoll,
 	},
 
 	setup() {
@@ -252,7 +256,7 @@ export default {
 				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.poll?.numVoters)
 			}
 
-			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
+			if (this.isPollPublic && (this.selfIsOwnerOrModerator || this.selfHasVoted)) {
 				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.poll?.numVoters)
 			}
 
@@ -265,6 +269,10 @@ export default {
 
 		canEndPoll() {
 			return this.isPollOpen && this.selfIsOwnerOrModerator
+		},
+
+		hasVotesToDisplay() {
+			return Object.keys(Object(this.poll?.votes)).length !== 0
 		},
 
 		votePercentage() {
@@ -441,7 +449,7 @@ export default {
 .results__options {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: calc(4 * var(--default-grid-baseline));
 	word-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
@@ -450,12 +458,18 @@ export default {
 	display: flex;
 	flex-direction: column;
 
+	&:not(:last-child) {
+		border-bottom: 1px solid var(--color-border);
+	}
+
 	&__details {
 		display: flex;
 		margin-bottom: 8px;
 	}
 
 	&-subtitle {
+		display: flex;
+		gap: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
 	}
 
