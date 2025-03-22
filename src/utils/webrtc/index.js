@@ -514,6 +514,8 @@ export {
 
 	mediaDevicesManager,
 
+	callParticipantsAudioPlayer,
+
 	callAnalyzer,
 
 	signalingGetSettingsForRecording,
