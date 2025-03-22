@@ -38,7 +38,7 @@
 					class="results__option">
 					<div class="results__option-title">
 						<p>{{ option }}</p>
-						<p class="percentage">
+						<p v-if="isPollPublic || isPollClosed" class="percentage">
 							{{ votePercentage[index] + '%' }}
 						</p>
 					</div>
@@ -51,7 +51,8 @@
 							{{ t('spreed', 'You voted for this option') }}
 						</p>
 					</div>
-					<NcProgressBar class="results__option-progress"
+					<NcProgressBar v-if="isPollPublic || isPollClosed"
+						class="results__option-progress"
 						:value="votePercentage[index]"
 						size="medium" />
 				</div>
