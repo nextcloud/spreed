@@ -252,6 +252,7 @@ export type components = {
     schemas: {
         Capabilities: {
             files: {
+                windows_compatible_filenames: boolean;
                 $comment: string | null;
                 bigfilechunking: boolean;
                 blacklisted_files: Record<string, never>[];
