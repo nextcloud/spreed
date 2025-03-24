@@ -11,6 +11,7 @@ import { t } from '@nextcloud/l10n'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import type { Conversation } from '../types/index.ts'
+import { futureRelativeTime } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
@@ -114,6 +115,11 @@ export function useConversationInfo({
 				message: t('spreed', 'Joining conversation …'),
 				title: t('spreed', 'Joining conversation …'),
 			}
+		}
+
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
+			&& item.value.objectId > Date.now()) {
+			return futureRelativeTime(item.value.objectId)
 		}
 
 		if (!exposeMessages) {
