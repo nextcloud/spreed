@@ -182,33 +182,6 @@ class DashboardServiceTest extends TestCase {
 	/**
 	 * @dataProvider calendarData
 	 */
-	public function testEventNotEventRoom($calData): void {
-		$calendar = $this->createMock(ICalendar::class);
-		$room = $this->createMock(Room::class);
-		$this->calendarManager->expects($this->once())
-			->method('getCalendarsForPrincipal')
-			->willReturn([$calendar]);
-		$this->timeFactory->expects($this->exactly(2))
-			->method('getDateTime')
-			->willReturnOnConsecutiveCalls(new \DateTime(), new \DateTime());
-		$calendar->expects($this->once())
-			->method('search')
-			->willReturn($calData);
-		$this->manager->expects($this->once())
-			->method('getRoomForUserByToken')
-			->willReturn($room);
-		$this->participantService->expects($this->never())
-			->method('getParticipant');
-		$this->logger->expects($this->once())
-			->method('debug');
-
-		$actual = $this->service->getEventRooms($this->userId);
-		$this->assertEmpty($actual);
-	}
-
-	/**
-	 * @dataProvider calendarData
-	 */
 	public function testEventParticipantNotFound($calData): void {
 		$calendar = $this->createMock(ICalendar::class);
 		$room = $this->createMock(Room::class);

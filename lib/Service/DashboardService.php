@@ -57,10 +57,6 @@ class DashboardService {
 				$event = null;
 				$location = null;
 				foreach ($calendarEvent['objects'] as $object) {
-					// We do not allow recurrences
-					if (isset($object['RRULE']) || isset($object['RECURRENCE-ID'])) {
-						continue;
-					}
 					/** @var \DateTimeImmutable $startDate */
 					$startDate = $object['DTSTART'][0];
 					$location = $object['LOCATION'][0] ?? null;
@@ -88,11 +84,6 @@ class DashboardService {
 					$room = $this->manager->getRoomForUserByToken($roomToken, $userId);
 				} catch (RoomNotFoundException) {
 					$this->logger->debug("Room $roomToken not found in dashboard service");
-					continue;
-				}
-
-				if ($room->getObjectType() !== Room::OBJECT_TYPE_EVENT) {
-					$this->logger->debug('Room ' . $room->getToken() . ' not an event room in dashboard service');
 					continue;
 				}
 
