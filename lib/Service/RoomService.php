@@ -54,6 +54,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
+use OCP\Calendar\IManager;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -86,6 +87,7 @@ class RoomService {
 		protected EmojiService $emojiService,
 		protected LoggerInterface $logger,
 		protected IL10N $l10n,
+		protected IManager $calendarManager,
 	) {
 	}
 
@@ -1456,5 +1458,24 @@ class RoomService {
 
 		$room->setObjectId($objectId);
 		$room->setObjectType($objectType);
+	}
+
+	public function hasExistingCalendarEvents(Room $room, string $userId, string $eventUid) : bool {
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $userId);
+		if (!empty($calendars)) {
+			$searchProperties = ['LOCATION'];
+			foreach ($calendars as $calendar) {
+				$searchResult = $calendar->search($room->getToken(), $searchProperties, [], 2);
+				foreach ($searchResult as $result) {
+					foreach ($result['objects'] as $object) {
+						if ($object['UID'][0] !== $eventUid) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }

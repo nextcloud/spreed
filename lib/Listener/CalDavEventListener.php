@@ -108,29 +108,53 @@ class CalDavEventListener implements IEventListener {
 		$rrule = $vevent->RRULE;
 		// We don't handle events with RRULEs
 		if (!empty($rrule)) {
-			$this->roomService->setObject($room);
+			$this->roomService->resetObject($room);
 			$this->logger->debug("Room $roomToken calendar event contains an RRULE, converting to regular room for calendar event integration");
+			return;
+		}
+
+		if ($this->roomService->hasExistingCalendarEvents($room, $this->userId, $vevent->UID->getValue())) {
+			$this->roomService->resetObject($room);
+			$this->logger->debug("Room $roomToken calendar event was already used previously, converting to regular room for calendar event integration");
 			return;
 		}
 
 		/** @var DateTime $start */
 		$start = $vevent->DTSTART;
+		/** @var DateTime $end */
+		$end = $vevent->DTEND;
 		if ($start instanceof Date) {
 			// Full day events don't have a timezone so we need to get the user's timezone
 			// If we don't have that we can use the default server timezone
 			$timezone = $this->timezoneService->getUserTimezone($this->userId) ?? $this->timezoneService->getDefaultTimezone();
 			try {
 				$start = $start->getDateTime(new \DateTimeZone($timezone))->getTimestamp();
+				$end = $end->getDateTime(new \DateTimeZone($timezone))->getTimestamp();
 			} catch (\Exception $e) {
 				$this->logger->warning("Invalid date time zone for user for room $roomToken, continuing with UTC+0: " . $e->getMessage() . ' for calendar event integration');
 				// Since this is for a full day event, we set a timestamp with UTC+0 instead
 				$start = $start->getDateTime(new \DateTimeZone('UTC'))->getTimestamp();
+				$end = $end->getDateTime(new \DateTimeZone('UTC'))->getTimestamp();
 			}
 		} elseif ($start instanceof DateTime) {
 			// This already includes a TZ in the object
 			$start = $start->getDateTime()->getTimestamp();
+			$end = $end->getDateTime()->getTimestamp();
 		}
 
-		$this->roomService->setObject($room, (string)$start, Room::OBJECT_TYPE_EVENT);
+		$objectId = $start . '#' . $end;
+		$this->roomService->setObject($room, $objectId, Room::OBJECT_TYPE_EVENT);
+
+		$name = $vevent->SUMMARY?->getValue();
+		if ($name !== null) {
+			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : $name;
+			$this->roomService->setName($room, $name);
+		}
+
+		$description = $vevent->DESCRIPTION?->getValue();
+		if ($description !== null) {
+			$description = strlen($name) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
+			$this->roomService->setDescription($room, $description);
+		}
 	}
 }
