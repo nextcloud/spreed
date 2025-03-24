@@ -5,9 +5,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router/composables'
 
 import IconAlert from 'vue-material-design-icons/Alert.vue'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -24,6 +27,8 @@ const props = defineProps<{
 }>()
 
 const store = useStore()
+const router = useRouter()
+const route = useRoute()
 const showEventConversationDialog = ref(false)
 
 const isModerator = store.getters.isModerator
@@ -32,8 +37,17 @@ const isModerator = store.getters.isModerator
  * Delete conversation
  */
 async function deleteEventConversation() {
-	await store.dispatch('deleteConversation', props.token)
-	showEventConversationDialog.value = false
+	try {
+		if (route?.params?.token === props.token) {
+			await store.dispatch('leaveConversation', { token: props.token })
+			await router.push({ name: 'root' })
+				.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
+		}
+		await store.dispatch('deleteConversationFromServer', { token: props.token })
+	} catch (error) {
+		console.error(`Error while deleting conversation ${error}`)
+		showError(t('spreed', 'Error while deleting conversation'))
+	}
 }
 
 /**
