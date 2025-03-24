@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { convertToUnix } from './formattedTime.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
@@ -49,6 +50,26 @@ export function hasCall(conversation) {
  */
 export function shouldIncludeArchived(conversation, showArchived) {
 	return !supportsArchive || (conversation.isArchived === showArchived)
+}
+
+/**
+ * check if the conversation is not an event conversation or if it is, check if it is happening in 16 hours
+ *
+ * @param {object} conversation conversation object
+ * @return {boolean}
+ */
+export function shouldIncludeEvents(conversation) {
+	return conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT || isEventHappeningSoon(conversation)
+}
+
+/**
+ * check if the conversation is happening in 16 hours
+ *
+ * @param {object} conversation conversation object
+ */
+export function isEventHappeningSoon(conversation) {
+	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+		&& parseInt(conversation.objectId.split('#')?.at(0) ?? '') - convertToUnix(new Date()) < 16 * 60 * 60 // within 16 hours
 }
 
 /**
