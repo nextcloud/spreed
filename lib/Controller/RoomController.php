@@ -75,6 +75,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Calendar\CalendarEventStatus;
 use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
@@ -2634,7 +2635,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$eventBuilder->setOrganizer($user->getEMailAddress(), $user->getDisplayName() ?: $this->userId);
 		$eventBuilder->setStartDate($startDate);
 		$eventBuilder->setEndDate($endDate);
-		$eventBuilder->setStatus('CONFIRMED');
+		$eventBuilder->setStatus(CalendarEventStatus::CONFIRMED);
 
 		$userAttendees = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_USERS);
 		foreach ($userAttendees as $userAttendee) {
