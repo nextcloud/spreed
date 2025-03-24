@@ -120,10 +120,10 @@ export function useConversationInfo({
 		}
 
 		// This is for event conversations where the last message is a system message
-		const startTime = parseInt(item.value.objectId?.split('#')?.at(0) ?? '')
+		const startTime = parseInt(item.value.objectId.split('#')?.at(0) ?? '')
 		const showTimeLeft = shortLastChatMessageAuthor.value === '' || lastMessage.value.messageType === 'comment_deleted'
 		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
-			&& startTime > nowUnix) {
+			&& startTime > nowUnix && showTimeLeft) {
 			if (startTime - nowUnix < 24 * 60 * 60) {
 				return futureRelativeTime(startTime * 1000)
 			} else {
