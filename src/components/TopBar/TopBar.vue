@@ -60,6 +60,8 @@
 			<!-- Upcoming meetings -->
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
+			<CalendarEventConversationActions v-if="showEventConversationActions" :token="token" />
+
 			<!-- Call time -->
 			<CallTime v-if="isInCall"
 				:start="conversation.callStartTime" />
@@ -122,6 +124,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 
+import CalendarEventConversationActions from './CalendarEventConversationActions.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
 import ReactionMenu from './ReactionMenu.vue'
@@ -138,6 +141,7 @@ import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
@@ -150,6 +154,7 @@ export default {
 		// Components
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
+		CalendarEventConversationActions,
 		CallButton,
 		CallTime,
 		ConversationIcon,
@@ -281,10 +286,23 @@ export default {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
 
+		eventEndTime() {
+			return parseInt(this.conversation.objectId?.split('#')?.at(1) ?? '')
+		},
+
 		showCalendarEvents() {
 			return this.getUserId && !this.isInCall && !this.isSidebar
-				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+				&& (this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.type !== CONVERSATION.TYPE.CHANGELOG
+				&& (this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT
+					|| this.eventEndTime > convertToUnix(Date.now())))
+		},
+
+		showEventConversationActions() {
+			return !this.isInCall && !this.isSidebar && this.isModeratorOrUser
+				&& this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+				&& this.eventEndTime < convertToUnix(Date.now())
+				&& !this.conversation.isArchived
 		},
 
 		getUserId() {
