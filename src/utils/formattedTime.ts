@@ -48,6 +48,10 @@ function futureRelativeTime(time: number): string {
 	const diff = time - Date.now()
 	const hours = Math.floor(diff / ONE_HOUR_IN_MS)
 	const minutes = Math.floor((diff - hours * ONE_HOUR_IN_MS) / (60 * 1000))
+	// If the time is in the past, return an empty string
+	if (diff <= 0) {
+		return ''
+	}
 	if (hours >= 1) {
 		if (minutes === 0) {
 			// TRANSLATORS: hint for the time when the meeting starts (only hours)
