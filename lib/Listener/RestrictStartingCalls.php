@@ -32,6 +32,7 @@ class RestrictStartingCalls implements IEventListener {
 	/**
 	 * @throws ForbiddenException
 	 */
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof BeforeParticipantModifiedEvent) {
 			return;

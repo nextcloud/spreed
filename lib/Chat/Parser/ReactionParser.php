@@ -18,6 +18,7 @@ use OCP\EventDispatcher\IEventListener;
  * @template-implements IEventListener<Event>
  */
 class ReactionParser implements IEventListener {
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof MessageParseEvent) {
 			return;

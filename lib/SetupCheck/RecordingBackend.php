@@ -20,10 +20,12 @@ class RecordingBackend implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		$name = $this->l->t('Recording backend');
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
@@ -32,6 +34,7 @@ class RecordingBackend implements ISetupCheck {
 		return $name;
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the recording backend requires a High-performance backend.'));

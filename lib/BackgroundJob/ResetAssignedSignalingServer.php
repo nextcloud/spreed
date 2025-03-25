@@ -38,6 +38,7 @@ class ResetAssignedSignalingServer extends TimedJob {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::SIGNALING_ASSIGNED_SERVER);
 	}
 
+	#[\Override]
 	protected function run($argument): void {
 		$this->manager->resetAssignedSignalingServers($this->cache);
 	}

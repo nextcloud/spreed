@@ -28,6 +28,7 @@ class ResourceTypeRegisterListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof ResourceTypeRegisterEvent) {
 			// Unrelated

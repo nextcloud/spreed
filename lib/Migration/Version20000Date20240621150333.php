@@ -21,6 +21,7 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// The table was dropped in Version20000Date20240621150334 and recreated in Version20000Date20240621150335
 		// To be less error prone by explicitly naming the columns banned_* and moderator_*

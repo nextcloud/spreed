@@ -33,6 +33,7 @@ class Version19000Date20240313134926 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
@@ -60,6 +61,7 @@ class Version19000Date20240313134926 extends SimpleMigrationStep {
 	 * Set the invitation state to accepted for existing federated users
 	 * Set the "has federation" for rooms with TalkV1 users
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_attendees')

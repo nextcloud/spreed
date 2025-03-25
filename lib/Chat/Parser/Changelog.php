@@ -20,6 +20,7 @@ use OCP\Server;
  * @template-implements IEventListener<Event>
  */
 class Changelog implements IEventListener {
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof MessageParseEvent) {
 			return;

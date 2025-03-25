@@ -19,6 +19,7 @@ class Version3002Date20180319104030 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/**
 		 * The table had to be redone so it contains a primary key

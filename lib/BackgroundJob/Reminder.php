@@ -26,6 +26,7 @@ class Reminder extends TimedJob {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		$this->reminderService->executeReminders($this->time->getDateTime());
 	}

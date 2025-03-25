@@ -46,6 +46,7 @@ class Listener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof ARoomEvent && $event->getRoom()->isFederatedConversation()) {
 			return;

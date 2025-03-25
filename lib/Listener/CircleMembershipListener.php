@@ -47,6 +47,7 @@ class CircleMembershipListener extends AMembershipListener {
 		);
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof AddingCircleMemberEvent) {
 			$this->addingCircleMemberEvent($event);

@@ -65,6 +65,7 @@ class Ban extends Entity implements \JsonSerializable {
 	/**
 	 * @return TalkBan
 	 */
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),

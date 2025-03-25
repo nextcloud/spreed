@@ -64,6 +64,7 @@ class Invitation extends Entity implements \JsonSerializable {
 	/**
 	 * @return array{id: int, localCloudId: string, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
 	 */
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),

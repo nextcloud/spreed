@@ -103,6 +103,7 @@ class CheckCertificates extends TimedJob {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		$turnServers = $this->talkConfig->getTurnServers(false);
 

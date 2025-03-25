@@ -24,6 +24,7 @@ class Version14000Date20220217115327 extends SimpleMigrationStep {
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
 	 * @param array $options
 	 */
+	#[\Override]
 	public function preSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-last-checked');
 	}

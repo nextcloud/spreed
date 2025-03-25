@@ -30,6 +30,7 @@ class RoomPlugin implements ISearchPlugin {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
 		if (!is_string($search) || $search === '') {
 			return false;

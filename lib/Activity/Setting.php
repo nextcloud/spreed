@@ -22,6 +22,7 @@ class Setting extends ActivitySettings {
 	 * @return string Lowercase a-z and underscore only identifier
 	 * @since 11.0.0
 	 */
+	#[\Override]
 	public function getIdentifier(): string {
 		return 'spreed';
 	}
@@ -30,6 +31,7 @@ class Setting extends ActivitySettings {
 	 * @return string A translated string
 	 * @since 11.0.0
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('You were invited to a <strong>conversation</strong> or had a <strong>call</strong>');
 	}
@@ -37,6 +39,7 @@ class Setting extends ActivitySettings {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function getGroupIdentifier(): string {
 		return 'other';
 	}
@@ -44,6 +47,7 @@ class Setting extends ActivitySettings {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function getGroupName(): string {
 		return $this->l->t('Other activities');
 	}
@@ -51,18 +55,21 @@ class Setting extends ActivitySettings {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 51;
 	}
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function canChangeNotification(): bool {
 		return false;
 	}
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\Override]
 	public function isDefaultEnabledNotification(): bool {
 		return false;
 	}

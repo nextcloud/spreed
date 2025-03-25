@@ -30,6 +30,7 @@ class BotConversation extends Entity implements \JsonSerializable {
 		$this->addType('state', Types::SMALLINT);
 	}
 
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),

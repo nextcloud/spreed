@@ -30,6 +30,7 @@ class TalkBackend implements ITalkBackend {
 	) {
 	}
 
+	#[\Override]
 	public function createConversation(string $name, array $moderators, IConversationOptions $options): IConversation {
 		$room = $this->manager->createRoom(
 			$options->isPublic() ? Room::TYPE_PUBLIC : Room::TYPE_GROUP,
@@ -52,6 +53,7 @@ class TalkBackend implements ITalkBackend {
 		return new Conversation($this->url, $room);
 	}
 
+	#[\Override]
 	public function deleteConversation(string $id): void {
 		$room = $this->manager->getRoomByToken($id);
 		$this->roomService->deleteRoom($room);

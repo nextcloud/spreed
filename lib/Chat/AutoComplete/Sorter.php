@@ -24,6 +24,7 @@ class Sorter implements ISorter {
 	 * @return string The ID of the sorter, e.g. commenters
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function getId(): string {
 		return 'talk_chat_participants';
 	}
@@ -35,6 +36,7 @@ class Sorter implements ISorter {
 	 * @param array{itemType: string, itemId: string, search?: string} $context carries key 'itemType' and 'itemId' of the source object (e.g. a file)
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function sort(array &$sortArray, array $context): void {
 		foreach ($sortArray as $type => &$byType) {
 			if ($type !== 'users') {

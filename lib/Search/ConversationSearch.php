@@ -37,6 +37,7 @@ class ConversationSearch implements IProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getId(): string {
 		return 'talk-conversations';
 	}
@@ -44,6 +45,7 @@ class ConversationSearch implements IProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Conversations');
 	}
@@ -51,6 +53,7 @@ class ConversationSearch implements IProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getOrder(string $route, array $routeParameters): ?int {
 		$currentUser = $this->userSession->getUser();
 		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
@@ -73,6 +76,7 @@ class ConversationSearch implements IProvider {
 	 *
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$rooms = $this->manager->getRoomsForUser($user->getUID());
 

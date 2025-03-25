@@ -22,14 +22,17 @@ class NotifyPush implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l10n->t('Client Push'); // TRANSLATORS: this is the app name of the notify_push app.
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		if ($this->appManager->isEnabledForAnyone('notify_push')) {
 			return SetupResult::success(

@@ -18,6 +18,7 @@ class CurrentMessageSearch extends MessageSearch {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getId(): string {
 		return 'talk-message-current';
 	}
@@ -25,6 +26,7 @@ class CurrentMessageSearch extends MessageSearch {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Messages in current conversation');
 	}
@@ -32,6 +34,7 @@ class CurrentMessageSearch extends MessageSearch {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getOrder(string $route, array $routeParameters): ?int {
 		$currentUser = $this->userSession->getUser();
 		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
@@ -47,6 +50,7 @@ class CurrentMessageSearch extends MessageSearch {
 		return null;
 	}
 
+	#[\Override]
 	protected function getSublineTemplate(): string {
 		return $this->l->t('{user}');
 	}
@@ -54,6 +58,7 @@ class CurrentMessageSearch extends MessageSearch {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$title = $this->l->t('Messages');
 		$currentToken = $this->getCurrentConversationToken($query);

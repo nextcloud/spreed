@@ -31,6 +31,7 @@ class ExpireChatMessages extends TimedJob {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		$this->chatManager->deleteExpiredMessages();
 		$this->pcmService->deleteExpiredMessages();

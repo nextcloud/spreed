@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Delete extends Base {
 	use TRoomCommand;
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('talk:room:delete')
@@ -56,6 +57,7 @@ class Delete extends Base {
 		return 0;
 	}
 
+	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
 		switch ($argumentName) {
 			case 'token':

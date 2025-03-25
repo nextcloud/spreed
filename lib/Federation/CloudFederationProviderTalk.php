@@ -92,6 +92,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getShareType(): string {
 		return 'talk-room';
 	}
@@ -101,6 +102,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	 * @throws HintException
 	 * @throws DBException
 	 */
+	#[\Override]
 	public function shareReceived(ICloudFederationShare $share): string {
 		if (!$this->config->isFederationEnabled()) {
 			$this->logger->debug('Received a federation invite but federation is disabled');
@@ -189,6 +191,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function notificationReceived($notificationType, $providerId, array $notification): array {
 		if (!is_numeric($providerId)) {
 			throw new BadRequestException(['providerId']);
@@ -631,6 +634,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getSupportedShareTypes(): array {
 		return ['user'];
 	}
@@ -638,6 +642,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getFederationIdFromSharedSecret(
 		#[SensitiveParameter]
 		string $sharedSecret,

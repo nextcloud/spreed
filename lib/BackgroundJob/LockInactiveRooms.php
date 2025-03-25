@@ -35,6 +35,7 @@ class LockInactiveRooms extends TimedJob {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function run($argument): void {
 		$interval = $this->appConfig->getInactiveLockTime();
 		$forceLobby = $this->appConfig->enableLobbyOnLockedRooms();

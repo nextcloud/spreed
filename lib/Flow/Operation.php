@@ -47,18 +47,22 @@ class Operation implements IOperation {
 	) {
 	}
 
+	#[\Override]
 	public function getDisplayName(): string {
 		return $this->l->t('Write to conversation');
 	}
 
+	#[\Override]
 	public function getDescription(): string {
 		return $this->l->t('Writes event information into a conversation of your choice');
 	}
 
+	#[\Override]
 	public function getIcon(): string {
 		return $this->urlGenerator->imagePath('spreed', 'app.svg');
 	}
 
+	#[\Override]
 	public function isAvailableForScope(int $scope): bool {
 		return $scope === FlowManager::SCOPE_USER;
 	}
@@ -70,11 +74,13 @@ class Operation implements IOperation {
 	 * @throws UnexpectedValueException
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function validateOperation(string $name, array $checks, string $operation): void {
 		[$mode, $token] = $this->parseOperationConfig($operation);
 		$this->validateOperationConfig($mode, $token, $this->getUser()->getUID());
 	}
 
+	#[\Override]
 	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
 		$flows = $ruleMatcher->getFlows(false);
 		foreach ($flows as $flow) {

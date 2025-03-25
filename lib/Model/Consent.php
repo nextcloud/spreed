@@ -34,6 +34,7 @@ class Consent extends Entity implements \JsonSerializable {
 		$this->addType('dateTime', Types::DATETIME);
 	}
 
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'token' => $this->getToken(),

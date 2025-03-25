@@ -36,6 +36,7 @@ class CheckMatterbridges extends TimedJob {
 
 	}
 
+	#[\Override]
 	protected function run($argument): void {
 		if ($this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1') {
 			$this->bridgeManager->checkAllBridges();

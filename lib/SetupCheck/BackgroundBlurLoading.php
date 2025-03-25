@@ -32,14 +32,17 @@ class BackgroundBlurLoading implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l10n->t('Background blur');
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		$url = $this->urlGenerator->linkTo('spreed', 'js/tflite.wasm');
 		$noResponse = true;

@@ -24,10 +24,12 @@ class ClearResourceAccessCache implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Invalidate access cache for projects conversation provider';
 	}
 
+	#[\Override]
 	public function run(IOutput $output): void {
 		$invalidatedCache = (int)$this->config->getAppValue('spreed', 'project_access_invalidated', '0');
 

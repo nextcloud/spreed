@@ -53,6 +53,7 @@ class TemplateLoader implements IEventListener {
 	 * Load the "Talk sidebar" UI in the public share page for the given share.
 	 * @param Event $event
 	 */
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof BeforeTemplateRenderedEvent) {
 			return;

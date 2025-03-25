@@ -40,6 +40,7 @@ class Reminder extends Entity implements \JsonSerializable {
 	/**
 	 * @return TalkChatReminder
 	 */
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'userId' => $this->getUserId(),

@@ -25,6 +25,7 @@ class BeforeUserJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 		return $this->user;
 	}
 
+	#[\Override]
 	public function getPassword(): string {
 		return $this->password;
 	}

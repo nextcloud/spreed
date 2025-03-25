@@ -27,6 +27,7 @@ class Section implements IIconSection {
 	 * @returns string
 	 * @since 12
 	 */
+	#[\Override]
 	public function getIcon(): string {
 		return $this->url->imagePath('spreed', 'app-dark.svg');
 	}
@@ -38,6 +39,7 @@ class Section implements IIconSection {
 	 * @returns string
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getID(): string {
 		return 'talk';
 	}
@@ -49,6 +51,7 @@ class Section implements IIconSection {
 	 * @return string
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Talk');
 	}
@@ -61,6 +64,7 @@ class Section implements IIconSection {
 	 * E.g.: 70
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 70;
 	}

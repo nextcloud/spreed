@@ -25,14 +25,17 @@ class FederationLockCache implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Federation');
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		if (!$this->talkConfig->isFederationEnabled()) {
 			return SetupResult::success();
