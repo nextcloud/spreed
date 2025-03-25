@@ -12,13 +12,15 @@
 
 ### Object types
 
-| Constant         | Can be created | Description                                                      | Object ID                                               |
-|------------------|----------------|------------------------------------------------------------------|---------------------------------------------------------|
-| `file`           | No             | Conversations about a file in the right sidebar of the files app | File ID                                                 |
-| `share:password` | No             | Video verification to verify the identity of the share recipient | Share token                                             |
-| `room`           | Yes            | Room is a breakout room                                          | Token of the main/parent conversation                   |
-| `phone`          | Yes            | Room is created when calling a phone number with SIP dial-out    | `phone` (not set atm, just used for the default avatar) |
-| `sample`         | No             | Room is a sample conversation                                    | User ID the sample                                      |
+| Constant                | Can be created | Description                                                                  | Object ID                                                                         |
+|-------------------------|----------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `file`                  | No             | Conversations about a file in the right sidebar of the files app             | File ID                                                                           |
+| `share:password`        | No             | Video verification to verify the identity of the share recipient             | Share token                                                                       |
+| `room`                  | Yes            | Room is a breakout room                                                      | Token of the main/parent conversation                                             |
+| `phone`                 | Yes            | Room is created when calling a phone number with SIP dial-out                | `phone` (not set atm, just used for the default avatar)                           |
+| `sample`                | No             | Room is a sample conversation                                                | User ID the sample                                                                |
+| `event`                 | Yes            | Event conversation created via the calendar                                  | Start and end unix timestamp of the event concatenated by pound sign: `start#end` |
+| `extended_conversation` | Yes            | Room is created from another conversation (e.g. adding a participant to 1-1) | Token of previous conversation                                                    |
 
 ### Read-only states
 * `0` Read-write

@@ -41,6 +41,7 @@ class Room {
 
 	public const OBJECT_TYPE_EMAIL = 'emails';
 	public const OBJECT_TYPE_EVENT = 'event';
+	public const OBJECT_TYPE_EXTENDED_CONVERSATION = 'extended_conversation';
 	public const OBJECT_TYPE_FILE = 'file';
 	public const OBJECT_TYPE_NOTE_TO_SELF = 'note_to_self';
 	public const OBJECT_TYPE_PHONE = 'phone';
