@@ -20,14 +20,16 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:primary="isFiltered !== null"
+						:primary="filters.length !== 0"
 						class="filters"
 						:class="{'hidden-visually': isSearching}">
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
 						<NcActionButton close-after-click
-							:model-value="isFiltered === 'mentions'"
+							type="checkbox"
+							:model-value="filters.includes('mentions')"
+							value="mentions"
 							@click="handleFilter('mentions')">
 							<template #icon>
 								<AtIcon :size="20" />
@@ -36,7 +38,9 @@
 						</NcActionButton>
 
 						<NcActionButton close-after-click
-							:model-value="isFiltered === 'unread'"
+							type="checkbox"
+							value="unread"
+							:model-value="filters.includes('unread')"
 							@click="handleFilter('unread')">
 							<template #icon>
 								<MessageBadge :size="20" />
@@ -44,7 +48,7 @@
 							{{ t('spreed', 'Filter unread messages') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="isFiltered"
+						<NcActionButton v-if="filters.length !== 0"
 							close-after-click
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
@@ -133,13 +137,13 @@
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
-						<AtIcon v-if="isFiltered === 'mentions'" :size="64" />
-						<MessageBadge v-else-if="isFiltered === 'unread'" :size="64" />
+						<AtIcon v-if="filters.includes('mentions')" :size="64" />
+						<MessageBadge v-else-if="filters.includes('unread')" :size="64" />
 						<IconArchive v-else-if="showArchived" :size="64" />
 						<MessageOutline v-else :size="64" />
 					</template>
 					<template #action>
-						<NcButton v-if="isFiltered" @click="handleFilter(null)">
+						<NcButton v-if="filters.length !== 0" @click="handleFilter(null)">
 							<template #icon>
 								<FilterRemoveIcon :size="20" />
 							</template>
@@ -322,6 +326,7 @@ export default {
 		const scroller = ref(null)
 
 		const showArchived = ref(false)
+		const filters = ref([])
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -333,6 +338,7 @@ export default {
 			initializeNavigation,
 			resetNavigation,
 			leftSidebar,
+			filters,
 			searchBox,
 			scroller,
 			federationStore,
@@ -371,7 +377,6 @@ export default {
 			isFetchingConversations: false,
 			isCurrentTabLeader: false,
 			isFocused: false,
-			isFiltered: null,
 			isNavigating: false,
 		}
 	},
@@ -386,11 +391,9 @@ export default {
 		},
 
 		emptyContentLabel() {
-			switch (this.isFiltered) {
-			case 'mentions':
-			case 'unread':
+			if (this.filters.length !== 0) {
 				return t('spreed', 'No matches found')
-			default:
+			} else {
 				return t('spreed', 'No conversations found')
 			}
 		},
@@ -399,12 +402,11 @@ export default {
 			if (this.showArchived) {
 				return t('spreed', 'You have no archived conversations.')
 			}
-			switch (this.isFiltered) {
-			case 'mentions':
+			if (this.filters.includes('mentions')) {
 				return t('spreed', 'You have no unread mentions.')
-			case 'unread':
+			} else if (this.filters.includes('unread')) {
 				return t('spreed', 'You have no unread messages.')
-			default:
+			} else {
 				return ''
 			}
 		},
@@ -425,7 +427,7 @@ export default {
 
 			let validConversationsCount = 0
 			const filteredConversations = this.conversationsList.filter((conversation) => {
-				const conversationIsValid = filterConversation(conversation, this.isFiltered)
+				const conversationIsValid = filterConversation(conversation, this.filters)
 				if (conversationIsValid) {
 					validConversationsCount++
 				}
@@ -457,7 +459,7 @@ export default {
 
 	watch: {
 		token(value) {
-			if (value && this.isFiltered) {
+			if (value && this.filters.length !== 0) {
 				this.isNavigating = true
 			}
 		},
@@ -565,11 +567,16 @@ export default {
 		},
 
 		handleFilter(filter) {
-			this.isFiltered = filter
 			// Store the active filter
-			if (filter) {
+			if (filter !== null && this.filters.indexOf(filter) === -1) {
+				this.filters = [...this.filters, filter]
 				BrowserStorage.setItem('filterEnabled', filter)
 			} else {
+				if (filter !== null) {
+					this.filters = this.filters.filter(f => f !== filter)
+				} else {
+					this.filters = []
+				}
 				BrowserStorage.removeItem('filterEnabled')
 			}
 			// Clear the search input once a filter is active
