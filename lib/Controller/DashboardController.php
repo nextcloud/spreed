@@ -44,12 +44,11 @@ class DashboardController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `dashboard-event-rooms`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<?TalkRoom>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>
 	 *
 	 * 200: A list of rooms or an empty array
 	 */
-	#[PublicPage]
-	#[BruteForceProtection(action: 'dashboard#getEventRooms')]
+	#[NoAdminRequired]
 	public function getEventRooms(): DataResponse {
 		$userId = $this->userSession->getUser()?->getUID();
 		$participants = $this->service->getEventRooms($userId);

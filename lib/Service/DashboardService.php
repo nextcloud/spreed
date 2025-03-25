@@ -31,7 +31,7 @@ class DashboardService {
 
 	/**
 	 * @param string $userId
-	 * @return Participant[]
+	 * @return list<Participant>
 	 */
 	public function getEventRooms(string $userId): array {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $userId);
