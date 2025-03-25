@@ -736,7 +736,7 @@ OC.L10N.register(
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Es wird dringend empfohlen, einen Speichercache zu konfigurieren, wenn Nextcloud Talk mit einem Hochleistungs-Backend ausgeführt wird.",
     "Client Push" : "Client-Push",
     "Client Push is installed, this improves the performance of desktop clients." : "Client-Push installiert ist. Dies verbessert die Leistung von Desktop-Clients.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push}ist nicht installiert. Dies kann zu Leistungsproblemen bei der Verwendung von Desktop-Clients führen.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} ist nicht installiert. Dies kann zu Leistungsproblemen bei der Verwendung von Desktop-Clients führen.",
     "Recording backend" : "Aufzeichnungs-Backend",
     "Using the recording backend requires a High-performance backend." : "Die Verwendung des Aufzeichnungs-Backends erfordert ein Hochleistungs-Backend.",
     "No recording backend configured" : "Kein Aufzeichnungs-Backend konfiguriert",
