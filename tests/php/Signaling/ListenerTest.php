@@ -25,6 +25,7 @@ use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\Signaling\Listener;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -37,6 +38,7 @@ class ListenerTest extends TestCase {
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected SessionService&MockObject $sessionService;
+	protected ITimeFactory&MockObject $timeFactory;
 	protected ?Listener $listener;
 
 	public function setUp(): void {
@@ -46,6 +48,7 @@ class ListenerTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
 		$this->listener = new Listener(
 			$this->createMock(Config::class),
@@ -54,6 +57,7 @@ class ListenerTest extends TestCase {
 			$this->manager,
 			$this->participantService,
 			$this->sessionService,
+			$this->timeFactory,
 		);
 	}
 

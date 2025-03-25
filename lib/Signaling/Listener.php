@@ -27,6 +27,7 @@ use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\RoomExtendedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
@@ -35,10 +36,12 @@ use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
@@ -71,6 +74,7 @@ class Listener implements IEventListener {
 		protected Manager $manager,
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
+		protected ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -126,6 +130,7 @@ class Listener implements IEventListener {
 		match (get_class($event)) {
 			RoomModifiedEvent::class,
 			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
+			RoomExtendedEvent::class => $this->notifyRoomExtended($event),
 			BeforeRoomSyncedEvent::class => $this->pauseRoomModifiedListener(),
 			RoomSyncedEvent::class => $this->notifyRoomSynced($event),
 			BeforeRoomDeletedEvent::class => $this->notifyBeforeRoomDeleted($event),
@@ -387,6 +392,27 @@ class Listener implements IEventListener {
 				$this->externalSignaling->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
 			}
 		}
+	}
+
+	protected function notifyRoomExtended(RoomExtendedEvent $event): void {
+		$room = $event->getRoom();
+
+		if ($room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
+			return;
+		}
+
+		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
+		$participants = $this->participantService->getParticipantsInCall($room, $timeout);
+
+		$sessionIds = [];
+		foreach ($participants as $participant) {
+			if ($participant->getSession() instanceof Session) {
+				$sessionIds[] = $participant->getSession()->getSessionId();
+			}
+		}
+
+		$newRoom = $event->getNewRoom();
+		$this->externalSignaling->switchToRoom($room, $newRoom->getToken(), $sessionIds);
 	}
 
 	/**
