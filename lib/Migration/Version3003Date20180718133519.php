@@ -27,6 +27,7 @@ class Version3003Date20180718133519 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
@@ -49,6 +50,7 @@ class Version3003Date20180718133519 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_rooms')

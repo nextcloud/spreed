@@ -173,6 +173,7 @@ class Application extends App implements IBootstrap {
 		parent::__construct(self::APP_ID, $urlParams);
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		$context->registerMiddleWare(CanUseTalkMiddleware::class);
 		$context->registerMiddleWare(InjectionMiddleware::class);
@@ -370,6 +371,7 @@ class Application extends App implements IBootstrap {
 		$context->registerSetupCheck(BackgroundBlurLoading::class);
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
 		$context->injectFn([$this, 'registerCollaborationResourceProvider']);
 		$context->injectFn([$this, 'registerClientLinks']);

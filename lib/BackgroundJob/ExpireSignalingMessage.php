@@ -32,6 +32,7 @@ class ExpireSignalingMessage extends TimedJob {
 
 	}
 
+	#[\Override]
 	protected function run($argument): void {
 		// Older than 5 minutes
 		$this->messages->expireOlderThan(5 * 60);

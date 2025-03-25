@@ -79,6 +79,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @return string Containing only [a-zA-Z0-9]
 	 */
+	#[\Override]
 	public function identifier(): string {
 		return 'ocRoomShare';
 	}
@@ -90,6 +91,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The share object
 	 * @throws GenericShareException
 	 */
+	#[\Override]
 	public function create(IShare $share): IShare {
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $share->getSharedBy());
@@ -278,6 +280,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 * @return IShare The share object
 	 */
+	#[\Override]
 	public function update(IShare $share): IShare {
 		$this->cleanSharesByIdCache();
 
@@ -323,6 +326,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param IShare $share
 	 */
+	#[\Override]
 	public function delete(IShare $share): void {
 		$this->cleanSharesByIdCache();
 
@@ -344,6 +348,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 * @param string $recipient UserId of the recipient
 	 */
+	#[\Override]
 	public function deleteFromSelf(IShare $share, $recipient): void {
 		$this->cleanSharesByIdCache();
 
@@ -398,6 +403,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The restored share object
 	 * @throws GenericShareException In case the share could not be restored
 	 */
+	#[\Override]
 	public function restore(IShare $share, string $recipient): IShare {
 		$this->cleanSharesByIdCache();
 
@@ -440,6 +446,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $recipient userId of recipient
 	 * @return IShare
 	 */
+	#[\Override]
 	public function move(IShare $share, $recipient): IShare {
 		$this->cleanSharesByIdCache();
 
@@ -499,6 +506,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[][]
 	 * @psalm-return array<array-key, non-empty-list<IShare>>
 	 */
+	#[\Override]
 	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
@@ -560,6 +568,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $offset
 	 * @return IShare[]
 	 */
+	#[\Override]
 	public function getSharesBy($userId, $shareType, $node, $reshares, $limit, $offset): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
@@ -610,6 +619,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 * @throws ShareNotFound
 	 */
+	#[\Override]
 	public function getShareById($id, $recipientId = null): IShare {
 		if (($recipientId === null) && isset($this->sharesByIdCache[$id])) {
 			$share = $this->sharesByIdCache[$id];
@@ -746,6 +756,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param Node $path
 	 * @return IShare[]
 	 */
+	#[\Override]
 	public function getSharesByPath(Node $path): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
@@ -774,6 +785,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $offset
 	 * @return IShare[]
 	 */
+	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
 		$allRooms = $this->manager->getRoomTokensForUser($userId);
 
@@ -867,6 +879,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 * @throws ShareNotFound
 	 */
+	#[\Override]
 	public function getShareByToken($token): IShare {
 		$qb = $this->dbConnection->getQueryBuilder();
 
@@ -903,6 +916,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $uid
 	 * @param int $shareType
 	 */
+	#[\Override]
 	public function userDeleted($uid, $shareType): void {
 		// A deleted user is handled automatically by the room hooks due to the
 		// user being removed from the room.
@@ -915,6 +929,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param string $gid
 	 */
+	#[\Override]
 	public function groupDeleted($gid): void {
 	}
 
@@ -926,6 +941,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $uid
 	 * @param string $gid
 	 */
+	#[\Override]
 	public function userDeletedFromGroup($uid, $gid): void {
 	}
 
@@ -938,6 +954,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param bool $currentAccess If current access is required (like for removed shares that might get revived later)
 	 * @return array
 	 */
+	#[\Override]
 	public function getAccessList($nodes, $currentAccess): array {
 		$ids = [];
 		foreach ($nodes as $node) {
@@ -1151,6 +1168,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return iterable
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getAllShares(): iterable {
 		$qb = $this->dbConnection->getQueryBuilder();
 

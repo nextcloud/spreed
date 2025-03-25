@@ -24,6 +24,7 @@ class Remove extends Base {
 		parent::__construct();
 	}
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('talk:user:remove')

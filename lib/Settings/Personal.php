@@ -23,6 +23,7 @@ class Personal implements ISettings {
 	 * @return TemplateResponse returns the instance with all parameters set, ready to be rendered
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		$parameters = [ 'clients' => $this->getClientLinks() ];
 		return new TemplateResponse('spreed', 'settings/personal/clients', $parameters);
@@ -32,6 +33,7 @@ class Personal implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getSection(): string {
 		return 'sync-clients';
 	}
@@ -44,6 +46,7 @@ class Personal implements ISettings {
 	 * E.g.: 70
 	 * @since 9.1
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 30;
 	}

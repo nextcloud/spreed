@@ -17,6 +17,7 @@ use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
  * @template-implements IEventListener<Event>
  */
 class FeaturePolicyListener implements IEventListener {
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!($event instanceof AddFeaturePolicyEvent)) {
 			return;

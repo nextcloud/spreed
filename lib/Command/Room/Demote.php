@@ -20,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Demote extends Base {
 	use TRoomCommand;
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('talk:room:demote')
@@ -67,6 +68,7 @@ class Demote extends Base {
 		return 0;
 	}
 
+	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
 		switch ($argumentName) {
 			case 'token':

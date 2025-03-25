@@ -22,6 +22,7 @@ class SampleConversationsListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof BeforeRoomsFetchEvent) {
 			$this->service->initialCreateSamples($event->getUserId());

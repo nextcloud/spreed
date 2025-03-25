@@ -20,10 +20,12 @@ class SIPConfiguration implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		$name = $this->l->t('SIP configuration');
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
@@ -32,6 +34,7 @@ class SIPConfiguration implements ISetupCheck {
 		return $name;
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));

@@ -29,6 +29,7 @@ class MaximumCallDuration extends TimedJob {
 		$this->setInterval(1);
 	}
 
+	#[\Override]
 	protected function run($argument): void {
 		$maxCallDuration = $this->appConfig->getAppValueInt('max_call_duration');
 		if ($maxCallDuration <= 0) {

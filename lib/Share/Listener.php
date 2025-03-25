@@ -28,6 +28,7 @@ class Listener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		match (get_class($event)) {
 			BeforeShareCreatedEvent::class => $this->overwriteShareTarget($event),

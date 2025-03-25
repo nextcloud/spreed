@@ -85,6 +85,7 @@ class InjectionMiddleware extends Middleware {
 	 * @throws ForbiddenException
 	 * @throws RoomNotFoundException
 	 */
+	#[\Override]
 	public function beforeController(Controller $controller, string $methodName): void {
 		if (!$controller instanceof AEnvironmentAwareOCSController) {
 			return;
@@ -375,6 +376,7 @@ class InjectionMiddleware extends Middleware {
 	/**
 	 * @throws \Exception
 	 */
+	#[\Override]
 	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof RoomNotFoundException ||
 			$exception instanceof ParticipantNotFoundException) {

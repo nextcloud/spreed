@@ -55,6 +55,7 @@ class Listener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		match (get_class($event)) {
 			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()?->getAttendee(), $event->getTarget()->getAttendee()),

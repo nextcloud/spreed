@@ -22,6 +22,7 @@ class NoteToSelfListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof BeforeRoomsFetchEvent) {
 			$this->service->initialCreateNoteToSelfForUser($event->getUserId());

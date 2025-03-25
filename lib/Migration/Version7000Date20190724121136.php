@@ -30,6 +30,7 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 	 * @throws SchemaException
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
@@ -58,6 +59,7 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 	 *
 	 * @return void
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('m.user_id', 'm.object_id')

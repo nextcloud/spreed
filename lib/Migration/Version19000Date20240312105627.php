@@ -31,6 +31,7 @@ class Version19000Date20240312105627 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
@@ -77,6 +78,7 @@ class Version19000Date20240312105627 extends SimpleMigrationStep {
 	/**
 	 * Remove legacy RetryJobs
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		/** @psalm-suppress UndefinedClass */
 		$formerClassName = \OCA\Talk\BackgroundJob\RetryJob::class;

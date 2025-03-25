@@ -62,6 +62,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getId(): string {
 		return 'spreed';
 	}
@@ -69,6 +70,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getTitle(): string {
 		return $this->l10n->t('Talk mentions');
 	}
@@ -76,6 +78,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getOrder(): int {
 		return 10;
 	}
@@ -83,6 +86,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getIconClass(): string {
 		return 'dashboard-talk-icon';
 	}
@@ -90,11 +94,13 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function isEnabled(): bool {
 		$user = $this->userSession->getUser();
 		return !($user instanceof IUser && $this->talkConfig->isDisabledForUser($user));
 	}
 
+	#[\Override]
 	public function getWidgetOptions(): WidgetOptions {
 		return new WidgetOptions(true);
 	}
@@ -102,6 +108,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @return list<WidgetButton>
 	 */
+	#[\Override]
 	public function getWidgetButtons(string $userId): array {
 		$buttons = [];
 		$buttons[] = new WidgetButton(
@@ -115,6 +122,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getIconUrl(): string {
 		return $this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg'));
 	}
@@ -122,6 +130,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getUrl(): ?string {
 		return $this->url->linkToRouteAbsolute('spreed.Page.index');
 	}
@@ -129,10 +138,12 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function load(): void {
 		Util::addStyle('spreed', 'icons');
 	}
 
+	#[\Override]
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {
 		$event = new BeforeRoomsFetchEvent($userId);
 		$this->dispatcher->dispatchTyped($event);
@@ -181,6 +192,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getItemsV2(string $userId, ?string $since = null, int $limit = 7): WidgetItems {
 		$event = new BeforeRoomsFetchEvent($userId);
 		$this->dispatcher->dispatchTyped($event);
@@ -324,6 +336,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getReloadInterval(): int {
 		return 30;
 	}

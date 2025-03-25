@@ -63,6 +63,7 @@ class CanUseTalkMiddleware extends Middleware {
 	 * @throws CanNotUseTalkException
 	 * @throws UnsupportedClientVersionException
 	 */
+	#[\Override]
 	public function beforeController(Controller $controller, string $methodName): void {
 		if ($this->request->isUserAgent([
 			IRequest::USER_AGENT_TALK_DESKTOP,
@@ -107,6 +108,7 @@ class CanUseTalkMiddleware extends Middleware {
 	/**
 	 * @throws \Exception
 	 */
+	#[\Override]
 	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof UnsupportedClientVersionException) {
 			if ($controller instanceof OCSController) {

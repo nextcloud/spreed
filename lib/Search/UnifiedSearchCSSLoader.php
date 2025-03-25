@@ -18,6 +18,7 @@ use OCP\Util;
  * @template-implements IEventListener<Event>
  */
 class UnifiedSearchCSSLoader implements IEventListener {
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof BeforeTemplateRenderedEvent) {
 			return;

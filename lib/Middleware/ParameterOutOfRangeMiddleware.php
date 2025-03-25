@@ -20,6 +20,7 @@ class ParameterOutOfRangeMiddleware extends Middleware {
 	/**
 	 * @throws \Exception
 	 */
+	#[\Override]
 	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof ParameterOutOfRangeException
 			&& $controller instanceof OCSController) {

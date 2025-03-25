@@ -29,6 +29,7 @@ class DisplayNameListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof UserChangedEvent && $event->getFeature() === 'displayName') {
 			$this->updateCachedName(Attendee::ACTOR_USERS, $event->getUser()->getUID(), (string)$event->getValue());

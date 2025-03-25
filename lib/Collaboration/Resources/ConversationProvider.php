@@ -33,6 +33,7 @@ class ConversationProvider implements IProvider {
 	) {
 	}
 
+	#[\Override]
 	public function getResourceRichObject(IResource $resource): array {
 		try {
 			$user = $this->userSession->getUser();
@@ -60,6 +61,7 @@ class ConversationProvider implements IProvider {
 		}
 	}
 
+	#[\Override]
 	public function canAccessResource(IResource $resource, ?IUser $user = null): bool {
 		$userId = $user instanceof IUser ? $user->getUID() : null;
 		if ($userId === null) {
@@ -83,6 +85,7 @@ class ConversationProvider implements IProvider {
 		}
 	}
 
+	#[\Override]
 	public function getType(): string {
 		return 'room';
 	}

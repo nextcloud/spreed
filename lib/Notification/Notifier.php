@@ -101,6 +101,7 @@ class Notifier implements INotifier {
 	 * @return string
 	 * @since 17.0.0
 	 */
+	#[\Override]
 	public function getID(): string {
 		return 'talk';
 	}
@@ -111,6 +112,7 @@ class Notifier implements INotifier {
 	 * @return string
 	 * @since 17.0.0
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->lFactory->get(Application::APP_ID)->t('Talk');
 	}
@@ -189,6 +191,7 @@ class Notifier implements INotifier {
 	 * @throws UnknownNotificationException
 	 * @since 9.0.0
 	 */
+	#[\Override]
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
 			throw new UnknownNotificationException('Incorrect app');

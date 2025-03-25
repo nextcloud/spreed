@@ -39,6 +39,7 @@ class CalDavEventListener implements IEventListener {
 
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof CalendarObjectCreatedEvent && !$event instanceof CalendarObjectUpdatedEvent) {
 			return;

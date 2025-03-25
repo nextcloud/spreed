@@ -52,6 +52,7 @@ class TemplateLoader implements IEventListener {
 	 * Load the "Video verification" UI in the public share auth page.
 	 * @param Event $event
 	 */
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof BeforeTemplateRenderedEvent) {
 			return;

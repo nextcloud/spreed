@@ -32,6 +32,7 @@ class AgeChatMessages extends Base {
 		return $this->config->getSystemValue('debug', false) === true;
 	}
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('talk:developer:age-chat-messages')

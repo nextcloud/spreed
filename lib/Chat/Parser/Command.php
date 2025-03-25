@@ -22,6 +22,7 @@ class Command implements IEventListener {
 	public const RESPONSE_USER = 1;
 	public const RESPONSE_ALL = 2;
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof MessageParseEvent) {
 			return;

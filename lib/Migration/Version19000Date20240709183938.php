@@ -31,6 +31,7 @@ class Version19000Date20240709183938 extends SimpleMigrationStep {
 	 * @param Closure(): ISchemaWrapper $schemaClosure
 	 * @param array $options
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$this->addMissingProtocol('talk_invitations', 'remote_server_url');
 		$this->addMissingProtocol('talk_proxy_messages', 'remote_server_url');

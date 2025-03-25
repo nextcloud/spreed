@@ -29,6 +29,7 @@ class CallProvider implements IProvider {
 	) {
 	}
 
+	#[\Override]
 	public function process(IEntry $entry): void {
 		$uid = $entry->getProperty('UID');
 

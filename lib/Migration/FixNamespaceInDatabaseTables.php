@@ -19,10 +19,12 @@ class FixNamespaceInDatabaseTables implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Fix the namespace in database tables';
 	}
 
+	#[\Override]
 	public function run(IOutput $output): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('jobs')

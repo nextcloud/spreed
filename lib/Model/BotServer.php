@@ -73,6 +73,7 @@ class BotServer extends Entity implements \JsonSerializable {
 	 *     features: int,
 	 * }
 	 */
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),

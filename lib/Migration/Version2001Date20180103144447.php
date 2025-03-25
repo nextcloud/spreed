@@ -30,6 +30,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
@@ -92,6 +93,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0

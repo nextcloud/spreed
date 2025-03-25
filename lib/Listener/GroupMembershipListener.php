@@ -18,6 +18,7 @@ use OCP\IGroup;
 use OCP\IUser;
 
 class GroupMembershipListener extends AMembershipListener {
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof UserAddedEvent) {
 			$this->addNewMemberToRooms($event->getGroup(), $event->getUser());

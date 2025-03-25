@@ -50,6 +50,7 @@ class AdminSettings implements ISettings {
 	/**
 	 * @return TemplateResponse
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
@@ -517,6 +518,7 @@ class AdminSettings implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
+	#[\Override]
 	public function getSection(): string {
 		return 'talk';
 	}
@@ -528,6 +530,7 @@ class AdminSettings implements ISettings {
 	 *
 	 * E.g.: 70
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 0;
 	}

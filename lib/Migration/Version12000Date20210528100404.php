@@ -20,6 +20,7 @@ class Version12000Date20210528100404 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// Obsoleted by Version13000Date20210921142733
 		//		/** @var ISchemaWrapper $schema */

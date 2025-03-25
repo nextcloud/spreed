@@ -21,10 +21,12 @@ class Conversation implements IConversation {
 	) {
 	}
 
+	#[\Override]
 	public function getId(): string {
 		return $this->room->getToken();
 	}
 
+	#[\Override]
 	public function getAbsoluteUrl(): string {
 		return $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $this->room->getToken()]);
 	}

@@ -29,6 +29,7 @@ class Version15000Date20220427183026 extends SimpleMigrationStep {
 	 * @param Closure $schemaClosure The `\Closure` returns a `\OCP\DB\ISchemaWrapper`
 	 * @param array $options
 	 */
+	#[\Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_rooms')

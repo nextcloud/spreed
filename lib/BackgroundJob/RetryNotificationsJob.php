@@ -26,6 +26,7 @@ class RetryNotificationsJob extends TimedJob {
 		$this->setInterval(1);
 	}
 
+	#[\Override]
 	protected function run($argument): void {
 		$this->backendNotifier->retrySendingFailedNotifications($this->time->getDateTime());
 	}

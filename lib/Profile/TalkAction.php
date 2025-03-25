@@ -28,22 +28,27 @@ class TalkAction implements ILinkAction {
 	) {
 	}
 
+	#[\Override]
 	public function preload(IUser $targetUser): void {
 		$this->targetUser = $targetUser;
 	}
 
+	#[\Override]
 	public function getAppId(): string {
 		return Application::APP_ID;
 	}
 
+	#[\Override]
 	public function getId(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getDisplayId(): string {
 		return $this->l->t('Contact via Talk');
 	}
 
+	#[\Override]
 	public function getTitle(): string {
 		$visitingUser = $this->userSession->getUser();
 		if (!$visitingUser || $visitingUser === $this->targetUser) {
@@ -52,14 +57,17 @@ class TalkAction implements ILinkAction {
 		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
 	}
 
+	#[\Override]
 	public function getPriority(): int {
 		return 10;
 	}
 
+	#[\Override]
 	public function getIcon(): string {
 		return $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg'));
 	}
 
+	#[\Override]
 	public function getTarget(): ?string {
 		$visitingUser = $this->userSession->getUser();
 		if (

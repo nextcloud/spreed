@@ -29,6 +29,7 @@ class Version7000Date20190724121137 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('p.user_id', 'p.room_id')
@@ -66,6 +67,7 @@ class Version7000Date20190724121137 extends SimpleMigrationStep {
 	 * @throws SchemaException
 	 * @since 13.0.0
 	 */
+	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();

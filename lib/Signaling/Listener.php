@@ -74,6 +74,7 @@ class Listener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			$this->handleInternalSignaling($event);

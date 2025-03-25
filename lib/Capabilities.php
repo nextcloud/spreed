@@ -199,6 +199,7 @@ class Capabilities implements IPublicCapability {
 	 *      spreed?: TalkCapabilities,
 	 * }
 	 */
+	#[\Override]
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {

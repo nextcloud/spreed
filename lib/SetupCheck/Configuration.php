@@ -25,14 +25,17 @@ class Configuration implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l10n->t('Talk configuration values');
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		$errors = $warnings = [];
 		$maxCallDuration = $this->appConfig->getAppValueInt('max_call_duration');

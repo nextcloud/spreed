@@ -29,14 +29,17 @@ class HighPerformanceBackend implements ISetupCheck {
 	) {
 	}
 
+	#[\Override]
 	public function getCategory(): string {
 		return 'talk';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('High-performance backend');
 	}
 
+	#[\Override]
 	public function run(): SetupResult {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			$setupResult = SetupResult::error(...);

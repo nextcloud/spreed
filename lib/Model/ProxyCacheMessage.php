@@ -94,6 +94,7 @@ class ProxyCacheMessage extends Entity implements \JsonSerializable {
 	/**
 	 * @return TalkChatProxyMessage
 	 */
+	#[\Override]
 	public function jsonSerialize(): array {
 		$expirationTimestamp = 0;
 		if ($this->getExpirationDatetime()) {

@@ -23,10 +23,12 @@ class CacheUserDisplayNames implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Cache the user display names';
 	}
 
+	#[\Override]
 	public function run(IOutput $output): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_attendees')

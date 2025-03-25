@@ -20,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Create extends Base {
 	use TRoomCommand;
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('talk:room:create')
@@ -150,6 +151,7 @@ class Create extends Base {
 		return 0;
 	}
 
+	#[\Override]
 	public function completeOptionValues($optionName, CompletionContext $context) {
 		switch ($optionName) {
 			case 'user':

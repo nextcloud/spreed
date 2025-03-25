@@ -27,6 +27,7 @@ class ReferenceInvalidationListener implements IEventListener {
 	) {
 	}
 
+	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof AttendeesAddedEvent
 			|| $event instanceof AttendeesRemovedEvent

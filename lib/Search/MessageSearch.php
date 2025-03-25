@@ -56,6 +56,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getId(): string {
 		return 'talk-message';
 	}
@@ -63,6 +64,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Messages');
 	}
@@ -70,6 +72,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function getOrder(string $route, array $routeParameters): ?int {
 		$currentUser = $this->userSession->getUser();
 		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
@@ -101,6 +104,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	/**
 	 * @inheritDoc
 	 */
+	#[\Override]
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$title = $this->l->t('Messages');
 		$currentToken = $this->getCurrentConversationToken($query);
@@ -300,6 +304,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		return $entry;
 	}
 
+	#[\Override]
 	public function getSupportedFilters(): array {
 		return [
 			IFilter::BUILTIN_TERM,
@@ -310,10 +315,12 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		];
 	}
 
+	#[\Override]
 	public function getAlternateIds(): array {
 		return ['talk-message'];
 	}
 
+	#[\Override]
 	public function getCustomFilters(): array {
 		return [
 			new FilterDefinition(self::CONVERSATION_FILTER)
