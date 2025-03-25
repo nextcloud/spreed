@@ -151,6 +151,7 @@ import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
+import { useWakeLock } from './useWakeLock.ts'
 import { SIMULCAST } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
@@ -198,6 +199,9 @@ export default {
 	},
 
 	setup(props) {
+		// Prevent the screen from turning off
+		useWakeLock()
+
 		// For debug and screenshot purposes. Set to true to enable
 		const devMode = ref(false)
 		provide('CallView:devModeEnabled', devMode)
