@@ -179,7 +179,7 @@ class ApiController extends OCSController {
 		// Create a calendar event with LOCATION and time via OCP
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
 		foreach ($calendars as $c) {
-			if ($c instanceof ICreateFromString && $c->getDisplayName() === 'Personal') {
+			if ($c instanceof ICreateFromString) {
 				$calendar = $c;
 			}
 		}
