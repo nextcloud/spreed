@@ -20,7 +20,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:primary="filters.length !== 0"
+						:type="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{'hidden-visually': isSearching}">
 						<template #icon>
@@ -29,7 +29,6 @@
 						<NcActionButton close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
-							value="mentions"
 							@click="handleFilter('mentions')">
 							<template #icon>
 								<AtIcon :size="20" />
@@ -39,7 +38,6 @@
 
 						<NcActionButton close-after-click
 							type="checkbox"
-							value="unread"
 							:model-value="filters.includes('unread')"
 							@click="handleFilter('unread')">
 							<template #icon>
@@ -48,7 +46,7 @@
 							{{ t('spreed', 'Filter unread messages') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="filters.length !== 0"
+						<NcActionButton v-if="isFiltered"
 							close-after-click
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
@@ -117,6 +115,15 @@
 				<!-- New Pending Invitations dialog -->
 				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
 			</div>
+			<TransitionWrapper class="conversations__filters"
+				name="zoom"
+				tag="div"
+				group>
+				<NcChip v-for="filter in filters"
+					:key="filter"
+					:text="FILTER_LABELS[filter]"
+					@close="handleFilter(filter)" />
+			</TransitionWrapper>
 			<NcAppNavigationItem v-if="pendingInvitationsCount"
 				class="invitation-button"
 				:name="t('spreed', 'Pending invitations')"
@@ -137,13 +144,13 @@
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
-						<AtIcon v-if="filters.includes('mentions')" :size="64" />
-						<MessageBadge v-else-if="filters.includes('unread')" :size="64" />
+						<AtIcon v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
+						<MessageBadge v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
 						<IconArchive v-else-if="showArchived" :size="64" />
 						<MessageOutline v-else :size="64" />
 					</template>
 					<template #action>
-						<NcButton v-if="filters.length !== 0" @click="handleFilter(null)">
+						<NcButton v-if="isFiltered" @click="handleFilter(null)">
 							<template #icon>
 								<FilterRemoveIcon :size="20" />
 							</template>
@@ -244,6 +251,7 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
@@ -283,6 +291,11 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const FILTER_LABELS = {
+	unread: t('spreed', 'Unread'),
+	mentions: t('spreed', 'Mentions'),
+	default: '',
+}
 
 export default {
 	name: 'LeftSidebar',
@@ -294,6 +307,7 @@ export default {
 		NcAppNavigationItem,
 		NcButton,
 		NcCounterBubble,
+		NcChip,
 		SearchBox,
 		NewConversationDialog,
 		OpenConversationsList,
@@ -326,7 +340,7 @@ export default {
 		const scroller = ref(null)
 
 		const showArchived = ref(false)
-		const filters = ref([])
+		const filters = ref(BrowserStorage.getItem('filterEnabled')?.split(',') ?? [])
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -349,6 +363,7 @@ export default {
 			supportsArchive,
 			showArchived,
 			settingsStore,
+			FILTER_LABELS,
 		}
 	},
 
@@ -391,7 +406,7 @@ export default {
 		},
 
 		emptyContentLabel() {
-			if (this.filters.length !== 0) {
+			if (this.isFiltered) {
 				return t('spreed', 'No matches found')
 			} else {
 				return t('spreed', 'No conversations found')
@@ -402,9 +417,9 @@ export default {
 			if (this.showArchived) {
 				return t('spreed', 'You have no archived conversations.')
 			}
-			if (this.filters.includes('mentions')) {
+			if (this.filters.length === 1 && this.filters[0] === 'mentions') {
 				return t('spreed', 'You have no unread mentions.')
-			} else if (this.filters.includes('unread')) {
+			} else if (this.filters.length === 1 && this.filters[0] === 'unread') {
 				return t('spreed', 'You have no unread messages.')
 			} else {
 				return ''
@@ -455,11 +470,15 @@ export default {
 		isCompact() {
 			return this.settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT
 		},
+
+		isFiltered() {
+			return this.filters.length !== 0
+		},
 	},
 
 	watch: {
 		token(value) {
-			if (value && this.filters.length !== 0) {
+			if (value && this.isFiltered) {
 				this.isNavigating = true
 			}
 		},
@@ -523,8 +542,6 @@ export default {
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
-		// Check filter status in previous sessions and apply if it exists
-		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
 
 	beforeDestroy() {
@@ -568,17 +585,27 @@ export default {
 
 		handleFilter(filter) {
 			// Store the active filter
-			if (filter !== null && this.filters.indexOf(filter) === -1) {
-				this.filters = [...this.filters, filter]
-				BrowserStorage.setItem('filterEnabled', filter)
+			if (filter === null) {
+				this.filters = []
 			} else {
-				if (filter !== null) {
+				if (this.filters.includes(filter)) {
 					this.filters = this.filters.filter(f => f !== filter)
 				} else {
-					this.filters = []
+					// Hardcode 'unread' and 'mentions' to behave like radio buttons
+					if (filter === 'unread' || filter === 'mentions') {
+						this.filters = [...this.filters.filter(f => f !== 'unread' && f !== 'mentions'), filter]
+					} else {
+						this.filters = [...this.filters, filter]
+					}
 				}
+			}
+
+			if (this.filters.length) {
+				BrowserStorage.setItem('filterEnabled', this.filters)
+			} else {
 				BrowserStorage.removeItem('filterEnabled')
 			}
+
 			// Clear the search input once a filter is active
 			this.searchText = ''
 			// Initiate the navigation status
@@ -948,6 +975,13 @@ export default {
 	:deep(.input-field) {
 		margin-block-start: 0;
 	}
+}
+
+.conversations__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
+	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2);
 }
 
 .left-sidebar__settings-button-container {

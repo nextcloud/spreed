@@ -59,6 +59,6 @@ export function shouldIncludeArchived(conversation, showArchived) {
  */
 export function filterConversation(conversation, filters) {
 	return filters.length === 0
-		|| ((!filters.includes('unread') || (filters.includes('unread') && hasUnreadMessages(conversation)))
-		&& (!filters.includes('mentions') || (filters.includes('mentions') && hasUnreadMentions(conversation))))
+		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
+		&& (!filters.includes('mentions') || hasUnreadMentions(conversation)))
 }
