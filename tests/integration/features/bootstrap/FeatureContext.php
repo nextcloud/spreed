@@ -1176,10 +1176,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		if ($body['objectType'] === 'event') {
+		if (isset($body['objectType']) && $body['objectType'] === 'event') {
 			[$start, $end ] = explode('#', $body['objectId']);
 			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);
-
 		}
 
 		if (isset($body['permissions'])) {
