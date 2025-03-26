@@ -5345,7 +5345,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @Given /^user "([^"]*)" creates conversation with event "([^"]*)" \((v4)\)$/
 	 */
-	public function createCalendarEventConversation(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
 		[$start, $end ] = explode('#', $body['objectId']);
 		$startTime = time() + (int)$start;
@@ -5355,15 +5355,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
-		$this->assertStatusCode($this->response, $statusCode);
+		$this->assertStatusCode($this->response, Http::STATUS_CREATED);
 
 		$response = $this->getDataFromResponse($this->response);
 
-		if ($statusCode === 201) {
-			self::$identifierToToken[$identifier] = $response['token'];
-			self::$identifierToId[$identifier] = $response['id'];
-			self::$tokenToIdentifier[$response['token']] = $identifier;
-		}
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$identifierToId[$identifier] = $response['id'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
 
 		$location = self::getRoomLocationForToken($identifier);
 		foreach (['LOCAL'] as $server) {

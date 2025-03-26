@@ -11,5 +11,5 @@ Feature: integration/dashboard-talk
       | roomType | 2 |
     Then user "participant1" sees the following entry when loading the dashboard conversations (v4)
       | name | objectType | objectId |
-      | room | event      | OBJJECTID(room) |
+      | room | event      | OBJECT_ID(room) |
       | room2 | | |
