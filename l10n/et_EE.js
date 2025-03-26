@@ -63,6 +63,7 @@ OC.L10N.register(
     "Collapse" : "Sulge",
     "Favorite" : "Lemmik",
     "Date:" : "Kuupäev:",
+    "Note:" : "Märkus:",
     "Hide details" : "Peida üksikasjad",
     "Show details" : "Näita üksikasju",
     "Disable" : "Lülita välja",
