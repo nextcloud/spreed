@@ -247,7 +247,9 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					height: itemSize + 'px',
 					alignItems: isCompact ? 'unset' : 'self-end',
 				}" />
-			<Hint v-else-if="item.type === 'hint'" :hint="item.hint" />
+			<Hint v-else-if="item.type === 'hint'"
+				tabindex="-1"
+				:hint="item.hint" />
 			<NcListItem v-else-if="item.type === 'user'"
 				:key="`user_${item.id}`"
 				:data-nav-id="`user_${item.id}`"

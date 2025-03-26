@@ -12,7 +12,7 @@
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
-						:list-ref="scroller"
+						:list-ref="[scroller, searchResults]"
 						@input="debounceFetchSearchResults"
 						@abort-search="abortSearch" />
 				</div>
