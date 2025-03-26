@@ -5346,7 +5346,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
-		if( isset($body['objectId'])) {
+		if (isset($body['objectId'])) {
 			[$start, $end ] = explode('#', $body['objectId']);
 			$startTime = time() + (int)$start;
 			$endTime = time() + (int)$end;
