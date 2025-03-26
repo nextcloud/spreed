@@ -181,4 +181,4 @@
 
 ## 21.1
 * `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
-* `dashboard` - Whether Talk APIs offer functionality for Dashboard requests
+* `dashboard-event-rooms` - Whether Talk APIs offer functionality for Dashboard requests
