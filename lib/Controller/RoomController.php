@@ -604,7 +604,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			// We are only doing this manually here to be able to return different status codes
 			// Actually createOneToOneConversation also checks it.
 			$room = $this->manager->getOne2OneRoom($currentUser->getUID(), $targetUser->getUID());
-			$this->participantService->ensureOneToOneRoomIsFilled($room);
+			$this->participantService->ensureOneToOneRoomIsFilled($room, $currentUser->getUID());
 			return new DataResponse(
 				$this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)),
 				Http::STATUS_OK
