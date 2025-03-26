@@ -12,7 +12,6 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
-use OCP\AppFramework\Http;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
@@ -5355,7 +5354,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
-		$this->assertStatusCode($this->response, Http::STATUS_CREATED);
+		$this->assertStatusCode($this->response, 201);
 
 		$response = $this->getDataFromResponse($this->response);
 
@@ -5374,7 +5373,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				'end' => $endTime,
 			]);
 
-			$this->assertStatusCode($this->response, Http::STATUS_OK);
+			$this->assertStatusCode($this->response, 200);
 			$this->setCurrentUser($currentUser);
 			if ($this->changedBruteforceSetting) {
 				$this->enableDisableBruteForceProtection('disable');
