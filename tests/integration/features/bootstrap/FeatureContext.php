@@ -5371,8 +5371,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$currentUser = $this->setCurrentUser('admin');
 			$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
 				'location' => $location,
-				'start' => $startTime,
-				'end' => $endTime,
+				'start' => $startTime ?? (time() + 3600),
+				'end' => $endTime ?? (time() + 7200),
 			]);
 
 			$this->assertStatusCode($this->response, 200);
