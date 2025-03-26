@@ -9,18 +9,25 @@ declare(strict_types=1);
 namespace OCA\SpreedCheats\Controller;
 
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Calendar\Exceptions\CalendarException;
+use OCP\Calendar\ICreateFromString;
+use OCP\Calendar\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
+use Sabre\VObject\UUIDUtil;
 
 class ApiController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		protected IDBConnection $db,
+		private IManager $calendarManager,
+		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -159,6 +166,76 @@ class ApiController extends OCSController {
 		}
 		$result->closeCursor();
 
+		return new DataResponse();
+	}
+
+	#[NoAdminRequired]
+	public function createEventInCalendar(string $location, string $start, string $end): DataResponse {
+		if ($this->userId === null) {
+			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+		}
+
+		$calendar = null;
+		// Create a calendar event with LOCATION and time via OCP
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
+		foreach ($calendars as $c) {
+			if ($c instanceof ICreateFromString && $c->getDisplayName() === 'Personal') {
+				$calendar = $c;
+			}
+		}
+
+		if ($calendar === null) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$calData = <<<EOF
+BEGIN:VCALENDAR
+PRODID:-//IDN nextcloud.com//Calendar app 5.2.0-dev.1//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VEVENT
+CREATED:20250310T171800Z
+DTSTAMP:20250310T171819Z
+LAST-MODIFIED:20250310T171819Z
+SEQUENCE:1
+UID:{{{UID}}}
+DTSTART;TZID=Europe/Vienna:{{{START}}}
+DTEND;TZID=Europe/Vienna:{{{END}}}
+STATUS:CONFIRMED
+SUMMARY:Event Room Test
+LOCATION:{{{LOCATION}}}
+END:VEVENT
+BEGIN:VTIMEZONE
+TZID:Europe/Vienna
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+END:VCALENDAR
+EOF;
+
+		$start = (new \DateTime())->setTimestamp((int)$start)->format('Ymd\THis');
+		$end = (new \DateTime())->setTimestamp((int)$end)->format('Ymd\THis');
+		$uid = UUIDUtil::getUUID();
+		$calData = str_replace(['{{{START}}}', '{{{END}}}', '{{{UID}}}', '{{{LOCATION}}}'], [$start, $end, $uid, $location], $calData);
+
+		try {
+			/** @var ICreateFromString $calendar */
+			$calendar->createFromString((string)time(), $calData);
+		} catch (CalendarException) {
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
 		return new DataResponse();
 	}
 }

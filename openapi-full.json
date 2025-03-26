@@ -8560,7 +8560,6 @@
                     "dashboard"
                 ],
                 "security": [
-                    {},
                     {
                         "bearer_auth": []
                     },
@@ -8616,8 +8615,7 @@
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "$ref": "#/components/schemas/Room",
-                                                        "nullable": true
+                                                        "$ref": "#/components/schemas/Room"
                                                     }
                                                 }
                                             }

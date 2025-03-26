@@ -115,6 +115,7 @@ class Capabilities implements IPublicCapability {
 		'schedule-meeting',
 		'edit-draft-poll',
 		'conversation-creation-all',
+		'dashboard-event-rooms',
 	];
 
 	public const CONDITIONAL_FEATURES = [

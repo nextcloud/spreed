@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => '(v1)',
+	'apiVersion' => '(v4)',
 ];
 
 return [

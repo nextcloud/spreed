@@ -12,6 +12,7 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
+use OCP\AppFramework\Http;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
@@ -69,7 +70,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $renamedTeams = [];
 	/** @var array<string, int> */
 	protected static array $userToBanId;
-
+	/** @var array<string, string> */
+	protected static array $identifierToObjectId = [];
 
 	protected static array $permissionsMap = [
 		'D' => 0, // PERMISSIONS_DEFAULT
@@ -127,6 +129,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	public static function getTeamIdForLabel(string $server, string $label): string {
 		return self::$createdTeams[$server][$label] ?? self::$renamedTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
+	}
+
+	public static function getRoomLocationForToken(string $identifier) {
+		return getenv('TEST_SERVER_URL') . '/call/' . self::$identifierToToken[$identifier] ?? throw new \RuntimeException('Unknown token: ' . $id);
 	}
 
 	public static function getMessageIdForText(string $text): int {
@@ -1168,6 +1174,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			} elseif ($result) {
 				throw new \InvalidArgumentException('Could not find parent room');
 			}
+		}
+
+		if ($body['objectType'] === 'event') {
+			[$start, $end ] = explode('#', $body['objectId']);
+			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);
+
 		}
 
 		if (isset($body['permissions'])) {
@@ -2807,6 +2819,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
 			Assert::assertStringEndsWith($widgetIconUrl, $dataIconUrl, 'Mismatch of icon URL for widget ' . $id);
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following entry when loading the dashboard conversations \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsEventConversationsForTalkDashboard(string $user, string $apiVersion, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/dashboard/events');
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		array_map(function ($room, $actual) {
+			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
+				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
+			}
+		}, $formData->getHash());
 	}
 
 	/**
@@ -5301,5 +5334,56 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} else {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
+	}
+
+	/**
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 * @return void
+	 *
+	 * @Given /^user "([^"]*)" creates conversation with event "([^"]*)" \((v4)\)$/
+	 */
+	public function createCalendarEventConversation(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$body = $formData->getRowsHash();
+		[$start, $end ] = explode('#', $body['objectId']);
+		$startTime = time() + (int)$start;
+		$endTime = time() + (int)$end;
+		$body['objectId'] = ($startTime) . '#' . ($endTime);
+		self::$identifierToObjectId = [$identifier, $body['objectId']];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+
+		if ($statusCode === 201) {
+			self::$identifierToToken[$identifier] = $response['token'];
+			self::$identifierToId[$identifier] = $response['id'];
+			self::$tokenToIdentifier[$response['token']] = $identifier;
+		}
+
+		$location = self::getRoomLocationForToken($identifier);
+		foreach (['LOCAL'] as $server) {
+			$this->usingServer($server);
+
+			$currentUser = $this->setCurrentUser('admin');
+			$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
+				'location' => $location,
+				'start' => $startTime,
+				'end' => $endTime,
+			]);
+
+			$this->assertStatusCode($this->response, Http::STATUS_OK);
+			$this->setCurrentUser($currentUser);
+			if ($this->changedBruteforceSetting) {
+				$this->enableDisableBruteForceProtection('disable');
+			}
+		}
+
+		$this->usingServer('LOCAL');
 	}
 }
