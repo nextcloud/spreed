@@ -189,6 +189,7 @@ class RoomService {
 			'',
 			Room::OBJECT_TYPE_PHONE,
 			Room::OBJECT_TYPE_EVENT,
+			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
 		];
 		if ($allowInternalTypes) {
 			$objectTypes[] = BreakoutRoom::PARENT_OBJECT_TYPE;

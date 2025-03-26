@@ -65,6 +65,7 @@ use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Events\RoomExtendedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
@@ -321,6 +322,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(LobbyModifiedEvent::class, SignalingListener::class);
 		$context->registerEventListener(BeforeRoomSyncedEvent::class, SignalingListener::class);
 		$context->registerEventListener(RoomSyncedEvent::class, SignalingListener::class);
+		$context->registerEventListener(RoomExtendedEvent::class, SignalingListener::class);
 
 		$context->registerEventListener(ChatMessageSentEvent::class, SignalingListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, SignalingListener::class);

@@ -13,6 +13,7 @@ use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\RoomExtendedEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
@@ -597,6 +598,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 		/** @var IUser $user */
 		$user = $this->userManager->get($this->userId);
 
+		/** @var ?Room $oldRoom */
+		$oldRoom = null;
+		if ($objectType === Room::OBJECT_TYPE_EXTENDED_CONVERSATION && $objectId !== '') {
+			try {
+				$oldRoom = $this->manager->getRoomForUserByToken($objectId, $this->userId);
+			} catch (RoomNotFoundException) {
+				return new DataResponse(['error' => CreationException::REASON_OBJECT], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
 		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
 			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
 		}
@@ -677,6 +688,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($invitationList->hasValidInvitations()) {
 			$this->participantService->addInvitationList($room, $invitationList, $user);
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_EXTENDED_CONVERSATION) {
+			$event = new RoomExtendedEvent($oldRoom, $room);
+			$this->dispatcher->dispatchTyped($event);
 		}
 
 		if (!$invitationList->hasInvalidInvitations()) {
