@@ -5346,11 +5346,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
-		[$start, $end ] = explode('#', $body['objectId']);
-		$startTime = time() + (int)$start;
-		$endTime = time() + (int)$end;
-		$body['objectId'] = ($startTime) . '#' . ($endTime);
-		self::$identifierToObjectId = [$identifier, $body['objectId']];
+		if( isset($body['objectId'])) {
+			[$start, $end ] = explode('#', $body['objectId']);
+			$startTime = time() + (int)$start;
+			$endTime = time() + (int)$end;
+			$body['objectId'] = ($startTime) . '#' . ($endTime);
+			self::$identifierToObjectId = [$identifier, $body['objectId']];
+		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
