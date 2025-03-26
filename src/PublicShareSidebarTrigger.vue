@@ -21,6 +21,7 @@
 <template>
 	<div class="button-holder">
 		<NcButton type="tertiary-on-primary"
+			class="sidebar-button"
 			:aria-label="ariaLabel"
 			@click="$emit('click')">
 			<template #icon>
@@ -72,5 +73,10 @@ export default {
 	display: flex;
 	justify-content: center;
 	height: 44px !important;
+
+	& .sidebar-button {
+		color: #ffffff;
+		filter: var(--background-image-invert-if-bright);
+	}
 }
 </style>
