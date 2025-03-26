@@ -5352,6 +5352,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$endTime = time() + (int)$end;
 			$body['objectId'] = ($startTime) . '#' . ($endTime);
 			self::$identifierToObjectId = [$identifier, $body['objectId']];
+		} else {
+			self::$identifierToObjectId = [$identifier, ''];
 		}
 
 		$this->setCurrentUser($user);
