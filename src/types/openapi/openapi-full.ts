@@ -5261,7 +5261,7 @@ export interface operations {
                 "OCS-APIRequest": boolean;
             };
             path: {
-                apiVersion: "v1";
+                apiVersion: "v4";
             };
             cookie?: never;
         };

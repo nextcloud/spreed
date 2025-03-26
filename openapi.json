@@ -8480,9 +8480,9 @@
                         "schema": {
                             "type": "string",
                             "enum": [
-                                "v1"
+                                "v4"
                             ],
-                            "default": "v1"
+                            "default": "v4"
                         }
                     },
                     {
