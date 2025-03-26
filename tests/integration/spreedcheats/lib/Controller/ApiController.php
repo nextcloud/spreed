@@ -232,7 +232,7 @@ EOF;
 
 		try {
 			/** @var ICreateFromString $calendar */
-			$calendar->createFromString((string)time(), $calData);
+			$calendar->createFromString((string)random_int(0, 10000), $calData);
 		} catch (CalendarException) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
