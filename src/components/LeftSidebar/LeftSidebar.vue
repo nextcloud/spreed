@@ -167,9 +167,6 @@
 				ref="searchResults"
 				class="scroller"
 				:search-text="searchText"
-				:is-compact="isCompact"
-				:is-focused="isFocused"
-				:can-start-conversations="canStartConversations"
 				:contacts-loading="contactsLoading"
 				:conversations-list="conversationsList"
 				:search-results="searchResults"
@@ -217,7 +214,6 @@
 <script>
 import debounce from 'debounce'
 import { ref } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
 
 import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 import IconArchive from 'vue-material-design-icons/Archive.vue'
@@ -598,7 +594,17 @@ export default {
 					onlyUsers: !this.canStartConversations,
 				})
 
-				this.searchResults = response?.data?.ocs?.data || []
+				const oneToOneMap = this.conversationsList.reduce((acc, result) => {
+					if (result.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+						acc.push(result.name)
+					}
+					return acc
+				}, [this.$store.getters.getUserId()])
+
+				this.searchResults = response?.data?.ocs?.data.filter((match) => {
+					return !(match.source === ATTENDEE.ACTOR_TYPE.USERS && oneToOneMap.includes(match.id))
+				}) ?? []
+
 				this.contactsLoading = false
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
