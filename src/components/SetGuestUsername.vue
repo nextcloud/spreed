@@ -26,7 +26,7 @@
 
 		<NcButton v-if="!isEditingUsername"
 			@click="handleEditUsername">
-			{{ t('spreed', 'Edit') }}
+			{{ t('spreed', 'Edit display name') }}
 			<template #icon>
 				<Pencil :size="20" />
 			</template>
