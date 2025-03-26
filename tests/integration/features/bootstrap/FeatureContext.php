@@ -2833,7 +2833,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$data = $this->getDataFromResponse($this->response);
 
-		array_map(function ($room, $actual) {
+		array_map(static function ($room) {
 			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
 				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
 			}
