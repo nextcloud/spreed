@@ -48,6 +48,9 @@ class Room {
 	public const OBJECT_TYPE_SAMPLE = 'sample';
 	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
 
+	public const OBJECT_ID_PHONE_OUTGOING = 'phone';
+	public const OBJECT_ID_PHONE_INCOMING = 'direct-dialin';
+
 	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;
 	public const RECORDING_AUDIO = 2;

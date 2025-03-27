@@ -1051,6 +1051,31 @@ class Notifier implements INotifier {
 			} else {
 				throw new AlreadyProcessedException();
 			}
+		} elseif ($room->getObjectType() === Room::OBJECT_TYPE_PHONE && $room->getObjectId() === Room::OBJECT_ID_PHONE_INCOMING) {
+			if ($this->notificationManager->isPreparingPushNotification()
+				|| (!$room->isFederatedConversation() && $this->participantService->hasActiveSessionsInCall($room))
+				|| ($room->isFederatedConversation() && $room->getActiveSince())
+			) {
+				$notification = $this->addActionButton($notification, 'call_view', $l->t('Accept call'), true, true);
+				$subject = $l->t('Incoming phone call from {call}');
+			} else {
+				$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
+				$subject = $l->t('You missed a phone call from {call}');
+			}
+
+			$notification
+				->setParsedSubject(str_replace('{call}', $roomName, $subject))
+				->setRichSubject(
+					$subject, [
+						'call' => [
+							'type' => 'call',
+							'id' => (string)$room->getId(),
+							'name' => $roomName,
+							'call-type' => $this->getRoomType($room),
+							'icon-url' => $this->avatarService->getAvatarUrl($room),
+						],
+					]
+				);
 		} elseif (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			if ($this->notificationManager->isPreparingPushNotification()
 				|| (!$room->isFederatedConversation() && $this->participantService->hasActiveSessionsInCall($room))
