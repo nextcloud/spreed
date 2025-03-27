@@ -170,7 +170,7 @@
 ## 21
 * `config => conversations => force-passwords` - Whether passwords are enforced for public rooms
 * `conversation-creation-password` - Whether the endpoints for creating public conversations or making a conversation public support setting a password
-* `call-notification-state-api` (local) - Whether the endpoints exists for checking if a call notification should be dismissed
+* `call-notification-state-api` (local) - Whether the endpoints exist for checking if a call notification should be dismissed
 * `schedule-meeting` (local) - Whether logged-in participants can schedule meetings
 * `config => chat => has-translation-task-providers` (local) - When true, translations can be done using the [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html).
 * `config => conversations => list-style` (local) - Whether conversation list should appear in certain way
@@ -180,6 +180,7 @@
 + `edit-draft-poll` - Whether moderators can edit draft polls
 
 ## 21.1
-* `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
+* `conversation-creation-all` (local) - Whether the conversation creation endpoint allows to specify all attributes of a conversation
+* `sip-direct-dialin` (local) - Whether the SIP bridge can create conversations when an external participant calls a mapped phone number
 * `important-conversations` (local) - Whether important conversations are supported
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
