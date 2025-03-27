@@ -592,6 +592,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// cases the call should be kept active from the point of view of
 		// WebRTC.
 		if (reconnect) {
+			// The signaling state must be marked as not in the call to prevent
+			// that after joining the call again the local participant is
+			// treated as in the call before a signaling message confirms it.
+			selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
+
 			return
 		}
 
