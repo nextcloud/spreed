@@ -636,7 +636,6 @@ Signaling.Standalone.prototype.reconnect = function() {
 	// simultaneously in case the server connection is interrupted.
 	const interval = this.reconnectIntervalMs - (this.reconnectIntervalMs / 2) + (this.reconnectIntervalMs * Math.random())
 	console.info('Reconnect in', interval)
-	this.reconnected = true
 	this.reconnectTimer = window.setTimeout(function() {
 		this.reconnectTimer = null
 		this.connect()
@@ -1361,18 +1360,10 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 		joinedUsers = data.event.join || []
 		if (joinedUsers.length) {
 			console.debug('Users joined', joinedUsers)
-			let leftUsers = {}
-			if (this.reconnected) {
-				this.reconnected = false
-				// The browser reconnected, some of the previous sessions
-				// may now no longer exist.
-				leftUsers = Object.assign({}, this.joinedUsers)
-			}
 
 			let userListIsDirty = false
 			for (i = 0; i < joinedUsers.length; i++) {
 				this.joinedUsers[joinedUsers[i].sessionid] = joinedUsers[i]
-				delete leftUsers[joinedUsers[i].sessionid]
 
 				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
 					if (joinedUsers[i].sessionid === this.sessionId) {
@@ -1382,18 +1373,6 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 					}
 				} else {
 					userListIsDirty = true
-				}
-			}
-			leftUsers = Object.keys(leftUsers)
-			if (leftUsers.length) {
-				this._trigger('usersLeft', [leftUsers])
-
-				for (i = 0; i < leftUsers.length; i++) {
-					delete this.joinedUsers[leftUsers[i]]
-
-					if (!this.settings.userId || leftUsers[i].userid !== this.settings.userId) {
-						userListIsDirty = true
-					}
 				}
 			}
 			this._trigger('usersJoined', [joinedUsers])
