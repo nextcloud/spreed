@@ -13,6 +13,43 @@
       <code><![CDATA[\OC_Util]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Command/PhoneNumber/AddPhoneNumber.php">
+    <UndefinedConstant>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::SUCCESS]]></code>
+      <code><![CDATA[self::SUCCESS]]></code>
+    </UndefinedConstant>
+  </file>
+  <file src="lib/Command/PhoneNumber/FindPhoneNumber.php">
+    <UndefinedConstant>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::SUCCESS]]></code>
+      <code><![CDATA[self::SUCCESS]]></code>
+    </UndefinedConstant>
+  </file>
+  <file src="lib/Command/PhoneNumber/ImportPhoneNumbers.php">
+    <UndefinedConstant>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::FAILURE]]></code>
+      <code><![CDATA[self::SUCCESS]]></code>
+    </UndefinedConstant>
+  </file>
+  <file src="lib/Command/PhoneNumber/RemoveAccount.php">
+    <UndefinedConstant>
+      <code><![CDATA[self::SUCCESS]]></code>
+    </UndefinedConstant>
+  </file>
+  <file src="lib/Command/PhoneNumber/RemovePhoneNumber.php">
+    <UndefinedConstant>
+      <code><![CDATA[self::SUCCESS]]></code>
+    </UndefinedConstant>
+  </file>
   <file src="lib/Config.php">
     <NullArgument>
       <code><![CDATA[null]]></code>
