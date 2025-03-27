@@ -78,6 +78,8 @@
 					{{ participantsInCall }}
 				</template>
 			</NcButton>
+			<ExtendOneToOneDialog v-else-if="!isSidebar && isOneToOneConversation"
+				:token="token" />
 
 			<!-- Reactions menu -->
 			<ReactionMenu v-if="isInCall && hasReactionSupport"
@@ -129,6 +131,7 @@ import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
+import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
@@ -148,6 +151,7 @@ export default {
 		CallButton,
 		CallTime,
 		ConversationIcon,
+		ExtendOneToOneDialog,
 		TopBarMediaControls,
 		NcButton,
 		NcPopover,
