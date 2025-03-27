@@ -1012,7 +1012,7 @@ const actions = {
 			]
 			const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
 
-			await context.dispatch('createGroupConversation', {
+			return context.dispatch('createGroupConversation', {
 				roomName,
 				roomType: CONVERSATION.TYPE.GROUP,
 				objectType: CONVERSATION.OBJECT_TYPE.EXTENDED,
@@ -1031,6 +1031,8 @@ const actions = {
 	 * @param {object} payload action payload;
 	 * @param {string} payload.roomName displayed name for a new conversation
 	 * @param {number} payload.roomType whether a conversation is public or private
+	 * @param payload.objectType object type of new conversation, if applicable
+	 * @param payload.objectId reference to initial conversation, if applicable
 	 * @param {string} payload.password password for a public conversation
 	 * @param {string} payload.description description for a new conversation
 	 * @param {number} payload.listable whether a conversation is opened to registered users

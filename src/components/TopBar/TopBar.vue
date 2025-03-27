@@ -65,15 +65,18 @@
 				:start="conversation.callStartTime" />
 
 			<!-- Participants counter -->
-			<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
+			<NcButton v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
 				type="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
-					<IconAccountMultiple :size="20" />
+					<IconAccountMultiplePlus v-if="isOneToOneConversation" :size="20" />
+					<IconAccountMultiple v-else :size="20" />
 				</template>
-				{{ participantsInCall }}
+				<template v-if="!isOneToOneConversation" #default>
+					{{ participantsInCall }}
+				</template>
 			</NcButton>
 
 			<!-- Reactions menu -->
@@ -108,6 +111,7 @@
 
 <script>
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
@@ -153,6 +157,7 @@ export default {
 		ReactionMenu,
 		// Icons
 		IconAccountMultiple,
+		IconAccountMultiplePlus,
 	},
 
 	props: {
@@ -251,6 +256,9 @@ export default {
 		},
 
 		participantsInCallAriaLabel() {
+			if (this.isOneToOneConversation) {
+				return t('spreed', 'Start a group conversation')
+			}
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 		},
 
