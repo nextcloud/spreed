@@ -71,10 +71,10 @@
 				type="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
-					<IconAccountMultiplePlus v-if="isOneToOneConversation" :size="20" />
+					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />
 					<IconAccountMultiple v-else :size="20" />
 				</template>
-				<template v-if="!isOneToOneConversation" #default>
+				<template v-if="!canExtendOneToOneConversation" #default>
 					{{ participantsInCall }}
 				</template>
 			</NcButton>
@@ -135,11 +135,13 @@ import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
+
+const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 export default {
 	name: 'TopBar',
@@ -205,6 +207,10 @@ export default {
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
+		canExtendOneToOneConversation() {
+			return supportConversationCreationAll && this.isOneToOneConversation
+		},
+
 		isModeratorOrUser() {
 			return this.$store.getters.isModeratorOrUser
 		},
@@ -260,8 +266,8 @@ export default {
 		},
 
 		participantsInCallAriaLabel() {
-			if (this.isOneToOneConversation) {
-				return t('spreed', 'Start a group conversation')
+			if (this.canExtendOneToOneConversation) {
+				return t('spreed', 'Add participant to this call')
 			}
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 		},
