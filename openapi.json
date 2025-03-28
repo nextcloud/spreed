@@ -1147,7 +1147,8 @@
                     "unreadMention",
                     "unreadMentionDirect",
                     "unreadMessages",
-                    "isArchived"
+                    "isArchived",
+                    "isImportant"
                 ],
                 "properties": {
                     "actorId": {
@@ -1360,6 +1361,10 @@
                     },
                     "isArchived": {
                         "type": "boolean"
+                    },
+                    "isImportant": {
+                        "type": "boolean",
+                        "description": "Required capability: `important-conversations`"
                     }
                 }
             },
