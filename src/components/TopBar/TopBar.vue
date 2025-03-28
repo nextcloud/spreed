@@ -78,7 +78,7 @@
 					{{ participantsInCall }}
 				</template>
 			</NcButton>
-			<ExtendOneToOneDialog v-else-if="!isSidebar && isOneToOneConversation"
+			<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
 				:token="token" />
 
 			<!-- Reactions menu -->

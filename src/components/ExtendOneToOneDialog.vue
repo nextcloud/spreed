@@ -38,11 +38,17 @@ const searchResults = ref<AutocompleteResult[]>([])
 
 const debounceFetchSearchResults = debounce(fetchSearchResults, 250)
 
+/**
+ * Initiate loading of results from server
+ */
 function handleInput() {
 	loading.value = true
 	debounceFetchSearchResults()
 }
 
+/**
+ * Resets the search field and results
+ */
 function abortSearch() {
 	loading.value = false
 	searchText.value = ''
