@@ -6350,6 +6350,23 @@ export interface operations {
                     };
                 };
             };
+            /** @description Renaming room is not possible - it can only be edited by the associated calendar event */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "event";
+                            };
+                        };
+                    };
+                };
+            };
         };
     };
     "room-delete-room": {
@@ -6599,6 +6616,23 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Updating the description is not possible - it can only be edited by the associated calendar event */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "event";
                             };
                         };
                     };
