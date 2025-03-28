@@ -147,6 +147,73 @@ Prints the number of attendees, active sessions and participant in the call.
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 | `--separator` | Separator for the CSV list when output=csv is used | yes | yes | no | *Required* |
 
+## talk:phone-number:add
+
+Add a mapping entry to map a phone number to an account
+
+### Usage
+
+* `talk:phone-number:add [-f|--force] [--] <phone> <account>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `phone` | Phone number that will be called | yes | no | *Required* |
+| `account` | Account to be added to the conversation | yes | no | *Required* |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--force\|-f` | Force the number to the given account even when it is assigned already | no | no | no | `false` |
+
+## talk:phone-number:find
+
+Find a phone number or the phone number of an account
+
+### Usage
+
+* `talk:phone-number:find [--phone PHONE] [--account ACCOUNT]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--phone` | Phone number to search for | yes | yes | no | *Required* |
+| `--account` | Account to get number(s) for | yes | yes | no | *Required* |
+
+## talk:phone-number:import
+
+Import a CSV list (format: "number","account") for SIP dial-in
+
+### Usage
+
+* `talk:phone-number:import [--reset] [-f|--force]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--reset` | Delete all phone numbers before importing | no | no | no | `false` |
+| `--force\|-f` | Force the numbers to the given account even when they are assigned already | no | no | no | `false` |
+
+## talk:phone-number:remove-account
+
+Remove mapping entries by account
+
+### Usage
+
+* `talk:phone-number:remove-account <account>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `account` | Account to remove all mapping entries for | yes | no | *Required* |
+
+## talk:phone-number:remove
+
+Remove a mapping entry by phone number
+
+### Usage
+
+* `talk:phone-number:remove <phone>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `phone` | Phone number to remove the mapping entry for | yes | no | *Required* |
+
 ## talk:recording:consent
 
 List all matching consent that were given to be audio and video recorded during a call (requires administrator or moderator configuration)
