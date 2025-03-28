@@ -8,7 +8,16 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
-		<EditableTextField :editable="canFullModerate"
+		<p v-if="conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT" class="app-settings-section__hint">
+			{{ t('spreed', 'You can change the title and the description in ') }}
+			<a :href="CalendarAppUrl"
+				target="_blank"
+				rel="noreferrer nofollow"
+				class="external">
+				{{ t('spreed', 'Calendar.') }} ↗
+			</a>
+		</p>
+		<EditableTextField :editable="canFullModerate && conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT"
 			:initial-text="conversationName"
 			:editing="isEditingName"
 			:loading="isNameLoading"
@@ -21,7 +30,7 @@
 			<h4 class="app-settings-section__subtitle">
 				{{ t('spreed', 'Description') }}
 			</h4>
-			<EditableTextField :editable="canFullModerate"
+			<EditableTextField :editable="canFullModerate && conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT"
 				:initial-text="description"
 				:editing="isEditingDescription"
 				:loading="isDescriptionLoading"
@@ -48,6 +57,7 @@ import { Fragment } from 'vue-frag'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'
@@ -112,6 +122,10 @@ export default {
 
 		token() {
 			return this.conversation.token
+		},
+
+		CalendarAppUrl() {
+			return generateUrl('apps/calendar')
 		},
 	},
 

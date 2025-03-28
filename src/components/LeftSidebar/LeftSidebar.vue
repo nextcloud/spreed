@@ -269,7 +269,7 @@ import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
+import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived, shouldIncludeEvents } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -430,6 +430,7 @@ export default {
 					validConversationsCount++
 				}
 				return shouldIncludeArchived(conversation, this.showArchived)
+					&& shouldIncludeEvents(conversation)
 					&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
 			})
 			// return empty if it only includes the current conversation without any flags

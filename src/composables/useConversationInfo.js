@@ -9,6 +9,7 @@ import { computed, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { futureRelativeTime, convertToUnix } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 /**
@@ -88,6 +89,11 @@ export function useConversationInfo({
 		// temporary item while joining, only for Conversation component
 		if (isSearchResult.value === false && !item.value.actorId) {
 			return t('spreed', 'Joining conversation …')
+		}
+
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
+			&& item.value.objectId > convertToUnix(Date.now())) {
+			return futureRelativeTime(item.value.objectId * 1000)
 		}
 
 		if (!exposeMessages) {
