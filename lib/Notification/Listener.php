@@ -275,11 +275,11 @@ class Listener implements IEventListener {
 		}
 
 		$this->preparedCallNotifications = [];
-		$userIds = $this->participantsService->getParticipantUserIdsForCallNotifications($room);
+		$users = $this->participantsService->getParticipantUsersForCallNotifications($room);
 		// Room name depends on the notification user for one-to-one,
 		// so we avoid pre-parsing it there. Also, it comes with some base load,
 		// so we only do it for "big enough" calls.
-		$preparseNotificationForPush = count($userIds) > 10;
+		$preparseNotificationForPush = count($users) > 10;
 		if ($preparseNotificationForPush) {
 			$fallbackLang = $this->serverConfig->getSystemValue('force_language', null);
 			if (is_string($fallbackLang)) {
@@ -294,7 +294,8 @@ class Listener implements IEventListener {
 
 		$this->connection->beginTransaction();
 		try {
-			foreach ($userIds as $userId) {
+			foreach ($users as $userId => $isImportant) {
+				$userId = (string)$userId;
 				if ($actorId === $userId) {
 					continue;
 				}
@@ -317,6 +318,7 @@ class Listener implements IEventListener {
 
 				try {
 					$userNotification->setUser($userId);
+					$userNotification->setPriorityNotification($isImportant);
 					$this->notificationManager->notify($userNotification);
 				} catch (\InvalidArgumentException $e) {
 					$this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -349,7 +351,8 @@ class Listener implements IEventListener {
 			$notification->setSubject('call', [
 				'callee' => $actor?->getActorId(),
 			])
-				->setDateTime($dateTime);
+				->setDateTime($dateTime)
+				->setPriorityNotification($target->isImportant());
 			$this->notificationManager->notify($notification);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
