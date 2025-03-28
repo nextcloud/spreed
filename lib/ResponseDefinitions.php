@@ -291,6 +291,8 @@ namespace OCA\Talk;
  *     unreadMentionDirect: bool,
  *     unreadMessages: int,
  *     isArchived: bool,
+ *     // Required capability: `important-conversations`
+ *     isImportant: bool,
  * }
  *
  * @psalm-type TalkRoomWithInvalidInvitations = TalkRoom&array{

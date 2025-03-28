@@ -1674,6 +1674,40 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Mark a conversation as important (still sending notifications while on DND)
+	 *
+	 * Required capability: `important-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was marked as important
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function markConversationAsImportant(): DataResponse {
+		$this->participantService->markConversationAsImportant($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Mark a conversation as unimportant (no longer sending notifications while on DND)
+	 *
+	 * Required capability: `important-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was marked as unimportant
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function markConversationAsUnimportant(): DataResponse {
+		$this->participantService->markConversationAsUnimportant($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Join a room
 	 *
 	 * @param string $token Token of the room

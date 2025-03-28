@@ -249,6 +249,10 @@ class Notifier implements INotifier {
 			->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')))
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
+		if ($participant instanceof Participant && $this->notificationManager->isPreparingPushNotification()) {
+			$notification->setPriorityNotification($participant->getAttendee()->isImportant());
+		}
+
 		$subject = $notification->getSubject();
 		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed' || $subject === 'summary_file_stored' || $subject === 'summary_failed') {
 			return $this->parseStoredRecording($notification, $room, $participant, $l);
