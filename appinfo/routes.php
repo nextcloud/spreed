@@ -15,6 +15,7 @@ return array_merge_recursive(
 	include(__DIR__ . '/routes/routesCallController.php'),
 	include(__DIR__ . '/routes/routesCertificateController.php'),
 	include(__DIR__ . '/routes/routesChatController.php'),
+	include(__DIR__ . '/routes/routesDashboardController.php'),
 	include(__DIR__ . '/routes/routesFederationController.php'),
 	include(__DIR__ . '/routes/routesFilesIntegrationController.php'),
 	include(__DIR__ . '/routes/routesGuestController.php'),
