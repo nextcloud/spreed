@@ -158,6 +158,8 @@ import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 
+const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
+
 export default {
 	name: 'RightSidebar',
 	components: {
@@ -246,8 +248,9 @@ export default {
 		},
 
 		canSearchParticipants() {
-			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION))
+			return this.conversation.type === CONVERSATION.TYPE.GROUP
+				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION)
+				|| (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && supportConversationCreationAll)
 		},
 
 		participantType() {
