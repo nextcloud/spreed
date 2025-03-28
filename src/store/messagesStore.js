@@ -856,6 +856,19 @@ const actions = {
 			context.commit('setVisualLastReadMessageId', { token, id: visualIdToUpdate })
 		}
 
+		// Ensure unread counters are updated when all messages are read
+		// This happens when id is null (clearLastReadMessage with chat-read-last feature)
+		// or when idToUpdate is the last message id
+		if (id === null || (idToUpdate && idToUpdate >= (conversation.lastMessage?.id || 0))) {
+			// All messages are read, update unread counters
+			context.commit('updateUnreadMessages', {
+				token,
+				unreadMessages: 0,
+				unreadMention: false,
+				unreadMentionDirect: false,
+			})
+		}
+
 		if (context.getters.getUserId()) {
 			// only update on server side if there's an actual user, not guest
 			const response = await updateLastReadMessage(token, id)
