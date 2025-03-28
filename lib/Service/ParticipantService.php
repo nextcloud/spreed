@@ -952,14 +952,18 @@ class ParticipantService {
 		}
 	}
 
-	public function ensureOneToOneRoomIsFilled(Room $room): void {
+	public function ensureOneToOneRoomIsFilled(Room $room, ?string $enforceUserId = null): void {
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			return;
 		}
 
 		$users = json_decode($room->getName(), true);
 		$participants = $this->getParticipantUserIds($room);
-		$missingUsers = array_diff($users, $participants);
+		if ($enforceUserId !== null) {
+			$missingUsers = !in_array($enforceUserId, $participants) ? [$enforceUserId] : [];
+		} else {
+			$missingUsers = array_diff($users, $participants);
+		}
 
 		foreach ($missingUsers as $userId) {
 			$userDisplayName = $this->userManager->getDisplayName($userId);
