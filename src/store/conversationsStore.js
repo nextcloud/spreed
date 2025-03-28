@@ -1021,6 +1021,7 @@ const actions = {
 			})
 		} catch (error) {
 			console.error('Error creating new conversation: ', error)
+			showError(t('spreed', 'Error while creating the conversation'))
 		}
 	},
 
@@ -1031,14 +1032,14 @@ const actions = {
 	 * @param {object} payload action payload;
 	 * @param {string} payload.roomName displayed name for a new conversation
 	 * @param {number} payload.roomType whether a conversation is public or private
-	 * @param payload.objectType object type of new conversation, if applicable
-	 * @param payload.objectId reference to initial conversation, if applicable
-	 * @param {string} payload.password password for a public conversation
-	 * @param {string} payload.description description for a new conversation
-	 * @param {number} payload.listable whether a conversation is opened to registered users
-	 * @param {Array} payload.participants list of participants
-	 * @param {object} payload.avatar avatar object: { emoji, color } | { file }
-	 * @return {object} new conversation object
+	 * @param {string} [payload.objectType] object type of new conversation, if applicable
+	 * @param {string} [payload.objectId] reference to initial conversation, if applicable
+	 * @param {string} [payload.password] password for a public conversation
+	 * @param {string} [payload.description] description for a new conversation
+	 * @param {number} [payload.listable] whether a conversation is opened to registered users
+	 * @param {Array} [payload.participants] list of participants
+	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
+	 * @return {import('../types/index.ts').Conversation} new conversation object
 	 */
 	async createGroupConversation(context, {
 		roomName,

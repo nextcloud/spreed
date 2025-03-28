@@ -2,11 +2,16 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { getCanonicalLocale, t } from '@nextcloud/l10n'
+import { getLanguage, t } from '@nextcloud/l10n'
 
 import { ATTENDEE } from '../constants.ts'
 
-export const getDisplayNameWithFallback = function(displayName: string, source: string): string {
+/**
+ * Returns display name with 'Guest' or 'Deleted user' fallback if not provided
+ * @param displayName possible name of participant
+ * @param source actor type of participant
+ */
+export function getDisplayNameWithFallback(displayName: string, source: string): string {
 	if (displayName?.trim()) {
 		return displayName.trim()
 	}
@@ -21,25 +26,25 @@ export const getDisplayNameWithFallback = function(displayName: string, source: 
 	return t('spreed', 'Deleted user')
 }
 
-export const getDisplayNamesList = function(displayNames: string[], maxLength: number): string {
-	const sanitizedList = displayNames.reduce<string[]>((acc, name) => {
-		if (name.trim()) {
-			acc.push(name.trim())
-		}
-		return acc
-	}, [])
+/**
+ * Returns concatenated display names with comma divider
+ * @param {Array} displayNames list of display name
+ * @param {number} [maxLength] max allowed length
+ */
+export function getDisplayNamesList(displayNames: string[], maxLength?: number): string {
+	const sanitizedList = displayNames.map((name) => name.trim()).filter(Boolean)
 
 	if (!sanitizedList.length) {
 		return ''
 	}
 
-	const string = new Intl.ListFormat(getCanonicalLocale(), {
+	const joinedDisplayNames = new Intl.ListFormat(getLanguage(), {
 		style: 'narrow',
 		type: 'conjunction',
 	}).format(sanitizedList)
 
-	if (string.length > maxLength) {
-		return string.substring(0, maxLength - 1) + '…'
+	if (maxLength && joinedDisplayNames.length > maxLength) {
+		return joinedDisplayNames.substring(0, maxLength - 1) + '…'
 	}
-	return string
+	return joinedDisplayNames
 }
