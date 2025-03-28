@@ -824,7 +824,12 @@ class NotifierTest extends TestCase {
 			->with($room)
 			->willReturn('getAvatarUrl');
 
+		$attendee = Attendee::fromRow([
+			'important' => false,
+		]);
 		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')
+			->willReturn($attendee);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
 			->with($room, 'recipient')
