@@ -5,6 +5,6 @@
 		}
 	},
 	"require-dev": {
-		"nextcloud/openapi-extractor": "^1.5.1"
+		"nextcloud/openapi-extractor": "^1.5.2"
 	}
 }
