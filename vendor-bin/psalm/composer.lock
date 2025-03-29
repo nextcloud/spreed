@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "714f252dc2ab90a7e039638c594774ce",
+    "content-hash": "6f3245127a6cdce1aed10fe9cec7ec5b",
     "packages": [],
     "packages-dev": [
         {
@@ -2319,16 +2319,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.4.17",
+            "version": "v6.4.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "799445db3f15768ecc382ac5699e6da0520a0a04"
+                "reference": "2e4af9c952617cc3f9559ff706aee420a8464c36"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/799445db3f15768ecc382ac5699e6da0520a0a04",
-                "reference": "799445db3f15768ecc382ac5699e6da0520a0a04",
+                "url": "https://api.github.com/repos/symfony/console/zipball/2e4af9c952617cc3f9559ff706aee420a8464c36",
+                "reference": "2e4af9c952617cc3f9559ff706aee420a8464c36",
                 "shasum": ""
             },
             "require": {
@@ -2393,7 +2393,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.4.17"
+                "source": "https://github.com/symfony/console/tree/v6.4.20"
             },
             "funding": [
                 {
@@ -2409,7 +2409,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-07T12:07:30+00:00"
+            "time": "2025-03-03T17:16:38+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -3109,16 +3109,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "6.9.4",
+            "version": "6.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "e052de4275fb6cdbfedfef1d883a7e90732ea609"
+                "reference": "61488aa2849793acfb72411829d114b4aa670941"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/e052de4275fb6cdbfedfef1d883a7e90732ea609",
-                "reference": "e052de4275fb6cdbfedfef1d883a7e90732ea609",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/61488aa2849793acfb72411829d114b4aa670941",
+                "reference": "61488aa2849793acfb72411829d114b4aa670941",
                 "shasum": ""
             },
             "require": {
@@ -3223,7 +3223,7 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2025-03-20T13:21:28+00:00"
+            "time": "2025-03-27T19:06:48+00:00"
         },
         {
             "name": "webmozart/assert",
