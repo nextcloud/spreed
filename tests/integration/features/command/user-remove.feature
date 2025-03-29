@@ -74,7 +74,7 @@ Feature: command/user-remove
     And user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | call_tried           | Missed call                  | {"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | call_tried           | Unanswered call              | {"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room | users         | participant1 | call_left            | You left the call            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
       | room | users         | participant1 | call_started         | Outgoing call                | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
@@ -99,7 +99,7 @@ Feature: command/user-remove
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
       | room | guests        | cli          | read_only            | An administrator locked the conversation | {"actor":{"type":"guest","id":"guest\/cli","name":"Guest","mention-id":"guest\/cli"}} |
-      | room | users         | participant1 | call_tried           | Missed call                  | {"user":{"type":"highlight","id":"deleted_users","name":"participant2-displayname"}} |
+      | room | users         | participant1 | call_tried           | Unanswered call              | {"user":{"type":"highlight","id":"deleted_users","name":"participant2-displayname"}} |
       | room | users         | participant1 | call_left            | You left the call            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
       | room | users         | participant1 | call_started         | Outgoing call                | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
