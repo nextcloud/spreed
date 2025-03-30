@@ -1441,7 +1441,7 @@ OC.L10N.register(
     "File upload is not available in this conversation" : "O upload de arquivo não está disponível nesta conversa",
     "Add emoji" : "Adicionar emoji",
     "Adding a mention will only notify users who did not read the message." : "Adicionar uma menção notificará apenas os usuários que não leram a mensagem.",
-    "Cancel editing" : "Cancel editing",
+    "Cancel editing" : "Cancelar edição",
     "File to share" : "Arquivo a compartilhar",
     "{user} is out of office and might not respond." : "{user} está ausente e pode não responder.",
     "Absence period: {startDate} - {endDate}" : "Período de ausência: {startDate} - {endDate}",

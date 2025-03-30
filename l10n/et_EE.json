@@ -101,6 +101,7 @@
     "Country" : "Riik",
     "Status" : "Staatus",
     "Created at" : "Loodud",
+    "_%n user_::_%n users_" : ["%n kasutaja","%n kasutajat"],
     "Delete this server" : "Kustuta see server",
     "OK" : "OK",
     "Federated user" : "Kasutaja liitpilves",
