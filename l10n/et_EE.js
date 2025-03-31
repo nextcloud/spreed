@@ -133,6 +133,7 @@ OC.L10N.register(
     "Edit conversation name" : "Muuda vestluse nime",
     "Edit conversation description" : "Muuda vestluse kirjeldust",
     "Disable" : "Lülita välja",
+    "Enable" : "Lülita sisse",
     "Choose" : "Vali",
     "Remove conversation picture" : "Eemalda vestluse pilt",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Muuda kasutajate vaikimisi õigusi siin vestluses. See ei mõjuuta moderaatorite õigusi.",
