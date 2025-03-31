@@ -1096,7 +1096,7 @@ class SystemMessage implements IEventListener {
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			// Can happen if a user was remove from a one-to-one room.
 			return [
-				$this->l->t('Missed call'),
+				$this->l->t('Unanswered call'),
 				[
 					'user' => [
 						'type' => 'highlight',
@@ -1117,7 +1117,7 @@ class SystemMessage implements IEventListener {
 		}
 
 		return [
-			$this->l->t('Missed call'),
+			$this->l->t('Unanswered call'),
 			[
 				'user' => $this->getUser($other),
 			],
