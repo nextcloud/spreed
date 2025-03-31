@@ -53,6 +53,7 @@
 			:no-results="noResults"
 			scrollable
 			show-search-hints
+			:token="token"
 			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>
@@ -102,9 +103,9 @@ export default {
 	},
 
 	props: {
-		conversationName: {
+		token: {
 			type: String,
-			required: true,
+			default: '',
 		},
 
 		selectedParticipants: {
@@ -213,7 +214,7 @@ export default {
 
 				const response = await request({
 					searchText: this.searchText,
-					token: 'new',
+					token: this.token || 'new',
 					forceTypes: [SHARE.TYPE.EMAIL], // email guests are allowed directly after conversation creation
 				})
 

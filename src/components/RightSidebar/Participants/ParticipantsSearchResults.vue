@@ -122,6 +122,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * Token of current conversation (if provided).
+		 */
+		token: {
+			type: String,
+			default: '',
+		},
+		/**
 		 * Display no-results state instead of list.
 		 */
 		noResults: {
