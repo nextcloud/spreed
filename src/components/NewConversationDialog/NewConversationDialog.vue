@@ -31,8 +31,7 @@
 				<NewConversationContactsPage v-if="page === 1"
 					class="new-group-conversation__content"
 					:selected-participants.sync="selectedParticipants"
-					:can-moderate-sip-dial-out="canModerateSipDialOut"
-					:conversation-name="conversationName" />
+					:can-moderate-sip-dial-out="canModerateSipDialOut" />
 			</div>
 
 			<!-- Navigation: different buttons with different actions and

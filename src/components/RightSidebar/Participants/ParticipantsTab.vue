@@ -51,6 +51,7 @@
 
 			<ParticipantsSearchResults v-if="canAdd"
 				class="search-results"
+				:token="token"
 				:search-results="searchResults"
 				:contacts-loading="contactsLoading"
 				:no-results="noResults"
