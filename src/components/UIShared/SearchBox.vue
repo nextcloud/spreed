@@ -165,7 +165,7 @@ export default {
 			}
 
 			// Blur triggered by clicking on a conversation item
-			if (this.listRef.length && this.listRef.some(list => list?.$el?.contains(event.relatedTarget))) {
+			if (this.listRef?.length && this.listRef.some(list => list?.$el?.contains(event.relatedTarget))) {
 				return
 			}
 
