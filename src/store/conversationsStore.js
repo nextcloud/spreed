@@ -67,6 +67,7 @@ import { useGroupwareStore } from '../stores/groupware.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { convertToUnix } from '../utils/formattedTime.ts'
+import { getDisplayNamesList } from '../utils/getDisplayName.ts'
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
@@ -992,6 +993,33 @@ const actions = {
 		} catch (error) {
 			console.error('Error creating new one to one conversation: ', error)
 		}
+	},
+
+	/**
+	 * Creates a new group conversation the new conversation from one-to-one conversation
+	 * with another one-to-one participant and given user
+	 *
+	 * @param {object} context default store context
+	 * @param {object} payload action payload
+	 * @param {string} payload.token one-to-one conversation token
+	 * @param {Array} payload.newParticipants selected participants to be added
+	 */
+	async extendOneToOneConversation(context, { token, newParticipants }) {
+		const conversation = context.getters.conversation(token)
+		const participants = [
+			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
+			{ id: conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: conversation.displayName },
+			...newParticipants,
+		]
+		const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
+
+		return context.dispatch('createGroupConversation', {
+			roomName,
+			roomType: CONVERSATION.TYPE.GROUP,
+			objectType: CONVERSATION.OBJECT_TYPE.EXTENDED,
+			objectId: token,
+			participants,
+		})
 	},
 
 	/**
