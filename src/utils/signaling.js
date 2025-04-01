@@ -1065,7 +1065,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 
 		// TODO(fancycode): How should this be handled better?
 		const url = this._getBackendUrl()
-		console.error('Could not connect to server using backend url ' + url, data)
+		console.error('Could not connect to server using backend url %s %o', url, data)
 		this.reconnect()
 		return
 	}

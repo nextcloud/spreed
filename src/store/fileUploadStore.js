@@ -356,7 +356,7 @@ const actions = {
 				knownPaths[promptPath] = suffix
 				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
-				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
+				console.error('Error while uploading file "%s": %s', fileName, exception.message)
 				if (exception.response) {
 					const message = await parseUploadError(exception)
 					if (message) {
@@ -408,7 +408,7 @@ const actions = {
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
-					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
+					console.error('Error while uploading file "%s": %s', fileName, exception.message)
 					if (exception.response.status === 507) {
 						reason = 'quota'
 						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
@@ -416,7 +416,7 @@ const actions = {
 						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 					}
 				} else {
-					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
+					console.error('Error while uploading file "%s": %s', fileName, exception.message)
 					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
 

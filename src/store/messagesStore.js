@@ -1294,7 +1294,7 @@ const actions = {
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
 			let statusCode = null
-			console.error(`error while submitting message ${error}`, error)
+			console.error('error while submitting message %s', error)
 			if (error.isAxiosError) {
 				statusCode = error?.response?.status
 			}
