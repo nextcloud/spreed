@@ -34,41 +34,41 @@ class AddPhoneNumber extends Base {
 	protected function configure(): void {
 		$this
 			->setName('talk:phone-number:add')
-			->setDescription('Add a mapping entry to map a phone number to an account')
+			->setDescription('Add a mapping entry to map a phone number to an user')
 			->addArgument(
 				'phone',
 				InputArgument::REQUIRED,
 				'Phone number that will be called',
 			)
 			->addArgument(
-				'account',
+				'user',
 				InputArgument::REQUIRED,
-				'Account to be added to the conversation',
+				'User to be added to the conversation',
 			)
 			->addOption(
 				'force',
 				'f',
 				InputOption::VALUE_NONE,
-				'Force the number to the given account even when it is assigned already',
+				'Force the number to the given user even when it is assigned already',
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$phoneNumber = $input->getArgument('phone');
-		$userId = $input->getArgument('account');
+		$userId = $input->getArgument('user');
 		$force = (bool)$input->getOption('force');
 
 		$user = $this->userManager->get($userId);
 		if (!$user instanceof IUser) {
-			$output->writeln('<error>Invalid account "' . $userId . '" provided</error>');
+			$output->writeln('<error>Invalid user "' . $userId . '" provided</error>');
 			return self::FAILURE;
 		}
 		$userId = $user->getUID();
 
 		$phoneNumberStandard = $this->phoneNumberUtil->convertToStandardFormat($phoneNumber);
 		if ($phoneNumberStandard === null) {
-			$output->writeln('<error>Invalid phone number ' . $phoneNumber . ' provided</error>');
+			$output->writeln('<error>Not a valid phone number ' . $phoneNumber . '. The format is invalid.</error>');
 			return self::FAILURE;
 		}
 		$phoneNumber = $phoneNumberStandard;

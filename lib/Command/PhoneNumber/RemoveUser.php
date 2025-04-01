@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RemoveAccount extends Base {
+class RemoveUser extends Base {
 
 	public function __construct(
 		private PhoneNumberMapper $mapper,
@@ -25,18 +25,18 @@ class RemoveAccount extends Base {
 	#[\Override]
 	protected function configure(): void {
 		$this
-			->setName('talk:phone-number:remove-account')
-			->setDescription('Remove mapping entries by account')
+			->setName('talk:phone-number:remove-user')
+			->setDescription('Remove mapping entries by user')
 			->addArgument(
-				'account',
+				'user',
 				InputArgument::REQUIRED,
-				'Account to remove all mapping entries for',
+				'User to remove all mapping entries for',
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$userId = $input->getArgument('account');
+		$userId = $input->getArgument('user');
 		$this->mapper->deleteByUser($userId);
 		return self::SUCCESS;
 	}
