@@ -194,9 +194,6 @@ export default {
 		},
 
 		sourcesWithoutResultsList() {
-			if (this.onlyUsers) {
-				return ''
-			}
 			if (!this.addableUsers.length) {
 				if (!this.addableGroups.length) {
 					return this.circlesWithoutResults
@@ -288,6 +285,10 @@ export default {
 
 	&__hint {
 		margin: 20px auto 0;
+	}
+
+	:deep(.app-navigation-hint):first-child {
+		margin-top: var(--default-grid-baseline) !important;
 	}
 }
 
