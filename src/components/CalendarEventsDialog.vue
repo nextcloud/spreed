@@ -36,7 +36,7 @@ import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { useStore } from '../composables/useStore.js'
-import { ATTENDEE } from '../constants.ts'
+import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import type { Conversation, Participant } from '../types/index.ts'
@@ -158,11 +158,11 @@ const attendeeHint = computed(() => {
 const searchText = ref('')
 const isMatch = (string: string = '') => string.toLowerCase().includes(searchText.value.toLowerCase())
 
+const conversation = computed<Conversation>(() => store.getters.conversation(props.token))
 const participants = computed(() => {
-	const conversation: Conversation = store.getters.conversation(props.token)
 	return store.getters.participantsList(props.token).filter((participant: Participant) => {
 		return [ATTENDEE.ACTOR_TYPE.USERS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType)
-			&& participant.attendeeId !== conversation.attendeeId
+			&& participant.attendeeId !== conversation.value.attendeeId
 	})
 })
 const participantsInitialised = computed(() => store.getters.participantsInitialised(props.token))
@@ -185,6 +185,17 @@ const selectedParticipants = computed(() => participants.value
 		return 0
 	})
 )
+
+const isOneToOneConversation = computed(() => {
+	return conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
+		|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+})
+
+const inviteLabel = computed(() => {
+	return isOneToOneConversation.value
+		? t('spreed', 'Invite {user}', { user: conversation.value.displayName })
+		: t('spreed', 'Invite all users and emails in this conversation')
+})
 
 onBeforeMount(() => {
 	getCalendars()
@@ -407,13 +418,13 @@ async function submitNewMeeting() {
 						{{ option.label }}
 					</template>
 				</NcSelect>
-				<h5 class="calendar-meeting__header">
+				<h5 v-if="!isOneToOneConversation" class="calendar-meeting__header">
 					{{ t('spreed', 'Attendees') }}
 				</h5>
 				<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
-					{{ t('spreed', 'Invite all users and emails') }}
+					{{ inviteLabel }}
 				</NcCheckboxRadioSwitch>
-				<NcButton type="tertiary" @click="isSelectorOpen = true">
+				<NcButton v-if="!isOneToOneConversation && !selectAll" type="tertiary" @click="isSelectorOpen = true">
 					<template #icon>
 						<IconAccountPlus :size="20" />
 					</template>
