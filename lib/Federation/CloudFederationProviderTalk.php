@@ -361,8 +361,21 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			if ($notification['newValue'] === null) {
 				$this->roomService->resetActiveSince($room, null);
 			} else {
-				$activeSince = $this->timeFactory->getDateTime('@' . $notification['newValue']);
-				$this->roomService->setActiveSince($room, null, $activeSince, $notification['callFlag'], !empty($notification['details'][AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT]));
+				$activeSince = $room->getActiveSince();
+				if ($activeSince === null || $notification['newValue'] < $activeSince->getTimestamp()) {
+					/**
+					 * If the host is sending a lower timestamp, we healed an early in_call update,
+					 * so we take the older value as the host should know more specifically.
+					 */
+					$activeSince = $this->timeFactory->getDateTime('@' . $notification['newValue']);
+				}
+				$this->roomService->setActiveSince(
+					$room,
+					null,
+					$activeSince,
+					$notification['callFlag'] | $room->getCallFlag(),
+					!empty($notification['details'][AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT]),
+				);
 			}
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
 			$this->roomService->setAvatar($room, $notification['newValue']);
@@ -373,7 +386,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {
-			$this->roomService->setActiveSince($room, null, $room->getActiveSince(), $notification['newValue'], true);
+			/**
+			 * In case the in_call update arrives before the actual active_since update,
+			 * we fake the timestamp so we at least don't fail the request.
+			 * When the active_since finally arrives we merge the results.
+			 */
+			$this->roomService->setActiveSince(
+				$room,
+				null,
+				$room->getActiveSince() ?? $this->timeFactory->getDateTime(),
+				$notification['newValue'],
+				true,
+			);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_LOBBY) {
 			$dateTime = !empty($notification['dateTime']) ? \DateTime::createFromFormat('U', $notification['dateTime']) : null;
 			$this->roomService->setLobby($room, $notification['newValue'], $dateTime, $notification['timerReached'] ?? false);
