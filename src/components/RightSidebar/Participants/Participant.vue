@@ -87,6 +87,7 @@
 				<NcButton v-if="canSkipLobby"
 					type="tertiary"
 					:title="t('spreed', 'Move back to lobby')"
+					:aria-label="t('spreed', 'Move back to lobby')"
 					@click="setLobbyPermission(false)">
 					<template #icon>
 						<AccountMinusIcon :size="20" />
@@ -95,6 +96,7 @@
 				<NcButton v-else
 					type="tertiary"
 					:title="t('spreed', 'Move to conversation')"
+					:aria-label="t('spreed', 'Move to conversation')"
 					@click="setLobbyPermission(true)">
 					<template #icon>
 						<AccountPlusIcon :size="20" />
