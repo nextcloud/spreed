@@ -99,9 +99,9 @@ VideoConstrainer.prototype = {
 
 			this._knownValidConstraintsForQuality[quality] = constraints
 
-			console.debug('Changed quality to ' + quality)
+			console.debug('Changed quality to %d', quality)
 		} catch (error) {
-			console.warn('Failed to set quality ' + quality, error)
+			console.warn('Failed to set quality %d', quality, error)
 
 			const resolutionConstraints = {
 				width: constraints.width,
