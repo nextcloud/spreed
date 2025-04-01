@@ -24,6 +24,7 @@
 		<template v-if="!showSearchMessagesTab && getUserId" #secondary-actions>
 			<NcActionButton type="tertiary"
 				:title="t('spreed', 'Search messages')"
+				:aria-label="t('spreed', 'Search messages')"
 				@click="handleShowSearch(true)">
 				<template #icon>
 					<IconMagnify :size="20" />
@@ -33,6 +34,7 @@
 		<template v-else-if="getUserId" #tertiary-actions>
 			<NcButton type="tertiary"
 				:title="t('spreed', 'Back')"
+				:aria-label="t('spreed', 'Back')"
 				@click="handleShowSearch(false)">
 				<template #icon>
 					<IconArrowLeft class="bidirectional-icon" :size="20" />

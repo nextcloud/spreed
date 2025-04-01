@@ -30,6 +30,8 @@
 		<NcButton v-if="userAbsenceMessage && isTextMoreThanOneLine"
 			class="absence-reminder__button"
 			type="tertiary"
+			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
+			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
 			<template #icon>
 				<ChevronUp class="icon" :class="{'icon--reverted': !collapsed}" :size="20" />

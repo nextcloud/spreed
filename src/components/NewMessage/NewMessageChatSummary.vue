@@ -13,6 +13,8 @@
 		<NcButton v-if="isTextMoreThanOneLine"
 			class="chat-summary__button"
 			type="tertiary"
+			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
+			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
 			<template #icon>
 				<IconChevronUp class="icon" :class="{'icon--reverted': !collapsed}" :size="20" />
