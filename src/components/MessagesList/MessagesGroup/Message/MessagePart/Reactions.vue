@@ -44,6 +44,7 @@
 		<NcButton v-if="showControls"
 			size="small"
 			:title="t('spreed', 'Show all reactions')"
+			:aria-label="t('spreed', 'Show all reactions')"
 			@click="showAllReactions = true">
 			<HeartOutlineIcon :size="15" />
 		</NcButton>
