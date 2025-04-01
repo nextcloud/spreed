@@ -34,7 +34,7 @@ class ImportPhoneNumbers extends Base {
 	protected function configure(): void {
 		$this
 			->setName('talk:phone-number:import')
-			->setDescription('Import a CSV list (format: "number","account") for SIP dial-in')
+			->setDescription('Import a CSV list (format: "number","user") for SIP dial-in')
 			->addOption(
 				'reset',
 				null,
@@ -45,7 +45,7 @@ class ImportPhoneNumbers extends Base {
 				'force',
 				'f',
 				InputOption::VALUE_NONE,
-				'Force the numbers to the given account even when they are assigned already',
+				'Force the numbers to the given user even when they are assigned already',
 			)
 		;
 	}
@@ -74,14 +74,14 @@ class ImportPhoneNumbers extends Base {
 
 			$phoneNumberStandard = $this->phoneNumberUtil->convertToStandardFormat($row[0]);
 			if ($phoneNumberStandard === null) {
-				$output->writeln('<error>Invalid phone number ' . $row[0] . ' provided</error>');
+				$output->writeln('<error>Not a valid phone number ' . $row[0] . '. The format is invalid.</error>');
 				return self::FAILURE;
 			}
 			$row[0] = $phoneNumberStandard;
 
 			$user = $this->userManager->get($row[1]);
 			if (!$user instanceof IUser) {
-				$output->writeln('<error>Invalid account "' . $row[1] . '" provided</error>');
+				$output->writeln('<error>Invalid user "' . $row[1] . '" provided</error>');
 				return self::FAILURE;
 			}
 			$row[1] = $user->getUID();

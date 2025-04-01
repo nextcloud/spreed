@@ -149,37 +149,37 @@ Prints the number of attendees, active sessions and participant in the call.
 
 ## talk:phone-number:add
 
-Add a mapping entry to map a phone number to an account
+Add a mapping entry to map a phone number to an user
 
 ### Usage
 
-* `talk:phone-number:add [-f|--force] [--] <phone> <account>`
+* `talk:phone-number:add [-f|--force] [--] <phone> <user>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `phone` | Phone number that will be called | yes | no | *Required* |
-| `account` | Account to be added to the conversation | yes | no | *Required* |
+| `user` | User to be added to the conversation | yes | no | *Required* |
 
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--force\|-f` | Force the number to the given account even when it is assigned already | no | no | no | `false` |
+| `--force\|-f` | Force the number to the given user even when it is assigned already | no | no | no | `false` |
 
 ## talk:phone-number:find
 
-Find a phone number or the phone number of an account
+Find a phone number or the phone number of an user
 
 ### Usage
 
-* `talk:phone-number:find [--phone PHONE] [--account ACCOUNT]`
+* `talk:phone-number:find [--phone PHONE] [--user USER]`
 
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
 | `--phone` | Phone number to search for | yes | yes | no | *Required* |
-| `--account` | Account to get number(s) for | yes | yes | no | *Required* |
+| `--user` | User to get number(s) for | yes | yes | no | *Required* |
 
 ## talk:phone-number:import
 
-Import a CSV list (format: "number","account") for SIP dial-in
+Import a CSV list (format: "number","user") for SIP dial-in
 
 ### Usage
 
@@ -188,19 +188,19 @@ Import a CSV list (format: "number","account") for SIP dial-in
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
 | `--reset` | Delete all phone numbers before importing | no | no | no | `false` |
-| `--force\|-f` | Force the numbers to the given account even when they are assigned already | no | no | no | `false` |
+| `--force\|-f` | Force the numbers to the given user even when they are assigned already | no | no | no | `false` |
 
-## talk:phone-number:remove-account
+## talk:phone-number:remove-user
 
-Remove mapping entries by account
+Remove mapping entries by user
 
 ### Usage
 
-* `talk:phone-number:remove-account <account>`
+* `talk:phone-number:remove-user <user>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
-| `account` | Account to remove all mapping entries for | yes | no | *Required* |
+| `user` | User to remove all mapping entries for | yes | no | *Required* |
 
 ## talk:phone-number:remove
 

@@ -40,16 +40,16 @@
       <code><![CDATA[self::SUCCESS]]></code>
     </UndefinedConstant>
   </file>
-  <file src="lib/Command/PhoneNumber/RemoveAccount.php">
-    <UndefinedConstant>
-      <code><![CDATA[self::SUCCESS]]></code>
-    </UndefinedConstant>
-  </file>
   <file src="lib/Command/PhoneNumber/RemovePhoneNumber.php">
     <UndefinedConstant>
       <code><![CDATA[self::SUCCESS]]></code>
     </UndefinedConstant>
   </file>
+	<file src="lib/Command/PhoneNumber/RemoveUser.php">
+		<UndefinedConstant>
+			<code><![CDATA[self::SUCCESS]]></code>
+		</UndefinedConstant>
+	</file>
   <file src="lib/Config.php">
     <NullArgument>
       <code><![CDATA[null]]></code>

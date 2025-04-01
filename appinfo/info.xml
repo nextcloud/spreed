@@ -103,7 +103,7 @@
 		<command>OCA\Talk\Command\PhoneNumber\AddPhoneNumber</command>
 		<command>OCA\Talk\Command\PhoneNumber\FindPhoneNumber</command>
 		<command>OCA\Talk\Command\PhoneNumber\ImportPhoneNumbers</command>
-		<command>OCA\Talk\Command\PhoneNumber\RemoveAccount</command>
+		<command>OCA\Talk\Command\PhoneNumber\RemoveUser</command>
 		<command>OCA\Talk\Command\PhoneNumber\RemovePhoneNumber</command>
 
 		<command>OCA\Talk\Command\Recording\Consent</command>

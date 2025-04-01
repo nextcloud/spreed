@@ -27,7 +27,7 @@ class FindPhoneNumber extends Base {
 	protected function configure(): void {
 		$this
 			->setName('talk:phone-number:find')
-			->setDescription('Find a phone number or the phone number of an account')
+			->setDescription('Find a phone number or the phone number of an user')
 			->addOption(
 				'phone',
 				null,
@@ -35,17 +35,17 @@ class FindPhoneNumber extends Base {
 				'Phone number to search for',
 			)
 			->addOption(
-				'account',
+				'user',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Account to get number(s) for',
+				'User to get number(s) for',
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$phoneNumber = (string)$input->getOption('phone');
-		$userId = (string)$input->getOption('account');
+		$userId = (string)$input->getOption('user');
 
 		if ($phoneNumber !== '') {
 			try {
@@ -59,7 +59,7 @@ class FindPhoneNumber extends Base {
 		}
 
 		if ($userId === '') {
-			$output->writeln('<error>Neither phone number nor account provided</error>');
+			$output->writeln('<error>Neither phone number nor user provided</error>');
 			return self::FAILURE;
 		}
 
