@@ -553,7 +553,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		foreach ($comments as $comment) {
 			$nextOffset = (int)$comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
-			$this->messageParser->parseMessage($message);
+			$this->messageParser->parseMessage($message, true);
 
 			if (!$message->getVisibility()) {
 				continue;
