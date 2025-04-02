@@ -468,7 +468,7 @@ class Listener implements IEventListener {
 			try {
 				$parentComment = $this->chatManager->getParentComment($room, (string)$replyTo);
 				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
-				$this->messageParser->parseMessage($parentMessage);
+				$this->messageParser->parseMessage($parentMessage, true);
 				if ($parentMessage->isReplyable()) {
 					$parent = $parentComment;
 				}

@@ -269,7 +269,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			}
 		} elseif ($room->getLastMessageId() && $room->getLastMessage() && !$room->isFederatedConversation()) {
 			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
-			$this->messageParser->parseMessage($message);
+			$this->messageParser->parseMessage($message, true);
 			$subtitle = $this->getSubtitleFromMessage($message);
 		}
 
