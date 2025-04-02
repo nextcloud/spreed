@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "號碼不詳",
     "%s (guest)" : "%s（訪客）",
     "Missed call" : "未接來電",
+    "Unanswered call" : "未接通話",
     "Call ended (Duration {duration})" : "通話已結束（持續時間 {duration}）",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "通話因達到最長通話時長（持續時間 {duration}）而結束",
     "{actor} ended the call (Duration {duration})" : "{actor} 結束了通話（持續時間 {duration}）",

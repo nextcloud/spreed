@@ -250,6 +250,7 @@
     "Unknown number" : "Unbekannte Nummer",
     "%s (guest)" : "%s (Gast) ",
     "Missed call" : "Verpasster Anruf",
+    "Unanswered call" : "Unbeantworteter Anruf",
     "Call ended (Duration {duration})" : "Anruf beendet (Dauer {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Anruf wurde beendet, da die maximale Gesprächsdauer erreicht wurde (Dauer {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} hat den Anruf beendet (Dauer {duration})",
