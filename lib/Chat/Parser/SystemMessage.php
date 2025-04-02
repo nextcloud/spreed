@@ -871,7 +871,7 @@ class SystemMessage implements IEventListener {
 			}
 		}
 
-		if ($node->getMimeType() === 'text/vcard') {
+		if ($node instanceof FileInfo && $node->getMimeType() === 'text/vcard') {
 			$vCard = $node->getContent();
 
 			$vObject = Reader::read($vCard);
