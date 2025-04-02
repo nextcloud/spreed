@@ -20,30 +20,40 @@
 			<IconMessageText :size="20" />
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
-		<!-- search in messages button-->
-		<template v-if="!showSearchMessagesTab && getUserId" #secondary-actions>
-			<NcActionButton type="tertiary"
-				:title="t('spreed', 'Search messages')"
-				:aria-label="t('spreed', 'Search messages')"
-				@click="handleShowSearch(true)">
-				<template #icon>
-					<IconMagnify :size="20" />
-				</template>
-			</NcActionButton>
-		</template>
-		<template v-else-if="getUserId" #tertiary-actions>
-			<NcButton type="tertiary"
-				:title="t('spreed', 'Back')"
-				:aria-label="t('spreed', 'Back')"
-				@click="handleShowSearch(false)">
-				<template #icon>
-					<IconArrowLeft class="bidirectional-icon" :size="20" />
-				</template>
-			</NcButton>
-		</template>
-		<template #description>
-			<InternalSignalingHint />
-			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+		<template #content>
+			<header class="app-sidebar-header">
+				<div class="app-sidebar-header__header">
+					<NcButton v-if="showSearchMessagesTab && getUserId"
+						type="tertiary"
+						:title="t('spreed', 'Back')"
+						:aria-label="t('spreed', 'Back')"
+						@click="handleShowSearch(false)">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" :size="20" />
+						</template>
+					</NcButton>
+					<h2 :aria-label="sidebarTitle"
+						:title="sidebarTitle"
+						class="app-sidebar-header__mainname">
+						{{ sidebarTitle }}
+					</h2>
+					<!-- search in messages button-->
+					<NcButton v-if="!showSearchMessagesTab && getUserId"
+						type="tertiary"
+						:title="t('spreed', 'Search messages')"
+						:aria-label="t('spreed', 'Search messages')"
+						@click="handleShowSearch(true)">
+						<template #icon>
+							<IconMagnify :size="20" />
+						</template>
+					</NcButton>
+				</div>
+				<div v-if="!showSearchMessagesTab && getUserId"
+					class="app-sidebar-header__description">
+					<InternalSignalingHint />
+					<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+				</div>
+			</header>
 		</template>
 		<NcAppSidebarTab v-if="showSearchMessagesTab"
 			id="search-messages"
@@ -507,6 +517,10 @@ export default {
 /* Override style set in server for "#app-sidebar" to match the style set in
  * nextcloud-vue for ".app-sidebar". */
 #app-sidebar {
+	display: flex;
+}
+
+.app-sidebar-header__header {
 	display: flex;
 }
 
