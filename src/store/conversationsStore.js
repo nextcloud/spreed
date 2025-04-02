@@ -914,7 +914,7 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch }, { modifiedSince }) {
+	async fetchConversations({ dispatch }, { modifiedSince, includeLastMessage = 1 }) {
 		const talkHashStore = useTalkHashStore()
 		const federationStore = useFederationStore()
 		try {
@@ -923,6 +923,7 @@ const actions = {
 			const response = await fetchConversations({
 				modifiedSince,
 				includeStatus: 1,
+				includeLastMessage,
 			})
 			talkHashStore.updateTalkVersionHash(response)
 			federationStore.updatePendingSharesCount(response.headers['x-nextcloud-talk-federation-invites'])
