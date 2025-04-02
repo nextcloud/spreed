@@ -106,7 +106,7 @@ class BotService {
 				$parent,
 				$this->l10nFactory->get('spreed', 'en', 'en')
 			);
-			$messageParser->parseMessage($parentMessage);
+			$messageParser->parseMessage($parentMessage, true);
 			$parentMessageData = [
 				'message' => $parentMessage->getMessage(),
 				'parameters' => $parentMessage->getMessageParameters(),
@@ -125,7 +125,7 @@ class BotService {
 			$event->getComment(),
 			$this->l10nFactory->get('spreed', 'en', 'en')
 		);
-		$messageParser->parseMessage($message);
+		$messageParser->parseMessage($message, true);
 		$messageData = [
 			'message' => $message->getMessage(),
 			'parameters' => $message->getMessageParameters(),

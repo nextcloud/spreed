@@ -421,8 +421,8 @@ class ChatControllerTest extends TestCase {
 
 		$i = 0;
 		$expectedCalls = [
-			[$parentMessage],
-			[$chatMessage],
+			[$parentMessage, false],
+			[$chatMessage, false],
 		];
 		$this->messageParser->expects($this->exactly(2))
 			->method('parseMessage')

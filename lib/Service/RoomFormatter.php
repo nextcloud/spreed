@@ -438,7 +438,7 @@ class RoomFormatter {
 		IComment $lastMessage,
 	): ?array {
 		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
-		$this->messageParser->parseMessage($message);
+		$this->messageParser->parseMessage($message, true);
 
 		if (!$message->getVisibility()) {
 			return null;
