@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "Unknown number",
     "%s (guest)" : "%s (guest)",
     "Missed call" : "Missed call",
+    "Unanswered call" : "Unanswered call",
     "Call ended (Duration {duration})" : "Call ended (Duration {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Call was ended, as it reached the maximum call duration (Duration {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} ended the call (Duration {duration})",
