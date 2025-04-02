@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "Neznámé číslo",
     "%s (guest)" : "%s (host)",
     "Missed call" : "Zmeškaný hovor",
+    "Unanswered call" : "Nezvednutý hovor",
     "Call ended (Duration {duration})" : "Hovor skončil (trval {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Hovor byl ukončen, protože přesáhl nejvyšší umožněnou délku (trval {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} ukončil(a) hovor (trval {duration})",

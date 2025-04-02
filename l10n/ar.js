@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "رقم غير معروف",
     "%s (guest)" : "%s (ضيف)",
     "Missed call" : "مكالمة فائتة",
+    "Unanswered call" : "مكالمة فائتة",
     "Call ended (Duration {duration})" : "انتهت المكالمة (المدة {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "تم إنهاء المكالمة، حيث وصلت إلى الحد الأقصى لمدة المكالمة (المدة {duration})",
     "{actor} ended the call (Duration {duration})" : "أنهى {actor} المكالمة (المدة {duration})",
