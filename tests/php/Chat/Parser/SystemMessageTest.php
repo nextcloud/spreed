@@ -632,7 +632,7 @@ class SystemMessageTest extends TestCase {
 			'parameters' => $parameters,
 		]), [], $message);
 
-		self::invokePrivate($parser, 'parseMessage', [$chatMessage]);
+		self::invokePrivate($parser, 'parseMessage', [$chatMessage, false]);
 
 		$this->assertSame($expectedMessage, $chatMessage->getMessage());
 		$this->assertSame($expectedParameters, $chatMessage->getMessageParameters());
@@ -672,7 +672,7 @@ class SystemMessageTest extends TestCase {
 		$chatMessage->setMessage($return, []);
 
 		$this->expectException(\OutOfBoundsException::class);
-		self::invokePrivate($parser, 'parseMessage', [$chatMessage]);
+		self::invokePrivate($parser, 'parseMessage', [$chatMessage, false]);
 	}
 
 	public function testGetFileFromShareForGuest(): void {
@@ -743,7 +743,7 @@ class SystemMessageTest extends TestCase {
 			'preview-available' => 'yes',
 			'width' => '1234',
 			'height' => '4567',
-		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 
 	public function testGetFileFromShareForGuestWithBlurhash(): void {
@@ -820,7 +820,7 @@ class SystemMessageTest extends TestCase {
 			'width' => '1234',
 			'height' => '4567',
 			'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj',
-		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 
 	public function testGetFileFromShareForOwner(): void {
@@ -897,7 +897,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'httpd/unix-directory',
 			'preview-available' => 'no',
-		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 
 	public function testGetFileFromShareForRecipient(): void {
@@ -982,7 +982,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'application/octet-stream',
 			'preview-available' => 'no',
-		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 
 	public function testGetFileFromShareForRecipientThrows(): void {
@@ -1026,7 +1026,7 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->expectException(NotFoundException::class);
-		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']);
+		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]);
 	}
 
 	public function testGetFileFromShareThrows(): void {
@@ -1046,7 +1046,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn($attendee);
 		$parser = $this->getParser();
 		$this->expectException(ShareNotFound::class);
-		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']);
+		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]);
 	}
 
 	public static function dataGetActor(): array {

@@ -522,7 +522,7 @@ class Notifier implements INotifier {
 			}
 
 			$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
-			$this->messageParser->parseMessage($message);
+			$this->messageParser->parseMessage($message, true);
 
 			if (!$message->getVisibility()) {
 				throw new AlreadyProcessedException();

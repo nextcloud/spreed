@@ -171,7 +171,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 					throw new RoomNotFoundException();
 				}
 				$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
-				$this->messageParser->parseMessage($message);
+				$this->messageParser->parseMessage($message, true);
 			} else {
 				try {
 					$proxy = $this->proxyCacheMessageMapper->findById($room, (int)$messageId);

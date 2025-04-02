@@ -66,7 +66,12 @@ class MessageParser {
 		return $message;
 	}
 
-	public function parseMessage(Message $message): void {
+	/**
+	 * @param bool $allowInaccurate File share messages will not have fully correct data for the file object
+	 *                              E.g. path is only the file name and preview generation is estimated by
+	 *                              mimetype only. This is done to prevent a filesystem setup.
+	 */
+	public function parseMessage(Message $message, bool $allowInaccurate = false): void {
 		$message->setMessage($message->getComment()->getMessage(), []);
 
 		$verb = $message->getComment()->getVerb();
@@ -77,7 +82,7 @@ class MessageParser {
 		$this->setMessageActor($message);
 		$this->setLastEditInfo($message);
 
-		$event = new MessageParseEvent($message->getRoom(), $message);
+		$event = new MessageParseEvent($message->getRoom(), $message, $allowInaccurate);
 		$this->dispatcher->dispatchTyped($event);
 	}
 

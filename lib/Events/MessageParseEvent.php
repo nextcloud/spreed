@@ -15,11 +15,16 @@ class MessageParseEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected Message $message,
+		protected bool $allowInaccurate,
 	) {
 		parent::__construct($room);
 	}
 
 	public function getMessage(): Message {
 		return $this->message;
+	}
+
+	public function allowInaccurate(): bool {
+		return $this->allowInaccurate;
 	}
 }
