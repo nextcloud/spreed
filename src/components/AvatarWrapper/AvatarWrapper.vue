@@ -27,8 +27,8 @@
 			:menu-container="menuContainer"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
-			:show-user-status="showUserStatus"
-			:show-user-status-compact="showUserStatusCompact"
+			:hide-status="!showUserStatus"
+			:verbose-status="!showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
 		<!-- Override user status for federated users -->

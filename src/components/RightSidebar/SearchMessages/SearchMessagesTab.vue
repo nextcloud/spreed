@@ -311,7 +311,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 								<NcAvatar :size="24"
 									:user="fromUser.id"
 									:display-name="fromUser.displayName"
-									:show-user-status="false" />
+									hide-status />
 							</template>
 						</NcChip>
 						<NcChip v-if="sinceDate"
