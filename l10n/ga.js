@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "Uimhir anaithnid",
     "%s (guest)" : "%s (aoi)",
     "Missed call" : "Glao caillte",
+    "Unanswered call" : "Glao gan freagra",
     "Call ended (Duration {duration})" : "Cuireadh deireadh leis an nglao (Fad {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Cuireadh deireadh leis an nglao, toisc gur shroich sé uasfhad an ghlao (Fad {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} chríochnaigh an glao (Fad {duration})",
