@@ -11759,6 +11759,19 @@
                         }
                     },
                     {
+                        "name": "includeLastMessage",
+                        "in": "query",
+                        "description": "Include the last message, clients should opt-out when only rendering a compact list",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
