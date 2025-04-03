@@ -38,8 +38,8 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status="!hideUserStatus"
-			:show-user-status-compact="!showUserOnlineStatus"
+			:hide-status="hideUserStatus"
+			:verbose-status="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
 			<IconVideo :size="20" :fill-color="'#E9322D'" />
