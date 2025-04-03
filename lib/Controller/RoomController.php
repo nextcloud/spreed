@@ -1588,6 +1588,11 @@ class RoomController extends AEnvironmentAwareController {
 			$result = [
 				'result' => true,
 			];
+		} elseif ($previousParticipant instanceof Participant && $previousParticipant->isGuest()) {
+			// Skip password checking
+			$result = [
+				'result' => true,
+			];
 		} else {
 			$result = $this->roomService->verifyPassword($room, (string) $this->session->getPasswordForRoom($token));
 		}
