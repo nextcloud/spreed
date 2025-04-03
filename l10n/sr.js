@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "Непознати број",
     "%s (guest)" : "%s (гост)",
     "Missed call" : "Пропуштени позив",
+    "Unanswered call" : "Пропуштени позив",
     "Call ended (Duration {duration})" : "Позив је завршен (Трајање {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Позив се завршио јер је достигнуто максимално трајање позива (Трајање {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} је завршио позив (Трајање {duration})",
