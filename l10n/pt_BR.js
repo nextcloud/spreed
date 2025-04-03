@@ -73,7 +73,7 @@ OC.L10N.register(
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- As próximas chamadas de eventos de calendário vinculados e substituições fora do escritório agora são mostradas nas conversas",
     "- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- As chamadas agora podem ser feitas de forma federada com outros servidores Talk (requer backend de alto desempenho)",
     "- Introducing the Nextcloud Talk desktop client for Windows, macOS and Linux: %s" : "- Apresentando o cliente de desktop Nextcloud Talk para Windows, macOS e Linux: %s",
-    "- Summarize call recordings and unread messages in chats with the Nextcloud Assistant" : "- Resuma gravações de chamadas e mensagens não lidas em chats com o Nextcloud Assistant",
+    "- Summarize call recordings and unread messages in chats with the Nextcloud Assistant" : "- Resuma gravações de chamadas e mensagens não lidas em chats com o Assistente Nextcloud",
     "- Improved meetings with recognizing guests invited via their email address, import of participant lists, drafts for polls and downloading call participant lists" : "- Reuniões aprimoradas com reconhecimento de convidados por meio de seus endereços de e-mail, importação de listas de participantes, rascunhos para enquetes e download de listas de participantes de chamadas",
     "- Archive conversations to stay focused" : "- Arquive conversas para se manter focado",
     "- Schedule a meeting into your calendar from within a conversation" : "- Agende uma reunião em seu calendário a partir de uma conversa",
