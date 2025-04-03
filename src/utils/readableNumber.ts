@@ -4,7 +4,10 @@
  */
 
 /**
- * Copied from https://www.w3resource.com/javascript-exercises/javascript-string-exercise-17.php
+ * Splits a string into chunks of a given size
+ * Samples:
+ * stringChop('Hello World', 3) => ['Hel', 'lo ', 'Wor', 'ld']
+ * stringChop('Hello World', 5) => ['Hello', ' Worl', 'd']
  *
  * @param str The string to chop
  * @param size Size of the chunks
@@ -13,7 +16,12 @@ function stringChop(str: string, size: number): string[] {
 	if (size <= 0) {
 		return [str]
 	}
-	return str.match(new RegExp('.{1,' + size + '}', 'g')) ?? [str]
+	const chunks: string[] = []
+	for (let i = 0; i < str.length; i += size) {
+		chunks.push(str.slice(i, i + size))
+	}
+
+	return chunks
 }
 
 /**
