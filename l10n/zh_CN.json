@@ -250,6 +250,7 @@
     "Unknown number" : "未知号码",
     "%s (guest)" : "%s（访客）",
     "Missed call" : "未接来电",
+    "Unanswered call" : "未接通话",
     "Call ended (Duration {duration})" : "通话结束（时长 {duration}）",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "通话结束，因为已达到最大通话时长（时长 {duration}）",
     "{actor} ended the call (Duration {duration})" : "{actor} 结束了通话（时长 {duration}）",
