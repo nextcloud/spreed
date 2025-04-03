@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcModal :can-close="false"
+	<NcModal no-close
 		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		size="small">
