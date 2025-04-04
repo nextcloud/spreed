@@ -8,6 +8,7 @@
 		<input v-model="modelProxy"
 			:value="value"
 			:aria-label="participantAriaLabel"
+			:disabled="isLocked"
 			type="checkbox"
 			class="selectable-participant__checkbox"
 			@keydown.enter.stop.prevent="handleEnter">
@@ -36,7 +37,7 @@
 </template>
 
 <script>
-import { inject } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 import IconCheck from 'vue-material-design-icons/Check.vue'
 
@@ -77,12 +78,20 @@ export default {
 
 	emits: ['update:checked', 'click-participant'],
 
-	setup() {
+	setup(props) {
 		// Toggles the bulk selection state of this component
 		const isBulkSelection = inject('bulkParticipantsSelection', false)
 
+		// Defines list of locked participants (can not be removed manually
+		const lockedParticipants = inject('lockedParticipants', ref([]))
+
+		const isLocked = computed(() => lockedParticipants.value.some(item => {
+			return item.id === props.participant.id && item.source === props.participant.source
+		}))
+
 		return {
 			isBulkSelection,
+			isLocked,
 		}
 	},
 
@@ -92,6 +101,9 @@ export default {
 				return this.checked
 			},
 			set(value) {
+				if (this.isLocked) {
+					return
+				}
 				this.isBulkSelection
 					? this.$emit('update:checked', value)
 					: this.$emit('click-participant', this.participant)
