@@ -160,6 +160,8 @@ export default {
 		const isInCall = useIsInCall()
 		const selectedParticipants = ref([])
 		provide('selectedParticipants', selectedParticipants)
+		const lockedParticipants = ref([])
+		provide('lockedParticipants', lockedParticipants)
 
 		// Add a visual bulk selection state for SelectableParticipant component
 		provide('bulkParticipantsSelection', true)
@@ -170,6 +172,7 @@ export default {
 		return {
 			isInCall,
 			selectedParticipants,
+			lockedParticipants,
 			dialogHeaderPrepId,
 			dialogHeaderResId,
 		}
@@ -255,6 +258,7 @@ export default {
 				// Preload the conversation name from group selection
 				this.newConversation.displayName = item.label
 				this.selectedParticipants.push(item)
+				this.lockedParticipants.push(item)
 			}
 
 			this.showModal()
@@ -275,6 +279,7 @@ export default {
 			this.listable = CONVERSATION.LISTABLE.NONE
 			this.isAvatarEdited = false
 			this.selectedParticipants = []
+			this.lockedParticipants = []
 		},
 
 		switchToPage(value) {
