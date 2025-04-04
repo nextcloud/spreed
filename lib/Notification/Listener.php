@@ -288,7 +288,7 @@ class Listener implements IEventListener {
 			} else {
 				$fallbackLang = $this->serverConfig->getSystemValueString('default_language', 'en');
 				/** @psalm-var array<string, string> $userLanguages */
-				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', $userIds);
+				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', array_map('strval', array_keys($users)));
 			}
 		}
 
