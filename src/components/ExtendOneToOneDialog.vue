@@ -18,6 +18,7 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NewConversationContactsPage from './NewConversationDialog/NewConversationContactsPage.vue'
 
 import { useStore } from '../composables/useStore.js'
+import { ATTENDEE, CONVERSATION } from '../constants.ts'
 
 const props = defineProps<{
   token: string,
@@ -27,15 +28,32 @@ const props = defineProps<{
 const store = useStore()
 const router = useRouter()
 
-const selectedParticipants = ref([])
+const selectedParticipants = ref(getArrayWithSecondAttendee(props.token))
 provide('selectedParticipants', selectedParticipants)
+
+const lockedParticipants = ref(getArrayWithSecondAttendee(props.token))
+provide('lockedParticipants', lockedParticipants)
 
 // Add a visual bulk selection state for SelectableParticipant component
 provide('bulkParticipantsSelection', true)
 
-watch(() => props.token, () => {
-	selectedParticipants.value = []
+watch(() => props.token, (newValue) => {
+	selectedParticipants.value = getArrayWithSecondAttendee(newValue)
+	lockedParticipants.value = getArrayWithSecondAttendee(newValue)
 })
+
+/**
+ * Returns second attendee of 1-1 conversation as SelectableParticipant-compatible object
+ * @param token - conversation token
+ */
+function getArrayWithSecondAttendee(token: string) {
+	const conversation = store.getters.conversation(token)
+	if (conversation?.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
+		return []
+	}
+	return [{ id: conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: conversation.displayName }]
+}
+
 /**
  * Add current participants and selected ones to the new conversation
  */
