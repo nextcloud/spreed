@@ -188,6 +188,16 @@ const mutations = {
 	 */
 	addConversation(state, conversation) {
 		Vue.set(state.conversations, conversation.token, conversation)
+
+		// Update unread counters in the unreadCount store if the conversation has unread messages
+		if (conversation.unreadMessages || conversation.unreadMention || conversation.unreadMentionDirect) {
+			this.dispatch('unreadCount/updateConversationCounts', {
+				token: conversation.token,
+				unreadMessages: conversation.unreadMessages || 0,
+				unreadMentions: conversation.unreadMention || 0,
+				unreadMentionDirect: conversation.unreadMentionDirect || 0,
+			})
+		}
 	},
 
 	/**
@@ -197,7 +207,23 @@ const mutations = {
 	 * @param {object} conversation the new conversation object
 	 */
 	updateConversation(state, conversation) {
+		const oldConversation = state.conversations[conversation.token]
 		state.conversations[conversation.token] = conversation
+
+		// Check if unread counts have changed and update the unreadCount store
+		if (oldConversation && (
+			oldConversation.unreadMessages !== conversation.unreadMessages ||
+			oldConversation.unreadMention !== conversation.unreadMention ||
+			oldConversation.unreadMentionDirect !== conversation.unreadMentionDirect
+		)) {
+			// Update unread counters in the unreadCount store
+			this.dispatch('unreadCount/updateConversationCounts', {
+				token: conversation.token,
+				unreadMessages: conversation.unreadMessages || 0,
+				unreadMentions: conversation.unreadMention || 0,
+				unreadMentionDirect: conversation.unreadMentionDirect || 0,
+			})
+		}
 	},
 
 	/**
@@ -207,6 +233,12 @@ const mutations = {
 	 * @param {string} token the token of the conversation to delete;
 	 */
 	deleteConversation(state, token) {
+		// Remove from unreadCount store if the conversation has unread messages
+		const conversation = state.conversations[token]
+		if (conversation && (conversation.unreadMessages || conversation.unreadMention || conversation.unreadMentionDirect)) {
+			this.dispatch('unreadCount/removeConversation', { token })
+		}
+
 		Vue.delete(state.conversations, token)
 	},
 
@@ -232,6 +264,14 @@ const mutations = {
 		if (unreadMentionDirect !== undefined) {
 			Vue.set(state.conversations[token], 'unreadMentionDirect', unreadMentionDirect)
 		}
+
+		// Update unread counters in the unreadCount store
+		this.dispatch('unreadCount/updateConversationCounts', {
+			token,
+			unreadMessages: state.conversations[token].unreadMessages || 0,
+			unreadMentions: state.conversations[token].unreadMention || 0,
+			unreadMentionDirect: state.conversations[token].unreadMentionDirect || 0,
+		})
 	},
 
 	setNotificationLevel(state, { token, notificationLevel }) {
