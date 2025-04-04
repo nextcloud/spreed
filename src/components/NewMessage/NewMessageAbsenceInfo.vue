@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { inject, ref } from 'vue'
+
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
@@ -82,9 +84,11 @@ export default {
 
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
+		const isVisible = inject('isVisible', ref(true))
 		return {
 			AVATAR,
 			isDarkTheme,
+			isVisible,
 		}
 	},
 
@@ -127,6 +131,14 @@ export default {
 			this.$nextTick(() => {
 				this.setIsTextMoreThanOneLine()
 			})
+		},
+
+		isVisible(value) {
+			if (value) {
+				this.$nextTick(() => {
+					this.setIsTextMoreThanOneLine()
+				})
+			}
 		},
 	},
 
