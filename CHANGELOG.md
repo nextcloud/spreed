@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.15 – 2025-04-04
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Do not reset previous connected users after resuming in a call
+  [#14735](https://github.com/nextcloud/spreed/issues/14735)
+- fix(sidebar): Show tooltips when Talk is in the sidebar
+  [#14697](https://github.com/nextcloud/spreed/issues/14697)
+- fix(guests): Fix style and labels on public share page as a guest
+  [#14720](https://github.com/nextcloud/spreed/issues/14720)
+  [#14726](https://github.com/nextcloud/spreed/issues/14726)
+- fix(calls): Skip password verification for guests that are reconnecting to the call
+  [#14787](https://github.com/nextcloud/spreed/pull/14787)
+- fix(calls): Fix leaving call if a signaling message is received while reconnecting
+  [#14788](https://github.com/nextcloud/spreed/pull/14788)
+
 ## 19.0.14 – 2025-03-12
 ### Changed
 - Update translations
