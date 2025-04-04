@@ -243,9 +243,9 @@ describe('MessagesList.vue', () => {
 
 			const dateSeparators = wrapper.findAll('.messages-group__date')
 			expect(dateSeparators).toHaveLength(3)
-			expect(dateSeparators.at(0).text()).toBe('2 days ago, May 9, 2020')
-			expect(dateSeparators.at(1).text()).toBe('Yesterday, May 10, 2020')
-			expect(dateSeparators.at(2).text()).toBe('Today, May 11, 2020')
+			expect(dateSeparators.at(0).text()).toBe('2 days ago, May 9')
+			expect(dateSeparators.at(1).text()).toBe('yesterday, May 10')
+			expect(dateSeparators.at(2).text()).toBe('today, May 11')
 		})
 
 		test('groups system messages with each other', () => {

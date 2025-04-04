@@ -290,7 +290,6 @@ import Translate from 'vue-material-design-icons/Translate.vue'
 import { getCurrentUser } from '@nextcloud/auth'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionInput from '@nextcloud/vue/components/NcActionInput'
@@ -309,7 +308,7 @@ import { getMessageReminder, removeMessageReminder, setMessageReminder } from '.
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
-import { convertToUnix } from '../../../../../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -495,11 +494,11 @@ export default {
 		},
 
 		messageDateTime() {
-			return moment(this.message.timestamp * 1000).format('lll')
+			return formatDateTime(this.message.timestamp * 1000, 'lll')
 		},
 
 		editedDateTime() {
-			return moment(this.message.lastEditTimestamp * 1000).format('lll')
+			return formatDateTime(this.message.lastEditTimestamp * 1000, 'lll')
 		},
 
 		customReminderDateTime: {
@@ -549,25 +548,25 @@ export default {
 				{
 					key: 'laterToday',
 					timestamp: laterTodayTime,
-					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: moment(laterTodayTime).format('LT') }),
+					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: formatDateTime(laterTodayTime, 'LT') }),
 					ariaLabel: t('spreed', 'Set reminder for later today'),
 				},
 				{
 					key: 'tomorrow',
 					timestamp: tomorrowTime,
-					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: moment(tomorrowTime).format('ddd LT') }),
+					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: formatDateTime(tomorrowTime, 'ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for tomorrow'),
 				},
 				{
 					key: 'thisWeekend',
 					timestamp: thisWeekendTime,
-					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: moment(thisWeekendTime).format('ddd LT') }),
+					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: formatDateTime(thisWeekendTime, 'ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for this weekend'),
 				},
 				{
 					key: 'nextWeek',
 					timestamp: nextWeekTime,
-					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: moment(nextWeekTime).format('ddd LT') }),
+					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: formatDateTime(nextWeekTime, 'ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for next week'),
 				},
 			].filter(option => option.timestamp !== null)
@@ -577,7 +576,7 @@ export default {
 			if (!this.currentReminder) {
 				return ''
 			}
-			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
+			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(this.currentReminder.timestamp * 1000, 'ddd LT') })
 		},
 
 		lastEditActorLabel() {
@@ -744,7 +743,7 @@ export default {
 			try {
 				await setMessageReminder(this.message.token, this.message.id, convertToUnix(timestamp))
 				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
-					datetime: moment(timestamp).format('LLL'),
+					datetime: formatDateTime(timestamp, 'LLL'),
 				}))
 			} catch (error) {
 				console.error(error)
