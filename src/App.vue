@@ -232,7 +232,7 @@ export default {
 			}
 		})
 
-		EventBus.on('switch-to-conversation', (params) => {
+		EventBus.on('switch-to-conversation', async (params) => {
 			if (this.isInCall) {
 				this.callViewStore.setForceCallView(true)
 
@@ -242,6 +242,11 @@ export default {
 				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + this.token)
 				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
 				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
+
+				// Fetch conversation object, if it's not known yet to the client
+				if (!this.$store.getters.conversation(params.token)) {
+					await this.fetchSingleConversation(params.token)
+				}
 
 				EventBus.once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {

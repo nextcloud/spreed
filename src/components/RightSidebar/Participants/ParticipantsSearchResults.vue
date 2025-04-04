@@ -6,58 +6,60 @@
 <template>
 	<div class="participants-search-results" :class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add users')" />
+			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
 				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 
-		<template v-if="addableGroups.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
-			<ParticipantsList :items="addableGroups"
-				is-search-result
-				@click="handleClickParticipant" />
+		<template v-if="!onlyUsers">
+			<template v-if="addableGroups.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
+				<ParticipantsList :items="addableGroups"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
+
+			<template v-if="addableEmails.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
+				<ParticipantsList :items="addableEmails"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
+
+			<template v-if="addableCircles.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
+				<ParticipantsList :items="addableCircles"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
+
+			<!-- integrations -->
+			<template v-if="integrations.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
+				<ul>
+					<NcButton v-for="(integration, index) in integrations"
+						:key="'integration' + index"
+						type="tertiary-no-background"
+						@click="runIntegration(integration)">
+						<!-- FIXME: dynamically change the material design icon -->
+						<template #icon>
+							<AccountPlus :size="20" />
+						</template>
+						{{ integration.label }}
+					</NcButton>
+				</ul>
+			</template>
+
+			<template v-if="addableRemotes.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
+				<ParticipantsList :items="addableRemotes"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
 		</template>
 
-		<template v-if="addableEmails.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
-			<ParticipantsList :items="addableEmails"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
-
-		<template v-if="addableCircles.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
-			<ParticipantsList :items="addableCircles"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
-
-		<!-- integrations -->
-		<template v-if="integrations.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
-			<ul>
-				<NcButton v-for="(integration, index) in integrations"
-					:key="'integration' + index"
-					type="tertiary-no-background"
-					@click="runIntegration(integration)">
-					<!-- FIXME: dynamically change the material design icon -->
-					<template #icon>
-						<AccountPlus :size="20" />
-					</template>
-					{{ integration.label }}
-				</NcButton>
-			</ul>
-		</template>
-
-		<template v-if="addableRemotes.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
-			<ParticipantsList :items="addableRemotes"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
-
-		<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
+		<NcAppNavigationCaption v-if="sourcesWithoutResults && !onlyUsers" :name="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-else-if="sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 
@@ -122,9 +124,23 @@ export default {
 			required: true,
 		},
 		/**
+		 * Token of current conversation (if provided).
+		 */
+		token: {
+			type: String,
+			default: '',
+		},
+		/**
 		 * Display no-results state instead of list.
 		 */
 		noResults: {
+			type: Boolean,
+			default: false,
+		},
+		/**
+		 * Display only results from internal users.
+		 */
+		onlyUsers: {
 			type: Boolean,
 			default: false,
 		},
@@ -166,7 +182,11 @@ export default {
 		},
 
 		sourcesWithoutResults() {
-			return !this.addableUsers.length || !this.addableGroups.length || this.circlesWithoutResults
+			if (this.onlyUsers) {
+				return !this.addableUsers.length
+			} else {
+				return !this.addableUsers.length || !this.addableGroups.length || this.circlesWithoutResults
+			}
 		},
 
 		integrations() {
@@ -265,6 +285,10 @@ export default {
 
 	&__hint {
 		margin: 20px auto 0;
+	}
+
+	:deep(.app-navigation-hint):first-child {
+		margin-top: var(--default-grid-baseline) !important;
 	}
 }
 
