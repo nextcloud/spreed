@@ -78,3 +78,15 @@ Feature: conversation-2/set-password
     And user "participant3" leaves room "room" with 200 (v4)
     When user "participant2" sets password "" for room "room" with 404 (v4)
     Then user "participant3" joins room "room" with 403 (v4)
+
+  # Applicable e.g. after permissions increased https://github.com/nextcloud/spreed/issues/14728
+  Scenario: Guest can reload / rejoin a password protected conversation without reentering the password
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    When user "participant1" sets password "foobar" for room "room" with 200 (v4)
+    And user "guest" joins room "room" with 200 (v4) session name "guest1"
+      | password | foobar |
+    And user "guest" sends message "Message 1" to room "room" with 201
+    And user "guest" joins room "room" with 200 (v4) session name "guest1"
+    And user "guest" sends message "Message 2" to room "room" with 201
