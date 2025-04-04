@@ -145,6 +145,7 @@ class RoomFormatter {
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 			'isArchived' => false,
+			'isImportant' => false,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -229,6 +230,7 @@ class RoomFormatter {
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 			'mentionPermissions' => $room->getMentionPermissions(),
 			'isArchived' => $attendee->isArchived(),
+			'isImportant' => $attendee->isImportant(),
 		]);
 
 		if ($room->isFederatedConversation()) {
