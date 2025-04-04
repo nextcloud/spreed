@@ -240,6 +240,7 @@ class CallController extends AEnvironmentAwareController {
 			// Default flags: user is in room with audio/video.
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
+		$lastJoinedCall = $this->timeFactory->getDateTime();
 
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
@@ -247,15 +248,15 @@ class CallController extends AEnvironmentAwareController {
 			$response = $proxy->joinFederatedCall($this->room, $this->participant, $flags, $silent, $recordingConsent);
 
 			if ($response->getStatus() === Http::STATUS_OK) {
-				$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
+				$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent, lastJoinedCall: $lastJoinedCall->getTimestamp());
 			}
 
 			return $response;
 		}
 
 		try {
-			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent);
-			$this->roomService->setActiveSince($this->room, $this->participant, $this->timeFactory->getDateTime(), $flags, silent: $silent);
+			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent, lastJoinedCall: $lastJoinedCall->getTimestamp());
+			$this->roomService->setActiveSince($this->room, $this->participant, $lastJoinedCall, $flags, silent: $silent);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
