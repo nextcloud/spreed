@@ -74,6 +74,10 @@ class Listener implements IEventListener {
 	 * @param Attendee[] $attendees
 	 */
 	protected function generateInvitation(Room $room, array $attendees): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return;
+		}
+
 		if ($room->getObjectType() === Room::OBJECT_TYPE_FILE) {
 			return;
 		}
@@ -135,6 +139,12 @@ class Listener implements IEventListener {
 	 * Room invitation: "{actor} invited you to {call}"
 	 */
 	protected function markInvitationRead(Room $room, IUser $user): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE
+			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			// No notifications for one-to-one, save a query
+			return;
+		}
+
 		$notification = $this->notificationManager->createNotification();
 		try {
 			$notification->setApp(Application::APP_ID)
