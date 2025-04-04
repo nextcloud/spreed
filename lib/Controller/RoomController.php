@@ -1670,7 +1670,8 @@ class RoomController extends AEnvironmentAwareController {
 		$authenticatedEmailGuest = $this->session->getAuthedEmailActorIdForRoom($token);
 
 		$headers = [];
-		if ($authenticatedEmailGuest !== null || $room->isFederatedConversation()) {
+		if ($authenticatedEmailGuest !== null || $room->isFederatedConversation()
+			|| ($previousParticipant instanceof Participant && $previousParticipant->isGuest())) {
 			// Skip password checking
 			$result = [
 				'result' => true,
