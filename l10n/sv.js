@@ -252,6 +252,7 @@ OC.L10N.register(
     "Unknown number" : "Okänt nummer",
     "%s (guest)" : "%s (gäst)",
     "Missed call" : "Missat samtal",
+    "Unanswered call" : "Obesvarat samtal",
     "Call ended (Duration {duration})" : "Samtal avslutat (Varaktighet {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Samtalet avslutades eftersom det nådde den maximala samtalslängden (Varaktighet {duration})",
     "{actor} ended the call (Duration {duration})" : "{actor} avslutade samtalet (Varaktighet {duration})",
