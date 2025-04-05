@@ -863,7 +863,7 @@
     "The consent to be recorded is not required." : "Zgoda na nagrywanie nie jest wymagana.",
     "Recording backend configuration is only possible with a High-performance backend." : "Konfiguracja zaplecza \"Nagrywanie\" jest możliwe tylko przy użyciu zaplecza o wysokiej wydajności.",
     "Add a new recording backend server" : "Dodaj nowy serwer zaplecza nagrywania",
-    "Shared secret" : "Udostępniony tajny klucz",
+    "Shared secret" : "Klucz współdzielony",
     "Recording consent" : "Zgoda na nagrywanie",
     "Recording transcription" : "Transkrypcja nagrań",
     "Automatically transcribe call recordings with a transcription provider" : "Automatyczne transkrybowanie nagrań rozmów za pomocą dostawcy usług transkrypcji",
