@@ -1289,7 +1289,7 @@ class ParticipantService {
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
 	 * @throws \InvalidArgumentException
 	 */
-	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): void {
+	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false, int $lastJoinedCall = 0): void {
 		if ($room->getType() === Room::TYPE_CHANGELOG
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
@@ -1328,7 +1328,7 @@ class ParticipantService {
 
 		$attendee = $participant->getAttendee();
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$attendee->setLastJoinedCall($this->timeFactory->getTime());
+			$attendee->setLastJoinedCall($lastJoinedCall ?: $this->timeFactory->getTime());
 			$this->attendeeMapper->update($attendee);
 		} elseif ($attendee->getActorType() === Attendee::ACTOR_PHONES) {
 			$attendee->setCallId('');
