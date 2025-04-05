@@ -319,7 +319,7 @@
     "The transcript for the call in {call} was uploaded to {file}." : "Das Transkript für den Anruf in {call} wurde als {file} hochgeladen.",
     "Failed to transcript call recording" : "Transkription der Anrufaufzeichnung fehlgeschlagen",
     "The server failed to transcript the recording at {file} for the call in {call}. Please reach out to the administration." : "Der Server konnte die Aufzeichnung in {file} für den Anruf in {call} nicht transkribieren. Bitte wenden Sie sich an die Administration.",
-    "Call summary now available" : "Anrufzusammenfassung nicht verfügbar",
+    "Call summary now available" : "Anrufzusammenfassung jetzt verfügbar",
     "The summary for the call in {call} was uploaded to {file}." : "Die Zusammenfassung für den Anruf in {call} wurde als {file} hochgeladen.",
     "Failed to summarize call recording" : "Zusammenfassung der Anrufaufzeichnung fehlgeschlagen",
     "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration." : "Der Server konnte die Aufzeichnung in {file} für den Anruf in {call} nicht zusammenfassen. Bitte wenden Sie sich an die Administration.",
