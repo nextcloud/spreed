@@ -4,10 +4,12 @@ Feature: scaling/conversations
 
   Scenario: Conversation list with many conversations
     Given enable query.log
+    Then user "participant1" is participant of the following unordered rooms (v4)
+    And note query.log: After creating samples and talk update
     When user "participant1" creates 75 rooms (v4)
       | roomType | 2          |
       | roomName | IDENTIFIER |
-    And note query.log: After creation
+    And note query.log: After creation of 75 rooms
     Then user "participant1" is participant of the following unordered rooms (v4)
       | name   | type | participantType |
       | room1  | 2    | 1               |
