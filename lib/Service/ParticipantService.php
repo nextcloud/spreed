@@ -88,6 +88,7 @@ use OCP\Security\ISecureRandom;
 use OCP\Server;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
+use Psr\Log\LoggerInterface;
 
 class ParticipantService {
 
@@ -113,6 +114,7 @@ class ParticipantService {
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
 		private IUserStatusManager $userStatusManager,
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -1982,6 +1984,13 @@ class ParticipantService {
 
 		if ($actorType === Attendee::ACTOR_USERS) {
 			return $this->getParticipant($room, $actorId, false);
+		}
+
+		if ($actorType === Attendee::ACTOR_GUESTS
+			&& in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_SYSTEM, Attendee::ACTOR_ID_CHANGELOG], true)) {
+			$exception = new ParticipantNotFoundException('User is not a participant');
+			$this->logger->info('Trying to load hardcoded system guest from attendees table: ' . $actorType . '/' . $actorId);
+			throw $exception;
 		}
 
 		$query = $this->connection->getQueryBuilder();
