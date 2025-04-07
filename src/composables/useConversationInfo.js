@@ -81,7 +81,7 @@ export function useConversationInfo({
 			return t('spreed', 'Guest')
 		}
 
-		return author
+		return escapeHtml(author)
 	})
 
 	const conversationInformation = computed(() => {
