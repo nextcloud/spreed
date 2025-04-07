@@ -69,6 +69,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $renamedTeams = [];
 	/** @var array<string, int> */
 	protected static array $userToBanId;
+	protected static ?string $queryLogFile = null;
+	protected static ?string $currentScenario = null;
 
 
 	protected static array $permissionsMap = [
@@ -194,6 +196,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @BeforeScenario
 	 */
 	public function setUp(BeforeScenarioScope $scope) {
+		self::$currentScenario = $scope->getFeature()->getTitle() . ':' . $scope->getScenario()->getLine() . ' - ' . $scope->getScenario()->getTitle();
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
@@ -3963,10 +3966,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($enable === 'enable') {
 			$this->runOcc(['config:system:get', 'datadirectory']);
 			$dir = trim($this->lastStdOut);
-			$this->runOcc(['config:system:set', 'query_log_file', '--value', rtrim($dir, '/') . '/query.log']);
+			self::$queryLogFile = rtrim($dir, '/') . '/query.log';
+			$this->runOcc(['config:system:set', 'query_log_file', '--value', self::$queryLogFile]);
+			file_put_contents(self::$queryLogFile, "\n>>>>> START\n" . self::$currentScenario . "\n", FILE_APPEND);
 		} else {
+			file_put_contents(self::$queryLogFile, "\n>>>>> END\n" . self::$currentScenario . "\n", FILE_APPEND);
 			$this->runOcc(['config:system:remove', 'query_log_file']);
 		}
+	}
+
+	/**
+	 * @Given /^note query\.log: (.*)$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function noteQueryLog(string $note): void {
+		file_put_contents(self::$queryLogFile, "\n>>>>> NOTE\n" . $note . "\n", FILE_APPEND);
 	}
 
 	/**

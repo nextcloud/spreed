@@ -214,10 +214,13 @@ Feature: scaling/call
     Then user "employee68" is participant of the following rooms (v4)
     Then user "employee69" is participant of the following rooms (v4)
     Then user "employee70" is participant of the following rooms (v4)
+    And note query.log: After employee boot
     When user "employee1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | company |
+    And note query.log: After creation
     When user "employee1" sets default permissions for room "room" to "CJ" with 200 (v4)
+    And note query.log: After set permissions
     Then user "employee1" joins room "room" with 200 (v4)
     Then user "employee1" joins call "room" with 200 (v4)
       | flags | 1 |
@@ -428,5 +431,7 @@ Feature: scaling/call
     Then user "employee70" joins room "room" with 200 (v4)
     Then user "employee70" joins call "room" with 200 (v4)
       | flags | 1 |
+    And note query.log: After all joins
     When user "employee1" ends call "room" with 200 (v4)
+    And note query.log: After end call
     And disable query.log

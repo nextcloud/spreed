@@ -2,11 +2,12 @@ Feature: scaling/conversations
   Background:
     Given user "participant1" exists
 
-  Scenario: Company call
+  Scenario: Conversation list with many conversations
     Given enable query.log
     When user "participant1" creates 75 rooms (v4)
       | roomType | 2          |
       | roomName | IDENTIFIER |
+    And note query.log: After creation
     Then user "participant1" is participant of the following unordered rooms (v4)
       | name   | type | participantType |
       | room1  | 2    | 1               |
