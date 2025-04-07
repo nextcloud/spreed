@@ -21,4 +21,4 @@ Feature: chat/note-to-self
       | Note to self | 6    | Note to self  |
     Then user "participant1" sees the following system messages in room "Note to self" with 200
       | room         | actorType | actorId | actorDisplayName | message                         | messageParameters                                              | systemMessage        |
-      | Note to self | guests    | system  |                  | System created the conversation | {"actor":{"type":"guest","id":"guest\/system","name":"Guest","mention-id":"guest\/system"}} | conversation_created |
+      | Note to self | guests    | system  |                  | System created the conversation | {"actor":{"type":"guest","id":"guest\/system","name":"System","mention-id":"guest\/system"}} | conversation_created |
