@@ -213,9 +213,11 @@ Feature: scaling/chat
     Then user "employee68" is participant of the following rooms (v4)
     Then user "employee69" is participant of the following rooms (v4)
     Then user "employee70" is participant of the following rooms (v4)
+    Given enable query.log
     When user "employee1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | company |
     When user "employee1" sends message "Message 1" to room "room" with 201
     When user "employee1" sends message "Message 2 @employee2" to room "room" with 201
     When user "employee1" sends message "Message 3 @all" to room "room" with 201
+    And disable query.log

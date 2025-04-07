@@ -49,7 +49,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-suite: ['callapi', 'chat-1', 'chat-2', 'chat-3', 'chat-4', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
+        test-suite:
+          - 'callapi'
+          - 'chat-1'
+          - 'chat-2'
+          - 'chat-3'
+          - 'chat-4'
+          - 'command'
+          - 'conversation-1'
+          - 'conversation-2'
+          - 'conversation-3'
+          - 'conversation-4'
+          - 'conversation-5'
+          - 'federation'
+          - 'integration'
+          - 'scaling'
+          - 'sharing-1'
+          - 'sharing-2'
+          - 'sharing-3'
+          - 'sharing-4'
         php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['main']
@@ -159,6 +177,17 @@ jobs:
         if: always()
         run: |
           cat data/nextcloud.log
+
+      - name: Print query logs
+        if: matrix.test-suite == 'scaling'
+        run: |
+          cat data/query.log
+
+      - name: Upload query.log
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: query-list.txt
+          path: data/query.log
 
       - name: Check Federation log
         if: always()

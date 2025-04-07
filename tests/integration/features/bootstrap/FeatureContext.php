@@ -1122,6 +1122,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates ([0-9]+) rooms \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userCreatesManyRoom(string $user, int $amount, string $apiVersion, ?TableNode $formData = null): void {
+		for ($i = 1; $i <= $amount; $i++) {
+			$identifier = 'room' . $i;
+			$this->userCreatesRoomWith($user, $identifier, 201, $apiVersion, $formData);
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates note-to-self \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1160,6 +1175,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
+		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
+			$body['roomName'] = $identifier;
+		}
 
 		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'room') {
 			$result = preg_match('/ROOM\(([^)]+)\)/', $body['objectId'], $matches);
@@ -3934,6 +3952,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->changedConfigs[$this->currentServer][$appId][] = $row[0];
 		}
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @Given /^(enable|disable) query\.log$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function toggleQueryLog(string $enable): void {
+		if ($enable === 'enable') {
+			$this->runOcc(['config:system:get', 'datadirectory']);
+			$dir = trim($this->lastStdOut);
+			$this->runOcc(['config:system:set', 'query_log_file', '--value', rtrim($dir, '/') . '/query.log']);
+		} else {
+			$this->runOcc(['config:system:remove', 'query_log_file']);
+		}
 	}
 
 	/**

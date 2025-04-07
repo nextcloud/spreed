@@ -143,6 +143,7 @@ Feature: scaling/call
     And user "employee70" is member of group "company"
 
   Scenario: Company call
+    Given enable query.log
     Then user "employee1" is participant of the following rooms (v4)
     Then user "employee2" is participant of the following rooms (v4)
     Then user "employee3" is participant of the following rooms (v4)
@@ -428,3 +429,4 @@ Feature: scaling/call
     Then user "employee70" joins call "room" with 200 (v4)
       | flags | 1 |
     When user "employee1" ends call "room" with 200 (v4)
+    And disable query.log
