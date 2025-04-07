@@ -1363,7 +1363,7 @@ class Manager {
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {
 		$query->leftJoin('r', 'comments', 'c', $query->expr()->andX(
 			$query->expr()->eq('r.last_message', 'c.id'),
-			$query->expr()->emptyString('r.remote_server'),
+			$query->expr()->isNull('r.remote_server'),
 		));
 		$query->selectAlias('c.id', 'comment_id');
 		$query->selectAlias('c.parent_id', 'comment_parent_id');
