@@ -61,7 +61,7 @@ export function useConversationInfo({
 
 		// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 		Object.keys(params).forEach((parameterKey) => {
-			subtitle = subtitle.replace('{' + parameterKey + '}', escapeHtml(params[parameterKey].name))
+			subtitle = subtitle.replaceAll('{' + parameterKey + '}', escapeHtml(params[parameterKey].name))
 		})
 
 		return subtitle
