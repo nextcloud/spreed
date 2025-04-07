@@ -7,7 +7,7 @@ import { computed, ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 
-import { useConversationInfo } from './useConversationInfo.js'
+import { useConversationInfo } from './useConversationInfo.ts'
 import { useStore } from './useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
