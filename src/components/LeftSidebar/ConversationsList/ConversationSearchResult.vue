@@ -15,9 +15,20 @@
 		<template #icon>
 			<ConversationIcon :item="item" :hide-favorite="!item?.attendeeId" :hide-call="!item?.attendeeId" />
 		</template>
-		<template v-if="conversationInformation" #subname>
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<span v-html="conversationInformation" />
+		<template v-if="conversationInformation.message" #subname>
+			<span class="conversation__subname" :title="conversationInformation.title">
+				<span v-if="conversationInformation.actor"
+					class="conversation__subname-actor">
+					{{ conversationInformation.actor }}
+				</span>
+				<component :is="conversationInformation.icon"
+					v-if="conversationInformation.icon"
+					class="conversation__subname-icon"
+					:size="16" />
+				<span class="conversation__subname-message">
+					{{ conversationInformation.message }}
+				</span>
+			</span>
 		</template>
 	</NcListItem>
 </template>
@@ -87,3 +98,26 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.conversation__subname {
+	display: flex;
+	gap: var(--default-grid-baseline);
+
+	&-actor {
+		flex: 0 1 auto;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	&-icon {
+		flex-shrink: 0;
+	}
+	&-message {
+		flex: 1 1 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+</style>
