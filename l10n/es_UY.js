@@ -12,6 +12,8 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "Talk" : "Hablar",
     "Guest" : "Invitado",
+    "Administration" : "Administración",
+    "System" : "Sistema",
     "Talk to %s" : "Hablar con %s",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",

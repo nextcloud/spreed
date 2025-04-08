@@ -138,6 +138,7 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "Du ryddede samtalens historik",
     "Message deleted by author" : "Beskeden er slettet af forfatteren",
     "Message deleted by you" : "Besked slettet af dig",
+    "Administration" : "Administration",
     "%s (guest)" : "%s (gæst)",
     "Talk conversations" : "Snak samtaler",
     "Talk to %s" : "Snak med %s",

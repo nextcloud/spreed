@@ -27,6 +27,8 @@ OC.L10N.register(
     "Talk updates ✅" : "Atualizações do Falar ✅",
     "System created the conversation" : "O sistema criou a conversa",
     "Message deleted by author" : "Mensagem apagada pelo autor",
+    "Administration" : "Administração",
+    "System" : "Sistema",
     "Talk conversations" : "Conversas no Talk",
     "Talk to %s" : "Falar com %s",
     "File is too big" : "O ficheiro é demasiado grande",

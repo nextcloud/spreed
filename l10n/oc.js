@@ -141,6 +141,7 @@ OC.L10N.register(
     "Message deleted by you" : "Messatge suprimit per vos",
     "Deleted user" : "Utilizaire suprimit",
     "Unknown number" : "Numèro desconegut",
+    "Administration" : "Administracion",
     "%s (guest)" : "%s (convidat)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} acabèt la sonada amb %n convidat (Durada {duration})","{actor} acabèt la sonada amb %n convidats (Durada {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} acabèt la sonada amb {user1} (Durada {duration})",

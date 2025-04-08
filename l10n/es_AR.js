@@ -5,6 +5,8 @@ OC.L10N.register(
     "Talk" : "Hablar",
     "Guest" : "Invitado",
     "Message deleted by author" : "Mensaje eliminado por el autor",
+    "Administration" : "Administración",
+    "System" : "Sistema",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",

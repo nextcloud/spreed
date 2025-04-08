@@ -134,6 +134,8 @@ OC.L10N.register(
     "Message deleted by author" : "Tin nhắn đã xóa bởi tác giả",
     "Message deleted by {actor}" : "Tin nhắn đã xóa bởi {actor}",
     "Message deleted by you" : "Tin nhắn đá xóa bởi bạn",
+    "Administration" : "Quản trị viên",
+    "System" : "Hệ thống",
     "%s (guest)" : "%s (khách mời)",
     "Talk to %s" : "Trò chuyện với %s",
     "File is not shared, or shared but not with the user" : "Tệp này không được chia sẻ, hoạc được chia sẻ nhưng không phải với người dùng này",

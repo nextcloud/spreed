@@ -250,6 +250,7 @@ OC.L10N.register(
     "Message deleted by you" : "Zprávu jste smazali",
     "Deleted user" : "Smazaný uživatel",
     "Unknown number" : "Neznámé číslo",
+    "Administration" : "Správa",
     "%s (guest)" : "%s (host)",
     "Missed call" : "Zmeškaný hovor",
     "Unanswered call" : "Nezvednutý hovor",

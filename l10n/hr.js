@@ -137,6 +137,8 @@ OC.L10N.register(
     "Message deleted by {actor}" : "Poruku je izbrisao {actor}",
     "Message deleted by you" : "Poruku ste vi izbrisali",
     "Deleted user" : "Izbrisan korisnik",
+    "Administration" : "Administracija",
+    "System" : "Sustav",
     "%s (guest)" : "%s (gost)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} je završio poziv s %n gostom (Trajanje {duration})","{actor} je završio poziv s %n gosta (Trajanje {duration})","{actor} je završio poziv s %n gostiju (Trajanje {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} je završio poziv s {user1} (Trajanje {duration})",

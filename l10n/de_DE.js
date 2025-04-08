@@ -250,6 +250,7 @@ OC.L10N.register(
     "Message deleted by you" : "Nachricht von Ihnen gelöscht",
     "Deleted user" : "Gelöschter Benutzer",
     "Unknown number" : "Unbekannte Nummer",
+    "Administration" : "Verwaltung",
     "%s (guest)" : "%s (Gast)",
     "Missed call" : "Verpasster Anruf",
     "Unanswered call" : "Unbeantworteter Anruf",

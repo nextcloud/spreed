@@ -246,6 +246,8 @@ OC.L10N.register(
     "Message deleted by you" : "Has eliminado este mensaje",
     "Deleted user" : "Usuario eliminado",
     "Unknown number" : "Número desconocido",
+    "Administration" : "Administración",
+    "System" : "Sistema",
     "%s (guest)" : "%s (invitado)",
     "Call ended (Duration {duration})" : "Llamada finalizada (Duración {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "La llamada ha terminado, porque ha alcanzado la duración máxima (Duración {duration})",
