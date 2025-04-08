@@ -171,6 +171,8 @@ OC.L10N.register(
     "Message deleted by author" : "Viestin lähettäjä poisti viestin",
     "Deleted user" : "Poistettu käyttäjä",
     "Unknown number" : "Tuntematon numero",
+    "Administration" : "Ylläpito",
+    "System" : "Järjestelmä",
     "%s (guest)" : "%s (vieras)",
     "Message of {user} in {conversation}" : "Käyttäjän {user} viesti keskustelussa {conversation}",
     "Message of {user}" : "Käyttäjän {user} viesti",

@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "Scrios tú an teachtaireacht",
     "Deleted user" : "Úsáideoir scriosta",
     "Unknown number" : "Uimhir anaithnid",
+    "Administration" : "Riarachán",
+    "System" : "Córas",
     "%s (guest)" : "%s (aoi)",
     "Missed call" : "Glao caillte",
     "Unanswered call" : "Glao gan freagra",

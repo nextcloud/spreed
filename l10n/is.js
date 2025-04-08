@@ -56,6 +56,8 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} deildi skrá sem ekki er lengur tiltæk",
     "You shared a file which is no longer available" : "Þú deildir skrá sem ekki er lengur tiltæk",
     "Message deleted by author" : "Skilaboðum eytt af höfundi",
+    "Administration" : "Stjórnun",
+    "System" : "Kerfið",
     "%s (guest)" : "%s (gestur)",
     "Talk conversations" : "Samtöl",
     "Talk to %s" : "Tala við %s",

@@ -55,6 +55,8 @@ OC.L10N.register(
     "You removed the conversation picture" : "Sina eemaldasid vestluse pildi",
     "Message deleted by author" : "Sõnum autori poolt kustutatud",
     "Message deleted by you" : "Sina kustutasid sõnumi",
+    "Administration" : "Haldus",
+    "System" : "Süsteem",
     "Missed call" : "Märkamata kõne",
     "Unanswered call" : "Vastamata kõne",
     "File is too big" : "Fail on liiga suur",

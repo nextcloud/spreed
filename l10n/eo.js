@@ -5,6 +5,8 @@ OC.L10N.register(
     "Talk" : "Paroli",
     "Guest" : "Gasto",
     "Message deleted by author" : "Mesaĝo estas forigita per aǔtoro",
+    "Administration" : "Administrado",
+    "System" : "Sistemo",
     "Talk conversations" : "Buŝaj konversacioj",
     "Talk to %s" : "Paroli al %s",
     "File is too big" : "Dosiero tro grandas",

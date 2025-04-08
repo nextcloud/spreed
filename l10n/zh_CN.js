@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "消息被你删除了",
     "Deleted user" : "删除用户",
     "Unknown number" : "未知号码",
+    "Administration" : "管理员",
+    "System" : "系统",
     "%s (guest)" : "%s（访客）",
     "Missed call" : "未接来电",
     "Unanswered call" : "未接通话",

@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "Talk" : "Prat",
     "Guest" : "Gjest",
+    "Administration" : "Administrasjon",
+    "System" : "System",
     "File is too big" : "Fila er for stor",
     "Invalid file provided" : "Ugyldig fil",
     "Invalid image" : "Ugyldig bilete",

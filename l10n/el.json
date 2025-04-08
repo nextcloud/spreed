@@ -110,6 +110,8 @@
     "Message deleted by {actor}" : "Το μήνυμα διαγράφηκε από {actor}",
     "Message deleted by you" : "Το μήνυμα διαγράφηκε από εσάς",
     "Deleted user" : "Διαγραμμένος χρήστης",
+    "Administration" : "Διαχείριση",
+    "System" : "Συστήματος",
     "%s (guest)" : "%s (επισκέπτης)",
     "Talk conversations" : "Συνομιλίες με Talk",
     "Talk to %s" : "Talk σε %s",

@@ -248,6 +248,8 @@
     "Message deleted by you" : "訊息被您刪除",
     "Deleted user" : "已刪除的用戶",
     "Unknown number" : "號碼不詳",
+    "Administration" : "管理",
+    "System" : "系统",
     "%s (guest)" : "%s（訪客）",
     "Missed call" : "未接來電",
     "Unanswered call" : "未接通話",

@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "Mensagem excluída por você",
     "Deleted user" : "Usuário excluído",
     "Unknown number" : "Número desconhecido",
+    "Administration" : "Administração",
+    "System" : "Sistema",
     "%s (guest)" : "%s (convidado)",
     "Missed call" : "Chamada perdida",
     "Unanswered call" : "Chamada não atendida",

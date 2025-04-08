@@ -22,6 +22,8 @@ OC.L10N.register(
     "{actor} created the conversation" : "{actor} membuat sebuah percakapan",
     "You created the conversation" : "Anda membuat sebuah percakapan",
     "Message deleted by author" : "Pesan dihapus oleh penyusun",
+    "Administration" : "Administrasi",
+    "System" : "Sistem",
     "File is too big" : "Berkas terlalu besar",
     "Invalid file provided" : "Berkas tidak valid",
     "Invalid image" : "Gambar tidak valid",

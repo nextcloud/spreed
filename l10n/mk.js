@@ -130,6 +130,8 @@ OC.L10N.register(
     "Someone voted on the poll {poll}" : "Некој гласаше на анкетата {poll}",
     "Message deleted by author" : "Пораката е избришана од авторот",
     "Deleted user" : "Избришан корисник",
+    "Administration" : "Администрација",
+    "System" : "Систем",
     "%s (guest)" : "%s (гостин)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} го заврши повикот со 1 гостин (Времетраење {duration})","{actor} го заврши повикот со %n гости (Времетраење {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} го заврши повикот со {user1} (Времетраење {duration})",
