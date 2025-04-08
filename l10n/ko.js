@@ -217,6 +217,8 @@ OC.L10N.register(
     "Message deleted by you" : "메시지를 삭제함",
     "Deleted user" : "삭제된 사용자",
     "Unknown number" : "알 수 없는 번호",
+    "Administration" : "관리",
+    "System" : "시스템",
     "%s (guest)" : "%s (손님)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor}님이 %n명의 손님이 있는 통화를 끝냈습니다. (길이: {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor}님이 {user1}님과의 통화를 끝냈습니다. (길이: {duration})",

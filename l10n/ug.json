@@ -226,6 +226,8 @@
     "Message deleted by you" : "سىز تەرىپىدىن ئۆچۈرۈلگەن ئۇچۇر",
     "Deleted user" : "ئىشلەتكۈچى ئۆچۈرۈلدى",
     "Unknown number" : "نامەلۇم نومۇر",
+    "Administration" : "Administration",
+    "System" : "سىستېما",
     "%s (guest)" : "% s (مېھمان)",
     "Call ended (Duration {duration})" : "چاقىرىش ئاخىرلاشتى (Duration {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "چاقىرىش ئاخىرلاشتى ، چۈنكى ئۇ ئەڭ يۇقىرى چاقىرىش ۋاقتىغا يەتتى (ۋاقتى {duration} ۋاقتى)",

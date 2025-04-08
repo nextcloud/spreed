@@ -58,6 +58,8 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} kopīgoja datni, kas vairs nav pieejama",
     "You shared a file which is no longer available" : "Jūs kopīgojāt datni, kas vairs nav pieejama",
     "Message deleted by author" : "Ziņojumu izdzēsa autors",
+    "Administration" : "Pārvaldīšana",
+    "System" : "Sistēma",
     "%s (guest)" : "%s (viesis)",
     "Talk conversations" : "Sarunas",
     "Talk to %s" : "Runāt ar %s",

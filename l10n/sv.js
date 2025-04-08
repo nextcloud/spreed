@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "Meddelandet togs bort av dig",
     "Deleted user" : "Borttagen användare",
     "Unknown number" : "Okänt nummer",
+    "Administration" : "Administration",
+    "System" : "System",
     "%s (guest)" : "%s (gäst)",
     "Missed call" : "Missat samtal",
     "Unanswered call" : "Obesvarat samtal",

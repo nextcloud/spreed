@@ -215,6 +215,8 @@ OC.L10N.register(
     "Message deleted by you" : "Message deleted by you",
     "Deleted user" : "Deleted user",
     "Unknown number" : "Unknown number",
+    "Administration" : "Administration",
+    "System" : "System",
     "%s (guest)" : "%s (guest)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} ended the call with %n guest (Duration {duration})","{actor} ended the call with %n guests (Duration {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} ended the call with {user1} (Duration {duration})",

@@ -111,6 +111,8 @@ OC.L10N.register(
     "Message deleted by you" : "Ați șters mesajul",
     "Deleted user" : "Utilizator șters",
     "Unknown number" : "Număr necunoscut",
+    "Administration" : "Administrare",
+    "System" : "Sistem",
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} a închis apelul cu {user1} (Durată {duration})",
     "{actor} ended the call with {user1} and {user2} (Duration {duration})" : "{actor} a închis apelul cu {user1} și {user2} (Durată {duration})",
     "{actor} ended the call with {user1}, {user2} and {user3} (Duration {duration})" : "{actor} a încheiat apelul cu {user1}, {user2} și {user3} (Durată {duration})",

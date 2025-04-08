@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "İleti sizin tarafınızdan silindi",
     "Deleted user" : "Kullanıcıyı sildi ",
     "Unknown number" : "Numara bilinmiyor",
+    "Administration" : "Yönetim",
+    "System" : "Sistem",
     "%s (guest)" : "%s (konuk)",
     "Missed call" : "Yanıtsız çağrı",
     "Call ended (Duration {duration})" : "Çağrı sonlandırıldı (Süre {duration})",

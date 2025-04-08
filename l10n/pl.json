@@ -248,6 +248,8 @@
     "Message deleted by you" : "Wiadomość usunięta przez Ciebie",
     "Deleted user" : "Usunięty użytkownik",
     "Unknown number" : "Nieznany numer",
+    "Administration" : "Administracja",
+    "System" : "System",
     "%s (guest)" : "%s (gość)",
     "Missed call" : "Nieodebrane połączenie",
     "Call ended (Duration {duration})" : "Połączenie zakończone (czas trwania {duration})",

@@ -138,6 +138,8 @@ OC.L10N.register(
     "Message deleted by you" : "Jūs ištrynėte žinutę",
     "Deleted user" : "Ištrintas naudotojas",
     "Unknown number" : "Nežinomas numeris",
+    "Administration" : "Administravimas",
+    "System" : "Sistema",
     "%s (guest)" : "%s (svečias)",
     "Call ended (Duration {duration})" : "Skambutis baigtas (Trukmė {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Skambutis buvo užbaigtas, nes jis pasiekė didžiausią skambučio trukmę (Trukmė {duration})",

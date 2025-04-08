@@ -250,6 +250,7 @@ OC.L10N.register(
     "Message deleted by you" : "Mensaxe eliminada por Vde.",
     "Deleted user" : "Usuario eliminado",
     "Unknown number" : "Número descoñecido",
+    "Administration" : "Administración",
     "%s (guest)" : "%s (convidado)",
     "Missed call" : "Chamada perdida",
     "Call ended (Duration {duration})" : "Chamada rematada (Duración {duration})",

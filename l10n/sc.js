@@ -136,6 +136,8 @@ OC.L10N.register(
     "Message deleted by author" : "Messàgiu cantzelladu dae s'autore",
     "Message deleted by {actor}" : "Messàgiu cantzelladu dae {actor}",
     "Message deleted by you" : "Messàgiu cantzelladu dae tue",
+    "Administration" : "Amministratzione",
+    "System" : "Sistema",
     "%s (guest)" : "%s (persone invitada)",
     "Talk conversations" : "Resonadas de Talk",
     "Talk to %s" : "Faedda cun %s",

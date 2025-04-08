@@ -12,6 +12,8 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "მოწვევა {call} ზარზე მომხმარებლისგან {actor}",
     "Talk" : "საუბარი",
     "Guest" : "სტუმარი",
+    "Administration" : "ადმინისტრაცია",
+    "System" : "სისტემა",
     "Talk to %s" : "საუბარი მომხმარებელთან %s",
     "File is too big" : "ფაილი ზედმეტად დიდია",
     "Invalid file provided" : "არასწორი ფაილი",
