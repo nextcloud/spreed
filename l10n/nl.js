@@ -219,6 +219,8 @@ OC.L10N.register(
     "Message deleted by you" : "Bericht verwijderd door jou",
     "Deleted user" : "Verwijderen gebruiker",
     "Unknown number" : "Onbekend aantal",
+    "Administration" : "Beheer",
+    "System" : "Systeem",
     "%s (guest)" : "%s (gast)",
     "Call ended (Duration {duration})" : "Gesprek beëindigd (duur {duration})",
     "Call was ended, as it reached the maximum call duration (Duration {duration})" : "Gesprek is beëindigd, omdat het de maximale gespreksduur heeft bereikt (duur {duration})",

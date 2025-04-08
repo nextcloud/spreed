@@ -248,6 +248,8 @@
     "Message deleted by you" : "Správu ste odstránili",
     "Deleted user" : "Zmazaný užívateľ",
     "Unknown number" : "Neznáme číslo",
+    "Administration" : "Administrácia",
+    "System" : "Systém",
     "%s (guest)" : "%s (guest)",
     "Missed call" : "Zmeškaný hovor",
     "Call ended (Duration {duration})" : "Hovor skončil (Doba hovoru {duration})",

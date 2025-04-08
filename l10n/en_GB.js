@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "Message deleted by you",
     "Deleted user" : "Deleted user",
     "Unknown number" : "Unknown number",
+    "Administration" : "Administration",
+    "System" : "System",
     "%s (guest)" : "%s (guest)",
     "Missed call" : "Missed call",
     "Unanswered call" : "Unanswered call",

@@ -68,6 +68,8 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} compartió un archivo que ya no está disponible",
     "You shared a file which is no longer available" : "Compartiste un archivo que ya no está disponible",
     "Message deleted by author" : "Mensaje eliminado por el autor",
+    "Administration" : "Administración",
+    "System" : "Sistema",
     "%s (guest)" : "%s (invitado)",
     "Talk conversations" : "Conversaciones de Talk",
     "Talk to %s" : "Hablar con %s",

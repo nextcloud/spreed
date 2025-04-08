@@ -248,6 +248,8 @@
     "Message deleted by you" : "Сообщение удалено Вами",
     "Deleted user" : "Удалённый пользователь",
     "Unknown number" : "Неизвестный номер",
+    "Administration" : "Администрирование",
+    "System" : "Системный",
     "%s (guest)" : "%s (гость)",
     "Missed call" : "Пропущенный вызов",
     "Call ended (Duration {duration})" : "Вызов завершён (Продолжительность {duration})",

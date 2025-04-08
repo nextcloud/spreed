@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "Обрисали сте поруку",
     "Deleted user" : "Обрисани корисник",
     "Unknown number" : "Непознати број",
+    "Administration" : "Администрација",
+    "System" : "Систем",
     "%s (guest)" : "%s (гост)",
     "Missed call" : "Пропуштени позив",
     "Unanswered call" : "Пропуштени позив",

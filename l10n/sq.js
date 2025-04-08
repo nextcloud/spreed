@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "_%n guest_::_%n guests_" : ["%n të ftuar","%n të ftuar"],
     "Guest" : "I ftuar",
+    "System" : "Sistem",
     "File is too big" : "Skedari është shumë i madh",
     "Invalid file provided" : "U dha kartelë e pavlefshme",
     "Invalid image" : "Figurë e pavlefshme",

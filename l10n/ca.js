@@ -250,6 +250,7 @@ OC.L10N.register(
     "Message deleted by you" : "Missatge suprimit per tu",
     "Deleted user" : "Usuari suprimit",
     "Unknown number" : "Número desconegut",
+    "Administration" : "Administració",
     "%s (guest)" : "%s (convidat)",
     "Missed call" : "Trucada perduda",
     "Call ended (Duration {duration})" : "Trucada finalitzada (durada {duration})",

@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "訊息已被您刪除",
     "Deleted user" : "已刪除的使用者",
     "Unknown number" : "未知號碼",
+    "Administration" : "管理",
+    "System" : "系統",
     "%s (guest)" : "%s（訪客）",
     "Missed call" : "未接通話",
     "Unanswered call" : "未接通話",

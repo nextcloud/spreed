@@ -223,6 +223,8 @@ OC.L10N.register(
     "Message deleted by you" : "Sporočilo ste izbrisali",
     "Deleted user" : "Izbrisan uporabnik",
     "Unknown number" : "Neznana številka",
+    "Administration" : "Skrbništvo",
+    "System" : "Sistem",
     "%s (guest)" : "%s (gost)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} konča klic z %n gostom (trajanje: {duration}).","{actor} konča klic s skupaj %n gostoma (trajanje: {duration}).","{actor} konča klic s skupaj %n gosti (trajanje: {duration}).","{actor} konča klic s skupaj %n gosti (trajanje: {duration})."],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} konča klic z osebo {user1} (trajanje {duration})",

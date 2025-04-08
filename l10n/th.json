@@ -3,6 +3,7 @@
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} ได้ตั้งค่า Matterbridge เพื่อซิงโครไนซ์การสนทนานี้กับแชทอื่น ๆ",
     "You set up Matterbridge to synchronize this conversation with other chats" : "คุณได้ตั้งค่า Matterbridge เพื่อซิงโครไนซ์การสนทนานี้กับแชทอื่น ๆ",
     "Message deleted by author" : "ข้อความถูกลบโดยผู้เขียน",
+    "System" : "ระบบ",
     "File is too big" : "ไฟล์ใหญ่เกินไป",
     "Invalid file provided" : "ไฟล์ที่ระบุไม่ถูกต้อง",
     "Invalid image" : "รูปภาพไม่ถูกต้อง",
