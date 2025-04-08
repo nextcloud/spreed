@@ -4,7 +4,6 @@
  */
 
 import { toRef } from '@vueuse/core'
-import escapeHtml from 'escape-html'
 import { computed, ref } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 
@@ -20,6 +19,9 @@ type Payload = {
 	exposeMessagesRef: Ref<boolean | null>,
 	exposeDescriptionRef: Ref<boolean | null>,
 }
+
+const TITLE_MAX_LENGTH = 1000
+
 /**
  * Reusable properties for Conversation... items
  * @param payload - function payload
@@ -76,11 +78,11 @@ export function useConversationInfo({
 		}
 
 		const params = lastMessage.value.messageParameters
-		let subtitle = (getMessageIcon(lastMessage.value) + ' ' + escapeHtml(lastMessage.value.message)).trim()
+		let subtitle = lastMessage.value.message.trim()
 
 		// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 		Object.keys(params).forEach((parameterKey) => {
-			subtitle = subtitle.replaceAll('{' + parameterKey + '}', escapeHtml(params[parameterKey].name))
+			subtitle = subtitle.replaceAll('{' + parameterKey + '}', params[parameterKey].name)
 		})
 
 		return subtitle
@@ -100,48 +102,79 @@ export function useConversationInfo({
 			return t('spreed', 'Guest')
 		}
 
-		return escapeHtml(author)
+		return author
 	})
 
 	const conversationInformation = computed(() => {
 		// temporary item while joining, only for Conversation component
 		if (isSearchResult.value === false && !item.value.actorId) {
-			return t('spreed', 'Joining conversation …')
+			return {
+				actor: null,
+				icon: null,
+				message: t('spreed', 'Joining conversation …'),
+				title: t('spreed', 'Joining conversation …'),
+			}
 		}
 
 		if (!exposeMessages) {
-			return exposeDescription ? item.value?.description : ''
+			return {
+				actor: null,
+				icon: null,
+				message: exposeDescription ? item.value?.description : '',
+				title: exposeDescription ? item.value?.description : null,
+			}
 		} else if (!hasLastMessage.value) {
-			return t('spreed', 'No messages')
+			return {
+				actor: null,
+				icon: null,
+				message: t('spreed', 'No messages'),
+				title: t('spreed', 'No messages'),
+			}
 		}
 
 		if (shortLastChatMessageAuthor.value === '') {
-			return simpleLastChatMessage.value
+			return {
+				actor: null,
+				icon: getMessageIcon(lastMessage.value),
+				message: simpleLastChatMessage.value,
+				title: simpleLastChatMessage.value.slice(0, TITLE_MAX_LENGTH),
+			}
 		}
 
 		if (lastMessage.value.actorId === item.value.actorId
 			&& lastMessage.value.actorType === item.value.actorType) {
-			return t('spreed', 'You: {lastMessage}', {
-				lastMessage: simpleLastChatMessage.value,
-			}, undefined, {
-				escape: false,
-				sanitize: false,
-			})
+			return {
+				// TRANSLATORS Prefix for messages shown in navigation list
+				actor: t('spreed', 'You:'),
+				icon: getMessageIcon(lastMessage.value),
+				message: simpleLastChatMessage.value,
+				title: t('spreed', 'You: {lastMessage}', {
+					lastMessage: simpleLastChatMessage.value,
+				}, { escape: false, sanitize: false }).slice(0, TITLE_MAX_LENGTH),
+			}
 		}
 
 		if ([CONVERSATION.TYPE.ONE_TO_ONE,
 			CONVERSATION.TYPE.ONE_TO_ONE_FORMER,
 			CONVERSATION.TYPE.CHANGELOG].includes(item.value.type)) {
-			return simpleLastChatMessage.value
+			return {
+				actor: null,
+				icon: getMessageIcon(lastMessage.value),
+				message: simpleLastChatMessage.value,
+				title: simpleLastChatMessage.value.slice(0, TITLE_MAX_LENGTH),
+			}
 		}
 
-		return t('spreed', '{actor}: {lastMessage}', {
-			actor: shortLastChatMessageAuthor.value,
-			lastMessage: simpleLastChatMessage.value,
-		}, undefined, {
-			escape: false,
-			sanitize: false,
-		})
+		return {
+			// TRANSLATORS Actor name prefixing for messages shown in navigation list
+			actor: t('spreed', '{actor}:', { actor: shortLastChatMessageAuthor.value }, { escape: false, sanitize: false }),
+			icon: getMessageIcon(lastMessage.value),
+			message: simpleLastChatMessage.value,
+			title: t('spreed', '{actor}: {lastMessage}', {
+				actor: shortLastChatMessageAuthor.value,
+				lastMessage: simpleLastChatMessage.value,
+			}, { escape: false, sanitize: false }).slice(0, TITLE_MAX_LENGTH),
+		}
 	})
 
 	const isOneToOneConversation = computed(() => {

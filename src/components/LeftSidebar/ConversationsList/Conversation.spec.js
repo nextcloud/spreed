@@ -21,7 +21,6 @@ import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcButton } from '../../../test-helpers.js'
-import { getMessageIcon } from '../../../utils/getMessageIcon.ts'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
@@ -115,20 +114,18 @@ describe('Conversation.vue', () => {
 		 * @param {boolean} isSearchResult Whether or not the item is a search result (has no … menu)
 		 */
 		function testConversationLabel(item, expectedText, isSearchResult = false) {
-			const wrapper = mount(Conversation, {
+			const wrapper = shallowMount(Conversation, {
 				localVue,
 				store,
-				stubs: {
-					RouterLink: RouterLinkStub,
-				},
 				propsData: {
 					isSearchResult,
 					item,
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
-			expect(el.vm.$slots.subname[0].data.domProps.innerHTML).toBe(expectedText)
+			const el = wrapper.find('.conversation__subname')
+			expect(el.text()).toMatch(expectedText)
+			return wrapper
 		}
 
 		test('display joining conversation message when not joined yet', () => {
@@ -143,18 +140,18 @@ describe('Conversation.vue', () => {
 
 		describe('author name', () => {
 			test('displays last chat message with shortened author name', () => {
-				testConversationLabel(item, 'Alice: hello')
+				testConversationLabel(item, /^Alice:\s+hello$/)
 			})
 
 			test('displays last chat message with author name if no space in name', () => {
 				item.lastMessage.actorDisplayName = 'Bob'
-				testConversationLabel(item, 'Bob: hello')
+				testConversationLabel(item, /^Bob:\s+hello$/)
 			})
 
 			test('displays own last chat message with "You" as author', () => {
 				item.lastMessage.actorId = 'actor-id-1'
 
-				testConversationLabel(item, 'You: hello')
+				testConversationLabel(item, /^You:\s+hello$/)
 			})
 
 			test('displays last system message without author', () => {
@@ -173,7 +170,7 @@ describe('Conversation.vue', () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				item.lastMessage.actorId = 'actor-id-1'
 
-				testConversationLabel(item, 'You: hello')
+				testConversationLabel(item, /^You:\s+hello$/)
 			})
 
 			test('displays last guest message with default author when none set', () => {
@@ -181,7 +178,7 @@ describe('Conversation.vue', () => {
 				item.lastMessage.actorDisplayName = ''
 				item.lastMessage.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 
-				testConversationLabel(item, 'Guest: hello')
+				testConversationLabel(item, /^Guest:\s+hello$/)
 			})
 
 			test('displays description for search results', () => {
@@ -199,8 +196,8 @@ describe('Conversation.vue', () => {
 					name: 'filename.jpg',
 				},
 			}
-			const svgTemplate = getMessageIcon(item.lastMessage)
-			testConversationLabel(item, 'Alice: ' + svgTemplate + ' filename.jpg')
+			const wrapper = testConversationLabel(item, /^Alice:\s+filename.jpg$/)
+			expect(wrapper.findComponent({ name: 'FileIcon' }).exists()).toBeTruthy()
 		})
 	})
 
