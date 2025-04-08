@@ -123,7 +123,7 @@ docker run \
   -e SIGNALING_SECRET=<your_signaling_secret> \
   -e INTERNAL_SECRET=<your_internal_secret> \
   -p <your_port>:8081 \
-  nextcloud/aio-talk:latest
+  ghcr.io/nextcloud-releases/aio-talk:latest
 ```
 
 Example:
@@ -139,7 +139,7 @@ docker run \
   -e SIGNALING_SECRET=2222 \
   -e INTERNAL_SECRET=3333 \
   -p 8080:8081 \
-  nextcloud/aio-talk:latest
+  ghcr.io/nextcloud-releases/aio-talk:latest
 ```
 
 ### Step 3 - Expose the container through the reverse proxy
@@ -191,7 +191,7 @@ docker run \
   -p <your_port>:8081 \
   -p 3478:3478/tcp \
   -p 3478:3478/udp \
-  nextcloud/aio-talk:latest
+  ghcr.io/nextcloud-releases/aio-talk:latest
 ```
 
 Note that we added the environment variable `TALK_HOST` and additionally exposed port TCP 3478 and UDP ports. The domain entered needs to be the one where the TURN server will be reachable on port 3478.
