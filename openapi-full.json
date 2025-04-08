@@ -12847,6 +12847,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "event",
                                                                 "type",
                                                                 "value"
                                                             ]
@@ -13496,6 +13497,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "event",
                                                                 "type",
                                                                 "value"
                                                             ]

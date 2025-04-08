@@ -843,7 +843,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Rename a room
 	 *
 	 * @param string $roomName New name
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
@@ -851,6 +851,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->roomService->setName($this->room, $roomName, validateType: true);
 		} catch (NameException $e) {
@@ -863,7 +867,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
@@ -871,6 +875,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->roomService->setDescription($this->room, $description);
 		} catch (DescriptionException $e) {
