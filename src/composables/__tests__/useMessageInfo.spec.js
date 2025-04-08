@@ -7,7 +7,7 @@ import { computed, ref } from 'vue'
 
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
-import { useConversationInfo } from '../useConversationInfo.js'
+import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.js'
 import { useStore } from '../useStore.js'
 
@@ -21,7 +21,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 	}))
 }))
 jest.mock('../useStore.js')
-jest.mock('../useConversationInfo.js')
+jest.mock('../useConversationInfo.ts')
 
 describe('message actions', () => {
 	let message
