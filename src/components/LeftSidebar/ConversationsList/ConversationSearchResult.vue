@@ -29,7 +29,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import ConversationIcon from './../../ConversationIcon.vue'
 
-import { useConversationInfo } from '../../../composables/useConversationInfo.js'
+import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 
 export default {
 	name: 'ConversationSearchResult',

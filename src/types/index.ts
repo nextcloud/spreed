@@ -57,6 +57,7 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 
 // Conversations
 export type Conversation = components['schemas']['Room']
+export type ConversationLastMessage = components['schemas']['RoomLastMessage']
 
 export type JoinRoomFullResponse = {
 	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>,

@@ -225,7 +225,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import ConversationIcon from './../../ConversationIcon.vue'
 
-import { useConversationInfo } from '../../../composables/useConversationInfo.js'
+import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { PARTICIPANT } from '../../../constants.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
