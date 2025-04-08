@@ -2190,6 +2190,13 @@ class ParticipantService {
 			return $this->getParticipant($room, $actorId, false);
 		}
 
+		if ($actorType === Attendee::ACTOR_GUESTS
+			&& in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_SYSTEM, Attendee::ACTOR_ID_CHANGELOG, Attendee::ACTOR_ID_SAMPLE], true)) {
+			$exception = new ParticipantNotFoundException('User is not a participant');
+			$this->logger->info('Trying to load hardcoded system guest from attendees table: ' . $actorType . '/' . $actorId);
+			throw $exception;
+		}
+
 		$query = $this->connection->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
