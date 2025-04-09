@@ -44,8 +44,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
-use OCA\Talk\Share\Helper\FilesMetadataCache;
-use OCA\Talk\Share\RoomShareProvider;
+use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -70,7 +69,6 @@ use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Share\Exceptions\ShareNotFound;
-use OCP\Share\IShare;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
@@ -108,8 +106,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected ReminderService $reminderService,
 		private GuestManager $guestManager,
 		private MessageParser $messageParser,
-		protected RoomShareProvider $shareProvider,
-		protected FilesMetadataCache $filesMetadataCache,
+		protected Preloader $sharePreloader,
 		private IManager $autoCompleteManager,
 		private IUserStatusManager $statusManager,
 		protected MatterbridgeManager $matterbridgeManager,
@@ -338,38 +335,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		return $this->parseCommentToResponse($comment);
 	}
 
-	/*
-	 * Gather share IDs from the comments and preload share definitions
-	 * and files metadata to avoid separate database query for each
-	 * individual share/node later on.
-	 *
-	 * @param IComment[] $comments
-	 */
-	protected function preloadShares(array $comments): void {
-		// Scan messages for share IDs
-		$shareIds = [];
-		foreach ($comments as $comment) {
-			$verb = $comment->getVerb();
-			if ($verb === 'object_shared') {
-				$message = $comment->getMessage();
-				$data = json_decode($message, true);
-				if (isset($data['parameters']['share'])) {
-					$shareIds[] = $data['parameters']['share'];
-				}
-			}
-		}
-		if (!empty($shareIds)) {
-			// Retrieved Share objects will be cached by
-			// the RoomShareProvider and returned from the cache to
-			// the Parser\SystemMessage without additional database queries.
-			$shares = $this->shareProvider->getSharesByIds($shareIds);
-
-			// Preload files metadata as well
-			$fileIds = array_filter(array_map(static fn (IShare $share) => $share->getNodeId(), $shares));
-			$this->filesMetadataCache->preloadMetadata($fileIds);
-		}
-	}
-
 	/**
 	 * Receives chat messages from the given room
 	 *
@@ -546,7 +511,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$currentUser = $this->userManager->get($this->userId);
 		$batchSize = $this->appConfig->getAppValueInt('ai_unread_summary_batch_size', 500);
 		$comments = $this->chatManager->waitForNewMessages($this->room, $fromMessageId, $batchSize, 0, $currentUser, true, false);
-		$this->preloadShares($comments);
+		$this->sharePreloader->preloadShares($comments);
 
 		$messages = [];
 		$nextOffset = 0;
@@ -652,7 +617,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 		}
 
-		$this->preloadShares($comments);
+		$this->sharePreloader->preloadShares($comments);
 
 		$i = 0;
 		$now = $this->timeFactory->getDateTime();
@@ -1414,7 +1379,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
-		$this->preloadShares($comments);
+		$this->sharePreloader->preloadShares($comments);
 
 		$messages = [];
 		$comments = $this->chatManager->filterCommentsWithNonExistingFiles($comments);
