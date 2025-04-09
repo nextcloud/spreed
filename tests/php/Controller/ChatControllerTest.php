@@ -29,8 +29,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
-use OCA\Talk\Share\Helper\FilesMetadataCache;
-use OCA\Talk\Share\RoomShareProvider;
+use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -68,8 +67,7 @@ class ChatControllerTest extends TestCase {
 	protected ReminderService&MockObject $reminderService;
 	protected GuestManager&MockObject $guestManager;
 	protected MessageParser&MockObject $messageParser;
-	protected RoomShareProvider&MockObject $roomShareProvider;
-	protected FilesMetadataCache&MockObject $filesMetadataCache;
+	protected Preloader&MockObject $sharePreloader;
 	protected IManager&MockObject $autoCompleteManager;
 	protected IUserStatusManager&MockObject $statusManager;
 	protected MatterbridgeManager&MockObject $matterbridgeManager;
@@ -111,8 +109,7 @@ class ChatControllerTest extends TestCase {
 		$this->reminderService = $this->createMock(ReminderService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
-		$this->roomShareProvider = $this->createMock(RoomShareProvider::class);
-		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
+		$this->sharePreloader = $this->createMock(Preloader::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
@@ -160,8 +157,7 @@ class ChatControllerTest extends TestCase {
 			$this->reminderService,
 			$this->guestManager,
 			$this->messageParser,
-			$this->roomShareProvider,
-			$this->filesMetadataCache,
+			$this->sharePreloader,
 			$this->autoCompleteManager,
 			$this->statusManager,
 			$this->matterbridgeManager,
