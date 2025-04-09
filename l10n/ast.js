@@ -174,6 +174,8 @@ OC.L10N.register(
     "Message deleted by you" : "Desaniciesti'l mensaxe",
     "Deleted user" : "Usuariu desaniciáu",
     "Unknown number" : "Númberu desconocíu",
+    "Administration" : "Alministración",
+    "System" : "Sistema",
     "%s (guest)" : "%s (convidáu)",
     "Message of {user}" : "Mensaxe de: {user}",
     "Talk conversations" : "Conversaciones de Talk",
