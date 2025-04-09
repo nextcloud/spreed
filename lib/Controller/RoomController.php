@@ -61,6 +61,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -122,6 +123,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected ITimeFactory $timeFactory,
 		protected ChecksumVerificationService $checksumVerificationService,
 		protected RoomFormatter $roomFormatter,
+		protected Preloader $sharePreloader,
 		protected IConfig $config,
 		protected IAppConfig $appConfig,
 		protected Config $talkConfig,
@@ -269,6 +271,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}, $rooms));
 
 			$statuses = $this->statusManager->getUserStatuses($userIds);
+		}
+
+		if ($includeLastMessage) {
+			$lastMessages = array_filter(array_map(static fn (Room $room) => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
+			$this->sharePreloader->preloadShares($lastMessages);
 		}
 
 		$return = [];
