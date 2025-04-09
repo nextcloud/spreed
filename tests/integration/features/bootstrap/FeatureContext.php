@@ -69,6 +69,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $renamedTeams = [];
 	/** @var array<string, int> */
 	protected static array $userToBanId;
+	protected static ?string $queryLogFile = null;
+	protected static ?string $currentScenario = null;
 
 
 	protected static array $permissionsMap = [
@@ -194,6 +196,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @BeforeScenario
 	 */
 	public function setUp(BeforeScenarioScope $scope) {
+		self::$currentScenario = $scope->getFeature()->getTitle() . ':' . $scope->getScenario()->getLine() . ' - ' . $scope->getScenario()->getTitle();
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
@@ -1122,6 +1125,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates ([0-9]+) rooms \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userCreatesManyRoom(string $user, int $amount, string $apiVersion, ?TableNode $formData = null): void {
+		for ($i = 1; $i <= $amount; $i++) {
+			$identifier = 'room' . $i;
+			$this->userCreatesRoomWith($user, $identifier, 201, $apiVersion, $formData);
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates note-to-self \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1160,6 +1178,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
+		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
+			$body['roomName'] = $identifier;
+		}
 
 		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'room') {
 			$result = preg_match('/ROOM\(([^)]+)\)/', $body['objectId'], $matches);
@@ -3934,6 +3955,33 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->changedConfigs[$this->currentServer][$appId][] = $row[0];
 		}
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @Given /^(enable|disable) query\.log$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function toggleQueryLog(string $enable): void {
+		if ($enable === 'enable') {
+			$this->runOcc(['config:system:get', 'datadirectory']);
+			$dir = trim($this->lastStdOut);
+			self::$queryLogFile = rtrim($dir, '/') . '/query.log';
+			$this->runOcc(['config:system:set', 'query_log_file', '--value', self::$queryLogFile]);
+			file_put_contents(self::$queryLogFile, "\n>>>>> START\n" . self::$currentScenario . "\n", FILE_APPEND);
+		} else {
+			file_put_contents(self::$queryLogFile, "\n>>>>> END\n" . self::$currentScenario . "\n", FILE_APPEND);
+			$this->runOcc(['config:system:remove', 'query_log_file']);
+		}
+	}
+
+	/**
+	 * @Given /^note query\.log: (.*)$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function noteQueryLog(string $note): void {
+		file_put_contents(self::$queryLogFile, "\n>>>>> NOTE\n" . $note . "\n", FILE_APPEND);
 	}
 
 	/**

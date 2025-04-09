@@ -192,6 +192,21 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user shares :path with :amount rooms
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param string $room
+	 * @param TableNode|null $body
+	 */
+	public function userSharesWithManyRooms(string $user, string $path, int $amount, ?TableNode $body = null) {
+		for ($i = 1; $i <= $amount; $i++) {
+			$identifier = 'room' . $i;
+			$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($identifier), $body);
+		}
+	}
+
+	/**
 	 * @When user :user shares :path with room :room with OCS :statusCode
 	 *
 	 * @param string $user
