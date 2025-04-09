@@ -421,11 +421,13 @@ async function submitNewMeeting() {
 				<h5 v-if="!isOneToOneConversation" class="calendar-meeting__header">
 					{{ t('spreed', 'Attendees') }}
 				</h5>
-				<NcLoadingIcon v-if="!participantsInitialised"
-					class="calendar-meeting--loading"
-					:name="t('spreed', 'Loading participants')" />
-				<p v-else-if="participantsInitialised && participants.length === 0">
-					{{ t('spreed', 'You are the only participant in the conversation') }}
+				<div v-if="!participantsInitialised"
+					class="calendar-meeting--loading">
+					<NcLoadingIcon />
+					{{ t('spreed', 'Loading …') }}
+				</div>
+				<p v-else-if="participants.length === 0">
+					{{ t('spreed', 'No other participants to send invitations to.') }}
 				</p>
 				<template v-else>
 					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
@@ -637,6 +639,9 @@ async function submitNewMeeting() {
 	}
 
 	&--loading {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
 		height: 32px;
 	}
 
