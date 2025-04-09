@@ -193,7 +193,7 @@ const isOneToOneConversation = computed(() => {
 
 const inviteLabel = computed(() => {
 	return !isOneToOneConversation.value
-		? t('spreed', 'Invite all users and emails')
+		? t('spreed', 'Invite all users and emails in this conversation')
 		: t('spreed', 'Invite {user}', { user: conversation.value.displayName })
 })
 
@@ -421,17 +421,24 @@ async function submitNewMeeting() {
 				<h5 v-if="!isOneToOneConversation" class="calendar-meeting__header">
 					{{ t('spreed', 'Attendees') }}
 				</h5>
-				<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
-					{{ inviteLabel }}
-				</NcCheckboxRadioSwitch>
-				<NcButton v-if="!isOneToOneConversation" type="tertiary" @click="isSelectorOpen = true">
-					<template #icon>
-						<IconAccountPlus :size="20" />
-					</template>
-					{{ t('spreed', 'Add attendees') }}
-				</NcButton>
-				<p>{{ attendeeHint }}</p>
-
+				<NcLoadingIcon v-if="!participantsInitialised"
+					class="calendar-meeting--loading"
+					:name="t('spreed', 'Loading participants')" />
+				<p v-else-if="participantsInitialised && participants.length === 0">
+					{{ t('spreed', 'You are the only participant in the conversation') }}
+				</p>
+				<template v-else>
+					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
+						{{ inviteLabel }}
+					</NcCheckboxRadioSwitch>
+					<NcButton v-if="!isOneToOneConversation && !selectAll" type="tertiary" @click="isSelectorOpen = true">
+						<template #icon>
+							<IconAccountPlus :size="20" />
+						</template>
+						{{ t('spreed', 'Add attendees') }}
+					</NcButton>
+					<p>{{ attendeeHint }}</p>
+				</template>
 				<template #actions>
 					<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
 						{{ invalidHint }}
@@ -627,6 +634,10 @@ async function submitNewMeeting() {
 	&__empty-content {
 		height: calc(5.5 * var(--item-height));
 		margin-block: auto !important;
+	}
+
+	&--loading {
+		height: 32px;
 	}
 
 	// Overwrite default NcDateTimePickerNative styles
