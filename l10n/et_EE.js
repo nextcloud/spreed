@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "_%n guest_::_%n guests_" : ["%n külaline","%n külalist"],
+    "Other activities" : "Muud tegevused",
     "Talk" : "Talk",
     "Guest" : "Külaline",
     "You created the conversation" : "Sina lõid selle vestluse",
