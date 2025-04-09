@@ -139,6 +139,7 @@ OC.L10N.register(
     "Message deleted by author" : "Beskeden er slettet af forfatteren",
     "Message deleted by you" : "Besked slettet af dig",
     "Administration" : "Administration",
+    "System" : "System",
     "%s (guest)" : "%s (gæst)",
     "Talk conversations" : "Snak samtaler",
     "Talk to %s" : "Snak med %s",

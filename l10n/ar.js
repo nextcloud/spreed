@@ -250,6 +250,8 @@ OC.L10N.register(
     "Message deleted by you" : "مُسحت الرسالة بواسطتك",
     "Deleted user" : "مستخدم محذوف",
     "Unknown number" : "رقم غير معروف",
+    "Administration" : "الإدارة",
+    "System" : "النظام",
     "%s (guest)" : "%s (ضيف)",
     "Missed call" : "مكالمة فائتة",
     "Unanswered call" : "مكالمة فائتة",
