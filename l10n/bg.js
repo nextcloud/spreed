@@ -185,6 +185,8 @@ OC.L10N.register(
     "Message deleted by {actor}" : "Съобщението е изтрито от {actor}",
     "Message deleted by you" : "Съобщение, изтрито от вас",
     "Deleted user" : "Изтрит потребител",
+    "Administration" : "Администрация",
+    "System" : "Система",
     "%s (guest)" : "%s (гост)",
     "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} прекрати разговора с %n гости (продължителност {duration})","{actor} прекрати разговора с %n гости (Продължителност {duration})"],
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} прекрати разговора с {user1} (Продължителност {duration})",

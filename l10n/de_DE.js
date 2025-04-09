@@ -251,6 +251,7 @@ OC.L10N.register(
     "Deleted user" : "Gelöschter Benutzer",
     "Unknown number" : "Unbekannte Nummer",
     "Administration" : "Verwaltung",
+    "System" : "System",
     "%s (guest)" : "%s (Gast)",
     "Missed call" : "Verpasster Anruf",
     "Unanswered call" : "Unbeantworteter Anruf",
