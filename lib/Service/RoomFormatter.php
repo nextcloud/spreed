@@ -63,6 +63,7 @@ class RoomFormatter {
 		?array $statuses = null,
 		bool $isSIPBridgeRequest = false,
 		bool $isListingBreakoutRooms = false,
+		bool $skipLastMessage = false,
 	): array {
 		return $this->formatRoomV4(
 			$responseFormat,
@@ -72,6 +73,7 @@ class RoomFormatter {
 			$statuses,
 			$isSIPBridgeRequest,
 			$isListingBreakoutRooms,
+			$skipLastMessage,
 		);
 	}
 
@@ -87,6 +89,7 @@ class RoomFormatter {
 		?array $statuses,
 		bool $isSIPBridgeRequest,
 		bool $isListingBreakoutRooms,
+		bool $skipLastMessage,
 	): array {
 		$roomData = [
 			'id' => $room->getId(),
@@ -379,7 +382,7 @@ class RoomFormatter {
 		}
 
 		$roomData['lastMessage'] = [];
-		$lastMessage = $room->getLastMessage();
+		$lastMessage = $skipLastMessage ? null : $room->getLastMessage();
 		if (!$room->isFederatedConversation() && $lastMessage instanceof IComment) {
 			$roomData['lastMessage'] = $this->formatLastMessage(
 				$responseFormat,
