@@ -98,7 +98,7 @@ Feature: command/user-remove
       | room | participant2-displayname | 5    | 1               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | guests        | cli          | read_only            | An administrator locked the conversation | {"actor":{"type":"guest","id":"guest\/cli","name":"Guest","mention-id":"guest\/cli"}} |
+      | room | guests        | cli          | read_only            | An administrator locked the conversation | {"actor":{"type":"guest","id":"guest\/cli","name":"Administration","mention-id":"guest\/cli"}} |
       | room | users         | participant1 | call_tried           | You tried to call {user}     | {"user":{"type":"highlight","id":"deleted_users","name":"participant2-displayname"}} |
       | room | users         | participant1 | call_left            | You left the call            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
       | room | users         | participant1 | call_started         | You started a call           | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |

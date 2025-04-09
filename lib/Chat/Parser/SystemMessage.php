@@ -1052,6 +1052,15 @@ class SystemMessage implements IEventListener {
 
 	protected function getGuestName(Room $room, string $actorType, string $actorId): string {
 		if ($actorId === Attendee::ACTOR_ID_CLI) {
+			// TRANSLATORS Actor name when a chat message was done by an administration person via the commmand line
+			return $this->l->t('Administration');
+		}
+		if ($actorId === Attendee::ACTOR_ID_SYSTEM) {
+			// TRANSLATORS Actor name when a chat message was done by the system instead of an actual actor
+			return $this->l->t('System');
+		}
+		if ($actorId === Attendee::ACTOR_ID_CHANGELOG) {
+			// Will be set by the Changelog Parser
 			return $this->l->t('Guest');
 		}
 
