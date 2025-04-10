@@ -96,21 +96,29 @@ export default {
 
 	computed: {
 		getTotalUnreadMessages() {
-			return this.$store.getters.conversationsList.reduce((total, conversation) => {
-				return total + (conversation.unreadMessages || 0);
-			}, 0);
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived)
+				.reduce((total, conversation) => {
+					return total + (conversation.unreadMessages || 0);
+				}, 0);
 		},
 		
 		getTotalUnreadMentions() {
-			return this.$store.getters.conversationsList.filter(conversation => conversation.unreadMention).length;
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && conversation.unreadMention)
+				.length;
 		},
 		
 		getTotalUnreadMentionsDirect() {
-			return this.$store.getters.conversationsList.filter(conversation => conversation.unreadMentionDirect).length;
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && conversation.unreadMentionDirect)
+				.length;
 		},
 
 		getUnreadConversationCount() {
-			return this.$store.getters.conversationsList.filter(conversation => (conversation.unreadMessages || 0) > 0).length;
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && (conversation.unreadMessages || 0) > 0)
+				.length;
 		},
 
 		getUserId() {
