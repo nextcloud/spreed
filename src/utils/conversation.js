@@ -55,10 +55,10 @@ export function shouldIncludeArchived(conversation, showArchived) {
  * apply the active filter
  *
  * @param {object} conversation conversation object
- * @param {string|null} filter the filter option
+ * @param {Array} filters the filter option
  */
-export function filterConversation(conversation, filter) {
-	return filter === null
-		|| (filter === 'unread' && hasUnreadMessages(conversation))
-		|| (filter === 'mentions' && hasUnreadMentions(conversation))
+export function filterConversation(conversation, filters) {
+	return filters.length === 0
+		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
+		&& (!filters.includes('mentions') || hasUnreadMentions(conversation)))
 }
