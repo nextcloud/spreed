@@ -153,7 +153,7 @@ class MessageParser {
 			$displayName = $actorId;
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
 		} elseif ($actorType === Attendee::ACTOR_GUESTS
-			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG], true)) {
+			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG, Attendee::ACTOR_ID_SYSTEM], true)) {
 			if (isset($this->guestNames[$actorId])) {
 				$displayName = $this->guestNames[$actorId];
 			} else {
