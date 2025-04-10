@@ -652,11 +652,8 @@ export default {
 			}
 		},
 
-		/**
-		 * Emits the UNREAD_COUNT_UPDATED event with the current counter values
-		 */
 		emitUnreadCountUpdated() {
-			emit('talk:unread:updated', {
+			emit('talk:unreads:updated', {
 				conversations: this.getUnreadConversationCount,
 				messages: this.getTotalUnreadMessages,
 				mentions: this.getTotalUnreadMentions,
