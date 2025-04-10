@@ -255,7 +255,7 @@ class GuestManager {
 			);
 		}
 
-		if ($room->getDescription() !== null) {
+		if (!empty($room->getDescription())) {
 			$template->addBodyListItem(
 				htmlspecialchars($room->getDescription()),
 				$this->l->t('Description'),
