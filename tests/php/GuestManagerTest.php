@@ -17,6 +17,7 @@ use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
@@ -37,6 +38,7 @@ class GuestManagerTest extends TestCase {
 	protected IL10N&MockObject $l;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected LoggerInterface&MockObject $logger;
+	private IDateTimeZone&MockObject $dateTime;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -51,6 +53,7 @@ class GuestManagerTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->dateTime = $this->createMock(IDateTimeZone::class);
 	}
 
 	public function getGuestManager(array $methods = []): GuestManager|MockObject {
@@ -68,6 +71,7 @@ class GuestManagerTest extends TestCase {
 					$this->l,
 					$this->dispatcher,
 					$this->logger,
+					$this->dateTime,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -85,6 +89,7 @@ class GuestManagerTest extends TestCase {
 			$this->l,
 			$this->dispatcher,
 			$this->logger,
+			$this->dateTime,
 		);
 	}
 
