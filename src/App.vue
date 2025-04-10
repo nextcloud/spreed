@@ -653,7 +653,7 @@ export default {
 		},
 
 		emitUnreadCountUpdated() {
-			emit('talk:unreads:updated', {
+			emit('talk:unread:updated', {
 				conversations: this.getUnreadConversationCount,
 				messages: this.getTotalUnreadMessages,
 				mentions: this.getTotalUnreadMentions,
