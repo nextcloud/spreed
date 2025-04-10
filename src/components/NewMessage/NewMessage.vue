@@ -85,6 +85,7 @@
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
+					@keydown.up="handleUpKeyInEmptyInput"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
 					@focus="restoreSelectionRange"
@@ -952,6 +953,12 @@ export default {
 			// FIXME text that is only one line should be cleared in upstream
 			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
 				this.toggleSilentChat()
+			}
+		},
+
+		handleUpKeyInEmptyInput(event) {
+			if (this.text === '') {
+				this.handleEditLastMessage(event)
 			}
 		}
 	},
