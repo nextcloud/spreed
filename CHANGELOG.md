@@ -5,6 +5,89 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.2 – 2025-04-10
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix: Improve performance of conversation list
+  [#14811](https://github.com/nextcloud/spreed/issues/14811)
+  [#14779](https://github.com/nextcloud/spreed/issues/14779)
+  [#14777](https://github.com/nextcloud/spreed/issues/14777)
+  [#14775](https://github.com/nextcloud/spreed/issues/14775)
+  [#14774](https://github.com/nextcloud/spreed/issues/14774)
+  [#14831](https://github.com/nextcloud/spreed/issues/14831)
+- fix: Improve performance when rendering system messages
+  [#14817](https://github.com/nextcloud/spreed/issues/14817)
+- fix: Improve performance when searching for conversations
+  [#14734](https://github.com/nextcloud/spreed/issues/14734)
+- fix(chat): Fix missing reactions on own messages while posting
+  [#14695](https://github.com/nextcloud/spreed/pull/14695)
+- fix(guests): Allow guests to reload the page without re-entering the password
+  [#14786](https://github.com/nextcloud/spreed/issues/14786)
+- fix(federation): Fix calls when federated server receive messages in wrong order
+  [#14770](https://github.com/nextcloud/spreed/pull/14770)
+- fix(calls): Fix call after resuming connection
+  [#14737](https://github.com/nextcloud/spreed/pull/14737)
+- fix(calls): Fix wrongly showing "Missed call" in one-to-one conversations
+  [#14833](https://github.com/nextcloud/spreed/pull/14833)
+- fix(calls): Fix videos in the last row being cut off
+  [#14692](https://github.com/nextcloud/spreed/pull/14692)
+- fix(calls): Prevent screen from turning off during calls
+  [#14733](https://github.com/nextcloud/spreed/pull/14733)
+- fix(settings): Fix initial state of end-to-end-encrypted calls setting
+  [#14693](https://github.com/nextcloud/spreed/pull/14693)
+- fix(events): Automatically confirm the calendar event for the organizer
+  [#14762](https://github.com/nextcloud/spreed/pull/14762)
+- fix(workflows): Adjust workflow registration to new mechanism
+  [#14823](https://github.com/nextcloud/spreed/pull/14823)
+- fix(polls): Hide intermediate results from anonymous polls
+  [#14724](https://github.com/nextcloud/spreed/issues/14724)
+
+## 20.1.6 – 2025-04-10
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix: Improve performance of conversation list
+  [#14810](https://github.com/nextcloud/spreed/issues/14810)
+  [#14830](https://github.com/nextcloud/spreed/issues/14830)
+  [#14834](https://github.com/nextcloud/spreed/issues/14834)
+- fix: Improve performance when rendering system messages
+  [#14816](https://github.com/nextcloud/spreed/issues/14816)
+- fix(guests): Allow guests to reload the page without re-entering the password
+  [#14785](https://github.com/nextcloud/spreed/issues/14785)
+- fix(federation): Fix calls when federated server receive messages in wrong order
+  [#14769](https://github.com/nextcloud/spreed/pull/14769)
+- fix(calls): Fix call after resuming connection
+  [#14736](https://github.com/nextcloud/spreed/pull/14736)
+- fix(calls): Fix wrongly showing "Missed call" in one-to-one conversations
+  [#14832](https://github.com/nextcloud/spreed/pull/14832)
+- fix(workflows): Adjust workflow registration to new mechanism
+  [#14823](https://github.com/nextcloud/spreed/pull/14823)
+- fix(polls): Hide intermediate results from anonymous polls
+  [#14723](https://github.com/nextcloud/spreed/issues/14723)
+
+## 19.0.15 – 2025-04-04
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(calls): Do not reset previous connected users after resuming in a call
+  [#14735](https://github.com/nextcloud/spreed/issues/14735)
+- fix(sidebar): Show tooltips when Talk is in the sidebar
+  [#14697](https://github.com/nextcloud/spreed/issues/14697)
+- fix(guests): Fix style and labels on public share page as a guest
+  [#14720](https://github.com/nextcloud/spreed/issues/14720)
+  [#14726](https://github.com/nextcloud/spreed/issues/14726)
+- fix(calls): Skip password verification for guests that are reconnecting to the call
+  [#14787](https://github.com/nextcloud/spreed/pull/14787)
+- fix(calls): Fix leaving call if a signaling message is received while reconnecting
+  [#14788](https://github.com/nextcloud/spreed/pull/14788)
+
 ## 21.0.1 – 2025-03-12
 ### Changed
 - Update translations
