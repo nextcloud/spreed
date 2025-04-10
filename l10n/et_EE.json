@@ -184,6 +184,7 @@
     "Yes" : "Ja",
     "Delete conversation" : "Kustuta vestlus",
     "_%n hour_::_%n hours_" : ["%n tund","%n tundi"],
+    "_%n day_::_%n days_" : ["%n päev","%n päeva"],
     "Password protection" : "Password protection",
     "Copy password" : "Kopeeri salasõna",
     "Lock conversation" : "Lukusta vestlus",
