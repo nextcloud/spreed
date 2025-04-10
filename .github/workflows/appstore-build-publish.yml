@@ -104,7 +104,7 @@ jobs:
         if: steps.check_composer.outputs.files_exists == 'true'
         run: |
           cd ${{ env.APP_NAME }}
-          composer install --no-dev
+          composer install --no-dev --classmap-authoritative
 
       - name: Build ${{ env.APP_NAME }}
         # Skip if no package.json
