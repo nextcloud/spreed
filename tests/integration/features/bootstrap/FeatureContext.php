@@ -13,6 +13,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
@@ -193,9 +198,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @BeforeScenario
-	 */
+	#[BeforeScenario]
 	public function setUp(BeforeScenarioScope $scope): void {
 		self::$currentScenario = $scope->getFeature()->getTitle() . ':' . $scope->getScenario()->getLine() . ' - ' . $scope->getScenario()->getTitle();
 		self::$identifierToToken = [];
@@ -233,18 +236,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->usingServer('LOCAL');
 	}
 
-	/**
-	 * @BeforeScenario
-	 */
+	#[BeforeScenario]
 	public function getOtherRequiredSiblingContexts(BeforeScenarioScope $scope): void {
 		$environment = $scope->getEnvironment();
 
 		$this->sharingContext = $environment->getContext('SharingContext');
 	}
 
-	/**
-	 * @AfterScenario
-	 */
+	#[AfterScenario]
 	public function tearDown(): void {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->usingServer($server);
@@ -264,9 +263,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Given /^using server "(LOCAL|REMOTE)"$/
-	 */
+	#[Given('/^using server "(LOCAL|REMOTE)"$/')]
 	public function usingServer(string $server): void {
 		if ($server === 'LOCAL') {
 			$this->baseUrl = $this->localServerUrl;
@@ -278,39 +275,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sharingContext->setCurrentServer($this->currentServer, $this->localServerUrl);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" cannot find any listed rooms \((v4)\)$/')]
 	public function userCannotFindAnyListedRooms(string $user, string $apiVersion): void {
 		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, null);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" cannot find any listed rooms with (\d+) \((v4)\)$/')]
 	public function userCannotFindAnyListedRoomsWithStatus(string $user, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/listed-room');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" cannot find any listed rooms with term "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" cannot find any listed rooms with term "([^"]*)" \((v4)\)$/')]
 	public function userCannotFindAnyListedRoomsWithTerm(string $user, string $term, string $apiVersion): void {
 		$this->userCanFindListedRoomsWithTerm($user, $term, $apiVersion);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" can find listed rooms \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" can find listed rooms \((v4)\)$/')]
 	public function userCanFindListedRooms(string $user, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, $formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" can find listed rooms with term "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" can find listed rooms with term "([^"]*)" \((v4)\)$/')]
 	public function userCanFindListedRoomsWithTerm(string $user, string $term, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$suffix = '';
@@ -330,9 +317,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertRooms($rooms, $formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" is participant of the following (unordered )?(note-to-self )?(modified-since )?rooms \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" is participant of the following (unordered )?(note-to-self )?(modified-since )?rooms \((v4)\)$/')]
 	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $modifiedSince, string $apiVersion, ?TableNode $formData = null): void {
 		$parameters = '';
 		if ($modifiedSince !== '') {
@@ -369,9 +354,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertRooms($rooms, $formData, $shouldOrder !== '');
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userListsBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
 
@@ -582,9 +565,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $rooms, $expected));
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" has the following invitations \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" has the following invitations \((v1)\)$/')]
 	public function userHasInvites(string $user, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/federation/invitation');
@@ -606,9 +587,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $identifier, string $server, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$inviteId = self::$remoteToInviteId[$server . '::' . $identifier];
 
@@ -685,9 +664,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return $server;
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" (is|is not) participant of room "([^"]*)" \((v4)\)$/')]
 	public function userIsParticipantOfRoom(string $user, string $isOrNotParticipant, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		if (strpos($user, 'guest') === 0) {
 			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion, $formData);
@@ -726,9 +703,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following attendees( with status)? in room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following attendees( with status)? in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSeesAttendeesInRoom(string $user, string $withStatus, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants?includeStatus=' . ($withStatus === ' with status' ? '1' : '0'));
@@ -742,9 +717,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertAttendeeList($identifier, $formData, $attendees);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following attendees in breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following attendees in breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSeesAttendeesInBreakoutRoomsForRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/breakout-rooms/participants');
@@ -917,9 +890,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" loads attendees attendee ids in room "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" loads attendees attendee ids in room "([^"]*)" \((v4)\)$/')]
 	public function userLoadsAttendeeIdsInRoom(string $user, string $identifier, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
@@ -1034,16 +1005,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 404);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates room "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates room "([^"]*)" \((v4)\)$/')]
 	public function userCreatesRoom(string $user, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userCreatesRoomWith($user, $identifier, 201, $apiVersion, $formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates ([0-9]+) rooms \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates ([0-9]+) rooms \((v4)\)$/')]
 	public function userCreatesManyRoom(string $user, int $amount, string $apiVersion, ?TableNode $formData = null): void {
 		for ($i = 1; $i <= $amount; $i++) {
 			$identifier = 'room' . $i;
@@ -1051,9 +1018,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates note-to-self \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates note-to-self \((v4)\)$/')]
 	public function userCreatesNoteToSelf(string $user, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/note-to-self');
@@ -1065,18 +1030,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $user . '-note-to-self';
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" reset note-to-self preference$/
-	 */
+	#[Then('/^user "([^"]*)" reset note-to-self preference$/')]
 	public function userResetNoteToSelfPreference(string $user): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/users/spreed/note_to_self');
 		$this->assertStatusCode($this->response, 200);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
 		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
@@ -1114,18 +1075,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" tries to create room with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" tries to create room with (\d+) \((v4)\)$/')]
 	public function userTriesToCreateRoom(string $user, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $formData);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion): void {
 		$fileId = $this->getFileIdForPath($user, $path);
 
@@ -1194,9 +1151,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets the room for last share with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" gets the room for last share with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForLastShare(string $user, int $statusCode, string $apiVersion): void {
 		$shareToken = $this->sharingContext->getLastShareToken();
 
@@ -1215,9 +1170,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates the password request room for last share with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates the password request room for last share with (\d+) \((v1)\)$/')]
 	public function userCreatesThePasswordRequestRoomForLastShare(string $user, int $statusCode, string $apiVersion): void {
 		$shareToken = $this->sharingContext->getLastShareToken();
 
@@ -1236,16 +1189,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userJoinsRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userJoinsRoomWithNamedSession($user, $identifier, $statusCode, $apiVersion, '', $formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\) session name "([^"]*)"$/
-	 */
+	#[Then('/^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\) session name "([^"]*)"$/')]
 	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 
@@ -1278,9 +1227,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" resends invite for room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" resends invite for room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userResendsInvite(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 
@@ -1309,9 +1256,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sets session state to (\d) in room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sets session state to (\d) in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSessionState(string $user, int $state, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1321,9 +1266,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/
-	 */
+	#[Then('/^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/')]
 	public function userViewsCallURL(string $user, string $identifier, int $statusCode, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendFrontpageRequest(
@@ -1340,9 +1283,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" views URL "([^"]*)" with query parameters and status code (\d+)$/
-	 */
+	#[Then('/^user "([^"]*)" views URL "([^"]*)" with query parameters and status code (\d+)$/')]
 	public function userViewsURLWithQuery(string $user, string $page, int $statusCode, ?TableNode $formData = null): void {
 		$parameters = [];
 		if ($formData instanceof TableNode) {
@@ -1359,9 +1300,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/')]
 	public function userSetsNotificationLevelForRoom(string $user, string $level, string $identifier, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -1384,27 +1323,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 200);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" leaves room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userExitsRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userLeavesRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/self');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($toRemove === 'stranger') {
 			$attendeeId = 123456789;
@@ -1420,9 +1353,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" removes (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" removes (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userRemovesAttendeeFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($actorId === 'stranger') {
 			$attendeeId = 123456789;
@@ -1443,9 +1374,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" bans ([^ ]*) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[When('/^user "([^"]*)" bans ([^ ]*) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $internalNote = null): void {
 		if ($actorType === 'guest') {
 			$actorId = self::$sessionNameToActorId[$actorId];
@@ -1495,9 +1424,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following bans in room "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following bans in room "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userLoadsBanIdsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $tableNode): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier]);
@@ -1539,9 +1466,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($expected, $bans);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" unbans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[When('/^user "([^"]*)" unbans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userUnbansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		if ($actorId === 'stranger') {
 			$actorId = '123456789';
@@ -1565,18 +1490,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" deletes room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" deletes room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userDeletesRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" gets room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v4', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
@@ -1595,9 +1516,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" renames room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" renames room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userRenamesRoom(string $user, string $identifier, string $newName, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1607,9 +1526,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets description for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets description for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsDescriptionForRoomTo(string $user, string $identifier, string $description, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1619,9 +1536,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsTheRoomPassword(string $user, string $password, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1631,9 +1546,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsLobbyStateForRoomTo(string $user, string $identifier, string $lobbyStateString, int $statusCode, string $apiVersion): void {
 		if ($lobbyStateString === 'no lobby') {
 			$lobbyState = 0;
@@ -1651,9 +1564,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" for (\d+) seconds with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" for (\d+) seconds with (\d+) \((v4)\)$/')]
 	public function userSetsLobbyStateAndTimerForRoom(string $user, string $identifier, string $lobbyStateString, int $lobbyTimer, int $statusCode, string $apiVersion): void {
 		if ($lobbyStateString === 'no lobby') {
 			$lobbyState = 0;
@@ -1671,9 +1582,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsSIPStateForRoomTo(string $user, string $identifier, string $SIPStateString, int $statusCode, string $apiVersion): void {
 		if ($SIPStateString === 'disabled') {
 			$SIPState = 0;
@@ -1693,9 +1602,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+) \((v4)\)$/')]
 	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1705,9 +1612,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userChangesReadOnlyStateOfTheRoom(string $user, string $newState, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1717,9 +1622,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all|\d+)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" allows listing room "([^"]*)" for "(none|users|all|\d+)" with (\d+) \((v4)\)$/')]
 	public function userChangesListableScopeOfTheRoom(string $user, string $identifier, string|int $newState, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		if ($newState === 'none') {
@@ -1741,9 +1644,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" adds (user|group|email|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -1771,9 +1672,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 
 
-	/**
-	 * @Then /^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
 			$attendeeId = 123456789;
@@ -1795,9 +1694,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets permissions for "([^"]*)" in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets permissions for "([^"]*)" in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsPermissionsForInRoomTo(string $user, string $participant, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
 			$attendeeId = 123456789;
@@ -1827,9 +1724,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets (call|default) permissions for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets (call|default) permissions for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsPermissionsForRoomTo(string $user, string $mode, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
 		$permissions = $this->mapPermissionsTestInput($permissionsString);
 
@@ -1845,9 +1740,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" joins call "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userJoinsCall(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1867,18 +1760,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" checks call notification for "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" checks call notification for "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userChecksCallNotification(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/notification-state');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" updates call flags in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" updates call flags in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userUpdatesCallFlagsInRoomTo(string $user, string $identifier, string $flags, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1888,9 +1777,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" pings (federated_user|user|guest) "([^"]*)"( attendeeIdPlusOne)? to join call "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" pings (federated_user|user|guest) "([^"]*)"( attendeeIdPlusOne)? to join call "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userPingsAttendeeInRoomTo(string $user, string $actorType, string $actorId, ?string $offset, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -1903,9 +1790,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" dials out to "([^"]*)" from call in room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" dials out to "([^"]*)" from call in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userDialsOut(string $user, string $phoneNumber, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/dialout/'
@@ -1924,18 +1809,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" leaves call "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" leaves call "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userLeavesCall(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" ends call "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" ends call "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userEndsCall(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$requestParameters = [
 			['all', true],
@@ -1949,9 +1830,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees (\d+) peers in call "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" sees (\d+) peers in call "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSeesPeersInCall(string $user, int $numPeers, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier]);
@@ -1965,9 +1844,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" downloads call participants from "([^"]*)" as "(csv)" with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^user "([^"]*)" downloads call participants from "([^"]*)" as "(csv)" with (\d+) \((v4)\)$/')]
 	public function userDownloadsPeersInCall(string $user, string $identifier, string $format, int $statusCode, string $apiVersion, ?TableNode $tableNode = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/download', [
@@ -1990,9 +1867,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (silent sends|sends) message ("[^"]*"|'[^']*') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" (silent sends|sends) message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
@@ -2030,9 +1905,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" edits message ("[^"]*"|'[^']*') in room "([^"]*)" to ("[^"]*"|'[^']*') with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" edits message ("[^"]*"|\'[^\']*\') in room "([^"]*)" to ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
 	public function userEditsMessageToRoom(string $user, string $oldMessage, string $identifier, string $newMessage, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$oldMessage = substr($oldMessage, 1, -1);
 		$oldMessage = str_replace('\n', "\n", $oldMessage);
@@ -2060,9 +1933,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sets reminder for message ("[^"]*"|'[^']*') in room "([^"]*)" for time (\d+) with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sets reminder for message ("[^"]*"|\'[^\']*\') in room "([^"]*)" for time (\d+) with (\d+)(?: \((v1)\))?$/')]
 	public function userSetsReminder(string $user, string $message, string $identifier, int $timestamp, int $statusCode, string $apiVersion = 'v1'): void {
 		$message = substr($message, 1, -1);
 
@@ -2075,9 +1946,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" deletes reminder for message ("[^"]*"|'[^']*') in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" deletes reminder for message ("[^"]*"|\'[^\']*\') in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userDeletesReminder(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$message = substr($message, 1, -1);
 
@@ -2089,9 +1958,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" \'([^\']*)\' to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSharesRichObjectToRoom(string $user, string $type, string $id, string $metaData, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2112,9 +1979,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" requests summary for "([^"]*)" starting from ("[^"]*"|'[^']*') with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" requests summary for "([^"]*)" starting from ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
 	public function userSummarizesRoom(string $user, string $identifier, string $message, int $statusCode, string $apiVersion = 'v1', ?TableNode $tableNode = null): void {
 		$message = substr($message, 1, -1);
 		$fromMessageId = self::$textToMessageId[$message];
@@ -2136,9 +2001,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" receives summary for "([^"]*)" with (\d+)$/
-	 */
+	#[Then('/^user "([^"]*)" receives summary for "([^"]*)" with (\d+)$/')]
 	public function userReceivesSummary(string $user, string $identifier, int $statusCode, ?TableNode $tableNode = null): void {
 		$this->sendRequest(
 			'GET', '/taskprocessing/task/' . self::$aiTaskIds[$user . '/summary/' . self::$identifierToToken[$identifier]],
@@ -2149,9 +2012,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertStringContainsString($tableNode->getRowsHash()['contains'], $response['task']['output']['output']);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates a poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" creates a poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function createPoll(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$data = $formData->getRowsHash();
 		$data['options'] = json_decode($data['options'], true);
@@ -2186,9 +2047,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" updates a draft poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" updates a draft poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function updateDraftPoll(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$data = $formData->getRowsHash();
 		$data['options'] = json_decode($data['options'], true);
@@ -2224,9 +2083,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets poll drafts for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" gets poll drafts for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function getPollDrafts(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/drafts');
@@ -2260,9 +2117,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertSame($data, $response);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesPollInRoom(string $user, string $question, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 
@@ -2276,9 +2131,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" closes poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" closes poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userClosesPollInRoom(string $user, string $question, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
@@ -2293,9 +2146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertPollEquals($expected, $response);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" votes for options "([^"]*)" on poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" votes for options "([^"]*)" on poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userVotesPollInRoom(string $user, string $options, string $question, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$data = [
 			'optionIds' => json_decode($options, true),
@@ -2384,9 +2235,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return $expected;
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following entry when loading the list of dashboard widgets(?: \((v1)\))$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following entry when loading the list of dashboard widgets(?: \((v1)\))$/')]
 	public function userGetsDashboardWidgets(string $user, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widgets');
@@ -2416,9 +2265,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1|v2)\))$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1|v2)\))$/')]
 	public function userGetsDashboardWidgetItems(string $user, string $widgetId, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widget-items?widgets[]=' . $widgetId);
@@ -2463,9 +2310,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userDeletesMessageFromRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2475,9 +2320,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" deletes chat history for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" deletes chat history for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userDeletesHistoryFromRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2486,9 +2329,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" reads message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userReadsMessageInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2498,9 +2339,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" marks room "([^"]*)" as unread with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" marks room "([^"]*)" as unread with (\d+)(?: \((v1)\))?$/')]
 	public function userMarkUnreadRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2509,9 +2348,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sends message "([^"]*)" with reference id "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSendsMessageWithReferenceIdToRoom(string $user, string $message, string $referenceId, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2530,9 +2367,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertStringStartsWith($response['referenceId'], $referenceId);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sends reply ("[^"]*"|'[^']*') on message ("[^"]*"|'[^']*') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sends reply ("[^"]*"|\'[^\']*\') on message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSendsReplyToRoom(string $user, string $reply, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$reply = substr($reply, 1, -1);
 		$message = substr($message, 1, -1);
@@ -2553,9 +2388,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^next message request has the following parameters set$/
-	 */
+	#[Then('next message request has the following parameters set')]
 	public function setChatParametersForNextRequest(?TableNode $formData = null): void {
 		$parameters = [];
 		foreach ($formData->getRowsHash() as $key => $value) {
@@ -2568,9 +2401,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$nextChatRequestParameters = $parameters;
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$query = ['lookIntoFuture' => 0];
 		if (self::$nextChatRequestParameters !== null) {
@@ -2589,9 +2420,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareDataResponse($formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" searches for messages ?(in other rooms)? with "([^"]*)" in room "([^"]*)" with (\d+)$/
-	 */
+	#[Then('/^user "([^"]*)" searches for messages ?(in other rooms)? with "([^"]*)" in room "([^"]*)" with (\d+)$/')]
 	public function userSearchesInRoom(string $user, string $searchProvider, string $search, string $identifier, int $statusCode, ?TableNode $formData = null): void {
 		$searchProvider = $searchProvider === 'in other rooms' ? 'talk-message' : 'talk-message-current';
 
@@ -2618,9 +2447,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareSearchResponse($formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedMediaInRoom(string $user, string $objectType, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share?objectType=' . $objectType);
@@ -2629,9 +2456,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareDataResponse($formData);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following shared summarized overview in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following shared summarized overview in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedOverviewMediaInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share/overview');
@@ -2650,9 +2475,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v1)\))?$/')]
 	public function userReceivedDeleteMessage(string $user, string $identifier, string $message, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
@@ -2670,9 +2493,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::fail('Missing message_deleted system message for "' . $message . '"');
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following messages in room "([^"]*)" starting with "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userAwaitsTheFollowingMessagesInRoom(string $user, string $identifier, string $knownMessage, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$textToMessageId[$knownMessage]);
@@ -2864,9 +2685,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $results));
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+)(?: expected cursor "([^"]*)")?$/
-	 */
+	#[Then('/^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+)(?: expected cursor "([^"]*)")?$/')]
 	public function userSearchesRooms(string $user, string $search, string $offset, int $limit, string $expectedCursor, ?TableNode $formData = null): void {
 		$searchUrl = '/search/providers/talk-conversations/search?limit=' . $limit;
 		if ($offset && array_key_exists($offset, self::$identifierToToken)) {
@@ -2886,9 +2705,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareSearchResponse($formData, $expectedCursor);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sees the following system messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sees the following system messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSystemMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
@@ -2959,9 +2776,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $messages, $expected));
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets the following candidate mentions in room "([^"]*)" for "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" gets the following candidate mentions in room "([^"]*)" for "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userGetsTheFollowingCandidateMentionsInRoomFor(string $user, string $identifier, string $search, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/mentions?search=' . $search);
@@ -3036,9 +2851,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" gets the following collaborator suggestions in room "([^"]*)" for "([^"]*)" with (\d+)$/
-	 */
+	#[Then('/^user "([^"]*)" gets the following collaborator suggestions in room "([^"]*)" for "([^"]*)" with (\d+)$/')]
 	public function userGetsTheFollowingCollaboratorSuggestions(string $user, string $identifier, string $search, int $statusCode, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/core/autocomplete/get?search=' . $search . '&itemType=call&itemId=' . self::$identifierToToken[$identifier] . '&shareTypes[]=0&shareTypes[]=1&shareTypes[]=7&shareTypes[]=4');
@@ -3084,9 +2897,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($expected, $mentions);
 	}
 
-	/**
-	 * @Then /^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function guestSetsName(string $user, string $name, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -3096,16 +2907,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^last response has (no) last common read message header$/
-	 */
+	#[Then('/^last response has (no) last common read message header$/')]
 	public function hasNoChatLastCommonReadHeader(string $no): void {
 		Assert::assertArrayNotHasKey('X-Chat-Last-Common-Read', $this->response->getHeaders(), 'X-Chat-Last-Common-Read is set to ' . ($this->response->getHeader('X-Chat-Last-Common-Read')[0] ?? '0'));
 	}
 
-	/**
-	 * @Then /^last response has last common read message header (set to|less than) "([^"]*)"$/
-	 */
+	#[Then('/^last response has last common read message header (set to|less than) "([^"]*)"$/')]
 	public function hasChatLastCommonReadHeader(string $setOrLower, string $message): void {
 		Assert::assertArrayHasKey('X-Chat-Last-Common-Read', $this->response->getHeaders());
 		if ($setOrLower === 'set to') {
@@ -3116,9 +2923,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^last response has federation invites header set to "([^"]*)"$/
-	 */
+	#[Then('/^last response has federation invites header set to "([^"]*)"$/')]
 	public function hasFederationInvitesHeader(string $count): void {
 		if ($count === 'NULL') {
 			Assert::assertFalse($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should not contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
@@ -3128,9 +2933,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" creates (\d+) (automatic|manual|free) breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" creates (\d+) (automatic|manual|free) breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		switch ($modeString) {
 			case 'automatic':
@@ -3166,18 +2969,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $status);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" removes breakout rooms from "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" removes breakout rooms from "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userRemovesBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $status);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" moves participants into different breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
-	 */
+	#[Then('/^user "([^"]*)" moves participants into different breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userMovesParticipantsInsideBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$data = [];
 		if ($formData instanceof TableNode) {
@@ -3195,9 +2994,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $status);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" broadcasts message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" broadcasts message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userBroadcastsMessageToBreakoutRooms(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$body = new TableNode([['message', $message]]);
 
@@ -3211,9 +3008,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (starts|stops) breakout rooms in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" (starts|stops) breakout rooms in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userStartsOrStopsBreakoutRooms(string $user, string $startStop, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -3224,9 +3019,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" switches in room "([^"]*)" to breakout room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" switches in room "([^"]*)" to breakout room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSwitchesBreakoutRoom(string $user, string $identifier, string $target, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -3240,9 +3033,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (requests assistance|cancels request for assistance) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" (requests assistance|cancels request for assistance) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userRequestsOrCancelsAssistanceInBreakoutRooms(string $user, string $requestCancel, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -3253,9 +3044,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to ("[^"]*"|\d) with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" sets setting "([^"]*)" to ("[^"]*"|\d) with (\d+)(?: \((v1)\))?$/')]
 	public function userSetting(string $user, string $setting, string|int $value, int $statusCode, string $apiVersion = 'v1'): void {
 		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
 			$value = substr($value, 1, -1);
@@ -3271,9 +3060,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" has capability "([^"]*)" set to ("[^"]*"|\d)$/
-	 */
+	#[Then('/^user "([^"]*)" has capability "([^"]*)" set to ("[^"]*"|\d)$/')]
 	public function userCheckCapability(string $user, string $capability, string $value): void {
 		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
 			$value = substr($value, 1, -1);
@@ -3301,9 +3088,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($value, $cur[$finalKey]);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" has room capability "([^"]*)" set to ("[^"]*"|\d) on room "([^"]*)"$/
-	 */
+	#[Then('/^user "([^"]*)" has room capability "([^"]*)" set to ("[^"]*"|\d) on room "([^"]*)"$/')]
 	public function userCheckCapabilityFromRoomApi(string $user, string $capability, string|int $value, string $identifier): void {
 		if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
 			$value = substr($value, 1, -1);
@@ -3345,16 +3130,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return $jsonBody['ocs']['data'];
 	}
 
-	/**
-	 * @Then /^status code is ([0-9]*)$/
-	 */
+	#[Then('/^status code is ([0-9]*)$/')]
 	public function isStatusCode(int $statusCode): void {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Given the following :appId app config is set
-	 */
+	#[Given('the following :appId app config is set')]
 	public function setAppConfig(string $appId, TableNode $formData): void {
 		$currentUser = $this->setCurrentUser('admin');
 		foreach ($formData->getRows() as $row) {
@@ -3366,9 +3147,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Given /^(enable|disable) query\.log$/
-	 */
+	#[Given('/^(enable|disable) query\.log$/')]
 	public function toggleQueryLog(string $enable): void {
 		if ($enable === 'enable') {
 			$this->runOcc(['config:system:get', 'datadirectory']);
@@ -3382,16 +3161,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Given /^note query\.log: (.*)$/
-	 */
+	#[Given('/^note query\.log: (.*)$/')]
 	public function noteQueryLog(string $note): void {
 		file_put_contents(self::$queryLogFile, "\n>>>>> NOTE\n" . $note . "\n", FILE_APPEND);
 	}
 
-	/**
-	 * @Given /^OCM provider (does not have|has) the following resource types$/
-	 */
+	#[Given('/^OCM provider (does not have|has) the following resource types$/')]
 	public function checkOCMProviderResourceTypes(string $shouldFind, TableNode $formData): void {
 		$this->sendFrontpageRequest('GET', '/ocm-provider');
 		$data = json_decode($this->response->getBody()->getContents(), true);
@@ -3417,9 +3192,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then user :user has the following notifications
-	 */
+	#[Then('user :user has the following notifications')]
 	public function userNotifications(string $user, ?TableNode $body = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -3500,9 +3273,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $notifications, $expectedNotifications), json_encode($notifications, JSON_PRETTY_PRINT));
 	}
 
-	/**
-	 * @Given /^guest accounts can be created$/
-	 */
+	#[Given('/^guest accounts can be created$/')]
 	public function allowGuestAccountsCreation(): void {
 		$currentUser = $this->setCurrentUser('admin');
 
@@ -3535,9 +3306,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Given /^Fake summary task provider is enabled$/
-	 */
+	#[Given('/^Fake summary task provider is enabled$/')]
 	public function enableTestingApp(): void {
 		$currentUser = $this->setCurrentUser('admin');
 
@@ -3561,10 +3330,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @BeforeScenario
-	 * @AfterScenario
-	 */
+	#[BeforeScenario]
+	#[AfterScenario]
 	public function resetSpreedAppData(): void {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->usingServer($server);
@@ -3586,9 +3353,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->usingServer('LOCAL');
 	}
 
-	/**
-	 * @AfterScenario
-	 */
+	#[AfterScenario]
 	public function resetAppsState(): void {
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->usingServer($server);
@@ -3647,18 +3412,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * User management
 	 */
 
-	/**
-	 * @Given /^as user "([^"]*)"$/
-	 */
+	#[Given('/^as user "([^"]*)"$/')]
 	public function setCurrentUser(?string $user): ?string {
 		$oldUser = $this->currentUser;
 		$this->currentUser = $user;
 		return $oldUser;
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" exists$/
-	 */
+	#[Given('/^user "([^"]*)" exists$/')]
 	public function assureUserExists(string $user): void {
 		$response = $this->userExists($user);
 		if ($response->getStatusCode() !== 200) {
@@ -3671,9 +3432,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Given /^(enable|disable) brute force protection$/
-	 */
+	#[Given('/^(enable|disable) brute force protection$/')]
 	public function enableDisableBruteForceProtection(string $enable): void {
 		if ($enable === 'enable') {
 			$this->changedBruteforceSetting = true;
@@ -3708,9 +3467,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Given /^the following brute force attempts are registered$/
-	 */
+	#[Given('/^the following brute force attempts are registered$/')]
 	public function assertBruteforceAttempts(?TableNode $tableNode = null): void {
 		$totalCount = 0;
 		if ($tableNode instanceof TableNode) {
@@ -3744,9 +3501,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($totalCount, $ipv4Attempts + $ipv6Attempts, 'IP has bruteforce attempts for other actions registered');
 	}
 
-	/**
-	 * @Given /^team "([^"]*)" exists$/
-	 */
+	#[Given('/^team "([^"]*)" exists$/')]
 	public function assureTeamExists(string $team): void {
 		$this->runOcc(['circles:manage:create', '--type', '1', '--output', 'json', 'admin', $team]);
 		$this->theCommandWasSuccessful();
@@ -3757,9 +3512,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$createdTeams[$this->currentServer][$team] = $data['id'];
 	}
 
-	/**
-	 * @Given /^User "([^"]*)" creates team "([^"]*)"$/
-	 */
+	#[Given('/^User "([^"]*)" creates team "([^"]*)"$/')]
 	public function createTeamAsUser(string $owner, string $team): void {
 		$this->runOcc(['circles:manage:create', '--type', '1', '--output', 'json', $owner, $team]);
 		$this->theCommandWasSuccessful();
@@ -3770,9 +3523,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$createdTeams[$this->currentServer][$team] = $data['id'];
 	}
 
-	/**
-	 * @Given /^team "([^"]*)" is renamed to "([^"]*)"$/
-	 */
+	#[Given('/^team "([^"]*)" is renamed to "([^"]*)"$/')]
 	public function assureTeamRenamed(string $team, string $newName): void {
 		$id = self::$createdTeams[$this->currentServer][$team];
 		$this->runOcc(['circles:manage:edit', $id, 'displayName', $newName]);
@@ -3780,17 +3531,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$renamedTeams[$this->currentServer][$newName] = $id;
 	}
 
-	/**
-	 * @Given /^add user "([^"]*)" to team "([^"]*)"$/
-	 */
+	#[Given('/^add user "([^"]*)" to team "([^"]*)"$/')]
 	public function addTeamMember(string $user, string $team): void {
 		$this->runOcc(['circles:members:add', '--type', '1', self::$createdTeams[$this->currentServer][$team], $user]);
 		$this->theCommandWasSuccessful();
 	}
 
-	/**
-	 * @Given /^delete team "([^"]*)"$/
-	 */
 	public function deleteTeam(string $team): void {
 		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$this->currentServer][$team]]);
 		$this->theCommandWasSuccessful();
@@ -3798,9 +3544,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		unset(self::$createdTeams[$this->currentServer][$team]);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" is a guest account user/
-	 */
+	#[Given('/^user "([^"]*)" is a guest account user/')]
 	public function createGuestUser(string $email): void {
 		$currentUser = $this->setCurrentUser('admin');
 		// in case it exists
@@ -3849,9 +3593,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" is deleted$/
-	 */
+	#[Given('/^user "([^"]*)" is deleted$/')]
 	public function userIsDeleted(string $user): void {
 		$deleted = false;
 
@@ -3894,9 +3636,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Given /^group "([^"]*)" exists$/
-	 */
+	#[Given('/^group "([^"]*)" exists$/')]
 	public function assureGroupExists(string $group): void {
 		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/cloud/groups', [
@@ -3921,9 +3661,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->createdGroups[$this->currentServer][$group] = $group;
 	}
 
-	/**
-	 * @Given /^set display name of group "([^"]*)" to "([^"]*)"$/
-	 */
+	#[Given('/^set display name of group "([^"]*)" to "([^"]*)"$/')]
 	public function renameGroup(string $groupId, string $displayName): void {
 		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('PUT', '/cloud/groups/' . urlencode($groupId), [
@@ -3944,9 +3682,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" is member of group "([^"]*)"$/
-	 */
+	#[When('/^user "([^"]*)" is member of group "([^"]*)"$/')]
 	public function addingUserToGroup(string $user, string $group): void {
 		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', "/cloud/users/$user/groups", [
@@ -3956,9 +3692,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" is not member of group "([^"]*)"$/
-	 */
+	#[When('/^user "([^"]*)" is not member of group "([^"]*)"$/')]
 	public function removeUserFromGroup(string $user, string $group): void {
 		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', "/cloud/users/$user/groups", [
@@ -3968,9 +3702,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" (delete react|react) with "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Given('/^user "([^"]*)" (delete react|react) with "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userReactWithOnMessageToRoomWith(string $user, string $action, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$textToMessageId[$message];
@@ -3985,9 +3717,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Given('/^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$message = str_replace('\n', "\n", $message);
 		$token = self::$identifierToToken[$identifier];
@@ -4044,9 +3774,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount(count($expected), $actual, 'Reaction count does not match');
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" set the message expiration to ([-\d]+) of room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Given('/^user "([^"]*)" set the message expiration to ([-\d]+) of room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetTheMessageExpirationToXWithStatusCode(string $user, int $messageExpiration, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
@@ -4055,9 +3783,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" sets the recording consent to (\d+) for room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[Given('/^user "([^"]*)" sets the recording consent to (\d+) for room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userSetsTheRecordingConsentToXWithStatusCode(string $user, int $recordingConsent, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/recording-consent', [
@@ -4066,17 +3792,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Given /^aging messages (\d+) hours in room "([^"]*)"$/
-	 */
+	#[Given('/^aging messages (\d+) hours in room "([^"]*)"$/')]
 	public function occAgeChatMessages(int $hours, string $identifier): void {
 		$this->runOcc(['talk:developer:age-chat-messages', '--hours', $hours, self::$identifierToToken[$identifier]]);
 		$this->theCommandWasSuccessful();
 	}
 
-	/**
-	 * @Given /^the following recording consent is recorded for (room|user) "([^"]*)"$/
-	 */
+	#[Given('/^the following recording consent is recorded for (room|user) "([^"]*)"$/')]
 	public function occRecordingConsentLists(string $filterType, string $identifier, TableNode $tableNode): void {
 		if ($filterType === 'room') {
 			$filter = ' --token ' . self::$identifierToToken[$identifier];
@@ -4103,9 +3825,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($expected, $actual);
 	}
 
-	/**
-	 * @When /^wait for ([0-9]+) (second|seconds)$/
-	 */
+	#[When('/^wait for ([0-9]+) (second|seconds)$/')]
 	public function waitForXSecond(int $seconds): void {
 		sleep($seconds);
 	}
@@ -4114,9 +3834,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * Requests
 	 */
 
-	/**
-	 * @Given /^user "([^"]*)" logs in$/
-	 */
+	#[Given('/^user "([^"]*)" logs in$/')]
 	public function userLogsIn(string $user): void {
 		$loginUrl = $this->baseUrl . '/login';
 
@@ -4151,9 +3869,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 200);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" uploads file "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" uploads file "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSendTheFileAsAvatarOfRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$options = [
@@ -4168,9 +3884,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets emoji "([^"]*)" with color "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" sets emoji "([^"]*)" with color "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSetsEmojiAsAvatarOfRoom(string $user, string $emoji, string $color, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$options = [
@@ -4185,25 +3899,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/')]
 	public function theRoomHasAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $darkTheme = false): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar' . ($darkTheme ? '/dark' : ''));
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^the room "([^"]*)" has an svg as (dark avatar|avatar) with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^the room "([^"]*)" has an svg as (dark avatar|avatar) with (\d+)(?: \((v1)\))?$/')]
 	public function theRoomHasASvgAvatarWithStatusCode(string $identifier, string $darkOrBright, int $statusCode, string $apiVersion = 'v1'): void {
 		$darkTheme = $darkOrBright === 'dark avatar';
 		$this->theRoomHasNoSvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true, $darkTheme);
 	}
 
-	/**
-	 * @When /^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/')]
 	public function theRoomHasNoSvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false, bool $darkTheme = false): void {
 		$this->theRoomHasAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion, $darkTheme);
 		$content = $this->response->getBody()->getContents();
@@ -4220,9 +3928,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @When /^the (dark avatar|avatar) svg of room "([^"]*)" (not contains|contains) the string "([^"]*)"(?: \((v1)\))?$/
-	 */
+	#[When('/^the (dark avatar|avatar) svg of room "([^"]*)" (not contains|contains) the string "([^"]*)"(?: \((v1)\))?$/')]
 	public function theAvatarSvgOfRoomContainsTheString(string $darkOrBright, string $identifier, string $contains, string $string, string $apiVersion = 'v1'): void {
 		$darkTheme = $darkOrBright === 'dark avatar';
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar' . ($darkTheme ? '/dark' : ''));
@@ -4241,18 +3947,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @When /^user "([^"]*)" delete the avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" delete the avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" starts "(invalid|audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" starts "(invalid|audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userStartRecordingInRoom(string $user, string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingTypes = [
 			'invalid' => -1,
@@ -4270,9 +3972,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" stops recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" stops recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userStopRecordingInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$roomToken = self::$identifierToToken[$identifier];
@@ -4280,9 +3980,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" store recording file "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" store recording file "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userStoreRecordingFileInRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingServerSharedSecret = 'the secret';
 		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
@@ -4339,9 +4037,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
-	/**
-	 * @Then /^read bot ids from OCC$/
-	 */
+	#[Then('/^read bot ids from OCC$/')]
 	public function readBotIds(): void {
 		$this->invokingTheCommand('talk:bot:list -v --output json');
 		$this->theCommandWasSuccessful();
@@ -4355,17 +4051,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then /^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/
-	 */
+	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/')]
 	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier): void {
 		$this->invokingTheCommand('talk:bot:' . $action . ' ' . self::$botNameToId[$botName] . ' ' . self::$identifierToToken[$identifier]);
 		$this->theCommandWasSuccessful();
 	}
 
-	/**
-	 * @Then /^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/
-	 */
+	#[Then('/^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/')]
 	public function stateUpdateForBot(string $state, string $botName, ?TableNode $body = null): void {
 		if ($state === 'enabled') {
 			$state = 1;
@@ -4385,9 +4077,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->theCommandWasSuccessful();
 	}
 
-	/**
-	 * @Then /^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function botSendsRequest(string $botName, string $sends, string $action, string $identifier, int $status, string $apiVersion, TableNode $body): void {
 		$currentUser = $this->setCurrentUser(null);
 
@@ -4428,9 +4118,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" (sets up|removes) bot "([^"]*)" for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" (sets up|removes) bot "([^"]*)" for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function setupOrRemoveBotViaOCSAPI(string $user, string $action, string $botName, string $identifier, int $status, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -4441,9 +4129,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $status);
 	}
 
-	/**
-	 * @Then /^user "([^"]*)" shares file from the (first|last) notification to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[Then('/^user "([^"]*)" shares file from the (first|last) notification to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userShareLastNotificationFile(string $user, string $firstLast, string $identifier, int $status, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -4470,9 +4156,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $status);
 	}
 
-	/**
-	 * @When /^(force run|run|repeating run) "([^"]*)" background jobs$/
-	 */
+	#[When('/^(force run|run|repeating run) "([^"]*)" background jobs$/')]
 	public function runReminderBackgroundJobs(string $useForce, string $class, bool $repeated = false): void {
 		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=' . $class]);
 		try {
@@ -4508,9 +4192,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets? status to "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
+	#[When('/^user "([^"]*)" sets? status to "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function setUserStatus(string $user, string $status, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -4521,9 +4203,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^client "([^"]*)" requests room list with (\d+) \((v4)\)$/
-	 */
+	#[Then('/^client "([^"]*)" requests room list with (\d+) \((v4)\)$/')]
 	public function getRoomListWithSpecificUserAgent(string $userAgent, int $statusCode, string $apiVersion): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room', null, [
 			'USER_AGENT' => $userAgent,
@@ -4538,9 +4218,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then the response error matches with :error
-	 */
+	#[Then('the response error matches with :error')]
 	public function assertResponseErrorMatchesWith(string $error): void {
 		$responseData = $this->getDataFromResponse($this->response);
 		Assert::assertEquals(['error' => $error], $responseData);
@@ -4550,9 +4228,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return substr(preg_replace('/(.*)data-requesttoken="(.*)">(.*)/sm', '\2', $response->getBody()->getContents()), 0, 89);
 	}
 
-	/**
-	 * @When /^last response body (contains|does not contain|starts with|starts not with|ends with|ends not with) "([^"]*)"(| with newlines)$/
-	 */
+	#[When('/^last response body (contains|does not contain|starts with|starts not with|ends with|ends not with) "([^"]*)"(| with newlines)$/')]
 	public function lastResponseBodyContains(string $comparison, string $needle, string $replaceNWithNewlines): void {
 		if ($replaceNWithNewlines) {
 			$needle = str_replace('\n', "\n", $needle);
@@ -4578,17 +4254,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
-	/**
-	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
-	 */
+	#[When('/^sending "([^"]*)" to "([^"]*)" with$/')]
 	public function sendRequest(string $verb, string $url, TableNode|array|null $body = null, array $headers = [], array $options = []): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
-	/**
-	 * @When /^sending "([^"]*)" to "([^"]*)" for xml with$/
-	 */
+	#[When('/^sending "([^"]*)" to "([^"]*)" for xml with$/')]
 	public function sendXMLRequest(string $verb, string $url, TableNode|array|null $body = null, array $headers = [], array $options = []): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 
@@ -4599,9 +4271,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" sets mention permissions for room "([^"]*)" to (all|moderators) with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" sets mention permissions for room "([^"]*)" to (all|moderators) with (\d+) \((v4)\)$/')]
 	public function userSetsMentionPermissionsOfTheRoom(string $user, string $identifier, string $mentionPermissions, int $statusCode, string $apiVersion): void {
 		$intMentionPermissions = 0; // all - default
 		if ($mentionPermissions === 'moderators') {
@@ -4618,9 +4288,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" (unarchives|archives) room "([^"]*)" with (\d+) \((v4)\)$/
-	 */
+	#[When('/^user "([^"]*)" (unarchives|archives) room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userArchivesConversation(string $user, string $action, string $identifier, int $statusCode, string $apiVersion): void {
 		$httpMethod = 'POST';
 
