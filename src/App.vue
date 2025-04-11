@@ -97,6 +97,32 @@ export default {
 	},
 
 	computed: {
+		getTotalUnreadMessages() {
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived)
+				.reduce((total, conversation) => {
+					return total + (conversation.unreadMessages || 0);
+				}, 0);
+		},
+		
+		getTotalUnreadMentions() {
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && conversation.unreadMention)
+				.length;
+		},
+		
+		getTotalUnreadMentionsDirect() {
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && conversation.unreadMentionDirect)
+				.length;
+		},
+
+		getUnreadConversationCount() {
+			return this.$store.getters.conversationsList
+				.filter(conversation => !conversation.isArchived && (conversation.unreadMessages || 0) > 0)
+				.length;
+		},
+
 		getUserId() {
 			return this.$store.getters.getUserId()
 		},
@@ -165,6 +191,17 @@ export default {
 				}
 			}
 		},
+
+		// Watch for changes in unread counters and emit events
+		getTotalUnreadMessages() {
+			this.emitUnreadCountUpdated()
+		},
+		getTotalUnreadMentions() {
+			this.emitUnreadCountUpdated()
+		},
+		getTotalUnreadMentionsDirect() {
+			this.emitUnreadCountUpdated()
+		}
 	},
 
 	beforeCreate() {
@@ -419,6 +456,9 @@ export default {
 			})
 		}
 
+		// Initialize unread counts emission
+		this.emitUnreadCountUpdated()
+
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
 		subscribe('notifications:notification:received', this.interceptNotificationReceived)
 	},
@@ -628,6 +668,15 @@ export default {
 			if (this.$route.name !== 'root' && !this.isInCall) {
 				this.$router.push({ name: 'root' })
 			}
+		},
+
+		emitUnreadCountUpdated() {
+			emit('talk:unread:updated', {
+				conversations: this.getUnreadConversationCount,
+				messages: this.getTotalUnreadMessages,
+				mentions: this.getTotalUnreadMentions,
+				mentionsDirect: this.getTotalUnreadMentionsDirect
+			})
 		},
 	},
 }

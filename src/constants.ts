@@ -359,3 +359,7 @@ export const TASK_PROCESSING = {
 		UNKNOWN: 'STATUS_UNKNOWN',
 	},
 }
+
+export const EVENTS = {
+	UNREAD_COUNT_UPDATED: 'talk:unread:updated',
+} as const
