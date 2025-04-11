@@ -26,6 +26,10 @@
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
+						<NcActionText class="filters__text">
+							{{ t('spreed', 'Filter conversations by') }}
+						</NcActionText>
+
 						<NcActionButton close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
@@ -33,7 +37,7 @@
 							<template #icon>
 								<AtIcon :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread mentions') }}
+							{{ t('spreed', 'Unread mentions') }}
 						</NcActionButton>
 
 						<NcActionButton close-after-click
@@ -43,7 +47,7 @@
 							<template #icon>
 								<MessageBadge :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread messages') }}
+							{{ t('spreed', 'Unread messages') }}
 						</NcActionButton>
 
 						<NcActionButton close-after-click
@@ -259,6 +263,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -325,6 +330,7 @@ export default {
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
+		NcActionText,
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
@@ -926,6 +932,13 @@ export default {
 	padding-inline: var(--default-grid-baseline);
 	overflow-y: auto;
 	line-height: 20px;
+}
+
+.filters__text {
+	margin-inline-start: calc(var(--default-grid-baseline) * 2);
+	:deep(.action-text__longtext) {
+		color: var(--color-text-maxcontrast);
+	}
 }
 
 .new-conversation {
