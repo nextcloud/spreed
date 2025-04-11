@@ -42,6 +42,16 @@ export function hasCall(conversation) {
 }
 
 /**
+ * check if the conversation is an event conversation
+ *
+ * @param {object} conversation conversation object
+ * @return {boolean}
+ */
+export function isEvent(conversation) {
+	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+}
+
+/**
  * check if the conversation is archived
  *
  * @param {object} conversation conversation object
@@ -81,5 +91,6 @@ export function isEventHappeningSoon(conversation) {
 export function filterConversation(conversation, filters) {
 	return filters.length === 0
 		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
-		&& (!filters.includes('mentions') || hasUnreadMentions(conversation)))
+		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
+		&& (!filters.includes('events') || isEvent(conversation)))
 }
