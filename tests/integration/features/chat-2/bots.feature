@@ -370,6 +370,7 @@ Feature: chat/bots
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 5    | 1               |
+    And invoking occ with "app:disable talk_webhook_demo"
     And invoking occ with "app:enable talk_webhook_demo"
     And the command was successful
     And invoking occ with "talk:bot:list room-name:room"
