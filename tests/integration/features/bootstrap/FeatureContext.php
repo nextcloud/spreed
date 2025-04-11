@@ -196,6 +196,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function setUp(BeforeScenarioScope $scope) {
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
+		self::$botNameToId = [];
 		self::$tokenToIdentifier = [];
 		self::$sessionNameToActorId = [];
 		self::$sessionIdToUser = [
@@ -5027,7 +5028,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" set status to "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" sets? status to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function setUserStatus(string $user, string $status, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
