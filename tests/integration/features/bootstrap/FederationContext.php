@@ -1,10 +1,16 @@
 <?php
+
+declare(strict_types=1);
+
 /**
- * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeScenario;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -15,13 +21,12 @@ class FederationContext implements Context, SnippetAcceptingContext {
 	private static string $phpFederatedServerPid = '';
 
 	/**
-	 * @BeforeScenario
-	 * @AfterScenario
-	 *
 	 * The server is started also after the scenarios to ensure that it is
 	 * properly cleaned up if stopped.
 	 */
-	public function startFederatedServer() {
+	#[BeforeScenario]
+	#[AfterScenario]
+	public function startFederatedServer(): void {
 		if (self::$phpFederatedServerPid !== '') {
 			return;
 		}
@@ -32,10 +37,8 @@ class FederationContext implements Context, SnippetAcceptingContext {
 		self::$phpFederatedServerPid = exec('php -S localhost:' . $port . ' -t ' . $rootDir . ' >/dev/null & echo $!');
 	}
 
-	/**
-	 * @When /^remote server is stopped$/
-	 */
-	public function remoteServerIsStopped() {
+	#[When('/^remote server is stopped$/')]
+	public function remoteServerIsStopped(): void {
 		if (self::$phpFederatedServerPid === '') {
 			return;
 		}

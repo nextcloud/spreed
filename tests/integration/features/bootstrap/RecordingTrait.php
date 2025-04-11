@@ -1,9 +1,17 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\Assert;
 
@@ -61,10 +69,8 @@ trait RecordingTrait {
 		throw new \Exception('Impossible to find an open port');
 	}
 
-	/**
-	 * @Given /^(recording|signaling) server is started$/
-	 */
-	public function recordingServerIsStarted() {
+	#[Given('/^(recording|signaling) server is started$/')]
+	public function recordingServerIsStarted(): void {
 		if ($this->isRunning()) {
 			return;
 		}
@@ -147,7 +153,7 @@ trait RecordingTrait {
 		[$host, $port] = explode(':', $this->getSignalingServerAddress());
 		$mockServerIsUp = false;
 		for ($i = 0; $i <= 20; $i++) {
-			$open = @fsockopen($host, $port);
+			$open = @fsockopen($host, (int)$port);
 			if (is_resource($open)) {
 				fclose($open);
 				$mockServerIsUp = true;
@@ -163,7 +169,7 @@ trait RecordingTrait {
 	/**
 	 * Is the Web Server currently running?
 	 */
-	public function isRunning() : bool {
+	public function isRunning(): bool {
 		if (!is_resource($this->recordingServerProcess)) {
 			return false;
 		}
@@ -177,12 +183,9 @@ trait RecordingTrait {
 		return $processStatus['running'];
 	}
 
-	/**
-	 * @AfterScenario
-	 *
-	 * @When /^(recording|signaling) server is stopped$/
-	 */
-	public function recordingServerIsStopped() {
+	#[AfterScenario]
+	#[Given('/^(recording|signaling) server is stopped$/')]
+	public function recordingServerIsStopped(): void {
 		if (gettype($this->recordingServerProcess) === 'resource') {
 			$this->stop($this->recordingServerProcess);
 			$this->recordingServerProcess = null;
@@ -206,10 +209,8 @@ trait RecordingTrait {
 		}
 	}
 
-	/**
-	 * @When /^recording server sent started request for "(audio|video)" recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
-	public function recordingServerSentStartedRequestForRecordingInRoomAsWith(string $recordingType, string $identifier, string $user, int $statusCode, string $apiVersion = 'v1') {
+	#[When('/^recording server sent started request for "(audio|video)" recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerSentStartedRequestForRecordingInRoomAsWith(string $recordingType, string $identifier, string $user, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingTypes = [
 			'video' => 1,
 			'audio' => 2,
@@ -230,17 +231,13 @@ trait RecordingTrait {
 		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
 	}
 
-	/**
-	 * @When /^recording server sent stopped request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
-	public function recordingServerSentStoppedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1') {
+	#[When('/^recording server sent stopped request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerSentStoppedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->recordingServerSentStoppedRequestForRecordingInRoomAsWith($identifier, null, $statusCode, $apiVersion);
 	}
 
-	/**
-	 * @When /^recording server sent stopped request for recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
-	public function recordingServerSentStoppedRequestForRecordingInRoomAsWith(string $identifier, ?string $user, int $statusCode, string $apiVersion = 'v1') {
+	#[When('/^recording server sent stopped request for recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerSentStoppedRequestForRecordingInRoomAsWith(string $identifier, ?string $user, int $statusCode, string $apiVersion = 'v1'): void {
 		$data = [
 			'type' => 'stopped',
 			'stopped' => [
@@ -258,10 +255,8 @@ trait RecordingTrait {
 		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
 	}
 
-	/**
-	 * @When /^recording server sent failed request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 */
-	public function recordingServerSentFailedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1') {
+	#[When('/^recording server sent failed request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerSentFailedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$data = [
 			'type' => 'failed',
 			'failed' => [
@@ -272,7 +267,7 @@ trait RecordingTrait {
 		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
 	}
 
-	private function sendBackendRequestFromRecordingServer(array $data, int $statusCode, string $apiVersion = 'v1') {
+	private function sendBackendRequestFromRecordingServer(array $data, int $statusCode, string $apiVersion = 'v1'): void {
 		$body = json_encode($data);
 
 		$random = md5((string)rand());
@@ -288,10 +283,8 @@ trait RecordingTrait {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	/**
-	 * @Then /^(recording|signaling) server received the following requests$/
-	 */
-	public function fakeServerReceivedTheFollowingRequests(string $server, ?TableNode $formData = null) {
+	#[Then('/^(recording|signaling) server received the following requests$/')]
+	public function fakeServerReceivedTheFollowingRequests(string $server, ?TableNode $formData = null): void {
 		if ($server === 'recording') {
 			$requests = $this->getRecordingServerReceivedRequests();
 		} else {
@@ -358,7 +351,7 @@ trait RecordingTrait {
 			if ($matched) {
 				$request['data'] = str_replace(
 					'PHONEATTENDEE(' . $matches[1] . ')',
-					FeatureContext::getAttendeeIdForPhoneNumber($identifier, $matches[1]),
+					(string)FeatureContext::getAttendeeIdForPhoneNumber($identifier, $matches[1]),
 					$request['data']
 				);
 			}
@@ -402,18 +395,14 @@ trait RecordingTrait {
 		Assert::assertEquals($expected, $requests);
 	}
 
-	/**
-	 * @Then /^signaling server will respond with$/
-	 */
+	#[Then('/^signaling server will respond with$/')]
 	public function nextSignalingServerResponseIs(TableNode $formData): void {
 		$data = $formData->getRowsHash();
 		$nextResponseFile = sys_get_temp_dir() . '/fake-nextcloud-talk-signaling-response';
 		file_put_contents($nextResponseFile, $data['response']);
 	}
 
-	/**
-	 * @Then /^reset (recording|signaling) server requests$/
-	 */
+	#[Then('/^reset (recording|signaling) server requests$/')]
 	public function resetSignalingServerRequests(string $server): void {
 		if ($server === 'recording') {
 			$this->getRecordingServerReceivedRequests();
