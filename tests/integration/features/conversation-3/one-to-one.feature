@@ -22,44 +22,50 @@ Feature: conversation-2/one-to-one
       | id    | type | participantType |
       | room1 | 1    | 1               |
     And user "participant2" is participant of the following rooms (v4)
-      | id    | type | participantType |
-      | room1 | 1    | 1               |
     And user "participant3" is participant of the following rooms (v4)
     And user "participant1" is participant of room "room1" (v4)
-    And user "participant2" is participant of room "room1" (v4)
+    And user "participant2" is not participant of room "room1" (v4)
     And user "participant3" is not participant of room "room1" (v4)
+    Given user "participant2" creates room "room1" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
+    And user "participant2" is participant of room "room1" (v4)
+    Then user "participant1" is participant of the following rooms (v4)
+      | id    | type | participantType |
+      | room1 | 1    | 1               |
+    And user "participant2" is participant of the following rooms (v4)
+      | id    | type | participantType |
+      | room1 | 1    | 1               |
 
   Scenario: User1 invites user2 to a one2one room and leaves it
     Given user "participant1" creates room "room2" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room2" (v4)
-    And user "participant2" is participant of room "room2" (v4)
+    And user "participant2" is not participant of room "room2" (v4)
     When user "participant1" removes themselves from room "room2" with 200 (v4)
     Then user "participant1" is not participant of room "room2" (v4)
     And user "participant1" is participant of the following rooms (v4)
-    And user "participant2" is participant of room "room2" (v4)
+    And user "participant2" is not participant of room "room2" (v4)
     And user "participant2" is participant of the following rooms (v4)
-      | id    | type | participantType |
-      | room2 | 1    | 1               |
-    And user "participant2" sees the following attendees in room "room2" with 200 (v4)
-      | actorType  | actorId      | participantType |
-      | users      | participant2 | 1               |
 
   Scenario: User1 invites user2 to a one2one room and tries to delete it
     Given user "participant1" creates room "room3" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room3" (v4)
-    And user "participant2" is participant of room "room3" (v4)
+    And user "participant2" is not participant of room "room3" (v4)
     When user "participant1" deletes room "room3" with 400 (v4)
     Then user "participant1" is participant of room "room3" (v4)
-    And user "participant2" is participant of room "room3" (v4)
+    And user "participant2" is not participant of room "room3" (v4)
 
   Scenario: User1 invites user2 to a one2one room and tries to remove user2
     Given user "participant1" creates room "room4" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room4" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Then user "participant1" is participant of room "room4" (v4)
     And user "participant2" is participant of room "room4" (v4)
     And user "participant1" loads attendees attendee ids in room "room4" (v4)
@@ -72,7 +78,6 @@ Feature: conversation-2/one-to-one
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room5" (v4)
-    And user "participant2" is participant of room "room5" (v4)
     When user "participant1" renames room "room5" to "new name" with 400 (v4)
 
   Scenario: User1 invites user2 to a one2one room and tries to make it public
@@ -80,7 +85,6 @@ Feature: conversation-2/one-to-one
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room6" (v4)
-    And user "participant2" is participant of room "room6" (v4)
     When user "participant1" makes room "room6" public with 400 (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id    | type | participantType |
@@ -90,6 +94,9 @@ Feature: conversation-2/one-to-one
     Given user "participant1" creates room "room7" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room7" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room7" (v4)
     And user "participant2" is participant of room "room7" (v4)
     And user "participant3" is not participant of room "room7" (v4)
@@ -104,6 +111,9 @@ Feature: conversation-2/one-to-one
     Given user "participant1" creates room "room8" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room8" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room8" (v4)
     And user "participant2" is participant of room "room8" (v4)
     And user "participant1" loads attendees attendee ids in room "room8" (v4)
@@ -113,6 +123,9 @@ Feature: conversation-2/one-to-one
     Given user "participant1" creates room "room9" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room9" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room9" (v4)
     And user "participant2" is participant of room "room9" (v4)
     And user "participant1" loads attendees attendee ids in room "room9" (v4)
@@ -141,29 +154,28 @@ Feature: conversation-2/one-to-one
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room12" (v4)
-    And user "participant2" is participant of room "room12" (v4)
+    And user "participant2" is not participant of room "room12" (v4)
     And user "participant1" is participant of the following rooms (v4)
       | id     | type | participantType |
       | room12 | 1    | 1               |
     And user "participant2" is participant of the following rooms (v4)
-      | id     | type | participantType |
-      | room12 | 1    | 1               |
     When user "participant1" creates room "room13" with 200 (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room12" (v4)
-    And user "participant2" is participant of room "room12" (v4)
+    And user "participant2" is not participant of room "room12" (v4)
     And user "participant1" is participant of the following rooms (v4)
       | id     | type | participantType |
       | room12 | 1    | 1               |
     And user "participant2" is participant of the following rooms (v4)
-      | id     | type | participantType |
-      | room12 | 1    | 1               |
 
   Scenario: User1 invites user2 to a one2one room, leaves and does it again, it's the same room
     Given user "participant1" creates room "room14" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room14" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room14" (v4)
     And user "participant2" is participant of room "room14" (v4)
     And user "participant1" is participant of the following rooms (v4)
@@ -212,6 +224,9 @@ Feature: conversation-2/one-to-one
     Given user "participant1" creates room "room" with 201 (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Then user "participant1" removes themselves from room "room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)

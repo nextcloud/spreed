@@ -61,6 +61,9 @@ Feature: conversation/lobby
       | invite   | participant2 |
     When user "participant1" sets lobby state for room "room" to "non moderators" with 400 (v4)
     And user "participant1" sets lobby state for room "room" to "no lobby" with 400 (v4)
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sets lobby state for room "room" to "non moderators" with 400 (v4)
     And user "participant2" sets lobby state for room "room" to "no lobby" with 400 (v4)
 

@@ -375,6 +375,7 @@ Feature: get
     Given user "participant2" creates room "one-to-one room not invited to" (v4)
       | roomType | 1 |
       | invite   | participant3 |
+    And user "participant2" sends message "Message 1" to room "one-to-one room not invited to" with 201
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
@@ -593,6 +594,7 @@ Feature: get
     Given user "participant2" creates room "one-to-one room not invited to" (v4)
       | roomType | 1 |
       | invite   | participant3 |
+    And user "participant2" sends message "Message 1" to room "one-to-one room not invited to" with 201
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
@@ -945,6 +947,7 @@ Feature: get
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
+    And user "participant1" sends message "Message 1" to room "own one-to-one room" with 201
     And user "participant3" creates folder "/test"
     And user "participant2" shares "welcome.txt" with room "own group room" with OCS 100
     And user "participant3" shares "test" with room "group room invited to" with OCS 100
@@ -1013,6 +1016,7 @@ Feature: get
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
+    And user "participant1" sends message "Message 1" to room "own one-to-one room" with 201
     And user "participant3" creates folder "/test"
     And user "participant2" shares "welcome.txt" with room "own group room" with OCS 100
     And user "participant3" shares "test" with room "group room invited to" with OCS 100
@@ -1056,6 +1060,7 @@ Feature: get
     And user "participant1" creates room "own one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant3 |
+    And user "participant1" sends message "Message 1" to room "own one-to-one room" with 201
     And user "participant3" creates folder "/test"
     And user "participant2" shares "welcome.txt" with room "own group room" with OCS 100
     And user "participant3" shares "test" with room "group room invited to" with OCS 100

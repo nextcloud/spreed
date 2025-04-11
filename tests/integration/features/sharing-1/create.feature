@@ -36,6 +36,7 @@ Feature: create
     Given user "participant2" creates room "one-to-one room invited to" (v4)
       | roomType | 1 |
       | invite   | participant1 |
+    And user "participant2" sends message "Message 1" to room "one-to-one room invited to" with 201
     When user "participant1" shares "welcome.txt" with room "one-to-one room invited to"
     Then share is returned with
       | uid_owner              | participant1 |

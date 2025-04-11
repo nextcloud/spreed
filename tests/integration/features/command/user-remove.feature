@@ -8,6 +8,9 @@ Feature: command/user-remove
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | public room |

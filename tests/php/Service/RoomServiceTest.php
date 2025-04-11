@@ -153,11 +153,6 @@ class RoomServiceTest extends TestCase {
 				'actorId' => 'uid1',
 				'displayName' => 'display-1',
 				'participantType' => Participant::OWNER,
-			], [
-				'actorType' => 'users',
-				'actorId' => 'uid2',
-				'displayName' => 'display-2',
-				'participantType' => Participant::OWNER,
 			]]);
 
 		$this->participantService->expects($this->never())

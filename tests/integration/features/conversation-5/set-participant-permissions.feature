@@ -9,6 +9,9 @@ Feature: conversation-2/set-publishing-permissions
     Given user "owner" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | moderator |
+    Given user "moderator" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | owner |
     And user "owner" loads attendees attendee ids in room "one-to-one room" (v4)
     When user "owner" sets permissions for "owner" in room "one-to-one room" to "S" with 400 (v4)
     And user "owner" sets permissions for "moderator" in room "one-to-one room" to "S" with 400 (v4)

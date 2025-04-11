@@ -39,6 +39,9 @@ Feature: command/monitor-calls
     When user "participant3" creates room "room2" (v4)
       | roomType | 1 |
       | invite | participant2 |
+    Given user "participant2" creates room "room2" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant3 |
     And user "participant2" gets room "room2" with 200 (v4)
 
     And user "participant2" joins room "room2" with 200 (v4)

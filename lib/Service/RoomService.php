@@ -99,7 +99,7 @@ class RoomService {
 		try {
 			// If room exists: Reuse that one, otherwise create a new one.
 			$room = $this->manager->getOne2OneRoom($actor->getUID(), $targetUser->getUID());
-			$this->participantService->ensureOneToOneRoomIsFilled($room);
+			$this->participantService->ensureOneToOneRoomIsFilled($room, $actor->getUID());
 		} catch (RoomNotFoundException) {
 			if (!$this->shareManager->currentUserCanEnumerateTargetUser($actor, $targetUser)) {
 				throw new RoomNotFoundException();
@@ -114,12 +114,6 @@ class RoomService {
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $actor->getUID(),
 					'displayName' => $actor->getDisplayName(),
-					'participantType' => Participant::OWNER,
-				],
-				[
-					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $targetUser->getUID(),
-					'displayName' => $targetUser->getDisplayName(),
 					'participantType' => Participant::OWNER,
 				],
 			], $actor);

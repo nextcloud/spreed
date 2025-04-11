@@ -127,170 +127,6 @@ class NotifierTest extends TestCase {
 		);
 	}
 
-	public static function dataPrepareOne2One(): array {
-		return [
-			['admin', 'Admin', 'Admin invited you to a private conversation'],
-			['test', 'Test user', 'Test user invited you to a private conversation'],
-		];
-	}
-
-	/**
-	 * @dataProvider dataPrepareOne2One
-	 */
-	public function testPrepareOne2One(string $uid, string $displayName, string $parsedSubject): void {
-		/** @var INotification&MockObject $n */
-		$n = $this->createMock(INotification::class);
-		$l = $this->createMock(IL10N::class);
-		$l->expects($this->any())
-			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			}));
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getType')
-			->willReturn(Room::TYPE_ONE_TO_ONE);
-		$room->expects($this->any())
-			->method('getId')
-			->willReturn(1234);
-		$room->expects($this->any())
-			->method('getDisplayName')
-			->with('recipient')
-			->willReturn($displayName);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with('roomToken')
-			->willReturn($room);
-
-		$this->lFactory->expects($this->once())
-			->method('get')
-			->with('spreed', 'de')
-			->willReturn($l);
-
-		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->once())
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
-
-		$this->userManager->expects($this->once())
-			->method('getDisplayName')
-			->with($uid)
-			->willReturn($displayName);
-
-		$n->expects($this->once())
-			->method('setIcon')
-			->willReturnSelf();
-		$n->expects($this->once())
-			->method('setLink')
-			->willReturnSelf();
-		$n->expects($this->once())
-			->method('setParsedSubject')
-			->with($parsedSubject)
-			->willReturnSelf();
-		$n->expects($this->once())
-			->method('setRichSubject')
-			->with('{user} invited you to a private conversation', [
-				'user' => [
-					'type' => 'user',
-					'id' => $uid,
-					'name' => $displayName,
-				],
-				'call' => [
-					'type' => 'call',
-					'id' => 1234,
-					'name' => $displayName,
-					'call-type' => 'one2one',
-					'icon-url' => '',
-				],
-			])
-			->willReturnSelf();
-
-		$n->expects($this->exactly(2))
-			->method('getUser')
-			->willReturn('recipient');
-		$n->expects($this->once())
-			->method('getApp')
-			->willReturn('spreed');
-		$n->expects($this->once())
-			->method('getSubject')
-			->willReturn('invitation');
-		$n->expects($this->once())
-			->method('getSubjectParameters')
-			->willReturn([$uid]);
-		$n->method('getObjectType')
-			->willReturn('room');
-		$n->method('getObjectId')
-			->willReturn('roomToken');
-
-		$this->notifier->prepare($n, 'de');
-	}
-
-	/**
-	 * @dataProvider dataPrepareOne2One
-	 * @param string $uid
-	 * @param string $displayName
-	 * @param string $parsedSubject
-	 */
-	public function testPreparingMultipleTimesOnlyGetsTheRoomOnce($uid, $displayName, $parsedSubject): void {
-		$numNotifications = 4;
-
-		$l = $this->createMock(IL10N::class);
-		$l->expects($this->any())
-			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			}));
-
-		$room = $this->createMock(Room::class);
-		$room->expects($this->any())
-			->method('getType')
-			->willReturn(Room::TYPE_ONE_TO_ONE);
-		$room->expects($this->any())
-			->method('getId')
-			->willReturn(1234);
-		$room->expects($this->any())
-			->method('getDisplayName')
-			->with('recipient')
-			->willReturn($displayName);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with('roomToken')
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-		$this->participantService->expects($this->once())
-			->method('getParticipant')
-			->with($room, 'recipient')
-			->willReturn($participant);
-
-		$this->lFactory->expects($this->exactly($numNotifications))
-			->method('get')
-			->with('spreed', 'de')
-			->willReturn($l);
-
-		$recipient = $this->createMock(IUser::class);
-		$this->userManager->expects($this->any())
-			->method('get')
-			->with('recipient')
-			->willReturn($recipient);
-
-		$this->userManager->expects($this->any())
-			->method('getDisplayName')
-			->with($uid)
-			->willReturn($displayName);
-
-		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
-		$this->notifier->prepare($n, 'de');
-		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
-		$this->notifier->prepare($n, 'de');
-		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
-		$this->notifier->prepare($n, 'de');
-		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
-		$this->notifier->prepare($n, 'de');
-	}
-
 	public function getNotificationMock(string $parsedSubject, string $uid, string $displayName) {
 		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
@@ -466,6 +302,117 @@ class NotifierTest extends TestCase {
 		$n->method('getObjectId')
 			->willReturn('roomToken');
 
+		$this->notifier->prepare($n, 'de');
+	}
+
+	/**
+	 * @dataProvider dataPrepareGroup
+	 */
+	public function testPrepareGroupMultipleTimesOnlyGetsTheRoomOnce(int $type, string $uid, string $displayName, string $name, string $parsedSubject): void {
+		$roomId = $type;
+		/** @var INotification&MockObject $n */
+		$n = $this->createMock(INotification::class);
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->will($this->returnCallback(function ($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			}));
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->atLeastOnce())
+			->method('getType')
+			->willReturn($type);
+		$room->expects($this->atLeastOnce())
+			->method('getDisplayName')
+			->with('recipient')
+			->willReturn($name);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with('roomToken')
+			->willReturn($room);
+
+		$this->lFactory->method('get')
+			->with('spreed', 'de')
+			->willReturn($l);
+
+		$recipient = $this->createMock(IUser::class);
+		$this->userManager->method('get')
+			->with('recipient')
+			->willReturn($recipient);
+
+		$this->userManager->method('getDisplayName')
+			->with($uid)
+			->willReturn($displayName);
+
+		$n->method('setIcon')
+			->willReturnSelf();
+		$n->method('setLink')
+			->willReturnSelf();
+		$n->method('setParsedSubject')
+			->with($parsedSubject)
+			->willReturnSelf();
+
+		$room->method('getId')
+			->willReturn($roomId);
+
+		$this->avatarService->method('getAvatarUrl')
+			->with($room)
+			->willReturn('getAvatarUrl');
+
+		if ($type === Room::TYPE_GROUP) {
+			$n->method('setRichSubject')
+				->with('{user} invited you to a group conversation: {call}', [
+					'user' => [
+						'type' => 'user',
+						'id' => $uid,
+						'name' => $displayName,
+					],
+					'call' => [
+						'type' => 'call',
+						'id' => $roomId,
+						'name' => $name,
+						'call-type' => 'group',
+						'icon-url' => 'getAvatarUrl',
+					],
+				])
+				->willReturnSelf();
+		} else {
+			$n->method('setRichSubject')
+				->with('{user} invited you to a group conversation: {call}', [
+					'user' => [
+						'type' => 'user',
+						'id' => $uid,
+						'name' => $displayName,
+					],
+					'call' => [
+						'type' => 'call',
+						'id' => $roomId,
+						'name' => $name,
+						'call-type' => 'public',
+						'icon-url' => 'getAvatarUrl',
+					],
+				])
+				->willReturnSelf();
+		}
+
+		$n->method('getUser')
+			->willReturn('recipient');
+		$n->method('getApp')
+			->willReturn('spreed');
+		$n->method('getSubject')
+			->willReturn('invitation');
+		$n->method('getSubjectParameters')
+			->willReturn([$uid]);
+		$n->method('getObjectType')
+			->willReturn('room');
+		$n->method('getObjectId')
+			->willReturn('roomToken');
+
+		$this->notifier->prepare($n, 'de');
+		$this->notifier->prepare($n, 'de');
+		$this->notifier->prepare($n, 'de');
+		$this->notifier->prepare($n, 'de');
 		$this->notifier->prepare($n, 'de');
 	}
 
