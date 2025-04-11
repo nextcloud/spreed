@@ -103,6 +103,7 @@ export const CONVERSATION = {
 		CIRCLES: 'circles',
 		VIDEO_VERIFICATION: 'share:password',
 		BREAKOUT_ROOM: 'room',
+		EXTENDED: 'extended_conversation',
 		DEFAULT: '',
 	},
 

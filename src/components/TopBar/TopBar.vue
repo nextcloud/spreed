@@ -65,16 +65,21 @@
 				:start="conversation.callStartTime" />
 
 			<!-- Participants counter -->
-			<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
+			<NcButton v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
 				type="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
-					<IconAccountMultiple :size="20" />
+					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />
+					<IconAccountMultiple v-else :size="20" />
 				</template>
-				{{ participantsInCall }}
+				<template v-if="!canExtendOneToOneConversation" #default>
+					{{ participantsInCall }}
+				</template>
 			</NcButton>
+			<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
+				:token="token" />
 
 			<!-- Reactions menu -->
 			<ReactionMenu v-if="isInCall && hasReactionSupport"
@@ -108,6 +113,7 @@
 
 <script>
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
@@ -125,14 +131,17 @@ import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
+import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
+
+const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 export default {
 	name: 'TopBar',
@@ -144,6 +153,7 @@ export default {
 		CallButton,
 		CallTime,
 		ConversationIcon,
+		ExtendOneToOneDialog,
 		TopBarMediaControls,
 		NcButton,
 		NcPopover,
@@ -153,6 +163,7 @@ export default {
 		ReactionMenu,
 		// Icons
 		IconAccountMultiple,
+		IconAccountMultiplePlus,
 	},
 
 	props: {
@@ -194,6 +205,10 @@ export default {
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
+		canExtendOneToOneConversation() {
+			return supportConversationCreationAll && this.isOneToOneConversation
 		},
 
 		isModeratorOrUser() {
@@ -251,6 +266,9 @@ export default {
 		},
 
 		participantsInCallAriaLabel() {
+			if (this.canExtendOneToOneConversation) {
+				return t('spreed', 'Add participants to this call')
+			}
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 		},
 
