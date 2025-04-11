@@ -115,6 +115,7 @@ class Capabilities implements IPublicCapability {
 		'schedule-meeting',
 		'edit-draft-poll',
 		'conversation-creation-all',
+		'dashboard-event-rooms',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -138,6 +139,7 @@ class Capabilities implements IPublicCapability {
 		'chat-summary-api',
 		'call-notification-state-api',
 		'schedule-meeting',
+		'dashboard-event-rooms',
 	];
 
 	public const LOCAL_CONFIGS = [

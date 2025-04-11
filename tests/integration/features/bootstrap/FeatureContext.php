@@ -72,6 +72,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static ?string $queryLogFile = null;
 	protected static ?string $currentScenario = null;
 
+	/** @var array<string, string> */
+	protected static array $identifierToObjectId = [];
 
 	protected static array $permissionsMap = [
 		'D' => 0, // PERMISSIONS_DEFAULT
@@ -129,6 +131,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	public static function getTeamIdForLabel(string $server, string $label): string {
 		return self::$createdTeams[$server][$label] ?? self::$renamedTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
+	}
+
+	public static function getRoomLocationForToken(string $identifier): string {
+		return getenv('TEST_SERVER_URL') . '/call/' . self::$identifierToToken[$identifier] ?? throw new \RuntimeException('Unknown token: ' . $identifier);
 	}
 
 	public static function getMessageIdForText(string $text): int {
@@ -436,6 +442,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 
 		$expected = $formData->getHash();
+
+		$count = count($expected);
+		for ($i = 0; $i < $count; $i++) {
+			if (isset($expected[$i]['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $expected[$i]['objectId'], $matches)) {
+				$expected[$i]['objectId'] = self::$identifierToObjectId[$matches[1]];
+			}
+		}
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
 				if (str_starts_with($roomA['name'], '/')) {
@@ -611,7 +624,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
-
+			if (isset($expectedRoom['objectId'])) {
+				$data['objectId'] = $room['objectId'];
+			}
+			if (isset($expectedRoom['objectType'])) {
+				$data['objectType'] = $room['objectType'];
+			}
 			return $data;
 		}, $rooms, $expected));
 	}
@@ -1189,6 +1207,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			} elseif ($result) {
 				throw new \InvalidArgumentException('Could not find parent room');
 			}
+		}
+
+		if (isset($body['objectType']) && $body['objectType'] === 'event') {
+			[$start, $end] = explode('#', $body['objectId']);
+			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);
 		}
 
 		if (isset($body['permissions'])) {
@@ -2828,6 +2851,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
 			Assert::assertStringEndsWith($widgetIconUrl, $dataIconUrl, 'Mismatch of icon URL for widget ' . $id);
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following entry when loading the dashboard conversations \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsEventConversationsForTalkDashboard(string $user, string $apiVersion, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/dashboard/events');
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+		Assert::assertCount(2, $data);
+		if (!$formData instanceof TableNode) {
+			Assert::assertEmpty($data);
+			return;
+		}
+
+		$this->assertRooms($data, $formData);
 	}
 
 	/**
@@ -5349,5 +5394,50 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} else {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
+	}
+
+	/**
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 * @return void
+	 *
+	 * @Given /^user "([^"]*)" creates conversation with event "([^"]*)" \((v4)\)$/
+	 */
+	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$body = $formData->getRowsHash();
+		$startTime = time() + 86400;
+		$endTime = time() + 90000;
+		if (isset($body['objectId'])) {
+			[$start, $end] = explode('#', $body['objectId']);
+			$startTime = time() + (int)$start;
+			$endTime = time() + (int)$end;
+			$body['objectId'] = $startTime . '#' . $endTime;
+			self::$identifierToObjectId[$identifier] = $body['objectId'];
+		}
+
+		$body['roomName'] = $identifier;
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
+		$this->assertStatusCode($this->response, 201);
+
+		$response = $this->getDataFromResponse($this->response);
+
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$identifierToId[$identifier] = $response['id'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
+
+		$location = self::getRoomLocationForToken($identifier);
+		$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
+			'name' => $identifier,
+			'location' => $location,
+			'start' => $startTime,
+			'end' => $endTime,
+		]);
+
+		$this->assertStatusCode($this->response, 200);
 	}
 }
