@@ -9,6 +9,9 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     When user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant3" joins room "room" with 404 (v4)
@@ -22,6 +25,9 @@ Feature: conversation/join-leave
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" joins room "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     When user "participant1" leaves room "room" with 200 (v4)

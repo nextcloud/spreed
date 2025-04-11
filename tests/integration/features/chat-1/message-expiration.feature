@@ -65,7 +65,6 @@ Feature: chat/message-expiration
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room" (v4)
-    And user "participant2" is participant of room "room" (v4)
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 1    | 1               |

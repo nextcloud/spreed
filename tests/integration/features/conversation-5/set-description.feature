@@ -57,6 +57,9 @@ Feature: conversation-2/set-description
     Given user "owner" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | moderator |
+    Given user "moderator" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | owner |
     When user "owner" sets description for room "one-to-one room" to "the description" with 400 (v4)
     And user "moderator" sets description for room "one-to-one room" to "the description" with 400 (v4)
     Then user "owner" is participant of room "one-to-one room" (v4)
