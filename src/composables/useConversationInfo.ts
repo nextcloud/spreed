@@ -8,9 +8,11 @@ import { computed, ref } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import type { Conversation } from '../types/index.ts'
+import { futureRelativeTime, convertToUnix } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
@@ -38,6 +40,7 @@ export function useConversationInfo({
 }: Payload) {
 	const exposeMessages = exposeMessagesRef.value !== null ? exposeMessagesRef.value : !isSearchResult.value
 	const exposeDescription = exposeDescriptionRef.value !== null ? exposeDescriptionRef.value : isSearchResult.value
+	const nowUnix = convertToUnix(Date.now())
 
 	const counterType = computed(() => {
 		if (!exposeMessages) {
@@ -129,6 +132,20 @@ export function useConversationInfo({
 				icon: null,
 				message: t('spreed', 'No messages'),
 				title: t('spreed', 'No messages'),
+			}
+		}
+
+		// This is for event conversations where the last message is a system message
+		const startTime = parseInt(item.value.objectId.split('#')?.at(0) ?? '')
+		const showTimeLeft = shortLastChatMessageAuthor.value === '' || lastMessage.value.messageType === 'comment_deleted'
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
+			&& startTime > nowUnix && showTimeLeft) {
+			if (startTime - nowUnix < 24 * 60 * 60) {
+				return futureRelativeTime(startTime * 1000)
+			} else {
+				return t('spreed', 'Event starts {date}', {
+					date: moment(startTime * 1000).calendar(),
+				})
 			}
 		}
 

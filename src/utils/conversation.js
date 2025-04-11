@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { convertToUnix } from './formattedTime.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
@@ -41,6 +42,16 @@ export function hasCall(conversation) {
 }
 
 /**
+ * check if the conversation is an event conversation
+ *
+ * @param {object} conversation conversation object
+ * @return {boolean}
+ */
+export function isEvent(conversation) {
+	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+}
+
+/**
  * check if the conversation is archived
  *
  * @param {object} conversation conversation object
@@ -52,6 +63,26 @@ export function shouldIncludeArchived(conversation, showArchived) {
 }
 
 /**
+ * check if the conversation is not an event conversation or if it is, check if it is happening in 16 hours
+ *
+ * @param {object} conversation conversation object
+ * @return {boolean}
+ */
+export function shouldIncludeEvents(conversation) {
+	return conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT || isEventHappeningSoon(conversation)
+}
+
+/**
+ * check if the conversation is happening in 16 hours
+ *
+ * @param {object} conversation conversation object
+ */
+export function isEventHappeningSoon(conversation) {
+	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+		&& parseInt(conversation.objectId.split('#')?.at(0) ?? '') - convertToUnix(new Date()) < 16 * 60 * 60 // within 16 hours
+}
+
+/**
  * apply the active filter
  *
  * @param {object} conversation conversation object
@@ -60,5 +91,6 @@ export function shouldIncludeArchived(conversation, showArchived) {
 export function filterConversation(conversation, filters) {
 	return filters.length === 0
 		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
-		&& (!filters.includes('mentions') || hasUnreadMentions(conversation)))
+		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
+		&& (!filters.includes('events') || isEvent(conversation)))
 }
