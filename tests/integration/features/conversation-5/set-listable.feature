@@ -56,6 +56,9 @@ Feature: conversation-2/set-listable
     Given user "creator" creates room "room" (v4)
       | roomType | 1            |
       | invite   | regular-user |
+    Given user "regular-user" creates room "room" with 200 (v4)
+      | roomType | 1            |
+      | invite   | creator |
     Then user "creator" allows listing room "room" for "all" with 400 (v4)
     And user "regular-user" allows listing room "room" for "all" with 400 (v4)
 

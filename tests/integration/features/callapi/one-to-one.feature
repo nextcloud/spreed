@@ -14,14 +14,13 @@ Feature: callapi/one-to-one
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" is participant of room "room" (v4)
-    And user "participant2" is participant of room "room" (v4)
+    And user "participant2" is not participant of room "room" (v4)
     Then user "participant1" sees 0 peers in call "room" with 200 (v4)
-    And user "participant2" sees 0 peers in call "room" with 200 (v4)
     Then user "participant1" joins room "room" with 200 (v4)
     Then user "participant1" sees 0 peers in call "room" with 200 (v4)
-    And user "participant2" sees 0 peers in call "room" with 200 (v4)
     Then user "participant1" joins call "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
+    And user "participant2" is participant of room "room" (v4)
     And user "participant2" sees 1 peers in call "room" with 200 (v4)
     And user "participant2" joins room "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
@@ -105,10 +104,13 @@ Feature: callapi/one-to-one
     Then user "participant1" sees 0 peers in call "room" with 200 (v4)
     And user "guest" sees 0 peers in call "room" with 404 (v4)
 
-  Scenario: Sending a message into a one-to-one chat re-adds the participants
+  Scenario: Starting a call in a one-to-one re-adds the participants
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
     When user "participant1" removes themselves from room "room" with 200 (v4)
@@ -126,6 +128,9 @@ Feature: callapi/one-to-one
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "room" (v4)
     And user "participant2" is participant of room "room" (v4)
     Then user "participant1" is participant of the following rooms (v4)

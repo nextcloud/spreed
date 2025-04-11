@@ -366,7 +366,6 @@ Feature: chat/bots
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" is participant of room "room" (v4)
-    And user "participant2" is participant of room "room" (v4)
     When user "participant2" is deleted
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
@@ -376,6 +375,7 @@ Feature: chat/bots
     And invoking occ with "talk:bot:list room-name:room"
     Then the command was successful
     And the command output is empty
+    And read bot ids from OCC
     And user "participant1" sets up bot "Webhook Demo" for room "room" with 400 (v1)
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful

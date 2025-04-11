@@ -10,9 +10,15 @@ Feature: command/user-transfer-ownership
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant4" creates room "one-to-one former" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one former" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant4 |
     Given user "participant1" creates room "user" (v4)
       | roomType | 3 |
       | roomName | user |
@@ -50,9 +56,15 @@ Feature: command/user-transfer-ownership
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant4" creates room "one-to-one former" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one former" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant4 |
     Given user "participant1" creates room "user" (v4)
       | roomType | 3 |
       | roomName | user |
@@ -91,9 +103,15 @@ Feature: command/user-transfer-ownership
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant4" creates room "one-to-one former" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one former" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant4 |
     Given user "participant1" creates room "user" (v4)
       | roomType | 3 |
       | roomName | user |

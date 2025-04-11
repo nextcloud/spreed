@@ -10,6 +10,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant1" sets session state to 2 in room "one-to-one room" with 404 (v4)
     Given user "participant2" joins room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
@@ -20,7 +23,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant2" joins room "one-to-one room" with 200 (v4)
     Given user "participant2" sets session state to 2 in room "one-to-one room" with 400 (v4)
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
@@ -36,9 +41,6 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                 | subject                                             |
@@ -51,9 +53,6 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
     When user "participant1" silent sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
@@ -65,9 +64,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sets notifications to disabled for room "one-to-one room" (v4)
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -77,6 +76,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant2" joins room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Hi @participant2 bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -87,9 +89,6 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Hi @participant2 bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                            | subject                                                          |
@@ -99,9 +98,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sets notifications to disabled for room "one-to-one room" (v4)
     When user "participant1" sends message "Hi @participant2 bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -111,9 +110,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     And user "participant1" react with "🚀" on message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -124,9 +123,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     And user "participant2" sets notifications to disabled for room "one-to-one room" (v4)
     And user "participant1" react with "🚀" on message "Message 1" to room "one-to-one room" with 201
@@ -137,6 +136,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     Given user "participant2" joins room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Hi @all bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -147,9 +149,6 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Hi @all bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                   | subject                                                          |
@@ -159,9 +158,9 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sets notifications to disabled for room "one-to-one room" (v4)
     When user "participant1" sends message "Hi @all bye" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
@@ -502,8 +501,6 @@ Feature: chat/notifications
       | roomType | 1 |
       | invite   | participant2 |
     # Join and leave to clear the invite notification
-    Given user "participant2" joins room "one-to-one room" with 200 (v4)
-    And user "participant2" leaves room "one-to-one room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                 | subject                                             |
