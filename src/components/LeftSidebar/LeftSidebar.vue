@@ -26,6 +26,8 @@
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
+						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
+
 						<NcActionButton close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
@@ -33,7 +35,7 @@
 							<template #icon>
 								<AtIcon :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread mentions') }}
+							{{ t('spreed', 'Unread mentions') }}
 						</NcActionButton>
 
 						<NcActionButton close-after-click
@@ -43,7 +45,7 @@
 							<template #icon>
 								<MessageBadge :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread messages') }}
+							{{ t('spreed', 'Unread messages') }}
 						</NcActionButton>
 
 						<NcActionButton close-after-click
@@ -258,6 +260,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -305,7 +308,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
 	mentions: t('spreed', 'Mentions'),
-	events: t('spreed', 'Events'),
+	events: t('spreed', 'Meetings'),
 	default: '',
 }
 
@@ -325,6 +328,7 @@ export default {
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
+		NcActionCaption,
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
