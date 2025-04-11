@@ -105,6 +105,44 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 // Signaling
 export type SignalingSettings = components['schemas']['SignalingSettings']
 
+export type InternalSignalingSession = components['schemas']['SignalingSession']
+
+// Based on https://github.com/strukturag/nextcloud-spreed-signaling/blob/master/api_signaling.go:
+// EventServerMessage - room - Join
+export type StandaloneSignalingJoinSession = {
+	userid: string,
+	user?:
+		| { displayname: string }
+		| { callid: string, number: string, type: string }, // Phone number
+	sessionid: string, // Standalone signaling id
+	roomsessionid?: string, // Nextcloud id
+	features?: string[],
+	federated?: boolean,
+}
+
+// EventServerMessage - room - Leave
+export type StandaloneSignalingLeaveSession = string // Standalone signaling id
+
+// EventServerMessage - participants - Update
+export type StandaloneSignalingUpdateSession = {
+	inCall: number,
+	lastPing: number,
+	sessionId: string, // Standalone signaling id
+	nextcloudSessionId?: string, // Nextcloud id
+	participantPermissions?: number,
+	participantType?: number,
+	userId?: string,
+	// Since Talk v20, treat as optional
+	actorId?: string,
+	actorType?: string,
+	displayName?: string,
+	// Internal participant (Recording server, phone number)
+	features?: string[],
+	internal?: boolean,
+	// Phone number only
+	virtual?: boolean,
+}
+
 // Conversations
 export type Conversation = components['schemas']['Room'] & {
 	// internal parameter up to mock a conversation object

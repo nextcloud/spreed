@@ -7,7 +7,14 @@ import mitt from 'mitt'
 import type { Emitter, EventType, Handler, WildcardHandler } from 'mitt'
 import type { Route } from 'vue-router'
 
-import type { ChatMessage, Conversation, Participant, SignalingSettings } from '../types/index.ts'
+import type {
+	ChatMessage,
+	Conversation,
+	InternalSignalingSession,
+	SignalingSettings,
+	StandaloneSignalingJoinSession,
+	StandaloneSignalingUpdateSession,
+} from '../types/index.ts'
 import type { components } from '../types/openapi/openapi-full.ts'
 
 // List of used events across the app
@@ -39,8 +46,11 @@ export type Events = {
 	'signaling-participant-list-changed': void,
 	'signaling-recording-status-changed': [string, number],
 	'signaling-settings-updated': [SignalingSettings],
-	'signaling-users-changed': [(Partial<Participant> & ({ sessionId: string } | { nextcloudSessionId: string }))[]],
-	'signaling-users-in-room': [{ sessionId: string, userId: string }[]],
+	'signaling-users-changed': [StandaloneSignalingUpdateSession[]],
+	'signaling-users-in-room': [InternalSignalingSession[]],
+	'signaling-users-joined': [StandaloneSignalingJoinSession[]],
+	'signaling-users-left': [string[]],
+	'signaling-all-users-changed-in-call-to-disconnected': void,
 	'smart-picker-open': void,
 	'switch-to-conversation': { token: string },
 	'talk:poll-added': { token: string, message: ChatMessage },
