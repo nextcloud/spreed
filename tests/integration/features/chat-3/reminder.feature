@@ -8,6 +8,9 @@ Feature: chat-2/reminder
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
     When user "participant1" sets reminder for message "Message 1" in room "room" for time 1234567 with 201 (v1)
@@ -35,6 +38,9 @@ Feature: chat-2/reminder
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" joins room "room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
     When user "participant1" sets reminder for message "Message 1" in room "room" for time 1234567 with 201 (v1)

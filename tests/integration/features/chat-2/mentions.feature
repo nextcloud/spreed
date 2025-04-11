@@ -13,6 +13,10 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "one-to-one room" for "" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant2" gets the following candidate mentions in room "one-to-one room" for "" with 404
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
@@ -24,6 +28,10 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "one-to-one room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant2" gets the following candidate mentions in room "one-to-one room" for "part" with 404
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
@@ -33,6 +41,10 @@ Feature: chat/mentions
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" gets the following candidate mentions in room "one-to-one room" for "unknown" with 200
+    And user "participant2" gets the following candidate mentions in room "one-to-one room" for "unknown" with 404
+    When user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "unknown" with 200
 
   Scenario: get mentions in a one-to-one room with a participant not in the room

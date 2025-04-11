@@ -366,6 +366,7 @@ class Listener implements IEventListener {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
+		$this->participantService->ensureOneToOneRoomIsFilled($room);
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);

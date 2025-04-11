@@ -966,33 +966,7 @@ class Notifier implements INotifier {
 		}
 
 		$roomName = $room->getDisplayName($notification->getUser());
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			$subject = $l->t('{user} invited you to a private conversation');
-			if ($this->participantService->hasActiveSessionsInCall($room)) {
-				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);
-			} else {
-				$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
-			}
-
-			$notification
-				->setParsedSubject(str_replace('{user}', $userDisplayName, $subject))
-				->setRichSubject(
-					$subject, [
-						'user' => [
-							'type' => 'user',
-							'id' => $uid,
-							'name' => $userDisplayName,
-						],
-						'call' => [
-							'type' => 'call',
-							'id' => (string)$room->getId(),
-							'name' => $roomName,
-							'call-type' => $this->getRoomType($room),
-							'icon-url' => $this->avatarService->getAvatarUrl($room),
-						],
-					]
-				);
-		} elseif (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+		if (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
 			if ($this->participantService->hasActiveSessionsInCall($room)) {
 				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);

@@ -11,6 +11,9 @@ Feature: conversation/delete-user
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant1" is participant of the following rooms (v4)
       | name         | type     | readOnly |
@@ -27,6 +30,9 @@ Feature: conversation/delete-user
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant1" is participant of the following rooms (v4)
       | name         | type     | readOnly |
