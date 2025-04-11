@@ -17,6 +17,9 @@ Feature: chat/one-to-one
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" sees the following messages in room "one-to-one room" with 200
       | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
@@ -58,6 +61,9 @@ Feature: chat/one-to-one
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant2" creates room "one-to-one room" with 200 (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
     And user "participant1" is participant of room "one-to-one room" (v4)
     And user "participant2" is participant of room "one-to-one room" (v4)
     When user "participant1" removes themselves from room "one-to-one room" with 200 (v4)
