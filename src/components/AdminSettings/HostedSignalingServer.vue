@@ -122,14 +122,13 @@
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 
-import { EventBus } from '../../services/EventBus.ts'
+import { formatDateTime } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'HostedSignalingServer',
@@ -193,10 +192,10 @@ export default {
 			return ''
 		},
 		expiryDate() {
-			return moment(this.trialAccount.expires).format('L')
+			return formatDateTime(this.trialAccount.expires, 'L')
 		},
 		createdDate() {
-			return moment(this.trialAccount.created).format('L')
+			return formatDateTime(this.trialAccount.created, 'L')
 		},
 	},
 

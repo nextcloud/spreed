@@ -8,7 +8,6 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
@@ -28,6 +27,7 @@ import {
 	getFileNamePrompt,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
+import { formatDateTime } from '../utils/formattedTime.ts'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
 const state = {
@@ -238,7 +238,7 @@ const actions = {
 
 			if (rename) {
 				// note: can't overwrite the original read-only name attribute
-				file.newName = moment(file.lastModified || file.lastModifiedDate).format('YYYYMMDD_HHmmss')
+				file.newName = formatDateTime(file.lastModified || file.lastModifiedDate, 'YYYYMMDD_HHmmss')
 					+ getFileExtension(file.name)
 			}
 
