@@ -181,3 +181,4 @@
 
 ## 21.1
 * `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
+* `important-conversations` (local) - Whether important conversations are supported
