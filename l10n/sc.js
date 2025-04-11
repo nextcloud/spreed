@@ -727,6 +727,7 @@ OC.L10N.register(
     "Add to favorites" : "Agiunghe a preferidos",
     "You need to promote a new moderator before you can leave the conversation." : "Depes promòvere un'àtera persona chi moderet antis de lassare sa resonada.",
     "Conversation actions" : "Atziones de is resonadas",
+    "Unread" : "De lèghere",
     "No matches found" : "Peruna currispondèntzia agatada",
     "No conversations found" : "Peruna resonada agatada",
     "An error occurred while performing the search" : "B'at àpidu un'errore in sa chirca",

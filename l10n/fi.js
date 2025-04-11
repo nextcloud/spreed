@@ -807,6 +807,7 @@ OC.L10N.register(
     "Decline invitation" : "Kieltäydy kutsusta",
     "Accept invitation" : "Hyväksy kutsu",
     "No pending invitations" : "Ei odottavia kutsuja",
+    "Unread" : "Lukematon",
     "No matches found" : "Ei tuloksia",
     "No conversations found" : "Keskusteluja ei löytynyt",
     "You have no unread mentions." : "Sinulla ei ole lukemattomia mainintoja.",
