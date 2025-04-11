@@ -997,6 +997,7 @@ OC.L10N.register(
     "Conversation actions" : "Dejanja pogovora",
     "Decline invitation" : "Zavrni povabilo",
     "Accept invitation" : "Sprejmi povabilo",
+    "Unread" : "Neprebrano",
     "No matches found" : "Ni najdenih zadetkov",
     "No conversations found" : "Pogovora ni mogoče najti",
     "You have no unread mentions." : "Ni neodgovorjenih omemb.",

@@ -961,6 +961,7 @@ OC.L10N.register(
     "Add to favorites" : "افزودن به برگزیده‌ها",
     "You need to promote a new moderator before you can leave the conversation." : "You need to promote a new moderator before you can leave the conversation.",
     "Conversation actions" : "Conversation actions",
+    "Unread" : "Unread",
     "No matches found" : "جستجو حاصلی دربرنداشت",
     "No conversations found" : "No conversations found",
     "An error occurred while performing the search" : "An error occurred while performing the search",

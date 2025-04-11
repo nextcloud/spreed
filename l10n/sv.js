@@ -1245,6 +1245,7 @@ OC.L10N.register(
     "Decline invitation" : "Avböj inbjudan",
     "Accept invitation" : "Acceptera inbjudan",
     "No pending invitations" : "Inga väntande inbjudningar",
+    "Unread" : "Oläst",
     "No matches found" : "Inga träffar hittades",
     "No conversations found" : "Inga konversationer hittades",
     "You have no archived conversations." : "Du har inga arkiverade konversationer.",

@@ -1245,6 +1245,7 @@ OC.L10N.register(
     "Decline invitation" : "Decline invitation",
     "Accept invitation" : "Accept invitation",
     "No pending invitations" : "No pending invitations",
+    "Unread" : "Unread",
     "No matches found" : "No matches found",
     "No conversations found" : "No conversations found",
     "You have no archived conversations." : "You have no archived conversations.",

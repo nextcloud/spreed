@@ -1240,6 +1240,7 @@ OC.L10N.register(
     "Decline invitation" : "Daveti reddet",
     "Accept invitation" : "Daveti kabul et",
     "No pending invitations" : "Bekleyen bir davet yok",
+    "Unread" : "Okunmamış",
     "No matches found" : "Eşleşen bir sonuç bulunamadı",
     "No conversations found" : "Herhangi bir görüşme bulunamadı",
     "You have no archived conversations." : "Arşivlenmiş bir görüşmeniz yok.",

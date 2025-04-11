@@ -202,6 +202,7 @@ OC.L10N.register(
     "Remove from favorites" : "Eemalda lemmikutest",
     "Add to favorites" : "Lisa lemmikutesse",
     "You need to promote a new moderator before you can leave the conversation." : "Pead määrama uue moderaatori enne siit vestlusest lahkumist.",
+    "Unread" : "Lugemata",
     "An error occurred while performing the search" : "Otsimisel tekkis viga",
     "Create a new conversation" : "Loo uus vestlus",
     "Clear filter" : "Tühjenda filter",

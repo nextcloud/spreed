@@ -1032,6 +1032,7 @@ OC.L10N.register(
     "Add to favorites" : "Add to favorites",
     "You need to promote a new moderator before you can leave the conversation." : "You need to promote a new moderator before you can leave the conversation.",
     "Conversation actions" : "Conversation actions",
+    "Unread" : "Unread",
     "No matches found" : "No matches found",
     "No conversations found" : "No conversations found",
     "You have no unread mentions." : "You have no unread mentions.",

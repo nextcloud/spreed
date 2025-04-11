@@ -699,6 +699,7 @@ OC.L10N.register(
     "Add to favorites" : "Προσθήκη στα αγαπημένα ",
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
     "Conversation actions" : "Δράσεις συνομιλιών",
+    "Unread" : "Μη αναγνωσμένο",
     "No matches found" : "Δεν βρέθηκαν αντιστοιχίες",
     "An error occurred while performing the search" : "Παρουσιάστηκε σφάλμα κατά την αναζήτηση",
     "Conversation list" : "Λίστα συνομιλιών",

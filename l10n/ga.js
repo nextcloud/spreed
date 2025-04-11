@@ -1245,6 +1245,7 @@ OC.L10N.register(
     "Decline invitation" : "Diúltaigh cuireadh",
     "Accept invitation" : "Glac le cuireadh",
     "No pending invitations" : "Níl aon chuirí ar feitheamh",
+    "Unread" : "Neamhléite",
     "No matches found" : "Níor aimsíodh aon mheaitseáil",
     "No conversations found" : "Níor aimsíodh aon chomhrá",
     "You have no archived conversations." : "Níl aon chomhráite sa chartlann agat.",
