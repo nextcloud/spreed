@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { convertToUnix } from './formattedTime.ts'
+import { convertToUnix, ONE_HOUR_IN_MS } from './formattedTime.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
@@ -42,6 +42,16 @@ export function hasCall(conversation) {
 }
 
 /**
+ * check if the conversation is an event conversation
+ *
+ * @param {object} conversation conversation object
+ * @return {boolean}
+ */
+export function isEvent(conversation) {
+	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+}
+
+/**
  * check if the conversation is archived
  *
  * @param {object} conversation conversation object
@@ -68,8 +78,8 @@ export function shouldIncludeEvents(conversation) {
  * @param {object} conversation conversation object
  */
 export function isEventHappeningSoon(conversation) {
-	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
-		&& parseInt(conversation.objectId.split('#')?.at(0) ?? '') - convertToUnix(new Date()) < 16 * 60 * 60 // within 16 hours
+	return isEvent(conversation)
+		&& (parseInt(conversation.objectId.split('#')?.at(0) ?? '') - convertToUnix(Date.now())) * 1000 < 16 * ONE_HOUR_IN_MS
 }
 
 /**
@@ -81,5 +91,6 @@ export function isEventHappeningSoon(conversation) {
 export function filterConversation(conversation, filters) {
 	return filters.length === 0
 		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
-		&& (!filters.includes('mentions') || hasUnreadMentions(conversation)))
+		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
+		&& ((!filters.includes('events') && shouldIncludeEvents(conversation)) || isEvent(conversation)))
 }

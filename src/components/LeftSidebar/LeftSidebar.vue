@@ -46,6 +46,16 @@
 							{{ t('spreed', 'Filter unread messages') }}
 						</NcActionButton>
 
+						<NcActionButton close-after-click
+							type="checkbox"
+							:model-value="filters.includes('events')"
+							@click="handleFilter('events')">
+							<template #icon>
+								<IconCalendar :size="20" />
+							</template>
+							{{ t('spreed', 'Event conversations') }}
+						</NcActionButton>
+
 						<NcActionButton v-if="isFiltered"
 							close-after-click
 							class="filter-actions__clearbutton"
@@ -230,6 +240,7 @@ import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.v
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import AtIcon from 'vue-material-design-icons/At.vue'
+import IconCalendar from 'vue-material-design-icons/CalendarBlank.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
@@ -294,6 +305,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
 	mentions: t('spreed', 'Mentions'),
+	events: t('spreed', 'Events'),
 	default: '',
 }
 
@@ -325,6 +337,7 @@ export default {
 		FilterRemoveIcon,
 		IconArchive,
 		IconArrowLeft,
+		IconCalendar,
 		Phone,
 		Plus,
 		ChatPlus,
