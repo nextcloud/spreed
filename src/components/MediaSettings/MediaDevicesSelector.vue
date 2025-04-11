@@ -4,7 +4,8 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
+import { computed } from 'vue'
 
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconRefresh from 'vue-material-design-icons/Refresh.vue'
@@ -41,7 +42,7 @@ const deviceOptions = computed<NcSelectOption[]>(() => ([
 ]))
 const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 
-const deviceIcon = computed<InstanceType<typeof IconMicrophone> | null>(() => {
+const deviceIcon = computed<ComponentPublicInstance | null>(() => {
 	switch (props.kind) {
 	case 'audioinput': return IconMicrophone
 	case 'audiooutput': return IconVolumeHigh
