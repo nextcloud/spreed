@@ -615,6 +615,7 @@ OC.L10N.register(
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
     "Conversation actions" : "Acțiuni conversație",
+    "Unread" : "Necitit",
     "No matches found" : "Nicio potrivire",
     "No conversations found" : "Nu sunt conversații",
     "You have no unread mentions." : "Nu aveți menționări necitite.",

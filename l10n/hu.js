@@ -991,6 +991,7 @@ OC.L10N.register(
     "Add to favorites" : "Hozzáadás a kedvencekhez ",
     "You need to promote a new moderator before you can leave the conversation." : "Új moderátort kell kineveznie, mielőtt elhagyhatja a beszélgetést.",
     "Conversation actions" : "Beszélgetési műveletek",
+    "Unread" : "Olvasatlan",
     "No matches found" : "Nincs találat",
     "No conversations found" : "Nem található beszélgetés",
     "You have no unread messages." : "Nincs olvasatlan üzenet.",

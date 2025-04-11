@@ -1117,6 +1117,7 @@ OC.L10N.register(
     "Decline invitation" : "تەكلىپنى رەت قىلىش",
     "Accept invitation" : "تەكلىپنى قوبۇل قىلىڭ",
     "No pending invitations" : "كۈتۈلمىگەن تەكلىپلەر يوق",
+    "Unread" : "ئوقۇمىغان",
     "No matches found" : "ماس كەلمىدى",
     "No conversations found" : "پاراڭ تېپىلمىدى",
     "You have no archived conversations." : "ئارخىپ پاراڭلىرىڭىز يوق.",

@@ -1100,6 +1100,7 @@ OC.L10N.register(
     "Decline invitation" : "Avslå invitasjon",
     "Accept invitation" : "Aksepter invitasjon",
     "No pending invitations" : "Ingen ventende invitasjoner",
+    "Unread" : "Ulest",
     "No matches found" : "Ingen treff funnet",
     "No conversations found" : "Ingen samtaler funnet",
     "You have no unread mentions." : "Du har ingen uleste nevner",

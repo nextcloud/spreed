@@ -825,6 +825,7 @@ OC.L10N.register(
     "Add to favorites" : "Aggiungi ai preferiti",
     "You need to promote a new moderator before you can leave the conversation." : "Devi promuovere un nuovo moderatore prima di poter abbandonare la conversazione. ",
     "Conversation actions" : "Azioni delle conversazioni",
+    "Unread" : "Da leggere",
     "No matches found" : "Nessuna corrispondenza trovata",
     "No conversations found" : "Nessuna conversazione trovata",
     "An error occurred while performing the search" : "Si è verificato un errore durante l'esecuzione della ricerca",
