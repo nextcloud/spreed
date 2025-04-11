@@ -1238,6 +1238,7 @@ OC.L10N.register(
     "Decline invitation" : "Odmítnout pozvání",
     "Accept invitation" : "Přijmout pozvání",
     "No pending invitations" : "Žádné čekající pozvánky",
+    "Unread" : "Nastavit jako nepřečtené",
     "No matches found" : "Nenalezeny žádné shody",
     "No conversations found" : "Nenalezena žádná konverzace",
     "You have no archived conversations." : "Nemáte žádné archivované konverzace.",

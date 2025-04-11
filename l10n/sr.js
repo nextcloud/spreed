@@ -1245,6 +1245,7 @@ OC.L10N.register(
     "Decline invitation" : "Одбиј позивницу",
     "Accept invitation" : "Прихвати позивницу",
     "No pending invitations" : "Нема позивница на чекању",
+    "Unread" : "Непрочитано",
     "No matches found" : "Нема подударања",
     "No conversations found" : "Није пронађен ниједан разговор",
     "You have no archived conversations." : "Немате ниједан архивирани разговор.",

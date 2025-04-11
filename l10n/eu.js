@@ -1042,6 +1042,7 @@ OC.L10N.register(
     "Decline invitation" : "Bazteztu gonbidapena",
     "Accept invitation" : "Onartu gonbidapena",
     "No pending invitations" : "Ez duzu gonbidapenik zain",
+    "Unread" : "Irakurri gabe",
     "No matches found" : "Ez dira emaitzarik aurkitu",
     "No conversations found" : "Ez da elkarrizketarik aurkitu",
     "An error occurred while performing the search" : "Errore bat gertatu da bilaketa egitean",

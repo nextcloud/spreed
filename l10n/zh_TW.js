@@ -1245,6 +1245,7 @@ OC.L10N.register(
     "Decline invitation" : "婉拒邀請",
     "Accept invitation" : "接受邀請",
     "No pending invitations" : "沒有待處理的邀請",
+    "Unread" : "未讀",
     "No matches found" : "找不到符合的項目",
     "No conversations found" : "找不到任何對話",
     "You have no archived conversations." : "您沒有已封存的對話。",

@@ -1240,6 +1240,7 @@ OC.L10N.register(
     "Decline invitation" : "Отклонить приглашение",
     "Accept invitation" : "Принять приглашение",
     "No pending invitations" : "Нет ожидающих приглашений",
+    "Unread" : "Непрочитанное",
     "No matches found" : "Соответствий не найдено",
     "No conversations found" : "Не найдено ни одного обсуждения",
     "You have no archived conversations." : "У Вас нет архивированных обсуждений.",
