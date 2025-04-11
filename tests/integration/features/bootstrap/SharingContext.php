@@ -121,14 +121,7 @@ class SharingContext implements Context {
 		$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
 	}
 
-	/**
-	 * @When user :user shares :path with room :room with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $room
-	 * @param int $statusCode
-	 */
+	#[When('user :user shares :path with room :room with OCS :statusCode')]
 	public function userSharesWithRoomWithOcs(string $user, string $path, string $room, int $statusCode) {
 		$this->userSharesWithRoom($user, $path, $room);
 		$this->theOCSStatusCodeShouldBe($statusCode);
