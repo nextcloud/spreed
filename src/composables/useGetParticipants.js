@@ -42,6 +42,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		EventBus.on('signaling-users-joined', handleUsersUpdated)
 		EventBus.on('signaling-users-changed', handleUsersUpdated)
 		EventBus.on('signaling-users-left', handleUsersLeft)
+		EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
@@ -61,7 +62,10 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		const sessionStore = useSessionStore()
 		sessionStore.updateSessionsLeft(token.value, sessionIds)
 	}
-
+	const handleUsersDisconnected = () => {
+		const sessionStore = useSessionStore()
+		sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(token.value)
+	}
 	/**
 	 * Stop the get participants listeners
 	 *
@@ -72,6 +76,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		EventBus.off('signaling-users-joined', handleUsersUpdated)
 		EventBus.off('signaling-users-changed', handleUsersUpdated)
 		EventBus.off('signaling-users-left', handleUsersLeft)
+		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
