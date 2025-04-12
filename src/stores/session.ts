@@ -38,6 +38,12 @@ type ParticipantUpdatePayload = {
 	sessionIds?: string[],
 }
 
+type ParticipantStandaloneJoinPayload = {
+	attendeeId: number,
+	displayName: string,
+	sessionIds: string[],
+}
+
 type State = {
 	sessions: Record<string, Session>,
 }
@@ -168,7 +174,7 @@ export const useSessionStore = defineStore('session', {
 				}
 
 				if (isStandaloneSignalingJoinSession(user)) {
-					// this.updateParticipantJoinedFromStandaloneSignaling(token, user)
+					this.updateParticipantJoinedFromStandaloneSignaling(token, session.attendeeId, user)
 				} else if (isStandaloneSignalingUpdateSession(user)) {
 					// this.updateParticipantChangedFromStandaloneSignaling(token, user)
 				}
@@ -196,7 +202,7 @@ export const useSessionStore = defineStore('session', {
 		 * @param sessionIds - Left session ids from signaling message
 		 */
 		updateSessionsLeft(token: string, sessionIds: StandaloneSignalingLeaveSession[]) {
-			// this.updateParticipantsLeftFromStandaloneSignaling(token, sessionIds)
+			this.updateParticipantsLeftFromStandaloneSignaling(token, sessionIds)
 			for (const sessionId of sessionIds) {
 				this.deleteSession(sessionId)
 			}
@@ -250,6 +256,60 @@ export const useSessionStore = defineStore('session', {
 						updatedData: { attendeeId, inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED, sessionIds: [] },
 					})
 				}
+			}
+		},
+
+		/**
+		 * Update participants joined in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 * @param attendeeId - Attendee ID
+		 * @param user - Users payload from signaling message
+		 */
+		updateParticipantJoinedFromStandaloneSignaling(token: string, attendeeId: number, user: StandaloneSignalingJoinSession) {
+			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
+			if (!participant) {
+				return
+			}
+
+			const updatedData: ParticipantStandaloneJoinPayload = {
+				attendeeId,
+				displayName: user.user?.displayname ?? participant.displayName,
+				sessionIds: [...new Set([...participant.sessionIds, user.roomsessionid])],
+			}
+
+			store.commit('updateParticipant', { token, attendeeId, updatedData })
+		},
+
+		/**
+		 * Update participants left in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 * @param sessionIdsLeft - Disconnected signaling sessions
+		 */
+		updateParticipantsLeftFromStandaloneSignaling(token: string, sessionIdsLeft: string[]) {
+			for (const sessionId of sessionIdsLeft) {
+				const session = this.getSession(sessionId)
+				const attendeeId = session?.attendeeId
+				if (!attendeeId) {
+					// Skip participant update
+					continue
+				}
+
+				const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
+				if (!participant) {
+					continue
+				}
+
+				const sessionIds = participant.sessionIds.filter((id: string) => id !== sessionId)
+				store.commit('updateParticipant', {
+					token,
+					attendeeId,
+					updatedData: {
+						sessionIds,
+						inCall: sessionIds.length ? participant.inCall : PARTICIPANT.CALL_FLAG.DISCONNECTED,
+					},
+				})
 			}
 		},
 	},
