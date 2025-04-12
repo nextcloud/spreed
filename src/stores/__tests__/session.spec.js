@@ -544,5 +544,138 @@ describe('sessionStore', () => {
 				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
 
 		})
+
+		it('should skip update if participant is not found', () => {
+			// Arrange
+			populateParticipantsStore()
+			sessionStore.updateSessions(TOKEN, [participantsJoinedPayload[0]])
+			vuexStore.commit('deleteParticipant', { token: TOKEN, attendeeId: 1 })
+
+			// Act
+			sessionStore.updateParticipantJoinedFromStandaloneSignaling(TOKEN, 1, {})
+			sessionStore.updateParticipantChangedFromStandaloneSignaling(TOKEN, 1, {})
+			sessionStore.updateParticipantLeftFromStandaloneSignaling(TOKEN, 'session-id-1')
+
+			// Assert
+			expect(vuexStore.commit).toHaveBeenCalledTimes(2) // 1 update, 1 deletion
+		})
+
+		it('should update participant objects for a known session on change', () => {
+			// Arrange
+			populateParticipantsStore()
+			const unknownResultsJoin = sessionStore.updateSessions(TOKEN, participantsJoinedPayload)
+
+			// Act
+			const unknownResultsChange = sessionStore.updateSessions(TOKEN, participantsChangedPayload.slice(0, 5))
+
+			// Assert
+			expect(unknownResultsJoin).toBeFalsy()
+			expect(unknownResultsChange).toBeFalsy()
+			expect(vuexStore.commit).toHaveBeenCalledTimes(10)
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant',
+				{
+					token: TOKEN,
+					attendeeId: 1,
+					updatedData: {
+						inCall: 7,
+						participantType: 1,
+						displayName: 'User 1',
+						lastPing: 1717192800,
+						permissions: 254
+					}
+				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant',
+				{
+					token: TOKEN,
+					attendeeId: 2,
+					updatedData: {
+						inCall: 7,
+						participantType: 3,
+						displayName: 'User 2',
+						lastPing: 1717192800,
+						permissions: 254
+					}
+				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant',
+				{
+					token: TOKEN,
+					attendeeId: 2,
+					updatedData: {
+						inCall: 7,
+						participantType: 3,
+						displayName: 'User 2',
+						lastPing: 1717192800,
+						permissions: 254
+					}
+				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant',
+				{
+					token: TOKEN,
+					attendeeId: 4,
+					updatedData: {
+						inCall: 0,
+						participantType: 3,
+						displayName: 'User 4',
+						lastPing: 1717192800,
+						permissions: 254
+					}
+				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10, 'updateParticipant',
+				{
+					token: TOKEN,
+					attendeeId: 5,
+					updatedData: {
+						displayName: 'Guest New',
+						inCall: 7,
+						participantType: 6,
+						lastPing: 1717192800,
+						permissions: 254
+					}
+				})
+		})
+
+		it('should handle unknown sessions on change', () => {
+			// Arrange
+			populateParticipantsStore()
+			const participantsPayload = [{
+				userId: 'user-unknown',
+				sessionId: 'session-id-unknown',
+				nextcloudSessionId: 'nextcloud-session-id-unknown'
+			}]
+
+			// Act
+			const unknownResults = sessionStore.updateSessions(TOKEN, participantsPayload)
+
+			// Assert
+			expect(unknownResults).toBeTruthy()
+			expect(Object.keys(sessionStore.sessions)).toHaveLength(1)
+			expect(sessionStore.getSession('session-id-unknown'))
+				.toMatchObject({
+					token: TOKEN,
+					attendeeId: undefined,
+					sessionId: 'nextcloud-session-id-unknown',
+					signalingSessionId: 'session-id-unknown'
+				})
+		})
+
+		it('should update participant objects for a known session on call disconnect', () => {
+			// Arrange
+			populateParticipantsStore()
+			sessionStore.updateSessions(TOKEN, participantsJoinedPayload)
+
+			// Act
+			sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(TOKEN)
+
+			// Assert
+			expect(vuexStore.commit).toHaveBeenCalledTimes(5 + 4)
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant',
+				{ token: TOKEN, attendeeId: 1, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant',
+				{ token: TOKEN, attendeeId: 2, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant',
+				{ token: TOKEN, attendeeId: 4, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant',
+				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0 } })
+		})
 	})
 })
