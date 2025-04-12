@@ -12,6 +12,7 @@ import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 import { CONVERSATION } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useSessionStore } from '../stores/session.ts'
 
 /**
  * @param {import('vue').Ref} isActive whether the participants tab is active
@@ -36,6 +37,10 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 */
 	function initialiseGetParticipants() {
 		EventBus.on('joined-conversation', onJoinedConversation)
+		EventBus.on('signaling-users-in-room', handleUsersUpdated)
+		EventBus.on('signaling-users-joined', handleUsersUpdated)
+		EventBus.on('signaling-users-changed', handleUsersUpdated)
+		EventBus.on('signaling-users-left', handleUsersLeft)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
@@ -44,12 +49,28 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		subscribe('guest-promoted', onJoinedConversation)
 	}
 
+	const handleUsersUpdated = async ([users]) => {
+		const sessionStore = useSessionStore()
+		if (sessionStore.updateSessions(token.value, users)) {
+			debounceUpdateParticipants()
+		}
+	}
+
+	const handleUsersLeft = ([sessionIds]) => {
+		const sessionStore = useSessionStore()
+		sessionStore.updateSessionsLeft(sessionIds)
+	}
+
 	/**
 	 * Stop the get participants listeners
 	 *
 	 */
 	function stopGetParticipants() {
 		EventBus.off('joined-conversation', onJoinedConversation)
+		EventBus.off('signaling-users-in-room', handleUsersUpdated)
+		EventBus.off('signaling-users-joined', handleUsersUpdated)
+		EventBus.off('signaling-users-changed', handleUsersUpdated)
+		EventBus.off('signaling-users-left', handleUsersLeft)
 		EventBus.off('signaling-participant-list-changed', debounceUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
