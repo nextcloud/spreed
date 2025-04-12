@@ -37,6 +37,7 @@ import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useSessionStore } from '../stores/session.ts'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
@@ -753,6 +754,7 @@ const actions = {
 	 */
 	async patchParticipants(context, { token, newParticipants, hasUserStatuses }) {
 		const guestNameStore = useGuestNameStore()
+		const sessionStore = useSessionStore()
 
 		const currentParticipants = context.state.attendees[token]
 		for (const attendeeId of Object.keys(Object(currentParticipants))) {
@@ -769,6 +771,17 @@ const actions = {
 				if (hasUserStatuses) {
 					emitUserStatusUpdated(participant)
 				}
+			}
+
+			// Heal unknown sessions from participants request
+			// If session.inCall is undefined, this is the best attempt to get the data; but in that case
+			// it will be the same for different sessions, otherwise we trust signaling messages
+			const sessionsToUpdate = sessionStore.orphanSessions.filter(session => participant.sessionIds.includes(session.sessionId))
+			for (const session of sessionsToUpdate) {
+				sessionStore.updateSession(session.signalingSessionId, {
+					attendeeId: participant.attendeeId,
+					inCall: session.inCall ?? participant.inCall,
+				})
 			}
 
 			if (participant.participantType === PARTICIPANT.TYPE.GUEST

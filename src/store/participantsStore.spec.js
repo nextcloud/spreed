@@ -35,6 +35,7 @@ import {
 	removeAllPermissionsFromParticipant,
 } from '../services/participantsService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useSessionStore } from '../stores/session.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('../services/participantsService', () => ({
@@ -397,9 +398,18 @@ describe('participantsStore', () => {
 			// Arrange
 			const payload = [{
 				attendeeId: 1,
-				sessionId: 'session-id-1',
+				sessionIds: ['session-id-1'],
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}]
+
+			const sessionStore = useSessionStore()
+			sessionStore.addSession({
+				attendeeId: undefined,
+				token: TOKEN,
+				signalingSessionId: 'signaling-session-id-1',
+				sessionId: 'session-id-1',
+				inCall: undefined,
+			})
 
 			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
 
@@ -408,6 +418,11 @@ describe('participantsStore', () => {
 
 			// Assert
 			expect(store.getters.participantsList(TOKEN)).toMatchObject(payload)
+			expect(sessionStore.getSession('signaling-session-id-1')).toMatchObject({
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			})
 		})
 
 		test('populates store for the fetched conversation', async () => {

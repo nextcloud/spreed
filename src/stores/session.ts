@@ -99,6 +99,10 @@ export const useSessionStore = defineStore('session', {
 				return acc | (session.inCall ?? 0)
 			}, 0)
 		},
+
+		orphanSessions: (state) => {
+			return Object.values(state.sessions).filter(session => !session.attendeeId)
+		},
 	},
 
 	actions: {
@@ -110,6 +114,15 @@ export const useSessionStore = defineStore('session', {
 		deleteSession(signalingSessionId: string) {
 			if (this.sessions[signalingSessionId]) {
 				Vue.delete(this.sessions, signalingSessionId)
+			}
+		},
+
+		updateSession(signalingSessionId: string, updatedData: Partial<Session>) {
+			if (this.sessions[signalingSessionId]) {
+				Vue.set(this.sessions, signalingSessionId, {
+					...this.sessions[signalingSessionId],
+					...updatedData,
+				})
 			}
 		},
 
