@@ -38,6 +38,11 @@ type ParticipantUpdatePayload = {
 	sessionIds?: string[],
 }
 
+type ParticipantStandaloneJoinPayload = {
+	displayName: string,
+	sessionIds: string[],
+}
+
 type State = {
 	sessions: Record<string, Session>,
 }
@@ -81,6 +86,15 @@ export const useSessionStore = defineStore('session', {
 			if (signalingSessionId) {
 				return state.sessions[signalingSessionId]
 			}
+		},
+
+		getAttendeeInCall: (state) => (attendeeId: number) => {
+			return Object.values(state.sessions).reduce((acc, session) => {
+				if (session.attendeeId !== attendeeId) {
+					return acc
+				}
+				return acc | (session.inCall ?? 0)
+			}, 0)
 		},
 	},
 
@@ -181,7 +195,7 @@ export const useSessionStore = defineStore('session', {
 				}
 
 				if (isStandaloneSignalingJoinSession(user)) {
-					// this.updateParticipantJoinedFromStandaloneSignaling(token, user)
+					this.updateParticipantJoinedFromStandaloneSignaling(token, session.attendeeId, user)
 				} else if (isStandaloneSignalingUpdateSession(user)) {
 					// this.updateParticipantChangedFromStandaloneSignaling(token, user)
 				}
@@ -210,8 +224,7 @@ export const useSessionStore = defineStore('session', {
 		 */
 		updateSessionsLeft(token: string, sessionIds: StandaloneSignalingLeaveSession[]) {
 			for (const sessionId of sessionIds) {
-				// this.updateParticipantLeftFromStandaloneSignaling(token, sessionId)
-				this.deleteSession(sessionId)
+				this.updateParticipantLeftFromStandaloneSignaling(token, sessionId)
 			}
 		},
 
@@ -266,6 +279,67 @@ export const useSessionStore = defineStore('session', {
 					})
 				}
 			}
+		},
+
+		/**
+		 * Update participants joined in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 * @param attendeeId - Attendee ID
+		 * @param user - Users payload from signaling message
+		 */
+		updateParticipantJoinedFromStandaloneSignaling(token: string, attendeeId: number, user: StandaloneSignalingJoinSession) {
+			/** Exclude internal clients (phone) from update */
+			if (!user.roomsessionid || (user.user && 'callid' in user.user)) {
+				return
+			}
+
+			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
+			if (!participant) {
+				return
+			}
+
+			const updatedData: ParticipantStandaloneJoinPayload = {
+				displayName: user.user?.displayname ?? participant.displayName,
+				sessionIds: [...new Set([...participant.sessionIds, user.roomsessionid])],
+			}
+
+			store.commit('updateParticipant', { token, attendeeId, updatedData })
+		},
+
+		/**
+		 * Update participant left in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 * @param signalingSessionId - Disconnected signaling session
+		 */
+		updateParticipantLeftFromStandaloneSignaling(token: string, signalingSessionId: string) {
+			const session = this.getSession(signalingSessionId)
+			this.deleteSession(signalingSessionId)
+			const attendeeId = session?.attendeeId
+			if (!attendeeId) {
+				// Skip participant update
+				return
+			}
+
+			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
+			if (!participant) {
+				return
+			}
+
+			// If attendee has another sessions left, need to compute remaining inCall value
+			const sessionIds = participant.sessionIds.filter((id: string) => id !== session.sessionId)
+			const inCall = sessionIds.length
+				? this.getAttendeeInCall(attendeeId)
+				: PARTICIPANT.CALL_FLAG.DISCONNECTED
+			store.commit('updateParticipant', {
+				token,
+				attendeeId,
+				updatedData: {
+					sessionIds,
+					inCall,
+				},
+			})
 		},
 	},
 })
