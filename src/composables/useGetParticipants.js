@@ -58,7 +58,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 
 	const handleUsersLeft = ([sessionIds]) => {
 		const sessionStore = useSessionStore()
-		sessionStore.updateSessionsLeft(sessionIds)
+		sessionStore.updateSessionsLeft(token.value, sessionIds)
 	}
 
 	/**
