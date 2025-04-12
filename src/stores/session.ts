@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { useGuestNameStore } from './guestName.js'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import store from '../store/index.js'
 import type {
@@ -176,7 +179,7 @@ export const useSessionStore = defineStore('session', {
 				if (isStandaloneSignalingJoinSession(user)) {
 					this.updateParticipantJoinedFromStandaloneSignaling(token, session.attendeeId, user)
 				} else if (isStandaloneSignalingUpdateSession(user)) {
-					// this.updateParticipantChangedFromStandaloneSignaling(token, user)
+					this.updateParticipantChangedFromStandaloneSignaling(token, session.attendeeId, user)
 				}
 			}
 
@@ -308,6 +311,59 @@ export const useSessionStore = defineStore('session', {
 					updatedData: {
 						sessionIds,
 						inCall: sessionIds.length ? participant.inCall : PARTICIPANT.CALL_FLAG.DISCONNECTED,
+					},
+				})
+			}
+		},
+
+		/**
+		 * Update participants changes in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 * @param attendeeId - Attendee ID
+		 * @param user - Users payload from signaling message
+        */
+		updateParticipantChangedFromStandaloneSignaling(token: string, attendeeId: number, user: StandaloneSignalingUpdateSession) {
+			const guestNameStore = useGuestNameStore()
+
+			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
+			if (!participant) {
+				return
+			}
+
+			const updatedData = {
+				attendeeId,
+				displayName: user.displayName ?? participant.displayName,
+				participantType: user.participantType,
+				permissions: user.participantPermissions,
+				inCall: Math.max(participant.inCall, user.inCall),
+				lastPing: user.lastPing,
+			}
+
+			store.commit('updateParticipant', { token, attendeeId, updatedData })
+
+			if ((participant.participantType === PARTICIPANT.TYPE.GUEST || participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+				&& updatedData.displayName !== participant.displayName) {
+				guestNameStore.addGuestName({
+					token,
+					actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
+					actorDisplayName: updatedData.displayName!,
+				}, { noUpdate: false })
+			}
+		},
+
+		/**
+		 * Update participants (end call for everyone) in store according to signaling message
+		 *
+		 * @param token - Conversation token
+		 */
+		updateParticipantsDisconnectedFromStandaloneSignaling(token: string) {
+			for (const participant of store.getters.participantsList(token) as Participant[]) {
+				store.commit('updateParticipant', {
+					token,
+					attendeeId: participant.attendeeId,
+					updatedData: {
+						inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 					},
 				})
 			}
