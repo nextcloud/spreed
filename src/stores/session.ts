@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { ATTENDEE } from '../constants.ts'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import store from '../store/index.js'
 import type {
 	InternalSignalingSession,
@@ -27,6 +27,16 @@ type SignalingSessionPayload =
 	| InternalSignalingSession
 	| StandaloneSignalingJoinSession
 	| StandaloneSignalingUpdateSession
+
+type ParticipantUpdatePayload = {
+	attendeeId: number,
+	displayName?: string,
+	inCall: number,
+	lastPing: number,
+	permissions: number,
+	participantType?: number,
+	sessionIds?: string[],
+}
 
 type State = {
 	sessions: Record<string, Session>,
@@ -165,7 +175,7 @@ export const useSessionStore = defineStore('session', {
 			}
 
 			if (isInternalSignalingSession(users)) {
-				// this.updateParticipantsFromInternalSignaling(token, users)
+				this.updateParticipantsFromInternalSignaling(token, users)
 
 				// Internal signaling server always returns all current sessions,
 				// so if some participants are missing - they are 'offline'
@@ -189,6 +199,57 @@ export const useSessionStore = defineStore('session', {
 			// this.updateParticipantsLeftFromStandaloneSignaling(token, sessionIds)
 			for (const sessionId of sessionIds) {
 				this.deleteSession(sessionId)
+			}
+		},
+
+		/**
+		 * Update participants in store according to data from internal signaling server
+		 *
+		 * @param token - Conversation token
+		 * @param users - Users payload from signaling message
+		 */
+		updateParticipantsFromInternalSignaling(token: string, users: InternalSignalingSession[]) {
+			const participantsToUpdate: Record<string, ParticipantUpdatePayload> = {}
+
+			for (const user of users) {
+				const session = this.getSession(user.sessionId)
+				const attendeeId = session?.attendeeId
+				if (!attendeeId) {
+					// Skip participant update
+					continue
+				}
+
+				if (!participantsToUpdate[attendeeId]) {
+					// Prepare payload to update object in participants store
+					participantsToUpdate[attendeeId] = {
+						attendeeId,
+						inCall: user.inCall,
+						lastPing: user.lastPing,
+						permissions: user.participantPermissions,
+						sessionIds: [user.sessionId],
+					}
+				} else {
+					// Payload already exists, but participant also joined from another device
+					participantsToUpdate[attendeeId].sessionIds!.push(user.sessionId)
+				}
+			}
+
+			for (const participant of store.getters.participantsList(token) as Participant[]) {
+				const { attendeeId, sessionIds } = participant
+				if (participantsToUpdate[attendeeId]) {
+					store.commit('updateParticipant', {
+						token,
+						attendeeId,
+						updatedData: participantsToUpdate[attendeeId],
+					})
+				} else if (sessionIds.length !== 0) {
+					// Participant left conversation from all devices, setting as 'offline'
+					store.commit('updateParticipant', {
+						token,
+						attendeeId,
+						updatedData: { attendeeId, inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED, sessionIds: [] },
+					})
+				}
 			}
 		},
 	},
