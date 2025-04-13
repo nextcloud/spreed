@@ -5,15 +5,8 @@
 
 <template>
 	<Fragment>
-		<p v-if="conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT" class="app-settings-section__hint">
-			{{ t('spreed', 'You can change the title and the description in ') }}
-			<a :href="CalendarAppUrl"
-				target="_blank"
-				rel="noreferrer nofollow"
-				class="external">
-				{{ t('spreed', 'Calendar.') }} ↗
-			</a>
-		</p>
+		<!-- eslint-disable-next-line vue/no-v-html -->
+		<p v-if="conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT" class="app-settings-section__hint" v-html="CalendarHint" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
@@ -126,6 +119,12 @@ export default {
 
 		CalendarAppUrl() {
 			return generateUrl('apps/calendar')
+		},
+
+		CalendarHint() {
+			return t('spreed', 'You can change the title and the description in {linkstart}Calendar ↗{linkend}.')
+				.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${this.CalendarAppUrl}">`)
+				.replace('{linkend}', '</a>')
 		},
 	},
 
