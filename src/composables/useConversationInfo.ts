@@ -133,9 +133,7 @@ export function useConversationInfo({
 			if (startTime - nowUnix < 24 * 60 * 60) {
 				return futureRelativeTime(startTime * 1000)
 			} else {
-				return t('spreed', 'Event starts {date}', {
-					date: moment(startTime * 1000).calendar(),
-				})
+				return moment(startTime * 1000).calendar()
 			}
 		}
 
