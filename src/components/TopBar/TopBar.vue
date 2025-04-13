@@ -285,16 +285,21 @@ export default {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
 
+		eventEndTime() {
+			return parseInt(this.conversation.objectId?.split('#')?.at(1) ?? '')
+		},
+
 		showCalendarEvents() {
 			return this.getUserId && !this.isInCall && !this.isSidebar
-				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-				&& this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT
+				&& (this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+				&& (this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT
+					|| this.eventEndTime > convertToUnix(Date.now())))
 		},
 
 		showEventConversationActions() {
 			return !this.isInCall && !this.isSidebar && this.isModeratorOrUser
 				&& this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
-				&& parseInt(this.conversation.objectId.split('#')?.at(1) ?? '') < convertToUnix(Date.now())
+				&& this.eventEndTime < convertToUnix(Date.now())
 				&& !this.conversation.isArchived
 		},
 

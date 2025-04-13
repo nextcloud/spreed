@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import { useRouter, useRoute } from 'vue-router/composables'
 
@@ -22,8 +22,8 @@ import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 const props = defineProps<{
-    token: string,
-    container?: string,
+	token: string,
+	container?: string,
 }>()
 
 const store = useStore()
@@ -31,7 +31,7 @@ const router = useRouter()
 const route = useRoute()
 const showEventConversationDialog = ref(false)
 
-const isModerator = store.getters.isModerator
+const isModerator = computed(() => store.getters.isModerator)
 
 /**
  * Delete conversation
@@ -59,9 +59,11 @@ async function archiveEventConversation() {
 }
 
 </script>
+
 <template>
 	<div>
 		<NcButton :aria-label="t('spreed', 'Event conversation expiry')"
+			:title="t('spreed', 'Event conversation expiry')"
 			type="warning"
 			@click="showEventConversationDialog = true">
 			<template #icon>
@@ -79,13 +81,11 @@ async function archiveEventConversation() {
 			</template>
 			<template #actions>
 				<NcButton v-if="isModerator"
-					:aria-label="t('spreed', 'Delete now')"
 					type="error"
 					@click="deleteEventConversation">
 					{{ t('spreed', 'Delete now') }}
 				</NcButton>
 				<NcButton v-if="supportsArchive"
-					:aria-label="t('spreed', 'Archive now')"
 					type="warning"
 					@click="archiveEventConversation">
 					{{ t('spreed', 'Archive now') }}
