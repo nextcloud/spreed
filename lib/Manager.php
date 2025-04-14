@@ -949,13 +949,10 @@ class Manager {
 		}
 
 		$room = $this->createRoomObject($row);
-		if ($userId !== null && isset($row['actor_id'])) {
-			$participant = $this->createParticipantObject($room, $row);
-			$this->participantService->cacheParticipant($room, $participant);
-			$room->setParticipant($row['actor_id'], $participant);
-		}
-
-		return $this->createRoomObject($row);
+		$participant = $this->createParticipantObject($room, $row);
+		$this->participantService->cacheParticipant($room, $participant);
+		$room->setParticipant($row['actor_id'], $participant);
+		return $room;
 	}
 
 	/**
