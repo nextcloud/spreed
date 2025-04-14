@@ -92,6 +92,7 @@ export default {
 		return {
 			collapsed: true,
 			isTextMoreThanOneLine: false,
+			resizeObserver: null,
 		}
 	},
 
@@ -122,16 +123,16 @@ export default {
 		},
 	},
 
-	watch: {
-		userAbsenceMessage() {
-			this.$nextTick(() => {
-				this.setIsTextMoreThanOneLine()
-			})
-		},
-	},
-
 	mounted() {
 		this.setIsTextMoreThanOneLine()
+		this.resizeObserver = new ResizeObserver(this.setIsTextMoreThanOneLine)
+		this.resizeObserver.observe(this.$refs.absenceMessage)
+	},
+
+	beforeDestroy() {
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	methods: {
@@ -141,6 +142,9 @@ export default {
 		},
 
 		setIsTextMoreThanOneLine() {
+			if (!this.collapsed) {
+				return
+			}
 			this.isTextMoreThanOneLine = this.$refs.absenceMessage?.scrollHeight > this.$refs.absenceMessage?.clientHeight
 		},
 
