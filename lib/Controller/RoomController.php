@@ -1930,6 +1930,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Direct dial-in (SIP bridge)
 	 *
 	 * @param string $phoneNumber Phone number that is called
+	 * @param string $caller Phone number of the person calling in
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
 	 *
 	 * 200: Participant returned
@@ -1941,7 +1942,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	public function directDialIn(string $phoneNumber): DataResponse {
+	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($phoneNumber)) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -1964,10 +1965,36 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
+		$room = null;
+		$cleanedCaller = $this->phoneNumberUtil->convertToStandardFormat($caller);
+		if ($cleanedCaller !== null) {
+			$objectId = $cleanedCaller;
+			try {
+				$room = $this->manager->getRoomForUserByObject($entity->getActorId(), Room::OBJECT_TYPE_PHONE, $objectId);
+				$this->logger->debug('Reusing existing direct dial-in conversation for caller ' . $cleanedCaller . ' and user ' . $entity->getActorId());
+			} catch (RoomNotFoundException) {
+			}
+		} else {
+			$objectId = Room::OBJECT_TYPE_PHONE;
+		}
 
-		// FIXME
+		if (!$room instanceof Room) {
+			$user = $this->userManager->get($entity->getActorId());
+			try {
+				$room = $this->roomService->createConversation(
+					Room::TYPE_GROUP,
+					$caller,
+					$user,
+					Room::OBJECT_TYPE_PHONE,
+					$objectId,
+					sipEnabled: Webinary::SIP_ENABLED_NO_PIN,
+				);
+			} catch (CreationException|PasswordException $e) {
+				$this->logger->error('Error occurred while creating SIP direct dial-in conversation', ['exception' => $e]);
+			}
+		}
 
-		return new DataResponse($this->formatRoom($room, $participant));
+		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $entity->getActorId(), false)));
 	}
 
 	/**

@@ -63,9 +63,9 @@ class PhoneService {
 		if (empty($entities)) {
 			// Replacement has no phone number, fall back to original user
 			return $entity;
-		} else {
-			return array_shift($entities);
 		}
+
+		return array_shift($entities);
 	}
 
 	/**
