@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,6 +9,9 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\ResponseInterface;
@@ -15,6 +20,7 @@ class SharingContext implements Context {
 	private string $baseUrl;
 	private string $currentServer;
 	private ?ResponseInterface $response = null;
+	private ?string $responseBody = null;
 	private string $currentUser = '';
 	private array $adminUser;
 	private string $regularUserPassword;
@@ -32,22 +38,13 @@ class SharingContext implements Context {
 		}
 	}
 
-	/**
-	 * @param string $currentServer
-	 * @param string $baseUrl
-	 */
-	public function setCurrentServer(string $currentServer, string $baseUrl) {
+	public function setCurrentServer(string $currentServer, string $baseUrl): void {
 		$this->currentServer = $currentServer;
 		$this->baseUrl = $baseUrl;
 	}
 
-	/**
-	 * @Given user :user creates folder :destination
-	 *
-	 * @param string $user
-	 * @param string $destination
-	 */
-	public function userCreatesFolder($user, $destination) {
+	#[Given('user :user creates folder :destination')]
+	public function userCreatesFolder(string $user, string $destination): void {
 		$this->currentUser = $user;
 
 		$url = "/$user/$destination/";
@@ -57,14 +54,8 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(201);
 	}
 
-	/**
-	 * @Given user :user moves file :source to :destination
-	 *
-	 * @param string $user
-	 * @param string $source
-	 * @param string $destination
-	 */
-	public function userMovesFileTo(string $user, string $source, string $destination) {
+	#[Given('user :user moves file :source to :destination')]
+	public function userMovesFileTo(string $user, string $source, string $destination): void {
 		$this->currentUser = $user;
 
 		$url = "/$user/$source";
@@ -75,26 +66,14 @@ class SharingContext implements Context {
 		$this->sendingToDav('MOVE', $url, $headers);
 	}
 
-	/**
-	 * @Given user :user moves file :source to :destination with :statusCode
-	 *
-	 * @param string $user
-	 * @param string $source
-	 * @param string $destination
-	 * @param int statusCode
-	 */
-	public function userMovesFileToWith(string $user, string $source, string $destination, int $statusCode) {
+	#[Given('user :user moves file :source to :destination with :statusCode')]
+	public function userMovesFileToWith(string $user, string $source, string $destination, int $statusCode): void {
 		$this->userMovesFileTo($user, $source, $destination);
 		$this->theHTTPStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @Given user :user deletes file :file
-	 *
-	 * @param string $user
-	 * @param string $file
-	 */
-	public function userDeletesFile($user, $file) {
+	#[Given('user :user deletes file :file')]
+	public function userDeletesFile(string $user, string $file): void {
 		$this->currentUser = $user;
 
 		$url = "/$user/$file";
@@ -104,137 +83,63 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(204);
 	}
 
-	/**
-	 * @When user :user shares :path with user :sharee
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param TableNode|null $body
-	 */
-	public function userSharesWithUser(string $user, string $path, string $sharee, ?TableNode $body = null) {
+	#[When('user :user shares :path with user :sharee')]
+	public function userSharesWithUser(string $user, string $path, string $sharee, ?TableNode $body = null): void {
 		$this->userSharesWith($user, $path, 0 /*IShare::TYPE_USER*/, $sharee, $body);
 	}
 
-	/**
-	 * @When user :user shares :path with user :sharee with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param int $statusCode
-	 */
-	public function userSharesWithUserWithOcs(string $user, string $path, string $sharee, int $statusCode) {
+	#[When('user :user shares :path with user :sharee with OCS :statusCode')]
+	public function userSharesWithUserWithOcs(string $user, string $path, string $sharee, int $statusCode): void {
 		$this->userSharesWithUser($user, $path, $sharee);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user shares :path with group :sharee
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param TableNode|null $body
-	 */
-	public function userSharesWithGroup(string $user, string $path, string $sharee, ?TableNode $body = null) {
+	#[When('user :user shares :path with group :sharee')]
+	public function userSharesWithGroup(string $user, string $path, string $sharee, ?TableNode $body = null): void {
 		$this->userSharesWith($user, $path, 1 /*IShare::TYPE_GROUP*/, $sharee, $body);
 	}
 
-	/**
-	 * @When user :user shares :path with group :sharee with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param int $statusCode
-	 */
-	public function userSharesWithGroupWithOcs(string $user, string $path, string $sharee, int $statusCode) {
+	#[When('user :user shares :path with group :sharee with OCS :statusCode')]
+	public function userSharesWithGroupWithOcs(string $user, string $path, string $sharee, int $statusCode): void {
 		$this->userSharesWithGroup($user, $path, $sharee);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user shares :path with team :sharee
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param TableNode|null $body
-	 */
-	public function userSharesWithTeam(string $user, string $path, string $sharee, ?TableNode $body = null) {
+	#[When('user :user shares :path with team :sharee')]
+	public function userSharesWithTeam(string $user, string $path, string $sharee, ?TableNode $body = null): void {
 		$this->userSharesWith($user, $path, 7 /*IShare::TYPE_CIRCLE*/, $sharee, $body);
 	}
 
-	/**
-	 * @When user :user shares :path with team :sharee with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $sharee
-	 * @param int $statusCode
-	 */
-	public function userSharesWithTeamWithOcs(string $user, string $path, string $sharee, int $statusCode) {
+	#[When('user :user shares :path with team :sharee with OCS :statusCode')]
+	public function userSharesWithTeamWithOcs(string $user, string $path, string $sharee, int $statusCode): void {
 		$this->userSharesWithTeam($user, $path, FeatureContext::getTeamIdForLabel($this->currentServer, $sharee));
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user shares :path with room :room
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $room
-	 * @param TableNode|null $body
-	 */
-	public function userSharesWithRoom(string $user, string $path, string $room, ?TableNode $body = null) {
+	#[When('user :user shares :path with room :room')]
+	public function userSharesWithRoom(string $user, string $path, string $room, ?TableNode $body = null): void {
 		$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
 	}
 
-	/**
-	 * @When user :user shares :path with room :room with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param string $room
-	 * @param int $statusCode
-	 */
+	#[When('user :user shares :path with room :room with OCS :statusCode')]
 	public function userSharesWithRoomWithOcs(string $user, string $path, string $room, int $statusCode) {
 		$this->userSharesWithRoom($user, $path, $room);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user shares :path by link
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param TableNode|null $body
-	 */
-	public function userSharesByLink(string $user, string $path, ?TableNode $body = null) {
+	#[When('user :user shares :path by link')]
+	public function userSharesByLink(string $user, string $path, ?TableNode $body = null): void {
 		$this->userSharesWith($user, $path, 3 /*IShare::TYPE_LINK*/, '', $body);
 	}
 
-	/**
-	 * @When user :user shares :path by link with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param string $path
-	 * @param int $statusCode
-	 * @param TableNode|null $body
-	 */
-	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode, ?TableNode $body = null) {
+	#[When('user :user shares :path by link with OCS :statusCode')]
+	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode, ?TableNode $body = null): void {
 		$this->userSharesByLink($user, $path, $body);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user updates last share with
-	 *
-	 * @param string $user
-	 * @param TableNode $body
-	 */
-	public function userUpdatesLastShareWith(string $user, TableNode $body) {
+	#[When('user :user updates last share with')]
+	public function userUpdatesLastShareWith(string $user, TableNode $body): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares/' . $this->getLastShareId();
@@ -242,12 +147,8 @@ class SharingContext implements Context {
 		$this->sendingTo('PUT', $url, $body);
 	}
 
-	/**
-	 * @When user :user deletes last share
-	 *
-	 * @param string $user
-	 */
-	public function userDeletesLastShare(string $user) {
+	#[When('user :user deletes last share')]
+	public function userDeletesLastShare(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares/' . $this->getLastShareId();
@@ -255,23 +156,14 @@ class SharingContext implements Context {
 		$this->sendingTo('DELETE', $url);
 	}
 
-	/**
-	 * @When user :user deletes last share with OCS :statusCode
-	 *
-	 * @param string $user
-	 * @param int $statusCode
-	 */
-	public function userDeletesLastShareWithOcs(string $user, int $statusCode) {
+	#[When('user :user deletes last share with OCS :statusCode')]
+	public function userDeletesLastShareWithOcs(string $user, int $statusCode): void {
 		$this->userDeletesLastShare($user);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
-	/**
-	 * @When user :user restores last share
-	 *
-	 * @param string $user
-	 */
-	public function userRestoresLastShareWithOcs(string $user) {
+	#[When('user :user restores last share')]
+	public function userRestoresLastShareWithOcs(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/deletedshares/ocRoomShare:' . $this->getLastShareId();
@@ -279,10 +171,8 @@ class SharingContext implements Context {
 		$this->sendingTo('POST', $url);
 	}
 
-	/**
-	 * @When user :user gets last share
-	 */
-	public function userGetsLastShare(string $user) {
+	#[When('user :user gets last share')]
+	public function userGetsLastShare(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares/' . $this->getLastShareId();
@@ -290,12 +180,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user accepts last share
-	 *
-	 * @param string $user
-	 */
-	public function userAcceptsLastShare(string $user) {
+	#[When('user :user accepts last share')]
+	public function userAcceptsLastShare(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares/pending/' . $this->getLastShareId();
@@ -306,12 +192,8 @@ class SharingContext implements Context {
 		$this->theOCSStatusCodeShouldBe(100);
 	}
 
-	/**
-	 * @When user :user gets all shares
-	 *
-	 * @param string $user
-	 */
-	public function userGetsAllShares(string $user) {
+	#[When('user :user gets all shares')]
+	public function userGetsAllShares(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares';
@@ -319,12 +201,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all shares and reshares
-	 *
-	 * @param string $user
-	 */
-	public function userGetsAllSharesAndReshares(string $user) {
+	#[When('user :user gets all shares and reshares')]
+	public function userGetsAllSharesAndReshares(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?reshares=true';
@@ -332,13 +210,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all shares for :path
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsAllSharesFor(string $user, string $path) {
+	#[When('user :user gets all shares for :path')]
+	public function userGetsAllSharesFor(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?path=' . $path;
@@ -346,13 +219,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all shares and reshares for :path
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsAllSharesAndResharesFor(string $user, string $path) {
+	#[When('user :user gets all shares and reshares for :path')]
+	public function userGetsAllSharesAndResharesFor(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?reshares=true&path=' . $path;
@@ -360,13 +228,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all shares for :path and its subfiles
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsAllSharesForAndItsSubfiles(string $user, string $path) {
+	#[When('user :user gets all shares for :path and its subfiles')]
+	public function userGetsAllSharesForAndItsSubfiles(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?subfiles=true&path=' . $path;
@@ -374,12 +237,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all received shares
-	 *
-	 * @param string $user
-	 */
-	public function userGetsAllReceivedShares(string $user) {
+	#[When('user :user gets all received shares')]
+	public function userGetsAllReceivedShares(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?shared_with_me=true';
@@ -387,13 +246,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets all received shares for :path
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsAllReceivedSharesFor(string $user, string $path) {
+	#[When('user :user gets all received shares for :path')]
+	public function userGetsAllReceivedSharesFor(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?shared_with_me=true&path=' . $path;
@@ -401,12 +255,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When user :user gets deleted shares
-	 *
-	 * @param string $user
-	 */
-	public function userGetsDeletedShares(string $user) {
+	#[When('user :user gets deleted shares')]
+	public function userGetsDeletedShares(string $user): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/deletedshares';
@@ -414,13 +264,8 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
-	/**
-	 * @When /^user "([^"]*)" gets sharees for$/
-	 *
-	 * @param string $user
-	 * @param TableNode $body
-	 */
-	public function userGetsShareesFor(string $user, TableNode $body) {
+	#[When('/^user "([^"]*)" gets sharees for$/')]
+	public function userGetsShareesFor(string $user, TableNode $body): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/sharees';
@@ -439,13 +284,8 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals(200, $this->response->getStatusCode());
 	}
 
-	/**
-	 * @When user :user gets the DAV properties for :path
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsTheDavPropertiesFor(string $user, string $path) {
+	#[When('user :user gets the DAV properties for :path')]
+	public function userGetsTheDavPropertiesFor(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = "/$user/$path";
@@ -455,13 +295,8 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(207);
 	}
 
-	/**
-	 * @When user :user gets the share-type DAV property for :path
-	 *
-	 * @param string $user
-	 * @param string $path
-	 */
-	public function userGetsTheShareTypeDavPropertyFor(string $user, string $path) {
+	#[When('user :user gets the share-type DAV property for :path')]
+	public function userGetsTheShareTypeDavPropertyFor(string $user, string $path): void {
 		$this->currentUser = $user;
 
 		$url = "/$user/$path";
@@ -479,12 +314,8 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(207);
 	}
 
-	/**
-	 * @When user :user gets recent files
-	 *
-	 * @param string $user
-	 */
-	public function userGetsRecentFiles(string $user) {
+	#[When('user :user gets recent files')]
+	public function userGetsRecentFiles(string $user): void {
 		// Recents endpoint is not an OCS endpoint, so a request token must be
 		// provided.
 		[$requestToken, $cookieJar] = $this->loggingInUsingWebAs($user);
@@ -494,13 +325,8 @@ class SharingContext implements Context {
 		$this->sendingToWithRequestToken('GET', $url, $requestToken, $cookieJar);
 	}
 
-	/**
-	 * @When transfering ownership from :user1 to :user2
-	 *
-	 * @param string $user1
-	 * @param string $user2
-	 */
-	public function transferingOwnershipFromTo(string $user1, string $user2) {
+	#[When('transfering ownership from :user1 to :user2')]
+	public function transferingOwnershipFromTo(string $user1, string $user2): void {
 		$args = ['files:transfer-ownership', $user1, $user2];
 
 		$args = array_map(function ($arg) {
@@ -526,30 +352,20 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals(0, $lastCode);
 	}
 
-	/**
-	 * @Then the OCS status code should be :statusCode
-	 *
-	 * @param int $statusCode
-	 */
-	public function theOCSStatusCodeShouldBe(int $statusCode) {
+	#[Then('the OCS status code should be :statusCode')]
+	public function theOCSStatusCodeShouldBe(int $statusCode): void {
 		$meta = $this->getXmlResponse()->meta[0];
 
 		\PHPUnit\Framework\Assert::assertEquals($statusCode, (int)$meta->statuscode, 'Response message: ' . (string)$meta->message);
 	}
 
-	/**
-	 * @Then the HTTP status code should be :statusCode
-	 *
-	 * @param int $statusCode
-	 */
-	public function theHTTPStatusCodeShouldBe(int $statusCode) {
+	#[Then('the HTTP status code should be :statusCode')]
+	public function theHTTPStatusCodeShouldBe(int $statusCode): void {
 		\PHPUnit\Framework\Assert::assertEquals($statusCode, $this->response->getStatusCode());
 	}
 
-	/**
-	 * @Then the list of returned shares has :count shares
-	 */
-	public function theListOfReturnedSharesHasShares(int $count) {
+	#[Then('the list of returned shares has :count shares')]
+	public function theListOfReturnedSharesHasShares(int $count): void {
 		$this->theHTTPStatusCodeShouldBe(200);
 		$this->theOCSStatusCodeShouldBe(100);
 
@@ -558,22 +374,13 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals($count, count($returnedShares->element));
 	}
 
-	/**
-	 * @Then share is returned with
-	 *
-	 * @param TableNode $body
-	 */
-	public function shareIsReturnedWith(TableNode $body) {
+	#[Then('share is returned with')]
+	public function shareIsReturnedWith(TableNode $body): void {
 		$this->shareXIsReturnedWith(0, $body);
 	}
 
-	/**
-	 * @Then share :number is returned with
-	 *
-	 * @param int $number
-	 * @param TableNode $body
-	 */
-	public function shareXIsReturnedWith(int $number, TableNode $body) {
+	#[Then('share :number is returned with')]
+	public function shareXIsReturnedWith(int $number, TableNode $body): void {
 		$this->theHTTPStatusCodeShouldBe(200);
 		$this->theOCSStatusCodeShouldBe(100);
 
@@ -669,19 +476,14 @@ class SharingContext implements Context {
 	}
 
 	/**
-	 * @Then /^"([^"]*)" sharees returned (are|is empty)$/
-	 *
 	 * Each sharee is specified as "| room name | room test identifier |"; the
 	 * name is checked against the returned "label" value, and the room test
 	 * identifier is used to get the room token, which is checked against the
 	 * returned "shareWith" value. The returned "shareType" value is expected to
 	 * always be "IShare::TYPE_ROOM", so there is no need to specify it.
-	 *
-	 * @param string $shareeType
-	 * @param string $isEmpty
-	 * @param TableNode|null $shareesList
 	 */
-	public function shareesReturnedAreIsEmpty(string $shareeType, string $isEmpty, ?TableNode $shareesList = null) {
+	#[Then('/^"([^"]*)" sharees returned (are|is empty)$/')]
+	public function shareesReturnedAreIsEmpty(string $shareeType, string $isEmpty, ?TableNode $shareesList = null): void {
 		if ($isEmpty !== 'is empty') {
 			$sharees = [];
 			foreach ($shareesList->getRows() as $row) {
@@ -690,7 +492,7 @@ class SharingContext implements Context {
 				$expectedSharee[] = FeatureContext::getTokenForIdentifier($row[1]);
 				$sharees[] = $expectedSharee;
 			}
-			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
+			$respondedArray = $this->getArrayOfShareesResponded($this->getXmlResponse(), $shareeType);
 			usort($sharees, function ($a, $b) {
 				return $a[2] <=> $b[2]; // Sort by token
 			});
@@ -699,18 +501,13 @@ class SharingContext implements Context {
 			});
 			\PHPUnit\Framework\Assert::assertEquals($sharees, $respondedArray);
 		} else {
-			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
+			$respondedArray = $this->getArrayOfShareesResponded($this->getXmlResponse(), $shareeType);
 			\PHPUnit\Framework\Assert::assertEmpty($respondedArray);
 		}
 	}
 
-	/**
-	 * @Then the list of returned files for :user is
-	 *
-	 * @param string $user
-	 * @param TableNode|null $table
-	 */
-	public function theListOfReturnedFilesForIs(string $user, ?TableNode $table = null) {
+	#[Then('the list of returned files for :user is')]
+	public function theListOfReturnedFilesForIs(string $user, ?TableNode $table = null): void {
 		$xmlResponse = $this->getXmlResponse();
 		$xmlResponse->registerXPathNamespace('d', 'DAV:');
 
@@ -729,12 +526,8 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals($expectedHrefs, $hrefs);
 	}
 
-	/**
-	 * @Then the response contains a share-types DAV property with
-	 *
-	 * @param TableNode|null $table
-	 */
-	public function theResponseContainsAShareTypesDavPropertyWith(?TableNode $table = null) {
+	#[Then('the response contains a share-types DAV property with')]
+	public function theResponseContainsAShareTypesDavPropertyWith(?TableNode $table = null): void {
 		$xmlResponse = $this->getXmlResponse();
 		$xmlResponse->registerXPathNamespace('oc', 'http://owncloud.org/ns');
 
@@ -753,14 +546,12 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals($expectedShareTypes, $shareTypes);
 	}
 
-	/**
-	 * @Then the response contains a share-types file property for :path with
-	 *
-	 * @param string $path
-	 * @param TableNode|null $table
-	 */
-	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, ?TableNode $table = null) {
-		$response = json_decode($this->response->getBody());
+	#[Then('the response contains a share-types file property for :path with')]
+	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, ?TableNode $table = null): void {
+		if ($this->responseBody === null) {
+			$this->responseBody = $this->response->getBody()->getContents();
+		}
+		$response = json_decode($this->responseBody);
 
 		$fileForPath = array_filter($response->files, function ($file) use ($path) {
 			$filePath = $file->path . (substr($file->path, -1) === '/'? '': '/');
@@ -790,14 +581,7 @@ class SharingContext implements Context {
 		\PHPUnit\Framework\Assert::assertEquals($expectedShareTypes, $shareTypes);
 	}
 
-	/**
-	 * @param string $user
-	 * @param string $path
-	 * @param string $shareType
-	 * @param string $shareWith
-	 * @param TableNode|null $body
-	 */
-	private function userSharesWith(string $user, string $path, string $shareType, string $shareWith, ?TableNode $body = null) {
+	private function userSharesWith(string $user, string $path, int $shareType, string $shareWith, ?TableNode $body = null): void {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares';
@@ -836,12 +620,7 @@ class SharingContext implements Context {
 		$this->lastCreatedShareData = $this->getXmlResponse();
 	}
 
-	/**
-	 * @param string $verb
-	 * @param string $url
-	 * @param TableNode $body
-	 */
-	private function sendingTo(string $verb, string $url, ?TableNode $body = null) {
+	private function sendingTo(string $verb, string $url, ?TableNode $body = null): void {
 		$fullUrl = $this->baseUrl . 'ocs/v1.php' . $url;
 		$client = new Client();
 		$options = [];
@@ -863,18 +642,14 @@ class SharingContext implements Context {
 
 		try {
 			$this->response = $client->request($verb, $fullUrl, $options);
+			$this->responseBody = null;
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
+			$this->responseBody = null;
 		}
 	}
 
-	/**
-	 * @param string $verb
-	 * @param string $url
-	 * @param array $headers
-	 * @param string $body
-	 */
-	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null) {
+	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null): void {
 		$fullUrl = $this->baseUrl . 'remote.php/dav/files' . $url;
 		$client = new Client();
 		$options = [];
@@ -895,18 +670,14 @@ class SharingContext implements Context {
 
 		try {
 			$this->response = $client->request($verb, $fullUrl, $options);
+			$this->responseBody = null;
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
+			$this->responseBody = null;
 		}
 	}
 
-	/**
-	 * @param string $verb
-	 * @param string $url
-	 * @param string $requestToken
-	 * @param CookieJar $cookieJar
-	 */
-	private function sendingToWithRequestToken(string $verb, string $url, string $requestToken, CookieJar $cookieJar) {
+	private function sendingToWithRequestToken(string $verb, string $url, string $requestToken, CookieJar $cookieJar): void {
 		$fullUrl = $this->baseUrl . $url;
 
 		$client = new Client();
@@ -921,23 +692,18 @@ class SharingContext implements Context {
 					]
 				]
 			);
+			$this->responseBody = null;
 		} catch (GuzzleHttp\Exception\ClientException $e) {
 			$this->response = $e->getResponse();
+			$this->responseBody = null;
 		}
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 * @return string
-	 */
 	private function extractRequestTokenFromResponse(ResponseInterface $response): string {
 		return substr(preg_replace('/(.*)data-requesttoken="(.*)">(.*)/sm', '\2', $response->getBody()->getContents()), 0, 89);
 	}
 
-	/**
-	 * @param string $user
-	 */
-	private function loggingInUsingWebAs(string $user) {
+	private function loggingInUsingWebAs(string $user): array {
 		$loginUrl = $this->baseUrl . '/login';
 
 		$cookieJar = new CookieJar();
@@ -974,33 +740,22 @@ class SharingContext implements Context {
 		return [$requestToken, $cookieJar];
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getLastShareToken(): string {
 		return (string)$this->lastCreatedShareData->data[0]->token;
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getLastShareId(): string {
 		return (string)$this->lastCreatedShareData->data[0]->id;
 	}
 
-	/**
-	 * @return SimpleXMLElement
-	 */
-	private function getXmlResponse(): \SimpleXMLElement {
-		return simplexml_load_string($this->response->getBody());
+	private function getXmlResponse(): \SimpleXMLElement|false {
+		if ($this->responseBody === null) {
+			$this->responseBody = $this->response->getBody()->getContents();
+		}
+		return simplexml_load_string($this->responseBody);
 	}
 
-	/**
-	 * @param string $field
-	 * @param string $contentExpected
-	 * @param \SimpleXMLElement $returnedShare
-	 */
-	private function assertFieldIsInReturnedShare(string $field, string $contentExpected, array $returnedShare) {
+	private function assertFieldIsInReturnedShare(string $field, string $contentExpected, array $returnedShare): void {
 		if ($contentExpected === 'IGNORE') {
 			return;
 		}
@@ -1026,9 +781,9 @@ class SharingContext implements Context {
 		}
 	}
 
-	private function getArrayOfShareesResponded(ResponseInterface $response, string $shareeType) {
-		$elements = simplexml_load_string($response->getBody())->data;
-		$elements = json_decode(json_encode($elements), 1);
+	private function getArrayOfShareesResponded(\SimpleXMLElement $response, string $shareeType): array {
+		$elements = $response->data;
+		$elements = json_decode(json_encode($elements), true);
 		if (strpos($shareeType, 'exact ') === 0) {
 			$elements = $elements['exact'];
 			$shareeType = substr($shareeType, 6);
