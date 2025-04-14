@@ -97,6 +97,33 @@ export default {
 	},
 
 	computed: {
+		unreadCountsMap() {
+			return this.$store.getters.conversationsList.reduce((acc, conversation) => {
+				if (conversation.isArchived) {
+					// Do not consider archived conversations in counting
+					return acc
+				}
+
+				if (conversation.unreadMessages > 0) {
+					acc.conversations++
+					acc.messages += conversation.unreadMessages
+				}
+
+				if (conversation.unreadMention) {
+					acc.mentions++
+				}
+
+				if (conversation.unreadMentionDirect) {
+					acc.mentionsDirect++
+				}
+				return acc
+			}, {
+				conversations: 0,
+				messages: 0,
+				mentions: 0,
+				mentionsDirect: 0,
+			})
+		},
 		getUserId() {
 			return this.$store.getters.getUserId()
 		},
@@ -165,6 +192,14 @@ export default {
 				}
 			}
 		},
+
+		unreadCountsMap: {
+			deep: true,
+			immediate: true,
+			handler(value) {
+				emit('talk:unread:updated', value)
+			},
+		}
 	},
 
 	beforeCreate() {
