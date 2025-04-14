@@ -28,6 +28,14 @@ See the general [Nextcloud Developers - Events](https://docs.nextcloud.com/serve
 * After event: `OCA\Talk\Events\RoomModifiedEvent`
 * Since: 18.0.0
 
+### Conversation extended
+
+When a new conversation is created from a one-to-one conversation
+
+* Before event: *Not available*
+* After event: `OCA\Talk\Events\RoomExtendedEvent`
+* Since: 21.1.0
+
 ### Lobby modified
 
 * Before event: `OCA\Talk\Events\BeforeLobbyModifiedEvent`
