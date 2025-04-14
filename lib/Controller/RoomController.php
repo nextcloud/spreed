@@ -2631,6 +2631,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId, [$calendarUri]);
 
 		if (empty($calendars)) {
+			$this->logger->error('scheduleMeeting calendar', ['uri' => $calendarUri]);
 			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -2639,17 +2640,20 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$user = $this->userManager->get($this->userId);
 		if (!$user instanceof IUser || $user->getEMailAddress() === null) {
+			$this->logger->error('scheduleMeeting email');
 			return new DataResponse(['error' => 'email'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$startDate = $this->timeFactory->getDateTime('@' . $start);
 		if ($start < $this->timeFactory->getTime()) {
+			$this->logger->error('scheduleMeeting start', ['start' => $start]);
 			return new DataResponse(['error' => 'start'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($end !== null) {
 			$endDate = $this->timeFactory->getDateTime('@' . $end);
 			if ($start >= $end) {
+				$this->logger->error('scheduleMeeting end', ['end' => $end]);
 				return new DataResponse(['error' => 'end'], Http::STATUS_BAD_REQUEST);
 			}
 		} else {
@@ -2711,7 +2715,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		try {
 			$eventBuilder->createInCalendar($calendar);
 		} catch (\InvalidArgumentException|CalendarException $e) {
-			$this->logger->debug('Failed to get calendar to schedule a meeting', ['exception' => $e]);
+			$this->logger->error('scheduleMeeting Failed to get calendar to schedule a meeting', ['exception' => $e]);
 			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
 		}
 
