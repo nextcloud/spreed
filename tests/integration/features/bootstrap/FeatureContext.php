@@ -485,6 +485,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['lobbyState'])) {
 				$data['lobbyState'] = (int)$room['lobbyState'];
 			}
+			if (!empty($expectedRoom['lobbyTimer'])) {
+				$data['lobbyTimer'] = (int)$room['lobbyTimer'];
+			}
+			if (isset($expectedRoom['lobbyTimer'])) {
+				$data['lobbyTimer'] = (int)$room['lobbyTimer'];
+				if ($expectedRoom['lobbyTimer'] === 'GREATER_THAN_ZERO' && $room['lobbyTimer'] > 0) {
+					$data['lobbyTimer'] = 'GREATER_THAN_ZERO';
+				}
+			}
 			if (isset($expectedRoom['breakoutRoomMode'])) {
 				$data['breakoutRoomMode'] = (int)$room['breakoutRoomMode'];
 			}
@@ -541,6 +550,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['defaultPermissions'])) {
 				$data['defaultPermissions'] = $this->mapPermissionsAPIOutput($room['defaultPermissions']);
+			}
+			if (isset($expectedRoom['mentionPermissions'])) {
+				$data['mentionPermissions'] = (int)$room['mentionPermissions'];
 			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
@@ -1027,6 +1039,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
+		if (isset($body['permissions'])) {
+			$body['permissions'] = $this->mapPermissionsTestInput($body['permissions']);
+		}
+		if (isset($body['lobbyTimer'])) {
+			if (preg_match('/^OFFSET\((\d+)\)$/', $body['lobbyTimer'], $matches)) {
+				$body['lobbyTimer'] = $matches[1] + time();
+			}
+		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);

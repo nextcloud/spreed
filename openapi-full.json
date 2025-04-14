@@ -712,6 +712,47 @@
                     }
                 }
             },
+            "InvitationList": {
+                "type": "object",
+                "properties": {
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "federated_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "emails": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "phones": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "teams": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "Matterbridge": {
                 "type": "object",
                 "required": [
@@ -1424,6 +1465,24 @@
                     },
                     {
                         "$ref": "#/components/schemas/ChatProxyMessage"
+                    }
+                ]
+            },
+            "RoomWithInvalidInvitations": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Room"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "invalidParticipants"
+                        ],
+                        "properties": {
+                            "invalidParticipants": {
+                                "$ref": "#/components/schemas/InvitationList"
+                            }
+                        }
                     }
                 ]
             },
@@ -11862,6 +11921,7 @@
             "post": {
                 "operationId": "room-create-room",
                 "summary": "Create a room with a user, a group or a circle",
+                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.",
                 "tags": [
                     "room"
                 ],
@@ -11880,7 +11940,14 @@
                             "schema": {
                                 "type": "object",
                                 "required": [
-                                    "roomType"
+                                    "roomType",
+                                    "readOnly",
+                                    "listable",
+                                    "lobbyState",
+                                    "sipEnabled",
+                                    "permissions",
+                                    "recordingConsent",
+                                    "mentionPermissions"
                                 ],
                                 "properties": {
                                     "roomType": {
@@ -11891,32 +11958,131 @@
                                     "invite": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "User, group, … ID to invite"
+                                        "description": "User, group, … ID to invite **Deprecated** Use the `$participants` array instead"
                                     },
                                     "roomName": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "Name of the room"
+                                        "description": "Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
                                     },
                                     "source": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.)"
+                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.) **Deprecated** Use the `$participants` array instead"
                                     },
                                     "objectType": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "Type of the object"
+                                        "description": "Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
                                     },
                                     "objectId": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "ID of the object"
+                                        "description": "ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
                                     },
                                     "password": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "The room password (only available with `conversation-creation-password` capability)"
+                                        "description": "The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})"
+                                    },
+                                    "readOnly": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "listable": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "messageExpiration": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0
+                                    },
+                                    "lobbyState": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "lobbyTimer": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0
+                                    },
+                                    "sipEnabled": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "permissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Default permissions for participants (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    },
+                                    "recordingConsent": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "mentionPermissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Who can mention at-all in the chat (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "emoji": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)",
+                                        "minLength": 1
+                                    },
+                                    "avatarColor": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)",
+                                        "minLength": 1
+                                    },
+                                    "participants": {
+                                        "$ref": "#/components/schemas/InvitationList",
+                                        "default": [],
+                                        "description": "List of participants to add grouped by type (only available with `conversation-creation-all` capability)"
                                     }
                                 }
                             }
@@ -12008,6 +12174,36 @@
                             }
                         }
                     },
+                    "202": {
+                        "description": "Room created successfully but not all participants could be added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoomWithInvalidInvitations"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "400": {
                         "description": "Room type invalid or missing or invalid password",
                         "content": {
@@ -12037,12 +12233,23 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "avatar",
+                                                                "description",
                                                                 "invite",
-                                                                "mode",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
                                                                 "object",
+                                                                "object-id",
+                                                                "object-type",
                                                                 "password",
                                                                 "permissions",
-                                                                "room",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
                                                                 "type"
                                                             ]
                                                         },
@@ -12087,12 +12294,23 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "avatar",
+                                                                "description",
                                                                 "invite",
-                                                                "mode",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
                                                                 "object",
+                                                                "object-id",
+                                                                "object-type",
                                                                 "password",
                                                                 "permissions",
-                                                                "room",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
                                                                 "type"
                                                             ]
                                                         },
@@ -12137,12 +12355,23 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "avatar",
+                                                                "description",
                                                                 "invite",
-                                                                "mode",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
                                                                 "object",
+                                                                "object-id",
+                                                                "object-type",
                                                                 "password",
                                                                 "permissions",
-                                                                "room",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
                                                                 "type"
                                                             ]
                                                         },
@@ -16736,6 +16965,10 @@
                                     "state": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
                                         "description": "New state"
                                     },
                                     "timer": {

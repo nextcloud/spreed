@@ -81,7 +81,13 @@ class PublicShareAuthController extends OCSController {
 		$roomName = $this->roomService->prepareConversationName($roomName);
 
 		// Create the room
-		$room = $this->roomService->createConversation(Room::TYPE_PUBLIC, $roomName, $sharerUser, 'share:password', $shareToken);
+		$room = $this->roomService->createConversation(
+			Room::TYPE_PUBLIC,
+			$roomName,
+			$sharerUser,
+			Room::OBJECT_TYPE_VIDEO_VERIFICATION,
+			$shareToken,
+		);
 
 		$user = $this->userSession->getUser();
 		$userId = $user instanceof IUser ? $user->getUID() : '';

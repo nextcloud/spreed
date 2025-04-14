@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomProperty\AvatarException;
 use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomModeException;
 use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomStatusException;
 use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
+use OCA\Talk\Exceptions\RoomProperty\CreationException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
@@ -62,6 +63,7 @@ use OCP\IUser;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
+use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use Psr\Log\LoggerInterface;
 
@@ -80,6 +82,7 @@ class RoomService {
 		protected IHasher $hasher,
 		protected IEventDispatcher $dispatcher,
 		protected IJobList $jobList,
+		protected EmojiService $emojiService,
 		protected LoggerInterface $logger,
 		protected IL10N $l10n,
 	) {
@@ -124,47 +127,142 @@ class RoomService {
 
 	/**
 	 * @return Room
-	 * @throws InvalidArgumentException on too long or empty names
-	 * @throws InvalidArgumentException unsupported type
-	 * @throws InvalidArgumentException invalid object data
+	 * @throws CreationException
 	 * @throws PasswordException empty or invalid password
 	 */
-	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = '', string $password = ''): Room {
+	public function createConversation(
+		int $type,
+		string $name,
+		?IUser $owner = null,
+		string $objectType = '',
+		string $objectId = '',
+		string $password = '',
+		int $readOnly = Room::READ_WRITE,
+		int $listable = Room::LISTABLE_NONE,
+		int $messageExpiration = 0,
+		int $lobbyState = Webinary::LOBBY_NONE,
+		?int $lobbyTimer = null,
+		int $sipEnabled = Webinary::SIP_DISABLED,
+		int $permissions = Attendee::PERMISSIONS_DEFAULT,
+		int $recordingConsent = RecordingService::CONSENT_REQUIRED_NO,
+		int $mentionPermissions = Room::MENTION_PERMISSIONS_EVERYONE,
+		string $description = '',
+		?string $emoji = null,
+		?string $avatarColor = null,
+		bool $allowInternalTypes = true,
+	): Room {
 		$name = trim($name);
 		if ($name === '' || mb_strlen($name) > 255) {
-			throw new InvalidArgumentException('name');
+			throw new CreationException(CreationException::REASON_NAME);
 		}
 
-		if (!\in_array($type, [
+		$types = [
 			Room::TYPE_GROUP,
 			Room::TYPE_PUBLIC,
-			Room::TYPE_CHANGELOG,
-			Room::TYPE_NOTE_TO_SELF,
-		], true)) {
-			throw new InvalidArgumentException('type');
+		];
+		if ($allowInternalTypes) {
+			$types[] = Room::TYPE_CHANGELOG;
+			$types[] = Room::TYPE_NOTE_TO_SELF;
+		}
+		if (!\in_array($type, $types, true)) {
+			throw new CreationException(CreationException::REASON_TYPE);
 		}
 
 		$objectType = trim($objectType);
 		if (isset($objectType[64])) {
-			throw new InvalidArgumentException('object_type');
+			throw new CreationException(CreationException::REASON_OBJECT_TYPE);
 		}
 
 		$objectId = trim($objectId);
 		if (isset($objectId[64])) {
-			throw new InvalidArgumentException('object_id');
+			throw new CreationException(CreationException::REASON_OBJECT_ID);
+		}
+
+		$objectTypes = [
+			'',
+			Room::OBJECT_TYPE_PHONE,
+			Room::OBJECT_TYPE_EVENT,
+		];
+		if ($allowInternalTypes) {
+			$objectTypes[] = BreakoutRoom::PARENT_OBJECT_TYPE;
+			$objectTypes[] = Room::OBJECT_TYPE_EMAIL;
+			$objectTypes[] = Room::OBJECT_TYPE_FILE;
+			$objectTypes[] = Room::OBJECT_TYPE_NOTE_TO_SELF;
+			$objectTypes[] = Room::OBJECT_TYPE_SAMPLE;
+			$objectTypes[] = Room::OBJECT_TYPE_VIDEO_VERIFICATION;
+		}
+
+		if (!in_array($objectType, $objectTypes, true)) {
+			throw new CreationException(CreationException::REASON_OBJECT_TYPE);
 		}
 
 		if (($objectType !== '' && $objectId === '') ||
 			($objectType === '' && $objectId !== '')) {
-			throw new InvalidArgumentException('object');
+			throw new CreationException(CreationException::REASON_OBJECT);
 		}
 
 		if ($type === Room::TYPE_PUBLIC && $password === '' && $this->config->isPasswordEnforced()) {
 			throw new PasswordException(PasswordException::REASON_VALUE, $this->l10n->t('Password needs to be set'));
 		}
 
+		if (!in_array($readOnly, [Room::READ_WRITE, Room::READ_ONLY], true)) {
+			throw new CreationException(CreationException::REASON_READ_ONLY);
+		}
+
+		if (!in_array($listable, [Room::LISTABLE_NONE, Room::LISTABLE_USERS, Room::LISTABLE_ALL], true)) {
+			throw new CreationException(CreationException::REASON_LISTABLE);
+		}
+
+		if ($messageExpiration < 0) {
+			throw new CreationException(CreationException::REASON_MESSAGE_EXPIRATION);
+		}
+
+		if (!in_array($lobbyState, [Webinary::LOBBY_NONE, Webinary::LOBBY_NON_MODERATORS], true)) {
+			throw new CreationException(CreationException::REASON_LOBBY);
+		}
+
+		$lobbyTimerDateTime = null;
+		if ($lobbyState !== Webinary::LOBBY_NONE && $lobbyTimer !== null) {
+			if ($lobbyTimer < 0) {
+				throw new CreationException(CreationException::REASON_LOBBY_TIMER);
+			}
+
+			$lobbyTimerDateTime = $this->timeFactory->getDateTime('@' . $lobbyTimer);
+			$lobbyTimerDateTime->setTimezone(new \DateTimeZone('UTC'));
+		}
+
+		if (!in_array($sipEnabled, [Webinary::SIP_DISABLED, Webinary::SIP_ENABLED, Webinary::SIP_ENABLED_NO_PIN], true)) {
+			throw new CreationException(CreationException::REASON_SIP_ENABLED);
+		}
+
+		if ($permissions < Attendee::PERMISSIONS_DEFAULT || $permissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
+			throw new CreationException(CreationException::REASON_PERMISSIONS);
+		} elseif ($permissions !== Attendee::PERMISSIONS_DEFAULT) {
+			$permissions |= Attendee::PERMISSIONS_CUSTOM;
+		}
+
+		if (!in_array($recordingConsent, [RecordingService::CONSENT_REQUIRED_NO, RecordingService::CONSENT_REQUIRED_YES], true)) {
+			throw new CreationException(CreationException::REASON_RECORDING_CONSENT);
+		}
+
+		if (!in_array($mentionPermissions, [Room::MENTION_PERMISSIONS_EVERYONE, Room::MENTION_PERMISSIONS_MODERATORS], true)) {
+			throw new CreationException(CreationException::REASON_MENTION_PERMISSIONS);
+		}
+		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new CreationException(CreationException::REASON_DESCRIPTION);
+		}
+
+		if ($emoji !== null) {
+			if ($this->emojiService->getFirstCombinedEmoji($emoji) !== $emoji) {
+				throw new CreationException(CreationException::REASON_AVATAR);
+			}
+			if ($avatarColor !== null && !preg_match('/^[a-fA-F0-9]{6}$/', $avatarColor)) {
+				throw new CreationException(CreationException::REASON_AVATAR);
+			}
+		}
+
 		if ($type !== Room::TYPE_PUBLIC || $password === '') {
-			$room = $this->manager->createRoom($type, $name, $objectType, $objectId);
+			$passwordHash = '';
 		} else {
 			$event = new ValidatePasswordPolicyEvent($password);
 			try {
@@ -173,7 +271,29 @@ class RoomService {
 				throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
 			}
 			$passwordHash = $this->hasher->hash($password);
-			$room = $this->manager->createRoom($type, $name, $objectType, $objectId, $passwordHash);
+		}
+
+		$room = $this->manager->createRoom(
+			$type,
+			$name,
+			$objectType,
+			$objectId,
+			$passwordHash,
+			$readOnly,
+			$listable,
+			$messageExpiration,
+			$lobbyState,
+			$lobbyTimerDateTime,
+			$sipEnabled,
+			$permissions,
+			$recordingConsent,
+			$mentionPermissions,
+			$description,
+		);
+
+		if ($emoji !== null) {
+			$avatarService = Server::get(AvatarService::class);
+			$avatarService->setAvatarFromEmoji($room, $emoji, $avatarColor);
 		}
 
 		if ($owner instanceof IUser) {
@@ -1303,5 +1423,4 @@ class RoomService {
 			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 	}
-
 }
