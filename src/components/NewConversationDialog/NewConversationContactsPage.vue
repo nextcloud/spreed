@@ -52,7 +52,9 @@
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			scrollable
-			show-search-hints
+			:show-search-hints="!onlyUsers"
+			:token="token"
+			:only-users="onlyUsers"
 			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>
@@ -102,9 +104,9 @@ export default {
 	},
 
 	props: {
-		conversationName: {
+		token: {
 			type: String,
-			required: true,
+			default: '',
 		},
 
 		selectedParticipants: {
@@ -115,6 +117,11 @@ export default {
 		canModerateSipDialOut: {
 			type: Boolean,
 			default: false,
+		},
+
+		onlyUsers: {
+			type: Boolean,
+			required: false,
 		},
 	},
 
@@ -213,7 +220,7 @@ export default {
 
 				const response = await request({
 					searchText: this.searchText,
-					token: 'new',
+					token: this.token || 'new',
 					forceTypes: [SHARE.TYPE.EMAIL], // email guests are allowed directly after conversation creation
 				})
 
@@ -301,9 +308,9 @@ export default {
 	gap: var(--default-grid-baseline);
 	border-bottom: 1px solid var(--color-background-darker);
 	padding: var(--default-grid-baseline) 0;
+	min-height: min-content;
 	max-height: 97px;
 	overflow-y: auto;
-	flex: 1 0 auto;
 	align-content: flex-start;
 }
 </style>

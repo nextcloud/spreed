@@ -67,6 +67,7 @@ import { useGroupwareStore } from '../stores/groupware.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { convertToUnix } from '../utils/formattedTime.ts'
+import { getDisplayNamesList } from '../utils/getDisplayName.ts'
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
@@ -995,22 +996,53 @@ const actions = {
 	},
 
 	/**
+	 * Creates a new group conversation the new conversation from one-to-one conversation
+	 * with another one-to-one participant and given user
+	 *
+	 * @param {object} context default store context
+	 * @param {object} payload action payload
+	 * @param {string} payload.token one-to-one conversation token
+	 * @param {Array} payload.newParticipants selected participants to be added
+	 */
+	async extendOneToOneConversation(context, { token, newParticipants }) {
+		const conversation = context.getters.conversation(token)
+		const participants = [
+			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
+			{ id: conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: conversation.displayName },
+			...newParticipants,
+		]
+		const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
+
+		return context.dispatch('createGroupConversation', {
+			roomName,
+			roomType: CONVERSATION.TYPE.GROUP,
+			objectType: CONVERSATION.OBJECT_TYPE.EXTENDED,
+			objectId: token,
+			participants,
+		})
+	},
+
+	/**
 	 * Creates a new private or public conversation, adds it to the store
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} payload action payload;
 	 * @param {string} payload.roomName displayed name for a new conversation
 	 * @param {number} payload.roomType whether a conversation is public or private
-	 * @param {string} payload.password password for a public conversation
-	 * @param {string} payload.description description for a new conversation
-	 * @param {number} payload.listable whether a conversation is opened to registered users
-	 * @param {Array} payload.participants list of participants
-	 * @param {object} payload.avatar avatar object: { emoji, color } | { file }
+	 * @param {string} [payload.objectType] object type of new conversation, if applicable
+	 * @param {string} [payload.objectId] reference to initial conversation, if applicable
+	 * @param {string} [payload.password] password for a public conversation
+	 * @param {string} [payload.description] description for a new conversation
+	 * @param {number} [payload.listable] whether a conversation is opened to registered users
+	 * @param {Array} [payload.participants] list of participants
+	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
 	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
 		roomName,
 		roomType,
+		objectType,
+		objectId,
 		password,
 		description,
 		listable,
@@ -1041,11 +1073,13 @@ const actions = {
 				response = await createConversation({
 					roomType,
 					roomName,
+					objectType,
+					objectId,
 					password,
 					description,
 					listable,
-					emoji: avatar.emoji,
-					avatarColor: avatar.color,
+					emoji: avatar?.emoji,
+					avatarColor: avatar?.color,
 					participants: participantsMap,
 				})
 			} else {
@@ -1062,12 +1096,12 @@ const actions = {
 			const promises = []
 
 			// FIXME Both advanced and legacy API do not support picture avatar upload on creation
-			if (avatar.file) {
+			if (avatar?.file) {
 				promises.push(context.dispatch('setConversationAvatarAction', { token, file: avatar.file }))
 			}
 
 			if (!supportConversationCreationAll) {
-				if (avatar.emoji) {
+				if (avatar?.emoji) {
 					promises.push(context.dispatch('setConversationEmojiAvatarAction', { token, emoji: avatar.emoji, color: avatar.color }))
 				}
 

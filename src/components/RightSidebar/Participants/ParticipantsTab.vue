@@ -41,17 +41,25 @@
 			:loading="!participantsInitialised" />
 
 		<div v-else class="scroller h-100">
-			<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
+			<template v-if="isOneToOneConversation">
+				<NcNoteCard type="info"
+					:text="t('spreed', 'A new group conversation with selected participant will be created')" />
+			</template>
+			<template v-else>
+				<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
 
-			<ParticipantsList v-if="filteredParticipants.length"
-				class="known-results"
-				:items="filteredParticipants"
-				:loading="!participantsInitialised" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+				<ParticipantsList v-if="filteredParticipants.length"
+					class="known-results"
+					:items="filteredParticipants"
+					:loading="!participantsInitialised" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
+			</template>
 
 			<ParticipantsSearchResults v-if="canAdd"
 				class="search-results"
+				:token="token"
 				:search-results="searchResults"
+				:only-users="isOneToOneConversation"
 				:contacts-loading="contactsLoading"
 				:no-results="noResults"
 				:search-text="searchText"
@@ -71,6 +79,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 
 import ParticipantsList from './ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
@@ -85,7 +94,7 @@ import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
-import { ATTENDEE } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
@@ -98,6 +107,7 @@ const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		NcNoteCard,
 		DialpadPanel,
 		Hint,
 		NcAppNavigationCaption,
@@ -204,6 +214,9 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+		isOneToOneConversation() {
+			return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(this.conversation.type)
+		},
 		userId() {
 			return this.$store.getters.getUserId()
 		},
@@ -290,6 +303,7 @@ export default {
 				const response = await request({
 					searchText: this.searchText,
 					token: this.token,
+					onlyUsers: this.isOneToOneConversation,
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []
@@ -309,18 +323,25 @@ export default {
 		/**
 		 * Add the selected group/user/circle to the conversation
 		 *
-		 * @param {object} item The autocomplete suggestion to start a conversation with
-		 * @param {string} item.id The ID of the target
-		 * @param {string} item.source The source of the target
+		 * @param {object} participant The autocomplete suggestion to start a conversation with
+		 * @param {string} participant.id The ID of the target
+		 * @param {string} participant.source The source of the target
 		 */
-		async addParticipants(item) {
+		async addParticipants(participant) {
 			try {
-				await addParticipant(this.token, item.id, item.source)
-				if (item.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
-					showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: item.id }))
+				if (this.isOneToOneConversation) {
+					await this.$store.dispatch('extendOneToOneConversation', {
+						token: this.token,
+						newParticipants: [participant],
+					})
+				} else {
+					await addParticipant(this.token, participant.id, participant.source)
+					this.cancelableGetParticipants()
+				}
+				if (participant.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
+					showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: participant.id }))
 				}
 				this.abortSearch()
-				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
 				showError(t('spreed', 'An error occurred while adding the participants'))
