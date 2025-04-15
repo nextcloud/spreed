@@ -103,23 +103,23 @@ export const useSessionStore = defineStore('session', {
 		},
 
 		orphanSessionIds: (state) => {
-			return Object.keys(state.sessions).filter(signalingSessionId => !state.sessions[signalingSessionId].attendeeId)
+			return Object.keys(state.sessions).filter(signalingSessionId => !state.sessions[signalingSessionId].attendeeId) // TODO
 		},
 	},
 
 	actions: {
 		addSession(session: Session) {
-			Vue.set(this.sessions, session.signalingSessionId, session)
+			Vue.set(this.sessions, session.signalingSessionId, session) // TODO
 			return session
 		},
 
 		deleteSession(signalingSessionId: string) {
 			if (this.sessions[signalingSessionId]) {
-				Vue.delete(this.sessions, signalingSessionId)
+				Vue.delete(this.sessions, signalingSessionId) // TODO
 			}
 		},
 
-		updateSession(signalingSessionId: string, updatedData: Partial<Session>) {
+		updateSession(signalingSessionId: string, updatedData: Partial<Session>) { // TODO
 			if (this.sessions[signalingSessionId]) {
 				Vue.set(this.sessions, signalingSessionId, {
 					...this.sessions[signalingSessionId],
@@ -131,7 +131,7 @@ export const useSessionStore = defineStore('session', {
 		findOrCreateSession(token: string, user: SignalingSessionPayload): Session {
 			const signalingSessionId = isStandaloneSignalingJoinSession(user) ? user.sessionid : user.sessionId
 			if (!signalingSessionId) {
-				throw new Error('Can not define sessionId from the payload')
+				throw new Error('Can not define sessionId from the payload') // TODO
 			}
 
 			const knownSession = this.getSession(signalingSessionId)
@@ -285,7 +285,7 @@ export const useSessionStore = defineStore('session', {
 		updateParticipantJoinedFromStandaloneSignaling(token: string, attendeeId: number, user: StandaloneSignalingJoinSession) {
 			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
 			if (!participant) {
-				return
+				return // TODO
 			}
 
 			const updatedData: ParticipantStandaloneJoinPayload = {
@@ -314,7 +314,7 @@ export const useSessionStore = defineStore('session', {
 
 				const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
 				if (!participant) {
-					continue
+					continue // TODO
 				}
 
 				const sessionIds = participant.sessionIds.filter((id: string) => id !== sessionId)
@@ -341,7 +341,7 @@ export const useSessionStore = defineStore('session', {
 
 			const participant = store.getters.getParticipant(token, attendeeId) as Participant | null
 			if (!participant) {
-				return
+				return // TODO
 			}
 
 			const updatedData = {
@@ -357,7 +357,7 @@ export const useSessionStore = defineStore('session', {
 
 			if ((participant.participantType === PARTICIPANT.TYPE.GUEST || participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 				&& updatedData.displayName !== participant.displayName) {
-				guestNameStore.addGuestName({
+				guestNameStore.addGuestName({  // TODO
 					token,
 					actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 					actorDisplayName: updatedData.displayName!,
