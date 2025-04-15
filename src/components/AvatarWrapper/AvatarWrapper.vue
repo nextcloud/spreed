@@ -28,6 +28,7 @@
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
 			:hide-status="!showUserStatus"
+			:show-user-status="showUserStatus"
 			:verbose-status="!showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
