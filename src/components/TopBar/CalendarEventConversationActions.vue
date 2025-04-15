@@ -39,7 +39,6 @@ const isModerator = computed(() => store.getters.isModerator)
 async function deleteEventConversation() {
 	try {
 		if (route?.params?.token === props.token) {
-			await store.dispatch('leaveConversation', { token: props.token })
 			await router.push({ name: 'root' })
 				.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
 		}
