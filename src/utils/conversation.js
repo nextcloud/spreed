@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { convertToUnix, ONE_HOUR_IN_MS } from './formattedTime.ts'
+import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
@@ -63,13 +63,28 @@ export function shouldIncludeArchived(conversation, showArchived) {
 }
 
 /**
+ * Returns the start and end time of the event conversation
+ *
+ * @param conversation
+ * @return {Object} start and end time in milliseconds
+ */
+export function getEventTimeRange(conversation) {
+	if (!isEvent(conversation)) {
+		return { start: null, end: null }
+	}
+	const [start, end] = conversation.objectId?.split('#')?.map(time => time * 1000)
+	return { start, end }
+}
+
+/**
  * check if the conversation is not an event conversation or if it is, check if it is happening in 16 hours
  *
  * @param {object} conversation conversation object
  * @return {boolean}
  */
 export function shouldIncludeEvents(conversation) {
-	return conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT || isEventHappeningSoon(conversation)
+	return !isEvent(conversation)
+	|| (conversation.objectId?.includes('#') && isEventHappeningSoon(conversation))
 }
 
 /**
@@ -78,8 +93,10 @@ export function shouldIncludeEvents(conversation) {
  * @param {object} conversation conversation object
  */
 export function isEventHappeningSoon(conversation) {
+	const timeDifference = getEventTimeRange(conversation).start - Date.now()
 	return isEvent(conversation)
-		&& (parseInt(conversation.objectId.split('#')?.at(0) ?? '') - convertToUnix(Date.now())) * 1000 < 16 * ONE_HOUR_IN_MS
+		&& timeDifference > 0
+		&& timeDifference < 16 * ONE_HOUR_IN_MS
 }
 
 /**
@@ -89,8 +106,10 @@ export function isEventHappeningSoon(conversation) {
  * @param {Array} filters the filter option
  */
 export function filterConversation(conversation, filters) {
-	return filters.length === 0
-		|| ((!filters.includes('unread') || hasUnreadMessages(conversation))
+	if (filters.length === 0) {
+		return shouldIncludeEvents(conversation)
+	}
+	return (!filters.includes('unread') || hasUnreadMessages(conversation))
 		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
-		&& ((!filters.includes('events') && shouldIncludeEvents(conversation)) || isEvent(conversation)))
+		&& (!filters.includes('events') || isEvent(conversation))
 }
