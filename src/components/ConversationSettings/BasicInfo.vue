@@ -6,11 +6,11 @@
 <template>
 	<Fragment>
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<p v-if="conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT" class="app-settings-section__hint" v-html="CalendarHint" />
+		<p v-if="isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
-		<EditableTextField :editable="canFullModerate && conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT"
+		<EditableTextField :editable="canFullModerate && !isEventConversation"
 			:initial-text="conversationName"
 			:editing="isEditingName"
 			:loading="isNameLoading"
@@ -23,7 +23,7 @@
 			<h4 class="app-settings-section__subtitle">
 				{{ t('spreed', 'Description') }}
 			</h4>
-			<EditableTextField :editable="canFullModerate && conversation.objectType !== CONVERSATION.OBJECT_TYPE.EVENT"
+			<EditableTextField :editable="canFullModerate && !isEventConversation"
 				:initial-text="description"
 				:editing="isEditingDescription"
 				:loading="isDescriptionLoading"
@@ -117,14 +117,14 @@ export default {
 			return this.conversation.token
 		},
 
-		CalendarAppUrl() {
-			return generateUrl('apps/calendar')
+		calendarHint() {
+			return t('spreed', 'You can change the title and the description in {linkstart}Calendar ↗{linkend}.')
+				.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${generateUrl('apps/calendar')}">`)
+				.replace('{linkend}', '</a>')
 		},
 
-		CalendarHint() {
-			return t('spreed', 'You can change the title and the description in {linkstart}Calendar ↗{linkend}.')
-				.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${this.CalendarAppUrl}">`)
-				.replace('{linkend}', '</a>')
+		isEventConversation() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
 		},
 	},
 
