@@ -83,6 +83,10 @@ return [
 		['name' => 'Room#addToFavorites', 'url' => '/api/{apiVersion}/room/{token}/favorite', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::removeFromFavorites() */
 		['name' => 'Room#removeFromFavorites', 'url' => '/api/{apiVersion}/room/{token}/favorite', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::markConversationAsImportant() */
+		['name' => 'Room#markConversationAsImportant', 'url' => '/api/{apiVersion}/room/{token}/important', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::markConversationAsUnimportant() */
+		['name' => 'Room#markConversationAsUnimportant', 'url' => '/api/{apiVersion}/room/{token}/important', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
 		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
 			'pin' => '\d{7,32}',
