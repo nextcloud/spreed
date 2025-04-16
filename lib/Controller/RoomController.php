@@ -1994,7 +1994,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $entity->getActorId(), false)));
+		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
+		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
 	/**
