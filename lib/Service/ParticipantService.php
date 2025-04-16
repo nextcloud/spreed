@@ -325,6 +325,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 */
+	public function markConversationAsImportant(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setImportant(true);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function markConversationAsUnimportant(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setImportant(false);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param IUser $user
@@ -1918,12 +1938,12 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
-	 * @return string[]
+	 * @return array<string, bool> (userId => isImportant)
 	 */
-	public function getParticipantUserIdsForCallNotifications(Room $room): array {
+	public function getParticipantUsersForCallNotifications(Room $room): array {
 		$query = $this->connection->getQueryBuilder();
 
-		$query->select('a.actor_id')
+		$query->select('a.actor_id', 'a.important')
 			->from('talk_attendees', 'a')
 			->leftJoin(
 				'a', 'talk_sessions', 's',
@@ -1960,14 +1980,14 @@ class ParticipantService {
 			);
 		}
 
-		$userIds = [];
+		$users = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$userIds[] = $row['actor_id'];
+			$users[$row['actor_id']] = (bool)$row['important'];
 		}
 		$result->closeCursor();
 
-		return $userIds;
+		return $users;
 	}
 
 	/**
