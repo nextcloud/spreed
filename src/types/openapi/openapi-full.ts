@@ -2379,6 +2379,8 @@ export type components = {
             /** Format: int64 */
             unreadMessages: number;
             isArchived: boolean;
+            /** @description Required capability: `important-conversations` */
+            isImportant: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
