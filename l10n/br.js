@@ -591,6 +591,7 @@ OC.L10N.register(
     "Go to file" : "Mont d'ar restr",
     "Translate" : "Treiñ",
     "Dismiss" : "Arrest",
+    "Translate to" : "Treiñ e",
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
     "_%n day ago_::_%n days ago_" : ["%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo"],
