@@ -84,7 +84,7 @@ export function getEventTimeRange(conversation) {
  */
 export function shouldIncludeEvents(conversation) {
 	return !isEvent(conversation)
-	|| (conversation.objectId?.includes('#') && isEventHappeningSoon(conversation))
+	|| (conversation.objectId?.includes('#') && shouldEventBeVisible(conversation))
 }
 
 /**
@@ -92,11 +92,9 @@ export function shouldIncludeEvents(conversation) {
  *
  * @param {object} conversation conversation object
  */
-export function isEventHappeningSoon(conversation) {
-	const timeDifference = getEventTimeRange(conversation).start - Date.now()
+export function shouldEventBeVisible(conversation) {
 	return isEvent(conversation)
-		&& timeDifference > 0
-		&& timeDifference < 16 * ONE_HOUR_IN_MS
+		&& getEventTimeRange(conversation).start - Date.now() < 16 * ONE_HOUR_IN_MS
 }
 
 /**

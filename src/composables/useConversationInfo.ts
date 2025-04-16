@@ -139,9 +139,19 @@ export function useConversationInfo({
 		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
 			&& startTime > Date.now() && showTimeLeft) {
 			if (startTime - Date.now() < ONE_DAY_IN_MS) {
-				return futureRelativeTime(startTime)
+				return {
+					actor: null,
+					icon: null,
+					message: futureRelativeTime(startTime),
+					title: futureRelativeTime(startTime),
+				}
 			} else {
-				return moment(startTime).calendar()
+				return {
+					actor: null,
+					icon: null,
+					message: moment(startTime).calendar(),
+					title: moment(startTime).calendar(),
+				}
 			}
 		}
 
