@@ -342,6 +342,7 @@ OC.L10N.register(
     "Until" : "Kuni",
     "No results found" : "Otsingutulemusi ei leidu",
     "Load more results" : "Laadi veel tulemusi",
+    "Projects" : "Projektid",
     "Edit display name" : "Muuda kuvatavat nime",
     "Appearance" : "Välimus",
     "Show conversations list in compact mode" : "Näita vestluste loendit kompaktses vaates",
