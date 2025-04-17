@@ -63,7 +63,6 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
 
 import { CONVERSATION } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.ts'
 
 export default {
@@ -95,6 +94,14 @@ export default {
 		 * Whether to only show conversations to which the user can post messages.
 		 */
 		showPostableOnly: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
+		 * Whether interacting with federated conversations is allowed for this component.
+		 */
+		allowFederation: {
 			type: Boolean,
 			default: false,
 		},
@@ -178,7 +185,10 @@ export default {
 				})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
-				.filter(conversation => !hasTalkFeature(this.currentRoom, 'federation-v1') || !conversation.remoteServer)
+				// Federated conversations do not support:
+				// - open conversations
+				// - 3rd app integrations (e.g. Deck / Maps)
+				.filter(conversation => this.allowFederation || !conversation.remoteServer)
 			this.loading = false
 		},
 

@@ -151,16 +151,18 @@
 					{{ level.label }}
 				</NcActionButton>
 
-				<NcActionSeparator />
+				<template v-if="showCallNotificationSettings">
+					<NcActionSeparator />
 
-				<NcActionButton type="checkbox"
-					:model-value="notificationCalls"
-					@click="setNotificationCalls(!notificationCalls)">
-					<template #icon>
-						<IconPhoneRing :size="16" />
-					</template>
-					{{ t('spreed', 'Notify about calls') }}
-				</NcActionButton>
+					<NcActionButton type="checkbox"
+						:model-value="notificationCalls"
+						@click="setNotificationCalls(!notificationCalls)">
+						<template #icon>
+							<IconPhoneRing :size="16" />
+						</template>
+						{{ t('spreed', 'Notify about calls') }}
+					</NcActionButton>
+				</template>
 			</template>
 		</template>
 
@@ -401,6 +403,10 @@ export default {
 
 		notificationCalls() {
 			return this.item.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+		},
+
+		showCallNotificationSettings() {
+			return !this.item.remoteServer || hasTalkFeature(this.item.token, 'federation-v2')
 		},
 
 		iconType() {
