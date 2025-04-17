@@ -61,6 +61,7 @@ use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PhoneService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
@@ -69,6 +70,7 @@ use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -136,6 +138,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected Config $talkConfig,
 		protected ICloudIdManager $cloudIdManager,
 		protected IPhoneNumberUtil $phoneNumberUtil,
+		protected PhoneService $phoneService,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
@@ -1955,6 +1958,78 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant, skipLastMessage: true));
+	}
+
+	/**
+	 * Direct dial-in (SIP bridge)
+	 *
+	 * @param string $phoneNumber Phone number that is called
+	 * @param string $caller Phone number of the person calling in
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
+	 *
+	 * 200: Participant returned
+	 * 401: SIP request invalid
+	 * 404: Participant not found
+	 * 501: SIP dial-in is not configured
+	 */
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
+	#[RequireRoom]
+	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($phoneNumber)) {
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException) {
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		try {
+			$entity = $this->phoneService->getAccountToCallForPhoneNumber($phoneNumber);
+		} catch (DoesNotExistException) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$room = null;
+		$cleanedCaller = $this->phoneNumberUtil->convertToStandardFormat($caller);
+		if ($cleanedCaller !== null) {
+			$objectId = $cleanedCaller;
+			try {
+				$room = $this->manager->getRoomForUserByObject($entity->getActorId(), Room::OBJECT_TYPE_PHONE, $objectId);
+				$this->logger->debug('Reusing existing direct dial-in conversation for caller ' . $cleanedCaller . ' and user ' . $entity->getActorId());
+			} catch (RoomNotFoundException) {
+			}
+		} else {
+			$objectId = Room::OBJECT_TYPE_PHONE;
+		}
+
+		if (!$room instanceof Room) {
+			$user = $this->userManager->get($entity->getActorId());
+			try {
+				$room = $this->roomService->createConversation(
+					Room::TYPE_GROUP,
+					$caller,
+					$user,
+					Room::OBJECT_TYPE_PHONE,
+					$objectId,
+					sipEnabled: Webinary::SIP_ENABLED_NO_PIN,
+				);
+			} catch (CreationException|PasswordException $e) {
+				$this->logger->error('Error occurred while creating SIP direct dial-in conversation', ['exception' => $e]);
+			}
+		}
+
+		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
+		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
 	/**

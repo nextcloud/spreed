@@ -917,6 +917,45 @@ class Manager {
 	}
 
 	/**
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForUserByObject(string $userId, string $objectType, string $objectId): Room {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)))
+			->andWhere($query->expr()->isNotNull('a.id'))
+			->setMaxResults(1);
+
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
+		$room = $this->createRoomObject($row);
+		$participant = $this->createParticipantObject($room, $row);
+		$this->participantService->cacheParticipant($room, $participant);
+		$room->setParticipant($row['actor_id'], $participant);
+		return $room;
+	}
+
+	/**
 	 * @return list<Room>
 	 */
 	public function getMultipleRoomsByObject(string $objectType, string $objectId, bool $orderById = false): array {
