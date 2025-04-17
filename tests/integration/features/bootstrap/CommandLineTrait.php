@@ -156,7 +156,7 @@ trait CommandLineTrait {
 
 	#[Then('/^the command failed with exit code ([0-9]+)$/')]
 	public function theCommandFailedWithExitCode(int $exitCode): void {
-		Assert::assertEquals($exitCode, $this->lastCode, 'The commands exit code did not match');
+		Assert::assertEquals($exitCode, $this->lastCode, 'The commands exit code did not match: ' . $this->lastStdOut . "\n\n" . $this->lastStdErr);
 	}
 
 	#[Then('/^the command failed with exception text "([^"]*)"$/')]
@@ -173,6 +173,7 @@ trait CommandLineTrait {
 
 	#[Then('/^the command output contains the text:$/')]
 	#[Then('/^the command output contains the text "([^"]*)"$/')]
+	#[Then("/^the command output contains the text '([^']*)'\$/")]
 	public function theCommandOutputContainsTheText(string $text): void {
 		if ($this->lastStdOut === '' && $this->lastStdErr !== '') {
 			Assert::assertStringContainsString($text, $this->lastStdErr, 'The command did not output the expected text on stdout');

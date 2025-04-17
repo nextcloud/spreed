@@ -73,8 +73,7 @@ class FindPhoneNumber extends Base {
 			$entry = array_pop($entries);
 			$output->writeln($entry->getActorId() . ' has phone number ' . $entry->getPhoneNumber() . ' assigned');
 		} else {
-			$entry = array_pop($entries);
-			$output->writeln($entry->getActorId() . ' has the following phone numbers assigned:');
+			$output->writeln($userId . ' has the following phone numbers assigned:');
 			foreach ($entries as $entry) {
 				$output->writeln(' - ' . $entry->getPhoneNumber());
 			}

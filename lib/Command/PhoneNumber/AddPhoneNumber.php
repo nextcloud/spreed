@@ -66,7 +66,7 @@ class AddPhoneNumber extends Base {
 		}
 		$userId = $user->getUID();
 
-		$phoneNumberStandard = $this->phoneNumberUtil->convertToStandardFormat($phoneNumber);
+		$phoneNumberStandard = preg_match('/^[0-9]{1,20}$/', $phoneNumber) ? $phoneNumber : $this->phoneNumberUtil->convertToStandardFormat($phoneNumber);
 		if ($phoneNumberStandard === null) {
 			$output->writeln('<error>Not a valid phone number ' . $phoneNumber . '. The format is invalid.</error>');
 			return self::FAILURE;
