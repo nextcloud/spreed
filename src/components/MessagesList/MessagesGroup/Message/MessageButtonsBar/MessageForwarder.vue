@@ -9,6 +9,7 @@
 		message to -->
 		<RoomSelector v-if="!showForwardedConfirmation"
 			show-postable-only
+			allow-federation
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
 			@select="setSelectedConversationToken"
