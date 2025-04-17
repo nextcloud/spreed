@@ -63,7 +63,6 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
 
 import { CONVERSATION } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.ts'
 
 export default {
@@ -178,7 +177,8 @@ export default {
 				})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
-				.filter(conversation => !hasTalkFeature(this.currentRoom, 'federation-v1') || !conversation.remoteServer)
+				// TODO MessageForwarder should work
+				.filter(conversation => !conversation.remoteServer) // no attachments support in federated conversations
 			this.loading = false
 		},
 

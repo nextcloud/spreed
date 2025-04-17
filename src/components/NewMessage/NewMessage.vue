@@ -388,7 +388,7 @@ export default {
 
 		canShareFiles() {
 			return !this.currentUserIsGuest
-				&& (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
+				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},
 
 		canUploadFiles() {
