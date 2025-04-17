@@ -108,6 +108,7 @@ OC.L10N.register(
     "State" : "Olek",
     "Name" : "Nimi",
     "Description" : "Kirjeldus",
+    "Permissions" : "Õigused",
     "End-to-end encrypted calls" : "Läbivalt krüptitud kõned",
     "Enable encryption" : "Luba krüptimine",
     "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "Seadistatud SIP-i võrgusilla vahendusel tehtavad läbivalt krüptitud kõned eeldavad uuema suure jõudlusega taustateenuse ja SIP-i võrgusilla kasutamist.",
