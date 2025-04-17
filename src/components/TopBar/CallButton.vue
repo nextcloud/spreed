@@ -322,7 +322,7 @@ export default {
 			return this.callEnabled
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& (hasTalkFeature(this.token, 'federation-v2') || !hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
+				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
 				&& !this.isInCall
 		},
 
