@@ -22,6 +22,7 @@ use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -43,6 +44,7 @@ class GuestManager {
 		protected IL10N $l,
 		protected IEventDispatcher $dispatcher,
 		protected LoggerInterface $logger,
+		protected IDateTimeZone $dateTimeZone,
 	) {
 	}
 
@@ -228,25 +230,42 @@ class GuestManager {
 		]);
 
 		if ($user instanceof IUser) {
-			$subject = $this->l->t('%s invited you to a conversation.', $user->getDisplayName());
+			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $room->getDisplayName('')]);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $user->getDisplayName()]);
 		} else {
-			$subject = $this->l->t('You were invited to a conversation.');
+			$subject = $this->l->t('You were invited to conversation "%s."', $room->getDisplayName(''));
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
 		}
 
 		$template->setSubject($subject);
 		$template->addHeader();
-		$template->addHeading($this->l->t('Conversation invitation'));
+		$template->addHeading(
+			htmlspecialchars($room->getDisplayName('')),
+			$this->l->t('Conversation invitation')
+		);
 		$template->addBodyText(
-			htmlspecialchars($subject . ' ' . $this->l->t('Click the button below to join.')),
+			htmlspecialchars($subject),
 			$subject
 		);
 
-		$template->addBodyButton(
-			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
-			$link
-		);
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE && $room->getLobbyTimer() !== null) {
+			$timezone = $this->dateTimeZone->getTimeZone();
+			$start = $room->getLobbyTimer()->setTimezone($timezone);
+			$template->addBodyListItem(
+				$this->l->l('datetime', $start) . ' (' . $timezone->getName() . ')',
+				$this->l->t('Scheduled time'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'places/calendar-dark.png'))
+			);
+		}
+
+		if (!empty($room->getDescription())) {
+			$template->addBodyListItem(
+				nl2br(htmlspecialchars($room->getDescription())),
+				$this->l->t('Description'),
+				$this->url->getAbsoluteURL($this->url->imagePath('core', 'apps/notes.svg')),
+				$room->getDescription()
+			);
+		}
 
 		if ($pin) {
 			$template->addBodyText($this->l->t('You can also dial-in via phone with the following details'));
@@ -270,8 +289,29 @@ class GuestManager {
 			);
 		}
 
-		$template->addFooter();
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE && $room->getLobbyTimer() !== null) {
+			$template->addBodyText('');
+			$template->addBodyText(
+				$this->l->t('Click the button below to join the lobby now.'),
+				$this->l->t('Click the link below to join the lobby now.')
+			);
+			$template->addBodyButton(
+				$this->l->t('Join lobby for "%s"', [$room->getDisplayName('')]),
+				$link
+			);
+		} else {
+			$template->addBodyText('');
+			$template->addBodyText(
+				$this->l->t('Click the button below to join the conversation now.'),
+				$this->l->t('Click the link below to join the conversation now.')
+			);
+			$template->addBodyButton(
+				$this->l->t('Join "%s"', [$room->getDisplayName('')]),
+				$link
+			);
+		}
 
+		$template->addFooter();
 		$message->setTo([$email]);
 		$message->useTemplate($template);
 		try {
