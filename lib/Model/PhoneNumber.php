@@ -12,6 +12,7 @@ use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
 /**
+ * @psalm-method int<1, max> getId()
  * @method void setPhoneNumber(string $phoneNumber)
  * @method string getPhoneNumber()
  * @method void setActorId(string $actorId)
