@@ -205,7 +205,7 @@ export default {
 		},
 
 		showMediaSettingsToggle() {
-			return (hasTalkFeature(this.token, 'federation-v2') || !hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
+			return !this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2')
 		},
 
 		supportBanV1() {
