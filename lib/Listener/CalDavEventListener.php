@@ -154,7 +154,7 @@ class CalDavEventListener implements IEventListener {
 
 		$description = $vevent->DESCRIPTION?->getValue();
 		if ($description !== null) {
-			$description = strlen($name) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
+			$description = strlen($description) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
 			$this->roomService->setDescription($room, $description);
 		}
 	}
