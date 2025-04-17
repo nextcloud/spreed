@@ -70,7 +70,7 @@ import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../constants.js'
-import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
@@ -127,7 +127,7 @@ export default {
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.$store.getters.getUserId()
 				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
-				&& (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
+				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},
 
 		isDragAndDropBlocked() {
