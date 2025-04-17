@@ -251,13 +251,9 @@ export default {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 
-		supportFederationV1() {
-			return hasTalkFeature(this.token, 'federation-v1')
-		},
-
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
-				&& (!this.supportFederationV1 || !this.conversation.remoteServer)
+				&& !this.conversation.remoteServer // no breakout rooms support in federated conversations
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 
@@ -266,7 +262,7 @@ export default {
 		},
 
 		showSharedItemsTab() {
-			return this.getUserId && (!this.supportFederationV1 || !this.conversation.remoteServer)
+			return this.getUserId && !this.conversation.remoteServer // no attachments support in federated conversations
 		},
 
 		showDetailsTab() {
