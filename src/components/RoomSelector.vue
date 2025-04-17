@@ -97,6 +97,14 @@ export default {
 		},
 
 		/**
+		 * Whether interacting with federated conversations is allowed for this component.
+		 */
+		allowFederation: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
 		 * Whether to only show open conversations to which the user can join.
 		 */
 		listOpenConversations: {
@@ -173,8 +181,10 @@ export default {
 				: await fetchConversations({})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
-				// TODO MessageForwarder should work
-				.filter(conversation => !conversation.remoteServer) // no attachments support in federated conversations
+				// Federated conversations do not support:
+				// - open conversations
+				// - 3rd app integrations (e.g. Deck / Maps)
+				.filter(conversation => this.allowFederation || !conversation.remoteServer)
 			this.loading = false
 		},
 
