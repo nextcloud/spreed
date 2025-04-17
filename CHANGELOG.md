@@ -5,6 +5,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.3 – 2025-04-17
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(avatar): Fix regression from library requesting too many status updates
+  [#14894](https://github.com/nextcloud/spreed/issues/14894)
+- fix(chat): Improve regex of todo-list handling also uppercase X
+  [#14904](https://github.com/nextcloud/spreed/issues/14904)
+- fix(federation): Use correct capability to show call-notification setting in federated conversations
+  [#14907](https://github.com/nextcloud/spreed/issues/14907)
+
 ## 21.0.2 – 2025-04-10
 ### Changed
 - Update translations
