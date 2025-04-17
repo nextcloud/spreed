@@ -8,9 +8,11 @@ import { computed, ref } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import type { Conversation } from '../types/index.ts'
+import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
@@ -105,6 +107,15 @@ export function useConversationInfo({
 		return author
 	})
 
+	/**
+	 *
+	 * @param conversation
+	 */
+	function getEventTimeRange(conversation: Conversation): { start: number, end: number } {
+		const [start, end] = conversation.objectId.split('#').map(time => time * 1000)
+		return { start, end }
+	}
+
 	const conversationInformation = computed(() => {
 		// temporary item while joining, only for Conversation component
 		if (isSearchResult.value === false && !item.value.actorId) {
@@ -113,6 +124,34 @@ export function useConversationInfo({
 				icon: null,
 				message: t('spreed', 'Joining conversation …'),
 				title: t('spreed', 'Joining conversation …'),
+			}
+		}
+
+		if (!exposeMessages) {
+			return exposeDescription ? item.value?.description : ''
+		} else if (!hasLastMessage.value) {
+			return t('spreed', 'No messages')
+		}
+
+		// This is for event conversations where the last message is a system message
+		const startTime = getEventTimeRange(item.value).start
+		const showTimeLeft = shortLastChatMessageAuthor.value === '' || lastMessage.value.messageType === 'comment_deleted'
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
+			&& startTime > Date.now() && showTimeLeft) {
+			if (startTime - Date.now() < ONE_DAY_IN_MS) {
+				return {
+					actor: null,
+					icon: null,
+					message: futureRelativeTime(startTime),
+					title: futureRelativeTime(startTime),
+				}
+			} else {
+				return {
+					actor: null,
+					icon: null,
+					message: moment(startTime).calendar(),
+					title: moment(startTime).calendar(),
+				}
 			}
 		}
 
@@ -193,6 +232,7 @@ export function useConversationInfo({
 	return {
 		counterType,
 		conversationInformation,
+		getEventTimeRange,
 		isOneToOneConversation,
 		isConversationReadOnly,
 		isConversationModifiable,
