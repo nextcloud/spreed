@@ -79,7 +79,7 @@ export default {
 
 	computed: {
 		showCallNotificationSettings() {
-			return (!hasTalkFeature(this.conversation.token, 'federation-v1') || !this.conversation.remoteServer)
+			return !this.conversation.remoteServer || hasTalkFeature(this.conversation.token, 'federation-v2')
 		}
 	},
 
