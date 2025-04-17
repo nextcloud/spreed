@@ -51,6 +51,16 @@ Feature: command/phone-number
     And the command output contains the text "Phone number +491601231212 is now assigned to participant2"
     And the command output contains the text "Was assigned to participant1"
 
+    Given invoking occ with "talk:phone-number:add 23 participant2"
+    Then the command failed with exit code 0
+    And the command output contains the text "Phone number 23 is now assigned to participant2"
+
+    Given invoking occ with "talk:phone-number:find --user participant2"
+    Then the command failed with exit code 0
+    And the command output contains the text "participant2 has the following phone numbers assigned:"
+    And the command output contains the text "- +491601231212"
+    And the command output contains the text "- 23"
+
     Given invoking occ with "talk:phone-number:find --user participant1"
     Then the command failed with exit code 0
     And the command output contains the text "participant1 has phone number +491601231213 assigned"
