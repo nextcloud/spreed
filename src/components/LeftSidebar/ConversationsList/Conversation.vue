@@ -116,17 +116,6 @@
 					</template>
 					{{ t('spreed', 'Leave conversation') }}
 				</NcActionButton>
-
-				<NcActionButton v-if="item.canDeleteConversation"
-					key="delete-conversation"
-					close-after-click
-					class="critical"
-					@click="isDeleteDialogOpen = true">
-					<template #icon>
-						<IconDelete :size="16" />
-					</template>
-					{{ t('spreed', 'Delete conversation') }}
-				</NcActionButton>
 			</template>
 			<template v-else-if="submenu === 'notifications'">
 				<NcActionButton :aria-label="t('spreed', 'Back')"
@@ -182,10 +171,9 @@
 			</NcActionButton>
 		</template>
 
-		<!-- confirmation required to leave / delete conversation -->
-		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
-			<NcDialog v-if="isLeaveDialogOpen"
-				:open.sync="isLeaveDialogOpen"
+		<!-- confirmation required to leave conversation -->
+		<template v-if="isLeaveDialogOpen" #extra>
+			<NcDialog :open.sync="isLeaveDialogOpen"
 				:name="t('spreed', 'Leave conversation')">
 				<template #default>
 					<p>{{ dialogLeaveMessage }}</p>
@@ -201,19 +189,6 @@
 						{{ t('spreed', 'Archive conversation') }}
 					</NcButton>
 					<NcButton type="warning" @click="leaveConversation">
-						{{ t('spreed', 'Yes') }}
-					</NcButton>
-				</template>
-			</NcDialog>
-			<NcDialog v-if="isDeleteDialogOpen"
-				:open.sync="isDeleteDialogOpen"
-				:name="t('spreed','Delete conversation')"
-				:message="dialogDeleteMessage">
-				<template #actions>
-					<NcButton type="tertiary" @click="isDeleteDialogOpen = false">
-						{{ t('spreed', 'No') }}
-					</NcButton>
-					<NcButton type="error" @click="deleteConversation">
 						{{ t('spreed', 'Yes') }}
 					</NcButton>
 				</template>
@@ -235,7 +210,6 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconBell from 'vue-material-design-icons/Bell.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconEye from 'vue-material-design-icons/Eye.vue'
 import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
@@ -283,7 +257,6 @@ export default {
 		IconBell,
 		IconCog,
 		IconContentCopy,
-		IconDelete,
 		IconExitToApp,
 		IconEye,
 		IconEyeOff,
@@ -337,7 +310,6 @@ export default {
 	setup(props) {
 		const submenu = ref(null)
 		const isLeaveDialogOpen = ref(false)
-		const isDeleteDialogOpen = ref(false)
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
@@ -346,7 +318,6 @@ export default {
 			supportsArchive,
 			submenu,
 			isLeaveDialogOpen,
-			isDeleteDialogOpen,
 			counterType,
 			conversationInformation,
 			notificationLevels,
@@ -375,13 +346,6 @@ export default {
 
 		dialogLeaveMessage() {
 			return t('spreed', 'Do you really want to leave "{displayName}"?', this.item, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		dialogDeleteMessage() {
-			return t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
 				escape: false,
 				sanitize: false,
 			})
@@ -443,24 +407,6 @@ export default {
 
 		showConversationSettings() {
 			emit('show-conversation-settings', { token: this.item.token })
-		},
-
-		/**
-		 * Deletes the conversation.
-		 */
-		async deleteConversation() {
-			try {
-				this.isDeleteDialogOpen = false
-				if (this.isActive) {
-					await this.$store.dispatch('leaveConversation', { token: this.item.token })
-					await this.$router.push({ name: 'root' })
-						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
-				}
-				await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
-			} catch (error) {
-				console.error(`Error while deleting conversation ${error}`)
-				showError(t('spreed', 'Error while deleting conversation'))
-			}
 		},
 
 		/**
