@@ -27,9 +27,10 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
+
+import { formatDateTime } from '../../../utils/formattedTime.ts'
 
 export default {
 	name: 'BannedItem',
@@ -59,7 +60,7 @@ export default {
 				// TRANSLATORS name of a moderator who banned a participant
 				{ label: t('spreed', 'Banned by:'), value: this.ban.moderatorDisplayName },
 				// TRANSLATORS Date and time of ban creation
-				{ label: t('spreed', 'Date:'), value: moment(this.ban.bannedTime * 1000).format('lll') },
+				{ label: t('spreed', 'Date:'), value: formatDateTime(this.ban.bannedTime * 1000, 'lll') },
 				// TRANSLATORS Internal note for moderators, usually a reason for this ban
 				{ label: t('spreed', 'Note:'), value: this.ban.internalNote },
 			]
