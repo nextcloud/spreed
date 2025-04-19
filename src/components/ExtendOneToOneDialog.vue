@@ -59,9 +59,12 @@ function getArrayWithSecondAttendee(token: string) {
  */
 async function extendOneToOneConversation() {
 	try {
+		const secondParticipant = getArrayWithSecondAttendee(props.token)[0]
 		const newConversation = await store.dispatch('extendOneToOneConversation', {
 			token: props.token,
-			newParticipants: selectedParticipants.value,
+			newParticipants: selectedParticipants.value.filter(participant => {
+				return !(participant.id === secondParticipant.id && participant.source === secondParticipant.source)
+			}),
 		})
 		if (newConversation) {
 			await router.push({ name: 'conversation', params: { token: newConversation.token } })
