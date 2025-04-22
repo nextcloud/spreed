@@ -20,6 +20,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
+use OCP\IL10N;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -35,6 +36,7 @@ class CalDavEventListenerTest extends TestCase {
 	private ParticipantService&MockObject $participantService;
 	private string $calData;
 	private string $userId;
+	private IL10N&MockObject $l10n;
 	private CalDavEventListener $listener;
 
 	public static function roomUrl() {
@@ -57,6 +59,7 @@ class CalDavEventListenerTest extends TestCase {
 		$this->timezoneService = $this->createMock(TimezoneService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userId = '123';
+		$this->l10n = $this->createMock(IL10N::class);
 		$this->calData = <<<EOD
 BEGIN:VCALENDAR
 PRODID:-//IDN nextcloud.com//Calendar app 5.2.0-dev.1//EN
@@ -101,6 +104,7 @@ EOD;
 			$this->timezoneService,
 			$this->participantService,
 			$this->userId,
+			$this->l10n,
 		);
 	}
 
@@ -383,6 +387,7 @@ DTEND;TZID=Europe/Vienna:20250315T110000
 STATUS:CONFIRMED
 LOCATION:https://nextcloud.local/index.php/call/44wd9tvp
 RRULE:FREQ=DAILY;UNTIL=20250322T090000Z
+DESCRIPTION:Test
 END:VEVENT
 BEGIN:VTIMEZONE
 TZID:Europe/Vienna
@@ -419,6 +424,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('resetObject')
 			->with($room);
+		$this->roomService->expects(self::once())
+			->method('setDescription')
+			->with($room, 'Test');
 		$this->roomService->expects(self::never())
 			->method('setObject');
 		$this->logger->expects(self::once())

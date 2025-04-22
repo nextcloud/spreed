@@ -19,6 +19,7 @@ use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 use Sabre\VObject\ParseException;
 use Sabre\VObject\Property\ICalendar\Date;
@@ -35,6 +36,7 @@ class CalDavEventListener implements IEventListener {
 		private TimezoneService $timezoneService,
 		private ParticipantService $participantService,
 		private string $userId,
+		private IL10N $l10n,
 	) {
 
 	}
@@ -106,19 +108,47 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
+		$name = $vevent->SUMMARY?->getValue();
+		if ($name !== null) {
+			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : $name;
+		}
+
+		$description = $vevent->DESCRIPTION?->getValue();
+		if ($description !== null) {
+			$description = strlen($description) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
+		}
+
 		$rrule = $vevent->RRULE;
+		$recurrenceId = $vevent->{'RECURRENCE-ID'}?->getValue();
 		// We don't handle events with RRULEs
-		if (!empty($rrule)) {
+		// And you cannot create an event room for a recurrence exception
+		if (!empty($rrule) || !empty($recurrenceId)) {
 			$this->roomService->resetObject($room);
 			$this->logger->debug("Room $roomToken calendar event contains an RRULE, converting to regular room for calendar event integration");
+			if ($event instanceof CalendarObjectCreatedEvent && $description !== null) {
+				// We still need to set the description for newly created events
+				// Since the room is still a type event when sending the data from the frontend
+				// So set the description for newly created events here to restore previous behaviour
+				$this->roomService->setDescription($room, $description);
+			}
 			return;
 		}
 
 		if ($this->roomService->hasExistingCalendarEvents($room, $this->userId, $vevent->UID->getValue())) {
 			$this->roomService->resetObject($room);
 			$this->logger->debug("Room $roomToken calendar event was already used previously, converting to regular room for calendar event integration");
+			if ($event instanceof CalendarObjectCreatedEvent && $description !== null) {
+				// We still need to set the description for newly created events
+				// Since the room is still a type event when sending the data from the frontend
+				// So set the description for newly created events here to restore previous behaviour
+				$this->roomService->setDescription($room, $description);
+			}
 			return;
 		}
+
+		// So we can unset names & descriptions in case the user deleted them
+		$this->roomService->setName($room, $name ?? $this->l10n->t('Talk conversation for event'));
+		$this->roomService->setDescription($room, $description ?? '');
 
 		/** @var DateTime $start */
 		$start = $vevent->DTSTART;
@@ -145,17 +175,5 @@ class CalDavEventListener implements IEventListener {
 
 		$objectId = $start . '#' . $end;
 		$this->roomService->setObject($room, $objectId, Room::OBJECT_TYPE_EVENT);
-
-		$name = $vevent->SUMMARY?->getValue();
-		if ($name !== null) {
-			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : $name;
-			$this->roomService->setName($room, $name);
-		}
-
-		$description = $vevent->DESCRIPTION?->getValue();
-		if ($description !== null) {
-			$description = strlen($description) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
-			$this->roomService->setDescription($room, $description);
-		}
 	}
 }
