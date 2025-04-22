@@ -620,6 +620,7 @@
     "Go to file" : "Gå til fil",
     "Forward message" : "Videresend besked",
     "Translate" : "Oversæt",
+    "Set custom reminder" : "Sæt brugerdefineret påmindelse",
     "Choose a conversation to forward the selected message." : "Vælg en samtale som den valgte besked skal videresendes til.",
     "Error while forwarding message" : "Der opstod en fejl ved videresendelse af beskeden.",
     "The message has been forwarded to {selectedConversationName}" : "Beskeden er videresendt til {selectedConversationName}",
