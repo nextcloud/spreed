@@ -12,6 +12,7 @@ import type {
 	AutocompleteParams,
 	AutocompleteResponse,
 	TaskProcessingResponse,
+	UserProfileResponse,
 	UnifiedSearchResponse,
 	SearchMessagePayload,
 } from '../types/index.ts'
@@ -71,6 +72,10 @@ const autocompleteQuery = async function({
 	})
 }
 
+const getUserProfile = async function(userId: string, options?: object): UserProfileResponse {
+	return axios.get(generateOcsUrl('profile/{userId}', { userId }), options)
+}
+
 const getTaskById = async function(id: number, options?: object): TaskProcessingResponse {
 	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
@@ -88,6 +93,7 @@ const searchMessages = async function(params: SearchMessagePayload, options: obj
 
 export {
 	autocompleteQuery,
+	getUserProfile,
 	getTaskById,
 	deleteTaskById,
 	searchMessages,

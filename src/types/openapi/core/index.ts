@@ -78,6 +78,9 @@ export type UserPreferencesResponse = ApiResponse<operationsProv['preferences-se
 // Task Processing API
 export type TaskProcessingResponse = ApiResponse<operationsCore['task_processing_api-get-task']['responses'][200]['content']['application/json']>
 
+// Profile API
+export type UserProfileData =  componentsCore['schemas']['ProfileData']
+export type UserProfileResponse = ApiResponse<operationsCore['profile_api-get-profile-fields']['responses'][200]['content']['application/json']>
 
 // Autocomplete API
 export type AutocompleteResult =  componentsCore['schemas']['AutocompleteResult']

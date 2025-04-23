@@ -333,8 +333,11 @@ export type EventTimeRange = {
 	start: number | null
 	end: number | null
 }
-// User preferences response
+
+// User profile / preferences response
 export type {
+	UserProfileData,
+	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
 } from './openapi/core/index.ts'
