@@ -306,6 +306,7 @@ OC.L10N.register(
     "Dial-in information" : "Сведения для звонка",
     "Meeting ID" : "Идентификатор встречи (ID)",
     "Your PIN" : "Ваш ПИН",
+    "Talk conversation for event" : "Обсуждение события в Talk",
     "Password request: %s" : "Запрос пароля: %s",
     "Private conversation" : "Частное обсуждение",
     "Deleted user (%s)" : "Удалённый пользователь (%s)",
@@ -964,7 +965,6 @@ OC.L10N.register(
     "To" : "Кому",
     "Calendar" : "Календарь",
     "Attendees" : "Участники",
-    "Invite all users and emails" : "Пригласить всех пользователей и адреса эл. почты",
     "Add attendees" : "Добавить участников",
     "Save" : "Сохранить",
     "Search participants" : "Искать участников",
@@ -2050,6 +2050,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Не предупреждать о проблемах со связью в вызовах с более чем 2 участниками",
     "Please try to reload the page" : "Обновите страницу",
     "Next call" : "Следующий вызов",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Федерация была обновлена, пожалуйста обновите страницу"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Федерация была обновлена, пожалуйста обновите страницу",
+    "Invite all users and emails" : "Пригласить всех пользователей и адреса эл. почты"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

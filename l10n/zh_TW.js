@@ -316,6 +316,7 @@ OC.L10N.register(
     "Click the button below to join the conversation now." : "點選下方按鈕以立刻加入對話。",
     "Click the link below to join the conversation now." : "點選下方連結以立刻加入對話。",
     "Join \"%s\"" : "加入「%s」",
+    "Talk conversation for event" : "活動的 Talk 對話",
     "Password request: %s" : "密碼請求：%s",
     "Private conversation" : "私人對話",
     "Deleted user (%s)" : "已刪除使用者 (%s)",
@@ -978,7 +979,6 @@ OC.L10N.register(
     "To" : "至",
     "Calendar" : "行事曆",
     "Attendees" : "參與者",
-    "Invite all users and emails" : "邀請所有使用者與電子郵件",
     "Add attendees" : "新增參與者",
     "Save" : "儲存",
     "Search participants" : "搜尋參與者",
@@ -2072,6 +2072,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請嘗試重新載入頁面",
     "Next call" : "下個通話",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面",
+    "Invite all users and emails" : "邀請所有使用者與電子郵件"
 },
 "nplurals=1; plural=0;");

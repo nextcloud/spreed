@@ -263,6 +263,7 @@ OC.L10N.register(
     "Reset" : "Reiniciar",
     "Back" : "Anterior",
     "Cancel" : "Cancelar",
+    "Now" : "Agora",
     "From" : "De",
     "To" : "Para",
     "Calendar" : "Calendário",

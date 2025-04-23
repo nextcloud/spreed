@@ -314,6 +314,7 @@
     "Click the button below to join the conversation now." : "Kliknutím na tlačítko níže se ke konverzaci připojíte nyní.",
     "Click the link below to join the conversation now." : "Kliknutím na odkaz níže se ke konverzaci připojíte nyní.",
     "Join \"%s\"" : "Připojit se k „%s“",
+    "Talk conversation for event" : "Konverzace v Talk pro událost",
     "Password request: %s" : "Požadavek na heslo: %s",
     "Private conversation" : "Soukromá konverzace",
     "Deleted user (%s)" : "Smazán uživatel (%s)",
@@ -969,7 +970,6 @@
     "To" : "Pro",
     "Calendar" : "Kalendář",
     "Attendees" : "Účastníci",
-    "Invite all users and emails" : "Pozvat všechny uživatele a e-maily",
     "Add attendees" : "Přidat účastníky",
     "Save" : "Uložit",
     "Search participants" : "Vyhledat účastníky",
@@ -2063,6 +2063,7 @@
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nevarovat před problémy s konektivitou u volání s více než 2 účastníky",
     "Please try to reload the page" : "Zkuste prosím stránku znovu načíst",
     "Next call" : "Následující volání",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Federování Nextcloud Talk bylo zaktualizováno – načtěte stránku znovu"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Federování Nextcloud Talk bylo zaktualizováno – načtěte stránku znovu",
+    "Invite all users and emails" : "Pozvat všechny uživatele a e-maily"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

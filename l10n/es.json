@@ -976,7 +976,6 @@
     "To" : "A",
     "Calendar" : "Calendario",
     "Attendees" : "Asistentes",
-    "Invite all users and emails" : "Invitar a todos los usuarios y correos",
     "Add attendees" : "Añadir asistentes",
     "Save" : "Guardar",
     "Search participants" : "Buscar participantes",
@@ -2070,6 +2069,7 @@
     "Don't warn about connectivity issues in calls with more than 2 participants" : "No advertir sobre problemas de conectividad en llamadas con más de 2 participantes",
     "Please try to reload the page" : "Por favor, intente recargar la página",
     "Next call" : "Siguiente llamada",
-    "Nextcloud Talk Federation was updated, please reload the page" : "La Federación de Nextcloud Talk ha sido actualizada, por favor, recargue la página"
+    "Nextcloud Talk Federation was updated, please reload the page" : "La Federación de Nextcloud Talk ha sido actualizada, por favor, recargue la página",
+    "Invite all users and emails" : "Invitar a todos los usuarios y correos"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -316,6 +316,7 @@ OC.L10N.register(
     "Click the button below to join the conversation now." : "Cliceáil ar an gcnaipe thíos chun páirt a ghlacadh sa chomhrá anois.",
     "Click the link below to join the conversation now." : "Cliceáil ar an nasc thíos chun páirt a ghlacadh sa chomhrá anois.",
     "Join \"%s\"" : "Glac páirt i \"%s\"",
+    "Talk conversation for event" : "Labhair comhrá don imeacht",
     "Password request: %s" : "Iarratas pasfhocail: %s",
     "Private conversation" : "Comhrá príobháideach",
     "Deleted user (%s)" : "Úsáideoir scriosta (%s)",
@@ -978,7 +979,6 @@ OC.L10N.register(
     "To" : "Chun",
     "Calendar" : "Féilire",
     "Attendees" : "Lucht freastail",
-    "Invite all users and emails" : "Tabhair cuireadh do gach úsáideoir agus ríomhphost",
     "Add attendees" : "Cuir lucht freastail leis",
     "Save" : "Sábháil",
     "Search participants" : "Cuardaigh rannpháirtithe",
@@ -2072,6 +2072,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Ná tabhair rabhadh faoi cheisteanna nascachta i nglaonna le níos mó ná 2 rannpháirtí",
     "Please try to reload the page" : "Déan iarracht an leathanach a athlódáil",
     "Next call" : "An chéad ghlao eile",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nuashonraíodh Nextcloud Talk Federation, athlódáil an leathanach le do thoil"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nuashonraíodh Nextcloud Talk Federation, athlódáil an leathanach le do thoil",
+    "Invite all users and emails" : "Tabhair cuireadh do gach úsáideoir agus ríomhphost"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

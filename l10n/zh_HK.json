@@ -305,6 +305,7 @@
     "Dial-in information" : "撥入細節",
     "Meeting ID" : "會議 ID",
     "Your PIN" : "您的 PIN",
+    "Talk conversation for event" : "活動 Talk 對話",
     "Password request: %s" : "索取密碼： %s",
     "Private conversation" : "私人對話",
     "Deleted user (%s)" : "已刪除用戶（%s）",
@@ -967,7 +968,6 @@
     "To" : "至",
     "Calendar" : "日曆",
     "Attendees" : "參與者",
-    "Invite all users and emails" : "邀請所有用戶及電郵",
     "Add attendees" : "添加與會者",
     "Save" : "儲存",
     "Search participants" : "搜尋參與者",
@@ -2055,6 +2055,7 @@
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請重新加載頁面",
     "Next call" : "下一通話",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新加載頁面"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新加載頁面",
+    "Invite all users and emails" : "邀請所有用戶及電郵"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
