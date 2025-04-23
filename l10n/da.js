@@ -156,6 +156,7 @@ OC.L10N.register(
     "Writes event information into a conversation of your choice" : "Skriver begivenhedsinformation i en samtale du vælger",
     "Conversation invitation" : "Invitation til samtale",
     "Description" : "Beskrivelse",
+    "Talk conversation for event" : "Snak samtale for begivenhed",
     "Password request: %s" : "Adgangskode-forespørgsel: %s",
     "Private conversation" : "Privat samtale",
     "Deleted user (%s)" : "Slettet bruger (%s)",
@@ -498,7 +499,6 @@ OC.L10N.register(
     "To" : "Til",
     "Calendar" : "Kalender",
     "Attendees" : "Deltagere",
-    "Invite all users and emails" : "Inviter alle brugere og e-mails",
     "Add attendees" : "Tilføj deltagere",
     "Save" : "Gem",
     "Search participants" : "Find deltagere",
@@ -862,6 +862,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveren bliver brugt til at proxy trafikken fra deltagerne bagved en firewall.",
     "Signaling servers" : "Signaleringsservere",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
-    "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere"
+    "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere",
+    "Invite all users and emails" : "Inviter alle brugere og e-mails"
 },
 "nplurals=2; plural=(n != 1);");

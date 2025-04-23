@@ -316,6 +316,7 @@ OC.L10N.register(
     "Click the button below to join the conversation now." : "Кликните на дугме испод да уђете у разговор.",
     "Click the link below to join the conversation now." : "Кликните на линк испод да уђете у разговор.",
     "Join \"%s\"" : "Придружи се разговору  „%s”",
+    "Talk conversation for event" : "Talk разговор за догађај",
     "Password request: %s" : "Захтев за лозинком: %s",
     "Private conversation" : "Приватни разговор",
     "Deleted user (%s)" : "Обрисани корисник (%s)",
@@ -978,7 +979,6 @@ OC.L10N.register(
     "To" : "За",
     "Calendar" : "Календар",
     "Attendees" : "Присутни",
-    "Invite all users and emails" : "Позови све кориснике и и-мејлове",
     "Add attendees" : " Додај учеснике",
     "Save" : "Сачувај",
     "Search participants" : "Претражи учеснике",
@@ -2072,6 +2072,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Не упозоравај на проблеме са конекцијом у разговорима са више од 2 учесника",
     "Please try to reload the page" : "Молимо вас, покушајте поново да учитате страницу",
     "Next call" : "Наредни позив",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу",
+    "Invite all users and emails" : "Позови све кориснике и и-мејлове"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
