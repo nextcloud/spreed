@@ -316,6 +316,7 @@ OC.L10N.register(
     "Click the button below to join the conversation now." : "Um jetzt der Unterhaltung beizutreten, auf die untenstehende Schaltfläche klicken.",
     "Click the link below to join the conversation now." : "Um jetzt der Unterhaltung beizutreten, auf den unten stehenden Link klicken.",
     "Join \"%s\"" : "\"%s\" beitreten",
+    "Talk conversation for event" : "Talk-Unterhaltung für ein Ereignis",
     "Password request: %s" : "Passwortanforderung: %s",
     "Private conversation" : "Private Unterhaltung",
     "Deleted user (%s)" : "Gelöschter Benutzer (%s)",
@@ -978,7 +979,6 @@ OC.L10N.register(
     "To" : "An",
     "Calendar" : "Kalender",
     "Attendees" : "Teilnehmende",
-    "Invite all users and emails" : "Alle Benutzer und E-Mail-Adressen einladen",
     "Add attendees" : "Teilnehmer hinzufügen",
     "Save" : "Speichern",
     "Search participants" : "Suche Teilnehmer",
@@ -1645,7 +1645,7 @@ OC.L10N.register(
     "Search conversations or users" : "Nach Unterhaltungen oder Benutzern suchen",
     "Select conversation" : "Unterhaltung auswählen",
     "Number length is not valid" : "Nummernlänge ist nicht gültig",
-    "Region code is not valid" : "Regionalcode ist nicht gültig",
+    "Region code is not valid" : "Vorwahl ist ungültig",
     "Number length is too short" : "Nummernlänge ist zu kurz",
     "Number length is too long" : "Nummernlänge ist zu lang",
     "Number is not valid" : "Nummer ist nicht gültig",
@@ -2072,6 +2072,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nicht vor Verbindungsproblemen bei Anrufen mit mehr als 2 Teilnehmern warnen",
     "Please try to reload the page" : "Bitte versuche, die Seite neu zu laden",
     "Next call" : "Nächster Anruf",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Federation wurde aktualisiert, bitte lade die Seite neu"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Federation wurde aktualisiert, bitte lade die Seite neu",
+    "Invite all users and emails" : "Alle Benutzer und E-Mail-Adressen einladen"
 },
 "nplurals=2; plural=(n != 1);");

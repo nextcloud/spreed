@@ -306,6 +306,7 @@ OC.L10N.register(
     "Dial-in information" : "Informació de marcatge",
     "Meeting ID" : "ID de la reunió",
     "Your PIN" : "El teu PIN",
+    "Talk conversation for event" : "Converses per a l'esdeveniment",
     "Password request: %s" : "Petició de contrasenya: %s",
     "Private conversation" : "Conversa privada",
     "Deleted user (%s)" : "Usuari (%s) suprimit",
@@ -968,7 +969,6 @@ OC.L10N.register(
     "To" : "A",
     "Calendar" : "Calendari",
     "Attendees" : "Assistents",
-    "Invite all users and emails" : "Convida tots els usuaris i correus electrònics",
     "Add attendees" : "Afegeix assistents",
     "Save" : "Desa",
     "Search participants" : "Cercar participants",
@@ -2056,6 +2056,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "No aviseu sobre problemes de connectivitat a les trucades amb més de 2 participants",
     "Please try to reload the page" : "Si us plau, prova de tornar a carregar la pàgina",
     "Next call" : "Propera trucada",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Federació Nextcloud Converses s'ha actualitzat, torneu a carregar la pàgina"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Federació Nextcloud Converses s'ha actualitzat, torneu a carregar la pàgina",
+    "Invite all users and emails" : "Convida tots els usuaris i correus electrònics"
 },
 "nplurals=2; plural=(n != 1);");

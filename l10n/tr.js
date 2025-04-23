@@ -306,6 +306,7 @@ OC.L10N.register(
     "Dial-in information" : "Çevirme bilgileri",
     "Meeting ID" : "Toplantı kimliği",
     "Your PIN" : "PIN numaranız",
+    "Talk conversation for event" : "Etkinlik için Konuş görüşmesi",
     "Password request: %s" : "Parola isteği: %s",
     "Private conversation" : "Özel görüşme",
     "Deleted user (%s)" : "Silinmiş kullanıcı (%s)",
@@ -964,7 +965,6 @@ OC.L10N.register(
     "To" : "Bitiş",
     "Calendar" : "Takvim",
     "Attendees" : "Katılanlar",
-    "Invite all users and emails" : "Tüm kullanıcıları ve e-posta adreslerini davet et",
     "Add attendees" : "Katılımcılar ekle",
     "Save" : "Kaydet",
     "Search participants" : "Katılımcı arama",
@@ -2050,6 +2050,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "2 kişiden fazla katılımcısı olan çağrılarda bağlantı sorunları uyarısı görüntülenmesin",
     "Please try to reload the page" : "Lütfen sayfayı yeniden yüklemeyi deneyin",
     "Next call" : "Sonraki çağrı",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Konuş Birlik güncellendi. Lütfen sayfayı yeniden yükleyin"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Konuş Birlik güncellendi. Lütfen sayfayı yeniden yükleyin",
+    "Invite all users and emails" : "Tüm kullanıcıları ve e-posta adreslerini davet et"
 },
 "nplurals=2; plural=(n > 1);");

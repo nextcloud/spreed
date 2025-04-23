@@ -232,6 +232,7 @@ OC.L10N.register(
     "Dial-in information" : "Інформація для входу в систему",
     "Meeting ID" : "Ідентифікатор зустрічі",
     "Your PIN" : "Ваш пін-код.",
+    "Talk conversation for event" : "Розмова Talk для події",
     "Password request: %s" : "Запит паролю:%s",
     "Private conversation" : "Приватна розмова",
     "Deleted user (%s)" : "Вилучений користувач (%s)",
