@@ -307,6 +307,7 @@ OC.L10N.register(
     "Dial-in information" : "Dial-in information",
     "Meeting ID" : "Meeting ID",
     "Your PIN" : "Your PIN",
+    "Talk conversation for event" : "Talk conversation for event",
     "Password request: %s" : "Password request: %s",
     "Private conversation" : "Private conversation",
     "Deleted user (%s)" : "Deleted user (%s)",
@@ -969,7 +970,6 @@ OC.L10N.register(
     "To" : "To",
     "Calendar" : "Calendar",
     "Attendees" : "Attendees",
-    "Invite all users and emails" : "Invite all users and emails",
     "Add attendees" : "Add attendees",
     "Save" : "Save",
     "Search participants" : "Search participants",
@@ -2057,6 +2057,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Don't warn about connectivity issues in calls with more than 2 participants",
     "Please try to reload the page" : "Please try to reload the page",
     "Next call" : "Next call",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation was updated, please reload the page"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation was updated, please reload the page",
+    "Invite all users and emails" : "Invite all users and emails"
 },
 "nplurals=2; plural=(n != 1);");

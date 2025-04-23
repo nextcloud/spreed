@@ -298,6 +298,7 @@ OC.L10N.register(
     "Dial-in information" : "Informácia o prichádzajúcom volaní.",
     "Meeting ID" : "ID schôdzky",
     "Your PIN" : "Váš PIN",
+    "Talk conversation for event" : "Konverzácia Talk pre udalosť",
     "Password request: %s" : "Požiadavka na heslo: %s",
     "Private conversation" : "Súkromná konverzácia",
     "Deleted user (%s)" : "Odstránený používateľ (%s)",
@@ -947,7 +948,6 @@ OC.L10N.register(
     "To" : "Pre",
     "Calendar" : "Kalendár",
     "Attendees" : "Účastníci",
-    "Invite all users and emails" : "Pozvať všetkých užívateľov a emaily",
     "Add attendees" : "Pridať účastníkov",
     "Save" : "Uložiť",
     "Search participants" : "Vyhľadať účastníkov",
@@ -1966,6 +1966,7 @@ OC.L10N.register(
     "Signaling servers" : "Signalizačné servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Pre väčšie inštalácie sa môže použiť externý signalizačný server. Pre použitie interného serveru ponechajte túto kolónku nevyplnenú.",
     "Please try to reload the page" : "Prosím načítajte stránku znova",
-    "Next call" : "Ďalší hovor"
+    "Next call" : "Ďalší hovor",
+    "Invite all users and emails" : "Pozvať všetkých užívateľov a emaily"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

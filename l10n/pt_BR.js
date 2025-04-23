@@ -316,6 +316,7 @@ OC.L10N.register(
     "Click the button below to join the conversation now." : "Clique no botão abaixo para entrar na conversa agora.",
     "Click the link below to join the conversation now." : "Clique no link abaixo para entrar na conversa agora.",
     "Join \"%s\"" : "Entrar na \"%s\"",
+    "Talk conversation for event" : "Conversa do Talk para o evento",
     "Password request: %s" : "Pedido de senha: %s",
     "Private conversation" : "Conversa privada",
     "Deleted user (%s)" : "Excluir usuário (%s)",
@@ -978,7 +979,6 @@ OC.L10N.register(
     "To" : "Para",
     "Calendar" : "Calendário",
     "Attendees" : "Participantes",
-    "Invite all users and emails" : "Convide todos os usuários e e-mails",
     "Add attendees" : "Adicionar participantes",
     "Save" : "Salvar",
     "Search participants" : "Procurar participantes",
@@ -2072,6 +2072,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Não avise sobre problemas de conectividade em chamadas com mais de 2 participantes",
     "Please try to reload the page" : "Por favor, tente recarregar a página",
     "Next call" : "Próxima chamada",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation foi atualizado, por favor, recarregue a página"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation foi atualizado, por favor, recarregue a página",
+    "Invite all users and emails" : "Convide todos os usuários e e-mails"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

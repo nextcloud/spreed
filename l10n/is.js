@@ -69,6 +69,7 @@ OC.L10N.register(
     "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",
     "Conversation invitation" : "Boð í samtal",
     "Description" : "Lýsing",
+    "Talk conversation for event" : "Samtal fyrir atburð",
     "Password request: %s" : "Beiðni um lykilorð: %s",
     "Private conversation" : "Einkasamtal",
     "Deleted user (%s)" : "Eyddi notanda (%s)",

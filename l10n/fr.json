@@ -300,6 +300,7 @@
     "Dial-in information" : "Informations d'appel",
     "Meeting ID" : "ID de réunion",
     "Your PIN" : "Votre PIN",
+    "Talk conversation for event" : "Conversation Talk pour l'événement",
     "Password request: %s" : "Demande de mot de passe : %s",
     "Private conversation" : "Conversation privée",
     "Deleted user (%s)" : "Utilisateur supprimé (%s)",
@@ -959,7 +960,6 @@
     "To" : "À",
     "Calendar" : "Agenda",
     "Attendees" : "Participants",
-    "Invite all users and emails" : "Inviter tous les utilisateurs et participants par email",
     "Add attendees" : "Ajouter des invités",
     "Save" : "Enregistrer",
     "Search participants" : "Rechercher les participants",
@@ -2042,6 +2042,7 @@
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Ne pas avertir au sujet des problèmes de latence dans les appels avec plus de 2 participants",
     "Please try to reload the page" : "Essayez de recharger la page",
     "Next call" : "Prochain appel",
-    "Nextcloud Talk Federation was updated, please reload the page" : "La fédération Nextcloud Talk a été mise à jour, merci de recharger la page"
+    "Nextcloud Talk Federation was updated, please reload the page" : "La fédération Nextcloud Talk a été mise à jour, merci de recharger la page",
+    "Invite all users and emails" : "Inviter tous les utilisateurs et participants par email"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

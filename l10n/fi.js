@@ -197,6 +197,7 @@ OC.L10N.register(
     "Dial-in information" : "Puhelintiedot",
     "Meeting ID" : "Tapaamisen tunniste",
     "Your PIN" : "PIN-koodisi",
+    "Talk conversation for event" : "Tapahtuman Talk-keskustelu",
     "Password request: %s" : "Salasanapyyntö: %s",
     "Private conversation" : "Yksityinen keskustelu",
     "Deleted user (%s)" : "Poistettiin käyttäjä (%s)",
