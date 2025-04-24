@@ -1074,7 +1074,7 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
-			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId);
+			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId, sipEnabled: Webinary::SIP_DISABLED);
 			Server::get(RoomService::class)->setReadOnly($room, Room::READ_ONLY);
 
 			$user = $this->userManager->get($userId);
@@ -1163,6 +1163,15 @@ class Manager {
 			if ($lobbyTimer !== null) {
 				$insert->setValue('lobby_timer', $insert->createNamedParameter($lobbyTimer, IQueryBuilder::PARAM_DATETIME_MUTABLE));
 				$row['lobby_timer'] = $lobbyTimer->format(\DATE_ATOM);
+			}
+		}
+		if ($sipEnabled === null) {
+			$default = $this->config->getAppValue('spreed', 'sip_dialin_default', 'none');
+			if ($default !== 'none') {
+				$default = (int)$default;
+				if (in_array($default, [Webinary::SIP_DISABLED, Webinary::SIP_ENABLED, Webinary::SIP_ENABLED_NO_PIN], true)) {
+					$sipEnabled = $default;
+				}
 			}
 		}
 		if ($sipEnabled !== null) {
