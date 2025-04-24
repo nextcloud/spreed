@@ -332,7 +332,10 @@ export default {
 				if (this.isOneToOneConversation) {
 					await this.$store.dispatch('extendOneToOneConversation', {
 						token: this.token,
-						newParticipants: [participant],
+						newParticipants: [
+							{ id: this.conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: this.conversation.displayName },
+							participant,
+						],
 					})
 				} else {
 					await addParticipant(this.token, participant.id, participant.source)
