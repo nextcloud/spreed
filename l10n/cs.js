@@ -960,6 +960,7 @@ OC.L10N.register(
     "{participant0} will receive an invitation" : "{participant0} obdrží pozvánku",
     "{participant0} and {participant1} will receive invitations" : "{participant0} a {participant1} obdrží pozvánky",
     "_{participant0}, {participant1} and %n other will receive invitations_::_{participant0}, {participant1} and %n others will receive invitations_" : ["{participant0}, {participant1} a %n další obdrží pozvánky","{participant0}, {participant1} a %n další obdrží pozvánky","{participant0}, {participant1} a %n dalších obdrží pozvánky","{participant0}, {participant1} a %n další obdrží pozvánky"],
+    "Invite {user}" : "Pozvat {user}",
     "Meeting created" : "Schůzka vytvořena",
     "Upcoming meetings" : "Nadcházející schůzky",
     "Next meeting" : "Příští schůzka",
