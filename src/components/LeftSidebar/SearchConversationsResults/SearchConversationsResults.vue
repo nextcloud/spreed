@@ -23,6 +23,7 @@ import Conversation from '../ConversationsList/Conversation.vue'
 import { ATTENDEE, CONVERSATION, AVATAR } from '../../../constants.ts'
 import { useSettingsStore } from '../../../stores/settings.js'
 import type { Conversation as TypeConversation, ParticipantSearchResult } from '../../../types/index.ts'
+import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
 const props = defineProps<{
 	searchText: string,
@@ -154,6 +155,7 @@ function iconData(item: ParticipantSearchResult) {
 			id: item.id,
 			name: item.label,
 			source: item.source,
+			preloadedUserStatus: getPreloadedUserStatus(item),
 			disableMenu: true,
 			token: 'new',
 			showUserStatus: true,

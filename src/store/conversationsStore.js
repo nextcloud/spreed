@@ -310,6 +310,7 @@ const actions = {
 				actorId: conversation.actorId, // FIXME check public share page handling
 				userId: currentUser ? currentUser.uid : '',
 				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '', // TODO guest name from localstore?
+				status: '',
 			},
 		})
 	},
