@@ -1003,13 +1003,12 @@ const actions = {
 	 * @param {object} context default store context
 	 * @param {object} payload action payload
 	 * @param {string} payload.token one-to-one conversation token
-	 * @param {Array} payload.newParticipants selected participants to be added
+	 * @param {Array} payload.newParticipants selected participants to be added (should include second participant form original conversation)
 	 */
 	async extendOneToOneConversation(context, { token, newParticipants }) {
 		const conversation = context.getters.conversation(token)
 		const participants = [
 			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
-			{ id: conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: conversation.displayName },
 			...newParticipants,
 		]
 		const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
