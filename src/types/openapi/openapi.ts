@@ -1553,7 +1553,10 @@ export type components = {
                     /** Format: int64 */
                     "recording-consent": number;
                     "supported-reactions": string[];
+                    /** @description List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg` */
                     "predefined-backgrounds": string[];
+                    /** @description List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg` */
+                    "predefined-backgrounds-v2": string[];
                     "can-upload-background": boolean;
                     "sip-enabled": boolean;
                     "sip-dialout-enabled": boolean;
