@@ -147,6 +147,16 @@ class CapabilitiesTest extends TestCase {
 							'7_library.jpg',
 							'8_space_station.jpg',
 						],
+						'predefined-backgrounds-v2' => [
+							'/img/backgrounds/1_office.jpg',
+							'/img/backgrounds/2_home.jpg',
+							'/img/backgrounds/3_abstract.jpg',
+							'/img/backgrounds/4_beach.jpg',
+							'/img/backgrounds/5_park.jpg',
+							'/img/backgrounds/6_theater.jpg',
+							'/img/backgrounds/7_library.jpg',
+							'/img/backgrounds/8_space_station.jpg',
+						],
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -246,6 +256,13 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
+		$this->appConfig->expects($this->any())
+			->method('getAppValueBool')
+			->willReturnMap([
+				['backgrounds_default_for_users', true, true],
+				['backgrounds_upload_users', true, true],
+			]);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$data = $capabilities->getCapabilities();
 		$this->assertSame([
@@ -286,6 +303,16 @@ class CapabilitiesTest extends TestCase {
 							'6_theater.jpg',
 							'7_library.jpg',
 							'8_space_station.jpg',
+						],
+						'predefined-backgrounds-v2' => [
+							'/img/backgrounds/1_office.jpg',
+							'/img/backgrounds/2_home.jpg',
+							'/img/backgrounds/3_abstract.jpg',
+							'/img/backgrounds/4_beach.jpg',
+							'/img/backgrounds/5_park.jpg',
+							'/img/backgrounds/6_theater.jpg',
+							'/img/backgrounds/7_library.jpg',
+							'/img/backgrounds/8_space_station.jpg',
 						],
 					],
 					'chat' => [
