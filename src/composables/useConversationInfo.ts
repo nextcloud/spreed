@@ -12,7 +12,8 @@ import moment from '@nextcloud/moment'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import type { Conversation } from '../types/index.ts'
-import { futureRelativeTime, convertToUnix } from '../utils/formattedTime.ts'
+import { getEventTimeRange } from '../utils/conversation.js'
+import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
@@ -40,7 +41,6 @@ export function useConversationInfo({
 }: Payload) {
 	const exposeMessages = exposeMessagesRef.value !== null ? exposeMessagesRef.value : !isSearchResult.value
 	const exposeDescription = exposeDescriptionRef.value !== null ? exposeDescriptionRef.value : isSearchResult.value
-	const nowUnix = convertToUnix(Date.now())
 
 	const counterType = computed(() => {
 		if (!exposeMessages) {
@@ -120,14 +120,24 @@ export function useConversationInfo({
 		}
 
 		// This is for event conversations where the last message is a system message
-		const startTime = parseInt(item.value.objectId.split('#')?.at(0) ?? '')
+		const startTime = getEventTimeRange(item.value).start
 		const showTimeLeft = shortLastChatMessageAuthor.value === '' || lastMessage.value.messageType === 'comment_deleted'
-		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT && item.value.objectId
-			&& startTime > nowUnix && showTimeLeft) {
-			if (startTime - nowUnix < 24 * 60 * 60) {
-				return futureRelativeTime(startTime * 1000)
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+			&& startTime && startTime > Date.now() && showTimeLeft) {
+			if (startTime - Date.now() < ONE_DAY_IN_MS) {
+				return {
+					actor: null,
+					icon: null,
+					message: futureRelativeTime(startTime),
+					title: futureRelativeTime(startTime),
+				}
 			} else {
-				return moment(startTime * 1000).calendar()
+				return {
+					actor: null,
+					icon: null,
+					message: moment(startTime).calendar(),
+					title: moment(startTime).calendar(),
+				}
 			}
 		}
 
