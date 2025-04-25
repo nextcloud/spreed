@@ -307,6 +307,7 @@ OC.L10N.register(
     "Dial-in information" : "معلومات الإتصال",
     "Meeting ID" : "معرف الإجتماع ",
     "Your PIN" : "رقمك السري",
+    "Talk conversation for event" : "محادثة الحدث ",
     "Password request: %s" : "طلب كلمة المرور: %s",
     "Private conversation" : "محادثة خاصة",
     "Deleted user (%s)" : "تم حذف العضو (%s)",
