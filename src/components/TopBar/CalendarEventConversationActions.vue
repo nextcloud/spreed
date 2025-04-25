@@ -61,8 +61,8 @@ async function archiveEventConversation() {
 
 <template>
 	<div>
-		<NcButton :aria-label="t('spreed', 'Event conversation expiry')"
-			:title="t('spreed', 'Event conversation expiry')"
+		<NcButton :aria-label="t('spreed', 'Meeting conversation expiry')"
+			:title="t('spreed', 'Meeting conversation expiry')"
 			type="warning"
 			@click="showEventConversationDialog = true">
 			<template #icon>
@@ -73,10 +73,10 @@ async function archiveEventConversation() {
 			size="small"
 			:container="container"
 			close-on-click-outside
-			:name="t('spreed', 'Event conversation to be expired')"
+			:name="t('spreed', 'Meeting conversation to be expired')"
 			@close="showEventConversationDialog = false">
 			<template #default>
-				<p>{{ t('spreed', 'Event conversations are archived after 7 days of no activity.') }}</p>
+				<p>{{ t('spreed', 'Meeting conversations are archived after 7 days of no activity.') }}</p>
 			</template>
 			<template #actions>
 				<NcButton v-if="isModerator"
