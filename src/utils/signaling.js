@@ -790,7 +790,7 @@ Signaling.Standalone.prototype.connect = function() {
 				this.processErrorTokenExpired()
 				break
 			default:
-				console.error('Ignore unknown error', data)
+				console.error('Ignore unknown error: %s', JSON.stringify(data.error))
 				this._trigger('error', [data.error])
 				break
 			}
