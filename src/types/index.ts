@@ -329,6 +329,10 @@ export type {
 export type scheduleMeetingParams = Required<operations['room-schedule-meeting']>['requestBody']['content']['application/json']
 export type scheduleMeetingResponse = ApiResponse<operations['room-schedule-meeting']['responses'][200]['content']['application/json']>
 
+export type EventTimeRange = {
+	start: number | null
+	end: number | null
+}
 // User preferences response
 export type {
 	UserPreferencesParams,
