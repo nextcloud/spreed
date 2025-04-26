@@ -628,14 +628,11 @@ export default {
 		_handleParticipantRaisedHand(callParticipantModel, raisedHand) {
 			const nickName = callParticipantModel.attributes.name || callParticipantModel.attributes.userId
 			// sometimes the nick name is not available yet...
-			if (nickName) {
-				if (raisedHand?.state) {
-					showMessage(t('spreed', '{nickName} raised their hand.', { nickName }))
-				}
-			} else {
-				if (raisedHand?.state) {
-					showMessage(t('spreed', 'A participant raised their hand.'))
-				}
+			if (raisedHand?.state) {
+				const message = nickName 
+					? t('spreed', '{nickName} raised their hand.', { nickName })
+					: t('spreed', 'A participant raised their hand.')
+				showMessage(message)
 			}
 
 			// update in callViewStore
