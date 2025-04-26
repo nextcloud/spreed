@@ -1207,6 +1207,7 @@ OC.L10N.register(
     "Add users or groups" : "کاربران یا گروه ها را اضافه کنید",
     "Add users" : "Add users",
     "Add groups" : "Add groups",
+    "Add teams" : "افزودن گروه‌ها",
     "Add other sources" : "Add other sources",
     "Add emails" : "Add emails",
     "Integrations" : "یکپارچگی‌ها",
