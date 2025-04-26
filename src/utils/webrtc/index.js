@@ -303,24 +303,24 @@ async function signalingIsConnected(signaling) {
 
 	const signalingConnectionSucceededOnConnect = () => {
 		signaling.off('connect', signalingConnectionSucceededOnConnect)
-		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+		signaling.off('error', signalingConnectionFailedOnError)
 
 		signalingConnectionSucceeded()
 	}
 
-	const signalingConnectionFailedOnInvalidToken = (error) => {
+	const signalingConnectionFailedOnError = (error) => {
 		if (error.code !== 'invalid_token') {
 			return
 		}
 
 		signaling.off('connect', signalingConnectionSucceededOnConnect)
-		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+		signaling.off('error', signalingConnectionFailedOnError)
 
 		signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
 	}
 
 	signaling.on('connect', signalingConnectionSucceededOnConnect)
-	signaling.on('error', signalingConnectionFailedOnInvalidToken)
+	signaling.on('error', signalingConnectionFailedOnError)
 
 	await signalingConnection
 }
