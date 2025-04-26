@@ -309,14 +309,18 @@ async function signalingIsConnected(signaling) {
 	}
 
 	const signalingConnectionFailedOnError = (error) => {
-		if (error.code !== 'invalid_token') {
+		if (error.code !== 'invalid_token' && error.code !== 'invalid_client_type') {
 			return
 		}
 
 		signaling.off('connect', signalingConnectionSucceededOnConnect)
 		signaling.off('error', signalingConnectionFailedOnError)
 
-		signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
+		if (error.code === 'invalid_token') {
+			signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
+		} else if (error.code === 'invalid_client_type') {
+			signalingConnectionFailed(new Error('Internal clients are not supported by the signaling server, is \'internalsecret\' set in the signaling server configuration file?'))
+		}
 	}
 
 	signaling.on('connect', signalingConnectionSucceededOnConnect)
