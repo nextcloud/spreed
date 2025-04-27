@@ -494,6 +494,7 @@ OC.L10N.register(
     "Login" : "Autorizēties",
     "Nickname" : "Iesauka",
     "Client ID" : "Klienta ID",
+    "Polls" : "Aptaujas",
     "Audio" : "Audio",
     "Other" : "Cits",
     "Group" : "Grupa",
