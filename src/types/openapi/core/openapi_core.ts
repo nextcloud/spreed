@@ -238,7 +238,8 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get profile fields for another user */
+        get: operations["profile_api-get-profile-fields"];
         /**
          * Update the visibility of a parameter
          * @description This endpoint requires password confirmation
@@ -1108,6 +1109,33 @@ export type components = {
             description: string | null;
             thumb: string | null;
             link: string;
+        };
+        ProfileAction: {
+            id: string;
+            icon: string;
+            title: string;
+            target: string | null;
+        };
+        ProfileData: components["schemas"]["ProfileFields"] & {
+            /** @description Timezone identifier like Europe/Berlin or America/North_Dakota/Beulah */
+            timezone: string;
+            /**
+             * Format: int64
+             * @description Offset in seconds, negative when behind UTC, positive otherwise
+             */
+            timezoneOffset: number;
+        };
+        ProfileFields: {
+            userId: string;
+            address?: string | null;
+            biography?: string | null;
+            displayname?: string | null;
+            headline?: string | null;
+            isUserAvatarVisible?: boolean;
+            organisation?: string | null;
+            pronouns?: string | null;
+            role?: string | null;
+            actions: components["schemas"]["ProfileAction"][];
         };
         PublicCapabilities: {
             bruteforce: {
@@ -2125,6 +2153,65 @@ export interface operations {
                                     [key: string]: Record<string, never>;
                                 };
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "profile_api-get-profile-fields": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                /** @description ID of the user */
+                targetUserId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Profile data returned successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ProfileData"];
+                        };
+                    };
+                };
+            };
+            /** @description Profile is disabled */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Account not found or disabled */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
