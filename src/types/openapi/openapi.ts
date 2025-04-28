@@ -8644,7 +8644,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "calendar" | "email" | "end" | "start";
+                                error: "calendar" | "conversation" | "email" | "end" | "start";
                             };
                         };
                     };
