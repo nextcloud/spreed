@@ -5,6 +5,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.0.4 – 2025-04-28
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(schedule-meeting): Make sure the other user is in one-to-one when scheduling
+  [#14973](https://github.com/nextcloud/spreed/issues/14973)
+  [#14967](https://github.com/nextcloud/spreed/issues/14967)
+- fix(schedule-meeting): Improve dialog when scheduling in one-to-one
+  [#14923](https://github.com/nextcloud/spreed/issues/14923)
+- fix(schedule-meeting): Hide schedule meeting from former one-to-one
+  [#14923](https://github.com/nextcloud/spreed/issues/14923)
+- fix(performance): Fix unnecessary user_status requests from avatar component
+  [#14932](https://github.com/nextcloud/spreed/issues/14932)
+
 ## 21.0.3 – 2025-04-17
 ### Changed
 - Update translations
