@@ -209,6 +209,7 @@ export default {
 
 		canExtendOneToOneConversation() {
 			return supportConversationCreationAll && this.isOneToOneConversation
+				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		isModeratorOrUser() {
