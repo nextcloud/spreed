@@ -111,8 +111,6 @@
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
     "Notes" : "โน้ต",
-    "Loading" : "กำลังโหลด",
-    "Close" : "ปิด",
-    "Password protect" : "ป้องกันด้วยรหัสผ่าน"
+    "Close" : "ปิด"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
