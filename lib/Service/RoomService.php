@@ -522,7 +522,12 @@ class RoomService {
 			throw new LobbyException(LobbyException::REASON_TYPE);
 		}
 
-		if ($room->getObjectType() !== '' && $room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
+		if ($room->getObjectType() !== '' && !in_array($room->getObjectType(), [
+			BreakoutRoom::PARENT_OBJECT_TYPE,
+			Room::OBJECT_TYPE_EMAIL,
+			Room::OBJECT_TYPE_EVENT,
+			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
+		], true)) {
 			throw new LobbyException(LobbyException::REASON_OBJECT);
 		}
 
