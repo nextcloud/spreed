@@ -22,6 +22,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
@@ -58,6 +59,7 @@ class SignalingController extends OCSController {
 		private TalkSession $session,
 		private Manager $manager,
 		private ParticipantService $participantService,
+		private RoomService $roomService,
 		private SessionService $sessionService,
 		private IDBConnection $dbConnection,
 		private Messages $messages,
@@ -858,7 +860,9 @@ class SignalingController extends OCSController {
 
 			if ($participant->getSession() instanceof Session) {
 				if ($inCall !== null) {
-					$this->participantService->changeInCall($room, $participant, $inCall);
+					$lastJoinedCall = $this->timeFactory->getDateTime();
+					$this->participantService->changeInCall($room, $participant, $inCall, lastJoinedCall: $lastJoinedCall->getTimestamp());
+					$this->roomService->setActiveSince($room, $participant, $lastJoinedCall, callFlag: $inCall, silent: false);
 				}
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}
