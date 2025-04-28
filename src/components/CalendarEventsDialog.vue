@@ -88,6 +88,7 @@ const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeabl
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
+		&& conversation.value.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
