@@ -283,6 +283,7 @@ export default {
 		showCalendarEvents() {
 			return this.getUserId && !this.isInCall && !this.isSidebar
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+				&& this.conversation.type !== CONVERSATION.TYPE.CHANGELOG
 		},
 
 		getUserId() {
