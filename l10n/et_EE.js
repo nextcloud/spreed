@@ -543,13 +543,9 @@ OC.L10N.register(
     "Agenda" : "Päevakava",
     "Call summary" : "Kõne kokkuvõte",
     "Call summary - {title}" : "Kõne kokkuvõte - {title}",
-    "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Suuremate paigalduste puhul peaksid kasutama täiendavat välist kõnehõlbustusserverit. Kui jätad tühjaks, on kasutusel sisseehitatud kõnehõlbustusserver.",
     "Copy conversation link" : "Kopeeri vestluse link",
-    "Loading" : "Laadimine",
     "Close" : "Sulge",
-    "Password protect" : "Parooliga kaitsmine",
     "Lost connection to signaling server. Try to reload the page manually." : "Kadus ühendus kõnehõlbustusserveriga. Proovi, kas lehe uuesti laadimine aitab.",
-    "Signaling servers" : "Kõnehõlbustusserverid",
     "Invite all users and emails" : "Kutsu kõiki kasutajaid ja e-posti aadresse"
 },
 "nplurals=2; plural=(n != 1);");
