@@ -12,7 +12,7 @@ import moment from '@nextcloud/moment'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import type { Conversation } from '../types/index.ts'
-import { getEventTimeRange } from '../utils/conversation.js'
+import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 

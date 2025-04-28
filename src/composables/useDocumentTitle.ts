@@ -13,7 +13,7 @@ import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useStore } from './useStore.js'
 import { EventBus } from '../services/EventBus.ts'
 import type { Conversation } from '../types/index.ts'
-import { hasUnreadMentions, hasCall } from '../utils/conversation.js'
+import { hasUnreadMentions, hasCall } from '../utils/conversation.ts'
 
 /**
  * Composable to check whether the page is visible.
