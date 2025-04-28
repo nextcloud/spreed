@@ -2607,7 +2607,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?int $end Unix timestamp when the meeting ends, falls back to 60 minutes after start
 	 * @param ?string $title Title or summary of the event, falling back to the conversation name if none is given
 	 * @param ?string $description Description of the event, falling back to the conversation description if none is given
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'calendar'|'email'|'end'|'start'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'calendar'|'conversation'|'email'|'end'|'start'}, array{}>
 	 *
 	 * 200: Meeting scheduled
 	 * 400: Meeting could not be created successfully
@@ -2615,6 +2615,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function scheduleMeeting(string $calendarUri, int $start, ?array $attendeeIds = null, ?int $end = null, ?string $title = null, ?string $description = null): DataResponse {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			return new DataResponse(['error' => 'conversation'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$eventBuilder = $this->calendarManager->createEventBuilder();
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId, [$calendarUri]);
 
@@ -2658,6 +2662,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$eventBuilder->setEndDate($endDate);
 		if (method_exists($eventBuilder, 'setStatus')) {
 			$eventBuilder->setStatus(CalendarEventStatus::CONFIRMED);
+		}
+
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+			$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 		}
 
 		$userAttendees = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_USERS);
