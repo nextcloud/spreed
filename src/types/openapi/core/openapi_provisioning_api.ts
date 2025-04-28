@@ -510,10 +510,6 @@ export type components = {
             id: string;
             language: string;
             /** Format: int64 */
-            firstLoginTimestamp: number;
-            /** Format: int64 */
-            lastLoginTimestamp: number;
-            /** Format: int64 */
             lastLogin: number;
             locale: string;
             manager: string;
@@ -524,8 +520,6 @@ export type components = {
             phoneScope?: components["schemas"]["UserDetailsScope"];
             profile_enabled: string;
             profile_enabledScope?: components["schemas"]["UserDetailsScope"];
-            pronouns: string;
-            pronounsScope?: components["schemas"]["UserDetailsScope"];
             quota: components["schemas"]["UserDetailsQuota"];
             role: string;
             roleScope?: components["schemas"]["UserDetailsScope"];
