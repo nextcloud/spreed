@@ -943,23 +943,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/index.php/core/mimeicon": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a preview by mime */
-        get: operations["preview-get-mime-icon-url"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/index.php/core/references/preview/{referenceId}": {
         parameters: {
             query?: never;
@@ -1176,58 +1159,36 @@ export type components = {
             completionExpectedAt: number | null;
             /** Format: double */
             progress: number | null;
-            /** Format: int64 */
-            scheduledAt: number | null;
-            /** Format: int64 */
-            startedAt: number | null;
-            /** Format: int64 */
-            endedAt: number | null;
         };
         TaskProcessingTaskType: {
             name: string;
             description: string;
-            inputShape: {
-                [key: string]: components["schemas"]["TaskProcessingShape"];
-            };
+            inputShape: components["schemas"]["TaskProcessingShape"][];
             inputShapeEnumValues: {
-                [key: string]: {
-                    name: string;
-                    value: string;
-                }[];
-            };
+                name: string;
+                value: string;
+            }[][];
             inputShapeDefaults: {
                 [key: string]: number | string;
             };
-            optionalInputShape: {
-                [key: string]: components["schemas"]["TaskProcessingShape"];
-            };
+            optionalInputShape: components["schemas"]["TaskProcessingShape"][];
             optionalInputShapeEnumValues: {
-                [key: string]: {
-                    name: string;
-                    value: string;
-                }[];
-            };
+                name: string;
+                value: string;
+            }[][];
             optionalInputShapeDefaults: {
                 [key: string]: number | string;
             };
-            outputShape: {
-                [key: string]: components["schemas"]["TaskProcessingShape"];
-            };
+            outputShape: components["schemas"]["TaskProcessingShape"][];
             outputShapeEnumValues: {
-                [key: string]: {
-                    name: string;
-                    value: string;
-                }[];
-            };
-            optionalOutputShape: {
-                [key: string]: components["schemas"]["TaskProcessingShape"];
-            };
+                name: string;
+                value: string;
+            }[][];
+            optionalOutputShape: components["schemas"]["TaskProcessingShape"][];
             optionalOutputShapeEnumValues: {
-                [key: string]: {
-                    name: string;
-                    value: string;
-                }[];
-            };
+                name: string;
+                value: string;
+            }[][];
         };
         Team: {
             id: string;
@@ -4556,28 +4517,6 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
-            };
-        };
-    };
-    "preview-get-mime-icon-url": {
-        parameters: {
-            query?: {
-                /** @description Mime type */
-                mime?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The mime icon url */
-            303: {
-                headers: {
-                    Location?: string;
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
