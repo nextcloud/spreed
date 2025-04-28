@@ -1117,12 +1117,8 @@ export type components = {
             target: string | null;
         };
         ProfileData: components["schemas"]["ProfileFields"] & {
-            /** @description Timezone identifier like Europe/Berlin or America/North_Dakota/Beulah */
             timezone: string;
-            /**
-             * Format: int64
-             * @description Offset in seconds, negative when behind UTC, positive otherwise
-             */
+            /** Format: int64 */
             timezoneOffset: number;
         };
         ProfileFields: {
