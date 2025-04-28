@@ -115,3 +115,47 @@ Feature: conversation-1/create
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType | description |
       | room | 3    | 1               | Lorem ipsum |
+
+  Scenario: Create extended conversation
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 3 |
+      | roomName | Foo bar |
+    Given user "participant2" creates room "room2" (v4)
+      | roomType | 3 |
+      | roomName | Not Your Public |
+    Given user "participant2" creates room "room3" (v4)
+      | roomType | 2 |
+      | roomName | Not Your Group |
+    Given user "participant2" creates room "room4" (v4)
+      | roomType | 2 |
+      | roomName | Not Your Open |
+      | listable | 1 |
+    Given user "participant1" creates room "room1-1" (v4)
+      | roomType | 3 |
+      | roomName | Okay |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room1) |
+    Given user "participant1" creates room "room2-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName |  Not okay Public |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room2) |
+    Given user "participant1" creates room "room3-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName |  Not okay Group |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room3) |
+    Given user "participant1" creates room "room4-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName |  Not okay Open |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room4) |
+    Given user "participant1" creates room "room5-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName |  Not okay Open |
+      | objectType | extended_conversation |
+      | objectId | in/valid |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id      | name    | type | participantType |
+      | room1   | Foo bar | 3    | 1               |
+      | room1-1 | Okay    | 3    | 1               |
