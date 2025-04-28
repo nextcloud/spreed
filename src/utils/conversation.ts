@@ -5,27 +5,27 @@
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { EventTimeRange } from '../types/index.ts'
+import type { EventTimeRange, Conversation } from '../types/index.ts'
+
+type Filter = 'unread' | 'mentions' | 'events'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 /**
  * check if the conversation has unread messages
  *
- * @param {object} conversation conversation object
- * @return {boolean}
+ * @param conversation conversation object
  */
-export function hasUnreadMessages(conversation) {
+export function hasUnreadMessages(conversation: Conversation): boolean {
 	return conversation.unreadMessages > 0
 }
 
 /**
  * check if the conversation has unread mentions
  *
- * @param {object} conversation conversation object
- * @return {boolean}
+ * @param conversation conversation object
  */
-export function hasUnreadMentions(conversation) {
+export function hasUnreadMentions(conversation: Conversation): boolean {
 	return conversation.unreadMention
 		|| conversation.unreadMentionDirect
 		|| (conversation.unreadMessages > 0
@@ -35,20 +35,18 @@ export function hasUnreadMentions(conversation) {
 /**
  * check if the conversation has ongoing call
  *
- * @param {object} conversation conversation object
- * @return {boolean}
+ * @param conversation conversation object
  */
-export function hasCall(conversation) {
+export function hasCall(conversation: Conversation): boolean {
 	return conversation.hasCall && conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
 }
 
 /**
  * check if the conversation is an event conversation
  *
- * @param {object} conversation conversation object
- * @return {boolean}
+ * @param conversation conversation object
  */
-export function isEvent(conversation) {
+export function isEvent(conversation: Conversation): boolean {
 	return conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
 }
 
@@ -56,20 +54,19 @@ export function isEvent(conversation) {
  * check if the conversation is archived
  *
  * @param {object} conversation conversation object
- * @param {boolean} showArchived whether current filtered list is of archived conversations
- * @return {boolean}
+ * @param showArchived whether current filtered list is of archived conversation
  */
-export function shouldIncludeArchived(conversation, showArchived) {
+export function shouldIncludeArchived(conversation: Conversation, showArchived: boolean): boolean {
 	return !supportsArchive || (conversation.isArchived === showArchived)
 }
 
 /**
  * Returns the start and end time of the event conversation
  *
- * @param {object} conversation conversation object
- * @return {EventTimeRange} start and end time in milliseconds
+ * @param conversation conversation object
+ * @return start and end time in milliseconds
  */
-export function getEventTimeRange(conversation) {
+export function getEventTimeRange(conversation: Conversation): EventTimeRange {
 	if (!isEvent(conversation) || !conversation.objectId) {
 		return { start: null, end: null }
 	}
@@ -90,9 +87,8 @@ export function getEventTimeRange(conversation) {
  * check if the conversation is not an event conversation or if it is, check if it is happening in 16 hours
  *
  * @param {object} conversation conversation object
- * @return {boolean}
  */
-export function shouldIncludeEvents(conversation) {
+export function shouldIncludeEvents(conversation: Conversation): boolean {
 	return !isEvent(conversation)
 	|| (conversation.objectId?.includes('#') && shouldEventBeVisible(conversation))
 }
@@ -102,18 +98,22 @@ export function shouldIncludeEvents(conversation) {
  *
  * @param {object} conversation conversation object
  */
-export function shouldEventBeVisible(conversation) {
+export function shouldEventBeVisible(conversation: Conversation): boolean {
+	const startTime = getEventTimeRange(conversation).start
+	if (!startTime) {
+		return false
+	}
 	return isEvent(conversation)
-		&& getEventTimeRange(conversation).start - Date.now() < 16 * ONE_HOUR_IN_MS
+		&& startTime - Date.now() < 16 * ONE_HOUR_IN_MS
 }
 
 /**
  * apply the active filter
  *
- * @param {object} conversation conversation object
- * @param {Array} filters the filter option
+ * @param conversation conversation object
+ * @param filters the filter option
  */
-export function filterConversation(conversation, filters) {
+export function filterConversation(conversation: Conversation, filters: Filter[]): boolean {
 	if (filters.length === 0) {
 		return shouldIncludeEvents(conversation)
 	}
