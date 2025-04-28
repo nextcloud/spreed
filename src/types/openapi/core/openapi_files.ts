@@ -11,10 +11,7 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Gets a thumbnail of the specified file
-         * @deprecated
-         */
+        /** Gets a thumbnail of the specified file */
         get: operations["api-get-thumbnail"];
         put?: never;
         post?: never;
@@ -252,7 +249,6 @@ export type components = {
     schemas: {
         Capabilities: {
             files: {
-                windows_compatible_filenames: boolean;
                 $comment: string | null;
                 bigfilechunking: boolean;
                 blacklisted_files: Record<string, never>[];
