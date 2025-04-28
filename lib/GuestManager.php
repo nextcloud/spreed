@@ -233,7 +233,7 @@ class GuestManager {
 			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $room->getDisplayName('')]);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $user->getDisplayName()]);
 		} else {
-			$subject = $this->l->t('You were invited to conversation "%s."', $room->getDisplayName(''));
+			$subject = $this->l->t('You were invited to conversation "%s".', $room->getDisplayName(''));
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
 		}
 
