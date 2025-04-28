@@ -375,8 +375,6 @@
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Loading" : "Memuat",
-    "Close" : "Tutup",
-    "Password protect" : "Lindungi dengan kata sandi"
+    "Close" : "Tutup"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

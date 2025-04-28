@@ -113,8 +113,6 @@ OC.L10N.register(
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
     "Notes" : "โน้ต",
-    "Loading" : "กำลังโหลด",
-    "Close" : "ปิด",
-    "Password protect" : "ป้องกันด้วยรหัสผ่าน"
+    "Close" : "ปิด"
 },
 "nplurals=1; plural=0;");
