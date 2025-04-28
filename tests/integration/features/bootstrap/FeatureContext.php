@@ -1044,7 +1044,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$body['roomName'] = $identifier;
 		}
 
-		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'room') {
+		if (isset($body['objectType'], $body['objectId']) && in_array($body['objectType'], ['room', 'extended_conversation'], true)) {
 			$result = preg_match('/ROOM\(([^)]+)\)/', $body['objectId'], $matches);
 			if ($result && isset(self::$identifierToToken[$matches[1]])) {
 				$body['objectId'] = self::$identifierToToken[$matches[1]];

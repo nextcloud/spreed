@@ -620,7 +620,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($objectType === Room::OBJECT_TYPE_EXTENDED_CONVERSATION && $objectId !== '') {
 			try {
 				$oldRoom = $this->manager->getRoomForUserByToken($objectId, $this->userId);
-			} catch (RoomNotFoundException) {
+				// Don't allow to extend unjoined public conversations
+				$this->participantService->getParticipant($oldRoom, $this->userId, false);
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
+				return new DataResponse(['error' => CreationException::REASON_OBJECT], Http::STATUS_BAD_REQUEST);
 			}
 
 			if ($oldRoom->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
