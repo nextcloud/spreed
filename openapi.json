@@ -18580,6 +18580,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "calendar",
+                                                                "conversation",
                                                                 "email",
                                                                 "end",
                                                                 "start"
