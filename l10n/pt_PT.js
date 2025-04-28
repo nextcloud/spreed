@@ -37,6 +37,7 @@ OC.L10N.register(
     "Unknown filetype" : "Tipo de ficheiro desconhecido",
     "Talk mentions" : "Menções no Falar",
     "No unread mentions" : "Nenhuma menção por ler",
+    "Description" : "Descrição",
     "Dismiss notification" : "Dispensar notificação",
     "Accept" : "Aceitar",
     "Decline" : "Recusar",
@@ -241,7 +242,6 @@ OC.L10N.register(
     "Disabled" : "Desativado",
     "State" : "Estado",
     "Name" : "Nome",
-    "Description" : "Descrição",
     "General settings" : "Definições Gerais",
     "Enable encryption" : "Ativar a encriptação",
     "Pending" : "Pendente",
@@ -263,6 +263,7 @@ OC.L10N.register(
     "Reset" : "Reiniciar",
     "Back" : "Anterior",
     "Cancel" : "Cancelar",
+    "Now" : "Agora",
     "From" : "De",
     "To" : "Para",
     "Calendar" : "Calendário",
@@ -387,8 +388,6 @@ OC.L10N.register(
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
     "Reports" : "Relatórios",
-    "Loading" : "A carregar",
-    "Close" : "Fechar",
-    "Password protect" : "Proteger com palavra-passe"
+    "Close" : "Fechar"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

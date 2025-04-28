@@ -19,6 +19,7 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
+    "Description" : "Descripción",
     "Accept" : "Aceptar",
     "Decline" : "Declinar",
     "Join call" : "Unirse a la llamada",
@@ -35,7 +36,6 @@ OC.L10N.register(
     "Enabled" : "Habilitado",
     "Disabled" : "Deshabilitado",
     "Name" : "Nombre",
-    "Description" : "Descripción",
     "Permissions" : "Permisos",
     "General settings" : "Configuraciones generales",
     "Enable encryption" : "Habilitar encripción",
@@ -147,11 +147,6 @@ OC.L10N.register(
     "__language_name__" : "Español (Peru)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
-    "Loading" : "Cargando",
-    "Close" : "Cerrar",
-    "Password protect" : "Proteger con contraseña",
-    "TURN server" : "Servidor TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. "
+    "Close" : "Cerrar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

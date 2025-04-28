@@ -19,6 +19,7 @@ OC.L10N.register(
     "Invalid file provided" : "არასწორი ფაილი",
     "Invalid image" : "არასწორი სურათი",
     "Unknown filetype" : "ამოუცნობი ფაილის ტიპი",
+    "Description" : "აღწერილობა",
     "Accept" : "მიღება",
     "Decline" : "ურაყოფა",
     "Join call" : "შეუერთდით ზარს",
@@ -35,7 +36,6 @@ OC.L10N.register(
     "Enabled" : "მოქმედია",
     "Disabled" : "არაა მოქმედი",
     "Name" : "სახელი",
-    "Description" : "აღწერილობა",
     "Permissions" : "უფლებები",
     "General settings" : "მთავარი პარამეტრები",
     "Enable encryption" : "შიფრაციის ამოქმედება",
@@ -155,11 +155,6 @@ OC.L10N.register(
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
     "Notes" : "ჩანაწერები",
-    "Loading" : "იტვირთება",
-    "Close" : "დახურვა",
-    "Password protect" : "პაროლით დაცვა",
-    "TURN server" : "TURN სერვერი",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი."
+    "Close" : "დახურვა"
 },
 "nplurals=2; plural=(n!=1);");

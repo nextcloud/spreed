@@ -30,6 +30,7 @@ OC.L10N.register(
     "Unknown filetype" : "Tipe berkas tak dikenal",
     "Say hi to your friends and colleagues!" : "Katakan halo kepada teman dan kolega Anda!",
     "You were mentioned" : "Anda disebutkan",
+    "Description" : "Deskrisi",
     "Dismiss notification" : "Abaikan notifikasi",
     "Accept" : "Terima",
     "Decline" : "Tolak",
@@ -261,7 +262,6 @@ OC.L10N.register(
     "Disabled" : "Dinonaktifkan",
     "State" : "Kondisi",
     "Name" : "Nama",
-    "Description" : "Deskrisi",
     "Off" : "Nonaktif",
     "Enable encryption" : "Aktifkan enkripsi",
     "Pending" : "Tunggu",
@@ -377,8 +377,6 @@ OC.L10N.register(
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Loading" : "Memuat",
-    "Close" : "Tutup",
-    "Password protect" : "Lindungi dengan kata sandi"
+    "Close" : "Tutup"
 },
 "nplurals=1; plural=0;");

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Invalid image" : "Ugyldig bilete",
     "Unknown filetype" : "Ukjend filtype",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",
+    "Description" : "Skildring",
     "Open settings" : "Opne instillingar",
     "Messages" : "Meldingar",
     "Albania" : "Albania",
@@ -50,7 +51,6 @@ OC.L10N.register(
     "Everyone" : "Alle",
     "Disabled" : "Deaktivert",
     "Name" : "Namn",
-    "Description" : "Skildring",
     "Enable encryption" : "Aktiver kryptering",
     "Pending" : "Under vegs",
     "Error" : "Feil",
@@ -128,8 +128,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
-    "Loading" : "Loading",
-    "Close" : "Lukk",
-    "Password protect" : "Vern med passord"
+    "Close" : "Lukk"
 },
 "nplurals=2; plural=(n != 1);");

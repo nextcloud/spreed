@@ -6,6 +6,7 @@ OC.L10N.register(
     "Invalid file provided" : "Ongeldige lêer verskaf",
     "Invalid image" : "Ongeldige beeld",
     "Unknown filetype" : "Onbekende lêertipe",
+    "Description" : "Beskrywing",
     "Accept" : "Aanvaar",
     "Open settings" : "Open instellings",
     "error" : "fout",
@@ -250,7 +251,6 @@ OC.L10N.register(
     "Saving …" : "Word gestoor …",
     "Saved!" : "Gestoor!",
     "Name" : "Naam",
-    "Description" : "Beskrywing",
     "All messages" : "Alle boodskappe",
     "Off" : "Af",
     "Pending" : "Hangend",
@@ -332,8 +332,6 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
-    "Loading" : "Laai tans..",
-    "Close" : "Sluit",
-    "Password protect" : "Beskerm met 'n wagwoord"
+    "Close" : "Sluit"
 },
 "nplurals=2; plural=(n != 1);");

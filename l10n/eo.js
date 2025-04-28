@@ -13,6 +13,7 @@ OC.L10N.register(
     "Invalid file provided" : "Nevalida dosiero provizita",
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
+    "Description" : "Priskribo",
     "Dismiss notification" : "Forsendi sciigon",
     "Accept" : "Akcepti",
     "Decline" : "Malakcepti",
@@ -263,7 +264,6 @@ OC.L10N.register(
     "Limit to groups" : "Limigi al grupoj",
     "Disabled" : "Malŝaltita",
     "Name" : "Nomo",
-    "Description" : "Priskribo",
     "Beta" : "Beta",
     "Enable encryption" : "Ŝalti ĉifradon",
     "Pending" : "Pritraktota",
@@ -357,8 +357,6 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
-    "Loading" : "Ŝargado",
-    "Close" : "Malfermi",
-    "Password protect" : "Protekti per pasvorto"
+    "Close" : "Malfermi"
 },
 "nplurals=2; plural=(n != 1);");

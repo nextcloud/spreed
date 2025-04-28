@@ -10,6 +10,7 @@ OC.L10N.register(
     "Invalid file provided" : "ไฟล์ที่ระบุไม่ถูกต้อง",
     "Invalid image" : "รูปภาพไม่ถูกต้อง",
     "Unknown filetype" : "ชนิดไฟล์ที่ไม่รู้จัก",
+    "Description" : "รายละเอียด",
     "Dismiss notification" : "ปิดการแจ้งเตือน",
     "Accept" : "ยอมรับ",
     "Decline" : "ปฏิเสธ",
@@ -24,7 +25,6 @@ OC.L10N.register(
     "Enabled" : "เปิดใช้งาน",
     "Disabled" : "ปิดใช้งาน",
     "Name" : "ชื่อ",
-    "Description" : "รายละเอียด",
     "All messages" : "ข้อความทั้งหมด",
     "@-mentions only" : "เฉพาะการกล่าวถึงแบบ @",
     "Enable encryption" : "เปิดใช้งานการเข้ารหัส",
@@ -113,8 +113,6 @@ OC.L10N.register(
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
     "Notes" : "โน้ต",
-    "Loading" : "กำลังโหลด",
-    "Close" : "ปิด",
-    "Password protect" : "ป้องกันด้วยรหัสผ่าน"
+    "Close" : "ปิด"
 },
 "nplurals=1; plural=0;");
