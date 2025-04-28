@@ -88,6 +88,7 @@ const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeabl
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
+		&& conversation.value.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
@@ -160,6 +161,11 @@ const isMatch = (string: string = '') => string.toLowerCase().includes(searchTex
 
 const conversation = computed<Conversation>(() => store.getters.conversation(props.token))
 const participants = computed(() => {
+	if (isOneToOneConversation.value && store.getters.participantsList(props.token).length === 1) {
+		// Second participant is not yet added to conversation, need to fake data from conversation object
+		// We do not have an attendeeId, so 'attendeeIds' in payload should be 'null' (selectAll === true)
+		return [{ id: conversation.value.name, source: ATTENDEE.ACTOR_TYPE.USERS, displayName: conversation.value.displayName }]
+	}
 	return store.getters.participantsList(props.token).filter((participant: Participant) => {
 		return [ATTENDEE.ACTOR_TYPE.USERS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType)
 			&& participant.attendeeId !== conversation.value.attendeeId
