@@ -155,7 +155,6 @@ OC.L10N.register(
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
     "Notes" : "ჩანაწერები",
-    "Loading" : "იტვირთება",
     "Close" : "დახურვა",
     "Password protect" : "პაროლით დაცვა",
     "TURN server" : "TURN სერვერი",

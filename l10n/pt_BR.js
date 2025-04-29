@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "Campo de e-mail ausente na linha de cabeçalho",
     "Following lines are invalid: %s" : "As seguintes linhas estão inválidas: %s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s convidou você para a conversa \"%2$s\".",
-    "You were invited to conversation \"%s.\"" : "Você foi convidado para a conversa \"%s\".",
     "Conversation invitation" : "Convite para conversa",
     "Scheduled time" : "Horário agendado",
     "Description" : "Descrição",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Não avise sobre problemas de conectividade em chamadas com mais de 2 participantes",
     "Please try to reload the page" : "Por favor, tente recarregar a página",
     "Next call" : "Próxima chamada",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation foi atualizado, por favor, recarregue a página",
-    "Invite all users and emails" : "Convide todos os usuários e e-mails"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation foi atualizado, por favor, recarregue a página"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

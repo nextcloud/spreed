@@ -1832,7 +1832,7 @@ OC.L10N.register(
     "The message could not be sent" : "ئۇچۇر ئەۋەتىلمىدى",
     "Copy conversation link" : "سۆھبەت ئۇلانمىسىنى كۆچۈرۈڭ",
     "Channel ID or name" : "قانال كىملىكى ياكى ئىسمى",
-    "Loading" : "Loading",
+    "Loading" : "يۈكلەۋاتىدۇ",
     "Close" : "ياپ",
     "Password protect" : "پارولنى قوغداش",
     "Private poll" : "شەخسىي راي سىناش",

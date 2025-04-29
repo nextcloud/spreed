@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "E-postfält saknas i rubrikraden",
     "Following lines are invalid: %s" : "Följande rader är ogiltiga: %s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s bjöd in dig till konversationen \"%2$s\".",
-    "You were invited to conversation \"%s.\"" : "Du blev inbjuden till konversationen \"%s.\"",
     "Conversation invitation" : "Inbjudan till konversation",
     "Scheduled time" : "Schemalagd tid",
     "Description" : "Beskrivning",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Varna inte om anslutningsproblem i samtal med fler än 2 deltagare",
     "Please try to reload the page" : "Försök att ladda om sidan",
     "Next call" : "Nästa samtal",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation uppdaterades, ladda om sidan",
-    "Invite all users and emails" : "Bjud in alla användare och e-postadresser"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation uppdaterades, ladda om sidan"
 },
 "nplurals=2; plural=(n != 1);");

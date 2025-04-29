@@ -896,7 +896,6 @@ OC.L10N.register(
     "Enabled for" : "Activat pentru",
     "The message could not be sent" : "Mesajul nu s-a putut transmite ",
     "Copy conversation link" : "Copiază linkul conversației",
-    "Loading" : "Loading",
     "Close" : "Închide",
     "Password protect" : "Protejare cu parolă",
     "Post to conversation" : "Postare în conversație",

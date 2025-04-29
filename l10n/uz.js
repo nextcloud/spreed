@@ -73,6 +73,7 @@ OC.L10N.register(
     "Translate" : "Tarjima",
     "Dismiss" : "Dismiss",
     "Contact" : "Aloqa",
+    "Remove {fileName}" : " {fileName} ni o'chirish",
     "Today" : "Today",
     "Yesterday" : "Kecha",
     "Add emoji" : "Emoji qo'shing",
@@ -104,7 +105,7 @@ OC.L10N.register(
     "Tasks" : "Tasks",
     "Notes" : "Notes",
     "Reports" : "Hisobotlar",
-    "Loading" : "Loading",
+    "Loading" : "Yuklanmoqda",
     "Close" : "Close",
     "Password protect" : "Password protect"
 },

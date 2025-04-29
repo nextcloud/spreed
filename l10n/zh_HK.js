@@ -2035,9 +2035,8 @@ OC.L10N.register(
     "The message could not be sent" : "無法傳送訊息",
     "Copy conversation link" : "複製對話連結",
     "Channel ID or name" : "頻道 ID 或名稱",
-    "Loading" : "載入中",
+    "Loading" : "加載中",
     "Close" : "關閉",
-    "Password protect" : "密碼防護",
     "Private poll" : "私人投票",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk已更新，您需要重新加載頁面才能開始或加入通話。",
     "Joining a conversation with \"{userid}\"" : "使用「{userid}」加入對話",
@@ -2057,7 +2056,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請重新加載頁面",
     "Next call" : "下一通話",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新加載頁面",
-    "Invite all users and emails" : "邀請所有用戶及電郵"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新加載頁面"
 },
 "nplurals=1; plural=0;");

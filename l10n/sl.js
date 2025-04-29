@@ -1617,7 +1617,7 @@ OC.L10N.register(
     "The message could not be sent" : "Sporočila ni mogoče poslati.",
     "Copy conversation link" : "Kopiraj povezavo pogovora",
     "Channel ID or name" : "Določilo ID kanala ali ime",
-    "Loading" : "Nalaganje",
+    "Loading" : "Poteka nalaganje ...",
     "Close" : "Zapri",
     "Password protect" : "Zaščiti z geslom",
     "Private poll" : "Zasebna anketa",

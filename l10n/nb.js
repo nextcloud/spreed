@@ -1829,7 +1829,7 @@ OC.L10N.register(
     "The message could not be sent" : "Meldingen kunne ikke sendes",
     "Copy conversation link" : "Kopier samtale lenke",
     "Channel ID or name" : "Kanal-ID eller navn",
-    "Loading" : "Laster",
+    "Loading" : "Lasting",
     "Close" : "Lukk",
     "Password protect" : "Passordbeskyttelse",
     "Private poll" : "Privat avstemning",

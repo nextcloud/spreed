@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "标题行中缺少电子邮件字段",
     "Following lines are invalid: %s" : "以下行无效：%s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s 邀请您加入对话“%2$s”。",
-    "You were invited to conversation \"%s.\"" : "您受邀参加对话“%s”。",
     "Conversation invitation" : "对话邀请",
     "Scheduled time" : "预定时间",
     "Description" : "描述",
@@ -2053,7 +2052,7 @@ OC.L10N.register(
     "The message could not be sent" : "无法发送消息",
     "Copy conversation link" : "复制对话链接",
     "Channel ID or name" : "频道 ID 或 名称",
-    "Loading" : "正在加载",
+    "Loading" : "加载中",
     "Close" : "关闭",
     "Password protect" : "密码保护",
     "Private poll" : "私密投票",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "不要对超过 2 位参与者的通话中的连接问题发出警告",
     "Please try to reload the page" : "请尝试重新加载页面",
     "Next call" : "下次通话",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，请重新加载页面",
-    "Invite all users and emails" : "邀请所有用户和电子邮件"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，请重新加载页面"
 },
 "nplurals=1; plural=0;");

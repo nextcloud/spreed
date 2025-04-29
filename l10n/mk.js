@@ -1020,7 +1020,6 @@ OC.L10N.register(
     "Response to" : "Одговори на",
     "Enabled for" : "Овозможено за",
     "Copy conversation link" : "копирај линк од разговорот",
-    "Loading" : "Се вчитува",
     "Close" : "Затвори",
     "Password protect" : "Заштити со лозинка",
     "Private poll" : "Приватна анкета",

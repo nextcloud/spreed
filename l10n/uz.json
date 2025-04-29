@@ -71,6 +71,7 @@
     "Translate" : "Tarjima",
     "Dismiss" : "Dismiss",
     "Contact" : "Aloqa",
+    "Remove {fileName}" : " {fileName} ni o'chirish",
     "Today" : "Today",
     "Yesterday" : "Kecha",
     "Add emoji" : "Emoji qo'shing",
@@ -102,7 +103,7 @@
     "Tasks" : "Tasks",
     "Notes" : "Notes",
     "Reports" : "Hisobotlar",
-    "Loading" : "Loading",
+    "Loading" : "Yuklanmoqda",
     "Close" : "Close",
     "Password protect" : "Password protect"
 },"pluralForm" :"nplurals=1; plural=0;"

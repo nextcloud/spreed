@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "У линији заглавља недостаје поље и-мејла",
     "Following lines are invalid: %s" : "Нису исправне следеће линије: %s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s вас је позвао у разговор „%2$s”.",
-    "You were invited to conversation \"%s.\"" : "Позвани сте у разговор „%s”.",
     "Conversation invitation" : "Позив за разговор",
     "Scheduled time" : "Заказано време",
     "Description" : "Опис",
@@ -2053,7 +2052,7 @@ OC.L10N.register(
     "The message could not be sent" : "Није могла да се пошаље порука",
     "Copy conversation link" : "Копирај линк разговора",
     "Channel ID or name" : "ID канала или име",
-    "Loading" : "Учитавање",
+    "Loading" : "Учитавам",
     "Close" : "Затвори",
     "Password protect" : "Заштићено лозинком",
     "Private poll" : "Приватно гласање",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Не упозоравај на проблеме са конекцијом у разговорима са више од 2 учесника",
     "Please try to reload the page" : "Молимо вас, покушајте поново да учитате страницу",
     "Next call" : "Наредни позив",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу",
-    "Invite all users and emails" : "Позови све кориснике и и-мејлове"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

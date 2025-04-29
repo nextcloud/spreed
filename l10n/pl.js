@@ -2047,7 +2047,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nie ostrzegaj przed problemami z łącznością w przypadku połączeń większych niż z 2-oma uczestnikami",
     "Please try to reload the page" : "Spróbuj ponownie wczytać stronę",
     "Next call" : "Następne połączenie",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Federacja Nextcloud Talk została zaktualizowana. Wczytaj stronę ponownie",
-    "Invite all users and emails" : "Zaproś wszystkich użytkowników i adresy e-mail"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Federacja Nextcloud Talk została zaktualizowana. Wczytaj stronę ponownie"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

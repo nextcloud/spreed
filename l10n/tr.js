@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "Başlık satırında e-posta alanı eksik",
     "Following lines are invalid: %s" : "Şu satırlar geçersiz: %s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s sizi \"%2$s\" görüşmesine davet etti.",
-    "You were invited to conversation \"%s.\"" : "\"%s\" görüşmesine davet edildiniz.",
     "Conversation invitation" : "Görüşme daveti",
     "Scheduled time" : "Planmış zaman",
     "Description" : "Açıklama",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "2 kişiden fazla katılımcısı olan çağrılarda bağlantı sorunları uyarısı görüntülenmesin",
     "Please try to reload the page" : "Lütfen sayfayı yeniden yüklemeyi deneyin",
     "Next call" : "Sonraki çağrı",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Konuş Birlik güncellendi. Lütfen sayfayı yeniden yükleyin",
-    "Invite all users and emails" : "Tüm kullanıcıları ve e-posta adreslerini davet et"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Konuş Birlik güncellendi. Lütfen sayfayı yeniden yükleyin"
 },
 "nplurals=2; plural=(n > 1);");

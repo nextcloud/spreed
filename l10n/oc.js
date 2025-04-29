@@ -1124,7 +1124,7 @@ OC.L10N.register(
     "The message could not be sent" : "Se podiá pas enviar lo messatge",
     "Copy conversation link" : "Copiar lo ligam de conversacion",
     "Channel ID or name" : "ID o nom del canal",
-    "Loading" : "Loading",
+    "Loading" : "Cargament",
     "Close" : "Tampar",
     "Password protect" : "Protegir per un senhal",
     "Private poll" : "Sondatge privat",

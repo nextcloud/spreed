@@ -302,7 +302,6 @@ OC.L10N.register(
     "Missing email field in header line" : "標題行中缺少電子郵件欄位",
     "Following lines are invalid: %s" : "以下行無效：%s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s 邀請您加入對話「%2$s」。",
-    "You were invited to conversation \"%s.\"" : "您被邀請加入對話「%s」。",
     "Conversation invitation" : "對話邀請",
     "Scheduled time" : "排定時間",
     "Description" : "描述",
@@ -2055,7 +2054,7 @@ OC.L10N.register(
     "Channel ID or name" : "頻道 ID 或名稱",
     "Loading" : "正在載入",
     "Close" : "關閉",
-    "Password protect" : "密碼防護",
+    "Password protect" : "密碼保護",
     "Private poll" : "私人投票",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk 已更新，您必須在開始或加入通話前重新載入頁面。",
     "Joining a conversation with \"{userid}\"" : "使用「{userid}」加入對話",
@@ -2075,7 +2074,6 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "對於參與者超過 2人的通話，請勿發出關於連線問題的警告",
     "Please try to reload the page" : "請嘗試重新載入頁面",
     "Next call" : "下個通話",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面",
-    "Invite all users and emails" : "邀請所有使用者與電子郵件"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面"
 },
 "nplurals=1; plural=0;");

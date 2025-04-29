@@ -1947,7 +1947,7 @@ OC.L10N.register(
     "The message could not be sent" : "Správu sa nepodarilo odoslať",
     "Copy conversation link" : "Kopírovať odkaz na konverzáciu",
     "Channel ID or name" : "Identifikátor alebo názov kanálu",
-    "Loading" : "Načítava sa...",
+    "Loading" : "Načítava sa",
     "Close" : "Zatvoriť",
     "Password protect" : "Chrániť heslom",
     "Private poll" : "Súkromná anketa",
@@ -1966,7 +1966,6 @@ OC.L10N.register(
     "Signaling servers" : "Signalizačné servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Pre väčšie inštalácie sa môže použiť externý signalizačný server. Pre použitie interného serveru ponechajte túto kolónku nevyplnenú.",
     "Please try to reload the page" : "Prosím načítajte stránku znova",
-    "Next call" : "Ďalší hovor",
-    "Invite all users and emails" : "Pozvať všetkých užívateľov a emaily"
+    "Next call" : "Ďalší hovor"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

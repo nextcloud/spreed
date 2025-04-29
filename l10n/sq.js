@@ -273,7 +273,6 @@ OC.L10N.register(
     "iOS app" : "Aplikacion iOS",
     "__language_name__" : "Shqip",
     "Tasks" : "Detyra",
-    "Loading" : "Duke ngarkuar",
     "Close" : "Mbylleni",
     "Password protect" : "Mbroje me fjalëkalim",
     "TURN server" : "Serveri TURN",

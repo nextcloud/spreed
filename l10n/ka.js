@@ -1667,7 +1667,7 @@ OC.L10N.register(
     "The message could not be sent" : "The message could not be sent",
     "Copy conversation link" : "Copy conversation link",
     "Channel ID or name" : "Channel ID or name",
-    "Loading" : "Loading",
+    "Loading" : "ითვირთება",
     "Close" : "Close",
     "Password protect" : "Password protect",
     "Private poll" : "Private poll",
