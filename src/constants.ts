@@ -107,6 +107,11 @@ export const CONVERSATION = {
 		DEFAULT: '',
 	},
 
+	OBJECT_ID: {
+		PHONE_INCOMING: 'direct-dialin',
+		PHONE_OUTGOING: 'phone',
+	},
+
 	LIST_STYLE: {
 		TWO_LINES: 'two-lines',
 		COMPACT: 'compact',

@@ -341,6 +341,7 @@ export default {
 
 		isPhoneRoom() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
+				&& this.conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
 		},
 
 		isInLobby() {
@@ -407,7 +408,9 @@ export default {
 				const attendeeId = this.$store.getters.participantsList(this.token)
 					.find(participant => participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES)
 					?.attendeeId
-				this.dialOutPhoneNumber(attendeeId)
+				if (attendeeId) {
+					this.dialOutPhoneNumber(attendeeId)
+				}
 			}
 		},
 
