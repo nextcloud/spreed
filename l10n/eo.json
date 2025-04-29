@@ -355,6 +355,7 @@
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
-    "Close" : "Malfermi"
+    "Close" : "Malfermi",
+    "Password protect" : "Protekti per pasvorto"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

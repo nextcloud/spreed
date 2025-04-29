@@ -510,11 +510,15 @@ OC.L10N.register(
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Informes",
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Llamada con %n invitado (Duración {duration})","Llamada con %n invitados (Duración {duration})","Llamada con %n invitados (Duración {duration})"],
+    "Call with {user1} and {user2} (Duration {duration})" : "Llamada con {user1} y {user2} (Duración {duration})",
     "%s invited you to a conversation." : "%s te invitó a una conversación",
     "You were invited to a conversation." : "fuiste invitado a una conversación",
     "Click the button below to join." : "Haz click en el botón de abajo para unirte.",
     "Join »%s«" : "Unirse »%s«",
     "{user} invited you to a private conversation" : " {user} te invitó a una conversación privada",
-    "Close" : "Cerrar"
+    "Close" : "Cerrar",
+    "Password protect" : "Proteger con contraseña",
+    "TURN server" : "Servidor TURN"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

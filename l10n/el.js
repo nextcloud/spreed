@@ -1019,6 +1019,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, please reload the page" : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα",
     "Failed to join the conversation. Try to reload the page." : "Η συμμετοχή στη συνομιλία απέτυχε. Προσπαθήστε να φορτώσετε ξανά τη σελίδα.",
     "Nextcloud is in maintenance mode, please reload the page" : "Το Nextcloud βρίσκεται σε λειτουργία συντήρησης, ανανεώστε τη σελίδα",
-    "Lost connection to signaling server. Try to reload the page manually." : "Χάθηκε η σύνδεση με τον διακομιστή σηματοδοσίας. Προσπαθήστε να ανανεώσετε την σελίδα χειροκίνητα."
+    "Lost connection to signaling server. Try to reload the page manually." : "Χάθηκε η σύνδεση με τον διακομιστή σηματοδοσίας. Προσπαθήστε να ανανεώσετε την σελίδα χειροκίνητα.",
+    "TURN server" : "Διακομιστής TURN"
 },
 "nplurals=2; plural=(n != 1);");
