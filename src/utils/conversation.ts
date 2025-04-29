@@ -103,8 +103,7 @@ export function shouldEventBeVisible(conversation: Conversation): boolean {
 	if (!startTime) {
 		return false
 	}
-	return isEvent(conversation)
-		&& startTime - Date.now() < 16 * ONE_HOUR_IN_MS
+	return startTime - Date.now() < 16 * ONE_HOUR_IN_MS
 }
 
 /**
