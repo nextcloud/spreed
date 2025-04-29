@@ -377,6 +377,7 @@ OC.L10N.register(
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Close" : "Tutup"
+    "Close" : "Tutup",
+    "Password protect" : "Lindungi dengan kata sandi"
 },
 "nplurals=1; plural=0;");

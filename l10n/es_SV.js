@@ -158,6 +158,8 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (El Salvador)",
     "Tasks" : "Tareas",
-    "Close" : "Cerrar"
+    "Close" : "Cerrar",
+    "Password protect" : "Proteger con contraseña",
+    "TURN server" : "Servidor TURN"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

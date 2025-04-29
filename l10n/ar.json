@@ -2003,20 +2003,19 @@
     "Click the button below to join." : "اضغط على الزر للإنضمام.",
     "Join »%s«" : "انضم »%s«",
     "{user} invited you to a private conversation" : "{user} قام بدعوتك إلى محادثة خاصة",
-    "SIP dial-in" : "الاتصال الهاتفي SIP ",
-    "Don't warn about connectivity issues in calls with more than 2 participants" : "لا تقم بالتنبيه لمشاكل في الأداء في المكالمات التي يزيد عدد المشاركين فيها عن 2",
-    "Please try to reload the page" : "رجاءً، قم بتحديد مكان الصفحة",
     "Copy conversation link" : "نسخ رابط المحادثة",
     "Close" : "إغلاق",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
-    "Next call" : "المكالمة التالية",
     "Joining a conversation with \"{userid}\"" : "إنضمام إلى محادثة مع \"{userid}\"",
     "Nextcloud Talk was updated, please reload the page" : "تم تحديث نكست كلاود التحدث، يرجى تحديث الصفحة.",
-    "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة عبر السحابة الموحدة لنكست كلاود. رجاءً، أعِد تحميل الصفحة",
     "An error happened when trying to share your file" : "حدث خطأ ما أثناء محاولة مشاركة ملفك ",
     "Failed to join the conversation. Try to reload the page." : "فشل في الانضمام للمحادثة، حدث الصفحة.",
     "Nextcloud is in maintenance mode, please reload the page" : "نكست كلاود في وضع الصيانة، يرجى تحديث الصفحة",
     "Lost connection to signaling server. Try to reload the page manually." : "انقطع الاتصال بخادم التشوير. حاول إعادة تحميل الصفحة يدويًا. ",
-    "Invite all users and emails" : "قُم بدعوة كل الأشخاص والإيميلات "
+    "SIP dial-in" : "الاتصال الهاتفي SIP ",
+    "Don't warn about connectivity issues in calls with more than 2 participants" : "لا تقم بالتنبيه لمشاكل في الأداء في المكالمات التي يزيد عدد المشاركين فيها عن 2",
+    "Please try to reload the page" : "رجاءً، قم بتحديد مكان الصفحة",
+    "Next call" : "المكالمة التالية",
+    "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة عبر السحابة الموحدة لنكست كلاود. رجاءً، أعِد تحميل الصفحة"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

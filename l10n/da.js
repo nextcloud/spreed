@@ -836,9 +836,8 @@ OC.L10N.register(
     "Click the button below to join." : "Tryk på knappen nedenfor for at deltage.",
     "Join »%s«" : "Deltag i »%s«",
     "{user} invited you to a private conversation" : "{user} inviterede dig til en privat samtale",
-    "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere",
     "Copy conversation link" : "Kopier samtalelink",
     "Close" : "Luk",
-    "Invite all users and emails" : "Inviter alle brugere og e-mails"
+    "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere"
 },
 "nplurals=2; plural=(n != 1);");
