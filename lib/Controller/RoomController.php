@@ -1945,6 +1945,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialInPin(string $pin): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -1955,10 +1959,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
-		}
-
-		if (!$this->talkConfig->isSIPConfigured()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
@@ -1989,6 +1989,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($phoneNumber)) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -1999,10 +2003,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
-		}
-
-		if (!$this->talkConfig->isSIPConfigured()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
@@ -2050,6 +2050,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -2060,10 +2064,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
-		}
-
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		if (!isset($options['actorId'], $options['actorType']) || $options['actorType'] !== Attendee::ACTOR_PHONES) {
@@ -2136,6 +2136,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -2150,10 +2154,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if (empty($options['attendeeId'])) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
-		}
-
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
