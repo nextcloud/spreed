@@ -14,19 +14,25 @@ import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
+import { generateUrl } from '@nextcloud/router'
 
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
+import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import type {
 	Conversation,
 	UserProfileData,
 } from '../../types/index.ts'
+
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const props = defineProps<{
 	isUser: boolean,
@@ -41,6 +47,8 @@ const emit = defineEmits<{
 
 const store = useStore()
 const groupwareStore = useGroupwareStore()
+
+const isDarkTheme = useIsDarkTheme()
 
 const profileLoading = ref(false)
 
@@ -65,6 +73,17 @@ const sidebarTitle = computed(() => {
 		})
 	}
 	return conversation.value.displayName
+})
+
+const avatarUrl = computed(() => {
+	if (!supportsAvatar || conversation.value.isDummyConversation) {
+		// TODO use a fallback icon (like icon-class in CnversationIcon)
+		return undefined
+	}
+
+	return isOneToOneConversation.value
+		? generateUrl('avatar/{userId}/512' + (isDarkTheme.value ? '/dark' : ''), { userId: conversation.value.name })
+		: getConversationAvatarOcsUrl(token.value, isDarkTheme.value, conversation.value.avatarVersion)
 })
 
 const profileInformation = computed(() => {
@@ -116,7 +135,8 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 </script>
 
 <template>
-	<div class="content">
+	<div class="content"
+		:class="{['content--' + mode]: state === 'default'}">
 		<template v-if="state === 'default'">
 			<div v-if="isUser" class="content__actions">
 				<NcActions v-if="profileActions.length" force-menu>
@@ -139,19 +159,29 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 				</NcButton>
 			</div>
 
-			<div class="content__header">
-				<NcAppSidebarHeader class="content__name content__name--has-actions"
-					:class="{ 'content__name--has-profile-actions': profileActions.length }"
-					:name="sidebarTitle"
-					:title="sidebarTitle" />
-				<div v-if="profileInformation.length"
-					class="content__info">
-					<p v-for="row in profileInformation"
-						:key="row.key"
-						class="content__info-row">
-						<component :is="row.icon" :size="16" />
-						{{ row.label }}
-					</p>
+			<div class="content__scroller animated">
+				<!-- User / conversation avatar image -->
+				<div class="content__image-wrapper animated">
+					<img class="content__image animated"
+						:src="avatarUrl"
+						:alt="conversation.displayName"
+						@click="mode === 'preview' && emit('update:mode', 'full')">
+				</div>
+				<!-- User / conversation profile information -->
+				<div class="content__header">
+					<NcAppSidebarHeader class="content__name content__name--has-actions"
+						:class="{ 'content__name--has-profile-actions': profileActions.length }"
+						:name="sidebarTitle"
+						:title="sidebarTitle" />
+					<div v-if="mode !== 'compact' && profileInformation.length"
+						class="content__info">
+						<p v-for="row in profileInformation"
+							:key="row.key"
+							class="content__info-row">
+							<component :is="row.icon" :size="16" />
+							{{ row.label }}
+						</p>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -178,6 +208,133 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 
 <style lang="scss" scoped>
 .content {
+	.animated,
+	.animated::after {
+		transition-property: inset, padding, width, height, border-radius, opacity;
+		transition-duration: var(--animation-slow);
+		transition-timing-function: ease-in-out;
+	}
+
+	&--compact {
+		// default
+		.content__image-wrapper {
+			width: 0;
+			height: 0;
+			padding: 0;
+
+			.content__image {
+				opacity: 0;
+			}
+		}
+	}
+
+	&--preview {
+		// avatar on the left
+		.content__scroller {
+			flex-wrap: wrap;
+		}
+
+		.content__header {
+			width: 75%;
+		}
+
+		.content__image-wrapper {
+			width: 25%;
+			height: 25%;
+			padding: var(--default-grid-baseline);
+			padding-block-start: calc(4 * var(--default-grid-baseline));
+
+			&::after {
+				inset-block-start: calc(4 * var(--default-grid-baseline)) !important;
+				height: calc(100% - 5 * var(--default-grid-baseline)) !important;
+			}
+		}
+	}
+
+	&--full {
+		// avatar in full size
+		.content__scroller {
+			flex-direction: column;
+			align-items: start;
+		}
+
+		.content__header {
+			width: 100%;
+			padding-inline: calc(2 * var(--default-grid-baseline));
+		}
+
+		.content__image-wrapper {
+			width: 100%;
+			height: 100%;
+			padding: 0;
+
+			&::after {
+				width: 100% !important;
+				height: 100% !important;
+				inset: 0 !important;
+				border-radius: 0 !important;
+				opacity: 1 !important;
+			}
+
+			.content__image {
+				border-radius: 0;
+			}
+		}
+
+		// Overwrite NcButton styles
+		& :deep(.button-vue--icon-only),
+		& ~ :deep(.button-vue--icon-only) {
+			filter: invert(1);
+		}
+
+		// Do not overwrite for dark theme
+		body[data-theme-dark] & :deep(.button-vue--icon-only),
+		body[data-theme-dark] & ~ :deep(.button-vue--icon-only) {
+			filter: none;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			body[data-theme-default] & :deep(.button-vue--icon-only),
+			body[data-theme-default] & ~ :deep(.button-vue--icon-only) {
+				filter: none;
+			}
+		}
+	}
+
+	&__scroller {
+		display: flex;
+	}
+
+	.content__image-wrapper {
+		position: relative;
+		flex-shrink: 0;
+		max-height: var(--app-sidebar-width);
+		overflow: hidden;
+
+		&::after {
+			position: absolute;
+			inset: var(--default-grid-baseline);
+			content: '';
+			z-index: 1;
+			width: calc(100% - 2 * var(--default-grid-baseline));
+			height: calc(100% - 2 * var(--default-grid-baseline));
+			border-radius: 50%;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 30%);
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+
+	.content__image {
+		max-width: 100%;
+		max-height: 100%;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		object-fit: cover;
+		object-position: top;
+	}
+
 	&__header {
 		flex-grow: 1;
 		display: flex;
@@ -216,6 +373,7 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 			display: flex;
 			flex-direction: column;
 			gap: var(--default-grid-baseline);
+			padding-inline-end: var(--default-grid-baseline);
 
 			&-row {
 				display: flex;
@@ -231,6 +389,19 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 		inset-inline-end: calc(var(--default-grid-baseline) + var(--app-sidebar-close-button-offset));
 		display: flex;
 		gap: var(--default-grid-baseline);
+
+		// Copy opaque styles of close button
+		:deep(.button-vue--icon-only),
+		:deep(.action-item) {
+			opacity: 0.7;
+
+			&:hover,
+			&:focus,
+			&:active,
+			&.action-item--open {
+				opacity: 1;
+			}
+		}
 	}
 
 	&__profile-action {
