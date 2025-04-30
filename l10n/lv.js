@@ -492,7 +492,7 @@ OC.L10N.register(
     "User" : "Lietotājs",
     "Password" : "Parole",
     "API token" : "API pilnvara",
-    "Login" : "Autorizēties",
+    "Login" : "Pieteikumvārds",
     "Nickname" : "Iesauka",
     "Client ID" : "Klienta ID",
     "Polls" : "Aptaujas",

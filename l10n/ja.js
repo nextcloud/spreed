@@ -826,6 +826,7 @@ OC.L10N.register(
     "Assign" : "割り当てる",
     "Cancel" : "キャンセル",
     "Add participant \"{user}\"" : "参加者 \"{user}\" を追加",
+    "Now" : "現在",
     "Loading …" : "読み込み中…",
     "No upcoming events" : "今後のイベントはありません",
     "From" : "差出人",

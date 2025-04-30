@@ -302,6 +302,7 @@ OC.L10N.register(
     "Missing email field in header line" : "У линији заглавља недостаје поље и-мејла",
     "Following lines are invalid: %s" : "Нису исправне следеће линије: %s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s вас је позвао у разговор „%2$s”.",
+    "You were invited to conversation \"%s\"." : "Позвани сте у разговор „%s”.",
     "Conversation invitation" : "Позив за разговор",
     "Scheduled time" : "Заказано време",
     "Description" : "Опис",
