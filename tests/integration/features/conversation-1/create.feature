@@ -155,7 +155,7 @@ Feature: conversation-1/create
       | roomName |  Not okay Open |
       | objectType | extended_conversation |
       | objectId | in/valid |
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | id      | name    | type | participantType |
       | room1   | Foo bar | 3    | 1               |
       | room1-1 | Okay    | 3    | 1               |
