@@ -5,6 +5,7 @@
 
 <template>
 	<NcAppSidebar v-if="isSidebarAvailable"
+		ref="sidebar"
 		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
@@ -113,6 +114,7 @@
 </template>
 
 <script>
+import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
 
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
@@ -184,11 +186,57 @@ export default {
 	},
 
 	setup() {
+		const sidebar = ref(null)
 		const contentModeIndex = ref(0)
+
+		let throttleTimeout = null
+		const throttleHandleWheelEvent = (event) => {
+			if (!throttleTimeout) {
+				handleWheelEvent(event)
+				throttleTimeout = setTimeout(() => {
+					// do something
+					clearTimeout(throttleTimeout)
+					throttleTimeout = null
+				}, 300 /* var(--animation-slow) */)
+			}
+		}
+
+		useEventListener(sidebar, 'wheel', throttleHandleWheelEvent, { capture: true })
+
+		/**
+		 * Listen to wheel event on sidebar to switch between header info appearances
+		 * @param {Event} event Wheel event
+		 */
+		function handleWheelEvent(event) {
+			// [1]: scrolling up; [-1]: scrolling down
+			const direction = event.deltaY < 0 ? 1 : -1
+
+			if (!CONTENT_MODES[contentModeIndex.value + direction]) {
+				// Already at the edge state
+				return
+			}
+
+			if (direction === -1) {
+				// Shrink before scrolling other content (block following scroll events)
+				event.preventDefault()
+			} else {
+				let target = event.target
+				while (target !== sidebar.value?.$el) {
+					if (target.scrollTop !== 0) {
+						// Expand only if other content is scrolled to the top
+						return
+					}
+					target = target.parentNode
+				}
+			}
+
+			contentModeIndex.value += direction
+		}
 
 		return {
 			CONTENT_MODES,
 			contentModeIndex,
+			sidebar,
 			sidebarStore: useSidebarStore()
 		}
 	},
@@ -393,13 +441,19 @@ export default {
 			}
 		},
 
-		token() {
-			if (this.$refs.participantsTab) {
-				this.$refs.participantsTab.$el.scrollTop = 0
-			}
+		token: {
+			handler() {
+				if (this.$refs.participantsTab) {
+					this.$refs.participantsTab.$el.scrollTop = 0
+				}
 
-			// Discard notification if the conversation changes or closed
-			this.notifyUnreadMessages(null)
+				// Discard notification if the conversation changes or closed
+				this.notifyUnreadMessages(null)
+
+				// FIXME collapse for group conversations until we show anything useful there
+				this.contentModeIndex = this.isOneToOne ? 1 : 0
+			},
+			immediate: true,
 		},
 
 		isModeratorOrUser(newValue) {
