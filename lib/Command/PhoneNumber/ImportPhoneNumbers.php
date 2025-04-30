@@ -74,7 +74,7 @@ class ImportPhoneNumbers extends Base {
 				continue;
 			}
 
-			$phoneNumberStandard = $this->phoneNumberUtil->convertToStandardFormat($row[0]);
+			$phoneNumberStandard = preg_match('/^[0-9]{1,20}$/', $row[0]) ? $row[0] : $this->phoneNumberUtil->convertToStandardFormat($row[0]);
 			if ($phoneNumberStandard === null) {
 				$output->writeln('<error>Not a valid phone number ' . $row[0] . '. The format is invalid.</error>');
 				return self::FAILURE;
