@@ -65,6 +65,7 @@ class SignalingControllerTest extends TestCase {
 	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
 	protected Manager|MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
+	protected RoomService&MockObject $roomService;
 	protected SessionService&MockObject $sessionService;
 	protected Messages&MockObject $messages;
 	protected IUserManager&MockObject $userManager;
@@ -107,6 +108,7 @@ class SignalingControllerTest extends TestCase {
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->roomService = $this->createMock(RoomService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -126,6 +128,7 @@ class SignalingControllerTest extends TestCase {
 			$this->session,
 			$this->manager,
 			$this->participantService,
+			$this->roomService,
 			$this->sessionService,
 			$this->dbConnection,
 			$this->messages,
