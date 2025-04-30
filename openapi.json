@@ -237,6 +237,7 @@
                                     "recording-consent",
                                     "supported-reactions",
                                     "predefined-backgrounds",
+                                    "predefined-backgrounds-v2",
                                     "can-upload-background",
                                     "sip-enabled",
                                     "sip-dialout-enabled",
@@ -268,6 +269,14 @@
                                     },
                                     "predefined-backgrounds": {
                                         "type": "array",
+                                        "description": "List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg`",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "predefined-backgrounds-v2": {
+                                        "type": "array",
+                                        "description": "List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg`",
                                         "items": {
                                             "type": "string"
                                         }

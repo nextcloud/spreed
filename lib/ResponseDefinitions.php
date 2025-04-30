@@ -354,7 +354,10 @@ namespace OCA\Talk;
  *             recording: bool,
  *             recording-consent: int,
  *             supported-reactions: list<string>,
+ *             // List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg`
  *             predefined-backgrounds: list<string>,
+ *              // List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg`
+ *             predefined-backgrounds-v2: list<string>,
  *             can-upload-background: bool,
  *             sip-enabled: bool,
  *             sip-dialout-enabled: bool,

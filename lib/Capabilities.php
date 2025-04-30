@@ -149,6 +149,7 @@ class Capabilities implements IPublicCapability {
 		],
 		'call' => [
 			'predefined-backgrounds',
+			'predefined-backgrounds-v2',
 			'can-upload-background',
 			'start-without-media',
 			'blur-virtual-background',
@@ -222,6 +223,7 @@ class Capabilities implements IPublicCapability {
 					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
 					'supported-reactions' => ['❤️', '🎉', '👏', '👋', '👍', '👎', '🔥', '😂', '🤩', '🤔', '😲', '😥'],
 					// 'predefined-backgrounds' => list<string>,
+					// 'predefined-backgrounds-v2' => list<string>,
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
@@ -292,46 +294,34 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
 		}
 
-		/** @var ?list<string> $predefinedBackgrounds */
-		$predefinedBackgrounds = null;
-		$cachedPredefinedBackgrounds = $this->talkCache->get('predefined_backgrounds');
-		if ($cachedPredefinedBackgrounds !== null) {
-			// Try using cached value
-			/** @var list<string>|null $predefinedBackgrounds */
-			$predefinedBackgrounds = json_decode($cachedPredefinedBackgrounds, true);
+		$includeBrandedBackgrounds = $user instanceof IUser || $this->appConfig->getAppValueBool('backgrounds_branded_for_guests');
+		$includeDefaultBackgrounds = !$user instanceof IUser || $this->appConfig->getAppValueBool('backgrounds_default_for_users', true);
+
+		$predefinedBackgrounds = [];
+		$defaultBackgrounds = $this->getBackgroundsFromDirectory(__DIR__ . '/../img/backgrounds', '_default');
+		if ($includeBrandedBackgrounds) {
+			$predefinedBackgrounds = $this->getBackgroundsFromDirectory(\OC::$SERVERROOT . '/themes/talk-backgrounds', '_branded');
+			$predefinedBackgrounds = array_map(static fn ($fileName) => '/themes/talk-backgrounds/' . $fileName, $predefinedBackgrounds);
 		}
 
-		if (!is_array($predefinedBackgrounds)) {
-			// Cache was empty or invalid, regenerate
-			/** @var list<string> $predefinedBackgrounds */
-			$predefinedBackgrounds = [];
-			if (file_exists(__DIR__ . '/../img/backgrounds')) {
-				$directoryIterator = new \DirectoryIterator(__DIR__ . '/../img/backgrounds');
-				foreach ($directoryIterator as $file) {
-					if (!$file->isFile()) {
-						continue;
-					}
-					if ($file->isDot()) {
-						continue;
-					}
-					if ($file->getFilename() === 'COPYING') {
-						continue;
-					}
-					$predefinedBackgrounds[] = $file->getFilename();
-				}
-				sort($predefinedBackgrounds);
-			}
-
-			$this->talkCache->set('predefined_backgrounds', json_encode($predefinedBackgrounds), 300);
+		if ($includeDefaultBackgrounds) {
+			$spreedWebPath = $this->appManager->getAppWebPath('spreed');
+			$prefixedDefaultBackgrounds = array_map(static fn ($fileName) => $spreedWebPath . '/img/backgrounds/' . $fileName, $defaultBackgrounds);
+			$predefinedBackgrounds = array_merge($predefinedBackgrounds, $prefixedDefaultBackgrounds);
 		}
 
-		$capabilities['config']['call']['predefined-backgrounds'] = $predefinedBackgrounds;
+		$capabilities['config']['call']['predefined-backgrounds'] = $defaultBackgrounds;
+		$capabilities['config']['call']['predefined-backgrounds-v2'] = array_values($predefinedBackgrounds);
+
 		if ($user instanceof IUser) {
-			$quota = $user->getQuota();
-			if ($quota !== 'none') {
-				$quota = Util::computerFileSize($quota);
+			$userAllowedToUpload = $this->appConfig->getAppValueBool('backgrounds_upload_users', true);
+			if ($userAllowedToUpload) {
+				$quota = $user->getQuota();
+				if ($quota !== 'none') {
+					$quota = Util::computerFileSize($quota);
+				}
+				$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
 			}
-			$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
 			$capabilities['config']['call']['can-enable-sip'] = $this->talkConfig->canUserEnableSIP($user);
 		}
 
@@ -350,5 +340,44 @@ class Capabilities implements IPublicCapability {
 		return [
 			'spreed' => $capabilities,
 		];
+	}
+
+	/**
+	 * @return list<string>
+	 */
+	protected function getBackgroundsFromDirectory(string $directory, string $cacheSuffix): array {
+		$cacheKey = 'predefined_backgrounds' . $cacheSuffix;
+
+		/** @var ?list<string> $predefinedBackgrounds */
+		$predefinedBackgrounds = null;
+		$cachedPredefinedBackgrounds = $this->talkCache->get($cacheKey);
+		if ($cachedPredefinedBackgrounds !== null) {
+			// Try using cached value
+			/** @var list<string>|null $predefinedBackgrounds */
+			$predefinedBackgrounds = json_decode($cachedPredefinedBackgrounds, true);
+		}
+
+		if (!is_array($predefinedBackgrounds)) {
+			if (file_exists($directory) && is_dir($directory)) {
+				$directoryIterator = new \DirectoryIterator($directory);
+				foreach ($directoryIterator as $file) {
+					if (!$file->isFile()) {
+						continue;
+					}
+					if ($file->isDot()) {
+						continue;
+					}
+					if ($file->getFilename() === 'COPYING') {
+						continue;
+					}
+					$predefinedBackgrounds[] = $file->getFilename();
+				}
+				sort($predefinedBackgrounds);
+			}
+
+			$this->talkCache->set($cacheKey, json_encode($predefinedBackgrounds), 300);
+		}
+
+		return $predefinedBackgrounds ?? [];
 	}
 }
