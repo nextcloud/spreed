@@ -763,22 +763,22 @@ PeerConnectionAnalyzer.prototype = {
 			type += ' (screen)'
 		}
 
-		return 'PeerConnectionAnalyzer: ' + type + ': '
+		return 'PeerConnectionAnalyzer: ' + type
 	},
 
 	_logStats(kind, message) {
 		const tag = this._getLogTag(kind)
 
 		if (message) {
-			console.debug(tag + message)
+			console.debug('%s: %s', tag, message)
 		}
 
-		console.debug(tag + 'Packets: ' + this._packets[kind].toString())
-		console.debug(tag + 'Packets lost: ' + this._packetsLost[kind].toString())
-		console.debug(tag + 'Packets lost ratio: ' + this._packetsLostRatio[kind].toString())
-		console.debug(tag + 'Packets per second: ' + this._packetsPerSecond[kind].toString())
-		console.debug(tag + 'Round trip time: ' + this._roundTripTime[kind].toString())
-		console.debug(tag + 'Timestamps: ' + this._timestampsForLogs[kind].toString())
+		console.debug('%s: Packets: %s', tag, this._packets[kind].toString())
+		console.debug('%s: Packets lost: %s', tag, this._packetsLost[kind].toString())
+		console.debug('%s: Packets lost ratio: %s', tag, this._packetsLostRatio[kind].toString())
+		console.debug('%s: Packets per second: %s', tag, this._packetsPerSecond[kind].toString())
+		console.debug('%s: Round trip time: %s', tag, this._roundTripTime[kind].toString())
+		console.debug('%s: Timestamps: %s', tag, this._timestampsForLogs[kind].toString())
 
 		this._logRtcStats(tag, kind)
 	},
@@ -786,12 +786,12 @@ PeerConnectionAnalyzer.prototype = {
 	_logRtcStats(tag, kind) {
 		for (const rtcStats of this._rtcStats[kind]) {
 			if (!rtcStats.length) {
-				console.debug(tag + 'no matching type')
+				console.debug('%s: no matching type', tag)
 				continue
 			}
 
 			for (const rtcStat of rtcStats) {
-				console.debug(tag + JSON.stringify(rtcStat))
+				console.debug('%s: %s', tag, JSON.stringify(rtcStat))
 			}
 		}
 	}
