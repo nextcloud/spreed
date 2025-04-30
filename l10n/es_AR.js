@@ -147,8 +147,10 @@ OC.L10N.register(
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
+    "Loading" : "Cargando",
     "Close" : "Cerrar",
     "Password protect" : "Proteger con contraseña",
-    "TURN server" : "Servidor TURN"
+    "TURN server" : "Servidor TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
