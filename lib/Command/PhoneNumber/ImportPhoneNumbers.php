@@ -56,7 +56,9 @@ class ImportPhoneNumbers extends Base {
 
 		$this->db->beginTransaction();
 		if ($reset) {
-			$this->db->truncateTable('talk_phone_numbers', false);
+			$query = $this->db->getQueryBuilder();
+			$query->delete('talk_phone_numbers');
+			$query->executeStatement();
 			$force = false;
 		}
 
