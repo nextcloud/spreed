@@ -5,6 +5,7 @@
 
 <template>
 	<NcAppSidebar v-if="isSidebarAvailable"
+		ref="sidebar"
 		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
@@ -25,6 +26,7 @@
 				:mode="CONTENT_MODES[contentModeIndex]"
 				:conversation="conversation"
 				:state="showSearchMessagesTab ? 'search' : 'default'"
+				@update:mode="handleUpdateMode"
 				@update:search="handleShowSearch" />
 		</template>
 		<template #description>
@@ -113,6 +115,7 @@
 </template>
 
 <script>
+import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
 
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
@@ -185,11 +188,57 @@ export default {
 	},
 
 	setup() {
-		const contentModeIndex = ref(parseInt(BrowserStorage.getItem('sidebarContentMode') ?? 0, 10))
+		const sidebar = ref(null)
+		const contentModeIndex = ref(parseInt(BrowserStorage.getItem('sidebarContentMode') ?? 1, 10))
+
+		let throttleTimeout = null
+		const throttleHandleWheelEvent = (event) => {
+			if (!throttleTimeout) {
+				handleWheelEvent(event)
+				throttleTimeout = setTimeout(() => {
+					// do something
+					clearTimeout(throttleTimeout)
+					throttleTimeout = null
+				}, 300 /* var(--animation-slow) */)
+			}
+		}
+
+		useEventListener(sidebar, 'wheel', throttleHandleWheelEvent, { capture: true })
+
+		/**
+		 * Listen to wheel event on sidebar to switch between header info appearances
+		 * @param {Event} event Wheel event
+		 */
+		function handleWheelEvent(event) {
+			// [1]: scrolling up; [-1]: scrolling down
+			const direction = event.deltaY < 0 ? 1 : -1
+
+			if (!CONTENT_MODES[contentModeIndex.value + direction]) {
+				// Already at the edge state
+				return
+			}
+
+			if (direction === -1) {
+				// Shrink before scrolling other content (block following scroll events)
+				event.preventDefault()
+			} else {
+				let target = event.target
+				while (target !== sidebar.value?.$el) {
+					if (target.scrollTop !== 0) {
+						// Expand only if other content is scrolled to the top
+						return
+					}
+					target = target.parentNode
+				}
+			}
+
+			contentModeIndex.value += direction
+		}
 
 		return {
 			CONTENT_MODES,
 			contentModeIndex,
+			sidebar,
 			sidebarStore: useSidebarStore()
 		}
 	},
@@ -445,6 +494,13 @@ export default {
 
 		handleUpdateActive(active) {
 			this.activeTab = active
+		},
+
+		handleUpdateMode(mode) {
+			const newModeIndex = CONTENT_MODES.findIndex((m) => m === mode)
+			if (newModeIndex !== -1) {
+				this.contentModeIndex = newModeIndex
+			}
 		},
 
 		handleShowSearch(value) {

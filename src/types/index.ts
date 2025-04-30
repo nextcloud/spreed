@@ -106,7 +106,10 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 export type SignalingSettings = components['schemas']['SignalingSettings']
 
 // Conversations
-export type Conversation = components['schemas']['Room']
+export type Conversation = components['schemas']['Room'] & {
+	// internal parameter up to mock a conversation object
+	isDummyConversation?: true
+}
 
 export type getAllConversationsParams = operations['room-get-rooms']['parameters']['query']
 export type getAllConversationsResponse = ApiResponse<operations['room-get-rooms']['responses'][200]['content']['application/json']>
