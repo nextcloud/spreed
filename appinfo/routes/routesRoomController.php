@@ -95,6 +95,8 @@ return [
 		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/verify-dialin', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialOutNumber() */
 		['name' => 'Room#verifyDialOutNumber', 'url' => '/api/{apiVersion}/room/{token}/verify-dialout', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::directDialIn() */
+		['name' => 'Room#directDialIn', 'url' => '/api/{apiVersion}/room/direct-dial-in', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RoomController::createGuestByDialIn() */
 		['name' => 'Room#createGuestByDialIn', 'url' => '/api/{apiVersion}/room/{token}/open-dial-in', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::rejectedDialOutRequest() */

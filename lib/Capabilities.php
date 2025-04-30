@@ -116,6 +116,7 @@ class Capabilities implements IPublicCapability {
 		'edit-draft-poll',
 		'conversation-creation-all',
 		'important-conversations',
+		'sip-direct-dialin',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -139,7 +140,9 @@ class Capabilities implements IPublicCapability {
 		'chat-summary-api',
 		'call-notification-state-api',
 		'schedule-meeting',
+		'conversation-creation-all',
 		'important-conversations',
+		'sip-direct-dialin',
 	];
 
 	public const LOCAL_CONFIGS = [

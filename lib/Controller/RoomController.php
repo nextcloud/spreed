@@ -61,6 +61,7 @@ use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PhoneService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
@@ -69,6 +70,7 @@ use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -136,6 +138,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected Config $talkConfig,
 		protected ICloudIdManager $cloudIdManager,
 		protected IPhoneNumberUtil $phoneNumberUtil,
+		protected PhoneService $phoneService,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
@@ -679,6 +682,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if (!empty($invitationList->getEmails())) {
 			$roomType = Room::TYPE_PUBLIC;
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_PHONE) {
+			$objectId = Room::OBJECT_ID_PHONE_OUTGOING;
 		}
 
 		try {
@@ -1656,7 +1663,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Archive a conversation
 	 *
-	 *  Required capability: `archived-conversations-v2`
+	 * Required capability: `archived-conversations-v2`
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
@@ -1938,6 +1945,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialInPin(string $pin): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -1950,10 +1961,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return $response;
 		}
 
-		if (!$this->talkConfig->isSIPConfigured()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
-		}
-
 		try {
 			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
 		} catch (ParticipantNotFoundException $e) {
@@ -1961,6 +1968,68 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant, skipLastMessage: true));
+	}
+
+	/**
+	 * Direct dial-in (SIP bridge)
+	 *
+	 * Required capability: `sip-direct-dialin`
+	 *
+	 * @param string $phoneNumber Phone number that is called
+	 * @param string $caller Phone number of the person calling in
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_NOT_IMPLEMENTED, null, array{}>
+	 *
+	 * 200: Call conversation created
+	 * 401: SIP request invalid
+	 * 404: Number is not assigned to any user
+	 * 500: Error occurred while creating conversation
+	 * 501: SIP dial-in is not configured
+	 */
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
+	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		try {
+			if (!$this->validateSIPBridgeRequest($phoneNumber)) {
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException) {
+			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		try {
+			$entity = $this->phoneService->getAccountToCallForPhoneNumber($phoneNumber);
+		} catch (DoesNotExistException) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$caller = trim($caller);
+		// TODO: Use later and get name from addressbook? $cleanedCaller = $this->phoneNumberUtil->convertToStandardFormat($caller);
+		$user = $this->userManager->get($entity->getActorId());
+		try {
+			$room = $this->roomService->createConversation(
+				Room::TYPE_GROUP,
+				$caller,
+				$user,
+				Room::OBJECT_TYPE_PHONE,
+				Room::OBJECT_ID_PHONE_INCOMING,
+				sipEnabled: Webinary::SIP_ENABLED_NO_PIN,
+			);
+		} catch (CreationException|PasswordException $e) {
+			$this->logger->error('Error occurred while creating SIP direct dial-in conversation', ['exception' => $e]);
+			return new DataResponse(null, Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, '', true, displayName: $caller);
+		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
 	/**
@@ -1981,6 +2050,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -1991,10 +2064,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
-		}
-
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		if (!isset($options['actorId'], $options['actorType']) || $options['actorType'] !== Attendee::ACTOR_PHONES) {
@@ -2067,6 +2136,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
+		}
+
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -2081,10 +2154,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if (empty($options['attendeeId'])) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
-		}
-
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
-			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
