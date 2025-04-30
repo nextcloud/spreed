@@ -302,6 +302,7 @@ OC.L10N.register(
     "Missing email field in header line" : "標題行中缺少電子郵件欄位",
     "Following lines are invalid: %s" : "以下行無效：%s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s 邀請您加入對話「%2$s」。",
+    "You were invited to conversation \"%s\"." : "您被邀請加入對話「%s」。",
     "Conversation invitation" : "對話邀請",
     "Scheduled time" : "排定時間",
     "Description" : "描述",

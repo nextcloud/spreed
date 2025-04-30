@@ -93,6 +93,7 @@ OC.L10N.register(
     "Grid view" : "To‘r ko‘rinishi",
     "Password" : "Password",
     "Login" : "Login",
+    "Client ID" : "Mijoz identifikatori",
     "Audio" : "Audio",
     "Other" : "Boshqa",
     "Show all files" : "Barcha fayllarni ko'rsatish",

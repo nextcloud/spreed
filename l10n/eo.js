@@ -357,6 +357,7 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
+    "Loading" : "Ŝargado",
     "Close" : "Malfermi",
     "Password protect" : "Protekti per pasvorto"
 },
