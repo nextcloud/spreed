@@ -3785,16 +3785,16 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer._logStats(kind, 'Message to log')
 
-			const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+			const tag = 'PeerConnectionAnalyzer: ' + kind
 
 			expect(consoleDebugMock).toHaveBeenCalledTimes(7)
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + 'Message to log')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + 'Packets: [0, 50, 60]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + 'Packets lost: [0, 10, 6]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + 'Packets lost ratio: [1.5, 0.2, 0.1]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, '%s: %s', tag, 'Message to log')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, '%s: Packets: %s', tag, '[0, 50, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, '%s: Packets lost: %s', tag, '[0, 10, 6]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, '%s: Packets lost ratio: %s', tag, '[1.5, 0.2, 0.1]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, '%s: Packets per second: %s', tag, '[NaN, 40, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: Round trip time: %s', tag, '[0.2, 0.3, 0.4]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: Timestamps: %s', tag, '[0, 1250, 1000]')
 			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
 			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
 		})
@@ -3813,16 +3813,16 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer._logStats(kind, 'Message to log')
 
-			const tag = 'PeerConnectionAnalyzer: ' + kind + ' (screen): '
+			const tag = 'PeerConnectionAnalyzer: ' + kind + ' (screen)'
 
 			expect(consoleDebugMock).toHaveBeenCalledTimes(7)
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + 'Message to log')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + 'Packets: [0, 50, 60]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + 'Packets lost: [0, 10, 6]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + 'Packets lost ratio: [1.5, 0.2, 0.1]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'Packets per second: [NaN, 40, 60]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + 'Round trip time: [0.2, 0.3, 0.4]')
-			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'Timestamps: [0, 1250, 1000]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(1, '%s: %s', tag, 'Message to log')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(2, '%s: Packets: %s', tag, '[0, 50, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(3, '%s: Packets lost: %s', tag, '[0, 10, 6]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(4, '%s: Packets lost ratio: %s', tag, '[1.5, 0.2, 0.1]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(5, '%s: Packets per second: %s', tag, '[NaN, 40, 60]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: Round trip time: %s', tag, '[0.2, 0.3, 0.4]')
+			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: Timestamps: %s', tag, '[0, 1250, 1000]')
 			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
 			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
 		})
@@ -3890,26 +3890,26 @@ describe('PeerConnectionAnalyzer', () => {
 				// Force the promises returning the stats to be executed.
 				await null
 
-				const tag = 'PeerConnectionAnalyzer: ' + kind + ': '
+				const tag = 'PeerConnectionAnalyzer: ' + kind
 
 				peerConnectionAnalyzer._logRtcStats(tag, kind)
 
 				expect(consoleDebugMock).toHaveBeenCalledTimes(15)
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + '{"type":"outbound-rtp","kind":"' + kind + '","id":"67890","packetsSent":150,"timestamp":11950,"rid":"h"}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + '{"type":"outbound-rtp","kind":"' + kind + '","id":"abcde","packetsSent":80,"timestamp":11950,"rid":"m"}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15,"roundTripTime":0.1}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"abcde","packetsReceived":72,"timestamp":11950,"packetsLost":8,"roundTripTime":0.1}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"roundTripTime":0.15,"jitter":0.007}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + 'no matching type')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30,"roundTripTime":0.3}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35,"roundTripTime":0.25}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, tag + '{"type":"outbound-rtp","kind":"' + kind + '","bytesSent":64042,"packetsSent":400,"timestamp":17000}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(13, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":360,"timestamp":17000,"packetsLost":40,"roundTripTime":0.15}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(14, tag + '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990,"codecId":"123456"}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(15, tag + '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"roundTripTime":0.2}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","id":"67890","packetsSent":150,"timestamp":11950,"rid":"h"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","id":"abcde","packetsSent":80,"timestamp":11950,"rid":"m"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15,"roundTripTime":0.1}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","localId":"abcde","packetsReceived":72,"timestamp":11950,"packetsLost":8,"roundTripTime":0.1}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"roundTripTime":0.15,"jitter":0.007}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: no matching type', tag)
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30,"roundTripTime":0.3}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35,"roundTripTime":0.25}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","bytesSent":64042,"packetsSent":400,"timestamp":17000}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(13, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":360,"timestamp":17000,"packetsLost":40,"roundTripTime":0.15}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(14, '%s: %s', tag, '{"type":"outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990,"codecId":"123456"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(15, '%s: %s', tag, '{"type":"remote-inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"roundTripTime":0.2}')
 			})
 
 			test.each([
@@ -3970,18 +3970,18 @@ describe('PeerConnectionAnalyzer', () => {
 				peerConnectionAnalyzer._logRtcStats(tag, kind)
 
 				expect(consoleDebugMock).toHaveBeenCalledTimes(12)
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, tag + '{"type":"inbound-rtp","kind":"' + kind + '","id":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","localId":"67890","packetsSent":150,"timestamp":11950}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"jitter":0.007}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, tag + 'no matching type')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, tag + '{"type":"inbound-rtp","kind":"' + kind + '","bytesReceived":64042,"packetsReceived":400,"timestamp":17000}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, tag + '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"codecId":"123456"}')
-				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, tag + '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(1, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","id":"67890","packetsReceived":135,"timestamp":11950,"packetsLost":15}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(2, '%s: %s', tag, '{"type":"remote-outbound-rtp","kind":"' + kind + '","localId":"67890","packetsSent":150,"timestamp":11950}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(3, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":180,"timestamp":13020,"packetsLost":20,"jitter":0.007}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(4, '%s: %s', tag, '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":200,"timestamp":13020}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(5, '%s: no matching type', tag)
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":270,"timestamp":14985,"packetsLost":30}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: %s', tag, '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":300,"timestamp":14985}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(8, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":315,"timestamp":16010,"packetsLost":35}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(9, '%s: %s', tag, '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":350,"timestamp":16010}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(10, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","bytesReceived":64042,"packetsReceived":400,"timestamp":17000}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(11, '%s: %s', tag, '{"type":"inbound-rtp","kind":"' + kind + '","packetsReceived":405,"timestamp":17990,"packetsLost":45,"codecId":"123456"}')
+				expect(consoleDebugMock).toHaveBeenNthCalledWith(12, '%s: %s', tag, '{"type":"remote-outbound-rtp","kind":"' + kind + '","packetsSent":450,"timestamp":17990}')
 			})
 		})
 	})
