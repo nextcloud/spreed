@@ -182,3 +182,4 @@
 ## 21.1
 * `conversation-creation-all` - Whether the conversation creation endpoint allows to specify all attributes of a conversation
 * `important-conversations` (local) - Whether important conversations are supported
+* `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory

@@ -131,6 +131,7 @@ export default {
 		return {
 			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
+			predefinedBackgroundsV2: getTalkConfig('local', 'call', 'predefined-backgrounds-v2'),
 			settingsStore: useSettingsStore(),
 		}
 	},
@@ -150,6 +151,10 @@ export default {
 		},
 
 		predefinedBackgroundsURLs() {
+			if (this.predefinedBackgroundsV2) {
+				return this.predefinedBackgroundsV2
+			}
+
 			return this.predefinedBackgrounds.map(fileName => {
 				return imagePath('spreed', 'backgrounds/' + fileName)
 			})
