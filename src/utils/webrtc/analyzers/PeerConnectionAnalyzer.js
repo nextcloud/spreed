@@ -800,16 +800,16 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_logRtcStats(tag, kind) {
-		for (const rtcStats of this._rtcStats[kind]) {
+		this._rtcStats[kind].forEach((rtcStats, i) => {
 			if (!rtcStats.length) {
-				console.debug('%s: no matching type', tag)
-				continue
+				console.debug('%s: %i: no matching type', tag, i)
+				return
 			}
 
-			for (const rtcStat of rtcStats) {
-				console.debug('%s: %s', tag, JSON.stringify(rtcStat))
-			}
-		}
+			rtcStats.forEach((rtcStat, j) => {
+				console.debug('%s: %i-%i: %s', tag, i, j, JSON.stringify(rtcStat))
+			})
+		})
 	}
 
 }
