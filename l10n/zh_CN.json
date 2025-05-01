@@ -300,6 +300,7 @@
     "Missing email field in header line" : "标题行中缺少电子邮件字段",
     "Following lines are invalid: %s" : "以下行无效：%s",
     "%1$s invited you to conversation \"%2$s\"." : "%1$s 邀请您加入对话“%2$s”。",
+    "You were invited to conversation \"%s\"." : "您已受邀加入对话“%s”。",
     "Conversation invitation" : "对话邀请",
     "Scheduled time" : "预定时间",
     "Description" : "描述",

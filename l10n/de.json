@@ -1409,7 +1409,7 @@
     "Could not update the message" : "Nachricht konnte nicht aktualisiert werden",
     "Copy code block" : "Codeblock kopieren",
     "Open poll • You voted already" : "Offene Umfrage • Du hast bereits abgestimmt",
-    "Open poll • Click to vote" : "Offene Umfrage • Klicken um abzustimmen",
+    "Open poll • Click to vote" : "Offene Umfrage • Klicken, um abzustimmen",
     "_Poll draft • %n option_::_Poll draft • %n options_" : ["Umfrageentwurf • %n Option","Umfrageentwurf • %n Optionen"],
     "Poll • Ended" : "Umfrage・Beendet",
     "Poll" : "Umfrage",
