@@ -851,7 +851,7 @@
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver bør eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Vis ikke advarsel om forbindelsesproblemer i samtaler med mere end 4 deltagere",
     "Copy conversation link" : "Kopier samtalelink",
-    "Loading" : "Loader",
+    "Loading" : "Indlæser",
     "Close" : "Luk",
     "Password protect" : "Beskyt med adgangskode",
     "Private poll" : "Privat afstemning",
