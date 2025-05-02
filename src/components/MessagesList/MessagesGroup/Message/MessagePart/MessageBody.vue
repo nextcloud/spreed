@@ -26,7 +26,10 @@
 
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" />
-			<Poll v-if="showResultsButton"
+			<CalendarEventConversationActions v-else-if="showEventConversationActions"
+				:token="message.token"
+				:is-highlighted="isLastMessage" />
+			<Poll v-else-if="showResultsButton"
 				:token="message.token"
 				show-as-button
 				v-bind="message.messageParameters.poll" />
@@ -125,7 +128,7 @@
 <script>
 import { vIntersectionObserver as IntersectionObserver, vElementSize as ElementSize } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
-import { toRefs } from 'vue'
+import { toRefs, inject } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import IconBellOff from 'vue-material-design-icons/BellOff.vue'
@@ -144,10 +147,12 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import Poll from './Poll.vue'
 import Quote from '../../../../Quote.vue'
+import CalendarEventConversationActions from '../../../../TopBar/CalendarEventConversationActions.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
+import { CONVERSATION } from '../../../../../constants.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
@@ -167,6 +172,7 @@ export default {
 		NcRichText,
 		Poll,
 		Quote,
+		CalendarEventConversationActions,
 		// Icons
 		AlertCircleIcon,
 		IconBellOff,
@@ -212,12 +218,14 @@ export default {
 			isEditable,
 			isFileShare,
 		} = useMessageInfo(message)
+		const isSidebar = inject('chatView:isSidebar', false)
 
 		return {
 			isInCall: useIsInCall(),
 			pollsStore: usePollsStore(),
 			isEditable,
 			isFileShare,
+			isSidebar,
 		}
 	},
 
@@ -258,6 +266,26 @@ export default {
 			return this.isInCall && this.pollsStore.isNewPoll(this.message.messageParameters.object.id)
 		},
 
+		isCallEndedMessage() {
+			return this.message.systemMessage === 'call_ended' || this.message.systemMessage === 'call_ended_everyone'
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.message.token)
+		},
+
+		showEventConversationActions() {
+			return !this.isInCall && !this.isSidebar && this.$store.getters.isModeratorOrUser
+				&& this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+				&& !this.conversation.isArchived
+				&& this.isCallEndedMessage
+				&& this.message.id > this.lastCallStartedMessageId
+		},
+
+		isLastMessage() {
+			return this.message.id === this.conversation.lastMessage?.id
+		},
+
 		isTemporary() {
 			return this.message.timestamp === 0
 		},
@@ -274,8 +302,12 @@ export default {
 			return moment(this.isTemporary ? undefined : this.message.timestamp * 1000).format('LL')
 		},
 
+		lastCallStartedMessageId() {
+			return this.$store.getters.getLastCallStartedMessageId(this.message.token)
+		},
+
 		isLastCallStartedMessage() {
-			return this.message.systemMessage === 'call_started' && this.message.id === this.$store.getters.getLastCallStartedMessageId(this.message.token)
+			return this.message.systemMessage === 'call_started' && this.message.id === this.lastCallStartedMessageId
 		},
 
 		showJoinCallButton() {

@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { provide } from 'vue'
+
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
@@ -107,7 +109,8 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
+		provide('chatView:isSidebar', props.isSidebar)
 		return {
 			chatExtrasStore: useChatExtrasStore(),
 		}
