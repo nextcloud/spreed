@@ -592,6 +592,7 @@ OC.L10N.register(
     "Muted" : "Summutatud",
     "Show screen" : "Näita ekraani",
     "Collapse" : "Sulge",
+    "Expand" : "Laienda",
     "Conversation messages" : "Vestluse sõnumid",
     "Scroll to bottom" : "Keri alla äärde",
     "Post message" : "Saada sõnum",

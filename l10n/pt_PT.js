@@ -345,6 +345,7 @@ OC.L10N.register(
     "Chat" : "Conversa",
     "Details" : "Detalhes",
     "Load more results" : "Mostrar mais resultados",
+    "Projects" : "Projectos",
     "No shared items" : "Sem itens partilhados",
     "Privacy" : "Privacidade",
     "Keyboard shortcuts" : "Atalhos de teclado",
