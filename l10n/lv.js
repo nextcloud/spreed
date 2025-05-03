@@ -435,6 +435,8 @@ OC.L10N.register(
     "No audio" : "Nav audio",
     "Upload" : "Augšupielādēt",
     "Files" : "Datnes",
+    "Later today – {timeLocale}" : "Vēlāk šodien – {timeLocale}",
+    "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien",
     "Reply" : "Atbildēt",
     "Go to file" : "Doties uz datni",
     "Translate" : "Tulkot",
