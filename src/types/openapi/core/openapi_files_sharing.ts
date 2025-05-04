@@ -888,7 +888,7 @@ export interface operations {
                     /** @description Send the password for the share over Talk */
                     sendPasswordByTalk?: string | null;
                     /** @description The expiry date of the share in the user's timezone at 00:00.
-                     *                    If $expireDate is not supplied or set to `null`, the system default will be used. */
+                     *                                If $expireDate is not supplied or set to `null`, the system default will be used. */
                     expireDate?: string | null;
                     /**
                      * @description Note for the share
@@ -1136,8 +1136,8 @@ export interface operations {
                     /** @description New additional attributes */
                     attributes?: string | null;
                     /** @description if the share should be send by mail.
-                     *                        Considering the share already exists, no mail will be send after the share is updated.
-                     *      				  You will have to use the sendMail action to send the mail. */
+                     *                                  Considering the share already exists, no mail will be send after the share is updated.
+                     *                                  You will have to use the sendMail action to send the mail. */
                     sendMail?: string | null;
                 };
             };
