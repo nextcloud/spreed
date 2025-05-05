@@ -93,6 +93,7 @@ export const mockedCapabilities: Capabilities = {
 			'schedule-meeting',
 			'edit-draft-poll',
 			'conversation-creation-all',
+			'dashboard-event-rooms',
 			// Conditional features
 			'message-expiration',
 			'reactions',
