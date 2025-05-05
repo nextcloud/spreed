@@ -102,7 +102,10 @@ export default {
 		},
 
 		isPhoneConversation() {
-			return this.conversation && this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
+			return this.conversation
+				&& (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
+					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
+					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY)
 		},
 
 		conversationDisplayName() {

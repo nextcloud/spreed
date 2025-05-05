@@ -99,7 +99,10 @@ export const CONVERSATION = {
 	OBJECT_TYPE: {
 		EMAIL: 'emails',
 		FILE: 'file',
-		PHONE: 'phone',
+		/** @deprecated */
+		PHONE_LEGACY: 'phone',
+		PHONE_PERSISTENT: 'phone_persist',
+		PHONE_TEMPORARY: 'phone_temporary',
 		CIRCLES: 'circles',
 		VIDEO_VERIFICATION: 'share:password',
 		BREAKOUT_ROOM: 'room',
