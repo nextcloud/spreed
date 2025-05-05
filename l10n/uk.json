@@ -1111,7 +1111,7 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Встановлений сиґнальний сервер потрібно оновити, щоби його версія була сумісною з версією Talk. Будь ласка, сконтактуйте з адміністратором.",
     "Please reload the page." : "Будь ласка, перезавантажте сторінку.",
     "Do not disturb" : "Не турбувати",
-    "Away" : "Піти",
+    "Away" : "Відсутній(-я)",
     "Default" : "За замовчуванням",
     "Microphone {number}" : "Мікрофон {number}",
     "Camera {number}" : "Камера {number}",
