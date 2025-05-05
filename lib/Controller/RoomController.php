@@ -684,7 +684,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$roomType = Room::TYPE_PUBLIC;
 		}
 
-		if ($objectType === Room::OBJECT_TYPE_PHONE) {
+		if (in_array($objectType, [
+			Room::OBJECT_TYPE_PHONE_PERSIST,
+			Room::OBJECT_TYPE_PHONE_TEMPORARY,
+			Room::OBJECT_TYPE_PHONE_LEGACY,
+		], true)) {
 			$objectId = Room::OBJECT_ID_PHONE_OUTGOING;
 		}
 
@@ -927,6 +931,30 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$this->roomService->deleteRoom($this->room);
 
 		return new DataResponse(null);
+	}
+
+	/**
+	 * Unbind a room from its object to prevent automatic retention
+	 *
+	 * Required capability: `unbind-conversation`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'object-type'}, array{}>
+	 *
+	 * 200: Room successfully unbound
+	 * 400: Unbinding room is not possible
+	 */
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	public function unbindRoomFromObject(): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+			$this->roomService->resetObject($this->room);
+		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_PHONE_TEMPORARY) {
+			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_PHONE_PERSIST, $this->room->getObjectId());
+		} else {
+			return new DataResponse(['error' => 'object-type'], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
 	/**
@@ -2019,7 +2047,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				Room::TYPE_GROUP,
 				$caller,
 				$user,
-				Room::OBJECT_TYPE_PHONE,
+				Room::OBJECT_TYPE_PHONE_TEMPORARY,
 				Room::OBJECT_ID_PHONE_INCOMING,
 				sipEnabled: Webinary::SIP_ENABLED_NO_PIN,
 			);

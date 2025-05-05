@@ -109,6 +109,13 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
+		$this->appConfig->method('getAppValueInt')
+			->willReturnMap([
+				['max_call_duration', 0, 0],
+				['retention_event_rooms', 28, 28],
+				['retention_phone_rooms', 7, 7],
+			]);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
@@ -171,6 +178,8 @@ class CapabilitiesTest extends TestCase {
 						'force-passwords' => false,
 						'list-style' => 'two-lines',
 						'description-length' => 2000,
+						'retention-event' => 28,
+						'retention-phone' => 7,
 					],
 					'federation' => [
 						'enabled' => false,
@@ -263,6 +272,13 @@ class CapabilitiesTest extends TestCase {
 				['backgrounds_upload_users', true, true],
 			]);
 
+		$this->appConfig->method('getAppValueInt')
+			->willReturnMap([
+				['max_call_duration', 0, 0],
+				['retention_event_rooms', 28, 28],
+				['retention_phone_rooms', 7, 7],
+			]);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$data = $capabilities->getCapabilities();
 		$this->assertSame([
@@ -328,6 +344,8 @@ class CapabilitiesTest extends TestCase {
 						'force-passwords' => false,
 						'list-style' => 'two-lines',
 						'description-length' => 2000,
+						'retention-event' => 28,
+						'retention-phone' => 7,
 					],
 					'federation' => [
 						'enabled' => false,

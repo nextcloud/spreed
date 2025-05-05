@@ -186,7 +186,9 @@ export default {
 					return 'icon-password'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.EMAIL) {
 					return 'icon-mail'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE) {
+				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
+					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
+					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
 					return 'icon-phone'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
 					return 'icon-team'

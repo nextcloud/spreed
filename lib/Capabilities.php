@@ -116,6 +116,7 @@ class Capabilities implements IPublicCapability {
 		'edit-draft-poll',
 		'conversation-creation-all',
 		'important-conversations',
+		'unbind-conversation',
 		'sip-direct-dialin',
 		'dashboard-event-rooms',
 	];
@@ -170,6 +171,8 @@ class Capabilities implements IPublicCapability {
 			'can-create',
 			'list-style',
 			'description-length',
+			'retention-event',
+			'retention-phone',
 		],
 		'federation' => [
 			'enabled',
@@ -252,6 +255,8 @@ class Capabilities implements IPublicCapability {
 					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
 					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
+					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
+					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
 				],
 				'federation' => [
 					'enabled' => false,

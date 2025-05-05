@@ -342,7 +342,7 @@ EOD;
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
-		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_PHONE);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_PHONE_LEGACY);
 		$participant = $this->createMock(Participant::class);
 		$participant->method('hasModeratorPermissions')->willReturn(true);
 
@@ -505,7 +505,7 @@ EOF;
 			->method('resetObject');
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741942800#1741946400', Room::OBJECT_TYPE_EVENT);
+			->with($room, Room::OBJECT_TYPE_EVENT, '1741942800#1741946400');
 		$this->timezoneService->expects(self::never())
 			->method('getUserTimezone');
 		$this->logger->expects(self::never())
@@ -557,7 +557,7 @@ EOF;
 			->method('resetObject');
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741820400#1741906800', Room::OBJECT_TYPE_EVENT);
+			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn('Europe/Vienna');
@@ -610,7 +610,7 @@ EOF;
 			->method('resetObject');
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741820400#1741906800', Room::OBJECT_TYPE_EVENT);
+			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);
@@ -664,7 +664,7 @@ EOF;
 			->method('resetObject');
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741824000#1741910400', Room::OBJECT_TYPE_EVENT);
+			->with($room, Room::OBJECT_TYPE_EVENT, '1741824000#1741910400');
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);

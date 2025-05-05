@@ -256,6 +256,10 @@ export type components = {
                     "list-style": "two-lines" | "compact";
                     /** Format: int64 */
                     "description-length": number;
+                    /** Format: int64 */
+                    "retention-event": number;
+                    /** Format: int64 */
+                    "retention-phone": number;
                 };
                 federation: {
                     enabled: boolean;

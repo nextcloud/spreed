@@ -1051,7 +1051,8 @@ class Notifier implements INotifier {
 			} else {
 				throw new AlreadyProcessedException();
 			}
-		} elseif ($room->getObjectType() === Room::OBJECT_TYPE_PHONE && $room->getObjectId() === Room::OBJECT_ID_PHONE_INCOMING) {
+		} elseif ($room->getObjectId() === Room::OBJECT_ID_PHONE_INCOMING
+			&& in_array($room->getObjectType(), [Room::OBJECT_TYPE_PHONE_PERSIST, Room::OBJECT_TYPE_PHONE_TEMPORARY, Room::OBJECT_TYPE_PHONE_LEGACY], true)) {
 			if ($this->notificationManager->isPreparingPushNotification()
 				|| (!$room->isFederatedConversation() && $this->participantService->hasActiveSessionsInCall($room))
 				|| ($room->isFederatedConversation() && $room->getActiveSince())

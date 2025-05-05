@@ -340,8 +340,10 @@ export default {
 		},
 
 		isPhoneRoom() {
-			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
-				&& this.conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
+			return this.conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
+				&& (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
+					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
+					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY)
 		},
 
 		isInLobby() {

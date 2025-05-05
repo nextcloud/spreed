@@ -943,6 +943,39 @@ class Manager {
 	}
 
 	/**
+	 * @return list<Room>
+	 */
+	public function getExpiringRoomsForObjectType(string $objectType, int $minimumLastActivity): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms')
+			->where($query->expr()->eq('object_type', $objectType))
+			->andWhere($query->expr()->lte('last_activity', $minimumLastActivity));
+
+		if ($objectType === Room::OBJECT_TYPE_EVENT) {
+			// Ignore events that don't have a start and end date,
+			// as they are most likely from before the Talk 21.1 upgrade
+			$query->andWhere($query->expr()->like('object_id', '%' . $this->db->escapeLikeParameter('#') . '%'));
+		}
+
+		$result = $query->executeQuery();
+
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
+			$rooms[] = $this->createRoomObject($row);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string[] $tokens
 	 * @return array<string, Room>
 	 */
