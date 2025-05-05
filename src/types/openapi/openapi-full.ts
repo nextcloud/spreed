@@ -241,6 +241,46 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/dashboard/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get up to 10 rooms that have events in the next 7 days sorted by their start timestamp ascending
+         * @description Required capability: `dashboard-event-rooms`
+         */
+        get: operations["calendar_integration-get-dashboard-events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/mutual-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get up to 3 events in the next 7 days sorted by their start timestamp ascending
+         * @description Required capability: `mutual-calendar-events`
+         */
+        get: operations["calendar_integration-get-mutual-events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}": {
         parameters: {
             query?: never;
@@ -520,26 +560,6 @@ export type paths = {
         };
         /** Get objects that are shared in the room overview */
         get: operations["chat-get-objects-shared-in-room-overview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/dashboard/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get up to 10 rooms that have events in the next 7 days sorted by their start timestamp ascending
-         * @description Required capability: `dashboard-event-rooms`
-         */
-        get: operations["dashboard-get-event-rooms"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3593,6 +3613,81 @@ export interface operations {
             };
         };
     };
+    "calendar_integration-get-dashboard-events": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A list of dashboard entries or an empty array */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["DashboardEvent"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "calendar_integration-get-mutual-events": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A list of dashboard entries or an empty array */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["DashboardEvent"][];
+                        };
+                    };
+                };
+            };
+            /** @description Room is not a 1 to 1 room, room is invalid, or user is not participant */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
     "call-get-peers-for-call": {
         parameters: {
             query?: never;
@@ -5337,36 +5432,6 @@ export interface operations {
                             data: {
                                 [key: string]: components["schemas"]["ChatMessage"][];
                             };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "dashboard-get-event-rooms": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description A list of dashboard entries or an empty array */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["DashboardEvent"][];
                         };
                     };
                 };

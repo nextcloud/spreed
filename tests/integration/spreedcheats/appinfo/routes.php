@@ -12,5 +12,6 @@ return [
 		['name' => 'Api#ageChat', 'url' => '/age', 'verb' => 'POST'],
 		['name' => 'Api#createEventInCalendar', 'url' => '/calendar', 'verb' => 'POST'],
 		['name' => 'Api#createDashboardEvents', 'url' => '/dashboardEvents', 'verb' => 'POST'],
+		['name' => 'Api#createEventAndInviteParticipant', 'url' => '/mutualEvents', 'verb' => 'POST'],
 	],
 ];
