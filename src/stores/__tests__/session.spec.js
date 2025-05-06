@@ -501,6 +501,22 @@ describe('sessionStore', () => {
 				})
 		})
 
+		it('should ignore ghost sessions', () => {
+			// Arrange
+			populateParticipantsStore()
+			const participantsPayload = [{
+				userid: '',
+				sessionid: 'session-id-recording',
+			}]
+
+			// Act
+			const unknownResults = sessionStore.updateSessions(TOKEN, participantsPayload)
+
+			// Assert
+			expect(unknownResults).toBeFalsy()
+			expect(Object.keys(sessionStore.sessions)).toHaveLength(0)
+		})
+
 		it('should remove old sessions and update participant objects', () => {
 			// Arrange
 			populateParticipantsStore()
