@@ -187,3 +187,4 @@
 * `config => conversations => retention-event` (local) - Number of days before an inactive event conversation is deleted (`0` = disabled)
 * `config => conversations => retention-phone` (local) - Number of days before an inactive incoming or outgoing phone conversation is deleted (`0` = disabled)
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
+* `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests

@@ -1467,6 +1467,28 @@ class RoomService {
 		$room->setObjectType($objectType);
 	}
 
+	/**
+	 * @param string $url
+	 * @return string
+	 */
+	public function parseRoomTokenFromUrl(string $url): string {
+		// Check if room exists and check if user is part of room
+		$array = explode('/', $url);
+		$token = end($array);
+		// Cut off any excess characters from the room token
+		if (str_contains($token, '?')) {
+			$token = substr($token, 0, strpos($token, '?'));
+		}
+		if (str_contains($token, '#')) {
+			$token = substr($token, 0, strpos($token, '#'));
+		}
+
+		if (!$token) {
+			throw new RoomNotFoundException();
+		}
+		return $token;
+	}
+
 	public function hasExistingCalendarEvents(Room $room, string $userId, string $eventUid) : bool {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $userId);
 		if (!empty($calendars)) {

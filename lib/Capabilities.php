@@ -118,6 +118,7 @@ class Capabilities implements IPublicCapability {
 		'important-conversations',
 		'unbind-conversation',
 		'sip-direct-dialin',
+		'dashboard-event-rooms',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -144,6 +145,7 @@ class Capabilities implements IPublicCapability {
 		'conversation-creation-all',
 		'important-conversations',
 		'sip-direct-dialin',
+		'dashboard-event-rooms',
 	];
 
 	public const LOCAL_CONFIGS = [
