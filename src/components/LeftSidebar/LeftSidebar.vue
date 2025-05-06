@@ -374,6 +374,7 @@ import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
+import { getPreloadedUserStatus } from '../../utils/userStatus.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
@@ -1025,6 +1026,7 @@ export default {
 					source: item.source,
 					disableMenu: true,
 					token: 'new',
+					preloadedUserStatus: getPreloadedUserStatus(item),
 					showUserStatus: true,
 				}
 			}

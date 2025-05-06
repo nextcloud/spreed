@@ -30,12 +30,21 @@ export function getPreloadedUserStatus(userData?: Conversation | Participant | P
 			icon: userData.statusIcon || null,
 		}
 	}
-	if ('status' in userData && typeof userData.status === 'object') {
+	if ('status' in userData) {
 		// We preloaded the status when via search API
-		return {
-			status: userData.status.status || null,
-			message: userData.status.message || null,
-			icon: userData.status.icon || null,
+		if (typeof userData.status === 'object') {
+			return {
+				status: userData.status.status || null,
+				message: userData.status.message || null,
+				icon: userData.status.icon || null,
+			}
+		} else if (typeof userData.status === 'string' && userData.status === '') {
+			// No status is set, provide empty status object to not make a request
+			return {
+				status: null,
+				message: null,
+				icon: null,
+			}
 		}
 	}
 	return undefined

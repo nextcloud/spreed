@@ -164,6 +164,7 @@ describe('conversationsStore', () => {
 						'session-id-1',
 					],
 					userId: 'current-user',
+					status: '',
 				},
 			})
 		})
@@ -195,6 +196,7 @@ describe('conversationsStore', () => {
 						'session-id-1',
 					],
 					userId: '',
+					status: '',
 				},
 			})
 		})
