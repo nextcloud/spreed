@@ -20,6 +20,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
+use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\UUIDUtil;
 
 class ApiController extends OCSController {
@@ -181,59 +182,6 @@ class ApiController extends OCSController {
 	}
 
 	#[NoAdminRequired]
-	public function createEventInCalendar(string $name, string $location, string $start, string $end): DataResponse {
-		if ($this->userId === null) {
-			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
-		}
-
-		$calendar = null;
-		// Create a calendar event with LOCATION and time via OCP
-		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
-		foreach ($calendars as $c) {
-			if ($c instanceof ICreateFromString) {
-				$calendar = $c;
-			}
-		}
-
-		if ($calendar === null) {
-			return new DataResponse(null, Http::STATUS_NOT_FOUND);
-		}
-
-		$calData = <<<EOF
-BEGIN:VCALENDAR
-PRODID:-//IDN nextcloud.com//Calendar app 5.2.0-dev.1//EN
-CALSCALE:GREGORIAN
-VERSION:2.0
-BEGIN:VEVENT
-CREATED:20250310T171800Z
-DTSTAMP:20250310T171819Z
-LAST-MODIFIED:20250310T171819Z
-SEQUENCE:2
-UID:{{{UID}}}
-DTSTART:{{{START}}}
-DTEND:{{{END}}}
-STATUS:CONFIRMED
-SUMMARY:{{{NAME}}}
-LOCATION:{{{LOCATION}}}
-END:VEVENT
-END:VCALENDAR
-EOF;
-
-		$start = (new \DateTime())->setTimestamp((int)$start)->format('Ymd\THis');
-		$end = (new \DateTime())->setTimestamp((int)$end)->format('Ymd\THis');
-		$uid = UUIDUtil::getUUID();
-		$calData = str_replace(['{{{NAME}}}', '{{{START}}}', '{{{END}}}', '{{{UID}}}', '{{{LOCATION}}}'], [$name, $start, $end, $uid, $location], $calData);
-
-		try {
-			/** @var ICreateFromString $calendar */
-			$calendar->createFromString((string)random_int(0, 10000), $calData);
-		} catch (CalendarException) {
-			return new DataResponse(null, Http::STATUS_FORBIDDEN);
-		}
-		return new DataResponse();
-	}
-
-	#[NoAdminRequired]
 	public function createDashboardEvents(string $name, string $location): DataResponse {
 		if ($this->userId === null) {
 			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
@@ -258,12 +206,71 @@ EOF;
 		foreach ($events as $event) {
 			try {
 				/** @var ICreateFromString $calendar */
-				$calendar->createFromString((string)random_int(0, 10000), $event);
+				$calendar->createFromString(random_int(0, 10000) . '.ics', $event);
 			} catch (CalendarException) {
 				return new DataResponse(null, Http::STATUS_FORBIDDEN);
 			}
 		}
 
+		return new DataResponse();
+	}
+
+	#[NoAdminRequired]
+	public function createEventAndInviteParticipant(string $organizer, string $attendee): DataResponse {
+		if ($this->userId === null) {
+			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+		}
+
+		$calendar = null;
+		// Create a calendar event with LOCATION and time via OCP
+		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
+		foreach ($calendars as $c) {
+			if ($c instanceof ICreateFromString) {
+				$calendar = $c;
+			}
+		}
+
+		if ($calendar === null) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$start = time();
+		$end = $start + 3600;
+		$startTime = (new \DateTime())->setTimestamp($start);
+		$endTime = (new \DateTime())->setTimestamp($end);
+		for ($i = 0; $i < 3; $i++) {
+			$interval = new \DateInterval('PT2H');
+			$startTime->add($interval);
+			$endTime->add($interval);
+
+			$vCalendar = new VCalendar();
+			$vevent = $vCalendar->createComponent('VEVENT');
+			$vevent->add('UID', UUIDUtil::getUUID());
+			$vevent->add('DTSTART');
+			$vevent->DTSTART->setDateTime($startTime);
+			$vevent->add('DTEND');
+			$vevent->DTEND->setDateTime($endTime);
+			$vevent->add('SUMMARY', 'Test');
+			$vevent->add('DESCRIPTION', 'Test');
+			$vevent->add('ORGANIZER', 'mailto:' . $organizer . '@example.tld', ['CN' => $organizer]);
+			$vevent->add('ATTENDEE', 'mailto:' . $attendee . '@example.tld', [
+				'CN' => $attendee,
+				'CUTYPE' => 'INDIVIDUAL',
+				'PARTSTAT' => 'NEEDS-ACTION',
+				'ROLE' => 'REQ-PARTICIPANT',
+				'RSVP' => 'TRUE'
+			]);
+			$vevent->add('STATUS', 'CONFIRMED');
+
+			$vCalendar->add($vevent);
+			$cal = $vCalendar->serialize();
+			try {
+				/** @var ICreateFromString $calendar */
+				$calendar->createFromString(random_int(0, 10000) . '.ics', $cal);
+			} catch (CalendarException) {
+				return new DataResponse(null, Http::STATUS_FORBIDDEN);
+			}
+		}
 		return new DataResponse();
 	}
 }

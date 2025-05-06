@@ -3456,6 +3456,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Given('/^user "([^"]*)" exists and has an email address$/')]
+	public function assureUserExistsAndHasEmail(string $user): void {
+		$response = $this->userExists($user);
+		if ($response->getStatusCode() !== 200) {
+			$this->createUser($user);
+			// Set a display name different than the user ID to be able to
+			// ensure in the tests that the right value was returned.
+			$this->setUserDisplayName($user);
+			$response = $this->userExists($user);
+			$this->assertStatusCode($response, 200);
+		}
+		$this->setUserEmail($user);
+	}
+
 	#[Given('/^(enable|disable) brute force protection$/')]
 	public function enableDisableBruteForceProtection(string $enable): void {
 		if ($enable === 'enable') {
@@ -3656,6 +3670,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('PUT', '/cloud/users/' . $user, [
 			'key' => 'displayname',
 			'value' => $user . '-displayname'
+		]);
+		$this->setCurrentUser($currentUser);
+	}
+
+	private function setUserEmail(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('PUT', '/cloud/users/' . $user, [
+			'key' => 'email',
+			'value' => $user . '@example.tld'
 		]);
 		$this->setCurrentUser($currentUser);
 	}
@@ -4378,70 +4401,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @param string $user
-	 * @param string $identifier
-	 * @param int $statusCode
-	 * @param string $apiVersion
-	 * @param TableNode|null $formData
-	 * @return void
-	 *
-	 * @Given /^user "([^"]*)" creates conversation with event "([^"]*)" \((v4)\)$/
-	 */
-	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
-		$body = $formData->getRowsHash();
-		$startTime = time() + 86400;
-		$endTime = time() + 90000;
-		if (isset($body['objectId'])) {
-			[$start, $end] = explode('#', $body['objectId']);
-			$startTime = time() + (int)$start;
-			$endTime = time() + (int)$end;
-			$body['objectId'] = $startTime . '#' . $endTime;
-			self::$identifierToObjectId[$identifier] = $body['objectId'];
-		}
-
-		$body['roomName'] = $identifier;
-
-		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
-		$this->assertStatusCode($this->response, 201);
-
-		$response = $this->getDataFromResponse($this->response);
-
-		self::$identifierToToken[$identifier] = $response['token'];
-		self::$identifierToId[$identifier] = $response['id'];
-		self::$tokenToIdentifier[$response['token']] = $identifier;
-
-		$location = self::getRoomLocationForToken($identifier);
-		$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
-			'name' => $identifier,
-			'location' => $location,
-			'start' => $startTime,
-			'end' => $endTime,
-		]);
-
-		$this->assertStatusCode($this->response, 200);
-	}
-
-	/**
-	 * @param string $user
-	 * @param string $identifier
-	 * @param int $statusCode
-	 * @param string $apiVersion
-	 * @param TableNode|null $formData
-	 * @return void
-	 *
-	 * @Given /^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/
-	 */
+	#[Given('/^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/')]
 	public function createCalendarEntriesWithRoom(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
-		$body = $formData->getRowsHash();
+		$this->setCurrentUser($user);
 
+		$body = $formData->getRowsHash();
 		$body['roomName'] = $identifier;
 		if (!isset(self::$tokenToIdentifier[$identifier])) {
-			$this->setCurrentUser($user);
 			$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
 			$this->assertStatusCode($this->response, 201);
-
 			$response = $this->getDataFromResponse($this->response);
 
 			self::$identifierToToken[$identifier] = $response['token'];
@@ -4449,11 +4417,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			self::$tokenToIdentifier[$response['token']] = $identifier;
 		}
 
-
 		$location = self::getRoomLocationForToken($identifier);
 		$this->sendRequest('POST', '/apps/spreedcheats/dashboardEvents', [
 			'name' => $identifier,
 			'location' => $location,
+		]);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	#[Given('/^user "([^"]*)" creates calendar events inviting user "([^"]*)" \((v4)\)$/')]
+	public function createEventsForOneToOne(string $user, string $participant, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreedcheats/mutualEvents', [
+			'organizer' => $user,
+			'attendee' => $participant,
 		]);
 
 		$this->assertStatusCode($this->response, 200);
@@ -4473,6 +4451,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->assertDashboardData($data, $formData);
 	}
+
+	#[Then('/^user "([^"]*)" sees the following entry when loading mutual events in room "([^"]*)" \((v4)\)$/')]
+	public function userGetsMutualEventConversations(string $user, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$token = self::$identifierToToken[$identifier];
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . $token . '/mutual-events');
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+		if (!$formData instanceof TableNode) {
+			Assert::assertEmpty($data);
+			return;
+		}
+
+		$this->assertDashboardData($data, $formData);
+	}
+
 
 	/**
 	 * @param array $dashboardEvents
