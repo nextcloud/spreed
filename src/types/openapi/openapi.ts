@@ -891,6 +891,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/object": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Unbind a room from its object to prevent automatic retention
+         * @description Required capability: `unbind-conversation`
+         */
+        delete: operations["room-unbind-room-from-object"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/public": {
         parameters: {
             query?: never;
@@ -1586,6 +1606,10 @@ export type components = {
                     "list-style": "two-lines" | "compact";
                     /** Format: int64 */
                     "description-length": number;
+                    /** Format: int64 */
+                    "retention-event": number;
+                    /** Format: int64 */
+                    "retention-phone": number;
                 };
                 federation: {
                     enabled: boolean;
@@ -6460,6 +6484,54 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-unbind-room-from-object": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Room successfully unbound */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Unbinding room is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "object-type";
                             };
                         };
                     };

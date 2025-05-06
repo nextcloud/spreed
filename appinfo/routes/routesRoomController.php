@@ -33,6 +33,8 @@ return [
 		['name' => 'Room#renameRoom', 'url' => '/api/{apiVersion}/room/{token}', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::deleteRoom() */
 		['name' => 'Room#deleteRoom', 'url' => '/api/{apiVersion}/room/{token}', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::unbindRoomFromObject() */
+		['name' => 'Room#unbindRoomFromObject', 'url' => '/api/{apiVersion}/room/{token}/object', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::makePublic() */
 		['name' => 'Room#makePublic', 'url' => '/api/{apiVersion}/room/{token}/public', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::makePrivate() */
