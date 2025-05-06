@@ -57,12 +57,7 @@ onMounted(async () => {
 }
 
 .talk-dashboard__event-card {
-	border-radius: var(--border-radius);
 	flex: 0 0 calc(25% - var(--default-grid-baseline));
-	max-width: 300px;
-	min-width: 200px;
-	border: 3px solid var(--color-border);
-	padding: calc(var(--default-grid-baseline) * 2);
 	scroll-snap-align: start;
 }
 
