@@ -580,4 +580,12 @@ class Room {
 	public function setMentionPermissions(int $mentionPermissions): void {
 		$this->mentionPermissions = $mentionPermissions;
 	}
+
+	public function setObjectId(string $objectId): void {
+		$this->objectId = $objectId;
+	}
+
+	public function setObjectType(string $objectType): void {
+		$this->objectType = $objectType;
+	}
 }

@@ -6905,7 +6905,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "type" | "value";
+                                error: "event" | "type" | "value";
                             };
                         };
                     };
@@ -7159,7 +7159,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "type" | "value";
+                                error: "event" | "type" | "value";
                             };
                         };
                     };

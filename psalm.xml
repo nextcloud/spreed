@@ -93,6 +93,7 @@
 		<file name="tests/stubs/oc_memcache.php" />
 		<file name="tests/stubs/oca_circles.php" />
 		<file name="tests/stubs/oca_federation_trustedservers.php" />
+		<file name="tests/stubs/oca_dav_caldav_timezoneservice.php" />
 		<file name="tests/stubs/oca_files_events.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
