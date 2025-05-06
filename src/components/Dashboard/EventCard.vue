@@ -6,9 +6,10 @@
 <script lang="ts" setup>
 
 import { useNow } from '@vueuse/core'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router/composables'
 
+import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconTextBox from 'vue-material-design-icons/TextBox.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 
@@ -17,10 +18,12 @@ import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
+import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
@@ -87,12 +90,14 @@ const hasCall = computed(() => {
 /**
  * Redirects to the conversation page and opens media settings
  *
+ * @param data object
+ * @param data.call - if true, opens the media settings
  */
-function handleJoin() {
+function handleJoin({ call = false } = {}) {
 	router.push({
 		name: 'conversation',
 		params: { token: props.eventRoom.roomToken },
-		hash: '#direct-call'
+		hash: call ? '#direct-call' : undefined,
 	})
 }
 
@@ -139,17 +144,35 @@ function handleJoin() {
 			<!--FIXME-->
 			{{ Object.entries(props.eventRoom.eventAttachments)[0]?.[1]?.filename }}
 		</span>
-		<span class="event-card__invitation-info">
+		<span class="event-card__invitation-info initial">
 			<span v-if="invitesLabel && !hasCall" class="secondary_text">
 				{{ invitesLabel }}
 			</span>
 			<NcButton v-if="(hasCall && !isInCall)"
 				type="primary"
-				@click="handleJoin">
+				@click="handleJoin({call: true})">
 				<template #icon>
 					<IconVideo :size="20" />
 				</template>
 				{{ t('spreed', 'Join') }}
+			</NcButton>
+		</span>
+		<span class="event-card__invitation-info hovered">
+			<NcButton type="tertiary"
+				@click="handleJoin">
+				<template #icon>
+					<NcIconSvgWrapper :svg="IconTalk" />
+				</template>
+				{{ t('spreed', 'View conversation') }}
+			</NcButton>
+			<NcButton type="tertiary"
+				:href="props.eventRoom.eventLink"
+				target="_blank"
+				:title="t('spreed', 'View event on Calendar')"
+				:aria-label="t('spreed', 'View event on Calendar')">
+				<template #icon>
+					<IconCalendarBlank :size="20" />
+				</template>
 			</NcButton>
 		</span>
 	</div>
@@ -177,6 +200,13 @@ function handleJoin() {
 		border-color: var(--color-primary) !important;
 	}
 
+	&:hover > .event-card__invitation-info.initial {
+		opacity: 0;
+	}
+	&:hover > .event-card__invitation-info.hovered {
+		opacity: 1;
+	}
+
 	&__date {
 		display: flex;
 		gap: 2px;
@@ -186,7 +216,6 @@ function handleJoin() {
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-
 	}
 
 	&__description {
@@ -236,6 +265,12 @@ function handleJoin() {
 		align-items: center;
 		justify-content: space-between;
 		padding: var(--default-grid-baseline);
+		opacity: 1;
+		transition: opacity 0.05s ease-in-out;
+
+		&.hovered {
+			opacity: 0;
+		}
 	}
 }
 
