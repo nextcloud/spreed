@@ -10,20 +10,24 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Dashboard\Event;
+use OCA\Talk\Exceptions\InvalidRoomException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Calendar\ICalendar;
 use OCP\Calendar\IManager;
 use OCP\IDateTimeZone;
 use OCP\IURLGenerator;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkDashboardEvent from ResponseDefinitions
  */
-class DashboardService {
+class CalendarIntegrationService {
 	public function __construct(
 		private Manager $manager,
 		private IManager $calendarManager,
@@ -33,6 +37,7 @@ class DashboardService {
 		private IDateTimeZone $dateTimeZone,
 		private AvatarService $avatarService,
 		private IURLGenerator $urlGenerator,
+		private IUserManager $userManager,
 	) {
 
 	}
@@ -41,7 +46,7 @@ class DashboardService {
 	 * @param string $userId
 	 * @return list<TalkDashboardEvent>
 	 */
-	public function getEvents(string $userId): array {
+	public function getDashboardEvents(string $userId): array {
 		$principaluri = 'principals/users/' . $userId;
 		$calendars = $this->calendarManager->getCalendarsForPrincipal($principaluri);
 		if (count($calendars) === 0) {
@@ -176,5 +181,152 @@ class DashboardService {
 		return array_map(static function (Event $event) {
 			return $event->jsonSerialize();
 		}, array_slice($events, 0, 10));
+	}
+
+	/**
+	 * @param string $userId
+	 * @param Room $room
+	 * @return list<TalkDashboardEvent>
+	 */
+	public function getMutualEvents(string $userId, Room $room): array {
+		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			throw new InvalidRoomException();
+		}
+
+		try {
+			$userIds = json_decode($room->getName(), false, 512, JSON_THROW_ON_ERROR);
+		} catch (\JsonException) {
+			throw new InvalidRoomException();
+		}
+
+		$participants = array_filter($userIds, static function (string $participantId) use ($userId) {
+			return $participantId !== $userId;
+		});
+
+		if (count($participants) !== 1) {
+			throw new InvalidRoomException();
+		}
+
+		$otherParticipant = $this->userManager->get(array_pop($participants));
+		if ($otherParticipant === null) {
+			// Change to correct exception
+			throw new ParticipantNotFoundException();
+		}
+
+		$pattern = $otherParticipant->getEMailAddress();
+		if ($pattern === null) {
+			return [];
+		}
+
+		$principaluri = 'principals/users/' . $userId;
+		$calendars = $this->calendarManager->getCalendarsForPrincipal($principaluri);
+		if (count($calendars) === 0) {
+			return [];
+		}
+
+		// Only use personal calendars
+		$calendars = array_filter($calendars, static function (ICalendar $calendar) {
+			if (method_exists($calendar, 'isShared')) {
+				return $calendar->isShared() === false;
+			}
+			return true;
+		});
+
+		$start = $this->timeFactory->getDateTime();
+		$end = clone($start);
+		$end = $end->add(\DateInterval::createFromDateString('1 week'));
+		$options = [
+			'timerange' => [
+				'start' => $start,
+				'end' => $end,
+			],
+		];
+
+		$userTimezone = $this->dateTimeZone->getTimezone();
+		$searchProperties = ['ATTENDEE', 'ORGANIZER'];
+		$events = [];
+		/** @var ICalendar $calendar */
+		foreach ($calendars as $calendar) {
+			$searchResult = $calendar->search($pattern, $searchProperties, $options);
+			foreach ($searchResult as $calendarEvent) {
+				// Find first recurrence in the future
+				$event = null;
+				$dashboardEvent = new Event();
+				foreach ($calendarEvent['objects'] as $object) {
+					$dashboardEvent->setStart(\DateTime::createFromImmutable($object['DTSTART'][0])->setTimezone($userTimezone)->getTimestamp());
+					$dashboardEvent->setEnd(\DateTime::createFromImmutable($object['DTEND'][0])->setTimezone($userTimezone)->getTimestamp());
+
+					if ($dashboardEvent->getStart() >= $start->getTimestamp()) {
+						$event = $object;
+						break;
+					}
+				}
+
+				if ($event === null) {
+					continue;
+				}
+
+				$dashboardEvent->setEventName($event['SUMMARY'][0] ?? '');
+				$dashboardEvent->setEventDescription($event['DESCRIPTION'][0] ?? null);
+				$dashboardEvent->addCalendar($calendar->getUri(), $calendar->getDisplayName(), $calendar->getDisplayColor());
+
+				$location = $event['LOCATION'][0] ?? null;
+				if ($location !== null && str_contains($location, '/call/') === true) {
+					try {
+						$token = $this->roomService->parseRoomTokenFromUrl($location);
+						// Already returns public / open conversations
+						$eventRoom = $this->manager->getRoomForUserByToken($token, $userId);
+					} catch (RoomNotFoundException) {
+						$this->logger->debug("Room for url $location not found in dashboard service");
+						continue;
+					}
+					$dashboardEvent->setRoomType($eventRoom->getType());
+					$dashboardEvent->setRoomName($eventRoom->getName());
+					$dashboardEvent->setRoomToken($eventRoom->getToken());
+					$dashboardEvent->setRoomDisplayName($eventRoom->getDisplayName($userId));
+					$dashboardEvent->setRoomAvatarVersion($this->avatarService->getAvatarVersion($eventRoom));
+					$dashboardEvent->setRoomActiveSince($eventRoom->getActiveSince()?->getTimestamp());
+				}
+
+				if (isset($event['ATTENDEE'])) {
+					$dashboardEvent->generateAttendance($event['ATTENDEE']);
+				}
+
+				if (isset($event['ATTACH'])) {
+					$dashboardEvent->handleCalendarAttachments($calendar->getUri(), $event['ATTACH']);
+				}
+
+				$objectId = base64_encode($this->urlGenerator->getWebroot() . '/remote.php/dav/calendars/' . $userId . '/' . $calendar->getUri() . '/' . $calendarEvent['uri']);
+				if (isset($event['RECURRENCE-ID'])) {
+					$dashboardEvent->setEventLink(
+						$this->urlGenerator->linkToRouteAbsolute(
+							'calendar.view.indexdirect.edit',
+							[
+								'objectId' => $objectId,
+								'recurrenceId' => $event['RECURRENCE-ID'][0],
+							]
+						)
+					);
+				} else {
+					$dashboardEvent->setEventLink(
+						$this->urlGenerator->linkToRouteAbsolute('calendar.view.indexdirect.edit', ['objectId' => $objectId])
+					);
+				}
+
+				$events[] = $dashboardEvent;
+			}
+		}
+
+		if (empty($events)) {
+			return $events;
+		}
+
+		usort($events, static function (Event $a, Event $b) {
+			return $a->getStart() - $b->getStart();
+		});
+
+		return array_map(static function (Event $event) {
+			return $event->jsonSerialize();
+		}, array_slice($events, 0, 3));
 	}
 }
