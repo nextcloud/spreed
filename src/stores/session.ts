@@ -23,7 +23,7 @@ type Session = {
 	attendeeId: number | undefined,
 	token: string,
 	signalingSessionId: string,
-	sessionId: string | undefined,
+	sessionId: string,
 	inCall: number | undefined,
 }
 
@@ -128,7 +128,7 @@ export const useSessionStore = defineStore('session', {
 			}
 		},
 
-		findOrCreateSession(token: string, user: SignalingSessionPayload): Session {
+		findOrCreateSession(token: string, user: SignalingSessionPayload): Session | null {
 			const signalingSessionId = isStandaloneSignalingJoinSession(user) ? user.sessionid : user.sessionId
 			if (!signalingSessionId) {
 				throw new Error('Can not define sessionId from the payload')
@@ -139,7 +139,7 @@ export const useSessionStore = defineStore('session', {
 				return knownSession
 			}
 
-			let sessionId: Session['sessionId']
+			let sessionId: Session['sessionId'] | undefined
 			let attendee: Participant | null
 			let inCall: Session['inCall']
 			if (isStandaloneSignalingJoinSession(user)) {
@@ -161,6 +161,10 @@ export const useSessionStore = defineStore('session', {
 					actorType: user.actorType,
 				}) as Participant | null
 				inCall = user.inCall
+			}
+
+			if (!sessionId) {
+				return null
 			}
 
 			return this.addSession({
@@ -185,6 +189,10 @@ export const useSessionStore = defineStore('session', {
 
 			for (const user of users) {
 				const session = this.findOrCreateSession(token, user)
+				if (!session) {
+					continue
+				}
+
 				currentSessionIds.add(session.signalingSessionId)
 
 				// If we can not find an attendeeId for session - participant is missing from the list
