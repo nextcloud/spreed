@@ -5,27 +5,41 @@
 
 <script lang="ts" setup>
 
-import { computed } from 'vue'
+import { useNow } from '@vueuse/core'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router/composables'
 
 import IconTextBox from 'vue-material-design-icons/TextBox.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 
 import { t, n, getLocale } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import type { DashboardEventRoom } from '../../types/index.ts'
+import { formattedTime } from '../../utils/formattedTime.ts'
 
 // props
 const props = defineProps<{
 	eventRoom: DashboardEventRoom
 }>()
 const store = useStore()
+const router = useRouter()
+const isInCall = useIsInCall()
+const elapsedTime = computed(() => {
+	if (!hasCall.value) {
+		return ''
+	}
+	return formattedTime(+useNow({ interval: 1_000 }).value - (props.eventRoom.roomActiveSince ?? 0) * 1000)
+})
 
 const isToday = computed(() => {
 	const startDate = new Date(props.eventRoom.start * 1000)
@@ -38,6 +52,9 @@ const conversation = computed(() => {
 })
 
 const eventDateLabel = computed(() => {
+	if (hasCall.value) {
+		return t('spreed', 'Ongoing')
+	}
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
 	const startDateString = startDate.toLocaleString(getLocale(), { hour: '2-digit', minute: '2-digit' })
@@ -63,11 +80,28 @@ const invitesLabel = computed(() => {
 	return `${acceptedInvites}${separator}${declinedInvites}`
 })
 
+const hasCall = computed(() => {
+	return props.eventRoom.roomActiveSince !== null
+})
+
+/**
+ * Redirects to the conversation page and opens media settings
+ *
+ */
+function handleJoin() {
+	router.push({
+		name: 'conversation',
+		params: { token: props.eventRoom.roomToken },
+		hash: '#direct-call'
+	})
+}
+
 </script>
 <template>
 	<div class="event-card"
 		:class="{
 			'event-card--highlighted': isToday,
+			'event-card--in-call': hasCall,
 		}">
 		<span class="title">
 			<span v-for="calendar in props.eventRoom.calendars"
@@ -78,8 +112,12 @@ const invitesLabel = computed(() => {
 				{{ props.eventRoom.eventName }}
 			</span>
 		</span>
-		<p class="secondary_text event-card__date">
+		<p class="event-card__date secondary_text">
 			{{ eventDateLabel }}
+			<template v-if="hasCall">
+				<IconVideo :size="20" :fill-color="'#E9322D'" />
+				<span>{{ elapsedTime }}</span>
+			</template>
 		</p>
 		<span class="event-card__room secondary_text">
 			<span>
@@ -102,21 +140,53 @@ const invitesLabel = computed(() => {
 			{{ Object.entries(props.eventRoom.eventAttachments)[0]?.[1]?.filename }}
 		</span>
 		<span class="event-card__invitation-info">
-			{{ invitesLabel }}
+			<span v-if="invitesLabel && !hasCall" class="secondary_text">
+				{{ invitesLabel }}
+			</span>
+			<NcButton v-if="(hasCall && !isInCall)"
+				type="primary"
+				@click="handleJoin">
+				<template #icon>
+					<IconVideo :size="20" />
+				</template>
+				{{ t('spreed', 'Join') }}
+			</NcButton>
 		</span>
 	</div>
 </template>
 <style scoped lang="scss">
 .event-card {
+	position: relative;
+	min-height: 225px;
+	display: flex;
+	flex-direction: column;
+	max-width: 300px;
+	min-width: 200px;
+	border: 3px solid var(--color-border);
+	padding: calc(var(--default-grid-baseline) * 2);
+	border-radius: var(--border-radius-large);
+
 	&--highlighted {
 		background-color: var(--color-primary-light);
-		border-color: var(--color-primary-light) !important;
+		&:not(.event-card--in-call) {
+			border-color: var(--color-primary-light) !important;
+		}
+	}
+
+	&--in-call {
+		border-color: var(--color-primary) !important;
 	}
 
 	&__date {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		display: flex;
+		gap: 2px;
+
+		& > * {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
 	}
 
 	&__description {
@@ -158,9 +228,14 @@ const invitesLabel = computed(() => {
 	}
 
 	&__invitation-info {
-		color: var(--color-text-maxcontrast);
-		font-size: 0.9em;
-		padding-top: var(--default-grid-baseline);
+		position: absolute;
+		bottom: 0;
+		inset-inline-start: 0;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--default-grid-baseline);
 	}
 }
 
@@ -181,6 +256,9 @@ const invitesLabel = computed(() => {
 .secondary_text {
 	color: var(--color-text-maxcontrast);
 	font-size: 0.9em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .calendar-badge {
