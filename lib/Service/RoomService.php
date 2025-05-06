@@ -183,7 +183,10 @@ class RoomService {
 
 		$objectTypes = [
 			'',
-			Room::OBJECT_TYPE_PHONE,
+			// Kept to keep older clients working
+			Room::OBJECT_TYPE_PHONE_LEGACY,
+			Room::OBJECT_TYPE_PHONE_PERSIST,
+			Room::OBJECT_TYPE_PHONE_TEMPORARY,
 			Room::OBJECT_TYPE_EVENT,
 			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
 		];
@@ -1445,10 +1448,14 @@ class RoomService {
 		$room->setObjectType('');
 	}
 
-	public function setObject(Room $room, string $objectId = '', string $objectType = ''): void {
+	/**
+	 * @psalm-param Room::OBJECT_TYPE_* $objectType
+	 */
+	public function setObject(Room $room, string $objectType, string $objectId): void {
 		if (($objectId !== '' && $objectType === '') || ($objectId === '' && $objectType !== '')) {
 			throw new InvalidRoomException('Object ID and Object Type must both be empty or both have values');
 		}
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('object_id', $update->createNamedParameter($objectId, IQueryBuilder::PARAM_STR))

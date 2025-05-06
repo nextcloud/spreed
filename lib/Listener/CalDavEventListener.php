@@ -174,6 +174,6 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		$objectId = $start . '#' . $end;
-		$this->roomService->setObject($room, $objectId, Room::OBJECT_TYPE_EVENT);
+		$this->roomService->setObject($room, Room::OBJECT_TYPE_EVENT, $objectId);
 	}
 }

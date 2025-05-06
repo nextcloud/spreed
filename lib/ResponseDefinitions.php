@@ -471,6 +471,8 @@ namespace OCA\Talk;
  *             force-passwords: bool,
  *             list-style: 'two-lines'|'compact',
  *             description-length: positive-int,
+ *             retention-event: non-negative-int,
+ *             retention-phone: non-negative-int,
  *         },
  *         federation: array{
  *             enabled: bool,

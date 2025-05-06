@@ -233,7 +233,9 @@
                                     "can-create",
                                     "force-passwords",
                                     "list-style",
-                                    "description-length"
+                                    "description-length",
+                                    "retention-event",
+                                    "retention-phone"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -253,6 +255,16 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
+                                    },
+                                    "retention-event": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
+                                    },
+                                    "retention-phone": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
                                     }
                                 }
                             },

@@ -44,7 +44,12 @@ class Room {
 	public const OBJECT_TYPE_EXTENDED_CONVERSATION = 'extended_conversation';
 	public const OBJECT_TYPE_FILE = 'file';
 	public const OBJECT_TYPE_NOTE_TO_SELF = 'note_to_self';
-	public const OBJECT_TYPE_PHONE = 'phone';
+	/**
+	 * @deprecated No longer used for new conversations
+	 */
+	public const OBJECT_TYPE_PHONE_LEGACY = 'phone';
+	public const OBJECT_TYPE_PHONE_PERSIST = 'phone_persist';
+	public const OBJECT_TYPE_PHONE_TEMPORARY = 'phone_temporary';
 	public const OBJECT_TYPE_SAMPLE = 'sample';
 	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
 

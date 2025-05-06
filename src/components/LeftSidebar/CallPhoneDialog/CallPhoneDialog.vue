@@ -56,6 +56,7 @@ import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { callSIPDialOut } from '../../../services/callsService.js'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { createLegacyConversation } from '../../../services/conversationsService.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 
@@ -123,7 +124,7 @@ export default {
 				const response = await createLegacyConversation({
 					roomType: CONVERSATION.TYPE.GROUP,
 					roomName: this.participantPhoneItem.phoneNumber,
-					objectType: CONVERSATION.OBJECT_TYPE.PHONE,
+					objectType: hasTalkFeature('local', 'sip-direct-dialin') ? CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY : CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
 				})
 				conversation = response.data.ocs.data
 				await this.$store.dispatch('addConversation', conversation)

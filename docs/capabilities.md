@@ -183,5 +183,8 @@
 * `conversation-creation-all` (local) - Whether the conversation creation endpoint allows to specify all attributes of a conversation
 * `sip-direct-dialin` (local) - Whether the SIP bridge can create conversations when an external participant calls a mapped phone number
 * `important-conversations` (local) - Whether important conversations are supported
+* `unbind-conversation` (local) - Whether the API exists to make an event and phone conversation persistent
+* `config => conversations => retention-event` (local) - Number of days before an inactive event conversation is deleted (`0` = disabled)
+* `config => conversations => retention-phone` (local) - Number of days before an inactive incoming or outgoing phone conversation is deleted (`0` = disabled)
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests
