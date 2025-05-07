@@ -42,6 +42,7 @@ import {
 	setConversationName,
 	setConversationDescription,
 	deleteConversation,
+	unbindConversationFromObject,
 	setNotificationLevel,
 	setNotificationCalls,
 	setConversationPermissions,
@@ -1231,6 +1232,17 @@ const actions = {
 			showError(t('spreed', 'Could not delete the conversation picture'))
 		}
 	},
+
+	async unbindConversationFromObject(context, { token }) {
+		try {
+			const response = await unbindConversationFromObject(token)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while unbinding conversation from object: ', error)
+			showError(t('spreed', 'Could not remove the automatic expiration'))
+		}
+	}
 }
 
 export default { state, mutations, getters, actions }
