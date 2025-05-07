@@ -115,6 +115,7 @@ function emitUserStatusUpdated(conversation) {
 const state = {
 	conversations: {
 	},
+	conversationsInitialised: false,
 }
 
 const getters = {
@@ -179,6 +180,8 @@ const getters = {
 		return (userId) => getters.conversationsList
 			.find((conversation) => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 	},
+
+	conversationsInitialised: state => state.conversationsInitialised,
 }
 
 const mutations = {
@@ -266,6 +269,10 @@ const mutations = {
 
 	setConversationHasPassword(state, { token, hasPassword }) {
 		Vue.set(state.conversations[token], 'hasPassword', hasPassword)
+	},
+
+	setConversationsInitialised(state, value) {
+		state.conversationsInitialised = value
 	},
 }
 
@@ -452,6 +459,8 @@ const actions = {
 			conversations: JSON.parse(cachedConversations),
 			withRemoving: true,
 		})
+
+		context.commit('setConversationsInitialised', true)
 
 		console.debug('Conversations have been restored from BrowserStorage')
 	},
@@ -917,7 +926,7 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch }, { modifiedSince, includeLastMessage = 1 }) {
+	async fetchConversations({ dispatch, commit }, { modifiedSince, includeLastMessage = 1 }) {
 		const talkHashStore = useTalkHashStore()
 		const federationStore = useFederationStore()
 		try {
@@ -945,6 +954,7 @@ const actions = {
 				invites: response.headers['x-nextcloud-talk-federation-invites'],
 				withRemoving: modifiedSince === 0,
 			})
+			commit('setConversationsInitialised', true)
 			return response
 		} catch (error) {
 			if (error?.response) {
