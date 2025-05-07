@@ -44,6 +44,8 @@ const expirationDuration = computed(() => {
 		return retentionEventPeriod
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
 		return retentionPhonePeriod
+	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING) {
+		return 0 // FIXME: get actual value from the server
 	}
 	return 0
 })
