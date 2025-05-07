@@ -52,6 +52,13 @@ class ExpireObjectRooms extends TimedJob {
 
 		$numDeletedRooms = 0;
 		foreach ($rooms as $room) {
+			if ($objectType === Room::OBJECT_TYPE_EVENT) {
+				[, $endTime] = explode('#', $room->getObjectId());
+				if ($endTime < $now) {
+					continue;
+				}
+			}
+
 			$this->roomService->deleteRoom($room);
 			$numDeletedRooms++;
 		}
