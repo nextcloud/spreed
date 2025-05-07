@@ -6,9 +6,11 @@
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router/composables'
 
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -70,6 +72,14 @@ async function startMeeting() {
 				:event-room="eventRoom"
 				class="talk-dashboard__event-card" />
 		</div>
+		<NcButton class="talk-dashboard__devices-button"
+			type="tertiary"
+			@click="emit('talk:media-settings:show', 'device-check')">
+			<template #icon>
+				<IconMicrophone :size="20" />
+			</template>
+			{{ t('spreed', 'Check devices') }}
+		</NcButton>
 	</div>
 </template>
 <style lang="scss" scoped>
@@ -111,6 +121,10 @@ async function startMeeting() {
 .talk-dashboard__event-card {
 	flex: 0 0 calc(25% - var(--default-grid-baseline));
 	scroll-snap-align: start;
+}
+
+.talk-dashboard__devices-button {
+	margin: calc(var(--default-grid-baseline) * 4);
 }
 
 .title {
