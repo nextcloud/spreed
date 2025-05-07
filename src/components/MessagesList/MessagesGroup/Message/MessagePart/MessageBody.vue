@@ -26,8 +26,9 @@
 
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" />
-			<CalendarEventConversationActions v-else-if="showEventConversationActions"
+			<ConversationActionsShortcut v-else-if="showConversationActionsShortcut"
 				:token="message.token"
+				:object-type="conversation.objectType"
 				:is-highlighted="isLastMessage" />
 			<Poll v-else-if="showResultsButton"
 				:token="message.token"
@@ -147,12 +148,13 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 
 import Poll from './Poll.vue'
 import Quote from '../../../../Quote.vue'
-import CalendarEventConversationActions from '../../../../TopBar/CalendarEventConversationActions.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
+import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { CONVERSATION } from '../../../../../constants.ts'
+import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
@@ -162,6 +164,7 @@ const regex = emojiRegex()
 // Regular expressions to check for task lists in message text like: - [ ], * [ ], + [ ],- [x], - [X]
 const checkboxRegexp = /^\s*[-+*]\s.*\[[\sxX]\]/
 const checkboxCheckedRegexp = /^\s*[-+*]\s.*\[[xX]\]/
+const supportUnbindConversation = hasTalkFeature('local', 'unbind-conversation')
 
 export default {
 	name: 'MessageBody',
@@ -172,7 +175,7 @@ export default {
 		NcRichText,
 		Poll,
 		Quote,
-		CalendarEventConversationActions,
+		ConversationActionsShortcut,
 		// Icons
 		AlertCircleIcon,
 		IconBellOff,
@@ -274,10 +277,15 @@ export default {
 			return this.$store.getters.conversation(this.message.token)
 		},
 
-		showEventConversationActions() {
-			return !this.isInCall && !this.isSidebar && this.$store.getters.isModeratorOrUser
-				&& this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
-				&& !this.conversation.isArchived
+		hasRetentionPeriod() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+			|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY
+		},
+
+		showConversationActionsShortcut() {
+			return supportUnbindConversation
+				&& !this.isInCall && !this.isSidebar && this.$store.getters.isModeratorOrUser
+				&& this.hasRetentionPeriod
 				&& this.isCallEndedMessage
 				&& this.message.id > this.lastCallStartedMessageId
 		},
