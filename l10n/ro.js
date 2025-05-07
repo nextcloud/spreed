@@ -744,7 +744,7 @@ OC.L10N.register(
     "Browse …" : "Navigare ...",
     "Select location for attachments" : "Selectați locația atașamentelor",
     "Appearance" : "Aspect",
-    "Privacy" : "Confindențialitate",
+    "Privacy" : "Confidențialitate",
     "Share my read-status and show the read-status of others" : "Arată statusul meu de citire și pe al celorlalți",
     "Share my typing-status and show the typing-status of others" : "Arată când tastez eu și ceilalți",
     "Sounds" : "Sunete",
