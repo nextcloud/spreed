@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router/composables'
 
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
@@ -16,11 +16,13 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 
 import EventCard from './EventCard.vue'
+import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { useTalkDashboardStore } from '../../stores/talkdashboard.ts'
-import type { DashboardEventRoom } from '../../types/index.ts'
+import type { Conversation, DashboardEventRoom } from '../../types/index.ts'
+import { filterConversation } from '../../utils/conversation.ts'
 
 const store = useStore()
 const router = useRouter()
@@ -29,6 +31,12 @@ const eventRooms = ref<DashboardEventRoom[]>([])
 onMounted(async () => {
 	eventRooms.value = await talkDashboardStore.fetchDashboardEventRooms() ?? []
 })
+
+const conversationsList = computed(() => store.getters.conversationsList)
+const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
+const filteredConversations = computed(() => conversationsList.value?.filter((conversation : Conversation) => {
+	return filterConversation(conversation, ['mentions'])
+}))
 
 /**
  * Creates a new group conversation and navigates to the conversation page.
@@ -79,6 +87,13 @@ async function startMeeting() {
 			</template>
 			{{ t('spreed', 'Check devices') }}
 		</NcButton>
+		<div class="talk-dashboard__unread-mentions"
+			:class="{'loading': !conversationsInitialised}">
+			<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+			<ConversationsListVirtual class="talk-dashboard__conversations-list"
+				:conversations="filteredConversations"
+				:loading="!conversationsInitialised" />
+		</div>
 	</div>
 </template>
 <style lang="scss" scoped>
@@ -123,6 +138,28 @@ async function startMeeting() {
 
 .talk-dashboard__devices-button {
 	margin-block: calc(var(--default-grid-baseline) * 4);
+}
+
+.talk-dashboard__unread-mentions {
+	max-height: 300px;
+	width: 300px;
+	overflow-y: auto;
+
+	& > .title {
+		display: block;
+		height: var(--default-clickable-area);
+		padding : var(--default-grid-baseline);
+	}
+
+	&.loading {
+		overflow: hidden;
+	}
+}
+
+.talk-dashboard__conversations-list {
+	margin-block: calc(var(--default-grid-baseline) * 2);
+	height: 100%;
+	line-height: 20px;
 }
 
 .title {
