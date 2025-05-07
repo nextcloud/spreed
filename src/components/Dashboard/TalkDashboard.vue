@@ -4,27 +4,65 @@
 -->
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router/composables'
 
+import IconVideo from 'vue-material-design-icons/Video.vue'
+
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import EventCard from './EventCard.vue'
 
+import { useStore } from '../../composables/useStore.js'
+import { CONVERSATION } from '../../constants.ts'
 import { useTalkDashboardStore } from '../../stores/talkdashboard.ts'
 import type { DashboardEventRoom } from '../../types/index.ts'
 
+const store = useStore()
+const router = useRouter()
 const talkDashboardStore = useTalkDashboardStore()
 const eventRooms = ref<DashboardEventRoom[]>([])
 onMounted(async () => {
 	eventRooms.value = await talkDashboardStore.fetchDashboardEventRooms() ?? []
 })
 
+/**
+ * Creates a new group conversation and navigates to the conversation page.
+ */
+async function startMeeting() {
+	try {
+		const conversation = await store.dispatch('createGroupConversation', {
+			roomName: t('spreed', 'Meeting'), // NOTE: it uses user language statically
+			roomType: CONVERSATION.TYPE.PUBLIC,
+		})
+		router.push({
+			name: 'conversation',
+			params: { token: conversation.token },
+			hash: '#direct-call',
+		})
+	} catch (error) {
+		console.error('Error creating conversation:', error)
+		showError(t('spreed', 'Error creating a meeting'))
+	}
+}
 </script>
 <template>
 	<div class="talk-dashboard-wrapper">
 		<div class="talk-dashboard__header">
 			{{ t('spreed', 'Talk home') }}
 		</div>
-		<span class="title">{{ t('spreed', 'Upcoming meetings') }}</span>
+		<div class="talk-dashboard__title">
+			<span class="title">{{ t('spreed', 'Upcoming meetings') }}</span>
+			<NcButton type="primary"
+				@click="startMeeting">
+				<template #icon>
+					<IconVideo />
+				</template>
+				{{ t('spreed', 'Start meeting now') }}
+			</NcButton>
+		</div>
 		<div class="talk-dashboard__event-cards">
 			<EventCard v-for="eventRoom in eventRooms"
 				:key="eventRoom.eventLink"
@@ -34,8 +72,12 @@ onMounted(async () => {
 	</div>
 </template>
 <style lang="scss" scoped>
+@import '../../assets/variables';
+
 .talk-dashboard-wrapper {
 	padding-inline: calc(var(--default-grid-baseline) * 2);
+	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
+	margin: 0 auto;
 }
 
 .talk-dashboard__header {
@@ -44,6 +86,14 @@ onMounted(async () => {
 	height: 51px; // top bar height
 	line-height: 51px;
 	text-align: center;
+}
+
+.talk-dashboard__title {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--default-grid-baseline);
 }
 
 .talk-dashboard__event-cards {
