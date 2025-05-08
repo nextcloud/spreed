@@ -6,7 +6,7 @@
 <template>
 	<ul :class="'placeholder-list placeholder-list--' + type">
 		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
-			<div class="placeholder-item__avatar" :style="{ '--avatar-size': item.avatarSize }">
+			<div v-if="type !== 'event-cards'" class="placeholder-item__avatar" :style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />
 			</div>
 			<div class="placeholder-item__content" :style="{'--last-line-width': item.width}">
@@ -28,7 +28,7 @@ export default {
 			type: String,
 			required: true,
 			validator(value) {
-				return ['conversations', 'messages', 'participants'].includes(value)
+				return ['conversations', 'messages', 'participants', 'event-cards'].includes(value)
 			},
 		},
 		count: {
@@ -152,6 +152,34 @@ export default {
 
 		&__avatar {
 			margin: auto;
+		}
+	}
+}
+
+// Event cards placeholder ruleset
+.placeholder-list--event-cards {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow: hidden;
+	.placeholder-item {
+		padding: 0;
+		margin: 0;
+		gap: 0;
+		&__content {
+			width: 100%;
+			padding: var(--default-grid-baseline);
+			margin: 0;
+			gap: var(--default-grid-baseline);
+
+			&-line {
+				margin: 0;
+				width: 100%;
+				min-width: 200px;
+				max-width: 300px;
+				height: 225px;
+				background-color: var(--color-placeholder-light);
+				border-radius: var(--border-radius-large);
+			}
 		}
 	}
 }
