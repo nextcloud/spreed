@@ -335,8 +335,11 @@ export type {
 	UpcomingEventsResponse,
 } from './openapi/core/index.ts'
 
+export type DashboardEvent = components['schemas']['DashboardEvent']
+
 export type scheduleMeetingParams = Required<operations['room-schedule-meeting']>['requestBody']['content']['application/json']
 export type scheduleMeetingResponse = ApiResponse<operations['room-schedule-meeting']['responses'][200]['content']['application/json']>
+export type getMutualEventsResponse = ApiResponse<operations['calendar_integration-get-mutual-events']['responses'][200]['content']['application/json']>
 
 export type EventTimeRange = {
 	start: number | null
