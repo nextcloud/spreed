@@ -495,6 +495,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/upcoming-reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all upcoming reminders
+         * @description Required capability: `upcoming-reminders`
+         */
+        get: operations["chat-get-upcoming-reminders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/read": {
         parameters: {
             query?: never;
@@ -1717,6 +1737,20 @@ export type components = {
             timestamp: number;
             token: string;
             userId: string;
+        };
+        ChatReminderUpcoming: {
+            actorDisplayName: string;
+            actorId: string;
+            actorType: string;
+            message: string;
+            /** Format: int64 */
+            messageId: number;
+            messageParameters: {
+                [key: string]: components["schemas"]["RichObjectParameter"];
+            };
+            /** Format: int64 */
+            reminderTimestamp: number;
+            roomToken: string;
         };
         DashboardEvent: {
             calendars: components["schemas"]["DashboardEventCalendar"][];
@@ -4611,6 +4645,36 @@ export interface operations {
                             data: {
                                 error?: string;
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-upcoming-reminders": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminders returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminderUpcoming"][];
                         };
                     };
                 };

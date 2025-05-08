@@ -6,6 +6,10 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+$requirementsVersionOnly = [
+	'apiVersion' => '(v1)',
+];
+
 $requirements = [
 	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
@@ -39,6 +43,8 @@ return [
 		['name' => 'Chat#getReminder', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/reminder', 'verb' => 'GET', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\ChatController::deleteReminder() */
 		['name' => 'Chat#deleteReminder', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/reminder', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\ChatController::getUpcomingReminders() */
+		['name' => 'Chat#getUpcomingReminders', 'url' => '/api/{apiVersion}/chat/upcoming-reminders', 'verb' => 'GET', 'requirements' => $requirementsVersionOnly],
 		/** @see \OCA\Talk\Controller\ChatController::setReadMarker() */
 		['name' => 'Chat#setReadMarker', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::markUnread() */

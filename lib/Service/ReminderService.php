@@ -31,6 +31,10 @@ class ReminderService {
 	) {
 	}
 
+	public function getUpcomingReminders(string $userId, int $limit): array {
+		return $this->reminderMapper->findForUser($userId, $limit);
+	}
+
 	public function setReminder(string $userId, string $token, int $messageId, int $timestamp): Reminder {
 		try {
 			$reminder = $this->reminderMapper->findForUserAndMessage($userId, $token, $messageId);
