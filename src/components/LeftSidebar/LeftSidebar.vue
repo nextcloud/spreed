@@ -7,6 +7,18 @@
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<template #search>
 			<div class="new-conversation">
+				<TransitionWrapper name="radial-reveal">
+					<NcButton v-show="searchText === ''"
+						type="secondary"
+						:class="{'hidden-visually': isSearching}"
+						class="talk-home-button"
+						:title="t('spreed', 'Talk home')"
+						@click="showTalkDashboard">
+						<template #icon>
+							<IconHome :size="20" />
+						</template>
+					</NcButton>
+				</TransitionWrapper>
 				<div class="conversations-search"
 					:class="{'conversations-search--expanded': isSearching}">
 					<SearchBox ref="searchBox"
@@ -248,6 +260,7 @@ import Cog from 'vue-material-design-icons/Cog.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import List from 'vue-material-design-icons/FormatListBulleted.vue'
+import IconHome from 'vue-material-design-icons/Home.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
@@ -342,6 +355,7 @@ export default {
 		IconArchive,
 		IconArrowLeft,
 		IconCalendar,
+		IconHome,
 		Phone,
 		Plus,
 		ChatPlus,
@@ -920,6 +934,11 @@ export default {
 				})
 			}
 		},
+
+		showTalkDashboard() {
+			this.$router.push({ name: 'root' })
+				.catch(err => console.debug(`Error while pushing the dashboard route: ${err}`))
+		}
 	},
 }
 </script>
@@ -983,7 +1002,7 @@ export default {
 	transition: all 0.15s ease;
 	z-index: 1;
 	// TODO replace with NcAppNavigationSearch
-	width: calc(100% - var(--default-grid-baseline) * 2 - var(--default-clickable-area) * 2);
+	width: calc(100% - var(--default-grid-baseline) * 3 - var(--default-clickable-area) * 3);
 	display: flex;
 
 	&--expanded {
@@ -993,6 +1012,10 @@ export default {
 	:deep(.input-field) {
 		margin-block-start: 0;
 	}
+}
+
+.talk-home-button {
+	margin-inline-end: var(--default-grid-baseline);
 }
 
 .conversations__filters {
