@@ -978,7 +978,7 @@ class ChatManager {
 	 * Get messages by ID
 	 *
 	 * @param int[] $commentIds
-	 * @return IComment[] Key is the message id
+	 * @return array<int, IComment> Key is the message id
 	 */
 	public function getMessagesById(array $commentIds): array {
 		return $this->commentsManager->getCommentsById(array_map('strval', $commentIds));

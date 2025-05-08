@@ -120,6 +120,7 @@ class Capabilities implements IPublicCapability {
 		'sip-direct-dialin',
 		'dashboard-event-rooms',
 		'mutual-calendar-events',
+		'upcoming-reminders',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -148,6 +149,7 @@ class Capabilities implements IPublicCapability {
 		'sip-direct-dialin',
 		'dashboard-event-rooms',
 		'mutual-calendar-events',
+		'upcoming-reminders',
 	];
 
 	public const LOCAL_CONFIGS = [

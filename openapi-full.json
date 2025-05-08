@@ -660,6 +660,50 @@
                     }
                 }
             },
+            "ChatReminderUpcoming": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "message",
+                    "messageId",
+                    "messageParameters",
+                    "reminderTimestamp",
+                    "roomToken"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "messageId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RichObjectParameter"
+                        }
+                    },
+                    "reminderTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "roomToken": {
+                        "type": "string"
+                    }
+                }
+            },
             "DashboardEvent": {
                 "type": "object",
                 "required": [
@@ -8125,6 +8169,83 @@
                                                         "error": {
                                                             "type": "string"
                                                         }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/upcoming-reminders": {
+            "get": {
+                "operationId": "chat-get-upcoming-reminders",
+                "summary": "Get all upcoming reminders",
+                "description": "Required capability: `upcoming-reminders`",
+                "tags": [
+                    "chat"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reminders returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ChatReminderUpcoming"
                                                     }
                                                 }
                                             }
