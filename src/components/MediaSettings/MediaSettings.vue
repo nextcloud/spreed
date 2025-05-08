@@ -85,6 +85,12 @@
 						:device-id="videoInputId"
 						@refresh="updateDevices"
 						@update:deviceId="handleVideoInputIdChange" />
+					<MediaDevicesSelector v-if="audioOutputSupported"
+						kind="audiooutput"
+						:devices="devices"
+						:device-id="audioOutputId"
+						@refresh="updateDevices"
+						@update:deviceId="handleAudioOutputIdChange" />
 					<MediaDevicesSpeakerTest />
 				</template>
 
@@ -263,7 +269,9 @@ export default {
 			audioPreviewAvailable,
 			videoPreviewAvailable,
 			audioInputId,
+			audioOutputId,
 			videoInputId,
+			audioOutputSupported,
 			initializeDevices,
 			stopDevices,
 			virtualBackground,
@@ -298,7 +306,9 @@ export default {
 			audioPreviewAvailable,
 			videoPreviewAvailable,
 			audioInputId,
+			audioOutputId,
 			videoInputId,
+			audioOutputSupported,
 			initializeDevices,
 			stopDevices,
 			virtualBackground,
@@ -545,6 +555,7 @@ export default {
 			this.isMirrored = false
 			// Update devices preferences
 			this.updatePreferences('audioinput')
+			this.updatePreferences('audiooutput')
 			this.updatePreferences('videoinput')
 		},
 
@@ -705,6 +716,11 @@ export default {
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
 			this.updatePreferences('audioinput')
+		},
+
+		handleAudioOutputIdChange(audioOutputId) {
+			this.audioOutputId = audioOutputId
+			this.updatePreferences('audiooutput')
 		},
 
 		handleVideoInputIdChange(videoInputId) {

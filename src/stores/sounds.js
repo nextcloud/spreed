@@ -25,6 +25,7 @@ const shouldPlaySounds = hasUserAccount
  * Preferred version is the .ogg, with .flac fallback if .ogg is not supported (Safari)
  */
 const fileExtension = new Audio().canPlayType('audio/ogg') ? '.ogg' : '.flac'
+const isAudioOutputSelectSupported = !!(new Audio().setSinkId)
 
 export const useSoundsStore = defineStore('sounds', {
 	state: () => ({
@@ -105,6 +106,21 @@ export const useSoundsStore = defineStore('sounds', {
 			this.createAudioObject('leave', 'leave_call', 0.75)
 			this.createAudioObject('wait', 'LibremPhoneCall', 0.5)
 			this.audioObjectsCreated = true
+		},
+
+		async setGeneralAudioOutput(deviceId) {
+			if (!isAudioOutputSelectSupported) {
+				return
+			}
+
+			try {
+				for (const key in this.audioObjects) {
+					this.pauseAudio(key)
+					await this.audioObjects[key].setSinkId(deviceId)
+				}
+			} catch (error) {
+				console.error(error)
+			}
 		},
 	}
 })

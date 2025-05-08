@@ -4,6 +4,7 @@
  */
 
 import attachMediaStream from '../attachmediastream.js'
+import { mediaDevicesManager } from '../webrtc/index.js'
 
 /**
  * Player for audio of call participants.
@@ -39,6 +40,7 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 	} else {
 		this._audioElements = new Map()
 	}
+	this.setGeneralAudioOutput(mediaDevicesManager.attributes.audioOutputId)
 
 	this._handleCallParticipantAddedBound = this._handleCallParticipantAdded.bind(this)
 	this._handleCallParticipantRemovedBound = this._handleCallParticipantRemoved.bind(this)
@@ -142,11 +144,33 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 
 		audioElement = attachMediaStream(stream, null, { audio: true })
+		this._setAudioElementOutput(mediaDevicesManager.attributes.audioOutputId, audioElement)
+
 		if (mute) {
 			audioElement.muted = true
 		}
 
 		this._audioElements.set(id, audioElement)
+	},
+
+	async setGeneralAudioOutput(deviceId) {
+		if (!mediaDevicesManager.isAudioOutputSelectSupported) {
+			console.debug('Your browser does not support audio output selecting')
+			return
+		}
+
+		const promises = []
+		for (const audioElement of this._audioElements.values()) {
+			promises.push(this._setAudioElementOutput(deviceId, audioElement))
+		}
+		await Promise.all(promises)
+	},
+
+	async _setAudioElementOutput(deviceId, audioElement = null) {
+		if (audioElement instanceof HTMLAudioElement) {
+			await audioElement.setSinkId(deviceId)
+			console.debug('Set audio output to %s', deviceId)
+		}
 	},
 
 	_handleAudioAvailableChanged(callParticipantModel, audioAvailable) {
