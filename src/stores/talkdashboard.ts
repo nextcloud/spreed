@@ -27,6 +27,7 @@ export const useTalkDashboardStore = defineStore('talkdashboard', {
 				this.eventRoomsInitialised = true
 			} catch (error) {
 				console.error('Error fetching dashboard event rooms:', error)
+				throw error
 			}
 		},
 	},
