@@ -444,7 +444,7 @@ OC.L10N.register(
     "Contact" : "Kontakts",
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
-    "_%n day ago_::_%n days ago_" : ["%n dienas atpakaļ","%n dienas atpakaļ","%n dienām"],
+    "_%n day ago_::_%n days ago_" : ["pirms %n dienām","pirms %n dienas","pirms %n dienām"],
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Kopīgojamā datne",
     "Upload from device" : "Augšupielādēt no ierīces",
