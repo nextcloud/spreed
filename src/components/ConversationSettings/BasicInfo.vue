@@ -6,7 +6,7 @@
 <template>
 	<Fragment>
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<p v-if="isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
+		<p v-if="canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
