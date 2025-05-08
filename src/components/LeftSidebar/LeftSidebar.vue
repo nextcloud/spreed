@@ -26,6 +26,8 @@
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
+						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
+
 						<NcActionButton close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
@@ -33,7 +35,7 @@
 							<template #icon>
 								<AtIcon :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread mentions') }}
+							{{ t('spreed', 'Unread mentions') }}
 						</NcActionButton>
 
 						<NcActionButton close-after-click
@@ -43,7 +45,17 @@
 							<template #icon>
 								<MessageBadge :size="20" />
 							</template>
-							{{ t('spreed', 'Filter unread messages') }}
+							{{ t('spreed', 'Unread messages') }}
+						</NcActionButton>
+
+						<NcActionButton close-after-click
+							type="checkbox"
+							:model-value="filters.includes('events')"
+							@click="handleFilter('events')">
+							<template #icon>
+								<IconCalendar :size="20" />
+							</template>
+							{{ t('spreed', 'Meeting conversations') }}
 						</NcActionButton>
 
 						<NcActionButton v-if="isFiltered"
@@ -230,6 +242,7 @@ import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.v
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import AtIcon from 'vue-material-design-icons/At.vue'
+import IconCalendar from 'vue-material-design-icons/CalendarBlank.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
@@ -247,6 +260,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -281,7 +295,7 @@ import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.js'
+import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -294,6 +308,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
 	mentions: t('spreed', 'Mentions'),
+	events: t('spreed', 'Meetings'),
 	default: '',
 }
 
@@ -313,6 +328,7 @@ export default {
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
+		NcActionCaption,
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
@@ -325,6 +341,7 @@ export default {
 		FilterRemoveIcon,
 		IconArchive,
 		IconArrowLeft,
+		IconCalendar,
 		Phone,
 		Plus,
 		ChatPlus,

@@ -7,7 +7,6 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { hasTalkFeature } from './CapabilitiesManager.ts'
-import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import type {
 	getAllConversationsParams,
 	getAllConversationsResponse,
@@ -19,6 +18,7 @@ import type {
 	createConversationResponse,
 	legacyCreateConversationParams,
 	deleteConversationResponse,
+	unbindConversationFromObjectResponse,
 	setConversationNameParams,
 	setConversationNameResponse,
 	setConversationPasswordParams,
@@ -165,6 +165,14 @@ async function setConversationDescription(token: string, description: setConvers
  */
 async function deleteConversation(token: string): deleteConversationResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }))
+}
+
+/**
+ * Detach a conversation from an object and it becomes a "normal" conversation.
+ * @param token The token of the conversation to be deleted.
+ */
+async function unbindConversationFromObject(token: string): unbindConversationFromObjectResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/object', { token }))
 }
 
 /**
@@ -351,6 +359,7 @@ export {
 	createLegacyConversation,
 	createConversation,
 	deleteConversation,
+	unbindConversationFromObject,
 	addToFavorites,
 	removeFromFavorites,
 	archiveConversation,

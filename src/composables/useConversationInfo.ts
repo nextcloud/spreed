@@ -8,9 +8,13 @@ import { computed, ref } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
+import { useStore } from './useStore.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
-import type { Conversation } from '../types/index.ts'
+import type { Conversation, ChatMessage } from '../types/index.ts'
+import { getEventTimeRange } from '../utils/conversation.ts'
+import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
@@ -113,6 +117,33 @@ export function useConversationInfo({
 				icon: null,
 				message: t('spreed', 'Joining conversation …'),
 				title: t('spreed', 'Joining conversation …'),
+			}
+		}
+
+		// This is for event conversations where no messages from participants are shown
+		const startTime = getEventTimeRange(item.value).start
+		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT
+			&& startTime && startTime > Date.now()) {
+			// Check if there is a message to display
+			const store = useStore()
+			const hasHumanMessage = item.value.unreadMessages !== 0 || store.getters.messagesList(item.value.token).some((message: ChatMessage) => {
+				return message.systemMessage === '' && message.messageType !== 'comment_deleted'
+			})
+
+			if (!hasHumanMessage && startTime - Date.now() < ONE_DAY_IN_MS) {
+				return {
+					actor: null,
+					icon: null,
+					message: futureRelativeTime(startTime),
+					title: futureRelativeTime(startTime),
+				}
+			} else if (!hasHumanMessage) {
+				return {
+					actor: null,
+					icon: null,
+					message: moment(startTime).calendar(),
+					title: moment(startTime).calendar(),
+				}
 			}
 		}
 
