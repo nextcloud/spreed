@@ -109,9 +109,9 @@ async function showConfirmationDialog() {
 	<div class="conversation-actions"
 		:class="{ 'conversation-actions--highlighted': props.isHighlighted }">
 		<p>{{ descriptionLabel }}</p>
-		<div class="conversation-actions__buttons">
-			<NcButton v-if="isModerator"
-				type="error"
+		<div v-if="isModerator"
+			class="conversation-actions__buttons">
+			<NcButton type="error"
 				@click="showConfirmationDialog">
 				<template #icon>
 					<IconDelete />
