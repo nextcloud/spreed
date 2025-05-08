@@ -366,7 +366,7 @@ async function submitNewMeeting() {
 					</template>
 
 					<template #description>
-						<p>{{ loading ? t('spreed', 'Loading …') : t('spreed', 'No upcoming events') }}</p>
+						<p>{{ loading ? t('spreed', 'Loading …') : t('spreed', 'No upcoming meetings') }}</p>
 					</template>
 				</NcEmptyContent>
 				<div v-if="canScheduleMeeting" class="calendar-events__buttons">
