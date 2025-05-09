@@ -25,6 +25,8 @@ use OCP\DB\Types;
  * @psalm-import-type TalkChatReminder from ResponseDefinitions
  */
 class Reminder extends Entity implements \JsonSerializable {
+	public const NUM_UPCOMING_REMINDERS = 10;
+
 	protected string $userId = '';
 	protected string $token = '';
 	protected int $messageId = 0;

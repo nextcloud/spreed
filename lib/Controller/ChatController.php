@@ -17,8 +17,10 @@ use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
@@ -32,6 +34,7 @@ use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Reminder;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
@@ -83,6 +86,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkChatMessage from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkChatReminder from ResponseDefinitions
+ * @psalm-import-type TalkChatReminderUpcoming from ResponseDefinitions
  * @psalm-import-type TalkRichObjectParameter from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -97,6 +101,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private IUserManager $userManager,
 		private IAppManager $appManager,
 		private ChatManager $chatManager,
+		protected Manager $manager,
 		private RoomFormatter $roomFormatter,
 		private ReactionManager $reactionManager,
 		private ParticipantService $participantService,
@@ -1034,6 +1039,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[UserRateLimit(limit: 60, period: 3600)]
 	public function setReminder(int $messageId, int $timestamp): DataResponse {
 		try {
+			// FIXME fail 400 when reminder is after expiration
+			// And system messages
 			$this->validateMessageExists($messageId, sync: true);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
@@ -1111,6 +1118,89 @@ class ChatController extends AEnvironmentAwareOCSController {
 		);
 
 		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * Get all upcoming reminders
+	 *
+	 * Required capability: `upcoming-reminders`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatReminderUpcoming>, array{}>
+	 *
+	 * 200: Reminders returned
+	 */
+	#[NoAdminRequired]
+	public function getUpcomingReminders(): DataResponse {
+		if ($this->userId === null) {
+			return new DataResponse([], Http::STATUS_OK);
+		}
+
+		$reminders = $this->reminderService->getUpcomingReminders($this->userId, Reminder::NUM_UPCOMING_REMINDERS);
+		if (empty($reminders)) {
+			return new DataResponse([], Http::STATUS_OK);
+		}
+
+		$tokens = array_unique(array_map(static fn (Reminder $reminder): string => $reminder->getToken(), $reminders));
+		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_USERS, $this->userId, tokens: $tokens);
+		$roomMap = [];
+		foreach ($rooms as $room) {
+			if ($room->isFederatedConversation()) {
+				// FIXME Federated chats
+				continue;
+			}
+			$roomMap[$room->getToken()] = $room;
+		}
+
+		/** @var Reminder[] $reminders */
+		$reminders = array_filter($reminders, static fn (Reminder $reminder): bool => isset($roomMap[$reminder->getToken()]));
+		if (empty($reminders)) {
+			return new DataResponse([], Http::STATUS_OK);
+		}
+
+		$messageIds = array_map(static fn (Reminder $reminder): int => $reminder->getMessageId(), $reminders);
+		$comments = $this->chatManager->getMessagesById($messageIds);
+		$now = $this->timeFactory->getDateTime();
+
+		$resultData = [];
+		foreach ($reminders as $reminder) {
+			if (!isset($comments[$reminder->getMessageId()])) {
+				continue;
+			}
+			$comment = $comments[$reminder->getMessageId()];
+			$room = $roomMap[$reminder->getToken()];
+			try {
+				$participant = $this->participantService->getParticipant($room, $this->userId);
+			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+
+			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			$expireDate = $message->getExpirationDateTime();
+			if ($expireDate instanceof \DateTime && $expireDate < $now) {
+				continue;
+			}
+
+			if (!$message->getVisibility()) {
+				continue;
+			}
+
+			$data = $message->toArray($this->getResponseFormat());
+
+			$resultData[] = [
+				'reminderTimestamp' => $reminder->getDateTime()->getTimestamp(),
+				'roomToken' => $reminder->getToken(),
+				'messageId' => $reminder->getMessageId(),
+				'actorType' => $data['actorType'],
+				'actorId' => $data['actorId'],
+				'actorDisplayName' => $data['actorDisplayName'],
+				'message' => $data['message'],
+				'messageParameters' => $data['messageParameters'],
+			];
+		}
+
+		return new DataResponse($resultData, Http::STATUS_OK);
 	}
 
 	/**
