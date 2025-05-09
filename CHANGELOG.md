@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.0-rc.1 – 2025-05-09
+### Added
+- 📅 Improve handling of event conversations: filtered until close to the meeting, default expiration, tracking of event name and description
+  [#14401](https://github.com/nextcloud/spreed/issues/14401)
+- 👥 Allow adding participants to one-to-one calls creating a new conversation
+  [#14398](https://github.com/nextcloud/spreed/issues/14398)
+- 📇 Enhance right sidebar in one-to-one conversations with information about the participant
+  [#14411](https://github.com/nextcloud/spreed/issues/14411)
+- 📲 Allow SIP direct dial-in to start a new conversation with an existing Nextcloud account
+  [#14992](https://github.com/nextcloud/spreed/issues/14992)
+- 🖌️ Allow to provide custom images for virtual backgrounds for branding or corporate appearance
+  [#14987](https://github.com/nextcloud/spreed/issues/14987)
+- 🔈 Allow selecting the output device in the media settings
+  [#15037](https://github.com/nextcloud/spreed/issues/15037)
+- ☎️ Administration setting to allow to enable SIP dial-in by default for new conversations
+  [#14940](https://github.com/nextcloud/spreed/issues/14940)
+
+### Changed
+- Update translations
+- Update dependencies
+
 ## 21.0.4 – 2025-04-28
 ### Changed
 - Update translations
