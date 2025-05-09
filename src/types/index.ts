@@ -106,7 +106,10 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 export type SignalingSettings = components['schemas']['SignalingSettings']
 
 // Conversations
-export type Conversation = components['schemas']['Room']
+export type Conversation = components['schemas']['Room'] & {
+	// internal parameter up to mock a conversation object
+	isDummyConversation?: true
+}
 
 export type getAllConversationsParams = operations['room-get-rooms']['parameters']['query']
 export type getAllConversationsResponse = ApiResponse<operations['room-get-rooms']['responses'][200]['content']['application/json']>
@@ -333,8 +336,11 @@ export type EventTimeRange = {
 	start: number | null
 	end: number | null
 }
-// User preferences response
+
+// User profile / preferences response
 export type {
+	UserProfileData,
+	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
 } from './openapi/core/index.ts'
