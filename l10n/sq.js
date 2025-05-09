@@ -249,6 +249,7 @@ OC.L10N.register(
     "Show your screen" : "Shfaq ekranin tënd",
     "Stop screensharing" : "Ndalo ndarjen e ekranit",
     "Grid view" : "Pamje galeri",
+    "Keep" : "Mbaje",
     "Submit" : "Dërgo",
     "User" : "Përdorues",
     "Password" : "Fjalëkalim",
