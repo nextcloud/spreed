@@ -30,7 +30,6 @@ OC.L10N.register(
     "Reset" : "Qayta tiklash",
     "Back" : "Orqaga",
     "Cancel" : "Cancel",
-    "No upcoming events" : "Kelgusi tadbirlar yo'q",
     "From" : "Dan",
     "To" : "Gacha",
     "Calendar" : "Calendar",

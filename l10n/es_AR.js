@@ -119,6 +119,7 @@ OC.L10N.register(
     "Show your screen" : "Mostrar su pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Grid view" : "Vista de cuadrícula",
+    "Keep" : "Mantener",
     "Submit" : "Enviar",
     "User" : "Usuario",
     "Password" : "Contraseña",

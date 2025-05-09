@@ -92,6 +92,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "แป้นพิมพ์ลัด",
     "Search" : "ค้นหา",
     "Grid view" : "มุมมองแบบตาราง",
+    "Keep" : "เก็บ",
     "Submit" : "ส่ง",
     "User" : "ผู้ใช้",
     "Password" : "รหัสผ่าน",
