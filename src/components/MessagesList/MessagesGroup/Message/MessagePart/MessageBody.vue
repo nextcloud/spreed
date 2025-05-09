@@ -141,7 +141,6 @@ import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
@@ -157,6 +156,7 @@ import { CONVERSATION } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
+import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -303,11 +303,11 @@ export default {
 		},
 
 		messageTime() {
-			return moment(this.isTemporary ? undefined : this.message.timestamp * 1000).format('LT')
+			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'LT')
 		},
 
 		messageDate() {
-			return moment(this.isTemporary ? undefined : this.message.timestamp * 1000).format('LL')
+			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'LL')
 		},
 
 		lastCallStartedMessageId() {
