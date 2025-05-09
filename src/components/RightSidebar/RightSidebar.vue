@@ -449,6 +449,9 @@ export default {
 
 			// Discard notification if the conversation changes or closed
 			this.notifyUnreadMessages(null)
+
+			// FIXME collapse for group conversations until we show anything useful there
+			this.contentModeIndex = this.isOneToOne ? 1 : 0
 		},
 
 		isModeratorOrUser(newValue) {
