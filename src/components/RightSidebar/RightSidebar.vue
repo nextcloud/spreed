@@ -24,7 +24,6 @@
 		<template #info>
 			<RightSidebarContent :is-user="!!getUserId"
 				:mode="CONTENT_MODES[contentModeIndex]"
-				:conversation="conversation"
 				:state="showSearchMessagesTab ? 'search' : 'default'"
 				@update:mode="handleUpdateMode"
 				@update:search="handleShowSearch" />

@@ -9,21 +9,26 @@ import Vue from 'vue'
 import type { AxiosError } from '@nextcloud/axios'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
+import { CONVERSATION } from '../constants.ts'
 import {
 	initializeCalDavClient,
 	getPersonalCalendars,
 	getDefaultCalendarUri,
 	convertUrlToUri,
 } from '../services/CalDavClient.ts'
+import { getUserProfile } from '../services/coreService.ts'
 import {
 	getUpcomingEvents,
 	getUserAbsence,
 	scheduleMeeting,
 } from '../services/groupwareService.ts'
 import type {
+	ApiErrorResponse,
+	Conversation,
 	DavCalendar,
 	OutOfOfficeResult,
 	UpcomingEvent,
+	UserProfileData,
 	scheduleMeetingParams,
 } from '../types/index.ts'
 
@@ -31,7 +36,9 @@ type State = {
 	absence: Record<string, OutOfOfficeResult>
 	calendars: Record<string, DavCalendar & { uri: string }>,
 	defaultCalendarUri: string | null,
-	upcomingEvents: Record<string, UpcomingEvent[]>
+	upcomingEvents: Record<string, UpcomingEvent[]>,
+	supportProfileInfo: boolean,
+	profileInfo: Record<string, UserProfileData>,
 }
 
 export const useGroupwareStore = defineStore('groupware', {
@@ -40,6 +47,8 @@ export const useGroupwareStore = defineStore('groupware', {
 		calendars: {},
 		defaultCalendarUri: null,
 		upcomingEvents: {},
+		supportProfileInfo: true,
+		profileInfo: {},
 	}),
 
 	getters: {
@@ -136,6 +145,31 @@ export const useGroupwareStore = defineStore('groupware', {
 		removeUpcomingEvents(token: string) {
 			if (this.upcomingEvents[token]) {
 				Vue.delete(this.upcomingEvents, token)
+			}
+		},
+
+		/**
+		 * Request and parse profile information
+		 * @param conversation The conversation object
+		 */
+		async getUserProfileInformation(conversation: Conversation) {
+			if (!this.supportProfileInfo || !conversation.name
+				|| conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
+				Vue.delete(this.profileInfo, conversation.token)
+				return
+			}
+
+			try {
+				const response = await getUserProfile(conversation.name)
+				Vue.set(this.profileInfo, conversation.token, response.data.ocs.data)
+			} catch (error) {
+				if ((error as ApiErrorResponse)?.response?.status === 405) {
+					// Method does not exist on current server version
+					// Skip further requests
+					this.supportProfileInfo = false
+				} else {
+					console.error(error)
+				}
 			}
 		},
 

@@ -22,12 +22,12 @@ import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
+import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { getUserProfile } from '../../services/coreService.ts'
+import { useGroupwareStore } from '../../stores/groupware.ts'
 import type {
-	ApiErrorResponse,
 	Conversation,
 	UserProfileData,
 } from '../../types/index.ts'
@@ -36,7 +36,6 @@ const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const props = defineProps<{
 	isUser: boolean,
-	conversation: Conversation,
 	state: 'default' | 'search',
 	mode: 'compact' | 'preview' | 'full',
 }>()
@@ -46,68 +45,69 @@ const emit = defineEmits<{
 	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
 }>()
 
-// FIXME cache in store until reload
-let isGetProfileAllowed = true
-
+const store = useStore()
+const groupwareStore = useGroupwareStore()
 const isDarkTheme = useIsDarkTheme()
 
 const profileLoading = ref(false)
 
-// FIXME cache in store to make less requests
-const profileData = ref<UserProfileData | null>(null)
+const token = computed(() => store.getters.getToken())
+
+const profileInfo = computed(() => groupwareStore.profileInfo[token.value])
 const profileActions = computed<UserProfileData['actions']>(() => {
-	if (!profileData.value) {
+	if (!profileInfo.value) {
 		return []
 	}
-	return profileData.value.actions.filter(action => action.id !== 'talk')
+	return profileInfo.value.actions.filter(action => action.id !== 'talk')
 })
 
-const isOneToOneConversation = computed(() => [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(props.conversation.type))
+const conversation = computed(() => store.getters.conversation(token.value) as Conversation)
+const isOneToOneConversation = computed(() => [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation.value.type))
 
 const sidebarTitle = computed(() => {
 	if (props.state === 'search') {
-		return t('spreed', 'Search in {name}', { name: props.conversation.displayName }, {
+		return t('spreed', 'Search in {name}', { name: conversation.value.displayName }, {
 			escape: false,
 			sanitize: false,
 		})
 	}
-	return props.conversation.displayName
+	return conversation.value.displayName
 })
 
 const avatarUrl = computed(() => {
-	if (!supportsAvatar || props.conversation.isDummyConversation) {
-		// TODO use a fallback icon (like icon-class in CnversationIcon)
+	if (!supportsAvatar || conversation.value.isDummyConversation) {
+		// TODO use a fallback icon (like icon-class in ConversationIcon)
 		return undefined
 	}
 
 	return isOneToOneConversation.value
-		? generateUrl('avatar/{userId}/512' + (isDarkTheme.value ? '/dark' : ''), { userId: props.conversation.name })
-		: getConversationAvatarOcsUrl(props.conversation.token, isDarkTheme.value, props.conversation.avatarVersion)
+		? generateUrl('avatar/{userId}/512' + (isDarkTheme.value ? '/dark' : ''), { userId: conversation.value.name })
+		: getConversationAvatarOcsUrl(token.value, isDarkTheme.value, conversation.value.avatarVersion)
 })
 
 const profileInformation = computed(() => {
-	if (!profileData.value) {
+	if (!profileInfo.value) {
 		return []
 	}
 
 	const fields = []
 
-	if (profileData.value.role || profileData.value.pronouns) {
+	if (profileInfo.value.role || profileInfo.value.pronouns) {
 		fields.push({
 			key: 'person',
 			icon: IconAccount,
-			label: joinFields(profileData.value.role, profileData.value.pronouns)
+			label: joinFields(profileInfo.value.role, profileInfo.value.pronouns)
 		})
 	}
-	if (profileData.value.organisation || profileData.value.address) {
+	if (profileInfo.value.organisation || profileInfo.value.address) {
 		fields.push({
 			key: 'organisation',
 			icon: IconOfficeBuilding,
-			label: joinFields(profileData.value.organisation, profileData.value.address)
+			label: joinFields(profileInfo.value.organisation, profileInfo.value.address)
 		})
 	}
 
-	const currentTime = moment(new Date().setSeconds(new Date().getTimezoneOffset() * 60 + profileData.value.timezoneOffset))
+	const currentTime = moment(new Date().setSeconds(new Date().getTimezoneOffset() * 60 + profileInfo.value.timezoneOffset))
 	fields.push({
 		key: 'timezone',
 		icon: IconClockOutline,
@@ -117,40 +117,11 @@ const profileInformation = computed(() => {
 	return fields
 })
 
-watch(() => props.conversation.token, () => {
-	if (isOneToOneConversation.value) {
-		getUserProfileInformation(props.conversation.name)
-	} else {
-		profileData.value = null
-	}
+watch(token, async () => {
+	profileLoading.value = true
+	await groupwareStore.getUserProfileInformation(conversation.value)
+	profileLoading.value = false
 }, { immediate: true })
-
-/**
- * Request and parse profile information
- * @param userId internal user identifier
- */
-async function getUserProfileInformation(userId: string) {
-	if (!isGetProfileAllowed || !userId) {
-		profileData.value = null
-		return
-	}
-
-	try {
-		profileLoading.value = true
-		const response = await getUserProfile(userId)
-		profileData.value = response.data.ocs.data
-	} catch (error) {
-		if ((error as ApiErrorResponse)?.response?.status === 405) {
-			// Method does not exist on current server version
-			// Skip further requests
-			isGetProfileAllowed = false
-		} else {
-			console.error(error)
-		}
-	} finally {
-		profileLoading.value = false
-	}
-}
 
 /**
  * Concatenates profile strings
