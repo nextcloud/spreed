@@ -16,8 +16,10 @@ import {
 	getDefaultCalendarUri,
 	convertUrlToUri,
 } from '../services/CalDavClient.ts'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getUserProfile } from '../services/coreService.ts'
 import {
+	getMutualEvents,
 	getUpcomingEvents,
 	getUserAbsence,
 	scheduleMeeting,
@@ -26,6 +28,7 @@ import type {
 	ApiErrorResponse,
 	Conversation,
 	DavCalendar,
+	DashboardEvent,
 	OutOfOfficeResult,
 	UpcomingEvent,
 	UserProfileData,
@@ -37,9 +40,12 @@ type State = {
 	calendars: Record<string, DavCalendar & { uri: string }>,
 	defaultCalendarUri: string | null,
 	upcomingEvents: Record<string, UpcomingEvent[]>,
+	mutualEvents: Record<string, DashboardEvent[]>,
 	supportProfileInfo: boolean,
 	profileInfo: Record<string, UserProfileData>,
 }
+
+const supportsMutualEvents = hasTalkFeature('local', 'mutual-calendar-events')
 
 export const useGroupwareStore = defineStore('groupware', {
 	state: (): State => ({
@@ -47,6 +53,7 @@ export const useGroupwareStore = defineStore('groupware', {
 		calendars: {},
 		defaultCalendarUri: null,
 		upcomingEvents: {},
+		mutualEvents: {},
 		supportProfileInfo: true,
 		profileInfo: {},
 	}),
@@ -171,6 +178,25 @@ export const useGroupwareStore = defineStore('groupware', {
 				} else {
 					console.error(error)
 				}
+			}
+		},
+
+		/**
+		 * Request and parse profile information
+		 * @param conversation The conversation object
+		 */
+		async getUserMutualEvents(conversation: Conversation) {
+			if (!supportsMutualEvents || !conversation.token
+				|| conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
+				return
+			}
+
+			// FIXME cache results for 6/24 hours and do not fetch again
+			try {
+				const response = await getMutualEvents(conversation.token)
+				Vue.set(this.mutualEvents, conversation.token, response.data.ocs.data)
+			} catch (error) {
+				console.error(error)
 			}
 		},
 
