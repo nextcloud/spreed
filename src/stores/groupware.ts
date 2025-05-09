@@ -159,6 +159,7 @@ export const useGroupwareStore = defineStore('groupware', {
 				return
 			}
 
+			// FIXME cache results for 6/24 hours and do not fetch again
 			try {
 				const response = await getUserProfile(conversation.name)
 				Vue.set(this.profileInfo, conversation.token, response.data.ocs.data)

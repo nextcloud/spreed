@@ -145,7 +145,6 @@ import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.ts'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 
@@ -188,7 +187,7 @@ export default {
 
 	setup() {
 		const sidebar = ref(null)
-		const contentModeIndex = ref(parseInt(BrowserStorage.getItem('sidebarContentMode') ?? 1, 10))
+		const contentModeIndex = ref(0)
 
 		let throttleTimeout = null
 		const throttleHandleWheelEvent = (event) => {
@@ -442,16 +441,19 @@ export default {
 			}
 		},
 
-		token() {
-			if (this.$refs.participantsTab) {
-				this.$refs.participantsTab.$el.scrollTop = 0
-			}
+		token: {
+			handler() {
+				if (this.$refs.participantsTab) {
+					this.$refs.participantsTab.$el.scrollTop = 0
+				}
 
-			// Discard notification if the conversation changes or closed
-			this.notifyUnreadMessages(null)
+				// Discard notification if the conversation changes or closed
+				this.notifyUnreadMessages(null)
 
-			// FIXME collapse for group conversations until we show anything useful there
-			this.contentModeIndex = this.isOneToOne ? 1 : 0
+				// FIXME collapse for group conversations until we show anything useful there
+				this.contentModeIndex = this.isOneToOne ? 1 : 0
+			},
+			immediate: true,
 		},
 
 		isModeratorOrUser(newValue) {
@@ -464,10 +466,6 @@ export default {
 				// Switch active tab to chat if guest was demoted from moderators
 				this.activeTab = 'chat'
 			}
-		},
-
-		contentModeIndex(value) {
-			BrowserStorage.setItem('sidebarContentMode', value)
 		},
 	},
 
