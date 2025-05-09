@@ -359,6 +359,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Ocorreu um erro enquanto iniciava a partilha de ecrã.",
     "Grid view" : "Vista em grelha",
     "Download attendance list" : "Transferir lista de presenças",
+    "Keep" : "Manter",
     "Select a region" : "Selecione uma região",
     "Submit" : "Submeter",
     "User" : "Utilizador",
