@@ -135,7 +135,18 @@ namespace OCA\Talk;
  *     messageId: int,
  *     timestamp: int,
  *     token: string,
- *     userId: string
+ *     userId: string,
+ * }
+ *
+ * @psalm-type TalkChatReminderUpcoming = array{
+ *     actorDisplayName: string,
+ *     actorId: string,
+ *     actorType: string,
+ *     message: string,
+ *     messageId: int,
+ *     messageParameters: array<string, TalkRichObjectParameter>,
+ *     reminderTimestamp: int,
+ *     roomToken: string,
  * }
  *
  * @psalm-type TalkFederationInvite = array{

@@ -16,6 +16,7 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -59,6 +60,7 @@ class ChatControllerTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
 	protected IAppManager&MockObject $appManager;
 	protected ChatManager&MockObject $chatManager;
+	protected Manager&MockObject $manager;
 	private RoomFormatter&MockObject $roomFormatter;
 	protected ReactionManager&MockObject $reactionManager;
 	protected ParticipantService&MockObject $participantService;
@@ -102,6 +104,7 @@ class ChatControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->manager = $this->createMock(Manager::class);
 		$this->roomFormatter = $this->createMock(RoomFormatter::class);
 		$this->reactionManager = $this->createMock(ReactionManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -151,6 +154,7 @@ class ChatControllerTest extends TestCase {
 			$this->userManager,
 			$this->appManager,
 			$this->chatManager,
+			$this->manager,
 			$this->roomFormatter,
 			$this->reactionManager,
 			$this->participantService,

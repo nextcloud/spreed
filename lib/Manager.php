@@ -359,7 +359,7 @@ class Manager {
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForActor(string $actorType, string $actorId, array $sessionIds = [], bool $includeLastMessage = false): array {
+	public function getRoomsForActor(string $actorType, string $actorId, array $sessionIds = [], bool $includeLastMessage = false, array $tokens = []): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -371,6 +371,10 @@ class Manager {
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
 			->where($query->expr()->isNotNull('a.id'));
+
+		if (!empty($tokens)) {
+			$query->andWhere($query->expr()->in('r.token', $query->createNamedParameter($tokens, IQueryBuilder::PARAM_STR_ARRAY)));
+		}
 
 		if (!empty($sessionIds)) {
 			$helper->selectSessionsTable($query);

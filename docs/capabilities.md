@@ -189,3 +189,4 @@
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests
 * `mutual-calendar-events` (local) - Whether Talk APIs offer mutual calendar events for 1:1 rooms
+* `upcoming-reminders` (local) - Whether the API to list upcoming reminders exists

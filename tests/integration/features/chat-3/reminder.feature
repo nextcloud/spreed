@@ -150,3 +150,33 @@ Feature: chat-2/reminder
     And user "participant1" deletes reminder for message "Message 1" in room "room" with 200 (v1)
     And user "participant1" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: Upcoming reminders
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 3 |
+      | roomName | room1 |
+    Given user "participant2" creates room "room2" (v4)
+      | roomType | 3 |
+      | roomName | room2 |
+    And user "participant2" adds user "participant1" to room "room2" with 200 (v4)
+    Given user "participant1" creates room "room3" (v4)
+      | roomType | 1 |
+      | invite | participant2 |
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    And user "participant2" sends message "Message 2" to room "room2" with 201
+    And user "participant1" sends message "Message 3" to room "room3" with 201
+    When user "participant1" sets reminder for message "Message 1" in room "room1" for time 1234567 with 201 (v1)
+    And user "participant1" sets reminder for message "Message 2" in room "room2" for time 1234568 with 201 (v1)
+    And user "participant1" sets reminder for message "Message 3" in room "room3" for time 1234569 with 201 (v1)
+    Then user "participant1" gets upcoming reminders (v1)
+      | reminderTimestamp | roomToken | messageId | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | 1234567           | room1     | Message 1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+      | 1234568           | room2     | Message 2 | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | 1234569           | room3     | Message 3 | users     | participant1 | participant1-displayname | Message 3 | []                |
+    And user "participant2" removes "participant1" from room "room2" with 200 (v4)
+    Then user "participant1" gets upcoming reminders (v1)
+      | reminderTimestamp | roomToken | messageId | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | 1234567           | room1     | Message 1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+      | 1234569           | room3     | Message 3 | users     | participant1 | participant1-displayname | Message 3 | []                |
+    And force run "OCA\Talk\BackgroundJob\Reminder" background jobs
+    Then user "participant1" gets upcoming reminders (v1)

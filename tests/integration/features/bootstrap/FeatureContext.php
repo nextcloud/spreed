@@ -1968,6 +1968,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" gets upcoming reminders \((v1)\)$/')]
+	public function userGetsUpcomingReminders(string $user, string $apiVersion, ?TableNode $table = null): void {
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/upcoming-reminders');
+		$this->assertStatusCode($this->response, 200);
+
+		$actual = $this->getDataFromResponse($this->response);
+		var_dump($actual);
+		if ($table === null) {
+			Assert::assertEmpty($actual);
+			return;
+		}
+
+		Assert::assertEquals(array_map(function (array $expected): array {
+			$expected['messageId'] = self::$textToMessageId[$expected['messageId']];
+			$expected['roomToken'] = self::$identifierToToken[$expected['roomToken']];
+			$expected['messageParameters'] = json_decode($expected['messageParameters']);
+			return $expected;
+		}, $table->getHash()), $actual);
+	}
+
 	#[Then('/^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" \'([^\']*)\' to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSharesRichObjectToRoom(string $user, string $type, string $id, string $metaData, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
