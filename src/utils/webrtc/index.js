@@ -333,24 +333,28 @@ async function signalingIsConnected(signaling) {
 
 	const signalingConnectionSucceededOnConnect = () => {
 		signaling.off('connect', signalingConnectionSucceededOnConnect)
-		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+		signaling.off('error', signalingConnectionFailedOnError)
 
 		signalingConnectionSucceeded()
 	}
 
-	const signalingConnectionFailedOnInvalidToken = (error) => {
-		if (error.code !== 'invalid_token') {
+	const signalingConnectionFailedOnError = (error) => {
+		if (error.code !== 'invalid_token' && error.code !== 'invalid_client_type') {
 			return
 		}
 
 		signaling.off('connect', signalingConnectionSucceededOnConnect)
-		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+		signaling.off('error', signalingConnectionFailedOnError)
 
-		signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
+		if (error.code === 'invalid_token') {
+			signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
+		} else if (error.code === 'invalid_client_type') {
+			signalingConnectionFailed(new Error('Internal clients are not supported by the signaling server, is \'internalsecret\' set in the signaling server configuration file?'))
+		}
 	}
 
 	signaling.on('connect', signalingConnectionSucceededOnConnect)
-	signaling.on('error', signalingConnectionFailedOnInvalidToken)
+	signaling.on('error', signalingConnectionFailedOnError)
 
 	await signalingConnection
 }
