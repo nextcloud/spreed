@@ -356,6 +356,8 @@ namespace OCA\Talk;
  *     isArchived: bool,
  *     // Required capability: `important-conversations`
  *     isImportant: bool,
+ *     // Required capability: `sensitive-conversations`
+ *     isSensitive: bool,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{

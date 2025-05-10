@@ -121,6 +121,7 @@ class Capabilities implements IPublicCapability {
 		'dashboard-event-rooms',
 		'mutual-calendar-events',
 		'upcoming-reminders',
+		'sensitive-conversations',
 	];
 
 	public const CONDITIONAL_FEATURES = [
