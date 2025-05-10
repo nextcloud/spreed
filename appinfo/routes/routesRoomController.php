@@ -89,6 +89,10 @@ return [
 		['name' => 'Room#markConversationAsImportant', 'url' => '/api/{apiVersion}/room/{token}/important', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::markConversationAsUnimportant() */
 		['name' => 'Room#markConversationAsUnimportant', 'url' => '/api/{apiVersion}/room/{token}/important', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::markConversationAsSensitive() */
+		['name' => 'Room#markConversationAsSensitive', 'url' => '/api/{apiVersion}/room/{token}/sensitive', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::markConversationAsInsensitive() */
+		['name' => 'Room#markConversationAsInsensitive', 'url' => '/api/{apiVersion}/room/{token}/sensitive', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
 		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
 			'pin' => '\d{7,32}',

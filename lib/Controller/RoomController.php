@@ -1757,6 +1757,40 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Mark a conversation as sensitive (no last message is visible / no push preview is shown)
+	 *
+	 * Required capability: `sensitive-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was marked as sensitive
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function markConversationAsSensitive(): DataResponse {
+		$this->participantService->markConversationAsSensitive($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Mark a conversation as insensitive (last message is visible / push preview is shown)
+	 *
+	 * Required capability: `sensitive-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was marked as insensitive
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function markConversationAsInsensitive(): DataResponse {
+		$this->participantService->markConversationAsInsensitive($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Join a room
 	 *
 	 * @param string $token Token of the room

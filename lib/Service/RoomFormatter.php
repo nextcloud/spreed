@@ -146,6 +146,7 @@ class RoomFormatter {
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 			'isArchived' => false,
 			'isImportant' => false,
+			'isSensitive' => false,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -231,6 +232,7 @@ class RoomFormatter {
 			'mentionPermissions' => $room->getMentionPermissions(),
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),
+			'isSensitive' => $attendee->isSensitive(),
 		]);
 
 		if ($room->isFederatedConversation()) {
@@ -391,6 +393,7 @@ class RoomFormatter {
 			}
 		}
 
+		$skipLastMessage = $skipLastMessage || $attendee->isSensitive();
 		$lastMessage = $skipLastMessage ? null : $room->getLastMessage();
 		if (!$room->isFederatedConversation() && $lastMessage instanceof IComment) {
 			$lastMessageData = $this->formatLastMessage(

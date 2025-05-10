@@ -78,6 +78,7 @@ class SelectHelper {
 			->addSelect($alias . 'last_attendee_activity')
 			->addSelect($alias . 'archived')
 			->addSelect($alias . 'important')
+			->addSelect($alias . 'sensitive')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

@@ -490,6 +490,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedRoom['isArchived'])) {
 					$data['isArchived'] = (int)$room['isArchived'];
 				}
+				if (isset($expectedRoom['isSensitive'])) {
+					$data['isSensitive'] = (int)$room['isSensitive'];
+				}
 				if (isset($expectedRoom['participantType'])) {
 					$data['participantType'] = (string)$room['participantType'];
 				}
@@ -4368,6 +4371,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$httpMethod, '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/archive',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^user "([^"]*)" marks room "([^"]*)" as (sensitive|insensitive) with (\d+) \((v4)\)$/')]
+	public function userMarksConversationSensitive(string $user, string $identifier, string $action, int $statusCode, string $apiVersion): void {
+		$httpMethod = 'POST';
+
+		if ($action === 'insensitive') {
+			$httpMethod = 'DELETE';
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$httpMethod, '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/sensitive',
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
