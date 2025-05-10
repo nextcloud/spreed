@@ -312,6 +312,7 @@ OC.L10N.register(
     "Privacy" : "Privaatheid",
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
+    "Keep" : "Hou",
     "Select a region" : "Kies ’n streek",
     "Submit" : "Dien in",
     "User" : "Gebruiker",

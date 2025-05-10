@@ -663,6 +663,7 @@ OC.L10N.register(
     "Stop screensharing" : "Echuañ ar rannadenn skramm",
     "Grid view" : "Diskwell ar roued",
     "Mute others" : "Lakaat ar re all mut",
+    "Keep" : "Mirout",
     "Submit" : "Kinnig",
     "Message without mention" : "Kemenn hp meneg",
     "Mention myself" : "Meneg ac'hanon",

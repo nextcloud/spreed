@@ -851,6 +851,7 @@ OC.L10N.register(
     "Raise hand" : "Alzar la mano",
     "Lower hand" : "Baxar la mano",
     "Start recording" : "Aniciar la grabación",
+    "Keep" : "Caltener",
     "Open dialpad" : "Abrir el tecláu numbéricu",
     "Submit" : "Unviar",
     "Search …" : "Buscar…",
