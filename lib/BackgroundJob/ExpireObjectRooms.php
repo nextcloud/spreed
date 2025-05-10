@@ -27,9 +27,8 @@ class ExpireObjectRooms extends TimedJob {
 		protected IAppConfig $appConfig,
 	) {
 		parent::__construct($timeFactory);
-		$this->setInterval(60 * 60 * 24);
-		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
-
+		$this->setInterval(60 * 60);
+		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 	}
 
 	#[\Override]
@@ -42,6 +41,11 @@ class ExpireObjectRooms extends TimedJob {
 		$eventRetention = $this->appConfig->getAppValueInt('retention_event_rooms', 28);
 		if ($eventRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_EVENT, $eventRetention);
+		}
+
+		$instantMeetingRetention = $this->appConfig->getAppValueInt('retention_instant_meetings', 1);
+		if ($instantMeetingRetention !== 0) {
+			$this->executeRetention(Room::OBJECT_TYPE_INSTANT_MEETING, $instantMeetingRetention);
 		}
 	}
 
