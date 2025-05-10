@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { useNow } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
 
 import IconAccount from 'vue-material-design-icons/Account.vue'
@@ -108,7 +109,8 @@ const profileInformation = computed(() => {
 		})
 	}
 
-	const currentTime = moment(new Date().setSeconds(new Date().getTimezoneOffset() * 60 + profileInfo.value.timezoneOffset))
+	const offsetInSeconds = new Date().getTimezoneOffset() * 60 + profileInfo.value.timezoneOffset
+	const currentTime = moment(useNow({ interval: 10_000 }).value).add(offsetInSeconds, 'seconds')
 	fields.push({
 		key: 'timezone',
 		icon: IconClockOutline,
