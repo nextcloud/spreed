@@ -18,9 +18,12 @@ import { generateUrl } from '@nextcloud/router'
 
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
+
+import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
@@ -29,9 +32,18 @@ import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import type {
 	Conversation,
+	DashboardEvent,
 	UserProfileData,
 } from '../../types/index.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 
+type MutualEvent = {
+	uri: DashboardEvent['eventLink'],
+	name: DashboardEvent['eventName'],
+	start: string,
+	href: DashboardEvent['eventLink'],
+	color: string,
+}
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const props = defineProps<{
@@ -118,9 +130,32 @@ const profileInformation = computed(() => {
 	return fields
 })
 
+const mutualEventsInformation = computed<MutualEvent[]>(() => {
+	if (!groupwareStore.mutualEvents[token.value]) {
+		return []
+	}
+
+	const now = convertToUnix(Date.now())
+	return groupwareStore.mutualEvents[token.value].map(event => {
+		const start = event.start
+			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+			: ''
+		return {
+			uri: event.eventLink,
+			name: event.eventName,
+			start,
+			href: event.eventLink,
+			color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
+		}
+	})
+})
+
 watch(token, async () => {
 	profileLoading.value = true
-	await groupwareStore.getUserProfileInformation(conversation.value)
+	await Promise.all([
+		groupwareStore.getUserProfileInformation(conversation.value),
+		groupwareStore.getUserMutualEvents(conversation.value),
+	])
 	profileLoading.value = false
 }, { immediate: true })
 
@@ -183,6 +218,18 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 						</p>
 					</div>
 				</div>
+			</div>
+			<div v-if="mode !== 'compact' && mutualEventsInformation.length"
+				class="content__events">
+				<NcAppNavigationCaption :name="t('spreed', 'Upcoming meetings')" />
+				<ul class="content__events-list">
+					<CalendarEventSmall v-for="event in mutualEventsInformation"
+						:key="event.uri"
+						:name="event.name"
+						:start="event.start"
+						:href="event.href"
+						:color="event.color" />
+				</ul>
 			</div>
 		</template>
 
@@ -400,6 +447,29 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 			&:active,
 			&.action-item--open {
 				opacity: 1;
+			}
+		}
+	}
+
+	&__events {
+		// To align with NcAppSidebarTab content width
+		margin-inline: 10px;
+
+		&-list {
+			--item-height: calc(2lh + var(--default-grid-baseline) * 3);
+			display: flex;
+			flex-direction: column;
+			margin: calc(var(--default-grid-baseline) / 2);
+			line-height: 20px;
+			max-height: calc(4.5 * var(--item-height) + 4 * var(--default-grid-baseline));
+			overflow-y: auto;
+
+			& > * {
+				margin-inline: calc(var(--default-grid-baseline) / 2);
+
+				&:not(:last-child) {
+					border-bottom: 1px solid var(--color-border-dark);
+				}
 			}
 		}
 	}
