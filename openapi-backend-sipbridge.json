@@ -610,7 +610,8 @@
                     "unreadMentionDirect",
                     "unreadMessages",
                     "isArchived",
-                    "isImportant"
+                    "isImportant",
+                    "isSensitive"
                 ],
                 "properties": {
                     "actorId": {
@@ -895,6 +896,10 @@
                     "isImportant": {
                         "type": "boolean",
                         "description": "Required capability: `important-conversations`"
+                    },
+                    "isSensitive": {
+                        "type": "boolean",
+                        "description": "Required capability: `sensitive-conversations`"
                     }
                 }
             },

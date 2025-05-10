@@ -345,6 +345,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 */
+	public function markConversationAsSensitive(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setSensitive(true);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function markConversationAsInsensitive(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setSensitive(false);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param IUser $user

@@ -492,6 +492,8 @@ export type components = {
             isArchived: boolean;
             /** @description Required capability: `important-conversations` */
             isImportant: boolean;
+            /** @description Required capability: `sensitive-conversations` */
+            isSensitive: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };
