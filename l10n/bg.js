@@ -1211,6 +1211,7 @@ OC.L10N.register(
     "Start recording" : "Започване на запис",
     "Set up breakout rooms" : "Създаване на стаи за отделно събрание",
     "Remove participant {name}" : "Премахване на участник {name}",
+    "Keep" : "Запази",
     "Select a region" : "Изберете регион",
     "Submit" : "Изпращане",
     "Search …" : "Търсене …",
