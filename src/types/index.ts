@@ -220,6 +220,10 @@ export type banActorParams = operations['ban-ban-actor']['requestBody']['content
 export type banActorResponse = ApiResponse<operations['ban-ban-actor']['responses'][200]['content']['application/json']>
 export type unbanActorResponse = ApiResponse<operations['ban-unban-actor']['responses'][200]['content']['application/json']>
 
+// Talk Dashboard
+export type DashboardEventRoom = components['schemas']['DashboardEvent']
+export type getDashboardEventRoomsResponse = ApiResponse<operations['calendar_integration-get-dashboard-events']['responses'][200]['content']['application/json']>
+
 // Bots
 export type Bot = components['schemas']['Bot']
 export type BotWithDetails = componentsAdmin['schemas']['BotWithDetails']

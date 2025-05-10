@@ -103,7 +103,7 @@
 			</MediaSettingsTabs>
 
 			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
+			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar && !isInTalkDashboard"
 				class="checkbox"
 				:model-value="showMediaSettings || showRecordingWarning"
 				:disabled="showRecordingWarning"
@@ -116,6 +116,22 @@
 				v-model="isRecordingFromStart"
 				class="checkbox">
 				{{ t('spreed', 'Start recording immediately with the call') }}
+			</NcCheckboxRadioSwitch>
+
+			<!-- Dashbord Device checker-->
+			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia && isInTalkDashboard"
+				id="call-media"
+				:model-value="startWithoutMediaEnabled"
+				:disabled="mediaLoading"
+				type="switch"
+				@update:model-value="toggleStartWithoutMedia">
+				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
+				type="switch"
+				:model-value="blurVirtualBackgroundEnabled"
+				@update:model-value="setBlurVirtualBackgroundEnabled">
+				{{ t('spreed', 'Enable blur background by default for all conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<!-- Recording warning -->
@@ -170,8 +186,8 @@
 					:disabled="isRecordingConsentRequired && !recordingConsentGiven"
 					:recording-consent-given="recordingConsentGiven"
 					:silent-call="silentCall" />
-				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
-					{{ t('spreed', 'Apply settings') }}
+				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
+					{{ isInTalkDashboard ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
 				</NcButton>
 			</div>
 		</div>
@@ -189,6 +205,7 @@ import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.v
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -217,6 +234,9 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
+
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
+const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 	name: 'MediaSettings',
@@ -315,6 +335,8 @@ export default {
 			model: localMediaModel,
 			tabs,
 			dialogHeaderId,
+			supportStartWithoutMedia,
+			supportDefaultBlurVirtualBackground,
 		}
 	},
 
@@ -332,6 +354,7 @@ export default {
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
 			skipBlurVirtualBackground: false,
+			mediaLoading: false,
 		}
 	},
 
@@ -430,17 +453,27 @@ export default {
 			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
+		isInTalkDashboard() {
+			return this.$route.name === 'root'
+		},
+
 		showSilentCallOption() {
-			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
+			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar && !this.isInTalkDashboard
 		},
 
 		showUpdateChangesButton() {
-			return this.updatedBackground || this.audioDeviceStateChanged
+			return (this.isInTalkDashboard || this.isInCall)
+				|| this.updatedBackground
+				|| this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
 		},
 
 		connectionFailed() {
 			return this.$store.getters.connectionFailed(this.token)
+		},
+
+		startWithoutMediaEnabled() {
+			return this.settingsStore.startWithoutMedia
 		},
 	},
 
@@ -726,6 +759,31 @@ export default {
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
+		},
+
+		async toggleStartWithoutMedia(value) {
+			this.mediaLoading = true
+			try {
+				await this.settingsStore.setStartWithoutMedia(value)
+				showSuccess(t('spreed', 'Your default media state has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting default media state'))
+			} finally {
+				this.mediaLoading = false
+			}
+		},
+
+		async setBlurVirtualBackgroundEnabled(value) {
+			try {
+				await this.settingsStore.setBlurVirtualBackgroundEnabled(value)
+				if (value) {
+					this.blurVirtualBackground()
+				} else {
+					this.virtualBackground.setEnabled(false)
+				}
+			} catch (error) {
+				console.error('Failed to set blur background enabled:', error)
+			}
 		},
 	},
 }
