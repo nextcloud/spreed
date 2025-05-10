@@ -15,6 +15,13 @@ import { EventBus } from '../services/EventBus.ts'
 import type { Conversation } from '../types/index.ts'
 import { hasUnreadMentions, hasCall } from '../utils/conversation.ts'
 
+type LastMessageMap = {
+	[token: string]: {
+		lastMessageId: number
+		unreadMessages: number
+	}
+}
+
 /**
  * Composable to check whether the page is visible.
  */
@@ -26,7 +33,7 @@ export function useDocumentTitle() {
 
 	const defaultPageTitle = ref<string>(getDefaultPageTitle())
 	const showAsterisk = ref(false)
-	const savedLastMessageMap = ref<Record<string, number>>({})
+	const savedLastMessageMap = ref<LastMessageMap>({})
 
 	const conversationList = computed(() => store.getters.conversationsList)
 	const actorId = computed(() => store.getters.getActorId())
@@ -46,8 +53,9 @@ export function useDocumentTitle() {
 		 */
 		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
 			return savedLastMessageMap.value[token] === undefined // Conversation is new
-				|| (savedLastMessageMap.value[token] !== newLastMessageMap[token] // Last message changed
-					&& newLastMessageMap[token] !== -1) // And it is not from the current user nor archived
+				|| (savedLastMessageMap.value[token].lastMessageId !== newLastMessageMap[token].lastMessageId // Last message changed
+					&& savedLastMessageMap.value[token].unreadMessages !== newLastMessageMap[token].unreadMessages // Unread messages changed
+					&& newLastMessageMap[token].lastMessageId !== -1) // And it is not under one of the exceptions (see getLastMessageMap())
 		})
 		if (shouldShowAsterisk) {
 			showAsterisk.value = true
@@ -85,16 +93,19 @@ export function useDocumentTitle() {
 	 *
 	 * @param conversationList array of conversations
 	 */
-	function getLastMessageMap(conversationList: Conversation[]): Record<string, number> {
+	function getLastMessageMap(conversationList: Conversation[]): LastMessageMap {
 		if (conversationList.length === 0) {
 			return {}
 		}
 
-		return conversationList.reduce((acc: Record<string, number>, conversation: Conversation) => {
-			const { token, lastMessage, isArchived } = conversation
+		return conversationList.reduce((acc: LastMessageMap, conversation: Conversation) => {
+			const { token, lastMessage, isArchived, unreadMessages } = conversation
 			// Default to 0 for messages without valid lastMessage
+			acc[token] = {
+				lastMessageId: 0,
+				unreadMessages: 0,
+			}
 			if (!lastMessage || Array.isArray(lastMessage)) {
-				acc[token] = 0
 				return acc
 			}
 
@@ -106,13 +117,14 @@ export function useDocumentTitle() {
 				// so to skip the asterisk for these messages
 				// Can't use 0 though because hidden commands result in 0,
 				// and they would hide other previously posted new messages
-				acc[token] = -1
+				acc[token].lastMessageId = -1
 			} else {
 				// @ts-expect-error: Property 'id' does not exist on type ChatProxyMessage
 				const lastMessageId = lastMessage.id ?? 0
 				const lastKnownMessageId = store.getters.getLastKnownMessageId(token) ?? 0
-				acc[token] = Math.max(lastMessageId, lastKnownMessageId)
+				acc[token].lastMessageId = Math.max(lastMessageId, lastKnownMessageId)
 			}
+			acc[token].unreadMessages = unreadMessages
 			return acc
 		}, {})
 	}
