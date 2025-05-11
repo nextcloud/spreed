@@ -38,7 +38,7 @@
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
 		</template>
-		<template v-if="!compact" #subname>
+		<template v-if="!compact && !item.isSensitive" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
 				<span v-if="conversationInformation.actor"
 					class="conversation__subname-actor">
@@ -322,6 +322,7 @@ export default {
 					canDeleteConversation: false,
 					canLeaveConversation: false,
 					hasCall: false,
+					isSensitive: false,
 				}
 			},
 		},
