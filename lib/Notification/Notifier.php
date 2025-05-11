@@ -638,16 +638,38 @@ class Notifier implements INotifier {
 
 		if ($participant->getAttendee()->isSensitive()) {
 			// Prevent message preview and conversation name in sensitive conversations
-			if ($notification->getSubject() === 'reaction') {
-				$subject = $l->t('Someone reacted in a private conversation');
-			} elseif ($notification->getSubject() === 'chat') {
-				$subject = $l->t('You received a message in a private conversation');
-			} elseif ($notification->getSubject() === 'reminder') {
-				$subject = $l->t('Reminder in a private conversation');
-			} elseif (str_starts_with($notification->getSubject(), 'mention_')) {
-				$subject = $l->t('Someone mentioned you in a private conversation');
+
+			if ($this->notificationManager->isPreparingPushNotification()) {
+				$translatedPrivateConversation = $l->t('Private conversation');
+
+				if ($notification->getSubject() === 'reaction') {
+					// TRANSLATORS Someone reacted in a private conversation
+					$subject = $translatedPrivateConversation . "\n" . $l->t('Someone reacted');
+				} elseif ($notification->getSubject() === 'chat') {
+					// TRANSLATORS You received a new message in a private conversation
+					$subject = $translatedPrivateConversation . "\n" . $l->t('New message');
+				} elseif ($notification->getSubject() === 'reminder') {
+					// TRANSLATORS Reminder for a message in a private conversation
+					$subject = $translatedPrivateConversation . "\n" . $l->t('Reminder');
+				} elseif (str_starts_with($notification->getSubject(), 'mention_')) {
+					// TRANSLATORS Someone mentioned you in a private conversation
+					$subject = $translatedPrivateConversation . "\n" . $l->t('Someone mentioned you');
+				} else {
+					// TRANSLATORS There's a notification in a private conversation
+					$subject = $translatedPrivateConversation . "\n" . $l->t('Notification');
+				}
 			} else {
-				$subject = $l->t('Notification in a private conversation');
+				if ($notification->getSubject() === 'reaction') {
+					$subject = $l->t('Someone reacted in a private conversation');
+				} elseif ($notification->getSubject() === 'chat') {
+					$subject = $l->t('You received a message in a private conversation');
+				} elseif ($notification->getSubject() === 'reminder') {
+					$subject = $l->t('Reminder in a private conversation');
+				} elseif (str_starts_with($notification->getSubject(), 'mention_')) {
+					$subject = $l->t('Someone mentioned you in a private conversation');
+				} else {
+					$subject = $l->t('Notification in a private conversation');
+				}
 			}
 
 			$richSubjectParameters = [];
