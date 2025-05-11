@@ -1617,7 +1617,7 @@ OC.L10N.register(
     "Add federated users" : "Adicionar usuários federados",
     "Searching …" : "Pesquisando...",
     "Search for more users" : "Pesquisar por mais usuários",
-    "You can search or add participants via name, email, or Federated Cloud ID" : "Você pode pesquisar ou adicionar participantes por nome, e-mail ou ID da Nuvem Federada",
+    "You can search or add participants via name, email, or Federated Cloud ID" : "Você pode pesquisar ou adicionar participantes por nome, e-mail ou ID de Nuvem Federada",
     "Search or add participants" : "Procure ou adicione participantes",
     "Invitation was sent to {actorId}" : "O convite foi enviado para {actorId}",
     "An error occurred while adding the participants" : "Ocorreu um erro ao adicionar os participantes",
