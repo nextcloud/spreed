@@ -1637,6 +1637,7 @@ OC.L10N.register(
     "Details" : "详情",
     "Shared items" : "已共享项目",
     "Search in {name}" : "在 {name} 中搜索",
+    "Local time: {time}" : "本地时间：{time}",
     "Search messages …" : "搜索消息…",
     "Search options" : "搜索选项",
     "From User" : "来自用户",

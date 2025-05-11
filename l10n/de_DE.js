@@ -1637,6 +1637,7 @@ OC.L10N.register(
     "Details" : "Details",
     "Shared items" : "Geteilte Elemente",
     "Search in {name}" : "Suche in {name}",
+    "Local time: {time}" : "Ortszeit: {time}",
     "Search messages …" : "Suche Nachrichten …",
     "Search options" : "Suchoptionen",
     "From User" : "Von Benutzer",
