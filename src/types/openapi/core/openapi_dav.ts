@@ -81,6 +81,7 @@ export type components = {
         Capabilities: {
             dav: {
                 chunking: string;
+                public_shares_chunking: boolean;
                 bulkupload?: string;
                 "absence-supported"?: boolean;
                 "absence-replacement"?: boolean;
