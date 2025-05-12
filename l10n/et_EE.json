@@ -194,7 +194,6 @@
     "Room {number}" : "Ruum: {number}",
     "Note to self" : "Minu märkmed",
     "Let's get started!" : "Alustame!",
-    "## 💭 Let the conversations flow: mention users, react to messages and more\n\nYou can mention everybody in a the conversation %s or mention specific participants by typing \"@\" and picking their name from the list." : "## 💭 Lase vestlusel kulgeda: maini kasutajaid, reageeri sõnumitele ja palju muud\n\n„%s“ vestluses saadi mainida kõiki või ühte konkreetset osaleja, selleks sisesta „@“ vali loendist soovitud nimi.",
     "You can reply to messages, forward them to other chats and people, or copy message content." : "Sa võid sõnumitele vastata, neid teistesse vestlustesse või teistele kasutajatele edastada ning kopeerida sõnumite sisu.",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Araabia Ühendemiraadid",
@@ -1003,6 +1002,7 @@
     "Are you sure you want to delete this conversation?" : "Kas oled kindel, et soovid selle vestluse kustutada?",
     "Delete now" : "Kustuta kohe",
     "Keep" : "Hoia alles",
+    "Select a region" : "Vali maa või piirkond",
     "Submit" : "Saada",
     "Search …" : "Otsi…",
     "Mention myself" : "Maini iseennast",
@@ -1176,6 +1176,7 @@
     "TURN server" : "TURN-i server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-server on kasutusel osalejate päringute puhverdamiseks olukorras, kui nad võrgus asuvad tulemüüri taga.",
     "Signaling servers" : "Kõnehõlbustusserverid",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Suuremate paigalduste puhul peaksid kasutama täiendavat välist kõnehõlbustusserverit. Kui jätad tühjaks, on kasutusel sisseehitatud kõnehõlbustusserver."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Suuremate paigalduste puhul peaksid kasutama täiendavat välist kõnehõlbustusserverit. Kui jätad tühjaks, on kasutusel sisseehitatud kõnehõlbustusserver.",
+    "## 💭 Let the conversations flow: mention users, react to messages and more\n\nYou can mention everybody in a the conversation %s or mention specific participants by typing \"@\" and picking their name from the list." : "## 💭 Lase vestlusel kulgeda: maini kasutajaid, reageeri sõnumitele ja palju muud\n\n„%s“ vestluses saadi mainida kõiki või ühte konkreetset osaleja, selleks sisesta „@“ vali loendist soovitud nimi."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
