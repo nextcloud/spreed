@@ -67,7 +67,7 @@ const profileImageFailed = ref(false)
 const token = computed(() => store.getters.getToken())
 
 const conversation = computed(() => store.getters.conversation(token.value) as Conversation)
-const isOneToOneConversation = computed(() => [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation.value.type))
+const isOneToOneConversation = computed(() => conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE)
 
 const profileInfo = computed(() => groupwareStore.profileInfo[token.value])
 const profileActions = computed<UserProfileData['actions']>(() => {
