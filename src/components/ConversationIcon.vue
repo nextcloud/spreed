@@ -68,6 +68,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getFallbackIconClass } from '../utils/conversation.ts'
 import { getPreloadedUserStatus } from '../utils/userStatus.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
@@ -173,56 +174,7 @@ export default {
 		},
 
 		iconClass() {
-			if (this.item.isDummyConversation) {
-				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
-				return this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
-			}
-
-			if (!supportsAvatar || this.failed) {
-				if (this.item.objectType === CONVERSATION.OBJECT_TYPE.FILE
-					|| this.item.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
-					return 'icon-file'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION) {
-					return 'icon-password'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.EMAIL) {
-					return 'icon-mail'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
-					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
-					|| this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
-					return 'icon-phone'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
-					return 'icon-event'
-				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
-					return 'icon-team'
-				} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-					return 'icon-changelog'
-				} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
-					return 'icon-user'
-				} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
-					return 'icon-contacts'
-				} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-					return 'icon-public'
-				}
-				return undefined
-			}
-
-			if (this.item.token) {
-				// Existing conversations use the /avatar endpoint… Always!
-				return undefined
-			}
-
-			if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
-				// Team icon for group conversation suggestions
-				return 'icon-team'
-			}
-
-			if (this.item.type === CONVERSATION.TYPE.GROUP) {
-				// Group icon for group conversation suggestions
-				return 'icon-contacts'
-			}
-
-			// Fall-through for other conversation suggestions to user-avatar handling
-			return undefined
+			return getFallbackIconClass(this.item, this.failed)
 		},
 
 		themeClass() {
