@@ -3,10 +3,12 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, watch, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router/composables'
 
 import IconAlarm from 'vue-material-design-icons/Alarm.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
@@ -37,7 +39,9 @@ const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes
 const store = useStore()
 const router = useRouter()
 const talkDashboardStore = useTalkDashboardStore()
-
+const forwardScrollable = ref(false)
+const backwardScrollable = ref(false)
+const eventCardsWrapper = ref<HTMLInputElement | null>(null)
 const eventRooms = computed(() => talkDashboardStore.eventrooms)
 const upcomingReminders = computed(() => talkDashboardStore.upcomingReminders)
 const eventsInitialised = computed(() => talkDashboardStore.eventRoomsInitialised)
@@ -65,8 +69,37 @@ onBeforeUnmount(() => {
 	if (actualiseDataInterval) {
 		clearInterval(actualiseDataInterval)
 	}
+
+	if (eventCardsWrapper?.value) {
+		eventCardsWrapper.value.removeEventListener('scroll', updateScrollableFlags)
+		resizeObserver.disconnect()
+	}
 })
 
+watch(eventCardsWrapper, (newValue) => {
+	if (newValue) {
+		newValue.addEventListener('scroll', updateScrollableFlags)
+		resizeObserver.observe(newValue)
+		updateScrollableFlags()
+	}
+})
+
+/**
+ * Updates the scrollable flags based on the current scroll position.
+ */
+async function updateScrollableFlags() {
+	await nextTick()
+	if (eventCardsWrapper.value) {
+		const { scrollLeft, scrollWidth, clientWidth } = eventCardsWrapper.value
+		backwardScrollable.value = scrollLeft > 0
+		forwardScrollable.value = scrollLeft + clientWidth < scrollWidth - 10 // 10px tolerance
+	}
+}
+
+// Use ResizeObserver to detect size changes
+const resizeObserver = new ResizeObserver(() => {
+	updateScrollableFlags()
+})
 const conversationsList = computed(() => store.getters.conversationsList)
 const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
 const filteredConversations = computed(() => conversationsList.value?.filter((conversation : Conversation) => {
@@ -116,6 +149,20 @@ async function startMeeting() {
 		showError(t('spreed', 'Error creating a meeting'))
 	}
 }
+
+/**
+ * Scrolls the event cards wrapper in the specified direction.
+ * @param {string} direction - The direction to scroll ('backward' or 'forward').
+ */
+function scroll({ direction } : { direction: 'backward' | 'forward' }) {
+	const scrollDirection = direction === 'backward' ? -1 : 1
+	if (eventCardsWrapper.value) {
+		eventCardsWrapper.value.scrollBy({
+			left: scrollDirection * eventCardsWrapper.value.clientWidth,
+			behavior: 'smooth',
+		})
+	}
+}
 </script>
 <template>
 	<div class="talk-dashboard-wrapper">
@@ -132,11 +179,34 @@ async function startMeeting() {
 				{{ t('spreed', 'Start meeting now') }}
 			</NcButton>
 		</div>
-		<div v-if="eventsInitialised && eventRooms.length > 0" class="talk-dashboard__event-cards">
-			<EventCard v-for="eventRoom in eventRooms"
-				:key="eventRoom.eventLink"
-				:event-room="eventRoom"
-				class="talk-dashboard__event-card" />
+		<div v-if="eventsInitialised && eventRooms.length > 0"
+			class="talk-dashboard__event-cards-wrapper"
+			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
+			<div ref="eventCardsWrapper"
+				class="talk-dashboard__event-cards">
+				<EventCard v-for="eventRoom in eventRooms"
+					:key="eventRoom.eventLink"
+					:event-room="eventRoom"
+					class="talk-dashboard__event-card" />
+			</div>
+			<div class="talk-dashboard__event-cards__scroll-indicator">
+				<NcButton v-show="backwardScrollable"
+					class="button-slide backward"
+					type="tertiary"
+					@click="scroll({direction: 'backward'})">
+					<template #icon>
+						<IconArrowLeft class="bidirectional-icon" />
+					</template>
+				</NcButton>
+				<NcButton v-show="forwardScrollable"
+					class="button-slide forward"
+					type="tertiary"
+					@click="scroll({direction: 'forward'})">
+					<template #icon>
+						<IconArrowRight class="bidirectional-icon" />
+					</template>
+				</NcButton>
+			</div>
 		</div>
 		<LoadingPlaceholder v-else-if="!eventsInitialised"
 			type="event-cards" />
@@ -243,7 +313,7 @@ async function startMeeting() {
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
 	scroll-snap-type: x mandatory; // Smooth snapping for scrolling
-	padding-inline: calc(var(--default-grid-baseline) * 4);
+	scrollbar-width: none;
 }
 
 .talk-dashboard__event-card {
@@ -251,8 +321,52 @@ async function startMeeting() {
 	scroll-snap-align: start;
 }
 
+.talk-dashboard__event-cards-wrapper {
+	position: relative;
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 44px;
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	&.backward-scrollable::before {
+		inset-inline-start: 0;
+		background: linear-gradient(to right, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
+	}
+
+	&.forward-scrollable::after {
+		inset-inline-end: 0;
+		background: linear-gradient(to left, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
+	}
+
+	.button-slide {
+		position: absolute !important;
+		display: flex;
+		top: 0;
+		padding: 0;
+		height: 100%;
+		margin: 0 !important;
+		z-index: 3;
+
+		&.backward {
+			inset-inline-start: 0;
+			justify-content: left;
+		}
+
+		&.forward {
+			inset-inline-end: 0;
+			justify-content: left;
+		}
+	}
+}
+
 .talk-dashboard__devices-button {
-	margin: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 4);
+	margin: calc(var(--default-grid-baseline) * 2) 0;
 }
 
 .talk-dashboard__chats {
