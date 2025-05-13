@@ -36,6 +36,7 @@ class CalDavEventListenerTest extends TestCase {
 	private ParticipantService&MockObject $participantService;
 	private string $calData;
 	private string $userId;
+	private string $userUri;
 	private IL10N&MockObject $l10n;
 	private CalDavEventListener $listener;
 
@@ -59,6 +60,7 @@ class CalDavEventListenerTest extends TestCase {
 		$this->timezoneService = $this->createMock(TimezoneService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userId = '123';
+		$this->userUri = 'principals/users/' . $this->userId;
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->calData = <<<EOD
 BEGIN:VCALENDAR
@@ -103,7 +105,6 @@ EOD;
 			$this->logger,
 			$this->timezoneService,
 			$this->participantService,
-			$this->userId,
 			$this->l10n,
 		);
 	}
@@ -132,8 +133,38 @@ EOD;
 		$this->listener->handle($event);
 	}
 
-	public function testIsCalendarEventNoLocation(): void {
+	public function testIsCalendarEventNoPrincipal(): void {
 		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => 'justSomeData']);
+
+		$this->logger->expects(self::once())
+			->method('debug')
+			->with('No principal uri for the event, skipping for calendar event integration');
+
+		$this->listener->handle($event);
+	}
+
+	public function testIsCalendarEventSystemCalendar(): void {
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => 'principals/system/system'], [], ['calendardata' => 'justSomeData']);
+
+		$this->logger->expects(self::once())
+			->method('debug')
+			->with('System calendar, skipping for calendar event integration');
+
+		$this->listener->handle($event);
+	}
+
+	public function testIsCalendarEventNoData(): void {
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], []);
+
+		$this->logger->expects(self::once())
+			->method('debug')
+			->with('No calendar data for the event, skipping for calendar event integration');
+
+		$this->listener->handle($event);
+	}
+
+	public function testIsCalendarEventNoLocation(): void {
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => 'justSomeData']);
 
 		$this->logger->expects(self::once())
 			->method('debug');
@@ -158,7 +189,7 @@ EOD;
 	}
 
 	public function testIsCalendarEventInvalidCalendarData(): void {
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => 'justSomeData\nLOCATION:']);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => 'justSomeData\nLOCATION:']);
 
 		$this->logger->expects(self::once())
 			->method('warning');
@@ -219,7 +250,7 @@ END:STANDARD
 END:VTIMEZONE
 END:VCALENDAR
 EOD;
-		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 
 		$this->logger->expects(self::once())
 			->method('debug');
@@ -248,7 +279,7 @@ EOD;
 	 */
 	public function testRoomNotFound(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
@@ -278,7 +309,7 @@ EOD;
 	 */
 	public function testUserNotParticipant(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken');
@@ -308,7 +339,7 @@ EOD;
 	 */
 	public function testUserNotModerator(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$participant = $this->createMock(Participant::class);
 		$participant->method('hasModeratorPermissions')->willReturn(false);
 
@@ -340,7 +371,7 @@ EOD;
 	 */
 	public function testRoomNotEventRoom(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectUpdatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_PHONE_LEGACY);
 		$participant = $this->createMock(Participant::class);
@@ -409,7 +440,7 @@ END:VTIMEZONE
 END:VCALENDAR
 EOF;
 
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
@@ -448,7 +479,7 @@ EOF;
 	 */
 	public function testHasExistingRooms(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
@@ -486,7 +517,7 @@ EOF;
 	 */
 	public function testTime(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
@@ -538,7 +569,7 @@ END:VEVENT
 END:VCALENDAR
 EOF;
 
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
@@ -591,7 +622,7 @@ END:VEVENT
 END:VCALENDAR
 EOF;
 
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
@@ -645,7 +676,7 @@ END:VEVENT
 END:VCALENDAR
 EOF;
 
-		$event = new CalendarObjectCreatedEvent(1, [], [], ['calendardata' => $calData]);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
 		$participant = $this->createMock(Participant::class);
