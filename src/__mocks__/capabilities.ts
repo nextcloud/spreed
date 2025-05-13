@@ -94,6 +94,7 @@ export const mockedCapabilities: Capabilities = {
 			'edit-draft-poll',
 			'conversation-creation-all',
 			'dashboard-event-rooms',
+			'upcoming-reminders',
 			// Conditional features
 			'message-expiration',
 			'reactions',
@@ -114,6 +115,7 @@ export const mockedCapabilities: Capabilities = {
 			'chat-summary-api',
 			'call-notification-state-api',
 			'schedule-meeting',
+			'upcoming-reminders',
 		],
 		config: {
 			attachments: {
