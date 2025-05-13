@@ -319,8 +319,11 @@ function onError() {
 		}
 
 		.content__header {
-			width: 100%;
 			padding-inline: calc(2 * var(--default-grid-baseline));
+		}
+
+		.content__name {
+			padding-inline-end: 0 !important;
 		}
 
 		.content__image-wrapper {
@@ -408,6 +411,7 @@ function onError() {
 		flex-direction: column;
 		align-items: start;
 		gap: var(--default-grid-baseline);
+		width: 100%;
 		padding-block: calc(2 * var(--default-grid-baseline)) var(--default-grid-baseline);
 		padding-inline-start: calc(2 * var(--default-grid-baseline));
 
