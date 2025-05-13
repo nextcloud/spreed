@@ -205,6 +205,8 @@ export type markUnreadResponse = ApiResponse<operations['chat-mark-unread']['res
 export type summarizeChatParams = operations['chat-summarize-chat']['requestBody']['content']['application/json']
 export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat']['responses'][201]['content']['application/json']>
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
+export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
+export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
