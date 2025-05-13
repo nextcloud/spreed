@@ -10,7 +10,9 @@ import type {
 	UserProfileData,
 } from '../../types/index.ts'
 
-import { t } from '@nextcloud/l10n'
+import type { ComponentPublicInstance } from 'vue'
+
+import { t, getLanguage } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
@@ -24,6 +26,8 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconDeleteClock from 'vue-material-design-icons/DeleteClock.vue'
+import IconLink from 'vue-material-design-icons/Link.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
@@ -44,6 +48,14 @@ type MutualEvent = {
 }
 
 type SidebarContentState = 'default' | 'search' | 'threads'
+
+type ProfileInformation = {
+	key: string,
+	label: string,
+	icon: ComponentPublicInstance,
+}[]
+
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const props = defineProps<{
 	isUser: boolean
@@ -107,11 +119,39 @@ const avatarUrl = computed(() => {
 })
 
 const profileInformation = computed(() => {
-	if (!profileInfo.value) {
-		return []
-	}
+	const fields: ProfileInformation = []
 
-	const fields = []
+	if (!profileInfo.value) {
+		if (isOneToOneConversation.value) {
+			return fields
+		}
+
+		// Compose information for group conversations
+		if (conversation.value.type === CONVERSATION.TYPE.PUBLIC) {
+			fields.push({
+				key: 'public',
+				icon: IconLink,
+				label: t('spreed', 'Public conversation')
+			})
+		}
+
+		if (conversation.value.messageExpiration !== 0) {
+			const formatter = new Intl.DurationFormat(getLanguage(), { style: 'long' })
+			const duration = formatter.format({
+				weeks: Math.trunc(conversation.value.messageExpiration / 604_800), // week in seconds
+				days: Math.trunc(conversation.value.messageExpiration % 604_800 / 86_400), // day in seconds
+				hours: Math.trunc(conversation.value.messageExpiration % 86_400 / 3_600), // hour in seconds
+				minutes: Math.trunc(conversation.value.messageExpiration % 3_600 / 60),
+			})
+			fields.push({
+				key: 'expiration',
+				icon: IconDeleteClock,
+				label: t('spreed', 'Message expiration set: {duration}', { duration }),
+			})
+		}
+
+		return fields
+	}
 
 	if (profileInfo.value.role || profileInfo.value.pronouns) {
 		fields.push({

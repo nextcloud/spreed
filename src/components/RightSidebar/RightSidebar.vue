@@ -200,7 +200,7 @@ export default {
 
 		const sidebar = ref(null)
 		const sidebarContent = ref(null)
-		const contentModeIndex = ref(0)
+		const contentModeIndex = ref(1)
 
 		let throttleTimeout = null
 		const throttleHandleWheelEvent = (event) => {
@@ -465,10 +465,10 @@ export default {
 				// Discard notification if the conversation changes or closed
 				this.notifyUnreadMessages(null)
 
-				// FIXME collapse for group conversations until we show anything useful there
-				this.contentModeIndex = this.isOneToOne ? 1 : 0
+				if (this.contentModeIndex === 2 || this.isOneToOne) {
+					this.contentModeIndex = 1
+				}
 			},
-
 			immediate: true,
 		},
 
