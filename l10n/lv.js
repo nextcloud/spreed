@@ -415,6 +415,7 @@ OC.L10N.register(
     "No" : "Nē",
     "Yes" : "Jā",
     "Delete conversation" : "Izdzēst sarunu",
+    "_%n hour_::_%n hours_" : ["%n stundu","%n stunda","%n stundas"],
     "Password protection" : "Password protection",
     "Open conversation" : "Atvērt sarunu",
     "Edit" : "Labot",
