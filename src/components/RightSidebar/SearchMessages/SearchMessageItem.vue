@@ -11,7 +11,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 const props = defineProps({
 	messageId: {
-		type: String,
+		type: [Number, String],
 		default: ''
 	},
 	title: {

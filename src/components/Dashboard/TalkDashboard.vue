@@ -6,6 +6,7 @@
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router/composables'
 
+import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
@@ -20,13 +21,17 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
 import EventCard from './EventCard.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
+import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useTalkDashboardStore } from '../../stores/talkdashboard.ts'
 import type { Conversation } from '../../types/index.ts'
 import { filterConversation } from '../../utils/conversation.ts'
+
+const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 
 const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes
 const store = useStore()
@@ -34,16 +39,31 @@ const router = useRouter()
 const talkDashboardStore = useTalkDashboardStore()
 
 const eventRooms = computed(() => talkDashboardStore.eventrooms)
+const upcomingReminders = computed(() => talkDashboardStore.upcomingReminders)
 const eventsInitialised = computed(() => talkDashboardStore.eventRoomsInitialised)
-const fetchEventRoomsInterval = ref<ReturnType<typeof setInterval> | null>(null)
-onMounted(async () => {
-	fetchEventRooms()
-	fetchEventRoomsInterval.value = setInterval(fetchEventRooms, FIVE_MINUTES)
+const remindersInitialised = computed(() => talkDashboardStore.upcomingRemindersInitialised)
+let actualiseDataInterval: ReturnType<typeof setInterval> | null = null
+
+// Data fetching handlers
+
+/**
+ * Fetches all necessary data for the dashboard.
+ */
+async function actualiseData() {
+	await Promise.all([
+		fetchEventRooms(),
+		fetchUpcomingReminders(),
+	])
+}
+
+onMounted(() => {
+	actualiseData()
+	actualiseDataInterval = setInterval(actualiseData, FIVE_MINUTES)
 })
 
 onBeforeUnmount(() => {
-	if (fetchEventRoomsInterval.value) {
-		clearInterval(fetchEventRoomsInterval.value)
+	if (actualiseDataInterval) {
+		clearInterval(actualiseDataInterval)
 	}
 })
 
@@ -61,6 +81,17 @@ async function fetchEventRooms() {
 		await talkDashboardStore.fetchDashboardEventRooms()
 	} catch (error) {
 		showError(t('spreed', 'Error fetching event rooms'))
+	}
+}
+
+/**
+ * Fetches the upcoming reminders
+ */
+async function fetchUpcomingReminders() {
+	try {
+		await talkDashboardStore.fetchUpcomingReminders()
+	} catch (error) {
+		showError(t('spreed', 'Error fetching upcoming reminders'))
 	}
 }
 
@@ -108,7 +139,6 @@ async function startMeeting() {
 				class="talk-dashboard__event-card" />
 		</div>
 		<LoadingPlaceholder v-else-if="!eventsInitialised"
-			class="event-cards__loading-placeholder"
 			type="event-cards" />
 		<NcEmptyContent v-else
 			class="talk-dashboard__empty-content"
@@ -126,21 +156,54 @@ async function startMeeting() {
 			</template>
 			{{ t('spreed', 'Check devices') }}
 		</NcButton>
-		<div class="talk-dashboard__unread-mentions"
-			:class="{'loading': !conversationsInitialised}">
-			<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
-			<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
-				class="talk-dashboard__conversations-list"
-				:conversations="filteredConversations"
-				:loading="!conversationsInitialised" />
-			<NcEmptyContent v-else
-				class="talk-dashboard__empty-content"
-				:name="t('spreed', 'All caught up!')"
-				:description="t('spreed', 'You have no unread mentions')">
-				<template #icon>
-					<IconAt :size="40" />
-				</template>
-			</NcEmptyContent>
+		<div class="talk-dashboard__chats">
+			<div class="talk-dashboard__unread-mentions"
+				:class="{'loading': !conversationsInitialised}">
+				<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
+					class="talk-dashboard__conversations-list"
+					:conversations="filteredConversations"
+					:loading="!conversationsInitialised" />
+				<NcEmptyContent v-else
+					class="talk-dashboard__empty-content"
+					:name="t('spreed', 'All caught up!')"
+					:description="t('spreed', 'You have no unread mentions')">
+					<template #icon>
+						<IconAt :size="40" />
+					</template>
+				</NcEmptyContent>
+			</div>
+			<div v-if="supportsUpcomingReminders"
+				class="talk-dashboard__upcoming-reminders">
+				<span class="title">{{ t('spreed', 'Upcoming reminders') }}</span>
+				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
+					<SearchMessageItem v-for="reminder in upcomingReminders"
+						:key="reminder.messageId"
+						:message-id="reminder.messageId"
+						:title="reminder.actorDisplayName"
+						:subline="reminder.message"
+						:token="reminder.roomToken"
+						:to="{
+							name: 'conversation',
+							params: { token: reminder.roomToken, skipLeaveWarning: true },
+							hash: `#message_${reminder.messageId}`
+						}"
+						:actor-id="reminder.actorId"
+						:actor-type="reminder.actorType"
+						:timestamp="`${reminder.reminderTimestamp}`" />
+				</div>
+				<LoadingPlaceholder v-else-if="!remindersInitialised"
+					class="upcoming-reminders__loading-placeholder"
+					type="conversations" />
+				<NcEmptyContent v-else
+					class="talk-dashboard__empty-content"
+					:name="t('spreed', 'No reminders scheduled')"
+					:description="t('spreed', 'You have no reminders scheduled')">
+					<template #icon>
+						<IconAlarm :size="40" />
+					</template>
+				</NcEmptyContent>
+			</div>
 		</div>
 	</div>
 </template>
@@ -148,6 +211,9 @@ async function startMeeting() {
 @import '../../assets/variables';
 
 .talk-dashboard-wrapper {
+	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
+	--section-width: 300px;
+	--section-height: 300px;
 	padding-inline: calc(var(--default-grid-baseline) * 2);
 	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
 	margin: 0 auto;
@@ -186,22 +252,49 @@ async function startMeeting() {
 }
 
 .talk-dashboard__devices-button {
-	margin: calc(var(--default-grid-baseline) * 4);
+	margin: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 4);
 }
 
-.talk-dashboard__unread-mentions {
-	max-height: 300px;
-	width: 300px;
-	overflow-y: auto;
+.talk-dashboard__chats {
+	display: flex;
+	gap: var(--default-grid-baseline);
+	padding-block-end: calc(var(--default-grid-baseline) * 2);
 
-	& > .title {
+	& .title {
 		display: block;
 		height: var(--default-clickable-area);
 		margin : var(--default-grid-baseline);
 	}
+}
+
+.talk-dashboard__unread-mentions {
+	max-height: var(--section-height);
+	width: var(--section-width);
 
 	&.loading {
 		overflow: hidden;
+	}
+}
+
+.talk-dashboard__upcoming-reminders {
+	max-height: var(--section-height);
+	width: var(--section-width);
+
+	&-list {
+		overflow-y: auto;
+		max-height: calc(100% - var(--title-height));
+	}
+}
+
+.upcoming-reminders {
+	&-list {
+		overflow-y: auto;
+		max-height: calc(100% - var(--title-height));
+	}
+
+	&__loading-placeholder {
+		overflow: hidden;
+		max-height: calc(100% - var(--title-height));
 	}
 }
 
@@ -209,13 +302,15 @@ async function startMeeting() {
 	background-color: var(--color-background-dark);
 	border-radius: var(--border-radius);
 	padding: calc(var(--default-grid-baseline) * 2);
-	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 4);
+	margin: var(--default-grid-baseline) 0;
 }
 
 .talk-dashboard__conversations-list {
-	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 4);
+	margin: var(--default-grid-baseline) 0;
 	height: 100%;
 	line-height: 20px;
+	overflow-y: auto;
+	max-height: calc(100% - var(--title-height));
 }
 
 .title {
