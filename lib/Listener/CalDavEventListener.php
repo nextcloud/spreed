@@ -66,7 +66,7 @@ class CalDavEventListener implements IEventListener {
 
 		$vevent = $vobject->VEVENT;
 		// Check if the location is set and if the location string contains a call url
-		$location = $vevent->LOCATION->getValue();
+		$location = $vevent->LOCATION?->getValue();
 		if ($location === null || !str_contains($location, '/call/')) {
 			$this->logger->debug('No location for the event or event is not a call link, skipping for calendar event integration');
 			return;
