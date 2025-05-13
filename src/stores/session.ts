@@ -136,6 +136,7 @@ export const useSessionStore = defineStore('session', {
 
 			const knownSession = this.getSession(signalingSessionId)
 			if (knownSession) {
+				console.log('DEBUG it is a known session', knownSession.attendeeId)
 				return knownSession
 			}
 
@@ -167,6 +168,7 @@ export const useSessionStore = defineStore('session', {
 				return null
 			}
 
+			console.log('DEBUG it is a new session', attendee?.attendeeId)
 			return this.addSession({
 				attendeeId: attendee?.attendeeId,
 				token,
@@ -197,6 +199,7 @@ export const useSessionStore = defineStore('session', {
 
 				// If we can not find an attendeeId for session - participant is missing from the list
 				if (!session.attendeeId) {
+					console.log('DEBUG it is an orphan session', session.sessionId)
 					hasUnknownSessions = true
 					continue
 				}

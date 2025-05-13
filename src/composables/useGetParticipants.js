@@ -37,33 +37,44 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 */
 	function initialiseGetParticipants() {
 		EventBus.on('joined-conversation', onJoinedConversation)
+		// Internal signaling messages (in room)
 		EventBus.on('signaling-users-in-room', handleUsersUpdated)
+		// External signaling messages (join, left, change)
 		EventBus.on('signaling-users-joined', handleUsersUpdated)
 		EventBus.on('signaling-users-changed', handleUsersUpdated)
 		EventBus.on('signaling-users-left', handleUsersLeft)
 		EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
-
-		// FIXME this works only temporary until signaling is fixed to be only on the calls
-		// Then we have to search for another solution. Maybe the room list which we update
-		// periodically gets a hash of all online sessions?
-		EventBus.on('signaling-participant-list-changed', debounceUpdateParticipants)
+		// External signaling messages (participant added/removed)
+		EventBus.on('signaling-participant-list-changed', handleOldBehaviour)
 		subscribe('guest-promoted', onJoinedConversation)
 	}
 
 	const handleUsersUpdated = async ([users]) => {
 		const sessionStore = useSessionStore()
 		if (sessionStore.updateSessions(token.value, users)) {
+			console.count(`should fetch list for ${token.value} | missing`)
 			debounceUpdateParticipants()
+		} else {
+			debounceLongUpdateParticipants()
+			console.count(`should fetch list for ${token.value} | long poll`)
 		}
+	}
+
+	const handleOldBehaviour = () => {
+		console.count(`should fetch list for ${token.value} | old behaviour`)
 	}
 
 	const handleUsersLeft = ([sessionIds]) => {
 		const sessionStore = useSessionStore()
 		sessionStore.updateSessionsLeft(token.value, sessionIds)
+		debounceLongUpdateParticipants()
+		console.count(`should fetch list for ${token.value} | long poll`)
 	}
 	const handleUsersDisconnected = () => {
 		const sessionStore = useSessionStore()
 		sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(token.value)
+		debounceLongUpdateParticipants()
+		console.count(`should fetch list for ${token.value} | long poll`)
 	}
 	/**
 	 * Stop the get participants listeners
@@ -76,7 +87,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		EventBus.off('signaling-users-changed', handleUsersUpdated)
 		EventBus.off('signaling-users-left', handleUsersLeft)
 		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
-		EventBus.off('signaling-participant-list-changed', debounceUpdateParticipants)
+		EventBus.off('signaling-participant-list-changed', handleOldBehaviour)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
 
@@ -113,15 +124,19 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		fetchingParticipants = true
 		debounceFastUpdateParticipants.clear()
 		debounceSlowUpdateParticipants.clear()
+		debounceLongUpdateParticipants.clear()
 
 		await store.dispatch('fetchParticipants', { token: token.value })
+		console.count(`fetch list for ${token.value}`)
 		fetchingParticipants = false
 	}
 
 	const debounceFastUpdateParticipants = debounce(
-		cancelableGetParticipants, 3000)
+		cancelableGetParticipants, 3_000)
 	const debounceSlowUpdateParticipants = debounce(
-		cancelableGetParticipants, 15000)
+		cancelableGetParticipants, 15_000)
+	const debounceLongUpdateParticipants = debounce(
+		cancelableGetParticipants, 60_000)
 
 	onMounted(() => {
 		if (isTopBar) {

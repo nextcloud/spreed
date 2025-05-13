@@ -495,6 +495,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				switch (message.type) {
 				case 'usersInRoom':
 					this._trigger('usersInRoom', [message.data])
+					// FIXME remove
 					this._trigger('participantListChanged')
 
 					localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
@@ -1377,6 +1378,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 			}
 			this._trigger('usersJoined', [joinedUsers])
 			if (userListIsDirty) {
+				// FIXME remove
 				this._trigger('participantListChanged')
 			}
 		}
@@ -1389,6 +1391,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 				delete this.joinedUsers[leftSessionIds[i]]
 			}
 			this._trigger('usersLeft', [leftSessionIds])
+			// FIXME remove
 			this._trigger('participantListChanged')
 		}
 		break
@@ -1496,9 +1499,11 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 				console.error('Unknown room participant event', data)
 			}
 		} else {
+			console.debug('Users changed', data.event.update.users || [])
 			// With updated user list
 			this._trigger('usersChanged', [data.event.update.users || []])
 		}
+		// FIXME remove
 		this._trigger('participantListChanged')
 		break
 	case 'flags':
