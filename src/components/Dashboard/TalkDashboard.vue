@@ -17,6 +17,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
@@ -200,14 +201,19 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 		</div>
 		<LoadingPlaceholder v-else-if="!eventsInitialised"
 			type="event-cards" />
-		<NcEmptyContent v-else
-			class="talk-dashboard__empty-content"
-			:name="t('spreed', 'No upcoming meetings')"
-			:description="t('spreed', 'You have no upcoming meetings scheduled in the next 7 days')">
-			<template #icon>
-				<IconCalendarBlank :size="40" />
-			</template>
-		</NcEmptyContent>
+		<div v-else class="talk-dashboard__empty-event-card">
+			<span class="title"> {{ t('spreed', 'You have no upcoming meetings') }}</span>
+			<span class="secondary_text"> {{ t('spreed','Schedule a meeting with a colleague from your calendar') }}</span>
+			<NcButton class="talk-dashboard__calendar-button"
+				type="secondary"
+				:href="generateUrl('apps/calendar')"
+				target="_blank">
+				<template #icon>
+					<IconCalendarBlank :size="20" />
+				</template>
+				{{ t('spreed', 'Open calendar') }}
+			</NcButton>
+		</div>
 		<NcButton class="talk-dashboard__devices-button"
 			type="tertiary"
 			@click="emit('talk:media-settings:show', 'device-check')">
@@ -353,6 +359,12 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	margin: calc(var(--default-grid-baseline) * 2) 0;
 }
 
+.talk-dashboard__calendar-button {
+	position: absolute !important;
+	bottom: calc(var(--default-grid-baseline) * 2);
+	inset-inline-start: calc(var(--default-grid-baseline) * 2);
+}
+
 .talk-dashboard__chats {
 	display: flex;
 	gap: var(--default-grid-baseline);
@@ -402,6 +414,17 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	margin: var(--default-grid-baseline) 0;
 }
 
+.talk-dashboard__empty-event-card {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	height: 225px;
+	width: 300px;
+	border-radius: var(--border-radius-large);
+	border: 3px solid var(--color-border);
+	padding: calc(var(--default-grid-baseline) * 2);
+}
+
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
 	height: 100%;
@@ -412,5 +435,15 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 
 .title {
 	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.secondary_text {
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 </style>
