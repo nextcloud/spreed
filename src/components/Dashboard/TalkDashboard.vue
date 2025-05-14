@@ -25,6 +25,8 @@ import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcInputField from '@nextcloud/vue/components/NcInputField'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import EventCard from './EventCard.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
@@ -38,6 +40,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import type { Conversation } from '../../types/index.ts'
 import { filterConversation } from '../../utils/conversation.ts'
+import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
@@ -57,6 +60,7 @@ const eventRooms = computed(() => dashboardStore.eventRooms || [])
 const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
 const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
 const remindersInitialised = computed(() => dashboardStore.upcomingRemindersInitialised)
+const conversationName = ref('')
 let actualiseDataInterval: ReturnType<typeof setInterval> | null = null
 
 // Data fetching handlers
@@ -123,11 +127,12 @@ const filteredConversations = computed(() => conversationsList.value?.filter((co
 async function startMeeting() {
 	try {
 		const conversation = await store.dispatch('createGroupConversation', {
-			roomName: t('spreed', 'Meeting'), // NOTE: it uses user language statically
+			roomName: conversationName.value ?? t('spreed', 'Meeting'), // NOTE: it uses user language statically
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
 			objectId: `${Math.floor(Date.now() / 1000)}`,
 		})
+		copyConversationLinkToClipboard(conversation.token)
 		router.push({
 			name: 'conversation',
 			params: { token: conversation.token },
@@ -167,13 +172,28 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }) }}
 		</div>
 		<div class="talk-dashboard__actions">
-			<NcButton type="primary"
-				@click="startMeeting">
-				<template #icon>
-					<IconVideo />
+			<NcPopover popup-role="dialog">
+				<template #trigger>
+					<NcButton type="primary">
+						<template #icon>
+							<IconVideo />
+						</template>
+						{{ t('spreed', 'Start meeting now') }}
+					</NcButton>
 				</template>
-				{{ t('spreed', 'Start meeting now') }}
-			</NcButton>
+				<div role="dialog"
+					aria-labelledby="instant_meeting_dialog"
+					class="instant-meeting__dialog"
+					aria-modal="true">
+					<strong>{{ t('spreed','Give your meeting a title') }}</strong>
+					<NcInputField id="room-name"
+						v-model="conversationName" />
+					<NcButton type="primary"
+						@click="startMeeting">
+						{{ t('spreed', 'Create and copy link') }}
+					</NcButton>
+				</div>
+			</NcPopover>
 			<NcButton v-if="canStartConversations"
 				@click="EventBus.emit('new-conversation-dialog:show')">
 				<template #icon>
@@ -472,5 +492,13 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	font-size: 0.9em;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.instant-meeting__dialog {
+	padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
 }
 </style>
