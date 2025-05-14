@@ -135,17 +135,25 @@ async function startMeeting() {
 function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	const scrollDirection = direction === 'backward' ? -1 : 1
 	if (eventCardsWrapper.value) {
+		let scrollAmount = 0
+		const visibleItems = Math.floor(eventCardsWrapper.value.clientWidth / (300 + 4))
+		if (visibleItems === 0) {
+			// FIXME: mobile view, scroll by 1 item
+			scrollAmount = eventCardsWrapper.value.clientWidth * scrollDirection
+		}
+		scrollAmount = visibleItems * (300 + 4) * scrollDirection - 34 * scrollDirection
 		eventCardsWrapper.value.scrollBy({
-			left: scrollDirection * eventCardsWrapper.value.clientWidth,
+			left: scrollAmount,
 			behavior: 'smooth',
 		})
+
 	}
 }
 </script>
 <template>
 	<div class="talk-dashboard-wrapper">
 		<div class="talk-dashboard__header">
-			{{ t('spreed', 'Talk home') }}
+			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }) }}
 		</div>
 		<div class="talk-dashboard__title">
 			<span class="title">{{ t('spreed', 'Upcoming meetings') }}</span>
@@ -272,8 +280,8 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	font-weight: bold;
 	height: 51px; // top bar height
 	line-height: 51px;
-	text-align: center;
 	margin: 0 auto;
+	padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
 }
 
 .talk-dashboard__title {
@@ -290,13 +298,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	gap: var(--default-grid-baseline);
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
-	scroll-snap-type: x mandatory; // Smooth snapping for scrolling
 	scrollbar-width: none;
-}
-
-.talk-dashboard__event-card {
-	flex: 0 0 calc(25% - var(--default-grid-baseline));
-	scroll-snap-align: start;
 }
 
 .talk-dashboard__event-cards-wrapper {
@@ -307,7 +309,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 		position: absolute;
 		top: 0;
 		bottom: 0;
-		width: 44px;
+		width: var(--default-clickable-area);
 		pointer-events: none;
 		z-index: 2;
 	}
@@ -391,8 +393,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__empty-content {
-	background-color: var(--color-background-dark);
-	border-radius: var(--border-radius);
+	border-radius: var(--border-radius-large);
 	padding: calc(var(--default-grid-baseline) * 2);
 	margin: var(--default-grid-baseline) 0;
 }
