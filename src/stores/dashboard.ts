@@ -6,12 +6,12 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getDashboardEventRooms } from '../services/dashboardService.ts'
-import { getUpcomingReminders } from '../services/remindersService.js'
+import { getUpcomingReminders, removeMessageReminder } from '../services/remindersService.js'
 import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
@@ -54,6 +54,19 @@ export const useDashboardStore = defineStore('dashboard', {
 				console.error('Error fetching upcoming reminders:', error)
 				showError(t('spreed', 'Error fetching upcoming reminders'))
 			}
-		}
+		},
+
+		async removeReminder(token: string, messageId: number) {
+			try {
+				await removeMessageReminder(token, messageId)
+				Vue.set(this, 'upcomingReminders', this.upcomingReminders.filter(reminder => {
+					return reminder.messageId !== messageId
+				}))
+				showSuccess(t('spreed', 'A reminder was successfully removed'))
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Error occurred when removing a reminder'))
+			}
+		},
 	},
 })

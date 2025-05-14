@@ -4,10 +4,23 @@
 -->
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
+import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
+
+import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
+
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import ConversationIcon from '../../ConversationIcon.vue'
+
+import { useStore } from '../../../composables/useStore.js'
+import { CONVERSATION } from '../../../constants.ts'
+import { useDashboardStore } from '../../../stores/dashboard.ts'
 
 const props = defineProps({
 	messageId: {
@@ -42,26 +55,83 @@ const props = defineProps({
 		type: String,
 		default: ''
 	},
+	messageParameters: {
+		type: [Array, Object],
+		default: () => ([])
+	},
+	isReminder: {
+		type: Boolean,
+		default: false
+	}
+})
+
+const store = useStore()
+const dashboardStore = useDashboardStore()
+
+const conversation = computed(() => store.getters.conversation(props.token))
+const isOneToOneConversation = computed(() => conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE)
+const name = computed(() => {
+	if (!props.isReminder || isOneToOneConversation.value) {
+		return props.title
+	}
+	return t('spreed', '{actor} in {conversation}',
+		{ actor: props.title, conversation: conversation.value.displayName },
+		{ escape: false, sanitize: false }
+	)
+})
+const richSubline = computed(() => {
+	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {
+		return props.subline
+	}
+
+	let text = props.subline.trim()
+
+	// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
+	Object.entries(props.messageParameters).forEach(([key, value]) => {
+		text = text.replaceAll('{' + key + '}', value.name)
+	})
+
+	return text
+})
+const clearReminderLabel = computed(() => {
+	if (!props.isReminder) {
+		return ''
+	}
+	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(+props.timestamp * 1000).format('ddd LT') })
 })
 </script>
 
 <template>
 	<NcListItem :data-nav-id="`message_${messageId}`"
-		:name="title"
+		:name="name"
 		:to="to"
-		:title="subline">
+		:title="richSubline"
+		force-menu>
 		<template #icon>
-			<AvatarWrapper :id="actorId"
+			<AvatarWrapper v-if="!isReminder || isOneToOneConversation"
+				:id="actorId"
 				:name="title"
 				:source="actorType"
 				disable-menu
 				:token="token" />
+			<ConversationIcon v-else
+				:item="conversation"
+				hide-user-status />
 		</template>
 		<template #subname>
-			{{ subline }}
+			{{ richSubline }}
+		</template>
+		<template v-if="isReminder" #actions>
+			<NcActionButton close-after-click
+				@click.stop="dashboardStore.removeReminder(token, +messageId)">
+				<template #icon>
+					<CloseCircleOutline :size="20" />
+				</template>
+				{{ clearReminderLabel }}
+			</NcActionButton>
 		</template>
 		<template #details>
-			<NcDateTime :timestamp="parseInt(timestamp) * 1000"
+			<NcDateTime :timestamp="+timestamp * 1000"
 				class="search-results__date"
 				relative-time="narrow"
 				ignore-seconds />

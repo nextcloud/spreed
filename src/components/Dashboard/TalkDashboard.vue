@@ -244,6 +244,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 						:message-id="reminder.messageId"
 						:title="reminder.actorDisplayName"
 						:subline="reminder.message"
+						:message-parameters="reminder.messageParameters"
 						:token="reminder.roomToken"
 						:to="{
 							name: 'conversation',
@@ -252,7 +253,8 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 						}"
 						:actor-id="reminder.actorId"
 						:actor-type="reminder.actorType"
-						:timestamp="`${reminder.reminderTimestamp}`" />
+						:timestamp="`${reminder.reminderTimestamp}`"
+						is-reminder />
 				</div>
 				<LoadingPlaceholder v-else-if="!remindersInitialised"
 					class="upcoming-reminders__loading-placeholder"
