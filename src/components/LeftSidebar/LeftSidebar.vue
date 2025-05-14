@@ -576,6 +576,9 @@ export default {
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
+		EventBus.on('new-conversation-dialog:show', this.showModalNewConversation)
+		EventBus.on('open-conversations-list:show', this.showModalListConversations)
+		EventBus.on('call-phone-dialog:show', this.showModalCallPhoneDialog)
 	},
 
 	beforeDestroy() {
@@ -586,6 +589,9 @@ export default {
 		EventBus.off('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.off('conversations-received', this.handleConversationsReceived)
 		EventBus.off('route-change', this.onRouteChange)
+		EventBus.off('new-conversation-dialog:show', this.showModalNewConversation)
+		EventBus.off('open-conversations-list:show', this.showModalListConversations)
+		EventBus.off('call-phone-dialog:show', this.showModalCallPhoneDialog)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null

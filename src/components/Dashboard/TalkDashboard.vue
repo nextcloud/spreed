@@ -11,11 +11,15 @@ import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconList from 'vue-material-design-icons/FormatListBulleted.vue'
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
+import IconPhone from 'vue-material-design-icons/Phone.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
@@ -29,12 +33,18 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import type { Conversation } from '../../types/index.ts'
 import { filterConversation } from '../../utils/conversation.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
+const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
+	&& getTalkConfig('local', 'call', 'sip-enabled')
+	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
+	&& getTalkConfig('local', 'call', 'can-enable-sip')
+const canStartConversations = loadState('spreed', 'start_conversations')
 
 const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes
 const store = useStore()
@@ -156,8 +166,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__header">
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }) }}
 		</div>
-		<div class="talk-dashboard__title">
-			<span class="title">{{ t('spreed', 'Upcoming meetings') }}</span>
+		<div class="talk-dashboard__actions">
 			<NcButton type="primary"
 				@click="startMeeting">
 				<template #icon>
@@ -165,6 +174,38 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 				</template>
 				{{ t('spreed', 'Start meeting now') }}
 			</NcButton>
+			<NcButton v-if="canStartConversations"
+				@click="EventBus.emit('new-conversation-dialog:show')">
+				<template #icon>
+					<IconPlus :size="20" />
+				</template>
+				{{ t('spreed', 'Create a new conversation') }}
+			</NcButton>
+
+			<NcButton @click="EventBus.emit('open-conversations-list:show')">
+				<template #icon>
+					<IconList :size="20" />
+				</template>
+				{{ t('spreed', 'Join open conversations') }}
+			</NcButton>
+
+			<NcButton v-if="canModerateSipDialOut"
+				@click="EventBus.emit('call-phone-dialog:show')">
+				<template #icon>
+					<IconPhone :size="20" />
+				</template>
+				{{ t('spreed', 'Call a phone number') }}
+			</NcButton>
+			<NcButton type="tertiary"
+				@click="emit('talk:media-settings:show', 'device-check')">
+				<template #icon>
+					<IconMicrophone :size="20" />
+				</template>
+				{{ t('spreed', 'Check devices') }}
+			</NcButton>
+		</div>
+		<div class="title">
+			{{ t('spreed', 'Upcoming meetings') }}
 		</div>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
@@ -214,14 +255,6 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 				{{ t('spreed', 'Open calendar') }}
 			</NcButton>
 		</div>
-		<NcButton class="talk-dashboard__devices-button"
-			type="tertiary"
-			@click="emit('talk:media-settings:show', 'device-check')">
-			<template #icon>
-				<IconMicrophone :size="20" />
-			</template>
-			{{ t('spreed', 'Check devices') }}
-		</NcButton>
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
 				:class="{'loading': !conversationsInitialised}">
@@ -280,7 +313,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
 	--section-width: 300px;
 	--section-height: 300px;
-	padding-inline: calc(var(--default-grid-baseline) * 2);
+	padding-inline: calc(var(--default-grid-baseline) * 3);
 	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
 	margin: 0 auto;
 }
@@ -294,12 +327,10 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
 }
 
-.talk-dashboard__title {
-	width: 100%;
+.talk-dashboard__actions {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 3);
+	padding-block: var(--default-grid-baseline);
 }
 
 .talk-dashboard__event-cards {
@@ -356,10 +387,6 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	}
 }
 
-.talk-dashboard__devices-button {
-	margin: calc(var(--default-grid-baseline) * 2) 0;
-}
-
 .talk-dashboard__calendar-button {
 	position: absolute !important;
 	bottom: calc(var(--default-grid-baseline) * 2);
@@ -370,12 +397,6 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	display: flex;
 	gap: var(--default-grid-baseline);
 	padding-block-end: calc(var(--default-grid-baseline) * 2);
-
-	& .title {
-		display: block;
-		height: var(--default-clickable-area);
-		margin : var(--default-grid-baseline);
-	}
 }
 
 .talk-dashboard__unread-mentions {
@@ -439,6 +460,9 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	display: block;
+	height: var(--default-clickable-area);
+	margin : var(--default-grid-baseline);
 }
 
 .secondary_text {
