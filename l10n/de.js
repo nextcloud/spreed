@@ -2015,7 +2015,7 @@ OC.L10N.register(
     "This conversation is password-protected." : "Diese Unterhaltung ist passwortgeschützt.",
     "The password is wrong. Try again." : "Das Passwort ist falsch. Bitte erneut versuchen.",
     "%s Talk on your mobile devices" : "%s Talk auf deinen mobilen Geräte",
-    "Join conversations at any time, anywhere, on any device." : "Nimm an Gesprächen teil, zu jeder Zeit, an jedem Ort und mit jedem Gerät.",
+    "Join conversations at any time, anywhere, on any device." : "Immer, überall und auf allen Geräten einer Unterhaltung beitreten.",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
     "__language_name__" : "Deutsch (Persönlich: Du)",
