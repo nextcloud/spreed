@@ -46,6 +46,9 @@ export type Events = {
 	'upload-discard': void,
 	'upload-finished': void,
 	'upload-start': void,
+	'new-conversation-dialog:show': void,
+	'open-conversations-list:show': void,
+	'call-phone-dialog:show': void,
 }
 
 // Extended types for mitt() library
