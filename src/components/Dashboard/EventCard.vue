@@ -180,11 +180,10 @@ function handleJoin({ call = false } = {}) {
 <style scoped lang="scss">
 .event-card {
 	position: relative;
-	min-height: 225px;
+	height: 225px;
 	display: flex;
 	flex-direction: column;
-	max-width: 300px;
-	min-width: 200px;
+	flex: 0 0 300px;
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
 	border-radius: var(--border-radius-large);
@@ -200,11 +199,11 @@ function handleJoin({ call = false } = {}) {
 		border-color: var(--color-primary) !important;
 	}
 
-	&:hover > .event-card__invitation-info.initial {
-		opacity: 0;
+	&:not(.event-card--in-call):hover > .event-card__invitation-info.initial {
+		display: none;
 	}
-	&:hover > .event-card__invitation-info.hovered {
-		opacity: 1;
+	&:not(.event-card--in-call):hover > .event-card__invitation-info.hovered {
+		display: flex;
 	}
 
 	&__date {
@@ -264,12 +263,10 @@ function handleJoin({ call = false } = {}) {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: var(--default-grid-baseline);
-		opacity: 1;
-		transition: opacity 0.05s ease-in-out;
+		padding: calc(var(--default-grid-baseline) * 2);
 
 		&.hovered {
-			opacity: 0;
+			display: none;
 		}
 	}
 }
