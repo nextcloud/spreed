@@ -342,15 +342,16 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 		height: 100%;
 		margin: 0 !important;
 		z-index: 3;
+		justify-content: left;
+		background: var(--color-main-background);
+		border-radius: var(--border-radius-large);
 
 		&.backward {
 			inset-inline-start: 0;
-			justify-content: left;
 		}
 
 		&.forward {
 			inset-inline-end: 0;
-			justify-content: left;
 		}
 	}
 }
