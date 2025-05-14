@@ -85,6 +85,7 @@ const invitesLabel = computed(() => {
 
 const hasCall = computed(() => {
 	return props.eventRoom.roomActiveSince !== null
+		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
 })
 
 /**
