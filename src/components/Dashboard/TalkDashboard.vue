@@ -29,7 +29,7 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useTalkDashboardStore } from '../../stores/talkdashboard.ts'
+import { useDashboardStore } from '../../stores/dashboard.ts'
 import type { Conversation } from '../../types/index.ts'
 import { filterConversation } from '../../utils/conversation.ts'
 
@@ -38,14 +38,14 @@ const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes
 const store = useStore()
 const router = useRouter()
-const talkDashboardStore = useTalkDashboardStore()
+const dashboardStore = useDashboardStore()
 const forwardScrollable = ref(false)
 const backwardScrollable = ref(false)
 const eventCardsWrapper = ref<HTMLInputElement | null>(null)
-const eventRooms = computed(() => talkDashboardStore.eventrooms)
-const upcomingReminders = computed(() => talkDashboardStore.upcomingReminders)
-const eventsInitialised = computed(() => talkDashboardStore.eventRoomsInitialised)
-const remindersInitialised = computed(() => talkDashboardStore.upcomingRemindersInitialised)
+const eventRooms = computed(() => dashboardStore.eventRooms || [])
+const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
+const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
+const remindersInitialised = computed(() => dashboardStore.upcomingRemindersInitialised)
 let actualiseDataInterval: ReturnType<typeof setInterval> | null = null
 
 // Data fetching handlers
@@ -55,8 +55,8 @@ let actualiseDataInterval: ReturnType<typeof setInterval> | null = null
  */
 async function actualiseData() {
 	await Promise.all([
-		fetchEventRooms(),
-		fetchUpcomingReminders(),
+		dashboardStore.fetchDashboardEventRooms(),
+		dashboardStore.fetchUpcomingReminders(),
 	])
 }
 
@@ -105,28 +105,6 @@ const conversationsInitialised = computed(() => store.getters.conversationsIniti
 const filteredConversations = computed(() => conversationsList.value?.filter((conversation : Conversation) => {
 	return filterConversation(conversation, ['mentions'])
 }))
-
-/**
- * Fetches the event rooms
- */
-async function fetchEventRooms() {
-	try {
-		await talkDashboardStore.fetchDashboardEventRooms()
-	} catch (error) {
-		showError(t('spreed', 'Error fetching event rooms'))
-	}
-}
-
-/**
- * Fetches the upcoming reminders
- */
-async function fetchUpcomingReminders() {
-	try {
-		await talkDashboardStore.fetchUpcomingReminders()
-	} catch (error) {
-		showError(t('spreed', 'Error fetching upcoming reminders'))
-	}
-}
 
 /**
  * Creates a new group conversation and navigates to the conversation page.
