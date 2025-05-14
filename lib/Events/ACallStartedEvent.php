@@ -13,7 +13,7 @@ use OCA\Talk\Room;
 
 abstract class ACallStartedEvent extends ARoomModifiedEvent {
 	/**
-	 * @param array<AParticipantModifiedEvent::DETAIL_*, bool> $details
+	 * @param array<AParticipantModifiedEvent::DETAIL_*, bool|list<string>> $details
 	 */
 	public function __construct(
 		Room $room,
@@ -39,6 +39,20 @@ abstract class ACallStartedEvent extends ARoomModifiedEvent {
 	 * @param AParticipantModifiedEvent::DETAIL_* $detail
 	 */
 	public function getDetail(string $detail): ?bool {
-		return $this->details[$detail] ?? null;
+		if (!isset($this->details[$detail])) {
+			return null;
+		}
+		return (bool)$this->details[$detail];
+	}
+
+	/**
+	 * @param AParticipantModifiedEvent::DETAIL_* $detail
+	 * @return list<string>
+	 */
+	public function getDetailList(string $detail): array {
+		if (!isset($this->details[$detail]) || !is_array($this->details[$detail])) {
+			return [];
+		}
+		return $this->details[$detail];
 	}
 }

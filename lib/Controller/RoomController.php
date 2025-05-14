@@ -629,7 +629,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => CreationException::REASON_OBJECT], Http::STATUS_BAD_REQUEST);
 			}
 
-			if ($oldRoom->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			if ($oldRoom->getType() !== Room::TYPE_ONE_TO_ONE) {
+				// If we ever allow more types, only moderators should be able to perform the action
 				return new DataResponse(['error' => CreationException::REASON_OBJECT], Http::STATUS_BAD_REQUEST);
 			}
 		}
