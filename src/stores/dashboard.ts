@@ -6,6 +6,9 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getDashboardEventRooms } from '../services/dashboardService.ts'
 import { getUpcomingReminders } from '../services/remindersService.js'
@@ -14,14 +17,14 @@ import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 
 type State = {
-	eventrooms: DashboardEventRoom[],
+	eventRooms: DashboardEventRoom[],
 	upcomingReminders: UpcomingReminder[],
 	eventRoomsInitialised: boolean
 	upcomingRemindersInitialised: boolean,
 }
-export const useTalkDashboardStore = defineStore('talkdashboard', {
+export const useDashboardStore = defineStore('dashboard', {
 	state: (): State => ({
-		eventrooms: [],
+		eventRooms: [],
 		upcomingReminders: [],
 		eventRoomsInitialised: false,
 		upcomingRemindersInitialised: false,
@@ -31,25 +34,25 @@ export const useTalkDashboardStore = defineStore('talkdashboard', {
 		async fetchDashboardEventRooms() {
 			try {
 				const response = await getDashboardEventRooms()
-				Vue.set(this, 'eventrooms', response.data.ocs.data)
+				Vue.set(this, 'eventRooms', response.data.ocs.data)
 				this.eventRoomsInitialised = true
 			} catch (error) {
 				console.error('Error fetching dashboard event rooms:', error)
-				throw error
+				showError(t('spreed', 'Error fetching upcoming events'))
 			}
 		},
 
 		async fetchUpcomingReminders() {
 			try {
 				if (!supportsUpcomingReminders) {
-					return []
+					return
 				}
 				const response = await getUpcomingReminders()
 				Vue.set(this, 'upcomingReminders', response.data.ocs.data)
 				this.upcomingRemindersInitialised = true
 			} catch (error) {
 				console.error('Error fetching upcoming reminders:', error)
-				throw error
+				showError(t('spreed', 'Error fetching upcoming reminders'))
 			}
 		}
 	},
