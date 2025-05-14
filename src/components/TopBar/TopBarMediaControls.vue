@@ -412,8 +412,7 @@ export default {
 				return
 			}
 
-			// webrtcsupport considers screen share supported only via HTTPS, even if it is actually supported in the browser/desktop
-			if (!this.model.getWebRtc().capabilities.supportScreenSharing && !IS_DESKTOP) {
+			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
 				if (window.location.protocol === 'https:') {
 					showMessage(t('spreed', 'Screen sharing is not supported by your browser.'))
 				} else {
