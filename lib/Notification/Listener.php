@@ -223,7 +223,7 @@ class Listener implements IEventListener {
 		}
 
 		if ($this->shouldSendCallNotification || $event->getRoom()->isFederatedConversation()) {
-			$this->sendCallNotifications($event->getRoom());
+			$this->sendCallNotifications($event->getRoom(), $event->getDetailList(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT_FOR));
 		}
 	}
 
@@ -254,9 +254,9 @@ class Listener implements IEventListener {
 	/**
 	 * Call notification: "{user} wants to talk with you"
 	 *
-	 * @param Room $room
+	 * @param list<string> $silentFor
 	 */
-	protected function sendCallNotifications(Room $room): void {
+	protected function sendCallNotifications(Room $room, array $silentFor = []): void {
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
@@ -286,6 +286,14 @@ class Listener implements IEventListener {
 
 		$this->preparedCallNotifications = [];
 		$users = $this->participantsService->getParticipantUsersForCallNotifications($room);
+
+		if (!empty($silentFor)) {
+			// Remove users for which the call should be silent
+			foreach ($silentFor as $userId) {
+				unset($users[$userId]);
+			}
+		}
+
 		// Room name depends on the notification user for one-to-one,
 		// so we avoid pre-parsing it there. Also, it comes with some base load,
 		// so we only do it for "big enough" calls.

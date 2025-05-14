@@ -1099,7 +1099,10 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function setActiveSince(Room $room, ?Participant $participant, \DateTime $since, int $callFlag, bool $silent): bool {
+	/**
+	 * @param list<string> $silentFor
+	 */
+	public function setActiveSince(Room $room, ?Participant $participant, \DateTime $since, int $callFlag, bool $silent, array $silentFor = []): bool {
 		$oldCallFlag = $room->getCallFlag();
 		$callFlag |= $oldCallFlag; // Merge the callFlags, so events and response are with the best values
 
@@ -1116,6 +1119,8 @@ class RoomService {
 		} else {
 			if ($silent) {
 				$details[AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT] = true;
+			} elseif (!empty($silentFor)) {
+				$details[AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT_FOR] = $silentFor;
 			}
 			$event = new BeforeCallStartedEvent($room, $since, $callFlag, $details, $participant);
 			$this->dispatcher->dispatchTyped($event);
