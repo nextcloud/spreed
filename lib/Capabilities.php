@@ -261,6 +261,7 @@ class Capabilities implements IPublicCapability {
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
+					'retention-instant-meetings' => max(0, $this->appConfig->getAppValueInt('retention_instant_meetings', 1)),
 				],
 				'federation' => [
 					'enabled' => false,
