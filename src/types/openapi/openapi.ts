@@ -3341,6 +3341,11 @@ export interface operations {
                      * @default false
                      */
                     recordingConsent?: boolean;
+                    /**
+                     * @description Send no call notification for previous participants
+                     * @default []
+                     */
+                    silentFor?: string[];
                 };
             };
         };

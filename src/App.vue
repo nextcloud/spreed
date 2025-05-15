@@ -272,6 +272,12 @@ export default {
 					await this.fetchSingleConversation(params.token)
 				}
 
+				const conversation = this.$store.getters.conversation(this.token)
+				const previousParticipants = []
+				if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+					previousParticipants.push(conversation.name)
+				}
+
 				EventBus.once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {
 						return
@@ -318,13 +324,22 @@ export default {
 						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 					}
 
-					await this.$store.dispatch('joinCall', {
+					const payload = {
 						token: params.token,
 						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 						flags,
 						silent: true,
 						recordingConsent: this.recordingConsentGiven,
-					})
+					}
+
+					if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTENDED) {
+						payload.silent = false
+						if (previousParticipants.length) {
+							payload.silentFor = previousParticipants
+						}
+					}
+
+					await this.$store.dispatch('joinCall', payload)
 
 					this.callViewStore.setForceCallView(false)
 				})

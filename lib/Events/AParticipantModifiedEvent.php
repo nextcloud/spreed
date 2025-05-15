@@ -19,6 +19,7 @@ abstract class AParticipantModifiedEvent extends ARoomEvent {
 	public const PROPERTY_TYPE = 'type';
 
 	public const DETAIL_IN_CALL_SILENT = 'silent';
+	public const DETAIL_IN_CALL_SILENT_FOR = 'silentFor';
 	public const DETAIL_IN_CALL_END_FOR_EVERYONE = 'endForEveryone';
 
 	/**

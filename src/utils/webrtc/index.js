@@ -169,8 +169,9 @@ let failedToStartCall = null
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
  * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
+ * @param {Array<string>} silentFor List of participants that should not receive a notification about the call
  */
-function startCall(signaling, configuration, silent, recordingConsent) {
+function startCall(signaling, configuration, silent, recordingConsent, silentFor) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
@@ -181,7 +182,7 @@ function startCall(signaling, configuration, silent, recordingConsent) {
 		}
 	}
 
-	signaling.joinCall(pendingJoinCallToken, flags, silent, recordingConsent).then(() => {
+	signaling.joinCall(pendingJoinCallToken, flags, silent, recordingConsent, silentFor).then(() => {
 		startedCall(flags)
 	}).catch(error => {
 		signalingLeaveCall(pendingJoinCallToken)
@@ -231,10 +232,11 @@ async function signalingJoinConversation(token, sessionId) {
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
  * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
+ * @param {Array<string>} silentFor List of participants that should not receive a notification about the call
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
-async function signalingJoinCall(token, flags, silent, recordingConsent) {
+async function signalingJoinCall(token, flags, silent, recordingConsent, silentFor) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
 
@@ -296,13 +298,13 @@ async function signalingJoinCall(token, flags, silent, recordingConsent) {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, configuration, silent, recordingConsent)
+				startCall(_signaling, configuration, silent, recordingConsent, silentFor)
 			}
 			const startCallOnceLocalMediaError = () => {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, null, silent, recordingConsent)
+				startCall(_signaling, null, silent, recordingConsent, silentFor)
 			}
 
 			// ".once" can not be used, as both handlers need to be removed when

@@ -4588,6 +4588,14 @@
                                         "type": "boolean",
                                         "default": false,
                                         "description": "When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )"
+                                    },
+                                    "silentFor": {
+                                        "type": "array",
+                                        "default": [],
+                                        "description": "Send no call notification for previous participants",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     }
                                 }
                             }

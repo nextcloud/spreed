@@ -577,7 +577,7 @@ describe('participantsStore', () => {
 		})
 
 		const assertInitialCallState = () => {
-			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false, false)
+			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false, false, undefined)
 			EventBus.emit('signaling-join-call', [TOKEN, actualFlags])
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
