@@ -38,8 +38,7 @@ import { CONVERSATION } from '../../constants.ts'
 import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
-import type { Conversation } from '../../types/index.ts'
-import { filterConversation } from '../../utils/conversation.ts'
+import { hasUnreadMentions } from '../../utils/conversation.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
@@ -49,13 +48,12 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = loadState('spreed', 'start_conversations')
 
-const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes
 const store = useStore()
 const router = useRouter()
 const dashboardStore = useDashboardStore()
 const forwardScrollable = ref(false)
 const backwardScrollable = ref(false)
-const eventCardsWrapper = ref<HTMLInputElement | null>(null)
+const eventCardsWrapper = ref<HTMLDivElement | null>(null)
 const eventRooms = computed(() => dashboardStore.eventRooms || [])
 const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
 const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
@@ -77,7 +75,7 @@ async function actualiseData() {
 
 onMounted(() => {
 	actualiseData()
-	actualiseDataInterval = setInterval(actualiseData, FIVE_MINUTES)
+	actualiseDataInterval = setInterval(actualiseData, 300_000)
 })
 
 onBeforeUnmount(() => {
@@ -115,11 +113,9 @@ async function updateScrollableFlags() {
 const resizeObserver = new ResizeObserver(() => {
 	updateScrollableFlags()
 })
-const conversationsList = computed(() => store.getters.conversationsList)
+
 const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
-const filteredConversations = computed(() => conversationsList.value?.filter((conversation : Conversation) => {
-	return filterConversation(conversation, ['mentions'])
-}))
+const filteredConversations = computed(() => store.getters.conversationsList.filter(hasUnreadMentions))
 
 /**
  * Creates a new group conversation and navigates to the conversation page.
@@ -127,20 +123,20 @@ const filteredConversations = computed(() => conversationsList.value?.filter((co
 async function startMeeting() {
 	try {
 		const conversation = await store.dispatch('createGroupConversation', {
-			roomName: conversationName.value ?? t('spreed', 'Meeting'), // NOTE: it uses user language statically
+			roomName: conversationName.value ?? t('spreed', 'Meeting'), // TRANSLATORS: Fallback for instant meeting name; it uses user language statically
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
-			objectId: `${Math.floor(Date.now() / 1000)}`,
+			objectId: Math.floor(Date.now() / 1000).toString(),
 		})
-		copyConversationLinkToClipboard(conversation.token)
-		router.push({
+		await copyConversationLinkToClipboard(conversation.token)
+		await router.push({
 			name: 'conversation',
 			params: { token: conversation.token },
 			hash: '#direct-call',
 		})
 	} catch (error) {
 		console.error('Error creating conversation:', error)
-		showError(t('spreed', 'Error creating a meeting'))
+		showError(t('spreed', 'Error while creating the conversation'))
 	}
 }
 
@@ -148,7 +144,7 @@ async function startMeeting() {
  * Scrolls the event cards wrapper in the specified direction.
  * @param {string} direction - The direction to scroll ('backward' or 'forward').
  */
-function scroll({ direction } : { direction: 'backward' | 'forward' }) {
+function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	const scrollDirection = direction === 'backward' ? -1 : 1
 	if (eventCardsWrapper.value) {
 		let scrollAmount = 0
@@ -162,14 +158,14 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 			left: scrollAmount,
 			behavior: 'smooth',
 		})
-
 	}
 }
 </script>
+
 <template>
 	<div class="talk-dashboard-wrapper">
 		<div class="talk-dashboard__header">
-			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }) }}
+			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
 		</div>
 		<div class="talk-dashboard__actions">
 			<NcPopover popup-role="dialog">
@@ -185,7 +181,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 					aria-labelledby="instant_meeting_dialog"
 					class="instant-meeting__dialog"
 					aria-modal="true">
-					<strong>{{ t('spreed','Give your meeting a title') }}</strong>
+					<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
 					<NcInputField id="room-name"
 						v-model="conversationName" />
 					<NcButton type="primary"
@@ -264,7 +260,9 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 			type="event-cards" />
 		<div v-else class="talk-dashboard__empty-event-card">
 			<span class="title"> {{ t('spreed', 'You have no upcoming meetings') }}</span>
-			<span class="secondary_text"> {{ t('spreed','Schedule a meeting with a colleague from your calendar') }}</span>
+			<span class="secondary_text">
+				{{ t('spreed', 'Schedule a meeting with a colleague from your calendar') }}
+			</span>
 			<NcButton class="talk-dashboard__calendar-button"
 				type="secondary"
 				:href="generateUrl('apps/calendar')"
@@ -328,6 +326,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 		</div>
 	</div>
 </template>
+
 <style lang="scss" scoped>
 @import '../../assets/variables';
 
@@ -350,7 +349,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__actions {
-	display: flex;
+	display: flex; // FIXME: should wrap on small screens (isMobile = true)?
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
 
@@ -372,6 +371,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 .talk-dashboard__event-cards-wrapper {
 	position: relative;
 	margin-bottom: calc(var(--default-grid-baseline) * 2);
+
 	&::before,
 	&::after {
 		content: '';
@@ -491,7 +491,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	text-overflow: ellipsis;
 	display: block;
 	height: var(--default-clickable-area);
-	margin-block : calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
+	margin-block: calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
 	margin-inline: var(--default-grid-baseline);
 }
 
@@ -504,9 +504,9 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 
 .instant-meeting__dialog {
 	padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-items: center;
 }
 </style>

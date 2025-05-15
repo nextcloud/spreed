@@ -1,6 +1,6 @@
 <!--
-  - SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
+	- SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <script lang="ts" setup>
@@ -13,7 +13,7 @@ import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconTextBox from 'vue-material-design-icons/TextBox.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 
-import { t, n, getLocale } from '@nextcloud/l10n'
+import { t, n, getCanonicalLocale } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -30,24 +30,21 @@ import { CONVERSATION } from '../../constants.ts'
 import type { DashboardEventRoom } from '../../types/index.ts'
 import { formattedTime } from '../../utils/formattedTime.ts'
 
-// props
 const props = defineProps<{
-	eventRoom: DashboardEventRoom
+	eventRoom: DashboardEventRoom,
 }>()
 const store = useStore()
 const router = useRouter()
 const isInCall = useIsInCall()
 const elapsedTime = computed(() => {
-	if (!hasCall.value) {
+	if (!hasCall.value || !(props.eventRoom.roomActiveSince ?? conversation.value.callStartTime)) {
 		return ''
 	}
-	return formattedTime(+useNow({ interval: 1_000 }).value - (props.eventRoom.roomActiveSince ?? 0) * 1000)
+	return formattedTime(+useNow({ interval: 1_000 }).value - (props.eventRoom.roomActiveSince ?? conversation.value.callStartTime) * 1000)
 })
 
 const isToday = computed(() => {
-	const startDate = new Date(props.eventRoom.start * 1000)
-	const today = new Date()
-	return startDate.toDateString() === today.toDateString()
+	return new Date(props.eventRoom.start * 1000).toDateString() === new Date().toDateString()
 })
 
 const conversation = computed(() => {
@@ -60,8 +57,8 @@ const eventDateLabel = computed(() => {
 	}
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
-	const startDateString = startDate.toLocaleString(getLocale(), { hour: '2-digit', minute: '2-digit' })
-	const endDateString = endDate.toLocaleString(getLocale(), { hour: '2-digit', minute: '2-digit' })
+	const startDateString = startDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
+	const endDateString = endDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
 	const dateString = isToday.value
 		? t('spreed', 'Today')
 		: moment(startDate).calendar(null, {
@@ -69,6 +66,7 @@ const eventDateLabel = computed(() => {
 			nextWeek: 'dddd',
 			sameElse: 'dddd'
 		})
+	// FIXME should be a translated string
 	return `${dateString} ${startDateString} - ${endDateString}`
 })
 
@@ -79,12 +77,12 @@ const hasAttachments = computed(() => {
 const invitesLabel = computed(() => {
 	const acceptedInvites = props.eventRoom.accepted ? n('spreed', '%n person accepted', '%n people accepted', props.eventRoom.accepted) : ''
 	const declinedInvites = props.eventRoom.declined ? n('spreed', '%n person declined', '%n people declined', props.eventRoom.declined) : ''
-	const separator = acceptedInvites && declinedInvites ? ', ' : ''
-	return `${acceptedInvites}${separator}${declinedInvites}`
+	// FIXME should be a translated string ??
+	return [acceptedInvites, declinedInvites].filter(Boolean).join(', ')
 })
 
 const hasCall = computed(() => {
-	return props.eventRoom.roomActiveSince !== null
+	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
 		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
 })
 
@@ -184,13 +182,15 @@ function handleJoin({ call = false } = {}) {
 	height: 225px;
 	display: flex;
 	flex-direction: column;
-	flex: 0 0 300px;
+	flex: 0 0 100%;
+	max-width: 300px;
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
 	border-radius: var(--border-radius-large);
 
 	&--highlighted {
 		background-color: var(--color-primary-light);
+
 		&:not(.event-card--in-call) {
 			border-color: var(--color-primary-light) !important;
 		}
@@ -203,6 +203,7 @@ function handleJoin({ call = false } = {}) {
 	&:not(.event-card--in-call):hover > .event-card__invitation-info.initial {
 		display: none;
 	}
+
 	&:not(.event-card--in-call):hover > .event-card__invitation-info.hovered {
 		display: flex;
 	}

@@ -19,7 +19,7 @@ const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 type State = {
 	eventRooms: DashboardEventRoom[],
 	upcomingReminders: UpcomingReminder[],
-	eventRoomsInitialised: boolean
+	eventRoomsInitialised: boolean,
 	upcomingRemindersInitialised: boolean,
 }
 export const useDashboardStore = defineStore('dashboard', {
