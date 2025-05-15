@@ -31,6 +31,7 @@ import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
+import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
@@ -339,24 +340,13 @@ async function submitNewMeeting() {
 			<template #default>
 				<template v-if="!loading && upcomingEvents.length">
 					<ul class="calendar-events__list">
-						<!-- Upcoming event -->
-						<li v-for="event in upcomingEvents" :key="event.uri">
-							<a class="calendar-events__item"
-								:class="{ 'calendar-events__item--thumb': !event.href }"
-								:href="event.href"
-								:title="t('spreed', 'Open Calendar')"
-								:tabindex="0"
-								target="_blank">
-								<span class="calendar-badge" :style="{ backgroundColor: event.color }" />
-								<span class="calendar-events__content">
-									<span class="calendar-events__header">
-										<span class="calendar-events__header-text">{{ event.summary }}</span>
-										<IconReload v-if="event.recurrenceId" :size="13" />
-									</span>
-									<span>{{ event.start }}</span>
-								</span>
-							</a>
-						</li>
+						<CalendarEventSmall v-for="event in upcomingEvents"
+							:key="event.uri"
+							:name="event.summary"
+							:start="event.start"
+							:href="event.href"
+							:color="event.color"
+							:is-recurring="!!event.recurrenceId" />
 					</ul>
 				</template>
 				<NcEmptyContent v-else class="calendar-events__empty-content">
@@ -523,6 +513,7 @@ async function submitNewMeeting() {
 		margin: calc(var(--default-grid-baseline) / 2);
 		line-height: 20px;
 		max-height: calc(4.5 * var(--item-height) + 4 * var(--default-grid-baseline));
+		max-width: 200px;
 		overflow-y: auto;
 
 		& > * {
@@ -531,49 +522,6 @@ async function submitNewMeeting() {
 			&:not(:last-child) {
 				border-bottom: 1px solid var(--color-border-dark);
 			}
-		}
-	}
-
-	&__item {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		margin-block: var(--default-grid-baseline);
-		padding-inline: var(--default-grid-baseline);
-		height: 100%;
-		border-radius: var(--border-radius);
-
-		&--thumb {
-			cursor: default;
-		}
-
-		&:hover {
-			background-color: var(--color-background-hover);
-		}
-	}
-
-	&__content {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-
-	&__header {
-		display: flex;
-		gap: var(--default-grid-baseline);
-		max-width: 150px;
-		font-weight: 500;
-
-		&-text {
-			display: inline-block;
-			width: 100%;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		:deep(.material-design-icon) {
-			margin-top: 2px;
 		}
 	}
 

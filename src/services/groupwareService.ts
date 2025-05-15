@@ -7,6 +7,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import type {
+	getMutualEventsResponse,
 	OutOfOfficeResponse,
 	UpcomingEventsResponse,
 	scheduleMeetingParams,
@@ -34,6 +35,15 @@ const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
 }
 
 /**
+ * Get information about mutual events for a given 1-1 conversation.
+ *
+ * @param token The conversation token
+ */
+const getMutualEvents = async function(token: string): getMutualEventsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}/mutual-events', { token }))
+}
+
+/**
  * Schedule a new meeting for a given conversation.
  *
  * @param token The conversation token
@@ -58,6 +68,7 @@ const scheduleMeeting = async function(token: string, { calendarUri, start, end,
 }
 
 export {
+	getMutualEvents,
 	getUpcomingEvents,
 	getUserAbsence,
 	scheduleMeeting,
