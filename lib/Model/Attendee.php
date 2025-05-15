@@ -44,6 +44,8 @@ use OCP\DB\Types;
  * @method bool isArchived()
  * @method void setImportant(bool $important)
  * @method bool isImportant()
+ * @method void setSensitive(bool $important)
+ * @method bool isSensitive()
  * @internal
  * @method int getPermissions()
  * @method void setAccessToken(string $accessToken)
@@ -116,6 +118,7 @@ class Attendee extends Entity {
 	protected int $notificationCalls = 0;
 	protected bool $archived = false;
 	protected bool $important = false;
+	protected bool $sensitive = false;
 	protected int $lastJoinedCall = 0;
 	protected int $lastReadMessage = 0;
 	protected int $lastMentionMessage = 0;
@@ -141,6 +144,7 @@ class Attendee extends Entity {
 		$this->addType('favorite', Types::BOOLEAN);
 		$this->addType('archived', Types::BOOLEAN);
 		$this->addType('important', Types::BOOLEAN);
+		$this->addType('sensitive', Types::BOOLEAN);
 		$this->addType('notificationLevel', Types::INTEGER);
 		$this->addType('notificationCalls', Types::INTEGER);
 		$this->addType('lastJoinedCall', Types::INTEGER);

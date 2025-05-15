@@ -191,3 +191,4 @@
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests
 * `mutual-calendar-events` (local) - Whether Talk APIs offer mutual calendar events for 1:1 rooms
 * `upcoming-reminders` (local) - Whether the API to list upcoming reminders exists
+* `sensitive-conversations` (local) - Whether sensitive conversations are supported

@@ -66,6 +66,7 @@ describe('Conversation.vue', () => {
 			displayName: 'conversation one',
 			isFavorite: false,
 			isArchived: false,
+			isSensitive: false,
 			lastMessage: {
 				actorId: 'user-id-alice',
 				actorDisplayName: 'Alice Wonderland',
@@ -198,6 +199,22 @@ describe('Conversation.vue', () => {
 			}
 			const wrapper = testConversationLabel(item, /^Alice:\s+filename.jpg$/)
 			expect(wrapper.findComponent({ name: 'FileIcon' }).exists()).toBeTruthy()
+		})
+
+		test('hides subname for sensitive conversations', () => {
+			item.isSensitive = true
+
+			const wrapper = shallowMount(Conversation, {
+				localVue,
+				store,
+				propsData: {
+					isSearchResult: false,
+					item,
+				},
+			})
+
+			const el = wrapper.find('.conversation__subname')
+			expect(el.exists()).toBe(false)
 		})
 	})
 
