@@ -5,6 +5,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.0-rc.2 – 2025-05-15
+### Added
+- 🍱 Add a Talk Dashboard
+  [#15094](https://github.com/nextcloud/spreed/issues/15094)
+- 📅 Allow creating instant meetings
+  [#15073](https://github.com/nextcloud/spreed/issues/15073)
+- 🤝 Show mutual events in the sidebar of one-to-one
+  [#15097](https://github.com/nextcloud/spreed/issues/15097)
+- 🙊 Add sensitive conversations which don't show a chat messages in sublines and notifications
+  [#15098](https://github.com/nextcloud/spreed/issues/15098)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Added
+- Send call notification to newly added participants
+  [#15090](https://github.com/nextcloud/spreed/issues/15090)
+- Fix issues with calendar event integration
+  [#15078](https://github.com/nextcloud/spreed/issues/15078)
+  [#15080](https://github.com/nextcloud/spreed/issues/15080)
+
 ## 21.1.0-rc.1 – 2025-05-09
 ### Added
 - 📅 Improve handling of event conversations: filtered until close to the meeting, default expiration, tracking of event name and description
