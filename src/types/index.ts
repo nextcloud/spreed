@@ -205,6 +205,8 @@ export type markUnreadResponse = ApiResponse<operations['chat-mark-unread']['res
 export type summarizeChatParams = operations['chat-summarize-chat']['requestBody']['content']['application/json']
 export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat']['responses'][201]['content']['application/json']>
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
+export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
+export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
@@ -219,6 +221,10 @@ export type getBansResponse = ApiResponse<operations['ban-list-bans']['responses
 export type banActorParams = operations['ban-ban-actor']['requestBody']['content']['application/json']
 export type banActorResponse = ApiResponse<operations['ban-ban-actor']['responses'][200]['content']['application/json']>
 export type unbanActorResponse = ApiResponse<operations['ban-unban-actor']['responses'][200]['content']['application/json']>
+
+// Talk Dashboard
+export type DashboardEventRoom = components['schemas']['DashboardEvent']
+export type getDashboardEventRoomsResponse = ApiResponse<operations['calendar_integration-get-dashboard-events']['responses'][200]['content']['application/json']>
 
 // Bots
 export type Bot = components['schemas']['Bot']

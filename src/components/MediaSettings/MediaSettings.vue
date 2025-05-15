@@ -102,76 +102,96 @@
 				</template>
 			</MediaSettingsTabs>
 
-			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
-				class="checkbox"
-				:model-value="showMediaSettings || showRecordingWarning"
-				:disabled="showRecordingWarning"
-				@update:model-value="setShowMediaSettings">
-				{{ t('spreed', 'Always show preview for this conversation') }}
-			</NcCheckboxRadioSwitch>
+			<!-- Dashboard Device checker-->
+			<template v-if="isInTalkDashboard">
+				<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
+					id="call-media"
+					:model-value="startWithoutMediaEnabled"
+					:disabled="mediaLoading"
+					type="switch"
+					@update:model-value="toggleStartWithoutMedia">
+					{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
+					type="switch"
+					:model-value="blurVirtualBackgroundEnabled"
+					@update:model-value="setBlurVirtualBackgroundEnabled">
+					{{ t('spreed', 'Enable blur background by default for all conversation') }}
+				</NcCheckboxRadioSwitch>
+			</template>
+			<template v-else>
+				<!-- "Always show" setting -->
+				<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
+					class="checkbox"
+					:model-value="showMediaSettings || showRecordingWarning"
+					:disabled="showRecordingWarning"
+					@update:model-value="setShowMediaSettings">
+					{{ t('spreed', 'Always show preview for this conversation') }}
+				</NcCheckboxRadioSwitch>
 
-			<!-- Moderator options before starting a call-->
-			<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-				v-model="isRecordingFromStart"
-				class="checkbox">
-				{{ t('spreed', 'Start recording immediately with the call') }}
-			</NcCheckboxRadioSwitch>
+				<!-- Moderator options before starting a call-->
+				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
+					v-model="isRecordingFromStart"
+					class="checkbox">
+					{{ t('spreed', 'Start recording immediately with the call') }}
+				</NcCheckboxRadioSwitch>
 
-			<!-- Recording warning -->
-			<NcNoteCard v-if="showRecordingWarning" type="warning">
-				<p v-if="isCurrentlyRecording">
-					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
-				</p>
-				<p v-else>
-					<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
-				</p>
-				<template v-if="isRecordingConsentRequired">
-					<p>
-						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+				<!-- Recording warning -->
+				<NcNoteCard v-if="showRecordingWarning" type="warning">
+					<p v-if="isCurrentlyRecording">
+						<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
 					</p>
-					<NcCheckboxRadioSwitch class="checkbox--warning"
-						:model-value="recordingConsentGiven"
-						@update:model-value="setRecordingConsentGiven">
-						{{ t('spreed', 'Give consent to the recording of this call') }}
-					</NcCheckboxRadioSwitch>
-				</template>
-			</NcNoteCard>
-
+					<p v-else>
+						<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+					</p>
+					<template v-if="isRecordingConsentRequired">
+						<p>
+							{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+						</p>
+						<NcCheckboxRadioSwitch class="checkbox--warning"
+							:model-value="recordingConsentGiven"
+							@update:model-value="setRecordingConsentGiven">
+							{{ t('spreed', 'Give consent to the recording of this call') }}
+						</NcCheckboxRadioSwitch>
+					</template>
+				</NcNoteCard>
+			</template>
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<NcActions v-if="showSilentCallOption" force-menu>
-					<NcActionButton v-if="!silentCall"
-						:name="t('spreed', 'Call without notification')"
-						close-after-click
-						@click="setSilentCall(true)">
-						{{ t('spreed', 'The conversation participants will not be notified about this call') }}
-						<template #icon>
-							<IconBellOff :size="16" />
-						</template>
-					</NcActionButton>
-					<NcActionButton v-else
-						:name="t('spreed', 'Normal call')"
-						close-after-click
-						@click="setSilentCall(false)">
-						<template #icon>
-							<IconBell :size="16" />
-						</template>
-						{{ t('spreed', 'The conversation participants will be notified about this call') }}
-					</NcActionButton>
-				</NcActions>
+				<template v-if="!isInTalkDashboard">
+					<NcActions v-if="showSilentCallOption" force-menu>
+						<NcActionButton v-if="!silentCall"
+							:name="t('spreed', 'Call without notification')"
+							close-after-click
+							@click="setSilentCall(true)">
+							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
+							<template #icon>
+								<IconBellOff :size="16" />
+							</template>
+						</NcActionButton>
+						<NcActionButton v-else
+							:name="t('spreed', 'Normal call')"
+							close-after-click
+							@click="setSilentCall(false)">
+							<template #icon>
+								<IconBell :size="16" />
+							</template>
+							{{ t('spreed', 'The conversation participants will be notified about this call') }}
+						</NcActionButton>
+					</NcActions>
 
-				<!-- Join call -->
-				<CallButton v-if="!isInCall"
-					class="call-button"
-					is-media-settings
-					:is-recording-from-start="isRecordingFromStart"
-					:disabled="isRecordingConsentRequired && !recordingConsentGiven"
-					:recording-consent-given="recordingConsentGiven"
-					:silent-call="silentCall" />
-				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
-					{{ t('spreed', 'Apply settings') }}
+					<!-- Join call -->
+					<CallButton v-if="!isInCall"
+						class="call-button"
+						is-media-settings
+						:is-recording-from-start="isRecordingFromStart"
+						:disabled="isRecordingConsentRequired && !recordingConsentGiven"
+						:recording-consent-given="recordingConsentGiven"
+						:silent-call="silentCall" />
+				</template>
+				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
+					{{ isInTalkDashboard ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
 				</NcButton>
 			</div>
 		</div>
@@ -189,6 +209,7 @@ import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.v
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -217,6 +238,9 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
+
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
+const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 	name: 'MediaSettings',
@@ -315,6 +339,8 @@ export default {
 			model: localMediaModel,
 			tabs,
 			dialogHeaderId,
+			supportStartWithoutMedia,
+			supportDefaultBlurVirtualBackground,
 		}
 	},
 
@@ -332,6 +358,8 @@ export default {
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
 			skipBlurVirtualBackground: false,
+			mediaLoading: false,
+			isInTalkDashboard: false,
 		}
 	},
 
@@ -435,12 +463,18 @@ export default {
 		},
 
 		showUpdateChangesButton() {
-			return this.updatedBackground || this.audioDeviceStateChanged
-				|| this.videoDeviceStateChanged
+			return (this.isInTalkDashboard || this.isInCall)
+				&& (this.updatedBackground
+				|| this.audioDeviceStateChanged
+				|| this.videoDeviceStateChanged)
 		},
 
 		connectionFailed() {
 			return this.$store.getters.connectionFailed(this.token)
+		},
+
+		startWithoutMediaEnabled() {
+			return this.settingsStore.startWithoutMedia
 		},
 	},
 
@@ -540,6 +574,10 @@ export default {
 				this.isPublicShareAuthSidebar = true
 			}
 
+			if (page === 'device-check') {
+				this.isInTalkDashboard = true
+			}
+
 			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
 				this.tabContent = 'devices'
 			}
@@ -551,6 +589,7 @@ export default {
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
+			this.isInTalkDashboard = false
 			this.isRecordingFromStart = false
 			this.isMirrored = false
 			// Update devices preferences
@@ -726,6 +765,31 @@ export default {
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
+		},
+
+		async toggleStartWithoutMedia(value) {
+			this.mediaLoading = true
+			try {
+				await this.settingsStore.setStartWithoutMedia(value)
+				showSuccess(t('spreed', 'Your default media state has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting default media state'))
+			} finally {
+				this.mediaLoading = false
+			}
+		},
+
+		async setBlurVirtualBackgroundEnabled(value) {
+			try {
+				await this.settingsStore.setBlurVirtualBackgroundEnabled(value)
+				if (value) {
+					this.blurVirtualBackground()
+				} else {
+					this.virtualBackground.setEnabled(false)
+				}
+			} catch (error) {
+				console.error('Failed to set blur background enabled:', error)
+			}
 		},
 	},
 }

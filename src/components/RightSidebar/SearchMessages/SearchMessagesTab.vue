@@ -18,14 +18,12 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
-import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import SearchMessageItem from './SearchMessageItem.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
@@ -336,29 +334,16 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 		</div>
 		<div class="search-results">
 			<template v-if="searchResults.length !== 0">
-				<NcListItem v-for="item of searchResults"
+				<SearchMessageItem v-for="item of searchResults"
 					:key="`message_${item.attributes.messageId}`"
-					:data-nav-id="`message_${item.attributes.messageId}`"
-					:name="item.title"
-					:to="item.to"
-					:v-tooltip="item.subline">
-					<template #icon>
-						<AvatarWrapper :id="item.attributes.actorId"
-							:name="item.title"
-							:source="item.attributes.actorType"
-							:disable-menu="true"
-							:token="item.attributes.conversation" />
-					</template>
-					<template #subname>
-						{{ item.subline }}
-					</template>
-					<template #details>
-						<NcDateTime :timestamp="parseInt(item.attributes.timestamp) * 1000"
-							class="search-results__date"
-							relative-time="narrow"
-							ignore-seconds />
-					</template>
-				</NcListItem>
+					:message-id="item.attributes.messageId"
+					:title="item.title"
+					:subline="item.subline"
+					:actor-id="item.attributes.actorId"
+					:actor-type="item.attributes.actorType"
+					:token="item.attributes.conversation"
+					:timestamp="item.attributes.timestamp"
+					:to="item.to" />
 			</template>
 			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"
 				class="search-results__empty"
@@ -438,10 +423,6 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 	transition: all 0.15s ease;
 	height: 100%;
 	overflow-y: auto;
-
-	&__date {
-		font-size: x-small;
-	}
 
 	&__loading {
 		height: var(--default-clickable-area);
