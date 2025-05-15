@@ -150,3 +150,36 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+// Overwrite NcListItem styles
+:deep(.list-item) {
+	overflow: hidden;
+	outline-offset: -2px;
+
+	.avatardiv .avatardiv__user-status {
+		inset-inline-end: -2px !important;
+		bottom: -2px !important;
+		min-height: 11px !important;
+		min-width: 11px !important;
+	}
+}
+
+/* Overwrite NcListItem styles for compact view */
+:deep(.list-item--compact) {
+	padding-block: 0 !important;
+}
+
+:deep(.list-item--compact:not(:has(.list-item-content__subname))) {
+	--list-item-height: calc(var(--clickable-area-small, 24px) + 4px) !important;
+}
+
+:deep(.list-item--compact .button-vue--size-normal) {
+	--button-size: var(--clickable-area-small, 24px);
+	--button-radius: var(--border-radius);
+}
+
+:deep(.list-item--compact .list-item-content__actions) {
+	height: var(--clickable-area-small, 24px);
+}
+</style>

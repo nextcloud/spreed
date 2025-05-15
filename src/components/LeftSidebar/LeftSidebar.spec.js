@@ -160,14 +160,12 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 
 			expect(wrapper.vm.searchText).toBe('')
-			expect(wrapper.vm.initialisedConversations).toBeFalsy()
 
 			expect(conversationsReceivedEvent).not.toHaveBeenCalled()
 
 			// move on past the fetchConversation call
 			await flushPromises()
 
-			expect(wrapper.vm.initialisedConversations).toBeTruthy()
 			const normalConversationsList = conversationsList.filter(conversation => !conversation.isArchived)
 			const conversationListItems = wrapper.findAll('.vue-recycle-scroller-STUB-item')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)

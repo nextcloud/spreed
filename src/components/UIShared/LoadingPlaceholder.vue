@@ -6,7 +6,9 @@
 <template>
 	<ul :class="'placeholder-list placeholder-list--' + type">
 		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
-			<div class="placeholder-item__avatar" :style="{ '--avatar-size': item.avatarSize }">
+			<div v-if="type !== 'event-cards'"
+				class="placeholder-item__avatar"
+				:style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />
 			</div>
 			<div class="placeholder-item__content" :style="{'--last-line-width': item.width}">
@@ -28,7 +30,7 @@ export default {
 			type: String,
 			required: true,
 			validator(value) {
-				return ['conversations', 'messages', 'participants'].includes(value)
+				return ['conversations', 'messages', 'participants', 'event-cards'].includes(value)
 			},
 		},
 		count: {
@@ -43,8 +45,12 @@ export default {
 			for (let i = 0; i < this.count; i++) {
 				// set up amount of lines in skeleton and generate random widths for last line
 				data.push({
-					amount: this.type === 'messages' ? 4 : this.type === 'conversations' ? 2 : 1,
-					width: this.type === 'participants' ? '60%' : (Math.floor(Math.random() * 40) + 30) + '%',
+					amount: this.type === 'messages'
+						? 4
+						: this.type === 'conversations' ? 2 : 1,
+					width: this.type === 'participants'
+						? '60%'
+						: this.type === 'event-cards' ? '100%' : (Math.floor(Math.random() * 40) + 30) + '%',
 					avatarSize: (this.type === 'messages' ? AVATAR.SIZE.SMALL : AVATAR.SIZE.DEFAULT) + 'px',
 				})
 			}
@@ -69,6 +75,7 @@ export default {
 
 	&__avatar {
 		flex-shrink: 0;
+
 		&-circle {
 			height: var(--avatar-size);
 			width: var(--avatar-size);
@@ -112,6 +119,7 @@ export default {
 
 	.placeholder-item {
 		padding-inline-end: 8px;
+
 		&__avatar {
 			width: 48px;
 			padding: 20px 8px 0;
@@ -144,7 +152,7 @@ export default {
 // Participants placeholder ruleset
 .placeholder-list--participants {
 	.placeholder-item {
-		--padding : calc(var(--default-grid-baseline) * 2);
+		--padding: calc(var(--default-grid-baseline) * 2);
 		gap: calc(var(--default-grid-baseline) * 2);
 		padding: calc(var(--padding) * 3 / 2) var(--padding) var(--padding);
 		height: 59px;
@@ -152,6 +160,27 @@ export default {
 
 		&__avatar {
 			margin: auto;
+		}
+	}
+}
+
+// Event cards placeholder ruleset
+.placeholder-list--event-cards {
+	display: flex;
+	gap: calc(var(--default-grid-baseline) * 2);
+	flex-wrap: nowrap;
+	overflow: hidden;
+
+	.placeholder-item {
+		&__content {
+			width: 300px;
+
+			&-line {
+				margin: 0;
+				height: 225px;
+				background-color: var(--color-placeholder-light);
+				border-radius: var(--border-radius-large);
+			}
 		}
 	}
 }
