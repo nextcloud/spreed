@@ -121,7 +121,7 @@
 							</template>
 							{{ t('spreed', 'Go to file') }}
 						</NcActionLink>
-						<NcActionLink :href="linkToFileDownload" :download="messageFile.name">
+						<NcActionLink v-if="!hideDownloadOption" :href="linkToFileDownload" :download="messageFile.name">
 							<template #icon>
 								<IconDownload :size="20" />
 							</template>
@@ -413,6 +413,7 @@ export default {
 			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
+			hideDownloadOption,
 			isConversationReadOnly,
 			isConversationModifiable,
 		} = useMessageInfo(message)
@@ -426,6 +427,7 @@ export default {
 			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
+			hideDownloadOption,
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
