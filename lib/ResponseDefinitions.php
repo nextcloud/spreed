@@ -484,6 +484,7 @@ namespace OCA\Talk;
  *             description-length: positive-int,
  *             retention-event: non-negative-int,
  *             retention-phone: non-negative-int,
+ *             retention-instant-meetings: non-negative-int,
  *         },
  *         federation: array{
  *             enabled: bool,

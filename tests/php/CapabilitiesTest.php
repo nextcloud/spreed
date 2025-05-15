@@ -114,6 +114,7 @@ class CapabilitiesTest extends TestCase {
 				['max_call_duration', 0, 0],
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
+				['retention_instant_meetings', 1, 1],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -180,6 +181,7 @@ class CapabilitiesTest extends TestCase {
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
+						'retention-instant-meetings' => 1,
 					],
 					'federation' => [
 						'enabled' => false,
@@ -277,6 +279,7 @@ class CapabilitiesTest extends TestCase {
 				['max_call_duration', 0, 0],
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
+				['retention_instant_meetings', 1, 1],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -346,6 +349,7 @@ class CapabilitiesTest extends TestCase {
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
+						'retention-instant-meetings' => 1,
 					],
 					'federation' => [
 						'enabled' => false,

@@ -259,7 +259,8 @@
                                     "list-style",
                                     "description-length",
                                     "retention-event",
-                                    "retention-phone"
+                                    "retention-phone",
+                                    "retention-instant-meetings"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -286,6 +287,11 @@
                                         "minimum": 0
                                     },
                                     "retention-phone": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
+                                    },
+                                    "retention-instant-meetings": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 0

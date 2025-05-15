@@ -206,6 +206,8 @@ export type components = {
                     "retention-event": number;
                     /** Format: int64 */
                     "retention-phone": number;
+                    /** Format: int64 */
+                    "retention-instant-meetings": number;
                 };
                 federation: {
                     enabled: boolean;
