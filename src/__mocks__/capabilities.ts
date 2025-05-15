@@ -93,7 +93,11 @@ export const mockedCapabilities: Capabilities = {
 			'schedule-meeting',
 			'edit-draft-poll',
 			'conversation-creation-all',
+			'important-conversations',
+			'unbind-conversation',
+			'sip-direct-dialin',
 			'dashboard-event-rooms',
+			'mutual-calendar-events',
 			'upcoming-reminders',
 			// Conditional features
 			'message-expiration',
@@ -115,6 +119,11 @@ export const mockedCapabilities: Capabilities = {
 			'chat-summary-api',
 			'call-notification-state-api',
 			'schedule-meeting',
+			'conversation-creation-all',
+			'important-conversations',
+			'sip-direct-dialin',
+			'dashboard-event-rooms',
+			'mutual-calendar-events',
 			'upcoming-reminders',
 		],
 		config: {
