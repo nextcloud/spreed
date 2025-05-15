@@ -154,6 +154,7 @@ export const mockedCapabilities: Capabilities = {
 				'description-length': 2000,
 				'retention-event': 28,
 				'retention-phone': 7,
+				'retention-instant-meetings': 1,
 			},
 			federation: {
 				enabled: false,
