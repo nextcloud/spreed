@@ -353,12 +353,17 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	display: flex;
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
+
+	:deep(.button-vue) {
+		height: var(--header-menu-item-height);
+		padding-inline: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 4);
+	}
 }
 
 .talk-dashboard__event-cards {
 	display: flex;
 	flex-wrap: nowrap;
-	gap: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
 	scrollbar-width: none;
@@ -366,6 +371,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__event-cards-wrapper {
 	position: relative;
+	margin-bottom: calc(var(--default-grid-baseline) * 2);
 	&::before,
 	&::after {
 		content: '';
@@ -467,6 +473,7 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	border-radius: var(--border-radius-large);
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
+	margin-bottom: calc(var(--default-grid-baseline) * 2);
 }
 
 .talk-dashboard__conversations-list {
@@ -484,7 +491,8 @@ function scroll({ direction } : { direction: 'backward' | 'forward' }) {
 	text-overflow: ellipsis;
 	display: block;
 	height: var(--default-clickable-area);
-	margin : var(--default-grid-baseline);
+	margin-block : calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
+	margin-inline: var(--default-grid-baseline);
 }
 
 .secondary_text {

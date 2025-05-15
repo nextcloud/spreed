@@ -230,7 +230,8 @@ function handleJoin({ call = false } = {}) {
 
 	&__room {
 		display: flex;
-		gap: 3px;
+		align-items: center;
+		gap: var(--default-grid-baseline);
 
 		& > span {
 			line-height: var(--chip-size);
