@@ -24,6 +24,7 @@ use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\Files\Folder;
@@ -59,6 +60,7 @@ class SystemMessageTest extends TestCase {
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected FilesMetadataCache&MockObject $filesMetadataCache;
 	protected Authenticator&MockObject $federationAuthenticator;
+	protected IEventDispatcher&MockObject $dispatcher;
 	protected IL10N&MockObject $l;
 
 	public function setUp(): void {
@@ -77,6 +79,7 @@ class SystemMessageTest extends TestCase {
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
 			->willReturnCallback(function ($text, $parameters = []) {
@@ -110,6 +113,7 @@ class SystemMessageTest extends TestCase {
 					$this->url,
 					$this->filesMetadataCache,
 					$this->federationAuthenticator,
+					$this->dispatcher,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -130,6 +134,7 @@ class SystemMessageTest extends TestCase {
 			$this->url,
 			$this->filesMetadataCache,
 			$this->federationAuthenticator,
+			$this->dispatcher,
 		);
 	}
 
@@ -741,6 +746,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'image/png',
 			'preview-available' => 'yes',
+			'hide-download' => 'no',
 			'width' => '1234',
 			'height' => '4567',
 		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
@@ -817,6 +823,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'image/png',
 			'preview-available' => 'yes',
+			'hide-download' => 'no',
 			'width' => '1234',
 			'height' => '4567',
 			'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj',
@@ -897,6 +904,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'httpd/unix-directory',
 			'preview-available' => 'no',
+			'hide-download' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 
@@ -982,6 +990,7 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'application/octet-stream',
 			'preview-available' => 'no',
+			'hide-download' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]));
 	}
 

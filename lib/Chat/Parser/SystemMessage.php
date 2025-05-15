@@ -12,6 +12,7 @@ use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
+use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
@@ -26,6 +27,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Federation\ICloudIdManager;
 use OCP\Files\FileInfo;
@@ -82,6 +84,7 @@ class SystemMessage implements IEventListener {
 		protected IURLGenerator $url,
 		protected FilesMetadataCache $metadataCache,
 		protected Authenticator $federationAuthenticator,
+		protected IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -825,6 +828,7 @@ class SystemMessage implements IEventListener {
 				$node = $share->getNodeCacheEntry();
 			} else {
 				$node = $share->getNode();
+				$this->dispatcher->dispatchTyped(new OverwritePublicSharePropertiesEvent($share));
 			}
 
 			$name = $node->getName();
@@ -854,6 +858,7 @@ class SystemMessage implements IEventListener {
 			'permissions' => (string)$node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => $share->getHideDownload() ? 'yes' : 'no',
 		];
 
 		// If a preview is available, check if we can get the dimensions of the file from the metadata API
