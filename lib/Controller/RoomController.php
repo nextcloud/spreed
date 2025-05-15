@@ -947,7 +947,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function unbindRoomFromObject(): DataResponse {
-		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT || $this->room->getObjectType() === Room::OBJECT_TYPE_INSTANT_MEETING) {
 			$this->roomService->resetObject($this->room);
 		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_PHONE_TEMPORARY) {
 			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_PHONE_PERSIST, $this->room->getObjectId());
