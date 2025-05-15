@@ -2,6 +2,7 @@ Feature: conversation-1/create
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
+    Given user "participant3" exists
 
   Scenario: Set password during creation
     Given user "participant1" creates room "room1" (v4)
@@ -119,7 +120,7 @@ Feature: conversation-1/create
   Scenario: Create extended conversation
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
-      | roomName | Foo bar |
+      | roomName | Your Group |
     Given user "participant2" creates room "room2" (v4)
       | roomType | 3 |
       | roomName | Not Your Public |
@@ -130,32 +131,53 @@ Feature: conversation-1/create
       | roomType | 2 |
       | roomName | Not Your Open |
       | listable | 1 |
-    Given user "participant1" creates room "room1-1" (v4)
+    Given user "participant1" creates room "room5" (v4)
+      | roomType | 1 |
+      | invite | participant2 |
+    Given user "participant2" creates room "room6" (v4)
+      | roomType | 1 |
+      | invite | participant3 |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id      | name                 | type | participantType |
+      | room1   | Your Group           | 3    | 1               |
+      | room5   | participant2         | 1    | 1               |
+    Given user "participant1" creates room "room1-1" with 400 (v4)
       | roomType | 3 |
-      | roomName | Okay |
+      | roomName | Own group conversation |
       | objectType | extended_conversation |
       | objectId | ROOM(room1) |
     Given user "participant1" creates room "room2-1" with 400 (v4)
       | roomType | 3 |
-      | roomName |  Not okay Public |
+      | roomName | Not own Public |
       | objectType | extended_conversation |
       | objectId | ROOM(room2) |
     Given user "participant1" creates room "room3-1" with 400 (v4)
       | roomType | 3 |
-      | roomName |  Not okay Group |
+      | roomName | Not okay Group |
       | objectType | extended_conversation |
       | objectId | ROOM(room3) |
     Given user "participant1" creates room "room4-1" with 400 (v4)
       | roomType | 3 |
-      | roomName |  Not okay Open |
+      | roomName | Not okay Open |
       | objectType | extended_conversation |
       | objectId | ROOM(room4) |
-    Given user "participant1" creates room "room5-1" with 400 (v4)
+    Given user "participant1" creates room "room5-1" (v4)
       | roomType | 3 |
-      | roomName |  Not okay Open |
+      | roomName | Okay: Own one-to-one |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room5) |
+    Given user "participant1" creates room "room6-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName | Not okay one-to-one |
+      | objectType | extended_conversation |
+      | objectId | ROOM(room6) |
+    Given user "participant1" creates room "room7-1" with 400 (v4)
+      | roomType | 3 |
+      | roomName | Not okay Invalid |
       | objectType | extended_conversation |
       | objectId | in/valid |
     Then user "participant1" is participant of the following unordered rooms (v4)
-      | id      | name    | type | participantType |
-      | room1   | Foo bar | 3    | 1               |
-      | room1-1 | Okay    | 3    | 1               |
+      | id      | name                 | type | participantType |
+      | room1   | Your Group           | 3    | 1               |
+      | room5   | participant2         | 1    | 1               |
+      | room5-1 | Okay: Own one-to-one | 3    | 1               |

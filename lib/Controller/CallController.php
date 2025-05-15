@@ -210,6 +210,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	 *                               (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
 	 *                               or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
 	 *                               and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
+	 * @param list<string> $silentFor Send no call notification for previous participants
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Call joined successfully
@@ -222,7 +223,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
-	public function joinCall(?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+	public function joinCall(?int $flags = null, bool $silent = false, bool $recordingConsent = false, array $silentFor = []): DataResponse {
 		try {
 			$this->validateRecordingConsent($recordingConsent);
 		} catch (\InvalidArgumentException) {
@@ -256,7 +257,7 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent, lastJoinedCall: $lastJoinedCall->getTimestamp());
-			$this->roomService->setActiveSince($this->room, $this->participant, $lastJoinedCall, $flags, silent: $silent);
+			$this->roomService->setActiveSince($this->room, $this->participant, $lastJoinedCall, $flags, silent: $silent, silentFor: $silentFor);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
