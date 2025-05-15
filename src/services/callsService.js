@@ -29,7 +29,7 @@ import {
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
  * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
- * @param {list<string>} silentFor List of participants that should not receive a notification about the call
+ * @param {Array<string>} silentFor List of participants that should not receive a notification about the call
  * @return {Promise<number>} The actual flags based on the available media
  */
 const joinCall = async function(token, flags, silent, recordingConsent, silentFor) {
