@@ -39,7 +39,7 @@ export default function(mode, constraints, cb) {
 	const callback = hasConstraints ? cb : constraints
 	let error
 
-	if (!IS_DESKTOP && (typeof window === 'undefined' || window.location.protocol === 'http:')) {
+	if (typeof window === 'undefined' || window.location.protocol === 'http:') {
 		error = new Error('NavigatorUserMediaError')
 		error.name = 'HTTPS_REQUIRED'
 		return callback(error)
