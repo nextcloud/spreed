@@ -459,7 +459,7 @@ export default {
 		},
 
 		showSilentCallOption() {
-			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar && !this.isInTalkDashboard
+			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
 		},
 
 		showUpdateChangesButton() {
