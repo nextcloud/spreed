@@ -113,6 +113,10 @@ export const useSoundsStore = defineStore('sounds', {
 				return
 			}
 
+			if (!this.audioObjectsCreated) {
+				this.initAudioObjects()
+			}
+
 			try {
 				for (const key in this.audioObjects) {
 					this.pauseAudio(key)
