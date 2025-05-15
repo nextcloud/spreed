@@ -28,13 +28,13 @@ import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import type {
 	Conversation,
 	DashboardEvent,
 	UserProfileData,
 } from '../../types/index.ts'
+import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
 type MutualEvent = {
@@ -44,7 +44,6 @@ type MutualEvent = {
 	href: DashboardEvent['eventLink'],
 	color: string,
 }
-const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const props = defineProps<{
 	isUser: boolean,
@@ -63,11 +62,12 @@ const groupwareStore = useGroupwareStore()
 const isDarkTheme = useIsDarkTheme()
 
 const profileLoading = ref(false)
+const profileImageFailed = ref(false)
 
 const token = computed(() => store.getters.getToken())
 
 const conversation = computed(() => store.getters.conversation(token.value) as Conversation)
-const isOneToOneConversation = computed(() => [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation.value.type))
+const isOneToOneConversation = computed(() => conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE)
 
 const profileInfo = computed(() => groupwareStore.profileInfo[token.value])
 const profileActions = computed<UserProfileData['actions']>(() => {
@@ -87,9 +87,10 @@ const sidebarTitle = computed(() => {
 	return conversation.value.displayName
 })
 
+const iconClass = computed(() => getFallbackIconClass(conversation.value, profileImageFailed.value))
+
 const avatarUrl = computed(() => {
-	if (!supportsAvatar || conversation.value.isDummyConversation) {
-		// TODO use a fallback icon (like icon-class in CnversationIcon)
+	if (iconClass.value) {
 		return undefined
 	}
 
@@ -167,6 +168,13 @@ watch(token, async () => {
 function joinFields(firstSubstring?: string | null, secondSubstring?: string | null): string {
 	return [firstSubstring, secondSubstring].filter(Boolean).join(' · ')
 }
+
+/**
+ * Handles image load error
+ */
+function onError() {
+	profileImageFailed.value = true
+}
 </script>
 
 <template>
@@ -197,9 +205,14 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 			<div class="content__scroller animated">
 				<!-- User / conversation avatar image -->
 				<div class="content__image-wrapper animated">
-					<img class="content__image animated"
+					<div v-if="iconClass"
+						class="content__image animated icon"
+						:class="iconClass" />
+					<img v-else
+						class="content__image animated"
 						:src="avatarUrl"
 						:alt="conversation.displayName"
+						@error="onError"
 						@click="mode === 'preview' && emit('update:mode', 'full')">
 				</div>
 				<!-- User / conversation profile information -->
@@ -306,8 +319,11 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 		}
 
 		.content__header {
-			width: 100%;
 			padding-inline: calc(2 * var(--default-grid-baseline));
+		}
+
+		.content__name {
+			padding-inline-end: 0 !important;
 		}
 
 		.content__image-wrapper {
@@ -373,13 +389,20 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 	}
 
 	.content__image {
+		display: block;
 		max-width: 100%;
 		max-height: 100%;
 		width: 100%;
 		height: 100%;
+		aspect-ratio: 1;
 		border-radius: 50%;
 		object-fit: cover;
 		object-position: top;
+
+		&.icon {
+			background-size: 50%;
+			background-color: var(--color-text-maxcontrast-default);
+		}
 	}
 
 	&__header {
@@ -388,6 +411,7 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 		flex-direction: column;
 		align-items: start;
 		gap: var(--default-grid-baseline);
+		width: 100%;
 		padding-block: calc(2 * var(--default-grid-baseline)) var(--default-grid-baseline);
 		padding-inline-start: calc(2 * var(--default-grid-baseline));
 

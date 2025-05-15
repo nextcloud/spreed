@@ -193,12 +193,13 @@ export default {
 		const throttleHandleWheelEvent = (event) => {
 			if (!throttleTimeout) {
 				handleWheelEvent(event)
-				throttleTimeout = setTimeout(() => {
-					// do something
-					clearTimeout(throttleTimeout)
-					throttleTimeout = null
-				}, 300 /* var(--animation-slow) */)
 			}
+			clearTimeout(throttleTimeout)
+			throttleTimeout = null
+			throttleTimeout = setTimeout(() => {
+				clearTimeout(throttleTimeout)
+				throttleTimeout = null
+			}, 300 /* var(--animation-slow) */)
 		}
 
 		useEventListener(sidebar, 'wheel', throttleHandleWheelEvent, { capture: true })

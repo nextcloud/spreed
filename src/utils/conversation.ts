@@ -10,6 +10,7 @@ import type { EventTimeRange, Conversation } from '../types/index.ts'
 type Filter = 'unread' | 'mentions' | 'events'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 /**
  * check if the conversation has unread messages
@@ -119,4 +120,63 @@ export function filterConversation(conversation: Conversation, filters: Filter[]
 	return (!filters.includes('unread') || hasUnreadMessages(conversation))
 		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
 		&& (!filters.includes('events') || isEvent(conversation))
+}
+
+/**
+ * check if the conversation is archived
+ *
+ * @param conversation conversation object
+ * @param forceFallback whether fallback should be forced
+ */
+export function getFallbackIconClass(conversation: Conversation, forceFallback: boolean): string | undefined {
+	if (conversation.isDummyConversation) {
+		// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
+		return conversation.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
+	}
+
+	if (!supportsAvatar || forceFallback) {
+		if (conversation.objectType === CONVERSATION.OBJECT_TYPE.FILE
+			|| conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
+			return 'icon-file'
+		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION) {
+			return 'icon-password'
+		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EMAIL) {
+			return 'icon-mail'
+		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
+			|| conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
+			|| conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
+			return 'icon-phone'
+		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
+			return 'icon-event'
+		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
+			return 'icon-team'
+		} else if (conversation.type === CONVERSATION.TYPE.CHANGELOG) {
+			return 'icon-changelog'
+		} else if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
+			return 'icon-user'
+		} else if (conversation.type === CONVERSATION.TYPE.GROUP) {
+			return 'icon-contacts'
+		} else if (conversation.type === CONVERSATION.TYPE.PUBLIC) {
+			return 'icon-public'
+		}
+		return undefined
+	}
+
+	if (conversation.token) {
+		// Existing conversations use the /avatar endpoint… Always!
+		return undefined
+	}
+
+	if (conversation.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
+		// Team icon for group conversation suggestions
+		return 'icon-team'
+	}
+
+	if (conversation.type === CONVERSATION.TYPE.GROUP) {
+		// Group icon for group conversation suggestions
+		return 'icon-contacts'
+	}
+
+	// Fall-through for other conversation suggestions to user-avatar handling
+	return undefined
 }
