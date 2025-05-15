@@ -39,6 +39,10 @@ class EventDocumentationTest extends TestCase {
 			self::assertTrue(true, 'Deprecated event ' . $eventClass . ' does not have to be documented');
 			return;
 		}
+		if (is_string($classDocBlock) && str_contains($classDocBlock, '@internal')) {
+			self::assertTrue(true, 'Internal event ' . $eventClass . ' does not have to be documented');
+			return;
+		}
 
 		$docs = file_get_contents(__DIR__ . '/../../docs/events.md');
 		$eventIsDocumented = str_contains($docs, 'Before event: `' . $eventClass . '`')

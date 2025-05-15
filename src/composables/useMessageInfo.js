@@ -39,6 +39,7 @@ export function useMessageInfo(message = ref({})) {
 			isConversationReadOnly: computed(() => false),
 			isFileShareWithoutCaption: computed(() => false),
 			isFileShare: computed(() => false),
+			hideDownloadOption: computed(() => true),
 			remoteServer: computed(() => ''),
 			lastEditor: computed(() => ''),
 			actorDisplayName: computed(() => ''),
@@ -79,6 +80,8 @@ export function useMessageInfo(message = ref({})) {
 	})
 
 	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('file')))
+
+	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters)).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
 
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
@@ -134,6 +137,7 @@ export function useMessageInfo(message = ref({})) {
 		isConversationReadOnly,
 		isFileShareWithoutCaption,
 		isFileShare,
+		hideDownloadOption,
 		remoteServer,
 		lastEditor,
 		actorDisplayName,
