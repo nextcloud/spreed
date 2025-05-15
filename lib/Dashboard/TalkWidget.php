@@ -265,9 +265,12 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 	protected function prepareRoom(Room $room, string $userId): WidgetItem {
 		$participant = $this->participantService->getParticipant($room, $userId);
+		$attendee = $participant->getAttendee();
 		$subtitle = '';
 
-		if ($room->getLastMessageId() && $room->isFederatedConversation()) {
+		if ($attendee->isSensitive()) {
+			// Don't leak sensitive last messages on dashboard
+		} elseif ($room->getLastMessageId() && $room->isFederatedConversation()) {
 			try {
 				$cachedMessage = $this->pcmService->findByRemote(
 					$room->getRemoteServer(),
@@ -285,7 +288,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$subtitle = $this->getSubtitleFromMessage($message);
 		}
 
-		$attendee = $participant->getAttendee();
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
 		} elseif (($room->isFederatedConversation() && $attendee->getLastMentionMessage())

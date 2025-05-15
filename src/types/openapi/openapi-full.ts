@@ -1295,6 +1295,30 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/sensitive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark a conversation as sensitive (no last message is visible / no push preview is shown)
+         * @description Required capability: `sensitive-conversations`
+         */
+        post: operations["room-mark-conversation-as-sensitive"];
+        /**
+         * Mark a conversation as insensitive (last message is visible / push preview is shown)
+         * @description Required capability: `sensitive-conversations`
+         */
+        delete: operations["room-mark-conversation-as-insensitive"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/notify": {
         parameters: {
             query?: never;
@@ -2685,6 +2709,8 @@ export type components = {
             isArchived: boolean;
             /** @description Required capability: `important-conversations` */
             isImportant: boolean;
+            /** @description Required capability: `sensitive-conversations` */
+            isSensitive: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -8867,6 +8893,68 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Conversation was marked as unimportant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-sensitive": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as sensitive */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-insensitive": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as insensitive */
             200: {
                 headers: {
                     [name: string]: unknown;
