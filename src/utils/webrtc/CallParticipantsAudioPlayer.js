@@ -159,11 +159,15 @@ CallParticipantsAudioPlayer.prototype = {
 			return
 		}
 
-		const promises = []
-		for (const audioElement of this._audioElements.values()) {
-			promises.push(this._setAudioElementOutput(deviceId, audioElement))
+		if (this._mixAudio) {
+			await this._setAudioElementOutput(deviceId, this._audioElement)
+		} else {
+			const promises = []
+			for (const audioElement of this._audioElements.values()) {
+				promises.push(this._setAudioElementOutput(deviceId, audioElement))
+			}
+			await Promise.all(promises)
 		}
-		await Promise.all(promises)
 	},
 
 	async _setAudioElementOutput(deviceId, audioElement = null) {
