@@ -166,11 +166,10 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 <template>
 	<div class="talk-dashboard-wrapper">
-		<div class="talk-dashboard__header">
+		<h2 class="talk-dashboard__header">
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
-		</div>
-		<div class="talk-dashboard__actions"
-			:class="{'talk-dashboard__actions--mobile': isMobile}">
+		</h2>
+		<div class="talk-dashboard__actions">
 			<NcPopover popup-role="dialog">
 				<template #trigger>
 					<NcButton type="primary">
@@ -186,7 +185,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					aria-modal="true">
 					<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
 					<NcInputField id="room-name"
-						v-model="conversationName" />
+						v-model="conversationName"
+						:placeholder="t('spreed', 'Meeting')" />
 					<NcButton type="primary"
 						@click="startMeeting">
 						{{ t('spreed', 'Create and copy link') }}
@@ -223,9 +223,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
 		</div>
-		<div class="title">
+		<h3 class="title">
 			{{ t('spreed', 'Upcoming meetings') }}
-		</div>
+		</h3>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
 			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
@@ -279,7 +279,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
 				:class="{'loading': !conversationsInitialised}">
-				<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+				<h3 class="title">
+					{{ t('spreed', 'Unread mentions') }}
+				</h3>
 				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
 					class="talk-dashboard__conversations-list"
 					:conversations="filteredConversations"
@@ -295,7 +297,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 			</div>
 			<div v-if="supportsUpcomingReminders"
 				class="talk-dashboard__upcoming-reminders">
-				<span class="title">{{ t('spreed', 'Upcoming reminders') }}</span>
+				<h3 class="title">
+					{{ t('spreed', 'Upcoming reminders') }}
+				</h3>
 				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
 					<SearchMessageItem v-for="reminder in upcomingReminders"
 						:key="reminder.messageId"
@@ -374,6 +378,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
 	scrollbar-width: none;
+	border-radius: var(--border-radius-large);
 }
 
 .talk-dashboard__event-cards-wrapper {
@@ -389,16 +394,6 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		width: var(--default-clickable-area);
 		pointer-events: none;
 		z-index: 2;
-	}
-
-	&.backward-scrollable::before {
-		inset-inline-start: 0;
-		background: linear-gradient(to right, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
-	}
-
-	&.forward-scrollable::after {
-		inset-inline-end: 0;
-		background: linear-gradient(to left, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
 	}
 
 	.button-slide {
@@ -431,7 +426,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__chats {
 	display: flex;
-	gap: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	padding-block-end: calc(var(--default-grid-baseline) * 2);
 	flex-wrap: wrap;
 }
@@ -473,6 +468,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	border-radius: var(--border-radius-large);
 	padding: calc(var(--default-grid-baseline) * 2);
 	margin: var(--default-grid-baseline) 0;
+	border: 3px solid var(--color-border);
+	height: var(--content-height);
 }
 
 .talk-dashboard__empty-event-card {
@@ -495,6 +492,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .title {
 	font-weight: bold;
+	font-size: inherit;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
