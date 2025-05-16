@@ -174,9 +174,10 @@ Feature: chat-2/reminder
       | 1234568           | room2     | Message 2 | users     | participant2 | participant2-displayname | Message 2 | []                |
       | 1234569           | room3     | Message 3 | users     | participant1 | participant1-displayname | Message 3 | []                |
     And user "participant2" removes "participant1" from room "room2" with 200 (v4)
+    And user "participant1" marks room "room1" as sensitive with 200 (v4)
     Then user "participant1" gets upcoming reminders (v1)
       | reminderTimestamp | roomToken | messageId | actorType | actorId      | actorDisplayName         | message   | messageParameters |
-      | 1234567           | room1     | Message 1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+      | 1234567           | room1     | Message 1 | users     | participant1 | participant1-displayname |           | []                |
       | 1234569           | room3     | Message 3 | users     | participant1 | participant1-displayname | Message 3 | []                |
     And force run "OCA\Talk\BackgroundJob\Reminder" background jobs
     Then user "participant1" gets upcoming reminders (v1)
