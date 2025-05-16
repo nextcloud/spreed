@@ -66,8 +66,11 @@ const eventDateLabel = computed(() => {
 			nextWeek: 'dddd',
 			sameElse: 'dddd'
 		})
-	// FIXME should be a translated string
-	return `${dateString} ${startDateString} - ${endDateString}`
+	return t('spreed', '{dateString} {startDateString} - {endDateString}', {
+		dateString,
+		startDateString,
+		endDateString,
+	})
 })
 
 const hasAttachments = computed(() => {
@@ -239,6 +242,7 @@ function handleJoin({ call = false } = {}) {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			flex-shrink: 0;
 		}
 	}
 

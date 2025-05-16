@@ -319,7 +319,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="conversations" />
 				<NcEmptyContent v-else
 					class="talk-dashboard__empty-content"
-					:name="t('spreed', 'No Reminders Scheduled')"
+					:name="t('spreed', 'No reminders scheduled')"
 					:description="t('spreed', 'You have no reminders scheduled')">
 					<template #icon>
 						<IconAlarm :size="40" />
@@ -431,7 +431,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__chats {
 	display: flex;
-	gap: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	padding-block-end: calc(var(--default-grid-baseline) * 2);
 	flex-wrap: wrap;
 }
@@ -473,6 +473,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	border-radius: var(--border-radius-large);
 	padding: calc(var(--default-grid-baseline) * 2);
 	margin: var(--default-grid-baseline) 0;
+	border: 3px solid var(--color-border);
+	height: var(--content-height);
 }
 
 .talk-dashboard__empty-event-card {
