@@ -157,6 +157,10 @@ export type setConversationPermissionsParams = Required<operations['room-set-per
 export type setConversationPermissionsResponse = ApiResponse<operations['room-set-permissions']['responses'][200]['content']['application/json']>
 export type setConversationMessageExpirationParams = Required<operations['room-set-message-expiration']>['requestBody']['content']['application/json']
 export type setConversationMessageExpirationResponse = ApiResponse<operations['room-set-message-expiration']['responses'][200]['content']['application/json']>
+export type markConversationAsImportantResponse = ApiResponse<operations['room-mark-conversation-as-important']['responses'][200]['content']['application/json']>
+export type markConversationAsUnimportantResponse = ApiResponse<operations['room-mark-conversation-as-unimportant']['responses'][200]['content']['application/json']>
+export type markConversationAsSensitiveResponse = ApiResponse<operations['room-mark-conversation-as-sensitive']['responses'][200]['content']['application/json']>
+export type markConversationAsInsensitiveResponse = ApiResponse<operations['room-mark-conversation-as-insensitive']['responses'][200]['content']['application/json']>
 
 export type JoinRoomFullResponse = {
 	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>,
