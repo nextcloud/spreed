@@ -115,6 +115,10 @@ class Event implements \JsonSerializable {
 
 	public function generateAttendance(array $attendees): void {
 		foreach ($attendees as $attendee) {
+			if (!isset($attendee[1]['PARTSTAT'])) {
+				continue;
+			}
+
 			switch ($attendee[1]['PARTSTAT']->getValue()) {
 				case 'ACCEPTED':
 					(int)$this->accepted++;
