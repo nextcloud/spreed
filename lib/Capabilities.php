@@ -178,6 +178,7 @@ class Capabilities implements IPublicCapability {
 			'description-length',
 			'retention-event',
 			'retention-phone',
+			'retention-instant-meetings',
 		],
 		'federation' => [
 			'enabled',

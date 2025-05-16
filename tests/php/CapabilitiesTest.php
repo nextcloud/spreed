@@ -396,10 +396,10 @@ class CapabilitiesTest extends TestCase {
 		foreach ($configFeatures as $feature) {
 			foreach (array_keys($configDefinition[$feature]['properties']) as $config) {
 				$suffix = '';
-				if (isset($data['spreed']['config-local'][$feature]) && in_array($config, Capabilities::LOCAL_CONFIGS[$feature])) {
+				if (in_array($config, Capabilities::LOCAL_CONFIGS[$feature])) {
 					$suffix = ' (local)';
 				}
-				$this->assertCapabilityIsDocumented("`config => $feature => $config`" . $suffix);
+				$this->assertCapabilityIsDocumented("`config => $feature => $config`" . $suffix . ' - ');
 			}
 		}
 	}
