@@ -12,6 +12,7 @@ import {
 	populateMediaDevicesPreferences,
 	promoteMediaDevice,
 } from '../../services/mediaDevicePreferences.ts'
+import { isSafari } from '../../utils/browserCheck.ts'
 import EmitterMixin from '../EmitterMixin.js'
 
 /**
@@ -92,10 +93,10 @@ export default function MediaDevicesManager() {
 	 * - supports navigator.mediaDevices.selectAudioOutput() (experimental feature, do not consider atm)
 	 * Safari:
 	 * - does not support audio output selection: https://bugs.webkit.org/show_bug.cgi?id=216641
-	 * - does not support AudioContext#setSinkId
+	 * - does not support AudioContext#setSinkId (required for call audio mixer)
 	 * @return {boolean} true if supported, false otherwise.
 	 */
-	this.isAudioOutputSelectSupported = !!(new Audio().setSinkId)
+	this.isAudioOutputSelectSupported = !isSafari && !!(new Audio().setSinkId)
 
 	this._enabledCount = 0
 
