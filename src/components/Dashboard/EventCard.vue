@@ -66,8 +66,11 @@ const eventDateLabel = computed(() => {
 			nextWeek: 'dddd',
 			sameElse: 'dddd'
 		})
-	// FIXME should be a translated string
-	return `${dateString} ${startDateString} - ${endDateString}`
+	return t('spreed', '{dateString} {startDateString} - {endDateString}', {
+		dateString,
+		startDateString,
+		endDateString,
+	})
 })
 
 const hasAttachments = computed(() => {
@@ -112,9 +115,9 @@ function handleJoin({ call = false } = {}) {
 				:key="calendar.principalUri"
 				class="calendar-badge"
 				:style="{ backgroundColor: calendar.calendarColor ?? usernameToColor(calendar.principalUri).color }" />
-			<span class="title_text">
+			<h4 class="title_text">
 				{{ props.eventRoom.eventName }}
-			</span>
+			</h4>
 		</span>
 		<p class="event-card__date secondary_text">
 			{{ eventDateLabel }}
@@ -124,7 +127,7 @@ function handleJoin({ call = false } = {}) {
 			</template>
 		</p>
 		<span class="event-card__room secondary_text">
-			<span>
+			<span class="event-card__room-prefix">
 				{{ props.eventRoom.roomType === CONVERSATION.TYPE.ONE_TO_ONE ? t('spreed', 'With') : t('spreed', 'In') }}
 			</span>
 			<NcChip type="tertiary"
@@ -160,7 +163,7 @@ function handleJoin({ call = false } = {}) {
 			<NcButton type="tertiary"
 				@click="handleJoin">
 				<template #icon>
-					<NcIconSvgWrapper :svg="IconTalk" />
+					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
@@ -234,11 +237,12 @@ function handleJoin({ call = false } = {}) {
 		align-items: center;
 		gap: var(--default-grid-baseline);
 
-		& > span {
+		&-prefix {
 			line-height: var(--chip-size);
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			flex-shrink: 0;
 		}
 	}
 
@@ -285,6 +289,8 @@ function handleJoin({ call = false } = {}) {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		font-size: inherit;
+		margin: 0;
 	}
 }
 
