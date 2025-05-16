@@ -1311,13 +1311,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
-			$data = [];
-			try {
-				$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
-				$data = ['type' => $this->room->getType()];
-			} catch (TypeException) {
-			}
-
 			$email = strtolower($newParticipant);
 			$actorId = hash('sha256', $email);
 			try {
@@ -1327,7 +1320,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$this->guestManager->sendEmailInvitation($this->room, $participant);
 			}
 
-			return new DataResponse($data);
+			return new DataResponse([]);
 		} elseif ($source === 'federated_users') {
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse(['error' => 'federation'], Http::STATUS_NOT_IMPLEMENTED);
