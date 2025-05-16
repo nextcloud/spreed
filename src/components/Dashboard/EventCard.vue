@@ -115,9 +115,9 @@ function handleJoin({ call = false } = {}) {
 				:key="calendar.principalUri"
 				class="calendar-badge"
 				:style="{ backgroundColor: calendar.calendarColor ?? usernameToColor(calendar.principalUri).color }" />
-			<span class="title_text">
+			<header class="title_text">
 				{{ props.eventRoom.eventName }}
-			</span>
+			</header>
 		</span>
 		<p class="event-card__date secondary_text">
 			{{ eventDateLabel }}
@@ -163,7 +163,7 @@ function handleJoin({ call = false } = {}) {
 			<NcButton type="tertiary"
 				@click="handleJoin">
 				<template #icon>
-					<NcIconSvgWrapper :svg="IconTalk" />
+					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>

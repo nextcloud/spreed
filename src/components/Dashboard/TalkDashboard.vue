@@ -223,9 +223,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
 		</div>
-		<div class="title">
+		<header class="title">
 			{{ t('spreed', 'Upcoming meetings') }}
-		</div>
+		</header>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
 			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
@@ -279,7 +279,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
 				:class="{'loading': !conversationsInitialised}">
-				<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+				<header class="title">{{ t('spreed', 'Unread mentions') }}</header>
 				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
 					class="talk-dashboard__conversations-list"
 					:conversations="filteredConversations"
@@ -295,7 +295,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 			</div>
 			<div v-if="supportsUpcomingReminders"
 				class="talk-dashboard__upcoming-reminders">
-				<span class="title">{{ t('spreed', 'Upcoming reminders') }}</span>
+				<header class="title">{{ t('spreed', 'Upcoming reminders') }}</header>
 				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
 					<SearchMessageItem v-for="reminder in upcomingReminders"
 						:key="reminder.messageId"
