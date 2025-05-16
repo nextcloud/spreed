@@ -29,6 +29,32 @@
 			@update:model-value="setNotificationCalls">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
 		</NcCheckboxRadioSwitch>
+
+		<NcCheckboxRadioSwitch v-if="supportImportantConversations"
+			id="important"
+			v-model="isImportant"
+			aria-describedby="important-hint"
+			type="switch"
+			@update:model-value="toggleImportant">
+			{{ t('spreed', 'Important conversation') }}
+		</NcCheckboxRadioSwitch>
+
+		<p id="important-hint" class="app-settings-section__hint">
+			{{ t('spreed', '"Do not disturb" user status is ignored for important conversations') }}
+		</p>
+
+		<NcCheckboxRadioSwitch v-if="supportSensitiveConversations"
+			id="sensitive"
+			v-model="isSensitive"
+			aria-describedby="sensitive-hint"
+			type="switch"
+			@update:model-value="toggleSensitive">
+			{{ t('spreed', 'Sensitive conversation') }}
+		</NcCheckboxRadioSwitch>
+
+		<p id="sensitive-hint" class="app-settings-section__hint">
+			{{ t('spreed', 'Message preview will be disabled in conversation list and notifications') }}
+		</p>
 	</div>
 </template>
 
@@ -43,6 +69,9 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+
+const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
+const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
@@ -67,6 +96,8 @@ export default {
 	setup() {
 		return {
 			notificationLevels,
+			supportImportantConversations,
+			supportSensitiveConversations,
 		}
 	},
 
@@ -74,6 +105,8 @@ export default {
 		return {
 			notifyCalls: this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
 			notificationLevel: this.conversation.notificationLevel.toString(),
+			isImportant: this.conversation.isImportant,
+			isSensitive: this.conversation.isSensitive,
 		}
 	},
 
@@ -115,6 +148,24 @@ export default {
 			const notificationCalls = isChecked ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF
 			await this.$store.dispatch('setNotificationCalls', { token: this.conversation.token, notificationCalls })
 		},
+
+		/**
+		 * Toggle the important flag for the conversation
+		 *
+		 * @param {boolean} isImportant The important flag to set.
+		 */
+		async toggleImportant(isImportant) {
+			await this.$store.dispatch('toggleImportant', { token: this.conversation.token, isImportant })
+		},
+
+		/**
+		 * Toggle the sensitive flag for the conversation
+		 *
+		 * @param {boolean} isSensitive The sensitive flag to set.
+		 */
+		async toggleSensitive(isSensitive) {
+			await this.$store.dispatch('toggleSensitive', { token: this.conversation.token, isSensitive })
+		}
 	},
 }
 </script>
