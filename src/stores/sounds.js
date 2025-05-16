@@ -12,6 +12,7 @@ import { generateFilePath } from '@nextcloud/router'
 
 import BrowserStorage from '../services/BrowserStorage.js'
 import { setPlaySounds } from '../services/settingsService.ts'
+import { isSafari } from '../utils/browserCheck.ts'
 
 const hasUserAccount = Boolean(getCurrentUser()?.uid)
 /**
@@ -25,7 +26,7 @@ const shouldPlaySounds = hasUserAccount
  * Preferred version is the .ogg, with .flac fallback if .ogg is not supported (Safari)
  */
 const fileExtension = new Audio().canPlayType('audio/ogg') ? '.ogg' : '.flac'
-const isAudioOutputSelectSupported = !!(new Audio().setSinkId)
+const isAudioOutputSelectSupported = !isSafari && !!(new Audio().setSinkId)
 
 export const useSoundsStore = defineStore('sounds', {
 	state: () => ({
