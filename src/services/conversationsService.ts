@@ -52,6 +52,10 @@ import type {
 	setConversationPermissionsResponse,
 	setConversationMessageExpirationParams,
 	setConversationMessageExpirationResponse,
+	markConversationAsImportantResponse,
+	markConversationAsUnimportantResponse,
+	markConversationAsSensitiveResponse,
+	markConversationAsInsensitiveResponse,
 } from '../types/index.ts'
 
 /**
@@ -189,6 +193,38 @@ async function addToFavorites(token: string): addConversationToFavoritesResponse
  */
 async function removeFromFavorites(token: string): removeConversationFromFavoritesResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/favorite', { token }))
+}
+
+/**
+ * Mark a conversation as important
+ * @param token The conversation token of the conversation to be favorites
+ */
+async function markAsImportant(token: string): markConversationAsImportantResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/important', { token }))
+}
+
+/**
+ * Unmark an important conversation
+ * @param token The token of the conversation to be removed from favorites
+ */
+async function markAsUnimportant(token: string): markConversationAsUnimportantResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/important', { token }))
+}
+
+/**
+ * Mark a conversation as important
+ * @param token The token of the conversation to be favorites
+ */
+async function markAsSensitive(token: string): markConversationAsSensitiveResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/sensitive', { token }))
+}
+
+/**
+ * Remove a conversation from the favorites
+ * @param token The token of the conversation to be removed from favorites
+ */
+async function markAsInsensitive(token: string): markConversationAsInsensitiveResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/sensitive', { token }))
 }
 
 /**
@@ -362,6 +398,10 @@ export {
 	unbindConversationFromObject,
 	addToFavorites,
 	removeFromFavorites,
+	markAsImportant,
+	markAsUnimportant,
+	markAsSensitive,
+	markAsInsensitive,
 	archiveConversation,
 	unarchiveConversation,
 	setNotificationLevel,
