@@ -163,6 +163,33 @@
 						{{ t('spreed', 'Notify about calls') }}
 					</NcActionButton>
 				</template>
+
+				<template v-if="supportImportantConversations || supportSensitiveConversations">
+					<NcActionSeparator />
+
+					<NcActionButton v-if="supportImportantConversations"
+						type="checkbox"
+						class="conversation__action--with-subline"
+						:name="t('spreed', 'Important conversation')"
+						:model-value="item.isImportant"
+						@click="toggleImportant(!item.isImportant)">
+						<template #icon>
+							<IconMessageAlert :size="16" />
+						</template>
+						{{ labelImportantHint }}
+					</NcActionButton>
+					<NcActionButton v-if="supportSensitiveConversations"
+						type="checkbox"
+						class="conversation__action--with-subline"
+						:name="t('spreed', 'Sensitive conversation')"
+						:model-value="item.isSensitive"
+						@click="toggleSensitive(!item.isSensitive)">
+						<template #icon>
+							<IconShieldLock :size="16" />
+						</template>
+						{{ t('spreed', 'Hide message text') }}
+					</NcActionButton>
+				</template>
 			</template>
 		</template>
 
@@ -239,7 +266,9 @@ import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconEye from 'vue-material-design-icons/Eye.vue'
 import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
+import IconMessageAlert from 'vue-material-design-icons/MessageAlert.vue'
 import IconPhoneRing from 'vue-material-design-icons/PhoneRing.vue'
+import IconShieldLock from 'vue-material-design-icons/ShieldLock.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
@@ -263,6 +292,8 @@ import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
+const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
@@ -287,7 +318,9 @@ export default {
 		IconExitToApp,
 		IconEye,
 		IconEyeOff,
+		IconMessageAlert,
 		IconPhoneRing,
+		IconShieldLock,
 		IconStar,
 		IconVolumeHigh,
 		IconVolumeOff,
@@ -322,6 +355,7 @@ export default {
 					canDeleteConversation: false,
 					canLeaveConversation: false,
 					hasCall: false,
+					isImportant: false,
 					isSensitive: false,
 				}
 			},
@@ -345,6 +379,8 @@ export default {
 		return {
 			AVATAR,
 			supportsArchive,
+			supportImportantConversations,
+			supportSensitiveConversations,
 			submenu,
 			isLeaveDialogOpen,
 			isDeleteDialogOpen,
@@ -372,6 +408,10 @@ export default {
 			return this.item.isArchived
 				? t('spreed', 'Unarchive conversation')
 				: t('spreed', 'Archive conversation')
+		},
+
+		labelImportantHint() {
+			return t('spreed', 'Ignore "Do not disturb"')
 		},
 
 		dialogLeaveMessage() {
@@ -529,6 +569,24 @@ export default {
 			})
 		},
 
+		/**
+		 * Toggle the important flag for the conversation
+		 *
+		 * @param {boolean} isImportant The important flag to set.
+		 */
+		async toggleImportant(isImportant) {
+			await this.$store.dispatch('toggleImportant', { token: this.item.token, isImportant })
+		},
+
+		/**
+		 * Toggle the sensitive flag for the conversation
+		 *
+		 * @param {boolean} isSensitive The sensitive flag to set.
+		 */
+		async toggleSensitive(isSensitive) {
+			await this.$store.dispatch('toggleSensitive', { token: this.item.token, isSensitive })
+		},
+
 		onClick() {
 			// add as temporary item that will refresh after the joining process is complete
 			if (this.isSearchResult) {
@@ -605,6 +663,24 @@ export default {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+		}
+	}
+
+	// FIXME: migrate to subline once it's ready
+	&__action--with-subline {
+		:deep(.action-button__longtext-wrapper) {
+			align-self: center;
+			padding-block: var(--default-grid-baseline);
+			line-height: 1;
+		}
+		:deep(.action-button__name) {
+			font-weight: 400;
+		}
+		:deep(.action-button__longtext) {
+			padding: 0;
+			color: var(--color-text-maxcontrast);
+			font-size: var(--font-size-small);
+			line-height: var(--default-font-size);
 		}
 	}
 }
