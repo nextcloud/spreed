@@ -114,6 +114,7 @@ OC.L10N.register(
     "Deleted user (%s)" : "Implijour dilamet (%s)",
     "Dismiss notification" : "Arrest ar gemenadennoù",
     "Accept" : "Asantiñ",
+    "Notification" : "Kemennadenn",
     "{user} in {call}" : "{user} e {call}",
     "Deleted user in {call}" : "Implijer dilamet e {call}",
     "{guest} (guest) in {call}" : "{guest} (kouviad) e {call}",
