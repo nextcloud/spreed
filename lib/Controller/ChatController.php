@@ -1188,6 +1188,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 			$data = $message->toArray($this->getResponseFormat());
 
+			if ($participant->getAttendee()->isSensitive()) {
+				$data['message'] = '';
+				$data['messageParameters'] = [];
+			}
+
 			$resultData[] = [
 				'reminderTimestamp' => $reminder->getDateTime()->getTimestamp(),
 				'roomToken' => $reminder->getToken(),
