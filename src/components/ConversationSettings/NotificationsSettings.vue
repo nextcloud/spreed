@@ -3,61 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div class="app-settings-subsection">
-		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Notifications') }}
-		</h4>
-
-		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
-			:key="level.value"
-			v-model="notificationLevel"
-			:value="level.value.toString()"
-			name="notification_level"
-			type="radio"
-			@update:model-value="setNotificationLevel">
-			<span class="radio-button">
-				<component :is="notificationLevelIcon(level.value)" />
-				{{ level.label }}
-			</span>
-		</NcCheckboxRadioSwitch>
-
-		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
-			id="notification_calls"
-			v-model="notifyCalls"
-			type="switch"
-			@update:model-value="setNotificationCalls">
-			{{ t('spreed', 'Notify about calls in this conversation') }}
-		</NcCheckboxRadioSwitch>
-
-		<NcCheckboxRadioSwitch v-if="supportImportantConversations"
-			id="important"
-			v-model="isImportant"
-			aria-describedby="important-hint"
-			type="switch"
-			@update:model-value="toggleImportant">
-			{{ t('spreed', 'Important conversation') }}
-		</NcCheckboxRadioSwitch>
-
-		<p id="important-hint" class="app-settings-section__hint">
-			{{ t('spreed', '"Do not disturb" user status is ignored for important conversations') }}
-		</p>
-
-		<NcCheckboxRadioSwitch v-if="supportSensitiveConversations"
-			id="sensitive"
-			v-model="isSensitive"
-			aria-describedby="sensitive-hint"
-			type="switch"
-			@update:model-value="toggleSensitive">
-			{{ t('spreed', 'Sensitive conversation') }}
-		</NcCheckboxRadioSwitch>
-
-		<p id="sensitive-hint" class="app-settings-section__hint">
-			{{ t('spreed', 'Message preview will be disabled in conversation list and notifications') }}
-		</p>
-	</div>
-</template>
-
 <script>
 import Account from 'vue-material-design-icons/Account.vue'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
@@ -169,6 +114,61 @@ export default {
 	},
 }
 </script>
+
+<template>
+	<div class="app-settings-subsection">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Notifications') }}
+		</h4>
+
+		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
+			:key="level.value"
+			v-model="notificationLevel"
+			:value="level.value.toString()"
+			name="notification_level"
+			type="radio"
+			@update:model-value="setNotificationLevel">
+			<span class="radio-button">
+				<component :is="notificationLevelIcon(level.value)" />
+				{{ level.label }}
+			</span>
+		</NcCheckboxRadioSwitch>
+
+		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
+			id="notification_calls"
+			v-model="notifyCalls"
+			type="switch"
+			@update:model-value="setNotificationCalls">
+			{{ t('spreed', 'Notify about calls in this conversation') }}
+		</NcCheckboxRadioSwitch>
+
+		<NcCheckboxRadioSwitch v-if="supportImportantConversations"
+			id="important"
+			v-model="isImportant"
+			aria-describedby="important-hint"
+			type="switch"
+			@update:model-value="toggleImportant">
+			{{ t('spreed', 'Important conversation') }}
+		</NcCheckboxRadioSwitch>
+
+		<p id="important-hint" class="app-settings-section__hint">
+			{{ t('spreed', '"Do not disturb" user status is ignored for important conversations') }}
+		</p>
+
+		<NcCheckboxRadioSwitch v-if="supportSensitiveConversations"
+			id="sensitive"
+			v-model="isSensitive"
+			aria-describedby="sensitive-hint"
+			type="switch"
+			@update:model-value="toggleSensitive">
+			{{ t('spreed', 'Sensitive conversation') }}
+		</NcCheckboxRadioSwitch>
+
+		<p id="sensitive-hint" class="app-settings-section__hint">
+			{{ t('spreed', 'Message preview will be disabled in conversation list and notifications') }}
+		</p>
+	</div>
+</template>
 
 <style lang="scss" scoped>
 .radio-button {
