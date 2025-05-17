@@ -18,6 +18,7 @@ OC.L10N.register(
     "Accept" : "Akcepti",
     "Decline" : "Malakcepti",
     "New message" : "Nova mesaĝo",
+    "Notification" : "Atentigo",
     "error" : "eraro",
     "Avatar image is not square" : "Avatarbildo ne estas kvadrata",
     "Andorra" : "Andoro",

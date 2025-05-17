@@ -162,6 +162,8 @@
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} inviterede dig til at deltage i {roomName} på {remoteServer}",
     "Accept" : "Accepter",
     "Decline" : "Afvis",
+    "New message" : "Ny besked",
+    "Reminder" : "Påmindelse",
     "{user} sent you a private message" : "{user} sendte dig en privat besked",
     "{user} sent a message in conversation {call}" : "{user} sendte en besked i samtalen {call}",
     "A deleted user sent a message in conversation {call}" : "En slettet bruger sendte en besked i samtalen {call}",

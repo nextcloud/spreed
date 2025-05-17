@@ -8,6 +8,7 @@ OC.L10N.register(
     "Unknown filetype" : "Onbekende lêertipe",
     "Description" : "Beskrywing",
     "Accept" : "Aanvaar",
+    "New message" : "Nuwe boodskap",
     "Open settings" : "Open instellings",
     "error" : "fout",
     "Andorra" : "Andorra",
