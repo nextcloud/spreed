@@ -84,7 +84,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.27.1",
-    "@babel/preset-env": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
     "@jest/globals": "^29.7.0",
     "@nextcloud/babel-config": "^1.2.0",
     "@nextcloud/browserslist-config": "^3.0.1",
