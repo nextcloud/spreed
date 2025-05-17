@@ -35,6 +35,10 @@ import {
 	createConversation,
 	addToFavorites,
 	removeFromFavorites,
+	markAsImportant,
+	markAsUnimportant,
+	markAsSensitive,
+	markAsInsensitive,
 	archiveConversation,
 	unarchiveConversation,
 	fetchConversations,
@@ -578,6 +582,36 @@ const actions = {
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
+	async toggleImportant(context, { token, isImportant }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = isImportant
+				? await markAsImportant(token)
+				: await markAsUnimportant(token)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while changing the conversation important status: ', error)
+		}
+	},
+
+	async toggleSensitive(context, { token, isSensitive }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = isSensitive
+				? await markAsSensitive(token)
+				: await markAsInsensitive(token)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while changing the conversation sensitive status: ', error)
 		}
 	},
 
