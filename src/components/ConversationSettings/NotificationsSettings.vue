@@ -3,116 +3,85 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<script>
-import Account from 'vue-material-design-icons/Account.vue'
-import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import IconAccount from 'vue-material-design-icons/Account.vue'
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
+import { useStore } from '../../composables/useStore.js'
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import type { Conversation } from '../../types/index.ts'
 
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
 const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
-	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
-	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
+	{ value: PARTICIPANT.NOTIFY.ALWAYS, icon: IconVolumeHigh, label: t('spreed', 'All messages') },
+	{ value: PARTICIPANT.NOTIFY.MENTION, icon: IconAccount, label: t('spreed', '@-mentions only') },
+	{ value: PARTICIPANT.NOTIFY.NEVER, icon: IconVolumeOff, label: t('spreed', 'Off') },
 ]
 
-export default {
-	name: 'NotificationsSettings',
+const props = defineProps<{
+	conversation: Conversation,
+}>()
 
-	components: {
-		NcCheckboxRadioSwitch,
-	},
+const store = useStore()
 
-	props: {
-		conversation: {
-			type: Object,
-			required: true,
-		},
-	},
+const showCallNotificationSettings = computed(() => {
+	return !props.conversation.remoteServer || hasTalkFeature(props.conversation.token, 'federation-v2')
+})
 
-	setup() {
-		return {
-			notificationLevels,
-			supportImportantConversations,
-			supportSensitiveConversations,
-		}
-	},
+const notificationLevel = computed(() => props.conversation.notificationLevel.toString())
 
-	data() {
-		return {
-			notifyCalls: this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
-			notificationLevel: this.conversation.notificationLevel.toString(),
-			isImportant: this.conversation.isImportant,
-			isSensitive: this.conversation.isSensitive,
-		}
-	},
-
-	computed: {
-		showCallNotificationSettings() {
-			return !this.conversation.remoteServer || hasTalkFeature(this.conversation.token, 'federation-v2')
-		}
-	},
-
-	methods: {
-		t,
-		notificationLevelIcon(value) {
-			switch (value) {
-			case PARTICIPANT.NOTIFY.ALWAYS:
-				return VolumeHigh
-			case PARTICIPANT.NOTIFY.MENTION:
-				return Account
-			case PARTICIPANT.NOTIFY.NEVER:
-			default:
-				return VolumeOff
-			}
-		},
-
-		/**
-		 * Set the notification level for the conversation
-		 *
-		 * @param {number} notificationLevel The notification level to set.
-		 */
-		async setNotificationLevel(notificationLevel) {
-			await this.$store.dispatch('setNotificationLevel', { token: this.conversation.token, notificationLevel })
-		},
-
-		/**
-		 * Set the call notification level for the conversation
-		 *
-		 * @param {boolean} isChecked Whether or not call notifications are enabled
-		 */
-		async setNotificationCalls(isChecked) {
-			const notificationCalls = isChecked ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF
-			await this.$store.dispatch('setNotificationCalls', { token: this.conversation.token, notificationCalls })
-		},
-
-		/**
-		 * Toggle the important flag for the conversation
-		 *
-		 * @param {boolean} isImportant The important flag to set.
-		 */
-		async toggleImportant(isImportant) {
-			await this.$store.dispatch('toggleImportant', { token: this.conversation.token, isImportant })
-		},
-
-		/**
-		 * Toggle the sensitive flag for the conversation
-		 *
-		 * @param {boolean} isSensitive The sensitive flag to set.
-		 */
-		async toggleSensitive(isSensitive) {
-			await this.$store.dispatch('toggleSensitive', { token: this.conversation.token, isSensitive })
-		}
-	},
+/**
+ * Set the notification level for the conversation
+ * FIXME: should be a computed with type "number", but it doesn't work at Vue 2 TS
+ *
+ * @param value The notification level to set.
+ */
+async function setNotificationLevel(value: string) {
+	await store.dispatch('setNotificationLevel', {
+		token: props.conversation.token,
+		notificationLevel: +value,
+	})
 }
+
+const notifyCalls = computed({
+	get: () => props.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
+	set: async (value) => {
+		await store.dispatch('setNotificationCalls', {
+			token: props.conversation.token,
+			notificationCalls: value ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF,
+		})
+	},
+})
+
+const isImportant = computed({
+	get: () => props.conversation.isImportant,
+	set: async (value) => {
+		await store.dispatch('toggleImportant', {
+			token: props.conversation.token,
+			isImportant: value,
+		})
+	},
+})
+
+const isSensitive = computed({
+	get: () => props.conversation.isSensitive,
+	set: async (value) => {
+		await store.dispatch('toggleSensitive', {
+			token: props.conversation.token,
+			isSensitive: value,
+		})
+	},
+})
 </script>
 
 <template>
@@ -123,13 +92,13 @@ export default {
 
 		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
 			:key="level.value"
-			v-model="notificationLevel"
+			:model-value="notificationLevel"
 			:value="level.value.toString()"
 			name="notification_level"
 			type="radio"
 			@update:model-value="setNotificationLevel">
 			<span class="radio-button">
-				<component :is="notificationLevelIcon(level.value)" />
+				<component :is="level.icon" />
 				{{ level.label }}
 			</span>
 		</NcCheckboxRadioSwitch>
@@ -137,8 +106,7 @@ export default {
 		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
 			id="notification_calls"
 			v-model="notifyCalls"
-			type="switch"
-			@update:model-value="setNotificationCalls">
+			type="switch">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
 		</NcCheckboxRadioSwitch>
 
@@ -146,8 +114,7 @@ export default {
 			id="important"
 			v-model="isImportant"
 			aria-describedby="important-hint"
-			type="switch"
-			@update:model-value="toggleImportant">
+			type="switch">
 			{{ t('spreed', 'Important conversation') }}
 		</NcCheckboxRadioSwitch>
 
@@ -159,8 +126,7 @@ export default {
 			id="sensitive"
 			v-model="isSensitive"
 			aria-describedby="sensitive-hint"
-			type="switch"
-			@update:model-value="toggleSensitive">
+			type="switch">
 			{{ t('spreed', 'Sensitive conversation') }}
 		</NcCheckboxRadioSwitch>
 
