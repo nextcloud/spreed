@@ -340,6 +340,7 @@ OC.L10N.register(
     "{user1} invited you to a federated conversation" : "{user1} le invitó a una conversación federada",
     "New message" : "Nuevo mensaje",
     "Reminder" : "Recordatorio",
+    "Notification" : "Notificación",
     "Reminder: You in {call}" : "Recordatorio: Ud. en {call}",
     "Reminder: {user} in {call}" : "Recordatorio: {user} en {call}",
     "Reminder: Deleted user in {call}" : "Recordatorio: Se eliminó al usuario en {call}",

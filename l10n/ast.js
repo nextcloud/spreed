@@ -200,6 +200,8 @@ OC.L10N.register(
     "Failed to transcript call recording" : "Nun se pue trescribir la grabación de la llamada",
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
+    "New message" : "Mensaxe nuevu",
+    "Notification" : "Avisu",
     "{user} reacted with {reaction}" : "{user} reaicionó con «{reaction}»",
     "{user} reacted with {reaction} in {call}" : "{user} reaicionó con «{reaction}» en: {call}",
     "{user} sent you a private message" : "{user} unvióte un mensaxe priváu",
