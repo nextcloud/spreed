@@ -78,7 +78,7 @@
     "vue2-leaflet": "^2.7.1",
     "vuex": "^3.6.2",
     "webdav": "^5.8.0",
-    "webrtc-adapter": "^9.0.1",
+    "webrtc-adapter": "^9.0.3",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
   },
