@@ -49,7 +49,7 @@
     "emoji-regex": "^10.4.0",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.26",
-    "extendable-media-recorder-wav-encoder": "^7.0.127",
+    "extendable-media-recorder-wav-encoder": "^7.0.128",
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
