@@ -26,6 +26,7 @@ import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManage
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const retentionEventPeriod = getTalkConfig('local', 'conversations', 'retention-event')
 const retentionPhonePeriod = getTalkConfig('local', 'conversations', 'retention-phone')
+const retentionInstantMeetingPeriod = getTalkConfig('local', 'conversations', 'retention-instant-meetings')
 
 const props = defineProps<{
 	token: string,
@@ -45,7 +46,7 @@ const expirationDuration = computed(() => {
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
 		return retentionPhonePeriod
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING) {
-		return 0 // FIXME: get actual value from the server
+		return retentionInstantMeetingPeriod
 	}
 	return 0
 })
