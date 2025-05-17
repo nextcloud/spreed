@@ -24,6 +24,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
+import LocalTime from '../UIShared/LocalTime.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
@@ -121,13 +122,6 @@ const profileInformation = computed(() => {
 		})
 	}
 
-	const currentTime = moment(new Date().setSeconds(new Date().getTimezoneOffset() * 60 + profileInfo.value.timezoneOffset))
-	fields.push({
-		key: 'timezone',
-		icon: IconClockOutline,
-		label: t('spreed', 'Local time: {time}', { time: currentTime.format('LT') })
-	})
-
 	return fields
 })
 
@@ -221,14 +215,21 @@ function onError() {
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
 						:title="sidebarTitle" />
-					<div v-if="mode !== 'compact' && profileInformation.length"
+					<div v-if="mode !== 'compact' && profileInfo"
 						class="content__info">
-						<p v-for="row in profileInformation"
+						<span v-for="row in profileInformation"
 							:key="row.key"
 							class="content__info-row">
 							<component :is="row.icon" :size="16" />
 							{{ row.label }}
-						</p>
+						</span>
+						<LocalTime v-if="profileInfo.timezone"
+							class="content__info-row"
+							:timezone="profileInfo.timezone">
+							<template #icon>
+								<IconClockOutline :size="16" />
+							</template>
+						</LocalTime>
 					</div>
 				</div>
 			</div>
