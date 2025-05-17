@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 - Update translations
 - Update dependencies
 
-### Added
+### Fixed
 - Send call notification to newly added participants
   [#15090](https://github.com/nextcloud/spreed/issues/15090)
 - Fix issues with calendar event integration
