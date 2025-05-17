@@ -27,6 +27,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 
 import EventCard from './EventCard.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
@@ -48,6 +49,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = loadState('spreed', 'start_conversations')
 
+const isMobile = useIsMobile()
 const store = useStore()
 const router = useRouter()
 const dashboardStore = useDashboardStore()
@@ -167,7 +169,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__header">
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
 		</div>
-		<div class="talk-dashboard__actions">
+		<div class="talk-dashboard__actions"
+			:class="{'talk-dashboard__actions--mobile': isMobile}">
 			<NcPopover popup-role="dialog">
 				<template #trigger>
 					<NcButton type="primary">
@@ -220,9 +223,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
 		</div>
-		<div class="title">
+		<header class="title">
 			{{ t('spreed', 'Upcoming meetings') }}
-		</div>
+		</header>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
 			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
@@ -276,7 +279,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
 				:class="{'loading': !conversationsInitialised}">
-				<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+				<header class="title">{{ t('spreed', 'Unread mentions') }}</header>
 				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
 					class="talk-dashboard__conversations-list"
 					:conversations="filteredConversations"
@@ -292,7 +295,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 			</div>
 			<div v-if="supportsUpcomingReminders"
 				class="talk-dashboard__upcoming-reminders">
-				<span class="title">{{ t('spreed', 'Upcoming reminders') }}</span>
+				<header class="title">{{ t('spreed', 'Upcoming reminders') }}</header>
 				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
 					<SearchMessageItem v-for="reminder in upcomingReminders"
 						:key="reminder.messageId"
@@ -316,7 +319,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="conversations" />
 				<NcEmptyContent v-else
 					class="talk-dashboard__empty-content"
-					:name="t('spreed', 'No Reminders Scheduled')"
+					:name="t('spreed', 'No reminders scheduled')"
 					:description="t('spreed', 'You have no reminders scheduled')">
 					<template #icon>
 						<IconAlarm :size="40" />
@@ -331,10 +334,11 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 @import '../../assets/variables';
 
 .talk-dashboard-wrapper {
-	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
+	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 3);
 	--section-width: 300px;
 	--section-height: 300px;
-	padding-inline: calc(var(--default-grid-baseline) * 3);
+	--content-height: calc(100% - var(--title-height));
+	padding: 0 calc(var(--default-grid-baseline) * 3);
 	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
 	margin: 0 auto;
 }
@@ -349,9 +353,13 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__actions {
-	display: flex; // FIXME: should wrap on small screens (isMobile = true)?
+	display: flex;
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
+
+	&--mobile {
+		flex-wrap: wrap;
+	}
 
 	:deep(.button-vue) {
 		height: var(--header-menu-item-height);
@@ -423,13 +431,15 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__chats {
 	display: flex;
-	gap: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	padding-block-end: calc(var(--default-grid-baseline) * 2);
+	flex-wrap: wrap;
 }
 
 .talk-dashboard__unread-mentions {
-	max-height: var(--section-height);
+	height: var(--section-height);
 	width: var(--section-width);
+	flex-shrink: 0;
 
 	&.loading {
 		overflow: hidden;
@@ -437,24 +447,25 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__upcoming-reminders {
-	max-height: var(--section-height);
+	height: var(--section-height);
 	width: var(--section-width);
+	flex-shrink: 0;
 
 	&-list {
 		overflow-y: auto;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 }
 
 .upcoming-reminders {
 	&-list {
 		overflow-y: auto;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 
 	&__loading-placeholder {
 		overflow: hidden;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 }
 
@@ -462,6 +473,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	border-radius: var(--border-radius-large);
 	padding: calc(var(--default-grid-baseline) * 2);
 	margin: var(--default-grid-baseline) 0;
+	border: 3px solid var(--color-border);
+	height: var(--content-height);
 }
 
 .talk-dashboard__empty-event-card {
@@ -478,10 +491,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	height: 100%;
 	line-height: 20px;
-	overflow-y: auto;
-	max-height: calc(100% - var(--title-height));
+	height: var(--content-height);
 }
 
 .title {

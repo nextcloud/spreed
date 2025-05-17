@@ -9,7 +9,7 @@
 			<div class="new-conversation">
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
-						type="secondary"
+						type="tertiary"
 						:class="{'hidden-visually': isSearching}"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
