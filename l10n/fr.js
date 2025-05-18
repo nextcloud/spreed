@@ -1874,6 +1874,7 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} a retiré {user0} et {user1} de la liste des modérateurs",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Un administrateur a retiré {user0}, {user1} et %n autre participant de la liste des modérateurs","Un administrateur a retiré {user0}, {user1} et %n autres participants de la liste des modérateurs","Un administrateur a retiré {user0}, {user1} et %n autres participants de la liste des modérateurs"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} a retiré {user0}, {user1} et %n autre participant de la liste des modérateurs","{actor} a retiré {user0}, {user1} et %n autres participants de la liste des modérateurs","{actor} a retiré {user0}, {user1} et %n autres participants de la liste des modérateurs"],
+    "You:" : "Toi : ",
     "You: {lastMessage}" : "Moi : {lastMessage}",
     "{actor}: {lastMessage}" : "{actor} : {lastMessage}",
     "Nextcloud Talk was updated." : "Nextcloud Talk a été mis à jour.",
