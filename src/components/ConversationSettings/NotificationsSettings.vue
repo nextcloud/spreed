@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, reactive } from 'vue'
 
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
@@ -38,6 +38,13 @@ const showCallNotificationSettings = computed(() => {
 	return !props.conversation.remoteServer || hasTalkFeature(props.conversation.token, 'federation-v2')
 })
 
+const loading = reactive({
+	level: false,
+	calls: false,
+	important: false,
+	sensitive: false,
+})
+
 const notificationLevel = computed(() => props.conversation.notificationLevel.toString())
 
 /**
@@ -47,39 +54,47 @@ const notificationLevel = computed(() => props.conversation.notificationLevel.to
  * @param value The notification level to set.
  */
 async function setNotificationLevel(value: string) {
+	loading.level = true
 	await store.dispatch('setNotificationLevel', {
 		token: props.conversation.token,
 		notificationLevel: +value,
 	})
+	loading.level = false
 }
 
 const notifyCalls = computed({
 	get: () => props.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
 	set: async (value) => {
+		loading.calls = true
 		await store.dispatch('setNotificationCalls', {
 			token: props.conversation.token,
 			notificationCalls: value ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF,
 		})
+		loading.calls = false
 	},
 })
 
 const isImportant = computed({
 	get: () => props.conversation.isImportant,
 	set: async (value) => {
+		loading.important = true
 		await store.dispatch('toggleImportant', {
 			token: props.conversation.token,
 			isImportant: value,
 		})
+		loading.important = false
 	},
 })
 
 const isSensitive = computed({
 	get: () => props.conversation.isSensitive,
 	set: async (value) => {
+		loading.sensitive = true
 		await store.dispatch('toggleSensitive', {
 			token: props.conversation.token,
 			isSensitive: value,
 		})
+		loading.sensitive = false
 	},
 })
 </script>
@@ -94,6 +109,7 @@ const isSensitive = computed({
 			:key="level.value"
 			:model-value="notificationLevel"
 			:value="level.value.toString()"
+			:disabled="loading.level"
 			name="notification_level"
 			type="radio"
 			@update:model-value="setNotificationLevel">
@@ -106,6 +122,7 @@ const isSensitive = computed({
 		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
 			id="notification_calls"
 			v-model="notifyCalls"
+			:disabled="loading.calls"
 			type="switch">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
 		</NcCheckboxRadioSwitch>
@@ -113,6 +130,7 @@ const isSensitive = computed({
 		<NcCheckboxRadioSwitch v-if="supportImportantConversations"
 			id="important"
 			v-model="isImportant"
+			:disabled="loading.important"
 			aria-describedby="important-hint"
 			type="switch">
 			{{ t('spreed', 'Important conversation') }}
@@ -125,6 +143,7 @@ const isSensitive = computed({
 		<NcCheckboxRadioSwitch v-if="supportSensitiveConversations"
 			id="sensitive"
 			v-model="isSensitive"
+			:disabled="loading.sensitive"
 			aria-describedby="sensitive-hint"
 			type="switch">
 			{{ t('spreed', 'Sensitive conversation') }}
