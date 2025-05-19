@@ -41,7 +41,7 @@ class Manager {
 
 	/**
 	 * @param int $serverId
-	 * @return array{status: Http::STATUS_OK, data: array<string, mixed>}|array{status: Http::STATUS_INTERNAL_SERVER_ERROR, data: array{error: string, version?: string}}
+	 * @return array{status: Http::STATUS_OK, data: array{version: string, warning?: string, features?: non-empty-list<string>}}|array{status: Http::STATUS_INTERNAL_SERVER_ERROR, data: array{error: string, version?: string}}
 	 * @throws \OutOfBoundsException When the serverId is not found
 	 */
 	public function checkServerCompatibility(int $serverId): array {
@@ -144,7 +144,9 @@ class Manager {
 
 			return [
 				'status' => Http::STATUS_OK,
-				'data' => $data,
+				'data' => [
+					'version' => $data['version'],
+				],
 			];
 		} catch (ConnectException) {
 			return [
@@ -175,6 +177,9 @@ class Manager {
 			&& in_array('switchto', $features, true);
 	}
 
+	/**
+	 * @return list<string>
+	 */
 	public function getSignalingServerMissingFeatures(IResponse $response): array {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
