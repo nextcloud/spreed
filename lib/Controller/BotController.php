@@ -125,7 +125,6 @@ class BotController extends AEnvironmentAwareController {
 	 * 201: Message sent successfully
 	 * 400: When the replyTo is invalid or message is empty
 	 * 401: Sending message is not allowed
-	 * 404: Room or session not found
 	 * 413: Message too long
 	 */
 	#[BruteForceProtection(action: 'bot')]
