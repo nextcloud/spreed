@@ -61,7 +61,7 @@ jobs:
 
     services:
       mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mysql-8.4:latest
+        image: ghcr.io/nextcloud/continuous-integration-mysql-8.4:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4444:3306/tcp
         env:

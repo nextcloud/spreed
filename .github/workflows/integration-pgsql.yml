@@ -76,7 +76,7 @@ jobs:
 
     services:
       postgres:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        image: ghcr.io/nextcloud/continuous-integration-postgres-16:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4444:5432/tcp
         env:
