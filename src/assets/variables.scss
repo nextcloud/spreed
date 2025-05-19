@@ -25,3 +25,6 @@ $transition-duration-slow: var(--animation-slow, 300ms);
 
 $transition: all $transition-duration-quick ease-in-out;
 $transition-slow: all $transition-duration-slow ease-in-out;
+
+// To be in sync with nextcloud-vue
+$breakpoint-mobile-small: 512px;
