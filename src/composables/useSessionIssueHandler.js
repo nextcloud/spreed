@@ -5,8 +5,14 @@
 
 import { nextTick, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
+
+import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
+
+import { useStore } from '../composables/useStore.js'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 
@@ -16,14 +22,18 @@ import SessionStorage from '../services/SessionStorage.js'
  * @return {import('vue').Ref<boolean>}
  */
 export function useSessionIssueHandler() {
+	const store = useStore()
+
 	const isLeavingAfterSessionIssue = ref(false)
 
 	onBeforeMount(() => {
+		EventBus.on('session-conflict-confirmation', handleSessionConflict)
 		EventBus.on('duplicate-session-detected', duplicateSessionTriggered)
 		EventBus.on('deleted-session-detected', deletedSessionTriggered)
 	})
 
 	onBeforeUnmount(() => {
+		EventBus.off('session-conflict-confirmation', handleSessionConflict)
 		EventBus.off('duplicate-session-detected', duplicateSessionTriggered)
 		EventBus.off('deleted-session-detected', deletedSessionTriggered)
 	})
@@ -44,6 +54,31 @@ export function useSessionIssueHandler() {
 			window.location.hash = `#${url}`
 			window.location.reload()
 		}
+	}
+
+	const handleSessionConflict = (token) => {
+		spawnDialog(ConfirmDialog, {
+			name: t('spreed', 'Duplicate session'),
+			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
+			buttons: [
+				{
+					label: t('spreed', 'Leave this page'),
+				},
+				{
+					label: t('spreed', 'Join here'),
+					type: 'primary',
+					callback: () => {
+						return true
+					},
+				}
+			],
+		}, (result) => {
+			if (result) {
+				store.dispatch('forceJoinConversation', { token })
+			} else {
+				duplicateSessionTriggered()
+			}
+		})
 	}
 
 	const duplicateSessionTriggered = () => {
