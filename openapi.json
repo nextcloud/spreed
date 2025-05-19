@@ -4580,6 +4580,7 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "In-Call flags",
                                         "minimum": 0,
                                         "maximum": 15
@@ -5317,6 +5318,7 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "In-Call flags",
                                         "minimum": 0,
                                         "maximum": 15
@@ -8209,6 +8211,7 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "ID if the last read message (Optional only with `chat-read-last` capability)",
                                         "minimum": -2
                                     }
@@ -12509,6 +12512,7 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)",
                                         "minimum": 0
                                     },
@@ -12555,12 +12559,14 @@
                                     "emoji": {
                                         "type": "string",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)",
                                         "minLength": 1
                                     },
                                     "avatarColor": {
                                         "type": "string",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)",
                                         "minLength": 1
                                     },
@@ -13078,6 +13084,13 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "X-Nextcloud-Federation",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -17915,6 +17928,7 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Timer when the lobby will be removed",
                                         "minimum": 0
                                     }
@@ -19309,6 +19323,7 @@
                                     "attendeeIds": {
                                         "type": "array",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event",
                                         "items": {
                                             "type": "integer",
@@ -19319,16 +19334,19 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Unix timestamp when the meeting ends, falls back to 60 minutes after start"
                                     },
                                     "title": {
                                         "type": "string",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Title or summary of the event, falling back to the conversation name if none is given"
                                     },
                                     "description": {
                                         "type": "string",
                                         "nullable": true,
+                                        "default": null,
                                         "description": "Description of the event, falling back to the conversation description if none is given"
                                     }
                                 }
@@ -19626,6 +19644,20 @@
                         "schema": {
                             "type": "string",
                             "default": ""
+                        }
+                    },
+                    {
+                        "name": "Talk-Recording-Random",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Talk-Recording-Checksum",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

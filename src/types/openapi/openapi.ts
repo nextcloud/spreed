@@ -3355,6 +3355,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description In-Call flags
+                     * @default null
                      */
                     flags?: number | null;
                     /**
@@ -3672,6 +3673,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description In-Call flags
+                     * @default null
                      */
                     flags?: number | null;
                     /**
@@ -4747,6 +4749,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description ID if the last read message (Optional only with `chat-read-last` capability)
+                     * @default null
                      */
                     lastReadMessage?: number | null;
                 };
@@ -6449,6 +6452,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
+                     * @default null
                      */
                     lobbyTimer?: number | null;
                     /**
@@ -6479,9 +6483,15 @@ export interface operations {
                      * @default
                      */
                     description?: string;
-                    /** @description Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability) */
+                    /**
+                     * @description Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)
+                     * @default null
+                     */
                     emoji?: string | null;
-                    /** @description Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability) */
+                    /**
+                     * @description Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
+                     * @default null
+                     */
                     avatarColor?: string | null;
                     /**
                      * @description List of participants to add grouped by type (only available with `conversation-creation-all` capability)
@@ -6658,6 +6668,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                "X-Nextcloud-Federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -8573,6 +8584,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description Timer when the lobby will be removed
+                     * @default null
                      */
                     timer?: number | null;
                 };
@@ -9112,16 +9124,26 @@ export interface operations {
                      * @description Unix timestamp when the meeting starts
                      */
                     start: number;
-                    /** @description List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event */
+                    /**
+                     * @description List of attendee ids to invite, if null everyone will be invited, if empty array only the actor will receive the event
+                     * @default null
+                     */
                     attendeeIds?: number[] | null;
                     /**
                      * Format: int64
                      * @description Unix timestamp when the meeting ends, falls back to 60 minutes after start
+                     * @default null
                      */
                     end?: number | null;
-                    /** @description Title or summary of the event, falling back to the conversation name if none is given */
+                    /**
+                     * @description Title or summary of the event, falling back to the conversation name if none is given
+                     * @default null
+                     */
                     title?: string | null;
-                    /** @description Description of the event, falling back to the conversation description if none is given */
+                    /**
+                     * @description Description of the event, falling back to the conversation description if none is given
+                     * @default null
+                     */
                     description?: string | null;
                 };
             };
@@ -9223,6 +9245,8 @@ export interface operations {
                 token?: string;
             };
             header: {
+                "Talk-Recording-Random"?: string;
+                "Talk-Recording-Checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
