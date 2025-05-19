@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { nextTick, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { nextTick, onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -48,7 +48,7 @@ export function useSessionIssueHandler() {
 				// FIXME: can't use router push as it somehow doesn't clean up
 				// fully and leads the other instance where "Join here" was clicked
 				// to redirect to "not found"
-				window.location = generateUrl(url)
+				window.location.replace(generateUrl(url))
 			})
 		} else {
 			window.location.hash = `#${url}`
@@ -57,6 +57,8 @@ export function useSessionIssueHandler() {
 	}
 
 	const handleSessionConflict = (token) => {
+		isLeavingAfterSessionIssue.value = true
+
 		spawnDialog(ConfirmDialog, {
 			name: t('spreed', 'Duplicate session'),
 			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
@@ -74,6 +76,7 @@ export function useSessionIssueHandler() {
 			],
 		}, (result) => {
 			if (result) {
+				isLeavingAfterSessionIssue.value = false
 				store.dispatch('forceJoinConversation', { token })
 			} else {
 				duplicateSessionTriggered()
@@ -91,5 +94,5 @@ export function useSessionIssueHandler() {
 		redirectTo('/apps/spreed/not-found')
 	}
 
-	return isLeavingAfterSessionIssue
+	return readonly(isLeavingAfterSessionIssue)
 }
