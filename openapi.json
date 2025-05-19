@@ -194,13 +194,15 @@
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "features-local": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "config": {
                         "type": "object",
@@ -449,7 +451,8 @@
                             "type": "array",
                             "items": {
                                 "type": "string"
-                            }
+                            },
+                            "minItems": 1
                         }
                     },
                     "version": {

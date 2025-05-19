@@ -441,8 +441,8 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkCapabilities = array{
- *     features: list<string>,
- *     features-local: list<string>,
+ *     features: non-empty-list<string>,
+ *     features-local: non-empty-list<string>,
  *     config: array{
  *         attachments: array{
  *             allowed: bool,
@@ -498,7 +498,7 @@ namespace OCA\Talk;
  *             hello-v2-token-key?: string,
  *         },
  *     },
- *     config-local: array<string, list<string>>,
+ *     config-local: array<string, non-empty-list<string>>,
  *     version: string,
  * }
  */
