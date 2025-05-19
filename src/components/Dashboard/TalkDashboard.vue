@@ -27,7 +27,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 
 import EventCard from './EventCard.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
@@ -49,7 +48,6 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = loadState('spreed', 'start_conversations')
 
-const isMobile = useIsMobile()
 const store = useStore()
 const router = useRouter()
 const dashboardStore = useDashboardStore()
@@ -146,16 +144,24 @@ async function startMeeting() {
  * Scrolls the event cards wrapper in the specified direction.
  * @param {string} direction - The direction to scroll ('backward' or 'forward').
  */
-function scroll({ direction }: { direction: 'backward' | 'forward' }) {
+function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) {
 	const scrollDirection = direction === 'backward' ? -1 : 1
 	if (eventCardsWrapper.value) {
+		const ITEM_WIDTH = 300 + 8 // 300px width + 8px gap
 		let scrollAmount = 0
-		const visibleItems = Math.floor(eventCardsWrapper.value.clientWidth / (300 + 4))
+		const visibleItems = Math.floor(eventCardsWrapper.value.clientWidth / ITEM_WIDTH)
 		if (visibleItems === 0) {
-			// FIXME: mobile view, scroll by 1 item
 			scrollAmount = eventCardsWrapper.value.clientWidth * scrollDirection
+		} else {
+			scrollAmount = visibleItems * ITEM_WIDTH * scrollDirection
+			// Arrow buttons are 34px wide
+			if (!backwardScrollable.value && scrollDirection === 1) {
+				scrollAmount -= 34
+			} else if (!forwardScrollable.value && scrollDirection === -1) {
+				scrollAmount += 34
+			}
 		}
-		scrollAmount = visibleItems * (300 + 4) * scrollDirection - 34 * scrollDirection
+
 		eventCardsWrapper.value.scrollBy({
 			left: scrollAmount,
 			behavior: 'smooth',
@@ -242,7 +248,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="tertiary"
 					:title="t('spreed', 'Scroll backward')"
 					:aria-label="t('spreed', 'Scroll backward')"
-					@click="scroll({direction: 'backward'})">
+					@click="scrollEventCards({direction: 'backward'})">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" />
 					</template>
@@ -252,7 +258,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="tertiary"
 					:title="t('spreed', 'Scroll forward')"
 					:aria-label="t('spreed', 'Scroll forward')"
-					@click="scroll({direction: 'forward'})">
+					@click="scrollEventCards({direction: 'forward'})">
 					<template #icon>
 						<IconArrowRight class="bidirectional-icon" />
 					</template>
@@ -360,10 +366,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	display: flex;
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
-
-	&--mobile {
-		flex-wrap: wrap;
-	}
+	flex-wrap: wrap;
 
 	:deep(.button-vue) {
 		height: var(--header-menu-item-height);
@@ -477,7 +480,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	flex-direction: column;
 	position: relative;
 	height: 225px;
-	width: 300px;
+	width: var(--section-width);
 	border-radius: var(--border-radius-large);
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
@@ -486,8 +489,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	line-height: 20px;
 	height: var(--content-height);
+	line-height: 20px;
 }
 
 .title {
@@ -515,5 +518,15 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	flex-direction: column;
 	gap: 4px;
 	align-items: center;
+}
+
+// Override NcButton styles for narrow screen size
+@media screen and (max-width: $breakpoint-mobile-small) {
+	.talk-dashboard__actions {
+		:deep(.button-vue),
+		:deep(.v-popper--theme-dropdown) {
+			width: 100%;
+		}
+	}
 }
 </style>
