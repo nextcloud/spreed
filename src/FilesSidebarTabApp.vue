@@ -37,7 +37,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 
 import LoadingComponent from './components/LoadingComponent.vue'
 
-import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
