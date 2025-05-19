@@ -511,6 +511,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                "X-Nextcloud-Federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
