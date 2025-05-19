@@ -67,6 +67,8 @@ jest.mock('@nextcloud/event-bus', () => ({
 	subscribe: jest.fn(),
 }))
 
+jest.spyOn(EventBus, 'emit')
+
 describe('participantsStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig = null
@@ -896,12 +898,11 @@ describe('participantsStore', () => {
 					prepareTestJoinWithMaxPingAge(41, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
-					testStoreConfig.actions.confirmForceJoinConversation = jest.fn()
 
 					store = new Vuex.Store(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
-					expect(testStoreConfig.actions.confirmForceJoinConversation).not.toHaveBeenCalled()
+					expect(EventBus.emit).not.toHaveBeenCalled()
 					expect(testStoreConfig.actions.forceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				})
 
@@ -909,13 +910,12 @@ describe('participantsStore', () => {
 					prepareTestJoinWithMaxPingAge(40, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
-					testStoreConfig.actions.confirmForceJoinConversation = jest.fn()
 
 					store = new Vuex.Store(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(testStoreConfig.actions.forceJoinConversation).not.toHaveBeenCalled()
-					expect(testStoreConfig.actions.confirmForceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
+					expect(EventBus.emit).toHaveBeenCalledWith('session-conflict-confirmation', TOKEN)
 				})
 			})
 
@@ -924,12 +924,11 @@ describe('participantsStore', () => {
 					prepareTestJoinWithMaxPingAge(61, PARTICIPANT.CALL_FLAG.IN_CALL)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
-					testStoreConfig.actions.confirmForceJoinConversation = jest.fn()
 
 					store = new Vuex.Store(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
-					expect(testStoreConfig.actions.confirmForceJoinConversation).not.toHaveBeenCalled()
+					expect(EventBus.emit).not.toHaveBeenCalled()
 					expect(testStoreConfig.actions.forceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				})
 
@@ -937,13 +936,12 @@ describe('participantsStore', () => {
 					prepareTestJoinWithMaxPingAge(60, PARTICIPANT.CALL_FLAG.IN_CALL)
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
-					testStoreConfig.actions.confirmForceJoinConversation = jest.fn()
 
 					store = new Vuex.Store(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(testStoreConfig.actions.forceJoinConversation).not.toHaveBeenCalled()
-					expect(testStoreConfig.actions.confirmForceJoinConversation).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
+					expect(EventBus.emit).toHaveBeenCalledWith('session-conflict-confirmation', TOKEN)
 				})
 			})
 		})
