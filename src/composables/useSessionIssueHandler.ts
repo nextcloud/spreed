@@ -4,6 +4,7 @@
  */
 
 import { nextTick, onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
+import type { DeepReadonly, Ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -18,10 +19,8 @@ import SessionStorage from '../services/SessionStorage.js'
 
 /**
  * Check whether the conflicting session detected or not, and navigate to another page
- *
- * @return {import('vue').Ref<boolean>}
  */
-export function useSessionIssueHandler() {
+export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 	const store = useStore()
 
 	const isLeavingAfterSessionIssue = ref(false)
@@ -38,7 +37,11 @@ export function useSessionIssueHandler() {
 		EventBus.off('deleted-session-detected', deletedSessionTriggered)
 	})
 
-	const redirectTo = (url) => {
+	/**
+	 * Reload page/app with the new URL
+	 * @param url - new URL
+	 */
+	function redirectTo(url: string) {
 		isLeavingAfterSessionIssue.value = true
 		SessionStorage.removeItem('joined_conversation')
 		// Need to delay until next tick, otherwise the PreventUnload is still being triggered,
@@ -56,25 +59,30 @@ export function useSessionIssueHandler() {
 		}
 	}
 
-	const handleSessionConflict = (token) => {
+	/**
+	 * Mark session conflict as pending and wait for user input to resolve
+	 * Pending conflict should not send 'leave' requests to signaling server / webserver
+	 * @param token - conversation token
+	 */
+	function handleSessionConflict(token: string) {
 		isLeavingAfterSessionIssue.value = true
 
+		// FIXME Vue3: spawnDialog supports Promise API
 		spawnDialog(ConfirmDialog, {
 			name: t('spreed', 'Duplicate session'),
 			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
 			buttons: [
 				{
 					label: t('spreed', 'Leave this page'),
+					callback: () => undefined,
 				},
 				{
 					label: t('spreed', 'Join here'),
 					type: 'primary',
-					callback: () => {
-						return true
-					},
+					callback: () => true,
 				}
 			],
-		}, (result) => {
+		}, (result?: boolean) => {
 			if (result) {
 				isLeavingAfterSessionIssue.value = false
 				store.dispatch('forceJoinConversation', { token })
@@ -84,13 +92,19 @@ export function useSessionIssueHandler() {
 		})
 	}
 
-	const duplicateSessionTriggered = () => {
-		// TODO: DESKTOP: should close the duplicated window instead of redirect
+	/**
+	 * Handle duplicate session
+	 * TODO: DESKTOP: should close the duplicated window instead of redirect
+	 */
+	function duplicateSessionTriggered() {
 		redirectTo('/apps/spreed/duplicate-session')
 	}
 
-	const deletedSessionTriggered = () => {
-		// workaround: force page refresh to kill stray WebRTC connections
+	/**
+	 * Handle deleted session
+	 * TODO: current workaround is to force page refresh to kill stray WebRTC connections
+	 */
+	function deletedSessionTriggered() {
 		redirectTo('/apps/spreed/not-found')
 	}
 
