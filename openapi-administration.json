@@ -101,13 +101,15 @@
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "features-local": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "config": {
                         "type": "object",
@@ -356,7 +358,8 @@
                             "type": "array",
                             "items": {
                                 "type": "string"
-                            }
+                            },
+                            "minItems": 1
                         }
                     },
                     "version": {
@@ -1494,8 +1497,23 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
-                                                    "additionalProperties": {
-                                                        "type": "object"
+                                                    "required": [
+                                                        "version"
+                                                    ],
+                                                    "properties": {
+                                                        "version": {
+                                                            "type": "string"
+                                                        },
+                                                        "warning": {
+                                                            "type": "string"
+                                                        },
+                                                        "features": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "minItems": 1
+                                                        }
                                                     }
                                                 }
                                             }

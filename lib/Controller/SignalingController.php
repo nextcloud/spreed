@@ -274,7 +274,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @param int $serverId ID of the signaling server
 	 * @psalm-param non-negative-int $serverId
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string, version?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{version: string, warning?: string, features?: non-empty-list<string>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string, version?: string}, array{}>
 	 *
 	 * 200: Welcome message returned
 	 * 404: Signaling server not found

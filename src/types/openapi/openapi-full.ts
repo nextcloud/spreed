@@ -11164,7 +11164,9 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: Record<string, never>;
+                                version: string;
+                                warning?: string;
+                                features?: string[];
                             };
                         };
                     };
