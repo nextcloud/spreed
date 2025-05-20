@@ -22,7 +22,8 @@
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<template #info>
-			<RightSidebarContent :is-user="!!getUserId"
+			<RightSidebarContent ref="sidebarContent"
+				:is-user="!!getUserId"
 				:mode="CONTENT_MODES[contentModeIndex]"
 				:state="showSearchMessagesTab ? 'search' : 'default'"
 				@update:mode="handleUpdateMode"
@@ -187,6 +188,7 @@ export default {
 
 	setup() {
 		const sidebar = ref(null)
+		const sidebarContent = ref(null)
 		const contentModeIndex = ref(0)
 
 		let throttleTimeout = null
@@ -199,7 +201,7 @@ export default {
 			throttleTimeout = setTimeout(() => {
 				clearTimeout(throttleTimeout)
 				throttleTimeout = null
-			}, 300 /* var(--animation-slow) */)
+			}, 100 /* delay after last fired event */)
 		}
 
 		useEventListener(sidebar, 'wheel', throttleHandleWheelEvent, { capture: true })
@@ -221,13 +223,9 @@ export default {
 				// Shrink before scrolling other content (block following scroll events)
 				event.preventDefault()
 			} else {
-				let target = event.target
-				while (target !== sidebar.value?.$el) {
-					if (target.scrollTop !== 0) {
-						// Expand only if other content is scrolled to the top
-						return
-					}
-					target = target.parentNode
+				if (!sidebarContent.value?.$el?.contains(event.target)) {
+					// Expand only if event happens within the RightSidebarContent component
+					return
 				}
 			}
 
@@ -238,6 +236,7 @@ export default {
 			CONTENT_MODES,
 			contentModeIndex,
 			sidebar,
+			sidebarContent,
 			sidebarStore: useSidebarStore()
 		}
 	},
