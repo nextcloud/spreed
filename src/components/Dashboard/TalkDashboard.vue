@@ -20,7 +20,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
+import { t, isRTL } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -47,6 +47,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = loadState('spreed', 'start_conversations')
+const isDirectionRTL = isRTL()
 
 const store = useStore()
 const router = useRouter()
@@ -84,16 +85,13 @@ onBeforeUnmount(() => {
 	}
 
 	if (eventCardsWrapper?.value) {
-		eventCardsWrapper.value.removeEventListener('scroll', updateScrollableFlags)
 		resizeObserver.disconnect()
 	}
 })
 
 watch(eventCardsWrapper, (newValue) => {
 	if (newValue) {
-		newValue.addEventListener('scroll', updateScrollableFlags)
 		resizeObserver.observe(newValue)
-		updateScrollableFlags()
 	}
 })
 
@@ -104,8 +102,8 @@ async function updateScrollableFlags() {
 	await nextTick()
 	if (eventCardsWrapper.value) {
 		const { scrollLeft, scrollWidth, clientWidth } = eventCardsWrapper.value
-		backwardScrollable.value = scrollLeft > 0
-		forwardScrollable.value = scrollLeft + clientWidth < scrollWidth - 10 // 10px tolerance
+		backwardScrollable.value = isDirectionRTL ? scrollLeft < 0 : scrollLeft > 0
+		forwardScrollable.value = (isDirectionRTL ? -1 : 1) * scrollLeft + clientWidth < scrollWidth - 10 // 10px tolerance
 	}
 }
 
@@ -145,7 +143,7 @@ async function startMeeting() {
  * @param {string} direction - The direction to scroll ('backward' or 'forward').
  */
 function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) {
-	const scrollDirection = direction === 'backward' ? -1 : 1
+	const scrollDirection = (direction === 'backward' ? -1 : 1) * (isDirectionRTL ? -1 : 1)
 	if (eventCardsWrapper.value) {
 		const ITEM_WIDTH = 300 + 8 // 300px width + 8px gap
 		let scrollAmount = 0
@@ -236,7 +234,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			class="talk-dashboard__event-cards-wrapper"
 			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
 			<div ref="eventCardsWrapper"
-				class="talk-dashboard__event-cards">
+				class="talk-dashboard__event-cards"
+				@scroll.passive="updateScrollableFlags">
 				<EventCard v-for="eventRoom in eventRooms"
 					:key="eventRoom.eventLink"
 					:event-room="eventRoom"
