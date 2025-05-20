@@ -138,6 +138,27 @@ class Event implements \JsonSerializable {
 		}
 	}
 
+	public function isAttendee(array $attendees, string $email): bool {
+		foreach ($attendees as $attendee) {
+			if (!isset($attendee[1]['PARTSTAT'])) {
+				continue;
+			}
+
+			// Calendar emails start with 'mailto:'
+			if (substr($attendee[0], 7) === $email) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	public function isOrganizer(array $organizer, string $email): bool {
+		// Calendar emails start with 'mailto:'
+		return substr($organizer[0], 7) === $email;
+	}
+
 	/**
 	 * Takes the room token, start and end time and attendees to build an identifier
 	 * If the identifier already exists, another event is happening at the same time

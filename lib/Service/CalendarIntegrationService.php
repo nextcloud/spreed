@@ -266,6 +266,19 @@ class CalendarIntegrationService {
 					continue;
 				}
 
+				if (!isset($event['ORGANIZER']) && !isset($event['ATTENDEE'])) {
+					// Don't show events without attendees
+					continue;
+				}
+
+				if (!$dashboardEvent->isOrganizer($event['ORGANIZER'], $otherParticipant->getEMailAddress()) && !$dashboardEvent->isAttendee($event['ATTENDEE'], $otherParticipant->getEMailAddress())) {
+					// Due to a bug in the caldav search, we will get a search result for recurring events
+					// even if the pattern does not match the current recurrence
+					// So make sure that $otherParticipant is an attendee on the current event
+					continue;
+				}
+
+				$dashboardEvent->generateAttendance($event['ATTENDEE']);
 				$dashboardEvent->setEventName($event['SUMMARY'][0] ?? '');
 				$dashboardEvent->setEventDescription($event['DESCRIPTION'][0] ?? null);
 				$dashboardEvent->addCalendar($calendar->getUri(), $calendar->getDisplayName(), $calendar->getDisplayColor());
@@ -286,10 +299,6 @@ class CalendarIntegrationService {
 					$dashboardEvent->setRoomDisplayName($eventRoom->getDisplayName($userId));
 					$dashboardEvent->setRoomAvatarVersion($this->avatarService->getAvatarVersion($eventRoom));
 					$dashboardEvent->setRoomActiveSince($eventRoom->getActiveSince()?->getTimestamp());
-				}
-
-				if (isset($event['ATTENDEE'])) {
-					$dashboardEvent->generateAttendance($event['ATTENDEE']);
 				}
 
 				if (isset($event['ATTACH'])) {
