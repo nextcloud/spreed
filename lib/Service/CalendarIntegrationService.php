@@ -56,6 +56,10 @@ class CalendarIntegrationService {
 		// Only use personal calendars
 		// Events for shared calendars where you are an ATTENDEE will be in your personal calendar
 		$calendars = array_filter($calendars, static function (ICalendar $calendar) {
+			if ($calendar->getUri() === 'contact_birthdays') {
+				// The birthday calendar does not contain events with a location matching a talk room.
+				return false;
+			}
 			if (method_exists($calendar, 'isShared')) {
 				return $calendar->isShared() === false;
 			}
