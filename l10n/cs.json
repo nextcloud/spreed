@@ -1216,12 +1216,15 @@
     "Allow to dial-in without a PIN" : "Umožnit zavolání do hovoru bez zadávání PIN kódu",
     "Ongoing" : "Probíhající",
     "Today" : "Dnes",
+    "_%n person accepted_::_%n people accepted_" : ["%n osoba přijala","%n lidé přijali","%n lidí přijalo","%n lidé přijaly"],
+    "_%n person declined_::_%n people declined_" : ["%n osoba odmítla","%n lidé odmítli","%n lidí odmítlo","%n lidé odmítli"],
     "With" : "S",
     "In" : "V",
     "Join" : "Připojit se",
     "View conversation" : "Zobrazit konverzaci",
     "Error while creating the conversation" : "Chyba při vytváření konverzace",
     "Hello, {displayName}" : "Dobrý den, {displayName}",
+    "Start meeting now" : "Zahájit schůzku nyní",
     "Create a new conversation" : "Vytvořit novou konverzaci",
     "Join open conversations" : "Přidat se do všem přístupných konverzací",
     "Call a phone number" : "Vytočit telefonní číslo",
@@ -1230,7 +1233,9 @@
     "Scroll forward" : "Posunout vpřed",
     "Open calendar" : "Otevřít kalendář",
     "Unread mentions" : "Označit zmínění jako nepřečtená",
+    "All caught up!" : "Vše dohnáno!",
     "Upcoming reminders" : "Nadcházející připomínky",
+    "No Reminders Scheduled" : "Nenaplánované žádné připomínky",
     "Start a group conversation" : "Zahájit skupinovou konverzaci",
     "Create conversation" : "Vytvořit konverzaci",
     "Enter your name" : "Zadejte své jméno",
@@ -1647,6 +1652,7 @@
     "Details" : "Podrobnosti",
     "Shared items" : "Sdílené položky",
     "Search in {name}" : "Hledat v {name}",
+    "{actor} in {conversation}" : "{actor} v {conversation}",
     "Search messages …" : "Hledat ve zprávách…",
     "Search options" : "Možnosti vyhledávání",
     "From User" : "Od uživatele",
@@ -2096,6 +2102,7 @@
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Nevarovat před problémy s konektivitou u volání s více než 2 účastníky",
     "Please try to reload the page" : "Zkuste prosím stránku znovu načíst",
     "Next call" : "Následující volání",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Federování Nextcloud Talk bylo zaktualizováno – načtěte stránku znovu"
+    "Nextcloud Talk Federation was updated, please reload the page" : "Federování Nextcloud Talk bylo zaktualizováno – načtěte stránku znovu",
+    "No reminders scheduled" : "Nenaplánované žádné připomínky"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
