@@ -51,6 +51,8 @@ const expirationDuration = computed(() => {
 	return 0
 })
 
+const isShown = computed(() => isModerator.value || expirationDuration.value !== 0)
+
 const descriptionLabel = computed(() => {
 	if (expirationDuration.value === 0) {
 		return t('spreed', 'Would you like to delete this conversation?')
@@ -109,7 +111,8 @@ async function showConfirmationDialog() {
 </script>
 
 <template>
-	<div class="conversation-actions"
+	<div v-if="isShown"
+		class="conversation-actions"
 		:class="{ 'conversation-actions--highlighted': props.isHighlighted }">
 		<p>{{ descriptionLabel }}</p>
 		<div v-if="isModerator"
