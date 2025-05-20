@@ -159,6 +159,10 @@ class Event implements \JsonSerializable {
 	public function handleCalendarAttachments(string $calendarName, array $attachments): void {
 		foreach ($attachments as $attachment) {
 			$params = $attachment[1];
+			if (!isset($params['X-NC-FILE-ID'])) {
+				continue;
+			}
+
 			$this->eventAttachments[$attachment[0]] = [
 				'calendars' => [$calendarName],
 				'fmttype' => $params['FMTTYPE']?->getValue(),

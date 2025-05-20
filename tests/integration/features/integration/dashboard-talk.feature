@@ -31,10 +31,10 @@ Feature: integration/dashboard-talk
       | eventName | eventDescription | invited | accepted | declined | tentative | eventAttachments | calendars | roomType |
       | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
       | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
-      | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
+      | Test      | Test             | 1       | null     | null     | null      | 1                | 1         | 0        |
     Then user "participant2" joins room "room1" with 200 (v4)
     Then user "participant2" sees the following entry when loading mutual events in room "room1" (v4)
       | eventName | eventDescription | invited | accepted | declined | tentative | eventAttachments | calendars | roomType |
       | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
       | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
-      | Test      | Test             | 1       | null     | null     | null      | 0                | 1         | 0        |
+      | Test      | Test             | 1       | null     | null     | null      | 1                | 1         | 0        |

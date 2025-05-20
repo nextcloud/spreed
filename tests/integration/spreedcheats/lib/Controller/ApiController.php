@@ -261,8 +261,21 @@ class ApiController extends OCSController {
 				'RSVP' => 'TRUE'
 			]);
 			$vevent->add('STATUS', 'CONFIRMED');
-
 			$vCalendar->add($vevent);
+			if ($i === 1) {
+				$vevent->add('ATTACH', '/index.php/f/3226', [
+					'FMTTYPE' => 'application/pdf',
+					'FILENAME' => 'test.pdf',
+				]);
+			}
+			if ($i === 2) {
+				$vevent->add('ATTACH', '/index.php/f/3226', [
+					'FMTTYPE' => 'application/pdf',
+					'FILENAME' => 'test.pdf',
+					'X-NC-FILE-ID' => '3226',
+					'X-NC-HAS-PREVIEW' => 'false'
+				]);
+			}
 			$cal = $vCalendar->serialize();
 			try {
 				/** @var ICreateFromString $calendar */
