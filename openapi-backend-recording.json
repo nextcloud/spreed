@@ -53,7 +53,8 @@
                             "conversations",
                             "federation",
                             "previews",
-                            "signaling"
+                            "signaling",
+                            "experiments"
                         ],
                         "properties": {
                             "attachments": {
@@ -280,6 +281,19 @@
                                     },
                                     "hello-v2-token-key": {
                                         "type": "string"
+                                    }
+                                }
+                            },
+                            "experiments": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
                                     }
                                 }
                             }

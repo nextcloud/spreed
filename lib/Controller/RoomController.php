@@ -190,6 +190,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
 		];
 
+		if ($this->userId !== null) {
+			$values[] = $this->appConfig->getAppValueInt('experiments_users');
+		} else {
+			$values[] = $this->appConfig->getAppValueInt('experiments_guests');
+		}
+
 		return [
 			'X-Nextcloud-Talk-Hash' => sha1(implode('#', $values)),
 		];
