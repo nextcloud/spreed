@@ -107,8 +107,6 @@ OC.L10N.register(
     "Tasks" : "Tasks",
     "Notes" : "Notes",
     "Reports" : "Hisobotlar",
-    "Loading" : "Yuklanmoqda",
-    "Close" : "Close",
-    "Password protect" : "Password protect"
+    "Close" : "Close"
 },
 "nplurals=1; plural=0;");

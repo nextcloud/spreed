@@ -128,7 +128,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
-    "Close" : "Lukk",
-    "Password protect" : "Vern med passord"
+    "Close" : "Lukk"
 },
 "nplurals=2; plural=(n != 1);");
