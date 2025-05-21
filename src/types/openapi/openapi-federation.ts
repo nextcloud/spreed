@@ -224,6 +224,10 @@ export type components = {
                     "session-ping-limit": number;
                     "hello-v2-token-key"?: string;
                 };
+                experiments: {
+                    /** Format: int64 */
+                    enabled: number;
+                };
             };
             "config-local": {
                 [key: string]: string[];

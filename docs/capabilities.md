@@ -188,6 +188,7 @@
 * `config => conversations => retention-instant-meetings` (local) - Number of days before an instant meeting conversation is deleted (`0` = disabled)
 * `config => conversations => retention-phone` (local) - Number of days before an inactive incoming or outgoing phone conversation is deleted (`0` = disabled)
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
+* `config => experiments => enabled` (local) - Bit flag of enabled experiments for clients
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests
 * `mutual-calendar-events` (local) - Whether Talk APIs offer mutual calendar events for 1:1 rooms
 * `upcoming-reminders` (local) - Whether the API to list upcoming reminders exists

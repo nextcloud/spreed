@@ -193,6 +193,9 @@ class Capabilities implements IPublicCapability {
 			'session-ping-limit',
 			'hello-v2-token-key',
 		],
+		'experiments' => [
+			'enabled',
+		],
 	];
 
 	protected ICache $talkCache;
@@ -277,6 +280,9 @@ class Capabilities implements IPublicCapability {
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
 					// 'hello-v2-token-key' => string,
+				],
+				'experiments' => [
+					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,

@@ -178,6 +178,9 @@ export const mockedCapabilities: Capabilities = {
 				'session-ping-limit': 200,
 				'hello-v2-token-key': '123',
 			},
+			experiments: {
+				enabled: 0,
+			},
 		},
 		'config-local': {
 			attachments: [
@@ -214,6 +217,9 @@ export const mockedCapabilities: Capabilities = {
 			signaling: [
 				'session-ping-limit',
 				'hello-v2-token-key',
+			],
+			experiments: [
+				'enabled',
 			],
 		},
 		version: '20.0.0-dev.0',

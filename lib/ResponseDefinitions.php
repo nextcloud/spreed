@@ -501,6 +501,9 @@ namespace OCA\Talk;
  *             session-ping-limit: int,
  *             hello-v2-token-key?: string,
  *         },
+ *         experiments: array{
+ *             enabled: non-negative-int,
+ *         },
  *     },
  *     config-local: array<string, non-empty-list<string>>,
  *     version: string,
