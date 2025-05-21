@@ -39,6 +39,7 @@ class Version3003Date20180720162342 extends SimpleMigrationStep {
 				'length' => 64,
 				'default' => '',
 			]);
+			$table->addIndex(['object_type', 'object_id'], 'tr_room_object');
 		}
 
 		return $schema;
