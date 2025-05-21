@@ -52,7 +52,7 @@ class FederationController extends OCSController {
 
 		// if none is given try the first Accept header
 		if ($format === null) {
-			$headers = $this->request->getHeader('Accept');
+			$headers = $this->request->getHeader('accept');
 			/**
 			 * Default value of
 			 * @see OCSController::buildResponse()

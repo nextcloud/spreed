@@ -25,6 +25,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\Federation\ICloudIdManager;
@@ -129,6 +130,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoCSRFRequired]
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
 		// Cache for 1 day
 		$cacheDuration = 60 * 60 * 24;
@@ -162,6 +164,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoCSRFRequired]
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
 	}
@@ -181,6 +184,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getUserProxyAvatarWithoutRoom(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, $darkTheme);
 	}
@@ -199,6 +203,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getUserProxyAvatarDarkWithoutRoom(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);
 	}
@@ -221,6 +226,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoCSRFRequired]
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getUserProxyAvatar(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
 		try {
 			$resolvedCloudId = $this->cloudIdManager->resolveCloudId($cloudId);
@@ -281,6 +287,7 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoCSRFRequired]
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getUserProxyAvatarDark(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);
 	}

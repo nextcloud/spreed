@@ -27,6 +27,7 @@ use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
@@ -136,12 +137,12 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 * @return bool
 	 */
 	private function validateBackendRequest(string $data): bool {
-		$random = $this->request->getHeader('Talk-Recording-Random');
+		$random = $this->request->getHeader('talk-recording-random');
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->debug('Missing random');
 			return false;
 		}
-		$checksum = $this->request->getHeader('Talk-Recording-Checksum');
+		$checksum = $this->request->getHeader('talk-recording-checksum');
 		if (empty($checksum)) {
 			$this->logger->debug('Missing checksum');
 			return false;
@@ -174,6 +175,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[BruteForceProtection(action: 'talkRecordingStatus')]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
@@ -380,6 +383,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
 	public function store(?string $owner): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
