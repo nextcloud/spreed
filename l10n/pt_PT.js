@@ -392,8 +392,6 @@ OC.L10N.register(
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
     "Reports" : "Relatórios",
-    "Loading" : "A carregar",
-    "Close" : "Fechar",
-    "Password protect" : "Proteger com palavra-passe"
+    "Close" : "Fechar"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

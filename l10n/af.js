@@ -334,7 +334,6 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
-    "Close" : "Sluit",
-    "Password protect" : "Beskerm met 'n wagwoord"
+    "Close" : "Sluit"
 },
 "nplurals=2; plural=(n != 1);");
