@@ -15,6 +15,7 @@ export type Events = {
 	[key: EventType]: unknown,
 	'audio-player-ended': number,
 	'conversations-received': { singleConversation: boolean },
+	'session-conflict-confirmation': string,
 	'deleted-session-detected': void,
 	'duplicate-session-detected': void,
 	'editing-message': void,
