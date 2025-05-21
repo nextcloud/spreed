@@ -10,10 +10,6 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
-import { spawnDialog } from '@nextcloud/vue/dist/Functions/dialog.js'
-
-import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
-
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
@@ -1058,7 +1054,7 @@ const actions = {
 					console.debug('Force joining automatically because the old session didn\'t ping for 40 seconds')
 					await context.dispatch('forceJoinConversation', { token })
 				} else {
-					await context.dispatch('confirmForceJoinConversation', { token })
+					EventBus.emit('session-conflict-confirmation', token)
 				}
 			} else if (error?.response?.status === 403 && error?.response?.data?.ocs?.data?.error === 'ban') {
 				EventBus.emit('forbidden-route', error.response.data.ocs.data)
@@ -1067,33 +1063,6 @@ const actions = {
 				showError(t('spreed', 'Failed to join the conversation.') + '\n' + messagePleaseTryToReload)
 			}
 		}
-	},
-
-	async confirmForceJoinConversation(context, { token }) {
-		// FIXME: UI stuff doesn't belong here, should rather
-		// be triggered using a store flag and a dedicated Vue component
-
-		spawnDialog(ConfirmDialog, {
-			name: t('spreed', 'Duplicate session'),
-			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
-			buttons: [
-				{
-					label: t('spreed', 'Leave this page'),
-				},
-				{
-					label: t('spreed', 'Join here'),
-					type: 'primary',
-					callback: () => {
-						context.dispatch('forceJoinConversation', { token })
-						return true
-					},
-				}
-			],
-		}, (result) => {
-			if (!result) {
-				EventBus.emit('duplicate-session-detected')
-			}
-		})
 	},
 
 	async forceJoinConversation(context, { token }) {
