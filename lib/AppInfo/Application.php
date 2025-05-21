@@ -82,6 +82,7 @@ use OCA\Talk\Federation\Proxy\TalkV1\Notifier\RoomModifiedListener as TalkV1Room
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
+use OCA\Talk\Listener\AddMissingIndicesListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\BotListener;
 use OCA\Talk\Listener\CalDavEventListener;
@@ -137,6 +138,7 @@ use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\Config\BeforePreferenceSetEvent;
+use OCP\DB\Events\AddMissingIndicesEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
@@ -349,6 +351,9 @@ class Application extends App implements IBootstrap {
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
 		$context->registerSearchProvider(MessageSearch::class);
+
+		// Fix database issues
+		$context->registerEventListener(AddMissingIndicesEvent::class, AddMissingIndicesListener::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
 
