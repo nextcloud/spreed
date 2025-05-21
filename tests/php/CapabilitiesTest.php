@@ -115,6 +115,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
+				['experiments_guests', 0, 0],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -194,6 +195,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 200,
+					],
+					'experiments' => [
+						'enabled' => 0,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
@@ -280,6 +284,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
+				['experiments_users', 0, 0],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -362,6 +367,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 50,
+					],
+					'experiments' => [
+						'enabled' => 0,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
