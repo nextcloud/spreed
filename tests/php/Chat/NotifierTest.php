@@ -184,20 +184,26 @@ class NotifierTest extends TestCase {
 
 	public static function dataShouldParticipantBeNotified(): array {
 		return [
-			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
-			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
-			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [], true],
-			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_USERS]], false],
-			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_FEDERATED_USERS]], true],
-			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT - 5, Attendee::ACTOR_USERS, 'test2', [], false],
-			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT + 5, Attendee::ACTOR_USERS, 'test2', [], true],
+			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [], false, Notifier::PRIORITY_NORMAL],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_USERS]], false, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_FEDERATED_USERS]], false, Notifier::PRIORITY_NORMAL],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT - 5, Attendee::ACTOR_USERS, 'test2', [], false, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT + 5, Attendee::ACTOR_USERS, 'test2', [], false, Notifier::PRIORITY_NORMAL],
+
+			// Marked as important, still blocked by session and being the author, but otherwise with PRIORITY_IMPORTANT
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], true, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [], true, Notifier::PRIORITY_IMPORTANT],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT - 5, Attendee::ACTOR_USERS, 'test2', [], true, Notifier::PRIORITY_NONE],
+			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT + 5, Attendee::ACTOR_USERS, 'test2', [], true, Notifier::PRIORITY_IMPORTANT],
 		];
 	}
 
 	/**
 	 * @dataProvider dataShouldParticipantBeNotified
 	 */
-	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $expected): void {
+	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $isImportant, int $expected): void {
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getActorType')
 			->willReturn($commentActorType);
@@ -208,6 +214,7 @@ class NotifierTest extends TestCase {
 		$attendee = Attendee::fromRow([
 			'actor_type' => $actorType,
 			'actor_id' => $actorId,
+			'important' => $isImportant,
 		]);
 		$session = null;
 		if ($sessionAge !== null) {
