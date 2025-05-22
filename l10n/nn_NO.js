@@ -78,6 +78,7 @@ OC.L10N.register(
     "More information" : "Meir informasjon",
     "Delete" : "Slett",
     "Notifications" : "Varsel",
+    "Important conversation" : "Viktig samtale",
     "Today" : "I dag",
     "Log in" : "Logg inn",
     "Remove from favorites" : "Remove from favorites",

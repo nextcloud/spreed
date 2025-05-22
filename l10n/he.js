@@ -447,6 +447,7 @@ OC.L10N.register(
     "Bridge saved" : "הגישור נשמר",
     "Log content" : "תוכן הרישום",
     "Notifications" : "התראות",
+    "Important conversation" : "דיון חשוב",
     "Today" : "היום",
     "Join" : "הצטרף",
     "Error while creating the conversation" : "שגיאה ביצירת הדיון",
