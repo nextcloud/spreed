@@ -35,6 +35,10 @@ export default function WebRTC(opts) {
 	}
 	let item
 
+	if (supportsInsertableStreams()) {
+		this.config.peerConnectionConfig.encodedInsertableStreams = true
+	}
+
 	// We also allow a 'logger' option. It can be any object that implements
 	// log, warn, and error methods.
 	// We log nothing by default, following "the rule of silence":
