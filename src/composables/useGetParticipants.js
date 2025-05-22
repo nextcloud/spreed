@@ -9,8 +9,12 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
-import { CONVERSATION } from '../constants.ts'
+import { CONFIG, CONVERSATION } from '../constants.ts'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useSessionStore } from '../stores/session.ts'
+
+const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.UPDATE_PARTICIPANTS
 
 /**
  * @param {import('vue').Ref} isActive whether the participants tab is active
@@ -19,6 +23,7 @@ import { EventBus } from '../services/EventBus.ts'
 export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 
 	// Encapsulation
+	const sessionStore = useSessionStore()
 	const store = useStore()
 	const token = computed(() => store.getters.getToken())
 	const conversation = computed(() => store.getters.conversation(token.value))
@@ -37,6 +42,13 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 */
 	function initialiseGetParticipants() {
 		EventBus.on('joined-conversation', onJoinedConversation)
+		if (experimentalUpdateParticipants) {
+			EventBus.on('signaling-users-in-room', handleUsersUpdated)
+			EventBus.on('signaling-users-joined', handleUsersUpdated)
+			EventBus.on('signaling-users-changed', handleUsersUpdated)
+			EventBus.on('signaling-users-left', handleUsersLeft)
+			EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
+		}
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
@@ -45,12 +57,29 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		subscribe('guest-promoted', onJoinedConversation)
 	}
 
+	const handleUsersUpdated = async ([users]) => {
+		if (sessionStore.updateSessions(token.value, users)) {
+			throttleUpdateParticipants()
+		}
+	}
+
+	const handleUsersLeft = ([sessionIds]) => {
+		sessionStore.updateSessionsLeft(token.value, sessionIds)
+	}
+	const handleUsersDisconnected = () => {
+		sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(token.value)
+	}
 	/**
 	 * Stop the get participants listeners
 	 *
 	 */
 	function stopGetParticipants() {
 		EventBus.off('joined-conversation', onJoinedConversation)
+		EventBus.off('signaling-users-in-room', handleUsersUpdated)
+		EventBus.off('signaling-users-joined', handleUsersUpdated)
+		EventBus.off('signaling-users-changed', handleUsersUpdated)
+		EventBus.off('signaling-users-left', handleUsersLeft)
+		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
