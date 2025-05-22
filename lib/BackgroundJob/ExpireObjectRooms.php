@@ -58,7 +58,8 @@ class ExpireObjectRooms extends TimedJob {
 		foreach ($rooms as $room) {
 			if ($objectType === Room::OBJECT_TYPE_EVENT) {
 				[, $endTime] = explode('#', $room->getObjectId());
-				if ($endTime < $now) {
+				if ($endTime >= $minimumLastActivity) {
+					// Event time is in the future, so don't even consider deleting
 					continue;
 				}
 			}
