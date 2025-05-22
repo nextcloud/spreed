@@ -9,7 +9,7 @@
 			<div class="new-conversation">
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
-						type="secondary"
+						type="tertiary"
 						:class="{'hidden-visually': isSearching}"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
@@ -1011,9 +1011,11 @@ export default {
 	// TODO replace with NcAppNavigationSearch
 	width: calc(100% - var(--default-grid-baseline) * 3 - var(--default-clickable-area) * 3);
 	display: flex;
+	margin-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 
 	&--expanded {
 		width: 100%;
+		margin-inline-start: 0;
 	}
 
 	:deep(.input-field) {
@@ -1023,6 +1025,7 @@ export default {
 
 .talk-home-button {
 	margin-inline-end: var(--default-grid-baseline);
+	position: absolute !important;
 }
 
 .conversations__filters {

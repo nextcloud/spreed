@@ -20,7 +20,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
+import { t, isRTL } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -47,6 +47,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = loadState('spreed', 'start_conversations')
+const isDirectionRTL = isRTL()
 
 const store = useStore()
 const router = useRouter()
@@ -84,16 +85,13 @@ onBeforeUnmount(() => {
 	}
 
 	if (eventCardsWrapper?.value) {
-		eventCardsWrapper.value.removeEventListener('scroll', updateScrollableFlags)
 		resizeObserver.disconnect()
 	}
 })
 
 watch(eventCardsWrapper, (newValue) => {
 	if (newValue) {
-		newValue.addEventListener('scroll', updateScrollableFlags)
 		resizeObserver.observe(newValue)
-		updateScrollableFlags()
 	}
 })
 
@@ -104,8 +102,8 @@ async function updateScrollableFlags() {
 	await nextTick()
 	if (eventCardsWrapper.value) {
 		const { scrollLeft, scrollWidth, clientWidth } = eventCardsWrapper.value
-		backwardScrollable.value = scrollLeft > 0
-		forwardScrollable.value = scrollLeft + clientWidth < scrollWidth - 10 // 10px tolerance
+		backwardScrollable.value = isDirectionRTL ? scrollLeft < 0 : scrollLeft > 0
+		forwardScrollable.value = (isDirectionRTL ? -1 : 1) * scrollLeft + clientWidth < scrollWidth - 10 // 10px tolerance
 	}
 }
 
@@ -144,16 +142,24 @@ async function startMeeting() {
  * Scrolls the event cards wrapper in the specified direction.
  * @param {string} direction - The direction to scroll ('backward' or 'forward').
  */
-function scroll({ direction }: { direction: 'backward' | 'forward' }) {
-	const scrollDirection = direction === 'backward' ? -1 : 1
+function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) {
+	const scrollDirection = (direction === 'backward' ? -1 : 1) * (isDirectionRTL ? -1 : 1)
 	if (eventCardsWrapper.value) {
+		const ITEM_WIDTH = 300 + 8 // 300px width + 8px gap
 		let scrollAmount = 0
-		const visibleItems = Math.floor(eventCardsWrapper.value.clientWidth / (300 + 4))
+		const visibleItems = Math.floor(eventCardsWrapper.value.clientWidth / ITEM_WIDTH)
 		if (visibleItems === 0) {
-			// FIXME: mobile view, scroll by 1 item
 			scrollAmount = eventCardsWrapper.value.clientWidth * scrollDirection
+		} else {
+			scrollAmount = visibleItems * ITEM_WIDTH * scrollDirection
+			// Arrow buttons are 34px wide
+			if (!backwardScrollable.value && scrollDirection === 1) {
+				scrollAmount -= 34
+			} else if (!forwardScrollable.value && scrollDirection === -1) {
+				scrollAmount += 34
+			}
 		}
-		scrollAmount = visibleItems * (300 + 4) * scrollDirection - 34 * scrollDirection
+
 		eventCardsWrapper.value.scrollBy({
 			left: scrollAmount,
 			behavior: 'smooth',
@@ -164,9 +170,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 <template>
 	<div class="talk-dashboard-wrapper">
-		<div class="talk-dashboard__header">
+		<h2 class="talk-dashboard__header">
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
-		</div>
+		</h2>
 		<div class="talk-dashboard__actions">
 			<NcPopover popup-role="dialog">
 				<template #trigger>
@@ -183,7 +189,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					aria-modal="true">
 					<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
 					<NcInputField id="room-name"
-						v-model="conversationName" />
+						v-model="conversationName"
+						:placeholder="t('spreed', 'Meeting')" />
 					<NcButton type="primary"
 						@click="startMeeting">
 						{{ t('spreed', 'Create and copy link') }}
@@ -220,14 +227,15 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
 		</div>
-		<div class="title">
+		<h3 class="title">
 			{{ t('spreed', 'Upcoming meetings') }}
-		</div>
+		</h3>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
 			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
 			<div ref="eventCardsWrapper"
-				class="talk-dashboard__event-cards">
+				class="talk-dashboard__event-cards"
+				@scroll.passive="updateScrollableFlags">
 				<EventCard v-for="eventRoom in eventRooms"
 					:key="eventRoom.eventLink"
 					:event-room="eventRoom"
@@ -239,7 +247,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="tertiary"
 					:title="t('spreed', 'Scroll backward')"
 					:aria-label="t('spreed', 'Scroll backward')"
-					@click="scroll({direction: 'backward'})">
+					@click="scrollEventCards({direction: 'backward'})">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" />
 					</template>
@@ -249,7 +257,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 					type="tertiary"
 					:title="t('spreed', 'Scroll forward')"
 					:aria-label="t('spreed', 'Scroll forward')"
-					@click="scroll({direction: 'forward'})">
+					@click="scrollEventCards({direction: 'forward'})">
 					<template #icon>
 						<IconArrowRight class="bidirectional-icon" />
 					</template>
@@ -276,7 +284,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
 				:class="{'loading': !conversationsInitialised}">
-				<span class="title">{{ t('spreed', 'Unread mentions') }}</span>
+				<h3 class="title">
+					{{ t('spreed', 'Unread mentions') }}
+				</h3>
 				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
 					class="talk-dashboard__conversations-list"
 					:conversations="filteredConversations"
@@ -292,7 +302,9 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 			</div>
 			<div v-if="supportsUpcomingReminders"
 				class="talk-dashboard__upcoming-reminders">
-				<span class="title">{{ t('spreed', 'Upcoming reminders') }}</span>
+				<h3 class="title">
+					{{ t('spreed', 'Upcoming reminders') }}
+				</h3>
 				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
 					<SearchMessageItem v-for="reminder in upcomingReminders"
 						:key="reminder.messageId"
@@ -331,10 +343,11 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 @import '../../assets/variables';
 
 .talk-dashboard-wrapper {
-	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
+	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 3); // '.title' height
 	--section-width: 300px;
 	--section-height: 300px;
-	padding-inline: calc(var(--default-grid-baseline) * 3);
+	--content-height: calc(100% - var(--title-height));
+	padding: 0 calc(var(--default-grid-baseline) * 3);
 	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
 	margin: 0 auto;
 }
@@ -349,9 +362,10 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__actions {
-	display: flex; // FIXME: should wrap on small screens (isMobile = true)?
+	display: flex;
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
+	flex-wrap: wrap;
 
 	:deep(.button-vue) {
 		height: var(--header-menu-item-height);
@@ -366,6 +380,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
 	scrollbar-width: none;
+	border-radius: var(--border-radius-large);
 }
 
 .talk-dashboard__event-cards-wrapper {
@@ -381,16 +396,6 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 		width: var(--default-clickable-area);
 		pointer-events: none;
 		z-index: 2;
-	}
-
-	&.backward-scrollable::before {
-		inset-inline-start: 0;
-		background: linear-gradient(to right, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
-	}
-
-	&.forward-scrollable::after {
-		inset-inline-end: 0;
-		background: linear-gradient(to left, rgba(var(--color-main-background-rgb), 1), rgba(var(--color-main-background-rgb), 0));
 	}
 
 	.button-slide {
@@ -423,13 +428,15 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__chats {
 	display: flex;
-	gap: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	padding-block-end: calc(var(--default-grid-baseline) * 2);
+	flex-wrap: wrap;
 }
 
 .talk-dashboard__unread-mentions {
-	max-height: var(--section-height);
+	height: var(--section-height);
 	width: var(--section-width);
+	flex-shrink: 0;
 
 	&.loading {
 		overflow: hidden;
@@ -437,24 +444,25 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 }
 
 .talk-dashboard__upcoming-reminders {
-	max-height: var(--section-height);
+	height: var(--section-height);
 	width: var(--section-width);
+	flex-shrink: 0;
 
 	&-list {
 		overflow-y: auto;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 }
 
 .upcoming-reminders {
 	&-list {
 		overflow-y: auto;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 
 	&__loading-placeholder {
 		overflow: hidden;
-		max-height: calc(100% - var(--title-height));
+		height: var(--content-height);
 	}
 }
 
@@ -462,6 +470,8 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	border-radius: var(--border-radius-large);
 	padding: calc(var(--default-grid-baseline) * 2);
 	margin: var(--default-grid-baseline) 0;
+	border: 3px solid var(--color-border);
+	height: var(--content-height);
 }
 
 .talk-dashboard__empty-event-card {
@@ -469,7 +479,7 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	flex-direction: column;
 	position: relative;
 	height: 225px;
-	width: 300px;
+	width: var(--section-width);
 	border-radius: var(--border-radius-large);
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
@@ -478,14 +488,13 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	height: 100%;
+	height: var(--content-height);
 	line-height: 20px;
-	overflow-y: auto;
-	max-height: calc(100% - var(--title-height));
 }
 
 .title {
 	font-weight: bold;
+	font-size: inherit;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -508,5 +517,15 @@ function scroll({ direction }: { direction: 'backward' | 'forward' }) {
 	flex-direction: column;
 	gap: 4px;
 	align-items: center;
+}
+
+// Override NcButton styles for narrow screen size
+@media screen and (max-width: $breakpoint-mobile-small) {
+	.talk-dashboard__actions {
+		:deep(.button-vue),
+		:deep(.v-popper--theme-dropdown) {
+			width: 100%;
+		}
+	}
 }
 </style>
