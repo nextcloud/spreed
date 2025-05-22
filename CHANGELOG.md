@@ -5,6 +5,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.0-rc.3 – 2025-05-22
+### Added
+- 📲 🙊 Add option to mark a conversation as sensitive or important
+  [#15175](https://github.com/nextcloud/spreed/issues/15175)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Fix missing push notifications for chat messages in important conversations
+  [#15180](https://github.com/nextcloud/spreed/issues/15180)
+- fix(dashboard): Make sure all events of the upcoming week are considered
+  [#15177](https://github.com/nextcloud/spreed/issues/15177)
+- fix(conversations): Make the "Local time" reactive in one-to-one conversations
+  [#15130](https://github.com/nextcloud/spreed/issues/15130)
+- fix(conversations): Only show events in one-to-one conversations when upcoming recurrences contain both participants
+  [#15163](https://github.com/nextcloud/spreed/issues/15163)
+- fix(conversations): Fix background job for conversation retention
+  [#15185](https://github.com/nextcloud/spreed/issues/15185)
+- fix(calls): Don't break the session when the user accidentally navigated to the same conversation
+  [#15170](https://github.com/nextcloud/spreed/issues/15170)
+- fix(calls): Make output device selection work on Safari
+  [#15142](https://github.com/nextcloud/spreed/issues/15142)
+
+## 20.1.7 – 2025-05-22
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(call): Fix missing call notification when SIP dial-in is starting a call
+  [#14991](https://github.com/nextcloud/spreed/issues/14991)
+- fix(chat): Improve regex of todo-list handling also uppercase X
+  [#14903](https://github.com/nextcloud/spreed/issues/14903)
+- fix(one-to-one): Add the other participant when sharing a file in one-to-one
+  [#14850](https://github.com/nextcloud/spreed/issues/14850)
+- fix(performance): Fix unnecessary user_status requests from avatar component
+  [#14934](https://github.com/nextcloud/spreed/issues/14934)
+
 ## 21.1.0-rc.2 – 2025-05-15
 ### Added
 - 🍱 Add a Talk Dashboard
