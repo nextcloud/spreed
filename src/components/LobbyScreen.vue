@@ -16,10 +16,11 @@
 
 			<p v-if="lobbyTimer"
 				class="lobby__countdown">
-				{{ message }} -
-				<span class="lobby__countdown relative-timestamp"
+				{{ message }}
+				<span v-if="relativeDate"
+					class="lobby__countdown relative-timestamp"
 					:title="startTime">
-					{{ relativeDate }}
+					- {{ relativeDate }}
 				</span>
 			</p>
 
@@ -45,7 +46,7 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
 
-import { futureRelativeTime } from '../utils/formattedTime.ts'
+import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
 export default {
 
@@ -77,6 +78,10 @@ export default {
 		},
 
 		relativeDate() {
+			if (Math.abs(Date.now() - this.lobbyTimer) > ONE_DAY_IN_MS) {
+				// No relative time
+				return ''
+			}
 			if (Math.abs(Date.now() - this.lobbyTimer) < 45000) {
 				return t('spreed', 'The meeting will start soon')
 			}
