@@ -126,3 +126,16 @@ window.URL.revokeObjectURL = jest.fn()
 
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
+
+// Make Jest fail on errors or warnings (like a11y warning from nextcloud/vue library)
+const originalWarn = global.console.warn
+console.warn = function(message) {
+	originalWarn.apply(console, arguments)
+	throw (message instanceof Error ? message : new Error(message))
+}
+
+const originalError = global.console.error
+console.error = function(message) {
+	originalError.apply(console, arguments)
+	throw (message instanceof Error ? message : new Error(message))
+}
