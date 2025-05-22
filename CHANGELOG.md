@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.7 – 2025-05-22
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(call): Fix missing call notification when SIP dial-in is starting a call
+  [#14991](https://github.com/nextcloud/spreed/issues/14991)
+- fix(chat): Improve regex of todo-list handling also uppercase X
+  [#14903](https://github.com/nextcloud/spreed/issues/14903)
+- fix(one-to-one): Add the other participant when sharing a file in one-to-one
+  [#14850](https://github.com/nextcloud/spreed/issues/14850)
+- fix(performance): Fix unnecessary user_status requests from avatar component
+  [#14934](https://github.com/nextcloud/spreed/issues/14934)
+
 ## 20.1.6 – 2025-04-10
 ### Changed
 - Update translations
