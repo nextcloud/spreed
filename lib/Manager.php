@@ -952,15 +952,15 @@ class Manager {
 	public function getExpiringRoomsForObjectType(string $objectType, int $minimumLastActivity): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
-		$helper->selectRoomsTable($query);
+		$helper->selectRoomsTable($query, '');
 		$query->from('talk_rooms')
-			->where($query->expr()->eq('object_type', $objectType))
-			->andWhere($query->expr()->lte('last_activity', $minimumLastActivity));
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->lte('last_activity', $query->createNamedParameter(new \DateTimeImmutable('@' . $minimumLastActivity), IQueryBuilder::PARAM_DATETIME_IMMUTABLE)));
 
 		if ($objectType === Room::OBJECT_TYPE_EVENT) {
 			// Ignore events that don't have a start and end date,
 			// as they are most likely from before the Talk 21.1 upgrade
-			$query->andWhere($query->expr()->like('object_id', '%' . $this->db->escapeLikeParameter('#') . '%'));
+			$query->andWhere($query->expr()->like('object_id', $query->createNamedParameter('%' . $this->db->escapeLikeParameter('#') . '%')));
 		}
 
 		$result = $query->executeQuery();
