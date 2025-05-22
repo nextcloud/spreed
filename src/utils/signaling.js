@@ -1436,6 +1436,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 		if (data.event.update.properties['participant-list']) {
 			console.debug('Room list event for participant list', data)
 			if (data.event.update.roomid === this.currentRoomToken) {
+				this._trigger('participantListUpdated')
 				this._trigger('participantListChanged')
 			} else {
 				// Participant list in another room changed, we don't really care
@@ -1502,6 +1503,7 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 				console.error('Unknown room participant event', data)
 			}
 		} else {
+			console.debug('Users changed', data.event.update.users || [])
 			// With updated user list
 			this._trigger('usersChanged', [data.event.update.users || []])
 		}

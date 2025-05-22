@@ -35,6 +35,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	let pendingChanges = true
 	let throttleFastUpdateTimeout = null
 	let throttleSlowUpdateTimeout = null
+	let throttleLongUpdateTimeout = null
 
 	/**
 	 * Initialise the get participants listeners
@@ -48,26 +49,31 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 			EventBus.on('signaling-users-changed', handleUsersUpdated)
 			EventBus.on('signaling-users-left', handleUsersLeft)
 			EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
+			EventBus.on('signaling-participant-list-updated', throttleUpdateParticipants)
+		} else {
+			// FIXME this works only temporary until signaling is fixed to be only on the calls
+			// Then we have to search for another solution. Maybe the room list which we update
+			// periodically gets a hash of all online sessions?
+			EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
 		}
-
-		// FIXME this works only temporary until signaling is fixed to be only on the calls
-		// Then we have to search for another solution. Maybe the room list which we update
-		// periodically gets a hash of all online sessions?
-		EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
 		subscribe('guest-promoted', onJoinedConversation)
 	}
 
 	const handleUsersUpdated = async ([users]) => {
 		if (sessionStore.updateSessions(token.value, users)) {
 			throttleUpdateParticipants()
+		} else {
+			throttleLongUpdate()
 		}
 	}
 
 	const handleUsersLeft = ([sessionIds]) => {
 		sessionStore.updateSessionsLeft(token.value, sessionIds)
+		throttleLongUpdate()
 	}
 	const handleUsersDisconnected = () => {
 		sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(token.value)
+		throttleLongUpdate()
 	}
 	/**
 	 * Stop the get participants listeners
@@ -80,6 +86,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		EventBus.off('signaling-users-changed', handleUsersUpdated)
 		EventBus.off('signaling-users-left', handleUsersLeft)
 		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
+		EventBus.off('signaling-participant-list-updated', throttleUpdateParticipants)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
@@ -104,7 +111,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		} else {
 			throttleSlowUpdate()
 		}
-	    pendingChanges = false
+		pendingChanges = false
 	}
 
 	const cancelableGetParticipants = async () => {
@@ -121,6 +128,8 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		throttleFastUpdateTimeout = null
 		clearTimeout(throttleSlowUpdateTimeout)
 		throttleSlowUpdateTimeout = null
+		clearTimeout(throttleLongUpdateTimeout)
+		throttleLongUpdateTimeout = null
 
 		await store.dispatch('fetchParticipants', { token: token.value })
 		fetchingParticipants = false
@@ -137,6 +146,12 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 			return
 		}
 		throttleSlowUpdateTimeout = setTimeout(cancelableGetParticipants, 15_000)
+	}
+	const throttleLongUpdate = () => {
+		if (throttleLongUpdateTimeout) {
+			return
+		}
+		throttleLongUpdateTimeout = setTimeout(cancelableGetParticipants, 60_000)
 	}
 
 	onMounted(() => {
