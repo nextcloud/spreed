@@ -101,6 +101,7 @@ appstore:
 	--exclude=README.md \
 	--exclude=.readthedocs.yaml \
 	--exclude=/recording \
+	--exclude=/rector.php \
 	--exclude=/redocly.yaml \
 	--exclude=/site \
 	--exclude=/src \
@@ -110,6 +111,7 @@ appstore:
 	--exclude=tests \
 	--exclude=tsconfig.json \
 	--exclude=vendor/bamarni \
+	--exclude=vendor/cweagans \
 	--exclude=vendor/bin \
 	--exclude=vendor-bin \
 	--exclude=webpack.common.config.js \
