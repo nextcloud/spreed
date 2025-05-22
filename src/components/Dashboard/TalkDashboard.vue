@@ -152,11 +152,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			scrollAmount = eventCardsWrapper.value.clientWidth * scrollDirection
 		} else {
 			scrollAmount = visibleItems * ITEM_WIDTH * scrollDirection
-			// Arrow buttons are 34px wide and offset by 1px -> subtract 33px
+			// Arrow buttons are 34px wide
 			if (!backwardScrollable.value && scrollDirection === 1) {
-				scrollAmount -= 33
+				scrollAmount -= 34
 			} else if (!forwardScrollable.value && scrollDirection === -1) {
-				scrollAmount += 33
+				scrollAmount += 34
 			}
 		}
 
@@ -350,8 +350,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	padding: 0 calc(var(--default-grid-baseline) * 3);
 	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
 	margin: 0 auto;
-	container-type: inline-size;
-	container-name: talk-dashboard;
 }
 
 .talk-dashboard__header {
@@ -413,11 +411,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		border-radius: var(--border-radius-large);
 
 		&.backward {
-			inset-inline-start: -1px;
+			inset-inline-start: 0;
 		}
 
 		&.forward {
-			inset-inline-end: -1px;
+			inset-inline-end: 0;
 		}
 	}
 }
@@ -490,8 +488,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	line-height: 20px;
 	height: var(--content-height);
+	line-height: 20px;
 }
 
 .title {
@@ -521,7 +519,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	align-items: center;
 }
 
-// Special breaking point 500px
+// Override NcButton styles for narrow screen size
 @media screen and (max-width: $breakpoint-mobile-small) {
 	.talk-dashboard__actions {
 		:deep(.button-vue),

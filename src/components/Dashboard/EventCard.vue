@@ -28,7 +28,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import type { DashboardEventRoom } from '../../types/index.ts'
-import { formattedTime } from '../../utils/formattedTime.ts'
+import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const props = defineProps<{
 	eventRoom: DashboardEventRoom,
@@ -58,7 +58,7 @@ const eventDateLabel = computed(() => {
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
 	const isToday = startDate.toDateString() === new Date().toDateString()
-	const isTomorrow = startDate.toDateString() === new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+	const isTomorrow = startDate.toDateString() === new Date(Date.now() + ONE_DAY_IN_MS).toDateString()
 
 	let time
 	if (startDate.toDateString() === endDate.toDateString()) {
@@ -135,15 +135,15 @@ function handleJoin({ call = false } = {}) {
 			'event-card--highlighted': isToday,
 			'event-card--in-call': hasCall,
 		}">
-		<span class="title">
+		<h4 class="title">
 			<span v-for="calendar in props.eventRoom.calendars"
 				:key="calendar.principalUri"
 				class="calendar-badge"
 				:style="{ backgroundColor: calendar.calendarColor ?? usernameToColor(calendar.principalUri).color }" />
-			<h4 class="title_text">
+			<span class="title_text">
 				{{ props.eventRoom.eventName }}
-			</h4>
-		</span>
+			</span>
+		</h4>
 		<p class="event-card__date secondary_text">
 			{{ eventDateLabel }}
 			<template v-if="hasCall">
@@ -312,14 +312,14 @@ function handleJoin({ call = false } = {}) {
 	align-items: center;
 	padding-inline-start: 6px; // revert negative margin
 	gap: var(--default-grid-baseline);
+	font-size: inherit;
+	margin: 0;
 
 	&_text {
 		font-weight: bold;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		font-size: inherit;
-		margin: 0;
 	}
 }
 
