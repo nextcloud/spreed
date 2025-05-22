@@ -59,3 +59,40 @@ Feature: conversation/delete-room
     When user "participant2" deletes room "room" with 404 (v4)
     Then user "participant1" is participant of room "room" (v4)
     And user "participant2" is not participant of room "room" (v4)
+
+  Scenario: Automatic retention of a past event conversation
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | objectType | event |
+      # 100 days in the past
+      | objectId | -8640000#-8643600 |
+    And user "participant1" is participant of room "room" (v4)
+    # Room is new
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    And user "participant1" is participant of room "room" (v4)
+    # Room is old but has a new message
+    And age room "room" 32 days
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    And user "participant1" is participant of room "room" (v4)
+    # Room is old and last message is old
+    And age room "room" 32 days
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    Then user "participant1" is not participant of room "room" (v4)
+
+  Scenario: No retention of a future event conversation
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | objectType | event |
+      # 100 days in the future
+      | objectId | 8640000#8643600 |
+    And user "participant1" is participant of room "room" (v4)
+    # Room is new
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    And user "participant1" is participant of room "room" (v4)
+    # Still aging to put the last activity into the past
+    And age room "room" 32 days
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    Then user "participant1" is participant of room "room" (v4)
