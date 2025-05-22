@@ -1473,7 +1473,6 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 			})
 			break
 		}
-		// eslint-disable-next-line no-fallthrough
 	case 'disinvite':
 		if (data.event?.disinvite?.roomid === this.currentRoomToken) {
 			if (this._isRejoiningConversationWithNewSession) {

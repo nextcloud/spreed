@@ -5,7 +5,6 @@
  * Based on code from https://github.com/jitsi/jitsi-meet
  */
 
-/* eslint-disable no-bitwise */
 /* global BigInt */
 
 import { deriveKeys, importKey, ratchet } from './crypto-utils';
@@ -94,7 +93,7 @@ export class Context {
 
         this._cryptoKeyRing[this._currentKeyIndex] = keys;
 
-        this._sendCount = BigInt(0); // eslint-disable-line new-cap
+        this._sendCount = BigInt(0);
     }
 
     /**

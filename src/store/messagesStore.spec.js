@@ -11,7 +11,6 @@ import Vuex from 'vuex'
 import { showError } from '@nextcloud/dialogs'
 
 import storeConfig from './storeConfig.js'
-// eslint-disable-next-line import/order -- required for testing
 import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE, CHAT,
