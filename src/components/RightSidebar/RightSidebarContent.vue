@@ -169,6 +169,20 @@ function joinFields(firstSubstring?: string | null, secondSubstring?: string | n
 function onError() {
 	profileImageFailed.value = true
 }
+
+/**
+ * Handles image click (alternative to scroll)
+ */
+function handleImageClick() {
+	emit('update:mode', props.mode === 'preview' ? 'full' : 'preview')
+}
+
+/**
+ * Handles header click (alternative to scroll)
+ */
+function handleHeaderClick() {
+	emit('update:mode', props.mode === 'preview' ? 'compact' : 'preview')
+}
 </script>
 
 <template>
@@ -207,14 +221,15 @@ function onError() {
 						:src="avatarUrl"
 						:alt="conversation.displayName"
 						@error="onError"
-						@click="mode === 'preview' && emit('update:mode', 'full')">
+						@click="handleImageClick">
 				</div>
 				<!-- User / conversation profile information -->
-				<div class="content__header">
+				<div class="content__header animated">
 					<NcAppSidebarHeader class="content__name content__name--has-actions"
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
-						:title="sidebarTitle" />
+						:title="sidebarTitle"
+						@click.native="handleHeaderClick" />
 					<div v-if="mode !== 'compact' && profileInfo"
 						class="content__info">
 						<span v-for="row in profileInformation"
@@ -399,6 +414,7 @@ function onError() {
 		border-radius: 50%;
 		object-fit: cover;
 		object-position: top;
+		cursor: pointer;
 
 		&.icon {
 			background-size: 50%;
@@ -431,6 +447,7 @@ function onError() {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
+			cursor: pointer;
 
 			&--has-actions {
 				padding-inline-end: calc(var(--actions-offset) + var(--app-sidebar-close-button-offset));
