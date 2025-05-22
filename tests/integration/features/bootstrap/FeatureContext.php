@@ -4441,6 +4441,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Given('/^age room "([^"]+)" (\d+) (hours|days)$/')]
+	public function ageRoomForRetentionAndExpiration(string $identifier, int $time, string $unit): void {
+		$this->setCurrentUser('admin');
+		if ($unit === 'days') {
+			$time *= 24;
+		}
+
+		$this->sendRequest('POST', '/apps/spreedcheats/age', [
+			'token' => self::$identifierToToken[$identifier],
+			'hours' => $time,
+		]);
+
+		var_dump($this->response->getBody()->getContents());
+		$this->assertStatusCode($this->response, 200);
+	}
+
 	#[Given('/^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/')]
 	public function createCalendarEntriesWithRoom(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);

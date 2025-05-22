@@ -59,3 +59,23 @@ Feature: conversation/delete-room
     When user "participant2" deletes room "room" with 404 (v4)
     Then user "participant1" is participant of room "room" (v4)
     And user "participant2" is not participant of room "room" (v4)
+
+  Scenario: Automatic retention
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | objectType | event |
+      | objectId | 1740204000#1740207600 |
+    And user "participant1" is participant of room "room" (v4)
+    # Room is new
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    And user "participant1" is participant of room "room" (v4)
+    # Room is old but has a new message
+    And age room "room" 32 days
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    And user "participant1" is participant of room "room" (v4)
+    # Room is old and last message is old
+    And age room "room" 32 days
+    When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
+    Then user "participant1" is not participant of room "room" (v4)
