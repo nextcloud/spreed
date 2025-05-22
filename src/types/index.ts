@@ -4,7 +4,7 @@
  */
 import type { AxiosError } from '@nextcloud/axios'
 
-import type { AutocompleteResult } from './openapi/core/index.ts'
+import type { AutocompleteResult } from './core.ts'
 import type {
 	components as componentsAdmin,
 	operations as operationsAdmin,
@@ -348,7 +348,7 @@ export type getMentionsResponse = ApiResponse<operations['chat-mentions']['respo
 // AI Summary
 export type {
 	TaskProcessingResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Teams (circles)
 export type TeamProbe = {
@@ -375,7 +375,7 @@ export type {
 	OutOfOfficeResponse,
 	UpcomingEvent,
 	UpcomingEventsResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 export type DashboardEvent = components['schemas']['DashboardEvent']
 
@@ -394,7 +394,7 @@ export type {
 	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Settings
 export type setSipSettingsParams = Required<operationsAdmin['settings-setsip-settings']>['requestBody']['content']['application/json']
@@ -417,24 +417,24 @@ export type {
 	AutocompleteResult,
 	AutocompleteParams,
 	AutocompleteResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Unified Search API
 export type {
 	SearchMessagePayload,
 	UnifiedSearchResultEntry,
 	UnifiedSearchResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Files API
 export type {
 	getFileTemplatesListResponse,
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Files sharing API
 export type {
 	createFileShareParams,
 	createFileShareResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
