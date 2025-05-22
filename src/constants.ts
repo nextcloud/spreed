@@ -9,6 +9,14 @@ export const CONFIG = {
 		REQUIRED: 1,
 		OPTIONAL: 2,
 	},
+	EXPERIMENTAL: {
+		/**
+		 * Since 21.1.0
+		 * Instead of refreshing the participant list repeatingly,
+		 * the data is generated from received signaling messages
+		 */
+		UPDATE_PARTICIPANTS: 1,
+	},
 } as const
 
 export const SIGNALING = {
