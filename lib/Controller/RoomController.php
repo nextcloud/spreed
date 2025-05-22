@@ -1942,7 +1942,20 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $headers);
+		$userStatuses = null;
+		if ($this->userId !== null
+			&& $this->appManager->isEnabledForUser('user_status')
+			&& $room->getType() === Room::TYPE_ONE_TO_ONE) {
+			$actorIds = json_decode($room->getName(), true) ?? [];
+			if (is_array($actorIds)) {
+				$actorIds = array_filter($actorIds, fn ($actorId) => $actorId !== $this->userId);
+				if (!empty($actorIds)) {
+					$userStatuses = $this->statusManager->getUserStatuses($actorIds);
+				}
+			}
+		}
+
+		return new DataResponse($this->formatRoom($room, $participant, $userStatuses), Http::STATUS_OK, $headers);
 	}
 
 	/**
