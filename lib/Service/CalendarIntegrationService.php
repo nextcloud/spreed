@@ -84,7 +84,7 @@ class CalendarIntegrationService {
 		$events = [];
 		/** @var ICalendar $calendar */
 		foreach ($calendars as $calendar) {
-			$searchResult = $calendar->search($pattern, $searchProperties, $options, 10);
+			$searchResult = $calendar->search($pattern, $searchProperties, $options, 100);
 			foreach ($searchResult as $calendarEvent) {
 				// Find first recurrence in the future
 				$event = null;
@@ -171,6 +171,9 @@ class CalendarIntegrationService {
 				}
 
 				$events[$dashboardEvent->generateEventIdentifier()] = $dashboardEvent;
+				if (count($events) === 10) {
+					break;
+				}
 			}
 		}
 
