@@ -57,20 +57,45 @@ const eventDateLabel = computed(() => {
 	}
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
-	const startDateString = startDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
-	const endDateString = endDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
-	const dateString = isToday.value
-		? t('spreed', 'Today')
-		: moment(startDate).calendar(null, {
-			nextDay: '[Tomorrow]',
-			nextWeek: 'dddd',
-			sameElse: 'dddd'
-		})
-	return t('spreed', '{dateString} {startDateString} - {endDateString}', {
-		dateString,
-		startDateString,
-		endDateString,
-	})
+	const isToday = startDate.toDateString() === new Date().toDateString()
+	const isTomorrow = startDate.toDateString() === new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+
+	let time
+	if (startDate.toDateString() === endDate.toDateString()) {
+		if (isToday || isTomorrow) {
+			// show the time only
+			const timeRange = Intl.DateTimeFormat(getCanonicalLocale(), {
+				hour: 'numeric',
+				minute: 'numeric',
+			}).formatRange(startDate, endDate)
+
+			const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+
+			// TRANSLATORS: e.g. "Tomorrow 10:00 - 11:00"
+			time = t('spreed', '{dayPrefix} {dateTime}', {
+				dayPrefix: isToday ? relativeFormatter.format(0, 'day') : relativeFormatter.format(1, 'day'),
+				dateTime: timeRange
+			})
+		} else {
+			time = Intl.DateTimeFormat(getCanonicalLocale(), {
+				weekday: 'long',
+				hour: 'numeric',
+				minute: 'numeric',
+			}).formatRange(startDate, endDate)
+		}
+	} else {
+		// show the month and the year as well
+		time = Intl.DateTimeFormat(getCanonicalLocale(), {
+			month: 'long',
+			year: 'numeric',
+			day: '2-digit',
+			hour: 'numeric',
+			minute: 'numeric',
+		}).formatRange(startDate, endDate)
+
+	}
+
+	return time
 })
 
 const hasAttachments = computed(() => {
@@ -214,6 +239,10 @@ function handleJoin({ call = false } = {}) {
 	&__date {
 		display: flex;
 		gap: 2px;
+
+		&::first-letter {
+			text-transform: capitalize;
+		}
 
 		& > * {
 			white-space: nowrap;
