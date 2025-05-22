@@ -13,6 +13,7 @@
 						:class="{'hidden-visually': isSearching}"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
+						:aria-label="t('spreed', 'Talk home')"
 						@click="showTalkDashboard">
 						<template #icon>
 							<IconHome :size="20" />
