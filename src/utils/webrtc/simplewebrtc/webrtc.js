@@ -5,7 +5,7 @@ import mockconsole from 'mockconsole'
  * SPDX-License-Identifier: MIT
  */
 import util from 'util'
-import { supportsWebRTC } from '../../browserCheck.ts'
+import { supportsInsertableStreams, supportsWebRTC } from '../../browserCheck.ts'
 import localMedia from './localmedia.js'
 import Peer from './peer.js'
 
@@ -34,6 +34,10 @@ export default function WebRTC(opts) {
 		},
 	}
 	let item
+
+	if (supportsInsertableStreams()) {
+		this.config.peerConnectionConfig.encodedInsertableStreams = true
+	}
 
 	// We also allow a 'logger' option. It can be any object that implements
 	// log, warn, and error methods.

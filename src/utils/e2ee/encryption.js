@@ -8,17 +8,12 @@ import base64js from 'base64-js'
 import debounce from 'debounce'
 import { v4 as uuidv4 } from 'uuid'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { supportsEncodedTransform, supportsInsertableStreams } from '../browserCheck.ts'
 import { isEqualJson } from '../utils.ts'
 import { importKey, ratchet } from './crypto-utils.js'
 import Deferred from './JitsiDeferred.js'
 import E2EEcontext from './JitsiE2EEContext.js'
 import initializeOlm from './olm.js'
-
-const supportsTransform
-	// Firefox
-	= (window.RTCRtpScriptTransform && window.RTCRtpSender && 'transform' in RTCRtpSender.prototype)
-	// Chrome
-		|| (window.RTCRtpReceiver && 'createEncodedStreams' in RTCRtpReceiver.prototype && window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype)
 
 // Period which we'll wait before updating / rotating our keys when a participant
 // joins or leaves.
@@ -40,7 +35,7 @@ class Encryption {
 	 * @async
 	 */
 	static async isSupported() {
-		if (!supportsTransform) {
+		if (!supportsEncodedTransform() && !supportsInsertableStreams()) {
 			throw new Error('stream transform is not supported')
 		}
 
