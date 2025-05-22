@@ -77,3 +77,29 @@ export function checkBrowser() {
 		showError(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
 	}
 }
+
+/**
+ * Check if the browser supports WebRTC Encoded Transform (i.e. Firefox).
+ */
+export function supportsEncodedTransform() {
+	return (window.RTCRtpScriptTransform && window.RTCRtpSender && 'transform' in RTCRtpSender.prototype)
+}
+
+/**
+ * Check if the browser supports insertable streams (i.e. Chromium).
+ */
+export function supportsInsertableStreams() {
+	if (!(window.RTCRtpReceiver && 'createEncodedStreams' in RTCRtpReceiver.prototype && window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype)) {
+		return false
+	}
+
+	// Feature-detect transferable streams which we need to operate in a worker.
+	// See https://groups.google.com/a/chromium.org/g/blink-dev/c/1LStSgBt6AM/m/hj0odB8pCAAJ
+	const stream = new ReadableStream()
+	try {
+		window.postMessage(stream, '*', [stream])
+		return true
+	} catch {
+		return false
+	}
+}

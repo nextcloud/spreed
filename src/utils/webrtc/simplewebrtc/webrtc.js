@@ -10,6 +10,7 @@ import webrtcSupport from 'webrtcsupport'
 
 import localMedia from './localmedia.js'
 import Peer from './peer.js'
+import { supportsInsertableStreams } from '../../browserCheck.ts'
 
 /**
  * @param {object} opts the options object.
@@ -36,6 +37,10 @@ export default function WebRTC(opts) {
 		},
 	}
 	let item
+
+	if (supportsInsertableStreams()) {
+		this.config.peerConnectionConfig.encodedInsertableStreams = true
+	}
 
 	// We also allow a 'logger' option. It can be any object that implements
 	// log, warn, and error methods.
