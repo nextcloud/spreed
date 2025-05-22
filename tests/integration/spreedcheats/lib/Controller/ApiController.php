@@ -125,17 +125,35 @@ class ApiController extends OCSController {
 
 	public function ageChat(string $token, int $hours): DataResponse {
 		$query = $this->db->getQueryBuilder();
-		$query->select('id')
+		$query->select('id', 'last_activity', 'object_id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		$result = $query->executeQuery();
-		$roomId = (int)$result->fetchOne();
+		$room = $result->fetch();
 		$result->closeCursor();
 
-		if (!$roomId) {
+		if (!$room) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
+		$roomId = (int)$room['id'];
+
+		$lastActivity = new \DateTime($room['last_activity']);
+		$lastActivity->sub(new \DateInterval('PT' . $hours . 'H'));
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_activity', $update->createNamedParameter($lastActivity, IQueryBuilder::PARAM_DATETIME_MUTABLE))
+			->where($update->expr()->eq('id', $update->createNamedParameter($roomId)));
+
+		$eventConversationObjectId = explode('#', $room['object_id']);
+		if (count($eventConversationObjectId) === 2) {
+			$eventConversationObjectId[0] -= $hours * 3600;
+			$eventConversationObjectId[1] -= $hours * 3600;
+			$update->set('object_id', $update->createNamedParameter(implode('#', $eventConversationObjectId)));
+		}
+		$update->executeStatement();
+
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('comments')
