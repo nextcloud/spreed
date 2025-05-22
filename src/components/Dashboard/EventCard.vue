@@ -28,7 +28,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import type { DashboardEventRoom } from '../../types/index.ts'
-import { formattedTime } from '../../utils/formattedTime.ts'
+import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const props = defineProps<{
 	eventRoom: DashboardEventRoom,
@@ -57,17 +57,45 @@ const eventDateLabel = computed(() => {
 	}
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
-	const startDateString = startDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
-	const endDateString = endDate.toLocaleString(getCanonicalLocale(), { hour: '2-digit', minute: '2-digit' })
-	const dateString = isToday.value
-		? t('spreed', 'Today')
-		: moment(startDate).calendar(null, {
-			nextDay: '[Tomorrow]',
-			nextWeek: 'dddd',
-			sameElse: 'dddd'
-		})
-	// FIXME should be a translated string
-	return `${dateString} ${startDateString} - ${endDateString}`
+	const isToday = startDate.toDateString() === new Date().toDateString()
+	const isTomorrow = startDate.toDateString() === new Date(Date.now() + ONE_DAY_IN_MS).toDateString()
+
+	let time
+	if (startDate.toDateString() === endDate.toDateString()) {
+		if (isToday || isTomorrow) {
+			// show the time only
+			const timeRange = Intl.DateTimeFormat(getCanonicalLocale(), {
+				hour: 'numeric',
+				minute: 'numeric',
+			}).formatRange(startDate, endDate)
+
+			const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+
+			// TRANSLATORS: e.g. "Tomorrow 10:00 - 11:00"
+			time = t('spreed', '{dayPrefix} {dateTime}', {
+				dayPrefix: isToday ? relativeFormatter.format(0, 'day') : relativeFormatter.format(1, 'day'),
+				dateTime: timeRange
+			})
+		} else {
+			time = Intl.DateTimeFormat(getCanonicalLocale(), {
+				weekday: 'long',
+				hour: 'numeric',
+				minute: 'numeric',
+			}).formatRange(startDate, endDate)
+		}
+	} else {
+		// show the month and the year as well
+		time = Intl.DateTimeFormat(getCanonicalLocale(), {
+			month: 'long',
+			year: 'numeric',
+			day: '2-digit',
+			hour: 'numeric',
+			minute: 'numeric',
+		}).formatRange(startDate, endDate)
+
+	}
+
+	return time
 })
 
 const hasAttachments = computed(() => {
@@ -107,7 +135,7 @@ function handleJoin({ call = false } = {}) {
 			'event-card--highlighted': isToday,
 			'event-card--in-call': hasCall,
 		}">
-		<span class="title">
+		<h4 class="title">
 			<span v-for="calendar in props.eventRoom.calendars"
 				:key="calendar.principalUri"
 				class="calendar-badge"
@@ -115,16 +143,16 @@ function handleJoin({ call = false } = {}) {
 			<span class="title_text">
 				{{ props.eventRoom.eventName }}
 			</span>
-		</span>
+		</h4>
 		<p class="event-card__date secondary_text">
-			{{ eventDateLabel }}
+			<span>{{ eventDateLabel }}</span>
 			<template v-if="hasCall">
 				<IconVideo :size="20" :fill-color="'#E9322D'" />
 				<span>{{ elapsedTime }}</span>
 			</template>
 		</p>
 		<span class="event-card__room secondary_text">
-			<span>
+			<span class="event-card__room-prefix">
 				{{ props.eventRoom.roomType === CONVERSATION.TYPE.ONE_TO_ONE ? t('spreed', 'With') : t('spreed', 'In') }}
 			</span>
 			<NcChip type="tertiary"
@@ -160,7 +188,7 @@ function handleJoin({ call = false } = {}) {
 			<NcButton type="tertiary"
 				@click="handleJoin">
 				<template #icon>
-					<NcIconSvgWrapper :svg="IconTalk" />
+					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
@@ -212,6 +240,10 @@ function handleJoin({ call = false } = {}) {
 		display: flex;
 		gap: 2px;
 
+		& > span::first-letter {
+			text-transform: capitalize;
+		}
+
 		& > * {
 			white-space: nowrap;
 			overflow: hidden;
@@ -234,11 +266,12 @@ function handleJoin({ call = false } = {}) {
 		align-items: center;
 		gap: var(--default-grid-baseline);
 
-		& > span {
+		&-prefix {
 			line-height: var(--chip-size);
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			flex-shrink: 0;
 		}
 	}
 
@@ -279,6 +312,8 @@ function handleJoin({ call = false } = {}) {
 	align-items: center;
 	padding-inline-start: 6px; // revert negative margin
 	gap: var(--default-grid-baseline);
+	font-size: inherit;
+	margin: 0;
 
 	&_text {
 		font-weight: bold;
