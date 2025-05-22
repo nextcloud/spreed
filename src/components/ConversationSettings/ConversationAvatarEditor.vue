@@ -127,7 +127,6 @@ import ConversationIcon from '../ConversationIcon.vue'
 
 import { AVATAR } from '../../constants.ts'
 
-// eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
 
 const validMimeTypes = ['image/png', 'image/jpeg']

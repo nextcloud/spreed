@@ -69,7 +69,6 @@ describe('VideoVue.vue', () => {
 		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
-		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
 		const webRtcMock = {

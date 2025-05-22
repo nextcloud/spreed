@@ -13,7 +13,6 @@ import Vuex from 'vuex'
 import { emit } from '@nextcloud/event-bus'
 
 import storeConfig from './storeConfig.js'
-// eslint-disable-next-line import/order -- required for testing
 import participantsStore from './participantsStore.js'
 import { PARTICIPANT } from '../constants.ts'
 import {

@@ -16,7 +16,6 @@ describe('actorStore', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(cloneDeep(actorStore))
 	})
 

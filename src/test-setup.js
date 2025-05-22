@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// eslint-disable-next-line
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 

@@ -143,8 +143,6 @@ export default {
 				simd: VirtualBackground.isWasmSimd(),
 			}
 
-			/* eslint-disable no-undef, camelcase */
-
 			// When the worker is loaded from Talk its URL starts with
 			// "apps/spreed/js". However, when it is loaded from the
 			// administration settings its URL starts with "apps/talk/js"
@@ -162,8 +160,6 @@ export default {
 			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
 
 			__webpack_public_path__ = __webpack_public_path__saved
-
-			/* eslint-enable no-undef, camelcase */
 
 			jitsiStreamBackgroundEffect.load().then(() => {
 				this.virtualBackgroundLoaded = true
