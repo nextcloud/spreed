@@ -56,7 +56,7 @@
 			class="poll-editor__option">
 			<NcTextField ref="pollOption"
 				v-model="pollForm.options[index]"
-				:label="t('spreed', 'Answer {option}', {option: index + 1})" />
+				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
 			<NcButton v-if="pollForm.options.length > 2"
 				type="tertiary"
 				:aria-label="t('spreed', 'Delete poll option')"

@@ -82,7 +82,7 @@ type NotificationAction = {
 }
 
 type RichObjectParameter = components['schemas']['RichObjectParameter']
-type RichObject<T extends keyof RichObjectParameter = 'id'|'name'|'type'> = Pick<RichObjectParameter, 'id'|'name'|'type'|T>
+type RichObject<T extends keyof RichObjectParameter = 'id' | 'name' | 'type'> = Pick<RichObjectParameter, 'id' | 'name' | 'type' | T>
 export type Notification<T = Record<string, RichObject & Record<string, unknown>>> = {
 	notificationId: number,
 	app: string,
@@ -158,7 +158,7 @@ export type getListedConversationsResponse = ApiResponse<operations['room-get-li
 
 export type createConversationParams = Required<operations['room-create-room']>['requestBody']['content']['application/json']
 export type createConversationResponse = ApiResponse<operations['room-create-room']['responses'][200]['content']['application/json']>
-export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType'|'roomName'|'password'|'objectType'|'objectId'|'invite'|'source'>
+export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType' | 'roomName' | 'password' | 'objectType' | 'objectId' | 'invite' | 'source'>
 export type deleteConversationResponse = ApiResponse<operations['room-delete-room']['responses'][200]['content']['application/json']>
 export type unbindConversationFromObjectResponse = ApiResponse<operations['room-unbind-room-from-object']['responses'][200]['content']['application/json']>
 
@@ -221,8 +221,8 @@ export type importEmailsParams = Required<operations['room-import-emails-as-part
 export type importEmailsResponse = ApiResponse<operations['room-import-emails-as-participants']['responses'][200]['content']['application/json']>
 
 // Chats
-export type Mention = RichObject<'server'|'call-type'|'icon-url'> & { 'mention-id'?: string }
-export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
+export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
+export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
 	'etag': string,
 	'permissions': string,
 	'width': string,

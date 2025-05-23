@@ -384,7 +384,7 @@ Signaling.Internal.prototype.disconnect = function() {
 	Signaling.Base.prototype.disconnect.apply(this, arguments)
 }
 
-Signaling.Internal.prototype.on = function(ev/*, handler */) {
+Signaling.Internal.prototype.on = function(ev/* , handler */) {
 	Signaling.Base.prototype.on.apply(this, arguments)
 
 	switch (ev) {

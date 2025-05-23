@@ -29,15 +29,10 @@ export default [
 			'@stylistic/linebreak-style': 'off', // changes 25 files -> indent
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@stylistic/member-delimiter-style': 'off', // removes commas from types
-			'@stylistic/no-multi-spaces': 'off',
 			'@stylistic/no-multiple-empty-lines': 'off',
-			'@stylistic/object-curly-spacing': 'off',
 			'@stylistic/padded-blocks': 'off',
 			'@stylistic/quote-props': 'off', // removes quotes from types
 			'@stylistic/semi': 'off', // changes e2ee files
-			'@stylistic/space-infix-ops': 'off',
-			'@stylistic/spaced-comment': 'off',
-			'@stylistic/type-annotation-spacing': 'off',
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
@@ -68,11 +63,8 @@ export default [
 			'prefer-const': 'off', // non-fixable
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign
-			'vue/arrow-spacing': 'off',
 			'vue/comma-dangle': 'off', // changes commas
-			'vue/comma-spacing': 'off',
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
-			'vue/key-spacing': 'off',
 			'vue/multi-word-component-names': 'off', // non-fixable
 			'vue/new-line-between-multi-line-property': 'off',
 			'vue/no-boolean-default': 'off', // non-fixable
@@ -81,12 +73,9 @@ export default [
 			'vue/no-unused-refs': 'off', // non-fixable
 			'vue/no-useless-mustaches': 'off', // changes template
 			'vue/object-curly-newline': 'off', // changes newlines
-			'vue/object-curly-spacing': 'off',
 			'vue/order-in-components': 'off', // moves code
 			'vue/padding-line-between-blocks': 'off',
 			'vue/quote-props': 'off', // changes template
-			'vue/space-in-parens': 'off',
-			'vue/space-infix-ops': 'off',
 		},
 	},
 ]

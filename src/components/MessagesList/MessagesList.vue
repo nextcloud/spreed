@@ -8,8 +8,8 @@
 	are outside of the viewport -->
 	<div ref="scroller"
 		class="scroller messages-list__scroller"
-		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
-			'scroller--isScrolling': isScrolling}"
+		:class="{ 'scroller--chatScrolledToBottom': isChatScrolledToBottom,
+			'scroller--isScrolling': isScrolling }"
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<TransitionWrapper name="fade">

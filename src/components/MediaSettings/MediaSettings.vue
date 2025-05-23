@@ -15,7 +15,7 @@
 			<div class="media-settings__preview">
 				<video v-show="showVideo"
 					ref="video"
-					:class="['preview__video', {'preview__video--mirrored': isMirrored}]"
+					:class="['preview__video', { 'preview__video--mirrored': isMirrored }]"
 					disablePictureInPicture
 					tabindex="-1" />
 				<NcButton v-if="showVideo"

@@ -5,7 +5,7 @@
 
 <template>
 	<a class="deck-card"
-		:class="{ 'wide': wide}"
+		:class="{ 'wide': wide }"
 		:href="link"
 		:aria-label="deckCardAriaLabel"
 		target="_blank">

@@ -17,7 +17,7 @@
 			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
 			<template #icon>
-				<IconChevronUp class="icon" :class="{'icon--reverted': !collapsed}" :size="20" />
+				<IconChevronUp class="icon" :class="{ 'icon--reverted': !collapsed }" :size="20" />
 			</template>
 		</NcButton>
 		<template v-if="loading">
@@ -32,7 +32,7 @@
 			</p>
 			<p ref="chatSummaryRef"
 				class="chat-summary__message"
-				:class="{'chat-summary__message--collapsed': collapsed}">{{ chatSummaryMessage }}</p>
+				:class="{ 'chat-summary__message--collapsed': collapsed }">{{ chatSummaryMessage }}</p>
 		</template>
 		<div class="chat-summary__actions">
 			<NcButton v-if="loading"

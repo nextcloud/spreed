@@ -55,7 +55,7 @@ async function disableLobby() {
 			<template #icon>
 				<IconLockOpen :size="20" />
 			</template>
-			{{ t('spreed', 'Disable lobby' ) }}
+			{{ t('spreed', 'Disable lobby') }}
 		</NcButton>
 
 		<NcButton v-if="supportImportEmails" @click="isImportEmailsDialogOpen = true">

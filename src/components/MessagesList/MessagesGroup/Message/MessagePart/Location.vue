@@ -8,7 +8,7 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"
-		:class="{ 'wide': wide}"
+		:class="{ 'wide': wide }"
 		:aria-label="linkAriaLabel">
 		<LMap :zoom="previewZoom"
 			:center="center"
@@ -26,7 +26,7 @@
 				<LTooltip :options="{
 					direction: 'top',
 					permanent: 'true',
-					offset: [-16,-14]}">
+					offset: [-16, -14] }">
 					{{ name }}
 				</LTooltip>
 			</LMarker>

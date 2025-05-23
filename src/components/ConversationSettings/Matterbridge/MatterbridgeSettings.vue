@@ -67,7 +67,7 @@
 			<ul>
 				<BridgePart v-for="(part, i) in parts"
 					:key="part.type + i"
-					:num="i+1"
+					:num="i + 1"
 					:part="part"
 					:type="matterbridgeTypes[part.type]"
 					:editing="part.editing"

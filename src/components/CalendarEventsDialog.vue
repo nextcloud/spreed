@@ -485,7 +485,7 @@ async function submitNewMeeting() {
 				</ul>
 				<NcEmptyContent v-else
 					class="calendar-meeting__empty-content"
-					:name="!participantsInitialised ? t('spreed', 'Loading …') :t('spreed', 'No results')">
+					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
 					<template #icon>
 						<NcLoadingIcon v-if="!participantsInitialised" />
 						<IconAccountSearch v-else />

@@ -29,7 +29,7 @@
 				:hide-call="compact"
 				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:show-user-online-status="compact"
-				:size="compact? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
 		<template #name>
 			<template v-if="compact && iconType">
@@ -234,7 +234,7 @@
 			</NcDialog>
 			<NcDialog v-if="isDeleteDialogOpen"
 				:open.sync="isDeleteDialogOpen"
-				:name="t('spreed','Delete conversation')"
+				:name="t('spreed', 'Delete conversation')"
 				:message="dialogDeleteMessage">
 				<template #actions>
 					<NcButton type="tertiary" @click="isDeleteDialogOpen = false">

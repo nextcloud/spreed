@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="shared-items" :class="{'shared-items__list' : hasListLayout}">
+	<div class="shared-items" :class="{ 'shared-items__list': hasListLayout }">
 		<template v-for="item in itemsToDisplay">
 			<div v-if="isLocation" :key="item.id" class="shared-items__location">
 				<Location wide v-bind="item.messageParameters.object" />

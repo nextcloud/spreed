@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="video-background" :style="{'background-color': backgroundColor }" />
+	<div class="video-background" :style="{ 'background-color': backgroundColor }" />
 </template>
 
 <script>

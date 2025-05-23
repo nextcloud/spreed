@@ -177,7 +177,7 @@ function handleJoin({ call = false } = {}) {
 			</span>
 			<NcButton v-if="(hasCall && !isInCall)"
 				type="primary"
-				@click="handleJoin({call: true})">
+				@click="handleJoin({ call: true })">
 				<template #icon>
 					<IconVideo :size="20" />
 				</template>

@@ -26,7 +26,7 @@
 					class="hidden-visually"
 					@change="handleFileInput">
 				<TransitionWrapper class="upload-editor__previews"
-					:class="{'dragging-over': isDraggingOver}"
+					:class="{ 'dragging-over': isDraggingOver }"
 					name="fade"
 					tag="div"
 					group>

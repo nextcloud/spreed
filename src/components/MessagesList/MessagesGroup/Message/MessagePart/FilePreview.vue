@@ -17,7 +17,7 @@
 		@keydown.enter="handleClick">
 		<span :title="file.name"
 			class="image-container"
-			:class="{'playable': isPlayable}"
+			:class="{ 'playable': isPlayable }"
 			:style="imageContainerStyle">
 			<img class="file-preview__image"
 				:class="previewImageClass"

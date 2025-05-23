@@ -32,7 +32,7 @@
 			<NcButton type="success"
 				:title="stopRecordingTitle"
 				:aria-label="stopRecordingTitle"
-				:class="{'audio-recorder__trigger--recording': isRecording}"
+				:class="{ 'audio-recorder__trigger--recording': isRecording }"
 				@click="stop">
 				<template #icon>
 					<Check :size="16" />

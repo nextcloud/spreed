@@ -19,10 +19,10 @@
 		<p v-if="userAbsencePeriod">{{ userAbsencePeriod }}</p>
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
-			<p>{{ t('spreed','Replacement:') }}</p>
+			<p>{{ t('spreed', 'Replacement:') }}</p>
 			<NcUserBubble :key="isDarkTheme ? 'dark' : 'light'"
 				class="absence-reminder__replacement__bubble"
-				:title="t('spreed','Open conversation')"
+				:title="t('spreed', 'Open conversation')"
 				:display-name="userAbsence.replacementUserDisplayName"
 				:user="userAbsence.replacementUserId"
 				@click="openConversationWithReplacementUser" />
@@ -34,10 +34,10 @@
 			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
 			<template #icon>
-				<ChevronUp class="icon" :class="{'icon--reverted': !collapsed}" :size="20" />
+				<ChevronUp class="icon" :class="{ 'icon--reverted': !collapsed }" :size="20" />
 			</template>
 		</NcButton>
-		<p ref="absenceMessage" class="absence-reminder__message" :class="{'absence-reminder__message--collapsed': collapsed}">{{ userAbsenceMessage }}</p>
+		<p ref="absenceMessage" class="absence-reminder__message" :class="{ 'absence-reminder__message--collapsed': collapsed }">{{ userAbsenceMessage }}</p>
 	</NcNoteCard>
 </template>
 
