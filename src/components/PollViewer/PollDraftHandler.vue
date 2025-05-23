@@ -55,12 +55,12 @@ import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{
-	token: string,
-	editorOpened?: boolean,
-	container?: string,
+	token: string
+	editorOpened?: boolean
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 
 const pollsStore = usePollsStore()

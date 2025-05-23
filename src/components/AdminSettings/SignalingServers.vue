@@ -107,10 +107,10 @@ const isCacheConfigured = loadState('spreed', 'has_cache_configured')
 const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
 
 const props = defineProps<{
-	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning'],
-	secret: InitialState['spreed']['signaling_servers']['secret'],
-	servers: InitialState['spreed']['signaling_servers']['servers'],
-	hasValidSubscription: InitialState['spreed']['has_valid_subscription'],
+	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning']
+	secret: InitialState['spreed']['signaling_servers']['secret']
+	servers: InitialState['spreed']['signaling_servers']['servers']
+	hasValidSubscription: InitialState['spreed']['has_valid_subscription']
 }>()
 
 const emit = defineEmits<{

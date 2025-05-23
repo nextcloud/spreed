@@ -26,17 +26,17 @@ import type { Conversation as TypeConversation, ParticipantSearchResult } from '
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
 const props = defineProps<{
-	searchText: string,
-	conversationsList: TypeConversation[],
-	contactsLoading: boolean,
-	searchResultsListedConversations: TypeConversation[],
-	searchResults: ParticipantSearchResult[],
+	searchText: string
+	conversationsList: TypeConversation[]
+	contactsLoading: boolean
+	searchResultsListedConversations: TypeConversation[]
+	searchResults: ParticipantSearchResult[]
 }>()
 
 const emit = defineEmits<{
-	(event: 'abort-search'): void,
-	(event: 'create-new-conversation', searchText: string): void,
-	(event: 'create-and-join-conversation', item: TypeConversation): void,
+	(event: 'abort-search'): void
+	(event: 'create-new-conversation', searchText: string): void
+	(event: 'create-and-join-conversation', item: TypeConversation): void
 }>()
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
@@ -68,10 +68,10 @@ const sections = [
 ] as const
 
 type SubListType = {
-	user: ParticipantSearchResult[],
-	group: ParticipantSearchResult[],
-	circle: ParticipantSearchResult[],
-	federated: ParticipantSearchResult[],
+	user: ParticipantSearchResult[]
+	group: ParticipantSearchResult[]
+	circle: ParticipantSearchResult[]
+	federated: ParticipantSearchResult[]
 }
 
 const searchResultsVirtual = computed(() => {

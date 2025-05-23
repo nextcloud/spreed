@@ -20,7 +20,7 @@ import { useStore } from '../../composables/useStore.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const props = defineProps<{
-	token: string,
+	token: string
 }>()
 
 const store = useStore()

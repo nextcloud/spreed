@@ -140,12 +140,12 @@ import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
-	token: string,
-	canCreatePollDrafts: boolean,
-	container?: string,
+	token: string
+	canCreatePollDrafts: boolean
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 defineExpose({
 	fillPollEditorFromDraft,

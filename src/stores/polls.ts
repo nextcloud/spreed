@@ -30,11 +30,11 @@ import type {
 
 type submitVotePayload = { token: string, pollId: string } & Pick<votePollParams, 'optionIds'>
 type State = {
-	polls: Record<string, Record<string, Poll>>,
-	drafts: Record<string, Record<string, PollDraft>>,
-	debouncedFunctions: Record<string, Record<string, () => void>>,
-	activePoll: null,
-	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>,
+	polls: Record<string, Record<string, Poll>>
+	drafts: Record<string, Record<string, PollDraft>>
+	debouncedFunctions: Record<string, Record<string, () => void>>
+	activePoll: null
+	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>
 }
 export const usePollsStore = defineStore('polls', {
 	state: (): State => ({

@@ -39,17 +39,17 @@ import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
 type MutualEvent = {
-	uri: DashboardEvent['eventLink'],
-	name: DashboardEvent['eventName'],
-	start: string,
-	href: DashboardEvent['eventLink'],
-	color: string,
+	uri: DashboardEvent['eventLink']
+	name: DashboardEvent['eventName']
+	start: string
+	href: DashboardEvent['eventLink']
+	color: string
 }
 
 const props = defineProps<{
-	isUser: boolean,
-	state: 'default' | 'search',
-	mode: 'compact' | 'preview' | 'full',
+	isUser: boolean
+	state: 'default' | 'search'
+	mode: 'compact' | 'preview' | 'full'
 }>()
 
 const emit = defineEmits<{

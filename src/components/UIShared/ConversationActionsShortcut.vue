@@ -29,9 +29,9 @@ const retentionPhonePeriod = getTalkConfig('local', 'conversations', 'retention-
 const retentionInstantMeetingPeriod = getTalkConfig('local', 'conversations', 'retention-instant-meetings')
 
 const props = defineProps<{
-	token: string,
-	objectType: string,
-	isHighlighted: boolean,
+	token: string
+	objectType: string
+	isHighlighted: boolean
 }>()
 
 const store = useStore()

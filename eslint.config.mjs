@@ -19,7 +19,6 @@ export default [
 			'@stylistic/function-paren-newline': 'off', // weird formatting
 			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
-			'@stylistic/member-delimiter-style': 'off', // removes commas from types
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable

@@ -6,15 +6,15 @@
 type InputId = string | undefined | null
 type InputListUpdated = MediaDeviceInfo[] | null
 type InputLists = {
-	newAudioInputList: InputListUpdated,
-	newAudioOutputList: InputListUpdated,
-	newVideoInputList: InputListUpdated,
+	newAudioInputList: InputListUpdated
+	newAudioOutputList: InputListUpdated
+	newVideoInputList: InputListUpdated
 }
 type Attributes = {
-	devices: MediaDeviceInfo[],
-	audioInputId: InputId,
-	audioOutputId: InputId,
-	videoInputId: InputId,
+	devices: MediaDeviceInfo[]
+	audioInputId: InputId
+	audioOutputId: InputId
+	videoInputId: InputId
 }
 
 enum DeviceKind {
@@ -24,9 +24,9 @@ enum DeviceKind {
 }
 
 type PromotePayload = {
-	kind: DeviceKind,
-	devices: MediaDeviceInfo[],
-	inputList: MediaDeviceInfo[],
+	kind: DeviceKind
+	devices: MediaDeviceInfo[]
+	inputList: MediaDeviceInfo[]
 	inputId: InputId
 }
 

@@ -29,7 +29,7 @@ const notificationLevels = [
 ]
 
 const props = defineProps<{
-	conversation: Conversation,
+	conversation: Conversation
 }>()
 
 const store = useStore()

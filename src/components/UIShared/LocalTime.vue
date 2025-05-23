@@ -11,7 +11,7 @@ import { t, getCanonicalLocale } from '@nextcloud/l10n'
 import { useCurrentTime } from '../../composables/useCurrentTime.ts'
 
 const props = defineProps<{
-	timezone: string,
+	timezone: string
 }>()
 
 const currentTime = useCurrentTime()

@@ -17,20 +17,20 @@ import { searchPossibleMentions } from '../services/mentionsService.ts'
 import type { ChatMention } from '../types/index.ts'
 
 type AutocompleteChatMention = Omit<ChatMention, 'status'> & {
-	icon?: string,
-	iconUrl?: string,
-	subline?: string | null,
+	icon?: string
+	iconUrl?: string
+	subline?: string | null
 	status?: {
-		status: string,
-		icon?: string | null,
-	},
+		status: string
+		icon?: string | null
+	}
 }
 type AutoCompleteCallback = (args: AutocompleteChatMention[]) => void
 type UserData = Record<string, AutocompleteChatMention>
 type UserDataTokenMap = Record<string, UserData>
 type ReturnType = {
-	autoComplete: (search: string, callback: AutoCompleteCallback) => void,
-	userData: ComputedRef<UserData>,
+	autoComplete: (search: string, callback: AutoCompleteCallback) => void
+	userData: ComputedRef<UserData>
 }
 
 const userDataTokenMap = ref<UserDataTokenMap>({})
