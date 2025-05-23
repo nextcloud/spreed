@@ -60,15 +60,18 @@ export default {
 		contactHasPhoto() {
 			return this.contactPhotoMimetype && this.contactPhoto
 		},
+
 		contactPhotoFromBase64() {
 			if (!this.contactHasPhoto) {
 				return OC.MimeType.getIconUrl('text/vcard')
 			}
 			return 'data:' + this.contactPhotoMimetype + ';base64,' + this.contactPhoto
 		},
+
 		displayName() {
 			return this.contactName || this.name
 		},
+
 		contactAriaLabel() {
 			return t('spreed', 'Contact')
 		},

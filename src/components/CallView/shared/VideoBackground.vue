@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="video-background" :style="{'background-color': backgroundColor }" />
+	<div class="video-background" :style="{ 'background-color': backgroundColor }" />
 </template>
 
 <script>
@@ -18,6 +18,7 @@ export default {
 			type: String,
 			default: null,
 		},
+
 		user: {
 			type: String,
 			default: '',

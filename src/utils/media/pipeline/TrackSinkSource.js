@@ -21,13 +21,11 @@ import EmitterMixin from '../../EmitterMixin.js'
  *        -----------------
  */
 export default class TrackSinkSource {
-
 	constructor() {
 		this._superEmitterMixin()
 		this._superTrackSinkMixin()
 		this._superTrackSourceMixin()
 	}
-
 }
 
 EmitterMixin.apply(TrackSinkSource.prototype)

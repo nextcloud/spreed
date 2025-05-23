@@ -80,13 +80,13 @@ Signaling.Base.prototype.on = function(ev, handler) {
 
 	let servers = []
 	switch (ev) {
-	case 'stunservers':
-	case 'turnservers':
-		servers = this.settings[ev] || []
-		if (servers.length) {
-			handler(servers)
-		}
-		break
+		case 'stunservers':
+		case 'turnservers':
+			servers = this.settings[ev] || []
+			if (servers.length) {
+				handler(servers)
+			}
+			break
 	}
 }
 
@@ -164,21 +164,21 @@ Signaling.Base.prototype.hasFeature = function(feature) {
 
 Signaling.Base.prototype.emit = function(ev, data) {
 	switch (ev) {
-	case 'joinRoom':
-		this.joinRoom(data)
-		break
-	case 'joinCall':
-		this.joinCall(data, arguments[2])
-		break
-	case 'leaveRoom':
-		this.leaveCurrentRoom()
-		break
-	case 'leaveCall':
-		this.leaveCurrentCall()
-		break
-	case 'message':
-		this.sendCallMessage(data)
-		break
+		case 'joinRoom':
+			this.joinRoom(data)
+			break
+		case 'joinCall':
+			this.joinCall(data, arguments[2])
+			break
+		case 'leaveRoom':
+			this.leaveCurrentRoom()
+			break
+		case 'leaveCall':
+			this.leaveCurrentCall()
+			break
+		case 'message':
+			this.sendCallMessage(data)
+			break
 	}
 }
 
@@ -384,15 +384,15 @@ Signaling.Internal.prototype.disconnect = function() {
 	Signaling.Base.prototype.disconnect.apply(this, arguments)
 }
 
-Signaling.Internal.prototype.on = function(ev/*, handler */) {
+Signaling.Internal.prototype.on = function(ev/* , handler */) {
 	Signaling.Base.prototype.on.apply(this, arguments)
 
 	switch (ev) {
-	case 'connect':
+		case 'connect':
 		// A connection is established if we can perform a request
 		// through it.
-		this._sendMessageWithCallback(ev)
-		break
+			this._sendMessageWithCallback(ev)
+			break
 	}
 }
 
@@ -497,26 +497,26 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
-				case 'usersInRoom':
-					this._trigger('usersInRoom', [message.data])
-					this._trigger('participantListChanged')
+					case 'usersInRoom':
+						this._trigger('usersInRoom', [message.data])
+						this._trigger('participantListChanged')
 
-					localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
-					if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
-						this._joinCallAgainOnceDisconnected = false
-						this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent, this.currentCallRecordingConsent, this.currentCallSilentFor)
-					}
+						localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
+						if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
+							this._joinCallAgainOnceDisconnected = false
+							this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent, this.currentCallRecordingConsent, this.currentCallSilentFor)
+						}
 
-					break
-				case 'message':
-					if (typeof (message.data) === 'string') {
-						message.data = JSON.parse(message.data)
-					}
-					this._trigger('message', [message.data])
-					break
-				default:
-					console.error('Unknown Signaling Message', message)
-					break
+						break
+					case 'message':
+						if (typeof (message.data) === 'string') {
+							message.data = JSON.parse(message.data)
+						}
+						this._trigger('message', [message.data])
+						break
+					default:
+						console.error('Unknown Signaling Message', message)
+						break
 				}
 				this._trigger('onAfterReceiveMessage', [message])
 			})
@@ -756,64 +756,64 @@ Signaling.Standalone.prototype.connect = function() {
 		this._trigger('onBeforeReceiveMessage', [data])
 		const message = {}
 		switch (data.type) {
-		case 'welcome':
-			this.welcomeReceived(data)
-			break
-		case 'hello':
-			if (!id) {
-				// Only process if not received as result of our "hello".
-				this.helloResponseReceived(data)
-			}
-			break
-		case 'room':
-			if (this.currentRoomToken && data.room.roomid !== this.currentRoomToken) {
-				this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid])
-				this.joinedUsers = {}
-				this.currentRoomToken = null
-				this.nextcloudSessionId = null
-			} else {
-				// TODO(fancycode): Only fetch properties of room that was modified.
-				EventBus.emit('should-refresh-conversations')
-			}
-			break
-		case 'event':
-			this.processEvent(data)
-			break
-		case 'message':
-			data.message.data.from = data.message.sender.sessionid
-			this._trigger('message', [data.message.data])
-			break
-		case 'control':
-			message.type = 'control'
-			message.payload = data.control.data
-			message.from = data.control.sender.sessionid
-			this._trigger('message', [message])
-			break
-		case 'dialout':
-			this.processDialOutEvent(data)
-			break
-		case 'transient':
-			this.processTransientEvent(data)
-			break
-		case 'error':
-			switch (data.error.code) {
-			case 'processing_failed':
-				console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
+			case 'welcome':
+				this.welcomeReceived(data)
 				break
-			case 'token_expired':
-				this.processErrorTokenExpired()
+			case 'hello':
+				if (!id) {
+				// Only process if not received as result of our "hello".
+					this.helloResponseReceived(data)
+				}
+				break
+			case 'room':
+				if (this.currentRoomToken && data.room.roomid !== this.currentRoomToken) {
+					this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid])
+					this.joinedUsers = {}
+					this.currentRoomToken = null
+					this.nextcloudSessionId = null
+				} else {
+				// TODO(fancycode): Only fetch properties of room that was modified.
+					EventBus.emit('should-refresh-conversations')
+				}
+				break
+			case 'event':
+				this.processEvent(data)
+				break
+			case 'message':
+				data.message.data.from = data.message.sender.sessionid
+				this._trigger('message', [data.message.data])
+				break
+			case 'control':
+				message.type = 'control'
+				message.payload = data.control.data
+				message.from = data.control.sender.sessionid
+				this._trigger('message', [message])
+				break
+			case 'dialout':
+				this.processDialOutEvent(data)
+				break
+			case 'transient':
+				this.processTransientEvent(data)
+				break
+			case 'error':
+				switch (data.error.code) {
+					case 'processing_failed':
+						console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
+						break
+					case 'token_expired':
+						this.processErrorTokenExpired()
+						break
+					default:
+						console.error('Ignore unknown error: %s', JSON.stringify(data.error))
+						this._trigger('error', [data.error])
+						break
+				}
 				break
 			default:
-				console.error('Ignore unknown error: %s', JSON.stringify(data.error))
-				this._trigger('error', [data.error])
+				if (!id) {
+					console.error('Ignore unknown event', data)
+				}
 				break
-			}
-			break
-		default:
-			if (!id) {
-				console.error('Ignore unknown event', data)
-			}
-			break
 		}
 		this._trigger('onAfterReceiveMessage', [data])
 	}.bind(this)
@@ -1313,18 +1313,18 @@ Signaling.Standalone.prototype._doLeaveRoom = function(token) {
 
 Signaling.Standalone.prototype.processEvent = function(data) {
 	switch (data.event.target) {
-	case 'room':
-		this.processRoomEvent(data)
-		break
-	case 'roomlist':
-		this.processRoomListEvent(data)
-		break
-	case 'participants':
-		this.processRoomParticipantsEvent(data)
-		break
-	default:
-		console.error('Unsupported event target', data)
-		break
+		case 'room':
+			this.processRoomEvent(data)
+			break
+		case 'roomlist':
+			this.processRoomListEvent(data)
+			break
+		case 'participants':
+			this.processRoomParticipantsEvent(data)
+			break
+		default:
+			console.error('Unsupported event target', data)
+			break
 	}
 }
 
@@ -1338,22 +1338,22 @@ Signaling.Standalone.prototype.processDialOutEvent = function(data) {
 
 Signaling.Standalone.prototype.processTransientEvent = function(data) {
 	switch (data.transient.type) {
-	case 'set':
-		if (data.transient.key.startsWith('callstatus_')) {
-			store.dispatch('processTransientCallStatus', { value: data.transient.value })
-		}
-		break
-	case 'remove':
+		case 'set':
+			if (data.transient.key.startsWith('callstatus_')) {
+				store.dispatch('processTransientCallStatus', { value: data.transient.value })
+			}
+			break
+		case 'remove':
 		// ignore event
-		break
-	case 'initial':
-		if (data.transient.data) {
-			store.dispatch('addPhonesStates', { phoneStates: data.transient.data })
-		}
-		break
-	default:
-		console.error('Unsupported event type', data)
-		break
+			break
+		case 'initial':
+			if (data.transient.data) {
+				store.dispatch('addPhonesStates', { phoneStates: data.transient.data })
+			}
+			break
+		default:
+			console.error('Unsupported event type', data)
+			break
 	}
 }
 
@@ -1362,159 +1362,158 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	let joinedUsers = []
 	let leftSessionIds = []
 	switch (data.event.type) {
-	case 'join':
-		joinedUsers = data.event.join || []
-		if (joinedUsers.length) {
-			console.debug('Users joined', joinedUsers)
+		case 'join':
+			joinedUsers = data.event.join || []
+			if (joinedUsers.length) {
+				console.debug('Users joined', joinedUsers)
 
-			let userListIsDirty = false
-			for (i = 0; i < joinedUsers.length; i++) {
-				this.joinedUsers[joinedUsers[i].sessionid] = joinedUsers[i]
+				let userListIsDirty = false
+				for (i = 0; i < joinedUsers.length; i++) {
+					this.joinedUsers[joinedUsers[i].sessionid] = joinedUsers[i]
 
-				if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
-					if (joinedUsers[i].sessionid === this.sessionId) {
+					if (this.settings.userId && joinedUsers[i].userid === this.settings.userId) {
+						if (joinedUsers[i].sessionid === this.sessionId) {
 						// We are ignoring joins before we found our own message,
 						// as otherwise you get the warning for your own old session immediately
-						this.ownSessionJoined = true
+							this.ownSessionJoined = true
+						}
+					} else {
+						userListIsDirty = true
 					}
-				} else {
-					userListIsDirty = true
+				}
+				this._trigger('usersJoined', [joinedUsers])
+				if (userListIsDirty) {
+					this._trigger('participantListChanged')
 				}
 			}
-			this._trigger('usersJoined', [joinedUsers])
-			if (userListIsDirty) {
+			break
+		case 'leave':
+			leftSessionIds = data.event.leave || []
+			if (leftSessionIds.length) {
+				console.debug('Users left', leftSessionIds)
+				for (i = 0; i < leftSessionIds.length; i++) {
+					delete this.joinedUsers[leftSessionIds[i]]
+				}
+				this._trigger('usersLeft', [leftSessionIds])
 				this._trigger('participantListChanged')
 			}
-		}
-		break
-	case 'leave':
-		leftSessionIds = data.event.leave || []
-		if (leftSessionIds.length) {
-			console.debug('Users left', leftSessionIds)
-			for (i = 0; i < leftSessionIds.length; i++) {
-				delete this.joinedUsers[leftSessionIds[i]]
-			}
-			this._trigger('usersLeft', [leftSessionIds])
-			this._trigger('participantListChanged')
-		}
-		break
-	case 'switchto':
-		EventBus.emit('switch-to-conversation', {
-			token: data.event.switchto.roomid,
-		})
-		break
-	case 'message':
-		this.processRoomMessageEvent(data.event.message.roomid, data.event.message.data)
-		break
-	default:
-		console.error('Unknown room event', data)
-		break
+			break
+		case 'switchto':
+			EventBus.emit('switch-to-conversation', {
+				token: data.event.switchto.roomid,
+			})
+			break
+		case 'message':
+			this.processRoomMessageEvent(data.event.message.roomid, data.event.message.data)
+			break
+		default:
+			console.error('Unknown room event', data)
+			break
 	}
 }
 
 Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 	switch (data.type) {
-	case 'chat':
+		case 'chat':
 		// FIXME this is not listened to
-		EventBus.emit('should-refresh-chat-messages')
-		break
-	case 'recording':
-		EventBus.emit('signaling-recording-status-changed', [token, data.recording.status])
-		break
-	default:
-		console.error('Unknown room message event', data)
+			EventBus.emit('should-refresh-chat-messages')
+			break
+		case 'recording':
+			EventBus.emit('signaling-recording-status-changed', [token, data.recording.status])
+			break
+		default:
+			console.error('Unknown room message event', data)
 	}
 }
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
-	case 'delete':
-		console.debug('Room list event', data)
-		EventBus.emit('should-refresh-conversations', { all: true })
-		break
-	case 'update':
-		if (data.event.update.properties['participant-list']) {
-			console.debug('Room list event for participant list', data)
-			if (data.event.update.roomid === this.currentRoomToken) {
-				this._trigger('participantListUpdated')
-				this._trigger('participantListChanged')
-			} else {
-				// Participant list in another room changed, we don't really care
-			}
+		case 'delete':
+			console.debug('Room list event', data)
+			EventBus.emit('should-refresh-conversations', { all: true })
 			break
-		} else {
+		case 'update':
+			if (data.event.update.properties['participant-list']) {
+				console.debug('Room list event for participant list', data)
+				if (data.event.update.roomid === this.currentRoomToken) {
+					this._trigger('participantListUpdated')
+					this._trigger('participantListChanged')
+				} else {
+				// Participant list in another room changed, we don't really care
+				}
+				break
+			} else {
 			// Some keys do not exactly match those in the room data, so they
 			// are normalized before emitting the event.
-			const properties = data.event.update.properties
-			const normalizedProperties = {}
+				const properties = data.event.update.properties
+				const normalizedProperties = {}
 
-			Object.keys(properties).forEach(key => {
-				if (key === 'active-since') {
+				Object.keys(properties).forEach(key => {
+					if (key === 'active-since') {
+						return
+					}
+
+					let normalizedKey = key
+					if (key === 'lobby-state') {
+						normalizedKey = 'lobbyState'
+					} else if (key === 'lobby-timer') {
+						normalizedKey = 'lobbyTimer'
+					} else if (key === 'read-only') {
+						normalizedKey = 'readOnly'
+					} else if (key === 'sip-enabled') {
+						normalizedKey = 'sipEnabled'
+					}
+
+					normalizedProperties[normalizedKey] = properties[key]
+				})
+
+				EventBus.emit('should-refresh-conversations', {
+					token: data.event.update.roomid,
+					properties: normalizedProperties,
+				})
+				break
+			}
+		case 'disinvite':
+			if (data.event?.disinvite?.roomid === this.currentRoomToken) {
+				if (this._isRejoiningConversationWithNewSession) {
+					console.debug('Rejoining conversation with new session, "disinvite" message ignored')
 					return
 				}
-
-				let normalizedKey = key
-				if (key === 'lobby-state') {
-					normalizedKey = 'lobbyState'
-				} else if (key === 'lobby-timer') {
-					normalizedKey = 'lobbyTimer'
-				} else if (key === 'read-only') {
-					normalizedKey = 'readOnly'
-				} else if (key === 'sip-enabled') {
-					normalizedKey = 'sipEnabled'
-				}
-
-				normalizedProperties[normalizedKey] = properties[key]
-			})
-
-			EventBus.emit('should-refresh-conversations', {
-				token: data.event.update.roomid,
-				properties: normalizedProperties,
-			})
-			break
-		}
-		// eslint-disable-next-line no-fallthrough
-	case 'disinvite':
-		if (data.event?.disinvite?.roomid === this.currentRoomToken) {
-			if (this._isRejoiningConversationWithNewSession) {
-				console.debug('Rejoining conversation with new session, "disinvite" message ignored')
-				return
+				console.error('User or session was removed from the conversation, redirecting')
+				EventBus.emit('deleted-session-detected')
+				break
 			}
-			console.error('User or session was removed from the conversation, redirecting')
-			EventBus.emit('deleted-session-detected')
-			break
-		}
 		// eslint-disable-next-line no-fallthrough
-	default:
-		console.debug('Room list event', data)
-		EventBus.emit('should-refresh-conversations')
-		break
+		default:
+			console.debug('Room list event', data)
+			EventBus.emit('should-refresh-conversations')
+			break
 	}
 }
 
 Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 	switch (data.event.type) {
-	case 'update':
-		if (data.event.update.all) {
+		case 'update':
+			if (data.event.update.all) {
 			// With `"all": true`
-			if (data.event.update.incall === 0) {
-				this._trigger('allUsersChangedInCallToDisconnected')
+				if (data.event.update.incall === 0) {
+					this._trigger('allUsersChangedInCallToDisconnected')
+				} else {
+					console.error('Unknown room participant event', data)
+				}
 			} else {
-				console.error('Unknown room participant event', data)
+				console.debug('Users changed', data.event.update.users || [])
+				// With updated user list
+				this._trigger('usersChanged', [data.event.update.users || []])
 			}
-		} else {
-			console.debug('Users changed', data.event.update.users || [])
-			// With updated user list
-			this._trigger('usersChanged', [data.event.update.users || []])
-		}
-		this._trigger('participantListChanged')
-		break
-	case 'flags':
-		this._trigger('participantFlagsChanged', [data.event.flags || []])
-		break
-	default:
-		console.error('Unknown room participant event', data)
-		break
+			this._trigger('participantListChanged')
+			break
+		case 'flags':
+			this._trigger('participantFlagsChanged', [data.event.flags || []])
+			break
+		default:
+			console.error('Unknown room participant event', data)
+			break
 	}
 }
 

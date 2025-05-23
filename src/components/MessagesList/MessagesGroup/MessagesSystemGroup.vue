@@ -19,7 +19,7 @@
 			</ul>
 			<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
 				class="messages"
-				:class="{'messages--collapsed': messagesCollapsed.messages?.length > 1}">
+				:class="{ 'messages--collapsed': messagesCollapsed.messages?.length > 1 }">
 				<Message v-for="message in messagesCollapsed.messages"
 					:key="message.id"
 					:message="message"
@@ -54,6 +54,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		/**
 		 * The messages object.
 		 */

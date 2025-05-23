@@ -11,7 +11,6 @@
  * modified only when the current conversation is joined and call is started.
  */
 export default class SpeakingStatusHandler {
-
 	// Constants, properties
 	#store
 	#localMediaModel
@@ -133,5 +132,4 @@ export default class SpeakingStatusHandler {
 			speaking,
 		})
 	}
-
 }

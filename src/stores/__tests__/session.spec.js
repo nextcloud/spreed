@@ -558,7 +558,6 @@ describe('sessionStore', () => {
 				{ token: TOKEN, attendeeId: 4, updatedData: { inCall: 0, sessionIds: [] } })
 			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 4, 'updateParticipant',
 				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
-
 		})
 
 		it('should skip update if participant is not found', () => {

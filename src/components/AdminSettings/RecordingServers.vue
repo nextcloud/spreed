@@ -170,6 +170,7 @@ export default {
 		showUploadLimitWarning() {
 			return this.uploadLimit !== 0 && this.uploadLimit < 512 * (1024 ** 2)
 		},
+
 		uploadLimitWarning() {
 			return t('spreed', 'The PHP settings "upload_max_filesize" or "post_max_size" only will allow to upload files up to {maxUpload}.', {
 				maxUpload: formatFileSize(this.uploadLimit, true, true),
@@ -250,13 +251,13 @@ export default {
 
 		getRecordingConsentDescription(value) {
 			switch (value) {
-			case CONFIG.RECORDING_CONSENT.OPTIONAL:
-				return t('spreed', 'Moderators will be allowed to enable consent on conversation level. The consent to be recorded will be required for each participant before joining every call in this conversation.')
-			case CONFIG.RECORDING_CONSENT.REQUIRED:
-				return t('spreed', 'The consent to be recorded will be required for each participant before joining every call.')
-			case CONFIG.RECORDING_CONSENT.OFF:
-			default:
-				return t('spreed', 'The consent to be recorded is not required.')
+				case CONFIG.RECORDING_CONSENT.OPTIONAL:
+					return t('spreed', 'Moderators will be allowed to enable consent on conversation level. The consent to be recorded will be required for each participant before joining every call in this conversation.')
+				case CONFIG.RECORDING_CONSENT.REQUIRED:
+					return t('spreed', 'The consent to be recorded will be required for each participant before joining every call.')
+				case CONFIG.RECORDING_CONSENT.OFF:
+				default:
+					return t('spreed', 'The consent to be recorded is not required.')
 			}
 		},
 

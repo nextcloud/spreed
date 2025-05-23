@@ -144,13 +144,13 @@ export default {
 		t,
 		getStateIcon(state) {
 			switch (state) {
-			case BOT.STATE.NO_SETUP:
-				return { state_icon_component: Lock, state_icon_label: t('spreed', 'Locked for moderators'), state_icon_color: 'var(--color-warning)' }
-			case BOT.STATE.ENABLED:
-				return { state_icon_component: Check, state_icon_label: t('spreed', 'Enabled'), state_icon_color: 'var(--color-success)' }
-			case BOT.STATE.DISABLED:
-			default:
-				return { state_icon_component: Cancel, state_icon_label: t('spreed', 'Disabled'), state_icon_color: 'var(--color-error)' }
+				case BOT.STATE.NO_SETUP:
+					return { state_icon_component: Lock, state_icon_label: t('spreed', 'Locked for moderators'), state_icon_color: 'var(--color-warning)' }
+				case BOT.STATE.ENABLED:
+					return { state_icon_component: Check, state_icon_label: t('spreed', 'Enabled'), state_icon_color: 'var(--color-success)' }
+				case BOT.STATE.DISABLED:
+				default:
+					return { state_icon_component: Cancel, state_icon_label: t('spreed', 'Disabled'), state_icon_color: 'var(--color-error)' }
 			}
 		},
 	},

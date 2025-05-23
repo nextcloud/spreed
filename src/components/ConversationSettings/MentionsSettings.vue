@@ -70,11 +70,11 @@ export default {
 
 		summaryLabel() {
 			switch (this.mentionPermissions) {
-			case CONVERSATION.MENTION_PERMISSIONS.MODERATORS:
-				return t('spreed', 'Only moderators are allowed to mention @all')
-			case CONVERSATION.MENTION_PERMISSIONS.EVERYONE:
-			default:
-				return t('spreed', 'All participants are allowed to mention @all')
+				case CONVERSATION.MENTION_PERMISSIONS.MODERATORS:
+					return t('spreed', 'Only moderators are allowed to mention @all')
+				case CONVERSATION.MENTION_PERMISSIONS.EVERYONE:
+				default:
+					return t('spreed', 'All participants are allowed to mention @all')
 			}
 		}
 	},

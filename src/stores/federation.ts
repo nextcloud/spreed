@@ -155,7 +155,7 @@ export const useFederationStore = defineStore('federation', {
 		 *
 		 * @param value amount of pending shares
 		 */
-		updatePendingSharesCount(value?: string|number) {
+		updatePendingSharesCount(value?: string | number) {
 			Vue.set(this, 'pendingSharesCount', value ? +value : 0)
 		},
 	},

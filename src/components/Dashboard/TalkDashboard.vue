@@ -232,7 +232,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		</h3>
 		<div v-if="eventsInitialised && eventRooms.length > 0"
 			class="talk-dashboard__event-cards-wrapper"
-			:class="{'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable}">
+			:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
 			<div ref="eventCardsWrapper"
 				class="talk-dashboard__event-cards"
 				@scroll.passive="updateScrollableFlags">
@@ -247,7 +247,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					type="tertiary"
 					:title="t('spreed', 'Scroll backward')"
 					:aria-label="t('spreed', 'Scroll backward')"
-					@click="scrollEventCards({direction: 'backward'})">
+					@click="scrollEventCards({ direction: 'backward' })">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" />
 					</template>
@@ -257,7 +257,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					type="tertiary"
 					:title="t('spreed', 'Scroll forward')"
 					:aria-label="t('spreed', 'Scroll forward')"
-					@click="scrollEventCards({direction: 'forward'})">
+					@click="scrollEventCards({ direction: 'forward' })">
 					<template #icon>
 						<IconArrowRight class="bidirectional-icon" />
 					</template>
@@ -283,7 +283,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		</div>
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
-				:class="{'loading': !conversationsInitialised}">
+				:class="{ 'loading': !conversationsInitialised }">
 				<h3 class="title">
 					{{ t('spreed', 'Unread mentions') }}
 				</h3>

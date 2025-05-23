@@ -164,11 +164,13 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		textFieldLabel() {
 			return this.canModerateSipDialOut
 				? t('spreed', 'Search participants or phone numbers')
 				: t('spreed', 'Search participants')
 		},
+
 		cancelSearchLabel() {
 			return t('spreed', 'Cancel search')
 		},
@@ -262,8 +264,8 @@ export default {
 			})
 			const payload = isSelected
 				? this.selectedParticipants.filter(selected => {
-					return selected.id !== participant.id || selected.source !== participant.source
-				})
+						return selected.id !== participant.id || selected.source !== participant.source
+					})
 				: [...this.selectedParticipants, participant]
 
 			this.$emit('update:selected-participants', payload)

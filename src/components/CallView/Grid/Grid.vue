@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, 'transparent': isLessThanTwoVideos }">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -36,7 +36,7 @@
 					</NcButton>
 					<div ref="grid"
 						class="grid"
-						:class="{stripe: isStripe}"
+						:class="{ stripe: isStripe }"
 						:style="gridStyle"
 						@mousemove="handleMovement"
 						@wheel="debounceHandleWheelEvent"
@@ -45,7 +45,7 @@
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
 								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{'video': !isStripe}"
+									:class="{ 'video': !isStripe }"
 									:show-video-overlay="showVideoOverlay"
 									:token="token"
 									:model="callParticipantModel"
@@ -63,7 +63,7 @@
 							<div v-for="key in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
-								:class="{'dev-mode-screenshot': screenshotMode}">
+								:class="{ 'dev-mode-screenshot': screenshotMode }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar :has-shadow="false"
 									:model="placeholderModel(key)"
@@ -203,6 +203,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * To be set to true when the grid is in the promoted view.
 		 */
@@ -210,38 +211,47 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
+
 		isRecording: {
 			type: Boolean,
 			default: false,
 		},
+
 		callParticipantModels: {
 			type: Array,
 			required: true,
 		},
+
 		localMediaModel: {
 			type: Object,
 			required: true,
 		},
+
 		localCallParticipantModel: {
 			type: Object,
 			required: true,
 		},
+
 		token: {
 			type: String,
 			required: true,
 		},
+
 		sharedDatas: {
 			type: Object,
 			required: true,
 		},
+
 		isLocalVideoSelectable: {
 			type: Boolean,
 			default: false,
 		},
+
 		screens: {
 			type: Array,
 			default: () => [],
@@ -319,9 +329,11 @@ export default {
 
 			return this.videos.length
 		},
+
 		videoWidth() {
 			return (this.gridWidth - GRID_GAP * (this.columns - 1)) / this.columns
 		},
+
 		videoHeight() {
 			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
@@ -377,6 +389,7 @@ export default {
 		minWidth() {
 			return (this.isStripe || this.isSidebar) ? 200 : 320
 		},
+
 		/**
 		 * Minimum height of the video components
 		 */
@@ -557,6 +570,7 @@ export default {
 			get() {
 				return this.isStripe
 			},
+
 			set(value) {
 				this.callViewStore.setCallViewMode({ token: this.token, isGrid: !value, clearLast: false })
 			},
@@ -827,6 +841,7 @@ export default {
 			this.currentPage++
 			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
 		},
+
 		handleClickPrevious() {
 			this.currentPage--
 			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
@@ -840,6 +855,7 @@ export default {
 			// TODO: debounce this
 			this.setTimerForUiControls()
 		},
+
 		setTimerForUiControls() {
 			if (this.showVideoOverlayTimer !== null) {
 				clearTimeout(this.showVideoOverlayTimer)

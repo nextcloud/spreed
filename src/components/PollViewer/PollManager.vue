@@ -21,7 +21,7 @@ const pollEditorRef = ref<InstanceType<typeof PollEditor> | null>(null)
 
 const showPollEditor = ref(false)
 const showPollDraftHandler = ref(false)
-const container = ref<string|undefined>(undefined)
+const container = ref<string | undefined>(undefined)
 
 const token = computed(() => store.getters.getConversationSettingsToken() || store.getters.getToken())
 const canCreatePollDrafts = computed(() => {

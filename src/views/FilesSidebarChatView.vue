@@ -14,6 +14,7 @@
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 	</div>
 </template>
+
 <script>
 
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
@@ -56,6 +57,7 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		connectionFailed() {
 			return this.$store.getters.connectionFailed(this.token)
 		},

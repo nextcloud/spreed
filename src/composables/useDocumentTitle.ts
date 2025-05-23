@@ -135,14 +135,14 @@ export function useDocumentTitle() {
 	 */
 	function setPageTitleFromRoute(route: Route) {
 		switch (route.name) {
-		case 'conversation':
-			setPageTitle(store.getters.conversation(route.params.token)?.displayName ?? '')
-			break
-		case 'duplicatesession':
-			setPageTitle(t('spreed', 'Duplicate session'))
-			break
-		default:
-			setPageTitle('')
+			case 'conversation':
+				setPageTitle(store.getters.conversation(route.params.token)?.displayName ?? '')
+				break
+			case 'duplicatesession':
+				setPageTitle(t('spreed', 'Duplicate session'))
+				break
+			default:
+				setPageTitle('')
 		}
 	}
 

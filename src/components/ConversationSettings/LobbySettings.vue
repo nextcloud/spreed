@@ -167,6 +167,7 @@ export default {
 				// millisecond based.
 				return this.conversation.lobbyTimer * 1000
 			},
+
 			set(value) {
 				this.saveLobbyTimer(value)
 			}

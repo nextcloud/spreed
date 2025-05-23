@@ -305,7 +305,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		// other one has no streams there will be no Peer for that other
 		// participant, so a null Peer needs to be explicitly set now.
 		if ((signaling.hasFeature('mcu') && user && !userHasStreams(user))
-				|| (!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !webrtc.webrtc.localStreams.length)) {
+			|| (!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !webrtc.webrtc.localStreams.length)) {
 			callParticipantModel.setPeer(null)
 
 			// As there is no Peer for the other participant the current state
@@ -759,7 +759,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				// ICE restart.
 				if (spreedPeerConnectionTable[peer.id] < 5) {
 					if (peer.pc.localDescription.type === 'offer'
-							&& peer.pc.signalingState === 'stable') {
+						&& peer.pc.signalingState === 'stable') {
 						spreedPeerConnectionTable[peer.id]++
 						console.debug('ICE restart after disconnect.', peer.id, peer)
 						peer.icerestart()
@@ -789,7 +789,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		if (!signaling.hasFeature('mcu')) {
 			if (spreedPeerConnectionTable[peer.id] < 5) {
 				if (peer.pc.localDescription.type === 'offer'
-						&& peer.pc.signalingState === 'stable') {
+					&& peer.pc.signalingState === 'stable') {
 					spreedPeerConnectionTable[peer.id]++
 					console.debug('ICE restart after failure.', peer.id, peer)
 					peer.icerestart()
@@ -827,30 +827,30 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
 
 			switch (peer.pc.iceConnectionState) {
-			case 'checking':
-				console.debug('Connecting to peer...', peer.id, peer)
+				case 'checking':
+					console.debug('Connecting to peer...', peer.id, peer)
 
-				break
-			case 'connected':
-			case 'completed': // on caller side
-				console.debug('Connection established.', peer.id, peer)
+					break
+				case 'connected':
+				case 'completed': // on caller side
+					console.debug('Connection established.', peer.id, peer)
 
-				handleIceConnectionStateConnected(peer)
-				break
-			case 'disconnected':
-				console.debug('Disconnected.', peer.id, peer)
+					handleIceConnectionStateConnected(peer)
+					break
+				case 'disconnected':
+					console.debug('Disconnected.', peer.id, peer)
 
-				handleIceConnectionStateDisconnected(peer)
-				break
-			case 'failed':
-				console.debug('Connection failed.', peer.id, peer)
+					handleIceConnectionStateDisconnected(peer)
+					break
+				case 'failed':
+					console.debug('Connection failed.', peer.id, peer)
 
-				handleIceConnectionStateFailed(peer)
-				break
-			case 'closed':
-				console.debug('Connection closed.', peer.id, peer)
+					handleIceConnectionStateFailed(peer)
+					break
+				case 'closed':
+					console.debug('Connection closed.', peer.id, peer)
 
-				break
+					break
 			}
 		})
 	}
@@ -896,34 +896,34 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState)
 
 			switch (peer.pc.iceConnectionState) {
-			case 'checking':
-				console.debug('Connecting own peer...', peer.id, peer)
+				case 'checking':
+					console.debug('Connecting own peer...', peer.id, peer)
 
-				break
-			case 'connected':
-			case 'completed':
-				console.debug('Connection established (own peer).', peer.id, peer)
+					break
+				case 'connected':
+				case 'completed':
+					console.debug('Connection established (own peer).', peer.id, peer)
 
-				break
-			case 'disconnected':
-				console.debug('Disconnected (own peer).', peer.id, peer)
+					break
+				case 'disconnected':
+					console.debug('Disconnected (own peer).', peer.id, peer)
 
-				setTimeout(function() {
-					if (peer.pc.iceConnectionState !== 'disconnected') {
-						return
-					}
+					setTimeout(function() {
+						if (peer.pc.iceConnectionState !== 'disconnected') {
+							return
+						}
 
-					peer.emit('extendedIceConnectionStateChange', 'disconnected-long')
-				}, 5000)
-				break
-			case 'failed':
-				console.debug('Connection failed (own peer).', peer.id, peer)
+						peer.emit('extendedIceConnectionStateChange', 'disconnected-long')
+					}, 5000)
+					break
+				case 'failed':
+					console.debug('Connection failed (own peer).', peer.id, peer)
 
-				break
-			case 'closed':
-				console.debug('Connection closed (own peer).', peer.id, peer)
+					break
+				case 'closed':
+					console.debug('Connection closed (own peer).', peer.id, peer)
 
-				break
+					break
 			}
 		})
 	}
@@ -1059,7 +1059,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 
 		const removeSender = (hasAudioSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO))
-							|| (hasVideoSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO))
+			|| (hasVideoSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO))
 
 		if (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
 			webrtc.webrtc.allowAudio()
@@ -1404,7 +1404,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
 		}
-
 	}
 
 	const clearErrorNotification = function() {
@@ -1496,7 +1495,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		return webrtc.webrtc.getPeers(null, 'video').length > 0 || Object.keys(delayedConnectionToPeer).length > 0
 	}
 
-	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
+	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/* , stream */) {
 		const callFlags = getCallFlagsFromLocalMedia()
 
 		// A reconnection is not needed if a device is disabled or if there are
@@ -1542,9 +1541,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		let message
 		let timeout = TOAST_PERMANENT_TIMEOUT
 		if ((error.name === 'NotSupportedError'
-				&& webrtc.capabilities.supportRTCPeerConnection)
-			|| (error.name === 'NotAllowedError'
-				&& error.message && error.message.includes('Only secure origins'))) {
+			&& webrtc.capabilities.supportRTCPeerConnection)
+		|| (error.name === 'NotAllowedError'
+			&& error.message && error.message.includes('Only secure origins'))) {
 			message = t('spreed', 'Access to microphone & camera is only possible with HTTPS')
 			message += ': ' + t('spreed', 'Please move your setup to HTTPS')
 		} else if (error.name === 'NotAllowedError') {

@@ -13,7 +13,7 @@
 		</template>
 
 		<NcActionButtonGroup class="reaction__group"
-			:style="{'--reactions-in-single-row': reactionsInSingleRow}">
+			:style="{ '--reactions-in-single-row': reactionsInSingleRow }">
 			<NcActionButton v-for="(reaction, index) in supportedReactions"
 				:key="index"
 				:aria-label="t('spreed', 'React with {reaction}', { reaction })"

@@ -36,6 +36,7 @@ export default {
 		IconMagnify,
 		NcTextField,
 	},
+
 	props: {
 		/**
 		 * The placeholder for the input field
@@ -44,6 +45,7 @@ export default {
 			type: String,
 			default: t('spreed', 'Search …'),
 		},
+
 		/**
 		 * The value of the input field.
 		 */
@@ -51,6 +53,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		/**
 		 * If true, this component displays an 'x' button to abort the search
 		 */
@@ -58,6 +61,7 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
 		/**
 		 * Conversations list reference for handling click trigger
 		 */
@@ -84,6 +88,7 @@ export default {
 			get() {
 				return this.value
 			},
+
 			set(value) {
 				this.updateValue(value)
 			}
@@ -169,7 +174,7 @@ export default {
 				return
 			}
 
-			 // Blur in other cases
+			// Blur in other cases
 			this.$emit('blur', event)
 			if (!this.isSearching) {
 				this.$emit('update:is-focused', false)

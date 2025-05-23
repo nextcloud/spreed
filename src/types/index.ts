@@ -4,7 +4,7 @@
  */
 import type { AxiosError } from '@nextcloud/axios'
 
-import type { AutocompleteResult } from './openapi/core/index.ts'
+import type { AutocompleteResult } from './core.ts'
 import type {
 	components as componentsAdmin,
 	operations as operationsAdmin,
@@ -53,9 +53,9 @@ type PasswordPolicyCapabilities = {
 
 // Capabilities
 export type Capabilities = {
-		spreed: SpreedCapabilities,
-		password_policy?: PasswordPolicyCapabilities,
-	}
+	spreed: SpreedCapabilities,
+	password_policy?: PasswordPolicyCapabilities,
+}
 
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 
@@ -82,7 +82,7 @@ type NotificationAction = {
 }
 
 type RichObjectParameter = components['schemas']['RichObjectParameter']
-type RichObject<T extends keyof RichObjectParameter = 'id'|'name'|'type'> = Pick<RichObjectParameter, 'id'|'name'|'type'|T>
+type RichObject<T extends keyof RichObjectParameter = 'id' | 'name' | 'type'> = Pick<RichObjectParameter, 'id' | 'name' | 'type' | T>
 export type Notification<T = Record<string, RichObject & Record<string, unknown>>> = {
 	notificationId: number,
 	app: string,
@@ -158,7 +158,7 @@ export type getListedConversationsResponse = ApiResponse<operations['room-get-li
 
 export type createConversationParams = Required<operations['room-create-room']>['requestBody']['content']['application/json']
 export type createConversationResponse = ApiResponse<operations['room-create-room']['responses'][200]['content']['application/json']>
-export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType'|'roomName'|'password'|'objectType'|'objectId'|'invite'|'source'>
+export type legacyCreateConversationParams = Pick<createConversationParams, 'roomType' | 'roomName' | 'password' | 'objectType' | 'objectId' | 'invite' | 'source'>
 export type deleteConversationResponse = ApiResponse<operations['room-delete-room']['responses'][200]['content']['application/json']>
 export type unbindConversationFromObjectResponse = ApiResponse<operations['room-unbind-room-from-object']['responses'][200]['content']['application/json']>
 
@@ -221,8 +221,8 @@ export type importEmailsParams = Required<operations['room-import-emails-as-part
 export type importEmailsResponse = ApiResponse<operations['room-import-emails-as-participants']['responses'][200]['content']['application/json']>
 
 // Chats
-export type Mention = RichObject<'server'|'call-type'|'icon-url'> & { 'mention-id'?: string }
-export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
+export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
+export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
 	'etag': string,
 	'permissions': string,
 	'width': string,
@@ -348,7 +348,7 @@ export type getMentionsResponse = ApiResponse<operations['chat-mentions']['respo
 // AI Summary
 export type {
 	TaskProcessingResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Teams (circles)
 export type TeamProbe = {
@@ -375,7 +375,7 @@ export type {
 	OutOfOfficeResponse,
 	UpcomingEvent,
 	UpcomingEventsResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 export type DashboardEvent = components['schemas']['DashboardEvent']
 
@@ -394,7 +394,7 @@ export type {
 	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Settings
 export type setSipSettingsParams = Required<operationsAdmin['settings-setsip-settings']>['requestBody']['content']['application/json']
@@ -417,24 +417,24 @@ export type {
 	AutocompleteResult,
 	AutocompleteParams,
 	AutocompleteResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Unified Search API
 export type {
 	SearchMessagePayload,
 	UnifiedSearchResultEntry,
 	UnifiedSearchResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Files API
 export type {
 	getFileTemplatesListResponse,
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'
 
 // Files sharing API
 export type {
 	createFileShareParams,
 	createFileShareResponse,
-} from './openapi/core/index.ts'
+} from './core.ts'

@@ -8,8 +8,8 @@
 	are outside of the viewport -->
 	<div ref="scroller"
 		class="scroller messages-list__scroller"
-		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
-			'scroller--isScrolling': isScrolling}"
+		:class="{ 'scroller--chatScrolledToBottom': isChatScrolledToBottom,
+			'scroller--isScrolling': isScrolling }"
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<TransitionWrapper name="fade">
@@ -268,6 +268,7 @@ export default {
 				this.onWindowFocus()
 			}
 		},
+
 		chatIdentifier: {
 			immediate: true,
 			handler(newValue, oldValue) {
@@ -307,7 +308,6 @@ export default {
 						this.updateTasksCount()
 					}
 				})
-
 			},
 		},
 
@@ -542,9 +542,9 @@ export default {
 
 			if (!message1IsSystem // System messages are grouped independently of author
 				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
-						|| message1.actorId !== message2.actorId)
-					|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
-						&& message1.actorDisplayName !== message2.actorDisplayName))) {
+					|| message1.actorId !== message2.actorId)
+				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
+					&& message1.actorDisplayName !== message2.actorDisplayName))) {
 				return false
 			}
 
@@ -562,14 +562,14 @@ export default {
 
 		getRelativePrefix(diffDays) {
 			switch (diffDays) {
-			case 0:
-				return t('spreed', 'Today')
-			case 1:
-				return t('spreed', 'Yesterday')
-			case 7:
-				return t('spreed', 'A week ago')
-			default:
-				return n('spreed', '%n day ago', '%n days ago', diffDays)
+				case 0:
+					return t('spreed', 'Today')
+				case 1:
+					return t('spreed', 'Yesterday')
+				case 7:
+					return t('spreed', 'A week ago')
+				default:
+					return n('spreed', '%n day ago', '%n days ago', diffDays)
 			}
 		},
 
@@ -596,7 +596,6 @@ export default {
 			} else {
 				return moment(startOfDay).format('LL')
 			}
-
 		},
 
 		/**
@@ -700,7 +699,6 @@ export default {
 
 				// Once the history is received, starts looking for new messages.
 				await this.pollNewMessages(token)
-
 			} else {
 				this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 			}
@@ -1195,6 +1193,7 @@ export default {
 			}
 			return '0'
 		},
+
 		/**
 		 * gets the first message's id.
 		 *
@@ -1218,7 +1217,6 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation'
 				&& from.params.token === to.params.token
 				&& from.hash !== to.hash) {
-
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
 					const focusedId = this.getMessageIdFromHash(to.hash)

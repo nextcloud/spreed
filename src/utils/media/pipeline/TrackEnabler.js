@@ -28,7 +28,6 @@ import TrackSinkSource from './TrackSinkSource.js'
  *        --------------
  */
 export default class TrackEnabler extends TrackSinkSource {
-
 	constructor() {
 		super()
 
@@ -67,5 +66,4 @@ export default class TrackEnabler extends TrackSinkSource {
 			this._setOutputTrackEnabled('default', this._enabled)
 		}
 	}
-
 }

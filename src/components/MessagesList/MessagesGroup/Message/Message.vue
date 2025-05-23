@@ -11,14 +11,14 @@
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message--hovered': showMessageButtonsBar}"
+		:class="{ 'message--hovered': showMessageButtonsBar }"
 		tabindex="0"
 		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage,
-			'system' : isSystemMessage,
-			'combined-system': isCombinedSystemMessage}"
+		<div :class="{ 'normal-message-body': !isSystemMessage && !isDeletedMessage,
+			'system': isSystemMessage,
+			'combined-system': isCombinedSystemMessage }"
 			class="message-body">
 			<MessageBody :rich-parameters="richParameters"
 				:is-deleting="isDeleting"
@@ -156,6 +156,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Specifies if the message is a combined system message.
 		 */
@@ -163,6 +164,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * Specifies whether the combined system message is collapsed.
 		 */
@@ -170,6 +172,7 @@ export default {
 			type: Boolean,
 			default: undefined,
 		},
+
 		/**
 		 * Specifies if the message is inside a collapsed group.
 		 */
@@ -177,14 +180,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		lastCollapsedMessageId: {
 			type: [String, Number],
 			default: 0,
 		},
+
 		previousMessageId: {
 			type: [String, Number],
 			default: 0,
 		},
+
 		nextMessageId: {
 			type: [String, Number],
 			default: 0,
@@ -449,6 +455,7 @@ export default {
 		toggleCombinedSystemMessage() {
 			this.$emit('toggle-combined-system-message')
 		},
+
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen
 		},

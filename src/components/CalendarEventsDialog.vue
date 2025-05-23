@@ -100,17 +100,17 @@ const newMeetingDescription = ref('')
 const invalid = ref<string | null>(null)
 const invalidHint = computed(() => {
 	switch (invalid.value) {
-	case null:
-		return ''
-	case 'calendar':
-		return t('spreed', 'Invalid calendar selected')
-	case 'start':
-		return t('spreed', 'Invalid start time selected')
-	case 'end':
-		return t('spreed', 'Invalid end time selected')
-	case 'unknown':
-	default:
-		return t('spreed', 'Unknown error occurred')
+		case null:
+			return ''
+		case 'calendar':
+			return t('spreed', 'Invalid calendar selected')
+		case 'start':
+			return t('spreed', 'Invalid start time selected')
+		case 'end':
+			return t('spreed', 'Invalid end time selected')
+		case 'unknown':
+		default:
+			return t('spreed', 'Unknown error occurred')
 	}
 })
 
@@ -128,24 +128,24 @@ const attendeeHint = computed(() => {
 	if (remainingCount === 0) {
 		// Amount is 2 or less
 		switch (summary.length) {
-		case 1: {
-			return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] },
-				undefined, {
-					escape: false,
-					sanitize: false,
-				})
-		}
-		case 2: {
-			return t('spreed', '{participant0} and {participant1} will receive invitations',
-				{ participant0: summary[0], participant1: summary[1] }, undefined, {
-					escape: false,
-					sanitize: false,
-				})
-		}
-		case 0:
-		default: {
-			return ''
-		}
+			case 1: {
+				return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] },
+					undefined, {
+						escape: false,
+						sanitize: false,
+					})
+			}
+			case 2: {
+				return t('spreed', '{participant0} and {participant1} will receive invitations',
+					{ participant0: summary[0], participant1: summary[1] }, undefined, {
+						escape: false,
+						sanitize: false,
+					})
+			}
+			case 0:
+			default: {
+				return ''
+			}
 		}
 	} else {
 		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations',
@@ -485,7 +485,7 @@ async function submitNewMeeting() {
 				</ul>
 				<NcEmptyContent v-else
 					class="calendar-meeting__empty-content"
-					:name="!participantsInitialised ? t('spreed', 'Loading …') :t('spreed', 'No results')">
+					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
 					<template #icon>
 						<NcLoadingIcon v-if="!participantsInitialised" />
 						<IconAccountSearch v-else />

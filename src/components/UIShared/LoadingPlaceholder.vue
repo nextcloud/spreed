@@ -11,7 +11,7 @@
 				:style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />
 			</div>
-			<div class="placeholder-item__content" :style="{'--last-line-width': item.width}">
+			<div class="placeholder-item__content" :style="{ '--last-line-width': item.width }">
 				<div v-for="idx in item.amount" :key="idx" class="placeholder-item__content-line" />
 			</div>
 			<div v-if="type === 'messages'" class="placeholder-item__info" />
@@ -33,6 +33,7 @@ export default {
 				return ['conversations', 'messages', 'participants', 'event-cards'].includes(value)
 			},
 		},
+
 		count: {
 			type: Number,
 			default: 5,

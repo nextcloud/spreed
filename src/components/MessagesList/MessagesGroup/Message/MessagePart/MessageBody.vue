@@ -39,7 +39,7 @@
 		<!-- Normal message body content -->
 		<div v-else
 			class="message-main__text markdown-message"
-			:class="{'message-highlighted': isNewPollMessage }"
+			:class="{ 'message-highlighted': isNewPollMessage }"
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
@@ -48,7 +48,7 @@
 			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
 				:arguments="richParameters"
-				:class="{'single-emoji': isSingleEmoji}"
+				:class="{ 'single-emoji': isSingleEmoji }"
 				autolink
 				dir="auto"
 				:interactive="message.markdown && isEditable"
@@ -64,7 +64,7 @@
 				type="tertiary"
 				:aria-label="t('spreed', 'Copy code block')"
 				:title="t('spreed', 'Copy code block')"
-				:style="{top: copyButtonOffset}"
+				:style="{ top: copyButtonOffset }"
 				@click="copyCodeBlock">
 				<template #icon>
 					<ContentCopyIcon :size="16" />
@@ -80,7 +80,7 @@
 			<div v-if="message.sendingFailure"
 				:title="sendingErrorIconTitle"
 				class="message-status sending-failed"
-				:class="{'retry-option': sendingErrorCanRetry}"
+				:class="{ 'retry-option': sendingErrorCanRetry }"
 				:aria-label="sendingErrorIconTitle"
 				tabindex="0"
 				@mouseover="showReloadButton = true"
@@ -196,14 +196,17 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		richParameters: {
 			type: Object,
 			required: true,
 		},
+
 		isDeleting: {
 			type: Boolean,
 			default: false,
 		},
+
 		hasCall: {
 			type: Boolean,
 			default: false,
@@ -279,8 +282,8 @@ export default {
 
 		hasRetentionPeriod() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
-			|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY
-			|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING
+				|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY
+				|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING
 		},
 
 		showConversationActionsShortcut() {

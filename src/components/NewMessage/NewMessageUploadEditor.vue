@@ -26,7 +26,7 @@
 					class="hidden-visually"
 					@change="handleFileInput">
 				<TransitionWrapper class="upload-editor__previews"
-					:class="{'dragging-over': isDraggingOver}"
+					:class="{ 'dragging-over': isDraggingOver }"
 					name="fade"
 					tag="div"
 					group>
@@ -220,6 +220,7 @@ export default {
 				}
 			}
 		},
+
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker

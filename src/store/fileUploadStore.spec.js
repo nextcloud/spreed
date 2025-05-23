@@ -11,9 +11,7 @@ import Vuex from 'vuex'
 import { showError } from '@nextcloud/dialogs'
 import { getUploader } from '@nextcloud/upload'
 
-// eslint-disable-next-line no-unused-vars -- required for testing
 import storeConfig from './storeConfig.js'
-// eslint-disable-next-line import/order -- required for testing
 import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.ts'

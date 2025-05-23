@@ -22,14 +22,17 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		id: {
 			type: String,
 			required: true,
 		},
+
 		name: {
 			type: String,
 			required: true,
 		},
+
 		link: {
 			type: String,
 			default: '',

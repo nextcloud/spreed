@@ -7,7 +7,7 @@
 	<div class="background-editor">
 		<button key="clear"
 			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === 'none'}"
+			:class="{ 'background-editor__element--selected': selectedBackground === 'none' }"
 			@click="handleSelectBackground('none')">
 			<IconCancel :size="20" />
 			{{
@@ -17,7 +17,7 @@
 		</button>
 		<button key="blur"
 			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
+			:class="{ 'background-editor__element--selected': selectedBackground === 'blur' }"
 			@click="handleSelectBackground('blur')">
 			<IconBlur :size="20" />
 			{{ t('spreed', 'Blur') }}
@@ -30,7 +30,7 @@
 					{{ t('spreed', 'Upload') }}
 				</button>
 				<button class="background-editor__element"
-					:class="{'background-editor__element--selected': isCustomBackground }"
+					:class="{ 'background-editor__element--selected': isCustomBackground }"
 					@click="showFilePicker = true">
 					<IconFolder :size="20" />
 					{{ t('spreed', 'Files') }}
@@ -41,7 +41,7 @@
 				:aria-label="ariaLabelForPredefinedBackground(path)"
 				:title="ariaLabelForPredefinedBackground(path)"
 				class="background-editor__element"
-				:class="{'background-editor__element--selected': selectedBackground === path}"
+				:class="{ 'background-editor__element--selected': selectedBackground === path }"
 				:style="{
 					'background-image': 'url(' + path + ')'
 				}"
@@ -210,7 +210,6 @@ export default {
 		},
 
 		async handleFileInput(event) {
-
 			// Make file path
 			const file = event.target.files[0]
 
@@ -240,7 +239,6 @@ export default {
 				})
 
 				this.handleSelectBackground(previewURL)
-
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Error while uploading the file'))

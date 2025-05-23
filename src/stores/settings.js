@@ -59,20 +59,20 @@ export const useSettingsStore = defineStore('settings', {
 			const storedValue = BrowserStorage.getItem('showMediaSettings_' + token)
 
 			switch (storedValue) {
-			case 'true': {
-				Vue.set(state.showMediaSettings, token, true)
-				return true
-			}
-			case 'false': {
-				Vue.set(state.showMediaSettings, token, false)
-				return false
-			}
-			case null:
-			default: {
-				BrowserStorage.setItem('showMediaSettings_' + token, 'true')
-				Vue.set(state.showMediaSettings, token, true)
-				return true
-			}
+				case 'true': {
+					Vue.set(state.showMediaSettings, token, true)
+					return true
+				}
+				case 'false': {
+					Vue.set(state.showMediaSettings, token, false)
+					return false
+				}
+				case null:
+				default: {
+					BrowserStorage.setItem('showMediaSettings_' + token, 'true')
+					Vue.set(state.showMediaSettings, token, true)
+					return true
+				}
 			}
 		},
 	},

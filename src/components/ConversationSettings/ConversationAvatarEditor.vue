@@ -9,7 +9,7 @@
 			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
 					:class="['avatar__preview-emoji', themeClass]"
-					:style="{'background-color': backgroundColor}">
+					:style="{ 'background-color': backgroundColor }">
 					{{ emojiAvatar }}
 				</div>
 				<ConversationIcon v-else-if="!loading"
@@ -127,7 +127,6 @@ import ConversationIcon from '../ConversationIcon.vue'
 
 import { AVATAR } from '../../constants.ts'
 
-// eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
 
 const validMimeTypes = ['image/png', 'image/jpeg']
@@ -155,6 +154,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Shows or hides the editing buttons.
 		 */
@@ -162,6 +162,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * Force component to emit signals and be used from parent components
 		 */
@@ -197,6 +198,7 @@ export default {
 				minContainerWidth: 300,
 				minContainerHeight: 300,
 			},
+
 			backgroundColor: '',
 			emojiAvatar: '',
 		}
@@ -234,6 +236,7 @@ export default {
 				this.$emit('avatar-edited', value)
 			}
 		},
+
 		emojiAvatar(value) {
 			if (this.controlled) {
 				this.$emit('avatar-edited', !!value)

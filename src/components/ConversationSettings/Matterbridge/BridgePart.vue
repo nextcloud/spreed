@@ -19,7 +19,7 @@
 						<IconCheck v-if="editing" :size="20" />
 						<IconPencil v-else :size="20" />
 					</template>
-					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
+					{{ editing ? t('spreed', 'Save') : t('spreed', 'Edit') }}
 				</NcActionButton>
 				<NcActionLink :href="type.infoTarget" target="_blank" close-after-click>
 					<template #icon>
@@ -100,22 +100,27 @@ export default {
 			type: Number,
 			required: true,
 		},
+
 		part: {
 			type: Object,
 			required: true,
 		},
+
 		type: {
 			type: Object,
 			required: true,
 		},
+
 		container: {
 			type: String,
 			required: true,
 		},
+
 		editing: {
 			type: Boolean,
 			default: false,
 		},
+
 		editable: {
 			type: Boolean,
 			default: true,

@@ -61,11 +61,13 @@ export default {
 			default: '',
 			required: true,
 		},
+
 		index: {
 			type: Number,
 			default: -1,
 			required: true,
 		},
+
 		loading: {
 			type: Boolean,
 			default: false,
@@ -79,6 +81,7 @@ export default {
 			get() {
 				return this.server
 			},
+
 			set(value) {
 				this.$emit('update:server', value)
 			}

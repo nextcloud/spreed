@@ -10,7 +10,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
 						type="tertiary"
-						:class="{'hidden-visually': isSearching}"
+						:class="{ 'hidden-visually': isSearching }"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
 						:aria-label="t('spreed', 'Talk home')"
@@ -21,7 +21,7 @@
 					</NcButton>
 				</TransitionWrapper>
 				<div class="conversations-search"
-					:class="{'conversations-search--expanded': isSearching}">
+					:class="{ 'conversations-search--expanded': isSearching }">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
@@ -35,7 +35,7 @@
 					<NcActions v-show="searchText === ''"
 						:type="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
-						:class="{'hidden-visually': isSearching}">
+						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
@@ -87,7 +87,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<NcActions v-show="searchText === ''"
 						class="actions"
-						:class="{'hidden-visually': isSearching}">
+						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
 							<ChatPlus :size="20" />
 						</template>
@@ -517,6 +517,7 @@ export default {
 				this.isNavigating = true
 			}
 		},
+
 		isCompact(value) {
 			if (!value) {
 				// Last messages are likely missing from the store, need to fetch with modifiedSince=0
@@ -544,26 +545,26 @@ export default {
 		talkBroadcastChannel.addEventListener('message', (event) => {
 			if (this.isCurrentTabLeader) {
 				switch (event.data.message) {
-				case 'force-fetch-all-conversations':
-					if (event.data.options?.all) {
-						this.roomListModifiedBefore = 0
-						this.forceFullRoomListRefreshAfterXLoops = 10
-					}
-					this.debounceFetchConversations()
-					break
+					case 'force-fetch-all-conversations':
+						if (event.data.options?.all) {
+							this.roomListModifiedBefore = 0
+							this.forceFullRoomListRefreshAfterXLoops = 10
+						}
+						this.debounceFetchConversations()
+						break
 				}
 			} else {
 				switch (event.data.message) {
-				case 'update-conversations':
-					this.$store.dispatch('patchConversations', {
-						conversations: event.data.conversations,
-						withRemoving: event.data.withRemoving,
-					})
-					this.federationStore.updatePendingSharesCount(event.data.invites)
-					break
-				case 'update-nextcloud-talk-hash':
-					this.talkHashStore.setNextcloudTalkHash(event.data.hash)
-					break
+					case 'update-conversations':
+						this.$store.dispatch('patchConversations', {
+							conversations: event.data.conversations,
+							withRemoving: event.data.withRemoving,
+						})
+						this.federationStore.updatePendingSharesCount(event.data.invites)
+						break
+					case 'update-nextcloud-talk-hash':
+						this.talkHashStore.setNextcloudTalkHash(event.data.hash)
+						break
 				}
 			}
 		})
