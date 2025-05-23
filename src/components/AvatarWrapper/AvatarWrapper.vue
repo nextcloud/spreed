@@ -10,7 +10,7 @@
 			{{ firstLetterOfGuestName }}
 		</div>
 		<div v-else-if="isBot" class="avatar bot">
-			{{ '>_' }}
+			>_
 		</div>
 		<img v-else-if="isFederatedUser && token"
 			:key="avatarUrl"
