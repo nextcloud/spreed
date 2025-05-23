@@ -228,8 +228,10 @@ export default {
 		},
 
 		showRecordingWarning() {
-			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
-				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
+			return [CALL.RECORDING.VIDEO_STARTING,
+				CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO,
+				CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
 				|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
 		},
 

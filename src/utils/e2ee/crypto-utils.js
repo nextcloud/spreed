@@ -25,7 +25,7 @@ export async function deriveKeys(material) {
 	}, material, {
 		name: 'AES-GCM',
 		length: 128
-	}, false, [ 'encrypt', 'decrypt' ]);
+	}, false, ['encrypt', 'decrypt']);
 
 	return {
 		material,
@@ -60,5 +60,5 @@ export async function ratchet(material) {
  */
 export async function importKey(keyBytes) {
 	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
-	return crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, [ 'deriveBits', 'deriveKey' ]);
+	return crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveBits', 'deriveKey']);
 }

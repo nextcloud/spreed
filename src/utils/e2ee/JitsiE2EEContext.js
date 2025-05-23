@@ -94,7 +94,7 @@ export default class E2EEcontext {
 				readableStream: receiverStreams.readable,
 				writableStream: receiverStreams.writable,
 				participantId
-			}, [ receiverStreams.readable, receiverStreams.writable ]);
+			}, [receiverStreams.readable, receiverStreams.writable]);
 		}
 	}
 
@@ -127,7 +127,7 @@ export default class E2EEcontext {
 				readableStream: senderStreams.readable,
 				writableStream: senderStreams.writable,
 				participantId
-			}, [ senderStreams.readable, senderStreams.writable ]);
+			}, [senderStreams.readable, senderStreams.writable]);
 		}
 	}
 
