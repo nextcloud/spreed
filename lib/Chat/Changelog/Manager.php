@@ -144,6 +144,11 @@ class Manager {
 			. $this->l->t('- Schedule a meeting into your calendar from within a conversation') . "\n"
 			. $this->l->t('- Search for messages of the current conversation directly in the right sidebar') . "\n"
 			. $this->l->t('- See more conversations on a first glance with the new compact list (enable in the Talk settings)'),
+			$this->l->t('## New in Talk %s', ['21.1']) . "\n"
+			. $this->l->t('- Meeting conversations now sync the title and description from the calendar and are hidden with a search filter until they are close to the start') . "\n"
+			. $this->l->t('- Mark conversations as sensitive in the notification settings, to hide the message content from the conversation list and notifications') . "\n"
+			. $this->l->t('- To receive push notifications during "Do not disturb", mark conversations as important') . "\n"
+			. $this->l->t('- Add other participants to a one-to-one call to create a new group call on the fly') . "\n",
 		];
 	}
 }
