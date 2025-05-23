@@ -183,7 +183,7 @@ const getters = {
 			return []
 		}
 
-		return Object.values(state.messages[token]).filter(message => {
+		return Object.values(state.messages[token]).filter((message) => {
 			return message.referenceId === referenceId
 				&& ('' + message.id).startsWith('temp-')
 		})
@@ -219,7 +219,7 @@ const getters = {
 			return null
 		}
 
-		return getters.messagesList(token).find(message => {
+		return getters.messagesList(token).find((message) => {
 			return message.id >= readMessageId
 				&& !String(message.id).startsWith('temp-')
 				&& message.systemMessage !== 'reaction'
@@ -236,7 +236,7 @@ const getters = {
 			return null
 		}
 
-		return getters.messagesList(token).findLast(message => {
+		return getters.messagesList(token).findLast((message) => {
 			return message.id < readMessageId
 				&& isMessageVisible(message.id)
 				&& !String(message.id).startsWith('temp-')
@@ -472,7 +472,7 @@ const mutations = {
 		}
 
 		if (message.reactionsSelf?.includes(reaction)) {
-			Vue.set(message, 'reactionsSelf', message.reactionsSelf.filter(item => item !== reaction))
+			Vue.set(message, 'reactionsSelf', message.reactionsSelf.filter((item) => item !== reaction))
 		}
 	},
 
@@ -502,7 +502,7 @@ const mutations = {
 		}
 
 		// If lastReadMessage is rendered, keep it and +- 100 messages, otherwise only newest 200 messages
-		const lastReadMessageIndex = messageIds.findIndex(id => +id === lastReadMessage)
+		const lastReadMessageIndex = messageIds.findIndex((id) => +id === lastReadMessage)
 
 		const messagesToRemove = lastReadMessageIndex !== -1
 			? messageIds.slice(lastReadMessageIndex + 99)
@@ -574,8 +574,8 @@ const actions = {
 				}
 				// Check existing messages for having a deleted / edited message as parent, and update them
 				context.getters.messagesList(token)
-					.filter(storedMessage => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
-					.forEach(storedMessage => {
+					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
+					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
 					})
 			}
@@ -603,7 +603,7 @@ const actions = {
 				}
 
 				// If successful, deletes the temporary message from the store
-				tempMessages.forEach(tempMessage => {
+				tempMessages.forEach((tempMessage) => {
 					context.dispatch('removeTemporaryMessageFromStore', { token, id: tempMessage.id })
 				})
 			}
@@ -643,7 +643,7 @@ const actions = {
 				if (message.messageParameters?.object?.type === 'talk-poll') {
 					EventBus.emit('talk:poll-added', { token, message })
 				}
-			} else if (Object.keys(message.messageParameters).some(key => key.startsWith('file'))) {
+			} else if (Object.keys(message.messageParameters).some((key) => key.startsWith('file'))) {
 				// Handle shares with multiple files
 			}
 		}
@@ -912,7 +912,7 @@ const actions = {
 		}
 
 		// Process each messages and adds it to the store
-		response.data.ocs.data.forEach(message => {
+		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
@@ -1010,7 +1010,7 @@ const actions = {
 		}
 
 		// Process each messages and adds it to the store
-		response.data.ocs.data.forEach(message => {
+		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
@@ -1143,7 +1143,7 @@ const actions = {
 		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
 		// Process each messages and adds it to the store
-		response.data.ocs.data.forEach(message => {
+		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache,
 				// force in case the display name has changed since
@@ -1359,7 +1359,7 @@ const actions = {
 
 		// when there is no token provided, the message will be forwarded to the Note to self conversation
 		if (!targetToken) {
-			let noteToSelf = context.getters.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
+			let noteToSelf = context.getters.conversationsList.find((conversation) => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 			// If Note to self doesn't exist, it will be regenerated
 			if (!noteToSelf) {
 				const response = await fetchNoteToSelfConversation()

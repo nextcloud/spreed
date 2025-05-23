@@ -75,7 +75,7 @@ const profileActions = computed<UserProfileData['actions']>(() => {
 	if (!profileInfo.value) {
 		return []
 	}
-	return profileInfo.value.actions.filter(action => action.id !== 'talk')
+	return profileInfo.value.actions.filter((action) => action.id !== 'talk')
 })
 
 const sidebarTitle = computed(() => {
@@ -131,7 +131,7 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 	}
 
 	const now = convertToUnix(Date.now())
-	return groupwareStore.mutualEvents[token.value].map(event => {
+	return groupwareStore.mutualEvents[token.value].map((event) => {
 		const start = event.start
 			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
 			: ''

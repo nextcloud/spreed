@@ -406,7 +406,7 @@ export default {
 		},
 
 		upload() {
-			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile?.sharePath))
+			return this.uploadManager?.queue.find((item) => item._source.includes(this.uploadFile?.sharePath))
 		},
 
 		uploadProgress() {
@@ -502,7 +502,7 @@ export default {
 
 			if (this.itemType === SHARED_ITEM.TYPES.MEDIA) {
 				const getRevertedList = (items) => Object.values(items).reverse()
-					.map(item => item.messageParameters.file)
+					.map((item) => item.messageParameters.file)
 
 				// Get available media files from store and put them to the list to navigate through slides
 				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media

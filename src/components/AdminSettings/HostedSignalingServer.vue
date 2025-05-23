@@ -218,8 +218,8 @@ export default {
 		// list of {code: "France", name: "France"}
 		this.countries = languagesAndCountries.countries
 
-		this.hostedHPBLanguage = this.languages.find(language => language.code === state.language) ?? this.languages[0]
-		this.hostedHPBCountry = this.countries.find(country => country.code === state.country) ?? this.countries[0]
+		this.hostedHPBLanguage = this.languages.find((language) => language.code === state.language) ?? this.languages[0]
+		this.hostedHPBCountry = this.countries.find((country) => country.code === state.country) ?? this.countries[0]
 	},
 
 	methods: {

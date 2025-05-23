@@ -145,9 +145,9 @@ export default {
 		const mergedGroups = Array.from(
 			new Set(
 				this.allowedGroups.concat(this.canStartConversations)
-					.map(g => JSON.stringify(g)),
+					.map((g) => JSON.stringify(g)),
 			),
-		).map(g => JSON.parse(g))
+		).map((g) => JSON.parse(g))
 
 		this.groups = mergedGroups.sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
@@ -187,7 +187,7 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
-			const groups = this.allowedGroups.map(group => {
+			const groups = this.allowedGroups.map((group) => {
 				return group.id
 			})
 
@@ -208,7 +208,7 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelStartConversations = t('spreed', 'Saving …')
 
-			const groups = this.canStartConversations.map(group => {
+			const groups = this.canStartConversations.map((group) => {
 				return group.id
 			})
 

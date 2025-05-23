@@ -332,7 +332,7 @@ export default {
 			if (!this.isInCall) {
 				// Push the newly created conversation's route.
 				this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
-					.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+					.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 
 				// Get complete participant list in advance
 				this.$store.dispatch('fetchParticipants', { token: this.newConversation.token })

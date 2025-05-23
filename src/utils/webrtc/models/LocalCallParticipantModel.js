@@ -56,7 +56,7 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', null)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
-		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
+		this._unwatchDisplayNameChange = store.watch((state) => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
 	setPeerId(peerId) {

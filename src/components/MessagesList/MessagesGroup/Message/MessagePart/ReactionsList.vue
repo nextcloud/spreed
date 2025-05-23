@@ -110,7 +110,7 @@ export default {
 
 			Object.entries(this.detailedReactions).forEach(([reaction, actors]) => {
 				modifiedDetailedReactions[reaction] = []
-				actors.forEach(actor => {
+				actors.forEach((actor) => {
 					const key = `${actor.actorId}-${actor.actorType}`
 					const actorDisplayName = this.getDisplayNameForReaction(actor)
 					const actorDisplayNameWithFallback = getDisplayNameWithFallback(actorDisplayName, actor.actorType)

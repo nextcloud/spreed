@@ -259,11 +259,11 @@ export default {
 		},
 
 		updateSelectedParticipants(participant) {
-			const isSelected = this.selectedParticipants.some(selected => {
+			const isSelected = this.selectedParticipants.some((selected) => {
 				return selected.id === participant.id && selected.source === participant.source
 			})
 			const payload = isSelected
-				? this.selectedParticipants.filter(selected => {
+				? this.selectedParticipants.filter((selected) => {
 						return selected.id !== participant.id || selected.source !== participant.source
 					})
 				: [...this.selectedParticipants, participant]

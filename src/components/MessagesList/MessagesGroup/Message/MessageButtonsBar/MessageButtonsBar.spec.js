@@ -404,7 +404,7 @@ describe('MessageButtonsBar.vue', () => {
 				{ label: 'second action', icon: 'some-icon2', callback: handler2 },
 			]
 			const integrationsStore = useIntegrationsStore()
-			actionsGetterMock.forEach(action => integrationsStore.addMessageAction(action))
+			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
 			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {

@@ -59,7 +59,7 @@ export default {
 		openConversation(conversation) {
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } })
-				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.closeModal()
 		},
 	},

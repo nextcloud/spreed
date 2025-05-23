@@ -277,7 +277,7 @@ export default {
 		},
 
 		votePercentage() {
-			const votes = Object.keys(Object(this.poll?.options)).map(index => this.poll?.votes['option-' + index] ?? 0)
+			const votes = Object.keys(Object(this.poll?.options)).map((index) => this.poll?.votes['option-' + index] ?? 0)
 			return calculateVotePercentage(votes, this.poll.numVoters)
 		},
 	},
@@ -335,7 +335,7 @@ export default {
 
 		setVoteData() {
 			this.voteToSubmit = this.selfHasVoted
-				? this.poll?.votedSelf.map(el => el.toString())
+				? this.poll?.votedSelf.map((el) => el.toString())
 				: []
 		},
 
@@ -358,7 +358,7 @@ export default {
 				await this.pollsStore.submitVote({
 					token: this.token,
 					pollId: this.id,
-					optionIds: this.voteToSubmit.map(element => +element),
+					optionIds: this.voteToSubmit.map((element) => +element),
 				})
 				this.modalPage = 'results'
 			} catch (error) {
@@ -394,7 +394,7 @@ export default {
 		},
 
 		getFilteredDetails(index) {
-			return (this.poll?.details || []).filter(item => item.optionId === index)
+			return (this.poll?.details || []).filter((item) => item.optionId === index)
 		},
 	},
 }

@@ -87,7 +87,7 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 		return
 	}
 
-	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter(key => key.startsWith('audioDisabled_')
+	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter((key) => key.startsWith('audioDisabled_')
 		|| key.startsWith('videoDisabled_')
 		|| key.startsWith('virtualBackgroundEnabled_')
 		|| key.startsWith('virtualBackgroundType_')
@@ -98,7 +98,7 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 	if (storageKeys.length) {
 		console.debug('Migrating localStorage keys to BrowserStorage', storageKeys)
 
-		storageKeys.forEach(key => {
+		storageKeys.forEach((key) => {
 			BrowserStorage.setItem(key, localStorage.getItem(key))
 			localStorage.removeItem(key)
 

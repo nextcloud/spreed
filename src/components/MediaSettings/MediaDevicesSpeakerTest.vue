@@ -55,7 +55,7 @@ export default {
 		},
 
 		equalizerBars() {
-			return Array.from(Array(4).keys()).map(item => ({
+			return Array.from(Array(4).keys()).map((item) => ({
 				key: item,
 				style: {
 					height: Math.random() * 100 + '%',

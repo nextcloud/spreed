@@ -58,7 +58,7 @@ const instance = new Vue({
 	store,
 	pinia,
 	router,
-	render: h => h(Recording),
+	render: (h) => h(Recording),
 })
 
 // make the instance available to global components that might run on the same page

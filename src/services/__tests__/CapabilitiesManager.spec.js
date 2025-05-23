@@ -17,7 +17,7 @@ import {
 import { getRemoteCapabilities } from '../federationService.ts'
 
 jest.mock('../BrowserStorage', () => ({
-	getItem: jest.fn(key => {
+	getItem: jest.fn((key) => {
 		const mockedConversations = [
 			{ token: 'TOKEN1', remoteServer: undefined },
 			{ token: 'TOKEN2', remoteServer: undefined },

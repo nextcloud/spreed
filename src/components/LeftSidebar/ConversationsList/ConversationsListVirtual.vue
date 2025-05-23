@@ -142,7 +142,7 @@ export default {
 		 * @return {void}
 		 */
 		scrollToConversation(token) {
-			const index = this.conversations.findIndex(conversation => conversation.token === token)
+			const index = this.conversations.findIndex((conversation) => conversation.token === token)
 			if (index !== -1) {
 				this.scrollToItem(index)
 			}

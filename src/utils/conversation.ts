@@ -76,7 +76,7 @@ export function getEventTimeRange(conversation: Conversation): EventTimeRange {
 		return { start: null, end: null }
 	}
 
-	const [start, end] = parts.map(time => Number(time) * 1000)
+	const [start, end] = parts.map((time) => Number(time) * 1000)
 	if (isNaN(start) || isNaN(end)) {
 		return { start: null, end: null }
 	}

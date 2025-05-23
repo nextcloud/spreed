@@ -24,7 +24,7 @@ const emit = defineEmits(['update'])
 // Defines list of locked participants (can not be removed manually
 const lockedParticipants = inject<Ref<(Participant | ParticipantSearchResult)[]>>('lockedParticipants', ref([]))
 
-const isLocked = computed(() => lockedParticipants.value.some(item => {
+const isLocked = computed(() => lockedParticipants.value.some((item) => {
 	if ('actorId' in props.participant) {
 		return ('actorId' in item)
 			? item.actorId === props.participant.actorId && item.actorType === props.participant.actorType

@@ -530,7 +530,7 @@ export default {
 				modelsWithNoPermissions: [],
 			}
 			const screensSet = new Set(this.screens)
-			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map(model => model.attributes.nextcloudSessionId))
+			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map((model) => model.attributes.nextcloudSessionId))
 			const videoTilesMap = new Map()
 			const audioTilesMap = new Map()
 
@@ -559,11 +559,11 @@ export default {
 		},
 
 		speakers() {
-			return this.callParticipantModels.filter(model => model.attributes.speaking)
+			return this.callParticipantModels.filter((model) => model.attributes.speaking)
 		},
 
 		speakersWithAudioOff() {
-			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
+			return this.tempPromotedModels.filter((model) => !model.attributes.audioAvailable)
 		},
 
 		devStripe: {
@@ -602,14 +602,14 @@ export default {
 		},
 
 		speakers(models) {
-			models.forEach(model => {
+			models.forEach((model) => {
 				this.promoteSpeaker(model)
 				clearTimeout(this.unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
 			})
 		},
 
 		speakersWithAudioOff(newModels, oldModels) {
-			newModels.forEach(speaker => {
+			newModels.forEach((speaker) => {
 				if (oldModels.includes(speaker)) {
 					return
 				}
@@ -906,7 +906,7 @@ export default {
 			const id = model.attributes.nextcloudSessionId
 
 			// if model is already in the first page, do nothing
-			if (this.orderedVideos.slice(0, this.slots).find(video => video.attributes.nextcloudSessionId === id)) {
+			if (this.orderedVideos.slice(0, this.slots).find((video) => video.attributes.nextcloudSessionId === id)) {
 				return
 			}
 
@@ -934,7 +934,7 @@ export default {
 			const orderedTiles = []
 			const rest = []
 			// Get the ordered tiles
-			orderMask.forEach(id => {
+			orderMask.forEach((id) => {
 				if (tilesMap.has(id)) {
 					orderedTiles.push(tilesMap.get(id))
 				}

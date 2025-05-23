@@ -430,7 +430,7 @@ export default {
 	methods: {
 		t,
 		forceMuteOthers() {
-			callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+			callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 				callParticipantModel.forceMute()
 			})
 		},
@@ -442,7 +442,7 @@ export default {
 
 			// Don't toggle fullscreen if there is an open modal
 			// FIXME won't be needed without Fulscreen API
-			if (Array.from(document.body.childNodes).filter(child => {
+			if (Array.from(document.body.childNodes).filter((child) => {
 				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
 					&& window.getComputedStyle(child).display !== 'none'
 			}).length !== 0) {
@@ -484,7 +484,7 @@ export default {
 			// also send request for assistance to the moderators.
 			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
 				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
-					.filter(sessionId => sessionId !== this.$store.getters.getSessionId())
+					.filter((sessionId) => sessionId !== this.$store.getters.getSessionId())
 					.length !== 0
 				if (hasRaisedHands) {
 					return // Assistance is already requested by someone in the room

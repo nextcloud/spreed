@@ -51,7 +51,7 @@ export function useDocumentTitle() {
 		 * - a conversation is newly added to lastMessageMap
 		 * - a conversation has a different last message id then previously
 		 */
-		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
+		const shouldShowAsterisk = Object.keys(newLastMessageMap).some((token) => {
 			return savedLastMessageMap.value[token] === undefined // Conversation is new
 				|| (savedLastMessageMap.value[token].lastMessageId !== newLastMessageMap[token].lastMessageId // Last message changed
 					&& savedLastMessageMap.value[token].unreadMessages !== newLastMessageMap[token].unreadMessages // Unread messages changed

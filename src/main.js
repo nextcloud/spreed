@@ -54,7 +54,7 @@ const instance = new Vue({
 	propsData: {
 		fileInfo: null,
 	},
-	render: h => h(App),
+	render: (h) => h(App),
 })
 
 window.store = store

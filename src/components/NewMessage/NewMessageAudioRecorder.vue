@@ -292,7 +292,7 @@ export default {
 		 * Stop the audio streams
 		 */
 		killStreams() {
-			this.audioStream?.getTracks().forEach(track => track.stop())
+			this.audioStream?.getTracks().forEach((track) => track.stop())
 		},
 	},
 

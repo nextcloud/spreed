@@ -145,7 +145,7 @@ export default {
 
 	computed: {
 		availableRooms() {
-			return this.rooms.filter(room => room.type !== CONVERSATION.TYPE.CHANGELOG
+			return this.rooms.filter((room) => room.type !== CONVERSATION.TYPE.CHANGELOG
 				&& room.objectType !== CONVERSATION.OBJECT_TYPE.FILE
 				&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 				&& (!this.currentRoom || this.currentRoom !== room.token)
@@ -188,7 +188,7 @@ export default {
 				// Federated conversations do not support:
 				// - open conversations
 				// - 3rd app integrations (e.g. Deck / Maps)
-				.filter(conversation => this.allowFederation || !conversation.remoteServer)
+				.filter((conversation) => this.allowFederation || !conversation.remoteServer)
 			this.loading = false
 		},
 

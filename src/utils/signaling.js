@@ -114,7 +114,7 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 	}
 
 	// Convert webrtc event names to kebab-case for "vue/custom-event-name-casing"
-	const kebabCase = string => string
+	const kebabCase = (string) => string
 		.replace(/([a-z])([A-Z])/g, '$1-$2')
 		.replace(/[\s_]+/g, '-')
 		.toLowerCase()
@@ -193,7 +193,7 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch(reason => { reject(reason) })
+			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch((reason) => { reject(reason) })
 		} else {
 			resolve()
 		}
@@ -203,7 +203,7 @@ Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch(reason => { reject(reason) })
+			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch((reason) => { reject(reason) })
 			this._resetCurrentCallParameters()
 		} else {
 			resolve()
@@ -488,7 +488,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				this.pullMessageErrorToast = null
 			}
 
-			result.data.ocs.data.forEach(message => {
+			result.data.ocs.data.forEach((message) => {
 				let localParticipant
 
 				if (OC.debug) {
@@ -501,7 +501,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 						this._trigger('usersInRoom', [message.data])
 						this._trigger('participantListChanged')
 
-						localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
+						localParticipant = message.data.find((participant) => participant.sessionId === this.sessionId)
 						if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
 							this._joinCallAgainOnceDisconnected = false
 							this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent, this.currentCallRecordingConsent, this.currentCallSilentFor)
@@ -890,7 +890,7 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 		this._isRejoiningConversationWithNewSession = true
 
 		rejoinConversation(this.currentRoomToken)
-			.then(response => {
+			.then((response) => {
 				store.commit('setInCall', {
 					token: this.currentRoomToken,
 					sessionId: this.nextcloudSessionId,
@@ -1178,7 +1178,7 @@ Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
 
 	Signaling.Base.prototype.joinRoom.apply(this, arguments)
 		.then(() => { pendingJoinRoomPromise.resolve() })
-		.catch(reason => { pendingJoinRoomPromise.reject(reason) })
+		.catch((reason) => { pendingJoinRoomPromise.reject(reason) })
 
 	return pendingJoinRoomPromise
 }
@@ -1274,7 +1274,7 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		this.joinCall(token, flags, silent, recordingConsent, silentFor)
 			.then(() => {
 				pendingJoinCallResolve()
-			}).catch(error => {
+			}).catch((error) => {
 				pendingJoinCallReject(error)
 			})
 
@@ -1448,7 +1448,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				const properties = data.event.update.properties
 				const normalizedProperties = {}
 
-				Object.keys(properties).forEach(key => {
+				Object.keys(properties).forEach((key) => {
 					if (key === 'active-since') {
 						return
 					}

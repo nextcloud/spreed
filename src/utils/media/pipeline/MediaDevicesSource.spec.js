@@ -66,10 +66,10 @@ function newMediaStreamMock(id) {
 			return this._tracks
 		})
 		this.getAudioTracks = jest.fn(() => {
-			return this._tracks.filter(track => track.kind === 'audio')
+			return this._tracks.filter((track) => track.kind === 'audio')
 		})
 		this.getVideoTracks = jest.fn(() => {
-			return this._tracks.filter(track => track.kind === 'video')
+			return this._tracks.filter((track) => track.kind === 'video')
 		})
 	}
 	return new MediaStreamMock()

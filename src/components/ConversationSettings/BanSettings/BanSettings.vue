@@ -105,7 +105,7 @@ export default {
 
 		async handleUnban(id) {
 			await unbanActor(this.token, id)
-			this.banList = this.banList.filter(ban => ban.id !== id)
+			this.banList = this.banList.filter((ban) => ban.id !== id)
 		}
 	},
 }

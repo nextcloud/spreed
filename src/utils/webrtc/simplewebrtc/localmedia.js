@@ -208,7 +208,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 			return cb(null, self._trackToStream.getStream(), actualConstraints)
 		}
-	}).catch(err => {
+	}).catch((err) => {
 		self.emit('localStreamRequestFailed')
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)

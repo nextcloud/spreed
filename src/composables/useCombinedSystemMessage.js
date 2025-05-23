@@ -82,7 +82,7 @@ export function useCombinedSystemMessage() {
 
 		// Handle cases when actor added users to conversation (when populate on creation, for example)
 		if (type === 'user_added') {
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
 				} else {
@@ -133,7 +133,7 @@ export function useCombinedSystemMessage() {
 
 		// Handle cases when actor removed users from conversation (when remove team/group, for example)
 		if (type === 'user_removed') {
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
 				} else {
@@ -186,7 +186,7 @@ export function useCombinedSystemMessage() {
 		if (type === 'call_joined' || type === 'call_left') {
 			const storedUniqueUsers = []
 
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				const actorReference = `${message.messageParameters.actor.id}_${message.messageParameters.actor.type}`
 				if (storedUniqueUsers.includes(actorReference)) {
 					return
@@ -249,7 +249,7 @@ export function useCombinedSystemMessage() {
 
 		// Handle cases when actor promoted several users to moderators
 		if (type === 'moderator_promoted') {
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
 				} else {
@@ -300,7 +300,7 @@ export function useCombinedSystemMessage() {
 
 		// Handle cases when actor demoted several users from moderators
 		if (type === 'moderator_demoted') {
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
 				} else {

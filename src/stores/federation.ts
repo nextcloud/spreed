@@ -36,7 +36,7 @@ export const useFederationStore = defineStore('federation', {
 				const response = await getShares()
 				const acceptedShares: State['acceptedShares'] = {}
 				const pendingShares: State['pendingShares'] = {}
-				response.data.ocs.data.forEach(item => {
+				response.data.ocs.data.forEach((item) => {
 					if (item.state === FEDERATION.STATE.ACCEPTED) {
 						acceptedShares[item.id] = item
 					} else {

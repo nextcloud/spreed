@@ -99,7 +99,7 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		const participant = this._signalingParticipantList.getParticipants().find(participant => participant.signalingSessionId === data.from)
+		const participant = this._signalingParticipantList.getParticipants().find((participant) => participant.signalingSessionId === data.from)
 		if (!participant) {
 			return
 		}

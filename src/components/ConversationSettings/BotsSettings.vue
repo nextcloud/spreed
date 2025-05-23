@@ -88,7 +88,7 @@ export default {
 	},
 
 	async created() {
-		(await this.botsStore.loadConversationBots(this.token)).forEach(id => {
+		(await this.botsStore.loadConversationBots(this.token)).forEach((id) => {
 			Vue.set(this.isLoading, id, false)
 		})
 	},

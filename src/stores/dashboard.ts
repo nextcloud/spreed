@@ -59,7 +59,7 @@ export const useDashboardStore = defineStore('dashboard', {
 		async removeReminder(token: string, messageId: number) {
 			try {
 				await removeMessageReminder(token, messageId)
-				Vue.set(this, 'upcomingReminders', this.upcomingReminders.filter(reminder => {
+				Vue.set(this, 'upcomingReminders', this.upcomingReminders.filter((reminder) => {
 					return reminder.messageId !== messageId
 				}))
 				showSuccess(t('spreed', 'A reminder was successfully removed'))

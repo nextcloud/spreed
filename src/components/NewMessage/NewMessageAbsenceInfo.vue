@@ -164,7 +164,7 @@ export default {
 				query: {
 					callUser: this.userAbsence.replacementUserId,
 				}
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }

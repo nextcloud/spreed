@@ -230,8 +230,8 @@ export default {
 		},
 
 		addableUsers() {
-			return this.searchResults.filter(item => item.source === ATTENDEE.ACTOR_TYPE.USERS)
-				.filter(user => !this.participants.some(participant => user.id === participant.userId))
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.USERS)
+				.filter((user) => !this.participants.some((participant) => user.id === participant.userId))
 		},
 
 		addableGroups() {
@@ -253,7 +253,7 @@ export default {
 				})
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
-					? this.addableUsers.map(user => ({
+					? this.addableUsers.map((user) => ({
 							...user,
 							id: user.id + '@' + window.location.host,
 							label: user.id + '@' + window.location.host,

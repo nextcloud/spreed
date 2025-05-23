@@ -155,7 +155,7 @@ export default {
 				return this.predefinedBackgroundsV2
 			}
 
-			return this.predefinedBackgrounds.map(fileName => {
+			return this.predefinedBackgrounds.map((fileName) => {
 				return imagePath('spreed', 'backgrounds/' + fileName)
 			})
 		},

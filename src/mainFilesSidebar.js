@@ -42,14 +42,14 @@ const pinia = createPinia()
 const newCallView = () => new Vue({
 	store,
 	pinia,
-	render: h => h(FilesSidebarCallViewApp),
+	render: (h) => h(FilesSidebarCallViewApp),
 })
 
 const newTab = () => new Vue({
 	store,
 	pinia,
 	id: 'talk-chat-tab',
-	render: h => h(FilesSidebarTabApp),
+	render: (h) => h(FilesSidebarTabApp),
 })
 
 if (!window.OCA.Talk) {

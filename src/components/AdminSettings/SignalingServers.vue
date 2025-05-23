@@ -193,7 +193,7 @@ function updateServers() {
 	loading.value = true
 
 	OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-		servers: serversProxy.value.filter(server => server.server.trim() !== ''),
+		servers: serversProxy.value.filter((server) => server.server.trim() !== ''),
 		secret: secretProxy.value,
 	}), {
 		success: () => {

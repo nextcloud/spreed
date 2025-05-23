@@ -78,7 +78,7 @@ export default {
 		 */
 		supportedReactions: {
 			type: Array,
-			validator: (prop) => prop.every(e => typeof e === 'string'),
+			validator: (prop) => prop.every((e) => typeof e === 'string'),
 			required: true,
 		},
 
@@ -112,15 +112,15 @@ export default {
 	watch: {
 		callParticipantModels(models) {
 			// subscribe connected models for reaction signals
-			const addedModels = models.filter(model => !this.registeredModels[model.attributes.peerId])
-			addedModels.forEach(addedModel => {
+			const addedModels = models.filter((model) => !this.registeredModels[model.attributes.peerId])
+			addedModels.forEach((addedModel) => {
 				this.registeredModels[addedModel.attributes.peerId] = addedModel
 				this.registeredModels[addedModel.attributes.peerId].on('reaction', this.handleReaction)
 			})
 
 			// unsubscribe disconnected models
-			const removedModelIds = Object.keys(this.registeredModels).filter(registeredModelId => !models.find(model => model.attributes.peerId === registeredModelId))
-			removedModelIds.forEach(removedModelId => {
+			const removedModelIds = Object.keys(this.registeredModels).filter((registeredModelId) => !models.find((model) => model.attributes.peerId === registeredModelId))
+			removedModelIds.forEach((removedModelId) => {
 				this.registeredModels[removedModelId].off('reaction', this.handleReaction)
 				delete this.registeredModels[removedModelId]
 			})
@@ -135,7 +135,7 @@ export default {
 	beforeDestroy() {
 		clearInterval(this.intervalId)
 		unsubscribe('send-reaction', this.handleOwnReaction)
-		Object.keys(this.registeredModels).forEach(modelId => {
+		Object.keys(this.registeredModels).forEach((modelId) => {
 			this.registeredModels[modelId].off('reaction', this.handleReaction)
 			delete this.registeredModels[modelId]
 		})
@@ -149,7 +149,7 @@ export default {
 
 		handleReaction(model, reaction, isLocalModel = false) {
 			// prevent spamming to queue from a single account
-			if (this.reactionsQueue.some(item => item.id === model.attributes.peerId)) {
+			if (this.reactionsQueue.some((item) => item.id === model.attributes.peerId)) {
 				return
 			}
 
@@ -187,7 +187,7 @@ export default {
 				return name
 			}
 
-			const participant = this.participants.find(participant => participant.sessionIds.includes(nextcloudSessionId))
+			const participant = this.participants.find((participant) => participant.sessionIds.includes(nextcloudSessionId))
 			if (participant?.displayName) {
 				return participant.displayName
 			}

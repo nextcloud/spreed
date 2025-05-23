@@ -44,7 +44,7 @@ function listMediaDevices(attributes: Attributes,
 	audioInputList: MediaDeviceInfo[],
 	audioOutputList: MediaDeviceInfo[],
 	videoInputList: MediaDeviceInfo[]): string {
-	const availableDevices = attributes.devices.map(device => device.deviceId)
+	const availableDevices = attributes.devices.map((device) => device.deviceId)
 
 	const getDeviceString = (device: MediaDeviceInfo, index: number) => {
 		const isUnplugged = !availableDevices.includes(device.deviceId) ? ' (unplugged)' : ''
@@ -82,7 +82,7 @@ ${videoInputList.map(getDeviceString).join('\n')}
  * @return {string|undefined} first available (plugged) device id
  */
 function getFirstAvailableMediaDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[]): string | undefined {
-	return inputList.find(device => devices.some(d => d.kind === device.kind && d.deviceId === device.deviceId))?.deviceId
+	return inputList.find((device) => devices.some((d) => d.kind === device.kind && d.deviceId === device.deviceId))?.deviceId
 }
 
 /**
@@ -121,17 +121,17 @@ function promoteMediaDevice({ kind, devices, inputList, inputId }: PromotePayloa
 	}
 
 	// Get the index of the first plugged device
-	const availableDevices = devices.filter(device => device.kind === kind)
-	const deviceToPromote = availableDevices.find(device => device.deviceId === inputId)
+	const availableDevices = devices.filter((device) => device.kind === kind)
+	const deviceToPromote = availableDevices.find((device) => device.deviceId === inputId)
 	if (!deviceToPromote) {
 		return null
 	}
 
-	const firstPluggedIndex = inputList.findIndex(device => availableDevices.some(d => d.deviceId === device.deviceId))
+	const firstPluggedIndex = inputList.findIndex((device) => availableDevices.some((d) => d.deviceId === device.deviceId))
 	const insertPosition = firstPluggedIndex === -1 ? inputList.length : firstPluggedIndex
 
 	// Get the index of the currently selected device
-	const currentDevicePosition = inputList.findIndex(device => device.deviceId === inputId)
+	const currentDevicePosition = inputList.findIndex((device) => device.deviceId === inputId)
 
 	if (currentDevicePosition === insertPosition) {
 		// preferences list is unchanged
@@ -171,17 +171,17 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[],
 	for (const device of devices) {
 		if (device.deviceId && device.kind === DeviceKind.AudioInput) {
 			// Add to the list of known devices
-			if (!audioInputList.some(input => input.deviceId === device.deviceId)) {
+			if (!audioInputList.some((input) => input.deviceId === device.deviceId)) {
 				newAudioInputList = registerNewMediaDevice(device, newAudioInputList ?? audioInputList)
 			}
 		} else if (device.deviceId && device.kind === DeviceKind.AudioOutput) {
 			// Add to the list of known devices
-			if (!audioOutputList.some(input => input.deviceId === device.deviceId)) {
+			if (!audioOutputList.some((input) => input.deviceId === device.deviceId)) {
 				newAudioOutputList = registerNewMediaDevice(device, newAudioOutputList ?? audioOutputList)
 			}
 		} else if (device.deviceId && device.kind === DeviceKind.VideoInput) {
 			// Add to the list of known devices
-			if (!videoInputList.some(input => input.deviceId === device.deviceId)) {
+			if (!videoInputList.some((input) => input.deviceId === device.deviceId)) {
 				newVideoInputList = registerNewMediaDevice(device, newVideoInputList ?? videoInputList)
 			}
 		}

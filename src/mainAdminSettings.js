@@ -15,5 +15,5 @@ Vue.prototype.OCP = OCP
 
 export default new Vue({
 	el: '#admin_settings',
-	render: h => h(AdminSettings),
+	render: (h) => h(AdminSettings),
 })

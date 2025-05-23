@@ -253,11 +253,11 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+			return callParticipantCollection.callParticipantModels.value.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
 		},
 
 		callParticipantModelsWithScreen() {
-			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
+			return this.callParticipantModels.filter((callParticipantModel) => callParticipantModel.attributes.screen)
 		},
 
 		localScreen() {
@@ -284,7 +284,7 @@ export default {
 			if (!this.showSelectedVideo || !this.selectedVideoPeerId) {
 				return null
 			}
-			return this.callParticipantModels.find(callParticipantModel => {
+			return this.callParticipantModels.find((callParticipantModel) => {
 				return callParticipantModel.attributes.peerId === this.selectedVideoPeerId
 			})
 		},
@@ -364,7 +364,7 @@ export default {
 			if (!this.shownRemoteScreenPeerId) {
 				return null
 			}
-			return this.callParticipantModels.find(callParticipantModel => {
+			return this.callParticipantModels.find((callParticipantModel) => {
 				return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
 			})
 		},
@@ -533,10 +533,10 @@ export default {
 		 * @param {Array} models the array of CallParticipantModels
 		 */
 		updateDataFromCallParticipantModels(models) {
-			const addedModels = models.filter(model => !this.sharedDatas[model.attributes.peerId])
-			const removedModelIds = Object.keys(this.sharedDatas).filter(sharedDataId => models.find(model => model.attributes.peerId === sharedDataId) === undefined)
+			const addedModels = models.filter((model) => !this.sharedDatas[model.attributes.peerId])
+			const removedModelIds = Object.keys(this.sharedDatas).filter((sharedDataId) => models.find((model) => model.attributes.peerId === sharedDataId) === undefined)
 
-			removedModelIds.forEach(removedModelId => {
+			removedModelIds.forEach((removedModelId) => {
 				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
 
 				this.$delete(this.sharedDatas, removedModelId)
@@ -553,13 +553,13 @@ export default {
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
 
-				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
+				const index = this.speakers.findIndex((speaker) => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
 
 				this._setScreenAvailable(removedModelId, false)
 			})
 
-			addedModels.forEach(addedModel => {
+			addedModels.forEach((addedModel) => {
 				const sharedData = {
 					promoted: false,
 					remoteVideoBlocker: new RemoteVideoBlocker(addedModel),
@@ -601,7 +601,7 @@ export default {
 		_setSpeaking(peerId, speaking) {
 			if (speaking) {
 				// Move the speaker to the first element of the list
-				const index = this.speakers.findIndex(speaker => speaker.id === peerId)
+				const index = this.speakers.findIndex((speaker) => speaker.id === peerId)
 				const speaker = this.speakers[index]
 				speaker.active = true
 				this.speakers.splice(index, 1)
@@ -611,7 +611,7 @@ export default {
 			}
 
 			// Set the speaker as not speaking
-			const index = this.speakers.findIndex(speaker => speaker.id === peerId)
+			const index = this.speakers.findIndex((speaker) => speaker.id === peerId)
 			const speaker = this.speakers[index]
 			speaker.active = false
 
@@ -619,7 +619,7 @@ export default {
 			if (index === 0) {
 				this.speakers.shift()
 
-				const firstInactiveSpeakerIndex = this.speakers.findIndex(speaker => !speaker.active)
+				const firstInactiveSpeakerIndex = this.speakers.findIndex((speaker) => !speaker.active)
 				if (firstInactiveSpeakerIndex === -1) {
 					this.speakers.push(speaker)
 				} else {
@@ -669,7 +669,7 @@ export default {
 		},
 
 		_setPromotedParticipant() {
-			Object.values(this.sharedDatas).forEach(sharedData => {
+			Object.values(this.sharedDatas).forEach((sharedData) => {
 				sharedData.promoted = false
 			})
 
@@ -706,7 +706,7 @@ export default {
 		_setScreenVisible() {
 			this.localSharedData.screenVisible = false
 
-			Object.values(this.sharedDatas).forEach(sharedData => {
+			Object.values(this.sharedDatas).forEach((sharedData) => {
 				sharedData.screenVisible = false
 			})
 
@@ -778,7 +778,7 @@ export default {
 		},
 
 		adjustSimulcastQuality() {
-			this.callParticipantModels.forEach(callParticipantModel => {
+			this.callParticipantModels.forEach((callParticipantModel) => {
 				this.adjustSimulcastQualityForParticipant(callParticipantModel)
 			})
 		},

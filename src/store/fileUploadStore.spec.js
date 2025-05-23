@@ -214,7 +214,7 @@ describe('fileUploadStore', () => {
 				expect(findUniquePath).toHaveBeenNthCalledWith(+index + 1, client, '/files/current-user', '/Talk/' + files[index].name, undefined)
 				expect(uploadMock).toHaveBeenNthCalledWith(+index + 1, `/Talk/${files[index].name}uniq`, files[index])
 			}
-			const referenceIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.referenceId)
+			const referenceIds = store.getters.getUploadsArray('upload-id1').map((entry) => entry[1].temporaryMessage.referenceId)
 
 			expect(shareFile).toHaveBeenCalledTimes(2)
 			expect(shareFile).toHaveBeenNthCalledWith(1, {
@@ -337,7 +337,7 @@ describe('fileUploadStore', () => {
 				files,
 			})
 
-			const fileIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.id)
+			const fileIds = store.getters.getUploadsArray('upload-id1').map((entry) => entry[1].temporaryMessage.id)
 			await store.dispatch('removeFileFromSelection', fileIds[1])
 
 			const uploads = store.getters.getInitialisedUploads('upload-id1')

@@ -120,7 +120,7 @@ export default {
 		},
 
 		botsExtended() {
-			return this.bots.map(bot => ({
+			return this.bots.map((bot) => ({
 				...bot,
 				...this.getStateIcon(bot.state),
 				description: bot.description ?? t('spreed', 'Description is not provided'),

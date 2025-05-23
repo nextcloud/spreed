@@ -46,7 +46,7 @@ describe('sessionStore', () => {
 		},
 	]
 	const populateParticipantsStore = (participants = participantsInStore) => {
-		participants.forEach(participant => {
+		participants.forEach((participant) => {
 			vuexStore.dispatch('addParticipant', { token: TOKEN, participant })
 		})
 	}

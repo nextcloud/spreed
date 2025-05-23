@@ -740,7 +740,7 @@ export default {
 		},
 
 		sleep(ms) {
-			return new Promise(resolve => setTimeout(resolve, ms))
+			return new Promise((resolve) => setTimeout(resolve, ms))
 		},
 
 		handleRetryMessage(id) {
@@ -897,7 +897,7 @@ export default {
 			}
 
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
+			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast((message) => {
 				return message.actorId === this.$store.getters.getUserId()
 					&& message.actorType === this.$store.getters.getActorType()
 					&& !message.isTemporary && !message.systemMessage
