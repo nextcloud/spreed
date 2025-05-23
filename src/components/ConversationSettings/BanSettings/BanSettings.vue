@@ -44,17 +44,13 @@
 </template>
 
 <script>
-import AccountCancel from 'vue-material-design-icons/AccountCancel.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
+import AccountCancel from 'vue-material-design-icons/AccountCancel.vue'
 import BannedItem from './BannedItem.vue'
-
 import { getConversationBans, unbanActor } from '../../../services/banService.ts'
 
 export default {

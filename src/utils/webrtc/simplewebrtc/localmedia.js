@@ -1,16 +1,11 @@
+import mockconsole from 'mockconsole'
 /**
  * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: MIT
  */
 import util from 'util'
-
-import mockconsole from 'mockconsole'
 import WildEmitter from 'wildemitter'
-
-// Only mediaDevicesManager is used, but it can not be assigned here due to not
-// being initialized yet.
-import getScreenMedia from './getscreenmedia.js'
 import BlackVideoEnforcer from '../../media/pipeline/BlackVideoEnforcer.js'
 import MediaDevicesSource from '../../media/pipeline/MediaDevicesSource.js'
 import SpeakingMonitor from '../../media/pipeline/SpeakingMonitor.js'
@@ -19,6 +14,9 @@ import TrackEnabler from '../../media/pipeline/TrackEnabler.js'
 import TrackToStream from '../../media/pipeline/TrackToStream.js'
 import VirtualBackground from '../../media/pipeline/VirtualBackground.js'
 import { mediaDevicesManager } from '../index.js'
+// Only mediaDevicesManager is used, but it can not be assigned here due to not
+// being initialized yet.
+import getScreenMedia from './getscreenmedia.js'
 
 /**
  * @param {object} opts the options object.

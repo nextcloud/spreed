@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import EmitterMixin from '../../EmitterMixin.js'
 import {
 	PEER_DIRECTION,
 	PEER_TYPE,
 	PeerConnectionAnalyzer,
 } from './PeerConnectionAnalyzer.js'
-import EmitterMixin from '../../EmitterMixin.js'
 
 /**
  * Analyzer for the quality of the connections of a Participant.

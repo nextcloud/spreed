@@ -5,29 +5,25 @@
 
 <script lang="ts" setup>
 
+import type { DashboardEventRoom } from '../../types/index.ts'
+
+import { getCanonicalLocale, n, t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
+import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { useNow } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router/composables'
-
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
-import IconTextBox from 'vue-material-design-icons/TextBox.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
-
-import { t, n, getCanonicalLocale } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
-
+import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconTextBox from 'vue-material-design-icons/TextBox.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../ConversationIcon.vue'
-
 import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
-import type { DashboardEventRoom } from '../../types/index.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const props = defineProps<{

@@ -4,24 +4,19 @@
 -->
 
 <script setup lang="ts">
+import { showError } from '@nextcloud/dialogs'
+import { getLanguage, t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
-import { useRouter, useRoute } from 'vue-router/composables'
-
+import { useRoute, useRouter } from 'vue-router/composables'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import IconCheckUnderline from 'vue-material-design-icons/CheckUnderline.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { t, getLanguage } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-
 import ConfirmDialog from '../../components/UIShared/ConfirmDialog.vue'
-
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
-import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const retentionEventPeriod = getTalkConfig('local', 'conversations', 'retention-event')

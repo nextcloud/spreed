@@ -5,7 +5,6 @@
 
 import wrap from '@vue/web-component-wrapper'
 import Vue from 'vue'
-
 import FlowPostToConversation from './views/FlowPostToConversation.vue'
 
 const FlowPostToConversationComponent = wrap(Vue, FlowPostToConversation)

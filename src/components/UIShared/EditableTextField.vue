@@ -62,16 +62,13 @@
 </template>
 
 <script>
-import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconClose from 'vue-material-design-icons/Close.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconPencil from 'vue-material-design-icons/Pencil.vue'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {

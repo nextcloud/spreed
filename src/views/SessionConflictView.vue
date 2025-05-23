@@ -3,10 +3,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import EmptyView from '../components/EmptyView.vue'
 </script>
 

@@ -56,23 +56,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import IconMessageBulleted from 'vue-material-design-icons/MessageBulleted.vue'
+import type { SummarizeChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import IconMessageBulleted from 'vue-material-design-icons/MessageBulleted.vue'
 import { useStore } from '../../composables/useStore.js'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
-import type { TaskProcessingResponse, SummarizeChatTask } from '../../types/index.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
 type TaskProcessingCancelableRequest = {

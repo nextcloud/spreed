@@ -19,12 +19,9 @@
 </template>
 
 <script>
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import { useSoundsStore } from '../../stores/sounds.js'
 
 export default {

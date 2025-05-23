@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { acceptShareResponse, getCapabilitiesResponse, getSharesResponse, rejectShareResponse } from '../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
-import type { acceptShareResponse, getSharesResponse, rejectShareResponse, getCapabilitiesResponse } from '../types/index.ts'
 
 /**
  * Fetches list of shares for a current user
@@ -48,8 +48,8 @@ const getRemoteCapabilities = async function(token: string, options?: object): g
 }
 
 export {
-	getShares,
 	acceptShare,
-	rejectShare,
 	getRemoteCapabilities,
+	getShares,
+	rejectShare,
 }

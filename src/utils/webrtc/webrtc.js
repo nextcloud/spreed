@@ -5,15 +5,14 @@
 
 import {
 	showError,
-	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
+	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
-import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
+import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
 let webrtc
 const spreedPeerConnectionTable = []

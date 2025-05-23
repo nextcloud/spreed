@@ -5,17 +5,15 @@
 
 <script setup lang="ts">
 import type { ComponentPublicInstance } from 'vue'
-import { computed } from 'vue'
 
+import { t } from '@nextcloud/l10n'
+import { computed } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconRefresh from 'vue-material-design-icons/Refresh.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
 
 type NcSelectOption = { id: string | null, label: string }
 type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }

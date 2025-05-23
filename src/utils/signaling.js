@@ -13,17 +13,16 @@ import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
 } from '@nextcloud/router'
-
-import CancelableRequest from './cancelableRequest.js'
-import Encryption from './e2ee/encryption.js'
-import { convertToUnix } from './formattedTime.ts'
-import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
 import { PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'
+import CancelableRequest from './cancelableRequest.js'
+import Encryption from './e2ee/encryption.js'
+import { convertToUnix } from './formattedTime.ts'
+import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
 
 const Signaling = {
 	Base: {},

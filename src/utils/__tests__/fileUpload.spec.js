@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import {
-	getFileExtension,
-	getFileSuffix,
 	extractFileName,
-	getFileNamePrompt,
 	findUniquePath,
+	getFileExtension,
+	getFileNamePrompt,
+	getFileSuffix,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
 } from '../fileUpload.js'

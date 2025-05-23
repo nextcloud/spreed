@@ -3,9 +3,17 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, watch, nextTick, ref } from 'vue'
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
+import { isRTL, t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router/composables'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcInputField from '@nextcloud/vue/components/NcInputField'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
@@ -16,26 +24,13 @@ import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
-import { t, isRTL } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-
-import EventCard from './EventCard.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
 import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
-
+import EventCard from './EventCard.vue'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
-import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'

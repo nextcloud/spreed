@@ -251,9 +251,16 @@
 
 <script>
 
-import { toRefs, ref } from 'vue'
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import { ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
-
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
@@ -273,21 +280,9 @@ import IconStar from 'vue-material-design-icons/Star.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
-
 import ConversationIcon from './../../ConversationIcon.vue'
-
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
-import { PARTICIPANT, AVATAR, CONVERSATION } from '../../../constants.ts'
+import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 

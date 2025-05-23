@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import axios from '@nextcloud/axios'
-
 // FIXME: should use the capabilities manager to get the password policy
 import { localCapabilities } from '../services/CapabilitiesManager.ts'
 // note: some chars removed on purpose to make them human friendly when read out

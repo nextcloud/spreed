@@ -41,18 +41,14 @@
 
 <script>
 
-import { inject, ref } from 'vue'
-
-import Check from 'vue-material-design-icons/Check.vue'
-
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
+import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-
+import Check from 'vue-material-design-icons/Check.vue'
 import RoomSelector from '../../../../RoomSelector.vue'
 
 export default {

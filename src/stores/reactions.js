@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import {
-	getReactionsDetails,
 	addReactionToMessage,
+	getReactionsDetails,
 	removeReactionFromMessage,
 } from '../services/reactionsService.ts'
 import store from '../store/index.js'

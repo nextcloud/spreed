@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { getTeamsProbeResponse } from '../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
-import type { getTeamsProbeResponse } from '../types/index.ts'
 
 /**
  * Get teams (circles) for a current user

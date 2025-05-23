@@ -1,14 +1,12 @@
+import { showError } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue } from '@vue/test-utils'
-import { setActivePinia, createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { showError } from '@nextcloud/dialogs'
-
-import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/reactionsService.ts'
+import { addReactionToMessage, getReactionsDetails, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'

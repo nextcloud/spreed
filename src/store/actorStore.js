@@ -11,7 +11,6 @@
  */
 
 import { loadState } from '@nextcloud/initial-state'
-
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { getTeams } from '../services/teamsService.ts'
 

@@ -2,10 +2,9 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { mockedCapabilities } from '../../__mocks__/capabilities.ts'
-import { getShares, acceptShare, rejectShare, getRemoteCapabilities } from '../../services/federationService.ts'
+import { acceptShare, getRemoteCapabilities, getShares, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useFederationStore } from '../federation.ts'
 

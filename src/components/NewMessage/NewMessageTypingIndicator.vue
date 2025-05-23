@@ -26,12 +26,9 @@
 </template>
 
 <script>
+import { n, t } from '@nextcloud/l10n'
 import escapeHtml from 'escape-html'
-
-import { t, n } from '@nextcloud/l10n'
-
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { AVATAR } from '../../constants.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 

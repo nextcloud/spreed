@@ -2,8 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.js'
 import { SHARED_ITEM } from '../../constants.ts'
 import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.js'

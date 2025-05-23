@@ -4,7 +4,6 @@
  */
 
 import { cloneDeep } from 'lodash'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -120,6 +119,6 @@ export {
 	findNcActionButton,
 	findNcButton,
 	findNcListItems,
-	generateOCSResponse,
 	generateOCSErrorResponse,
+	generateOCSResponse,
 }

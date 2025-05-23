@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { DeepReadonly, Ref } from 'vue'
+
 import { createSharedComposable } from '@vueuse/core'
 import { onUnmounted, readonly, ref } from 'vue'
-import type { DeepReadonly, Ref } from 'vue'
 
 /**
  * Composable to get current time (as Date object)

@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { UAParser } from 'ua-parser-js'
-
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { UAParser } from 'ua-parser-js'
 
 const parser = new UAParser()
 const browser = parser.getBrowser()

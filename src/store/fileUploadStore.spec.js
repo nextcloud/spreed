@@ -1,3 +1,5 @@
+import { showError } from '@nextcloud/dialogs'
+import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,16 +9,12 @@ import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
-
-import storeConfig from './storeConfig.js'
-import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
+import fileUploadStore from './fileUploadStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/DavClient', () => ({
 	getDavClient: jest.fn(),

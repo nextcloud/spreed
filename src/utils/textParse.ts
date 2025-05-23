@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { decodeHTML } from 'entities'
+import type { ChatMessage, Mention } from '../types/index.ts'
 
 import { getBaseUrl } from '@nextcloud/router'
-
+import { decodeHTML } from 'entities'
 import { MENTION } from '../constants.ts'
-import type { ChatMessage, Mention } from '../types/index.ts'
 
 /**
  * Parse message text to return proper formatting for mentions
@@ -65,6 +64,6 @@ function parseSpecialSymbols(text: string): string {
 }
 
 export {
-	parseSpecialSymbols,
 	parseMentions,
+	parseSpecialSymbols,
 }

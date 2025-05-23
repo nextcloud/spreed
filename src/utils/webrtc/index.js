@@ -4,18 +4,6 @@
  */
 
 import Axios from '@nextcloud/axios'
-
-import CallAnalyzer from './analyzers/CallAnalyzer.js'
-import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
-import MediaDevicesManager from './MediaDevicesManager.js'
-import CallParticipantCollection from './models/CallParticipantCollection.js'
-import LocalCallParticipantModel from './models/LocalCallParticipantModel.js'
-import LocalMediaModel from './models/LocalMediaModel.js'
-import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
-import './shims/MediaStream.js'
-import './shims/MediaStreamTrack.js'
-import SpeakingStatusHandler from './SpeakingStatusHandler.js'
-import initWebRtc from './webrtc.js'
 import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -26,6 +14,18 @@ import CancelableRequest from '../cancelableRequest.js'
 import Encryption from '../e2ee/encryption.js'
 import Signaling from '../signaling.js'
 import SignalingTypingHandler from '../SignalingTypingHandler.js'
+import CallAnalyzer from './analyzers/CallAnalyzer.js'
+import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
+import MediaDevicesManager from './MediaDevicesManager.js'
+import CallParticipantCollection from './models/CallParticipantCollection.js'
+import LocalCallParticipantModel from './models/LocalCallParticipantModel.js'
+import LocalMediaModel from './models/LocalMediaModel.js'
+import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
+import SpeakingStatusHandler from './SpeakingStatusHandler.js'
+import initWebRtc from './webrtc.js'
+
+import './shims/MediaStream.js'
+import './shims/MediaStreamTrack.js'
 
 let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
@@ -514,23 +514,19 @@ function signalingSetTyping(typing) {
 }
 
 export {
+	callAnalyzer,
 	callParticipantCollection,
+	callParticipantsAudioPlayer,
 	localCallParticipantModel,
 	localMediaModel,
-
 	mediaDevicesManager,
-
-	callParticipantsAudioPlayer,
-
-	callAnalyzer,
-
 	signalingGetSettingsForRecording,
-	signalingJoinConversation,
 	signalingJoinCall,
 	signalingJoinCallForRecording,
+	signalingJoinConversation,
+	signalingKill,
 	signalingLeaveCall,
 	signalingLeaveConversation,
-	signalingKill,
 	signalingSendCallMessage,
 	signalingSetTyping,
 }

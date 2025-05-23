@@ -110,18 +110,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
-
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Close from 'vue-material-design-icons/Close.vue'
-import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { computed, nextTick, reactive, ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -129,13 +122,17 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
-import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 

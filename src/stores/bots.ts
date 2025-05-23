@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { Bot } from '../types/index.ts'
+
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
 import { BOT } from '../constants.ts'
 import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.ts'
-import type { Bot } from '../types/index.ts'
 
 type State = {
 	bots: Record<string, Record<number, Bot>>

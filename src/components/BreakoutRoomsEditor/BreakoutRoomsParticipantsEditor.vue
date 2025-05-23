@@ -90,23 +90,18 @@
 </template>
 
 <script>
-import { provide } from 'vue'
-
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import Reload from 'vue-material-design-icons/Reload.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { provide } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-
-import SelectableParticipant from './SelectableParticipant.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import Reload from 'vue-material-design-icons/Reload.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
-
+import SelectableParticipant from './SelectableParticipant.vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 

@@ -28,14 +28,12 @@
 </template>
 
 <script>
-import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionButtonGroup from '@nextcloud/vue/components/NcActionButtonGroup'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 
 export default {
 	name: 'ReactionMenu',

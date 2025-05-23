@@ -4,25 +4,21 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
-
-import IconChatPlus from 'vue-material-design-icons/ChatPlus.vue'
+import type { ParticipantSearchResult, Conversation as TypeConversation } from '../../../types/index.ts'
 
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import { computed, ref } from 'vue'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-
+import IconChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import Hint from '../../UIShared/Hint.vue'
 import Conversation from '../ConversationsList/Conversation.vue'
-
-import { ATTENDEE, CONVERSATION, AVATAR } from '../../../constants.ts'
+import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useSettingsStore } from '../../../stores/settings.js'
-import type { Conversation as TypeConversation, ParticipantSearchResult } from '../../../types/index.ts'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
 const props = defineProps<{

@@ -3,19 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { toRef } from '@vueuse/core'
-import { computed, ref } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
+import type { ChatMessage, Conversation } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
-import { useStore } from './useStore.js'
+import { toRef } from '@vueuse/core'
+import { computed, ref } from 'vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
-import type { Conversation, ChatMessage } from '../types/index.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
+import { useStore } from './useStore.js'
 
 type Payload = {
 	item: Ref<Conversation> | ComputedRef<Conversation>

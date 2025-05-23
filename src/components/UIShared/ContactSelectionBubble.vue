@@ -4,17 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
+import type { Participant, ParticipantSearchResult } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-
+import { computed, inject, ref } from 'vue'
 import NcChip from '@nextcloud/vue/components/NcChip'
-
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { AVATAR } from '../../constants.ts'
-import type { Participant, ParticipantSearchResult } from '../../types/index.ts'
 
 const props = defineProps<{
 	participant: Participant | ParticipantSearchResult

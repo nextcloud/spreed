@@ -105,26 +105,21 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import VueCropper from 'vue-cropperjs'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
+import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Palette from 'vue-material-design-icons/Palette.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
-import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
-import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
 import ConversationIcon from '../ConversationIcon.vue'
-
 import { AVATAR } from '../../constants.ts'
 
 import 'cropperjs/dist/cropper.css'

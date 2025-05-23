@@ -7,12 +7,10 @@ import flushPromises from 'flush-promises' // TODO fix after migration to @vue/t
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex, { Store } from 'vuex'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
+import Quote from '../../../Quote.vue'
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -21,10 +19,8 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import Quote from '../../../Quote.vue'
-
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 

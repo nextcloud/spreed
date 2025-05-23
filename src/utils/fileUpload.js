@@ -122,11 +122,11 @@ function separateDuplicateUploads(uploads) {
 }
 
 export {
-	findUniquePath,
 	extractFileName,
+	findUniquePath,
 	getFileExtension,
-	getFileSuffix,
 	getFileNamePrompt,
+	getFileSuffix,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
 }

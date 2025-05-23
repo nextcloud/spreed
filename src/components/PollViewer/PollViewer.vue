@@ -116,16 +116,8 @@
 </template>
 
 <script>
+import { n, t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
-
-import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileLock from 'vue-material-design-icons/FileLock.vue'
-import IconPoll from 'vue-material-design-icons/Poll.vue'
-
-import { t, n } from '@nextcloud/l10n'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -134,9 +126,12 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
+import IconFileLock from 'vue-material-design-icons/FileLock.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 import PollVotersDetails from './PollVotersDetails.vue'
-
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.ts'

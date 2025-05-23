@@ -4,13 +4,11 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import type { CSSProperties, Component } from 'vue'
+import type { Component, CSSProperties } from 'vue'
 
 import { isRTL } from '@nextcloud/l10n'
-
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
 import TransitionExpand from './TransitionExpand.vue'
 
 type TabDefinition = {

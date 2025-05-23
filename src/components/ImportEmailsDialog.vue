@@ -4,20 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import type { ApiErrorResponse } from '../types/index.ts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
-
+import { n, t } from '@nextcloud/l10n'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import { importEmails } from '../services/participantsService.js'
-import type { ApiErrorResponse } from '../types/index.ts'
 
 const loading = ref(false)
 const listImport = ref<HTMLInputElement | null>(null)

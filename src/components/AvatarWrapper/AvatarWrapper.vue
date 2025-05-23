@@ -46,16 +46,12 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
-import WebIcon from 'vue-material-design-icons/Web.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
+import { ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
+import WebIcon from 'vue-material-design-icons/Web.vue'
 import { ATTENDEE, AVATAR } from '../../constants.ts'
 import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 

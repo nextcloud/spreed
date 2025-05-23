@@ -64,23 +64,18 @@
 </template>
 
 <script>
-import { decode } from 'blurhash'
-
-import Close from 'vue-material-design-icons/Close.vue'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
-
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
-import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
+import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
-
+import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-
-import AudioPlayer from './AudioPlayer.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
-
+import AudioPlayer from './AudioPlayer.vue'
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'

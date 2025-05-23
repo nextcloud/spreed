@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import type {
 	addReactionParams,
 	addReactionResponse,
@@ -13,6 +10,9 @@ import type {
 	deleteReactionResponse,
 	getReactionsResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 const addReactionToMessage = async function(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options: object): addReactionResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', {
@@ -42,4 +42,4 @@ const getReactionsDetails = async function(token: string, messageId: number, opt
 	}, options), options)
 }
 
-export { addReactionToMessage, removeReactionFromMessage, getReactionsDetails }
+export { addReactionToMessage, getReactionsDetails, removeReactionFromMessage }

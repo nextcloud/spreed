@@ -5,8 +5,7 @@
 
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import { getSharedItemsOverview, getSharedItems } from '../services/sharedItemsService.js'
+import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.js'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
 /**

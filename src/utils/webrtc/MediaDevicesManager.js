@@ -4,7 +4,6 @@
  */
 
 import { t } from '@nextcloud/l10n'
-
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	getFirstAvailableMediaDevice,

@@ -4,15 +4,11 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { computed } from 'vue'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
-
+import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
 import { useStore } from '../../composables/useStore.js'
 import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 

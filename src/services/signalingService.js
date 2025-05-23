@@ -30,6 +30,6 @@ const getWelcomeMessage = async (serverId) => {
 
 export {
 	fetchSignalingSettings,
-	pullSignalingMessages,
 	getWelcomeMessage,
+	pullSignalingMessages,
 }

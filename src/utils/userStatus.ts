@@ -1,16 +1,16 @@
-/**
- * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
- * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-import { t } from '@nextcloud/l10n'
-
 import type {
 	Conversation,
 	Participant,
 	ParticipantSearchResult,
 	ParticipantStatus,
 } from '../types/index.ts'
+
+/**
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+import { t } from '@nextcloud/l10n'
 
 /**
  * Generate user status object to use as preloaded status with NcAvatar

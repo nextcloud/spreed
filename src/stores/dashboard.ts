@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
+import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getDashboardEventRooms } from '../services/dashboardService.ts'
 import { getUpcomingReminders, removeMessageReminder } from '../services/remindersService.js'
-import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 

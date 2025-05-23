@@ -72,17 +72,15 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { t } from '@nextcloud/l10n'
+import { generateUrl, imagePath } from '@nextcloud/router'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import IconCheckBold from 'vue-material-design-icons/CheckBold.vue'
 import IconFolder from 'vue-material-design-icons/Folder.vue'
 import IconUpload from 'vue-material-design-icons/Upload.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
-import { t } from '@nextcloud/l10n'
-import { imagePath, generateUrl } from '@nextcloud/router'
-
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'

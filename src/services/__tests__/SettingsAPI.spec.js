@@ -2,10 +2,8 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { jest, describe, it, expect } from '@jest/globals'
-
+import { describe, expect, it, jest } from '@jest/globals'
 import { emit } from '@nextcloud/event-bus'
-
 import { SettingsAPI, useCustomSettings } from '../SettingsAPI.ts'
 
 jest.mock('@nextcloud/event-bus')

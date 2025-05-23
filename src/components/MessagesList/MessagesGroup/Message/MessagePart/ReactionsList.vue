@@ -45,16 +45,12 @@
 </template>
 
 <script>
-import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
-
 import { ATTENDEE, AVATAR } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'

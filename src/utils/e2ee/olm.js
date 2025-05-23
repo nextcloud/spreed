@@ -5,7 +5,6 @@
 
 import Olm from '@matrix-org/olm'
 import wasmFile from '@matrix-org/olm/olm.wasm'
-
 import { generateFilePath } from '@nextcloud/router'
 
 let initialized = false

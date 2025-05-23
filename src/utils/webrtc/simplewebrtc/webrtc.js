@@ -1,13 +1,11 @@
+import mockconsole from 'mockconsole'
 /**
  * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: MIT
  */
 import util from 'util'
-
-import mockconsole from 'mockconsole'
 import webrtcSupport from 'webrtcsupport'
-
 import localMedia from './localmedia.js'
 import Peer from './peer.js'
 

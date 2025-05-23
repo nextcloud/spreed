@@ -39,17 +39,13 @@
 </template>
 
 <script>
-import escapeHtml from 'escape-html'
-
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-
 import { getGuestNickname } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
+import escapeHtml from 'escape-html'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {

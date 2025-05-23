@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
+import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getBaseUrl } from '@nextcloud/router'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { FEDERATION } from '../constants.ts'
 import { setRemoteCapabilitiesIfEmpty } from '../services/CapabilitiesManager.ts'
-import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
-import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
+import { acceptShare, getShares, rejectShare } from '../services/federationService.ts'
 
 type State = {
 	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>

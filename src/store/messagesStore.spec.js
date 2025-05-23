@@ -1,3 +1,4 @@
+import { showError } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,11 +8,6 @@ import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { showError } from '@nextcloud/dialogs'
-
-import storeConfig from './storeConfig.js'
-import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE, CHAT,
 } from '../constants.ts'
@@ -21,17 +17,19 @@ import {
 import {
 	deleteMessage,
 	editMessage,
-	updateLastReadMessage,
 	fetchMessages,
 	getMessageContext,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
+	updateLastReadMessage,
 } from '../services/messagesService.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import messagesStore from './messagesStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
+import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
 
-import { getRemoteCapabilities } from './federationService.ts'
+import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
+import { getRemoteCapabilities } from './federationService.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & { hash?: string }

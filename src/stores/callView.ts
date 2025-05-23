@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
+import type { Conversation } from '../types/index.ts'
 
+import { defineStore } from 'pinia'
 import { CONVERSATION } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
-import type { Conversation } from '../types/index.ts'
 
 type State = {
 	forceCallView: boolean

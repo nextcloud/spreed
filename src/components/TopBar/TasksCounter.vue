@@ -4,12 +4,9 @@
 -->
 
 <script setup lang="ts">
+import { n, t } from '@nextcloud/l10n'
 import { computed } from 'vue'
-
-import { t, n } from '@nextcloud/l10n'
-
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 
 const chatExtrasStore = useChatExtrasStore()

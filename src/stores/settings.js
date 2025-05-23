@@ -3,20 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import { loadState } from '@nextcloud/initial-state'
-
 import { PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
-	setReadStatusPrivacy,
-	setTypingStatusPrivacy,
-	setStartWithoutMedia,
 	setBlurVirtualBackground,
 	setConversationsListStyle,
+	setReadStatusPrivacy,
+	setStartWithoutMedia,
+	setTypingStatusPrivacy,
 } from '../services/settingsService.ts'
 
 /**

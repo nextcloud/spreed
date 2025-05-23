@@ -3,17 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, ref } from 'vue'
-
 import { t } from '@nextcloud/l10n'
-
-import { useConversationInfo } from './useConversationInfo.ts'
-import { useStore } from './useStore.js'
+import { computed, ref } from 'vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { ONE_DAY_IN_MS, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
+import { useConversationInfo } from './useConversationInfo.ts'
+import { useStore } from './useStore.js'
 
 /**
  * Check whether the user can edit the message or not

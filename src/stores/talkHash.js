@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 

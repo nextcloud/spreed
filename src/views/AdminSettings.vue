@@ -4,10 +4,10 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import type { InitialState } from '../types/index.ts'
 
 import { loadState } from '@nextcloud/initial-state'
-
+import { computed, ref } from 'vue'
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
@@ -20,9 +20,7 @@ import SIPBridge from '../components/AdminSettings/SIPBridge.vue'
 import StunServers from '../components/AdminSettings/StunServers.vue'
 import TurnServers from '../components/AdminSettings/TurnServers.vue'
 import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
-
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import type { InitialState } from '../types/index.ts'
 
 const hasValidSubscription = loadState<InitialState['spreed']['has_valid_subscription']>('spreed', 'has_valid_subscription')
 

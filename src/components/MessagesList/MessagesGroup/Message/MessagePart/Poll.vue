@@ -56,16 +56,12 @@
 </template>
 
 <script>
+import { n, t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
-
-import { t, n } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
 import { POLL } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'

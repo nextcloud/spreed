@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import mitt from 'mitt'
 import type { Emitter, EventType, Handler, WildcardHandler } from 'mitt'
 import type { Route } from 'vue-router'
-
 import type {
 	ChatMessage,
 	Conversation,
@@ -16,6 +14,8 @@ import type {
 	StandaloneSignalingUpdateSession,
 } from '../types/index.ts'
 import type { components } from '../types/openapi/openapi-full.ts'
+
+import mitt from 'mitt'
 
 // List of used events across the app
 export type Events = {

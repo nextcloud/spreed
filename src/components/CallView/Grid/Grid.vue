@@ -149,28 +149,23 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { inject, ref } from 'vue'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-
-import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
-
-import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
-import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
+import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0

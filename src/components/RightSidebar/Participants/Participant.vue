@@ -308,6 +308,17 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcActionText from '@nextcloud/vue/components/NcActionText'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcListItem from '@nextcloud/vue/components/NcListItem'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import Account from 'vue-material-design-icons/Account.vue'
 import AccountMinusIcon from 'vue-material-design-icons/AccountMinus.vue'
 import AccountPlusIcon from 'vue-material-design-icons/AccountPlus.vue'
@@ -329,33 +340,18 @@ import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
 import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
-
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import NcActionText from '@nextcloud/vue/components/NcActionText'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
-import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
-
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import {
 	callSIPDialOut,
 	callSIPHangupPhone,
 	callSIPHoldPhone,
 	callSIPMutePhone,
-	callSIPUnmutePhone,
 	callSIPSendDTMF,
+	callSIPUnmutePhone,
 } from '../../../services/callsService.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'

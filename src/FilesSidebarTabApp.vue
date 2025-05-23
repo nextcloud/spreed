@@ -32,11 +32,8 @@ import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
 import LoadingComponent from './components/LoadingComponent.vue'
-
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getFileConversation } from './services/filesIntegrationServices.js'

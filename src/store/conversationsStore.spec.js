@@ -1,3 +1,4 @@
+import { emit } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,39 +8,36 @@ import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { emit } from '@nextcloud/event-bus'
-
-import storeConfig from './storeConfig.js'
 import {
-	CONVERSATION,
-	WEBINAR,
-	PARTICIPANT,
 	ATTENDEE,
+	CONVERSATION,
+	PARTICIPANT,
+	WEBINAR,
 } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import {
-	makeConversationPublic,
-	makeConversationPrivate,
 	addToFavorites,
-	removeFromFavorites,
+	changeListable,
 	changeLobbyState,
 	changeReadOnlyState,
-	changeListable,
 	createConversation,
-	setConversationName,
-	setConversationDescription,
-	setNotificationLevel,
-	setSIPEnabled,
+	deleteConversation,
 	fetchConversation,
 	fetchConversations,
-	deleteConversation,
-	setConversationPermissions,
+	makeConversationPrivate,
+	makeConversationPublic,
+	removeFromFavorites,
 	setCallPermissions,
+	setConversationDescription,
+	setConversationName,
+	setConversationPermissions,
+	setNotificationLevel,
+	setSIPEnabled,
 } from '../services/conversationsService.ts'
-import { updateLastReadMessage, setConversationUnread } from '../services/messagesService.ts'
+import { setConversationUnread, updateLastReadMessage } from '../services/messagesService.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/conversationsService', () => ({
 	makeConversationPublic: jest.fn(),

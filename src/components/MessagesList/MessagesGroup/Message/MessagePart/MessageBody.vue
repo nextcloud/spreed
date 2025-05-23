@@ -127,10 +127,14 @@
 </template>
 
 <script>
-import { vIntersectionObserver as IntersectionObserver, vElementSize as ElementSize } from '@vueuse/components'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
+import { vElementSize as ElementSize, vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
-import { toRefs, inject } from 'vue'
-
+import { inject, toRefs } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
@@ -138,26 +142,17 @@ import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
 import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
 import ReloadIcon from 'vue-material-design-icons/Reload.vue'
-
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichText from '@nextcloud/vue/components/NcRichText'
-
-import Poll from './Poll.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
-
+import Poll from './Poll.vue'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { CONVERSATION } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
-import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
+import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
 const regex = emojiRegex()

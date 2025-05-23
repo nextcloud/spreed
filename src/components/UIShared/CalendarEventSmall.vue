@@ -4,9 +4,8 @@
 -->
 
 <script setup lang="ts">
-import IconReload from 'vue-material-design-icons/Reload.vue'
-
 import { t } from '@nextcloud/l10n'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 
 const props = defineProps<{
 	name: string | null

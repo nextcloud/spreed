@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import * as wasmCheck from 'wasm-check'
-
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect.js'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 import createTFLiteModule from './vendor/tflite/tflite.js'

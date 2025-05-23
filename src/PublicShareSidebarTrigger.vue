@@ -15,14 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { UnwrapNestedRefs } from 'vue'
 
-import MessageText from 'vue-material-design-icons/MessageText.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { computed } from 'vue'
 import NcHeaderButton from '@nextcloud/vue/components/NcHeaderButton'
+import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 const props = defineProps<{
 	sidebarState: UnwrapNestedRefs<{ isOpen: boolean }>

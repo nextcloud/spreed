@@ -3,10 +3,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
-import Octagon from 'vue-material-design-icons/Octagon.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import Octagon from 'vue-material-design-icons/Octagon.vue'
 import EmptyView from '../components/EmptyView.vue'
 </script>
 
