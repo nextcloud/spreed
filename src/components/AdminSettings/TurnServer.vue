@@ -315,9 +315,7 @@ export default {
 				pc.createDataChannel('status')
 			}
 
-			pc.createOffer(
-				offerOptions,
-			).then(
+			pc.createOffer(offerOptions).then(
 				(description) => {
 					pc.setLocalDescription(description)
 				},

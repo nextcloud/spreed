@@ -81,8 +81,7 @@ const searchResultsVirtual = computed(() => {
 	const lowerSearchText = props.searchText.toLowerCase()
 	const searchResultsConversationList = props.conversationsList.filter((conversation) =>
 		conversation.displayName.toLowerCase().includes(lowerSearchText)
-		|| conversation.name.toLowerCase().includes(lowerSearchText),
-	)
+		|| conversation.name.toLowerCase().includes(lowerSearchText))
 
 	// Add conversations section
 	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })

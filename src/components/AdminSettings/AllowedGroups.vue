@@ -142,12 +142,8 @@ export default {
 		// Make a unique list with the groups we know from allowedGroups and canStartConversations
 		// Unique checking is done by turning the group objects (with id and name)
 		// into json strings and afterwards back again
-		const mergedGroups = Array.from(
-			new Set(
-				this.allowedGroups.concat(this.canStartConversations)
-					.map((g) => JSON.stringify(g)),
-			),
-		).map((g) => JSON.parse(g))
+		const mergedGroups = Array.from(new Set(this.allowedGroups.concat(this.canStartConversations)
+			.map((g) => JSON.stringify(g)))).map((g) => JSON.parse(g))
 
 		this.groups = mergedGroups.sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)

@@ -492,24 +492,25 @@ describe('participantsStore', () => {
 				statusClearAt: 'statusClearAt',
 			}]
 
-			fetchParticipants.mockResolvedValue(generateOCSResponse(
-				{
-					headers: { 'x-nextcloud-has-user-statuses': true },
-					payload,
-				}))
+			fetchParticipants.mockResolvedValue(generateOCSResponse({
+				headers: { 'x-nextcloud-has-user-statuses': true },
+				payload,
+			}))
 
 			// Act
 			await store.dispatch('fetchParticipants', { token: TOKEN })
 
 			// Assert
-			expect(emit).toHaveBeenCalledWith('user_status:status.updated',
+			expect(emit).toHaveBeenCalledWith(
+				'user_status:status.updated',
 				{
 					clearAt: 'statusClearAt',
 					icon: 'statusIcon',
 					message: 'statusMessage',
 					status: 'status',
 					userId: 'actor-id',
-				})
+				},
+			)
 		})
 
 		test('updates conversation if fail to fetch participants', async () => {
@@ -520,10 +521,9 @@ describe('participantsStore', () => {
 				status: 403,
 				payload: [],
 			}))
-			fetchConversation.mockResolvedValue(generateOCSResponse(
-				{
-					payload: {},
-				}))
+			fetchConversation.mockResolvedValue(generateOCSResponse({
+				payload: {},
+			}))
 			// Act
 			await store.dispatch('fetchParticipants', { token: TOKEN })
 

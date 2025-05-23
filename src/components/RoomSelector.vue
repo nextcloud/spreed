@@ -150,8 +150,7 @@ export default {
 				&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 				&& (!this.currentRoom || this.currentRoom !== room.token)
 				&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
-				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase())),
-			)
+				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase())))
 		},
 
 		noMatchFoundTitle() {

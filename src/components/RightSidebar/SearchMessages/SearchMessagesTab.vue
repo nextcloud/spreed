@@ -229,8 +229,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 						},
 					},
 				}
-			}),
-			)
+			}))
 			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {

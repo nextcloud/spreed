@@ -92,8 +92,7 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 		|| key.startsWith('virtualBackgroundEnabled_')
 		|| key.startsWith('virtualBackgroundType_')
 		|| key.startsWith('virtualBackgroundBlurStrength_')
-		|| key.startsWith('virtualBackgroundUrl_'),
-	)
+		|| key.startsWith('virtualBackgroundUrl_'))
 
 	if (storageKeys.length) {
 		console.debug('Migrating localStorage keys to BrowserStorage', storageKeys)

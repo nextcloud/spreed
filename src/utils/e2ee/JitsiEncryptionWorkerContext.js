@@ -145,21 +145,22 @@ export class Context {
 				name: ENCRYPTION_ALGORITHM,
 				iv,
 				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength),
-			}, this._cryptoKeyRing[keyIndex].encryptionKey, new Uint8Array(encodedFrame.data,
-				UNENCRYPTED_BYTES[encodedFrame.type]))
+			}, this._cryptoKeyRing[keyIndex].encryptionKey, new Uint8Array(
+				encodedFrame.data,
+				UNENCRYPTED_BYTES[encodedFrame.type],
+			))
 				.then((cipherText) => {
 					const newData = new ArrayBuffer(frameHeader.byteLength + cipherText.byteLength
 						+ iv.byteLength + frameTrailer.byteLength)
 					const newUint8 = new Uint8Array(newData)
 
 					newUint8.set(frameHeader) // copy first bytes.
-					newUint8.set(
-						new Uint8Array(cipherText), frameHeader.byteLength) // add ciphertext.
-					newUint8.set(
-						new Uint8Array(iv), frameHeader.byteLength + cipherText.byteLength) // append IV.
+					newUint8.set(new Uint8Array(cipherText), frameHeader.byteLength) // add ciphertext.
+					newUint8.set(new Uint8Array(iv), frameHeader.byteLength + cipherText.byteLength) // append IV.
 					newUint8.set(
 						frameTrailer,
-						frameHeader.byteLength + cipherText.byteLength + iv.byteLength) // append frame trailer.
+						frameHeader.byteLength + cipherText.byteLength + iv.byteLength,
+					) // append frame trailer.
 
 					encodedFrame.data = newData
 
@@ -173,9 +174,9 @@ export class Context {
 		}
 
 		/* NOTE WELL:
-         * This will send unencrypted data (only protected by DTLS transport encryption) when no key is configured.
-         * This is ok for demo purposes but should not be done once this becomes more relied upon.
-         */
+		 * This will send unencrypted data (only protected by DTLS transport encryption) when no key is configured.
+		 * This is ok for demo purposes but should not be done once this becomes more relied upon.
+		 */
 		controller.enqueue(encodedFrame)
 	}
 
@@ -192,7 +193,8 @@ export class Context {
 		if (this._cryptoKeyRing[keyIndex]) {
 			const decodedFrame = await this._decryptFrame(
 				encodedFrame,
-				keyIndex)
+				keyIndex,
+			)
 
 			if (decodedFrame) {
 				controller.enqueue(decodedFrame)
@@ -213,8 +215,9 @@ export class Context {
 	async _decryptFrame(
 		encodedFrame,
 		keyIndex,
-            initialKey = undefined,
-            ratchetCount = 0) {
+			initialKey = undefined,
+			ratchetCount = 0,
+	) {
 		const { encryptionKey } = this._cryptoKeyRing[keyIndex]
 		let { material } = this._cryptoKeyRing[keyIndex]
 
@@ -234,19 +237,22 @@ export class Context {
 			const iv = new Uint8Array(
 				encodedFrame.data,
 				encodedFrame.data.byteLength - ivLength - frameTrailer.byteLength,
-				ivLength)
+				ivLength,
+			)
 
 			const cipherTextStart = frameHeader.byteLength
 			const cipherTextLength = encodedFrame.data.byteLength
 				- (frameHeader.byteLength + ivLength + frameTrailer.byteLength)
 
-			const plainText = await crypto.subtle.decrypt({
-				name: 'AES-GCM',
-				iv,
-				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength),
-			},
-			encryptionKey,
-			new Uint8Array(encodedFrame.data, cipherTextStart, cipherTextLength))
+			const plainText = await crypto.subtle.decrypt(
+				{
+					name: 'AES-GCM',
+					iv,
+					additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength),
+				},
+				encryptionKey,
+				new Uint8Array(encodedFrame.data, cipherTextStart, cipherTextLength),
+			)
 
 			const newData = new ArrayBuffer(frameHeader.byteLength + plainText.byteLength)
 			const newUint8 = new Uint8Array(newData)
@@ -275,7 +281,8 @@ export class Context {
 					encodedFrame,
 					keyIndex,
 					initialKey || currentKey,
-					ratchetCount + 1)
+					ratchetCount + 1,
+				)
 			}
 
 			/**

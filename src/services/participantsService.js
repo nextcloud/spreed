@@ -36,16 +36,12 @@ const joinConversation = async ({ token, forceJoin = false }, options) => {
 	}, options)
 
 	if (response.headers.get('X-Nextcloud-Bruteforce-Throttled')) {
-		console.error(
-			'Remote address is bruteforce throttled: '
+		console.error('Remote address is bruteforce throttled: '
 			+ response.headers.get('X-Nextcloud-Bruteforce-Throttled')
-			+ ' (Request ID: ' + response.headers.get('X-Request-ID') + ')',
-		)
+			+ ' (Request ID: ' + response.headers.get('X-Request-ID') + ')')
 		const throttleMs = parseInt(response.headers.get('X-Nextcloud-Bruteforce-Throttled'), 10)
 		if (throttleMs > 5000) {
-			showWarning(
-				t('spreed', 'Your requests are throttled at the moment due to brute force protection'),
-			)
+			showWarning(t('spreed', 'Your requests are throttled at the moment due to brute force protection'))
 		}
 	}
 
@@ -200,7 +196,8 @@ const importEmails = async (token, file, testRun = false) => {
  * @param {number} state Session state;
  */
 const setSessionState = async (token, state) => {
-	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/state', { token }),
+	return axios.put(
+		generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/state', { token }),
 		{ state },
 	)
 }
@@ -254,12 +251,14 @@ const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
  * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
  */
 const setPermissions = async (token, attendeeId, method = 'set', permission) => {
-	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
+	await axios.put(
+		generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
 		{
 			attendeeId,
 			method,
 			permissions: permission,
-		})
+		},
+	)
 }
 
 /**

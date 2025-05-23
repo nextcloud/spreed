@@ -186,8 +186,7 @@ const selectedParticipants = computed(() => participants.value
 			return a.displayName ? -1 : 1
 		}
 		return 0
-	}),
-)
+	}))
 
 const isOneToOneConversation = computed(() => {
 	return conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
