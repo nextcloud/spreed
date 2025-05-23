@@ -68,6 +68,7 @@ import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import { useReactionsStore } from '../stores/reactions.js'
+import { useSharedItemsStore } from '../stores/sharedItems.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNamesList } from '../utils/getDisplayName.ts'
@@ -389,6 +390,8 @@ const actions = {
 		groupwareStore.purgeGroupwareStore(token)
 		const reactionsStore = useReactionsStore()
 		reactionsStore.purgeReactionsStore(token)
+		const sharedItemsStore = useSharedItemsStore()
+		sharedItemsStore.purgeSharedItemsStore(token)
 		context.dispatch('purgeMessagesStore', token)
 		context.commit('deleteConversation', token)
 		context.dispatch('purgeParticipantsStore', token)
@@ -514,6 +517,8 @@ const actions = {
 			chatExtrasStore.removeParentIdToReply(token)
 			const reactionsStore = useReactionsStore()
 			reactionsStore.purgeReactionsStore(token)
+			const sharedItemsStore = useSharedItemsStore()
+			sharedItemsStore.purgeSharedItemsStore(token)
 			context.dispatch('purgeMessagesStore', token)
 			return response
 		} catch (error) {
