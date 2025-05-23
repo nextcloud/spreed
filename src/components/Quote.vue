@@ -12,7 +12,7 @@ components.
 	<component :is="component.tag"
 		:to="component.link"
 		class="quote"
-		:class="{'quote-own-message': isOwnMessageQuoted}"
+		:class="{ 'quote-own-message': isOwnMessageQuoted }"
 		@click.native="handleQuoteClick">
 		<div class="quote__main">
 			<div v-if="message.id"

@@ -26,13 +26,13 @@
 				class="conversation-header"
 				@click="openConversationSettings">
 				<div class="conversation-header__text"
-					:class="{'conversation-header__text--offline': isPeerInactive}">
+					:class="{ 'conversation-header__text--offline': isPeerInactive }">
 					<p class="title">
 						{{ conversation.displayName }}
 					</p>
 					<p v-if="showUserStatusAsDescription"
 						class="description"
-						:class="{'description__in-chat' : !isInCall }">
+						:class="{ 'description__in-chat': !isInCall }">
 						{{ statusMessage }}
 					</p>
 					<NcPopover v-if="conversation.description"
@@ -44,7 +44,7 @@
 						<template #trigger="{ attrs }">
 							<p v-bind="attrs"
 								class="description"
-								:class="{'description__in-chat' : !isInCall }">
+								:class="{ 'description__in-chat': !isInCall }">
 								{{ conversation.description }}
 							</p>
 						</template>

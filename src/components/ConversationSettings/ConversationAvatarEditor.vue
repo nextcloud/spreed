@@ -9,7 +9,7 @@
 			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
 					:class="['avatar__preview-emoji', themeClass]"
-					:style="{'background-color': backgroundColor}">
+					:style="{ 'background-color': backgroundColor }">
 					{{ emojiAvatar }}
 				</div>
 				<ConversationIcon v-else-if="!loading"

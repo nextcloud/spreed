@@ -74,7 +74,7 @@
 		</div>
 		<NcDialog v-if="showDialog"
 			:open.sync="showDialog"
-			:name="t('spreed','Delete breakout rooms')"
+			:name="t('spreed', 'Delete breakout rooms')"
 			:message="dialogMessage"
 			container=".participants-editor">
 			<template #actions>

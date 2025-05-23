@@ -15,7 +15,7 @@
 				<template v-for="type in sharedItemsOrder">
 					<NcButton v-if="sharedItems[type]"
 						:key="type"
-						:class="{'active' : activeTab === type}"
+						:class="{ 'active': activeTab === type }"
 						type="tertiary"
 						@click="handleTabClick(type)">
 						{{ sharedItemTitle[type] || sharedItemTitle.default }}

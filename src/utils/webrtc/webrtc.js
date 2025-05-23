@@ -1496,7 +1496,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		return webrtc.webrtc.getPeers(null, 'video').length > 0 || Object.keys(delayedConnectionToPeer).length > 0
 	}
 
-	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
+	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/* , stream */) {
 		const callFlags = getCallFlagsFromLocalMedia()
 
 		// A reconnection is not needed if a device is disabled or if there are

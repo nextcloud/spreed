@@ -15,7 +15,7 @@
 				trailing-button-icon="close"
 				class="selector__search"
 				:label="t('spreed', 'Search conversations or users')"
-				:show-trailing-button="searchText !==''"
+				:show-trailing-button="searchText !== ''"
 				@trailing-button-click="clearText">
 				<template #icon>
 					<Magnify :size="16" />

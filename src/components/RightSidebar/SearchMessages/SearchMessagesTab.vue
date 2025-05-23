@@ -83,7 +83,7 @@ const participantsInitialised = computed(() => store.getters.participantsInitial
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)
 		.filter(({ actorType }: Participant) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
+		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string }) => ({
 			id: actorId,
 			displayName,
 			isNoUser: actorType !== 'users',

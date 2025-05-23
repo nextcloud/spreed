@@ -11,14 +11,14 @@
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message--hovered': showMessageButtonsBar}"
+		:class="{ 'message--hovered': showMessageButtonsBar }"
 		tabindex="0"
 		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage,
-			'system' : isSystemMessage,
-			'combined-system': isCombinedSystemMessage}"
+		<div :class="{ 'normal-message-body': !isSystemMessage && !isDeletedMessage,
+			'system': isSystemMessage,
+			'combined-system': isCombinedSystemMessage }"
 			class="message-body">
 			<MessageBody :rich-parameters="richParameters"
 				:is-deleting="isDeleting"

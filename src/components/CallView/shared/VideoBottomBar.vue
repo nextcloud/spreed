@@ -5,7 +5,7 @@
 
 <template>
 	<div class="wrapper"
-		:class="{'wrapper--big': isBig}"
+		:class="{ 'wrapper--big': isBig }"
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
@@ -63,7 +63,7 @@
 					:title="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
-					:class="{'screen-visible': sharedData.screenVisible}"
+					:class="{ 'screen-visible': sharedData.screenVisible }"
 					type="tertiary-no-background"
 					@click.stop="switchToScreen">
 					<template #icon>

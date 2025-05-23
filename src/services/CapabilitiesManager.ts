@@ -13,7 +13,7 @@ import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullRespo
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & { hash?: string }
 type RemoteCapabilities = Record<string, RemoteCapability>
-type TokenMap = Record<string, string|undefined|null>
+type TokenMap = Record<string, string | undefined | null>
 
 let remoteTokenMap: TokenMap = generateTokenMap()
 

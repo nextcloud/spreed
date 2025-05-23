@@ -71,7 +71,7 @@
 				<!-- mention editing hint -->
 				<NcNoteCard v-if="showMentionEditHint"
 					type="warning"
-					:text="t('spreed','Adding a mention will only notify users who did not read the message.')" />
+					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 				<NcRichContenteditable ref="richContenteditable"
 					:key="container"
 					v-model="text"

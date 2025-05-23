@@ -16,7 +16,7 @@
 				{{ t('spreed', 'Files required for virtual background can be loaded') }}
 				<NcButton type="tertiary"
 					class="vue-button-inline"
-					:class="{'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false}"
+					:class="{ 'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false }"
 					:title="virtualBackgroundAvailableTitle"
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">

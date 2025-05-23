@@ -15,7 +15,7 @@
 			ref="richContenteditable"
 			v-model="text"
 			dir="auto"
-			:auto-complete="()=>{}"
+			:auto-complete="() => {}"
 			:maxlength="maxLength"
 			:multiline="multiline"
 			:contenteditable="!loading"

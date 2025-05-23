@@ -10,7 +10,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
 						type="tertiary"
-						:class="{'hidden-visually': isSearching}"
+						:class="{ 'hidden-visually': isSearching }"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
 						:aria-label="t('spreed', 'Talk home')"
@@ -21,7 +21,7 @@
 					</NcButton>
 				</TransitionWrapper>
 				<div class="conversations-search"
-					:class="{'conversations-search--expanded': isSearching}">
+					:class="{ 'conversations-search--expanded': isSearching }">
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
@@ -35,7 +35,7 @@
 					<NcActions v-show="searchText === ''"
 						:type="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
-						:class="{'hidden-visually': isSearching}">
+						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
 							<FilterIcon :size="15" />
 						</template>
@@ -87,7 +87,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<NcActions v-show="searchText === ''"
 						class="actions"
-						:class="{'hidden-visually': isSearching}">
+						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
 							<ChatPlus :size="20" />
 						</template>

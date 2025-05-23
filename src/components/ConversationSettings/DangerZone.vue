@@ -19,7 +19,7 @@
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
 					:open.sync="isLeaveConversationDialogOpen"
-					:name="t('spreed','Leave conversation')"
+					:name="t('spreed', 'Leave conversation')"
 					container=".danger-zone">
 					<template #default>
 						<p>{{ leaveConversationDialogMessage }}</p>
@@ -53,7 +53,7 @@
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
 					:open.sync="isDeleteConversationDialogOpen"
-					:name="t('spreed','Delete conversation')"
+					:name="t('spreed', 'Delete conversation')"
 					:message="deleteConversationDialogMessage"
 					container=".danger-zone">
 					<template #actions>
@@ -79,7 +79,7 @@
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
 					:open.sync="isDeleteChatDialogOpen"
-					:name="t('spreed','Delete all chat messages')"
+					:name="t('spreed', 'Delete all chat messages')"
 					:message="deleteChatDialogMessage"
 					container=".danger-zone">
 					<template #actions>

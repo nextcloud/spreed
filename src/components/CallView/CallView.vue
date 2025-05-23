@@ -18,7 +18,7 @@
 			<div id="videos">
 				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					class="video__promoted"
-					:class="{'full-page': showFullPage}">
+					:class="{ 'full-page': showFullPage }">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="`promoted-${selectedVideoPeerId}`"

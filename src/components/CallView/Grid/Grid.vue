@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, 'transparent': isLessThanTwoVideos }">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -36,7 +36,7 @@
 					</NcButton>
 					<div ref="grid"
 						class="grid"
-						:class="{stripe: isStripe}"
+						:class="{ stripe: isStripe }"
 						:style="gridStyle"
 						@mousemove="handleMovement"
 						@wheel="debounceHandleWheelEvent"
@@ -45,7 +45,7 @@
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
 								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{'video': !isStripe}"
+									:class="{ 'video': !isStripe }"
 									:show-video-overlay="showVideoOverlay"
 									:token="token"
 									:model="callParticipantModel"
@@ -63,7 +63,7 @@
 							<div v-for="key in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
-								:class="{'dev-mode-screenshot': screenshotMode}">
+								:class="{ 'dev-mode-screenshot': screenshotMode }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar :has-shadow="false"
 									:model="placeholderModel(key)"
