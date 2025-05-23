@@ -979,6 +979,30 @@
                         }
                     },
                     {
+                        "name": "x-nextcloud-federation",
+                        "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "X-Nextcloud-Federation",
                         "in": "header",
                         "schema": {

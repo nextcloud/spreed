@@ -11,10 +11,17 @@ namespace OCA\Talk\Middleware\Attribute;
 
 use Attribute;
 use OCA\Talk\Middleware\InjectionMiddleware;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 
 /**
  * @see InjectionMiddleware::getRoom()
  */
 #[Attribute(Attribute::TARGET_METHOD)]
-class FederationSupported {
+class FederationSupported extends RequestHeader {
+	public function __construct() {
+		parent::__construct(
+			'x-nextcloud-federation',
+			'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request'
+		);
+	}
 }

@@ -379,6 +379,22 @@
                         }
                     },
                     {
+                        "name": "talk-recording-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-recording-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -638,6 +654,22 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "talk-recording-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-recording-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

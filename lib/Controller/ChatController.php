@@ -53,6 +53,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
@@ -215,6 +216,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
@@ -392,6 +394,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function receiveMessages(int $lookIntoFuture,
 		int $limit = 100,
 		int $lastKnownMessageId = 0,
@@ -749,6 +752,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function getMessageContext(
 		int $messageId,
 		int $limit = 50): DataResponse {
@@ -839,6 +843,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireAuthenticatedParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function deleteMessage(int $messageId): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
@@ -931,6 +936,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireAuthenticatedParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function editMessage(int $messageId, string $message): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
@@ -1037,6 +1043,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	#[UserRateLimit(limit: 60, period: 3600)]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function setReminder(int $messageId, int $timestamp): DataResponse {
 		try {
 			// FIXME fail 400 when reminder is after expiration
@@ -1071,6 +1078,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
 	public function getReminder(int $messageId): DataResponse {
 		try {
 			$this->validateMessageExists($messageId);

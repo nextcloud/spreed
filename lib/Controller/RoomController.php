@@ -76,6 +76,7 @@ use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -390,6 +391,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI]
 	#[OpenAPI(scope: 'backend-sipbridge')]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request')]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum')]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge')]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);

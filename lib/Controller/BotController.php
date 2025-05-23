@@ -36,6 +36,7 @@ use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\MessageTooLongException;
@@ -73,6 +74,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed used to generate the request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'Signature over the request body to verify authenticity')]
 	protected function getBotFromHeaders(string $token, string $message): Bot {
 		$random = $this->request->getHeader('X-Nextcloud-Talk-Bot-Random');
 		if (empty($random) || strlen($random) < 32) {
