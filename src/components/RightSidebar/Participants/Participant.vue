@@ -690,15 +690,12 @@ export default {
 		removeDialogMessage() {
 			switch (this.participant.actorType) {
 				case ATTENDEE.ACTOR_TYPE.GROUPS:
-					return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?',
-						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+					return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?', { displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 				case ATTENDEE.ACTOR_TYPE.CIRCLES:
-					return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?',
-						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+					return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?', { displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 				case ATTENDEE.ACTOR_TYPE.USERS:
 				default:
-					return t('spreed', 'Do you really want to remove {displayName} from this conversation?',
-						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+					return t('spreed', 'Do you really want to remove {displayName} from this conversation?', { displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 			}
 		},
 

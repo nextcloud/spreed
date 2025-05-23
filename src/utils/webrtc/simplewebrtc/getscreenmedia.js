@@ -115,7 +115,8 @@ export default function(mode, constraints, cb) {
 		// script does that
 		if (sessionStorage.getScreenMediaJSExtensionId) {
 			chrome.runtime.sendMessage(sessionStorage.getScreenMediaJSExtensionId,
-				{ type: 'getScreen', id: 1 }, null,
+				{ type: 'getScreen', id: 1 },
+				null,
 				function(data) {
 					if (!data || data.sourceId === '') { // user canceled
 						const error = new Error('NavigatorUserMediaError')

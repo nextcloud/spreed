@@ -129,18 +129,16 @@ const attendeeHint = computed(() => {
 		// Amount is 2 or less
 		switch (summary.length) {
 			case 1: {
-				return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] },
-					undefined, {
-						escape: false,
-						sanitize: false,
-					})
+				return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
 			}
 			case 2: {
-				return t('spreed', '{participant0} and {participant1} will receive invitations',
-					{ participant0: summary[0], participant1: summary[1] }, undefined, {
-						escape: false,
-						sanitize: false,
-					})
+				return t('spreed', '{participant0} and {participant1} will receive invitations', { participant0: summary[0], participant1: summary[1] }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
 			}
 			case 0:
 			default: {
@@ -148,12 +146,10 @@ const attendeeHint = computed(() => {
 			}
 		}
 	} else {
-		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations',
-			'{participant0}, {participant1} and %n others will receive invitations', remainingCount,
-			{ participant0: summary[0], participant1: summary[1] }, {
-				escape: false,
-				sanitize: false,
-			})
+		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations', '{participant0}, {participant1} and %n others will receive invitations', remainingCount, { participant0: summary[0], participant1: summary[1] }, {
+			escape: false,
+			sanitize: false,
+		})
 	}
 })
 

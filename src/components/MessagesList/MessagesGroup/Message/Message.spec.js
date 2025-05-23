@@ -388,7 +388,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{file}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -416,7 +417,8 @@ describe('Message.vue', () => {
 				}
 				const messageEl = renderRichObject(
 					caption,
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -445,7 +447,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{deck-card}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -467,7 +470,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{geo-location}',
-					params, {
+					params,
+					{
 						'geo-location': {
 							component: Location,
 							props: params['geo-location'],
@@ -490,7 +494,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{unknown}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,

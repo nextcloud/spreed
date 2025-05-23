@@ -193,39 +193,36 @@ describe('sessionStore', () => {
 			// Assert
 			expect(unknownResults).toBeFalsy()
 			expect(vuexStore.commit).toHaveBeenCalledTimes(3)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(1, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 1,
-					updatedData: {
-						inCall: 7,
-						lastPing: 1717192800,
-						permissions: 254,
-						sessionIds: ['nextcloud-session-id-1'],
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: {
-						inCall: 7,
-						lastPing: 1717192800,
-						permissions: 254,
-						sessionIds: ['nextcloud-session-id-2', 'nextcloud-session-id-3'],
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 5,
-					updatedData: {
-						inCall: 7,
-						lastPing: 1717192800,
-						permissions: 254,
-						sessionIds: ['nextcloud-session-id-5'],
-					},
-				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(1, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 1,
+				updatedData: {
+					inCall: 7,
+					lastPing: 1717192800,
+					permissions: 254,
+					sessionIds: ['nextcloud-session-id-1'],
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: {
+					inCall: 7,
+					lastPing: 1717192800,
+					permissions: 254,
+					sessionIds: ['nextcloud-session-id-2', 'nextcloud-session-id-3'],
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 5,
+				updatedData: {
+					inCall: 7,
+					lastPing: 1717192800,
+					permissions: 254,
+					sessionIds: ['nextcloud-session-id-5'],
+				},
+			})
 		})
 
 		it('should handle unknown sessions', () => {
@@ -280,21 +277,18 @@ describe('sessionStore', () => {
 			expect(Object.keys(sessionStore.sessions)).toHaveLength(1)
 			expect(sessionStore.getSession('nextcloud-session-id-1')).toBeUndefined()
 			expect(vuexStore.commit).toHaveBeenCalledTimes(6)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(4, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 1, updatedData: { inCall: 0, sessionIds: [] } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(5, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: {
-						inCall: 3,
-						lastPing: 1717192800,
-						permissions: 254,
-						sessionIds: ['nextcloud-session-id-3'],
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(4, 'updateParticipant', { token: TOKEN, attendeeId: 1, updatedData: { inCall: 0, sessionIds: [] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(5, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: {
+					inCall: 3,
+					lastPing: 1717192800,
+					permissions: 254,
+					sessionIds: ['nextcloud-session-id-3'],
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant', { token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
 		})
 	})
 
@@ -441,39 +435,34 @@ describe('sessionStore', () => {
 			// Assert
 			expect(unknownResults).toBeFalsy()
 			expect(vuexStore.commit).toHaveBeenCalledTimes(5)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(1, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 1,
-					updatedData: { displayName: 'User 1', sessionIds: ['nextcloud-session-id-1'] },
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: { displayName: 'User 2', sessionIds: ['nextcloud-session-id-2'] },
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: {
-						displayName: 'User 2',
-						sessionIds: ['nextcloud-session-id-2', 'nextcloud-session-id-3'],
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(4, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 4,
-					updatedData: { displayName: 'User 4', sessionIds: ['nextcloud-session-id-4'] },
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(5, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 5,
-					updatedData: { displayName: 'Guest', sessionIds: ['nextcloud-session-id-5'] },
-				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(1, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 1,
+				updatedData: { displayName: 'User 1', sessionIds: ['nextcloud-session-id-1'] },
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: { displayName: 'User 2', sessionIds: ['nextcloud-session-id-2'] },
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: {
+					displayName: 'User 2',
+					sessionIds: ['nextcloud-session-id-2', 'nextcloud-session-id-3'],
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(4, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 4,
+				updatedData: { displayName: 'User 4', sessionIds: ['nextcloud-session-id-4'] },
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(5, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 5,
+				updatedData: { displayName: 'Guest', sessionIds: ['nextcloud-session-id-5'] },
+			})
 		})
 
 		it('should handle unknown sessions on join', () => {
@@ -550,14 +539,10 @@ describe('sessionStore', () => {
 			expect(Object.keys(sessionStore.sessions)).toMatchObject(['session-id-3', 'session-id-11'])
 			expect(sessionStore.getSession('session-id-1')).toBeUndefined()
 			expect(vuexStore.commit).toHaveBeenCalledTimes(10 + 4)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 1, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 1, updatedData: { inCall: 0, sessionIds: [] } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 2, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 2, updatedData: { inCall: 3, sessionIds: ['nextcloud-session-id-3'] } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 3, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 4, updatedData: { inCall: 0, sessionIds: [] } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 4, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 1, 'updateParticipant', { token: TOKEN, attendeeId: 1, updatedData: { inCall: 0, sessionIds: [] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 2, 'updateParticipant', { token: TOKEN, attendeeId: 2, updatedData: { inCall: 3, sessionIds: ['nextcloud-session-id-3'] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 3, 'updateParticipant', { token: TOKEN, attendeeId: 4, updatedData: { inCall: 0, sessionIds: [] } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10 + 4, 'updateParticipant', { token: TOKEN, attendeeId: 5, updatedData: { inCall: 0, sessionIds: [] } })
 		})
 
 		it('should skip update if participant is not found', () => {
@@ -587,66 +572,61 @@ describe('sessionStore', () => {
 			expect(unknownResultsJoin).toBeFalsy()
 			expect(unknownResultsChange).toBeFalsy()
 			expect(vuexStore.commit).toHaveBeenCalledTimes(10)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 1,
-					updatedData: {
-						inCall: 7,
-						participantType: 1,
-						displayName: 'User 1',
-						lastPing: 1717192800,
-						permissions: 254,
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: {
-						inCall: 7,
-						participantType: 3,
-						displayName: 'User 2',
-						lastPing: 1717192800,
-						permissions: 254,
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 2,
-					updatedData: {
-						inCall: 7,
-						participantType: 3,
-						displayName: 'User 2',
-						lastPing: 1717192800,
-						permissions: 254,
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 4,
-					updatedData: {
-						inCall: 0,
-						participantType: 3,
-						displayName: 'User 4',
-						lastPing: 1717192800,
-						permissions: 254,
-					},
-				})
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(10, 'updateParticipant',
-				{
-					token: TOKEN,
-					attendeeId: 5,
-					updatedData: {
-						displayName: 'Guest New',
-						inCall: 7,
-						participantType: 6,
-						lastPing: 1717192800,
-						permissions: 254,
-					},
-				})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 1,
+				updatedData: {
+					inCall: 7,
+					participantType: 1,
+					displayName: 'User 1',
+					lastPing: 1717192800,
+					permissions: 254,
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: {
+					inCall: 7,
+					participantType: 3,
+					displayName: 'User 2',
+					lastPing: 1717192800,
+					permissions: 254,
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 2,
+				updatedData: {
+					inCall: 7,
+					participantType: 3,
+					displayName: 'User 2',
+					lastPing: 1717192800,
+					permissions: 254,
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 4,
+				updatedData: {
+					inCall: 0,
+					participantType: 3,
+					displayName: 'User 4',
+					lastPing: 1717192800,
+					permissions: 254,
+				},
+			})
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(10, 'updateParticipant', {
+				token: TOKEN,
+				attendeeId: 5,
+				updatedData: {
+					displayName: 'Guest New',
+					inCall: 7,
+					participantType: 6,
+					lastPing: 1717192800,
+					permissions: 254,
+				},
+			})
 		})
 
 		it('should handle unknown sessions on change', () => {
@@ -683,14 +663,10 @@ describe('sessionStore', () => {
 
 			// Assert
 			expect(vuexStore.commit).toHaveBeenCalledTimes(5 + 4)
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 1, updatedData: { inCall: 0 } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 2, updatedData: { inCall: 0 } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 4, updatedData: { inCall: 0 } })
-			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant',
-				{ token: TOKEN, attendeeId: 5, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(6, 'updateParticipant', { token: TOKEN, attendeeId: 1, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(7, 'updateParticipant', { token: TOKEN, attendeeId: 2, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(8, 'updateParticipant', { token: TOKEN, attendeeId: 4, updatedData: { inCall: 0 } })
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(9, 'updateParticipant', { token: TOKEN, attendeeId: 5, updatedData: { inCall: 0 } })
 		})
 	})
 })
