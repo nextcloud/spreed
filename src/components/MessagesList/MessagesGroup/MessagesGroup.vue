@@ -89,7 +89,7 @@ export default {
 
 		const actorInfo = computed(() => {
 			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
-				.filter(value => value).join(' ')
+				.filter((value) => value).join(' ')
 		})
 
 		return {

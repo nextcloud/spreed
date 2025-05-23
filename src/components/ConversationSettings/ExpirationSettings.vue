@@ -77,7 +77,7 @@ export default {
 		expirationOptions() {
 			const expirationOptions = [...this.defaultExpirationOptions]
 
-			if (!expirationOptions.some(option => option.id === this.conversation.messageExpiration)) {
+			if (!expirationOptions.some((option) => option.id === this.conversation.messageExpiration)) {
 				expirationOptions.push({ id: this.conversation.messageExpiration, label: t('spreed', 'Custom expiration time') })
 			}
 

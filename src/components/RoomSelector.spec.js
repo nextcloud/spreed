@@ -101,7 +101,7 @@ describe('RoomSelector', () => {
 	})
 
 	const mountRoomSelector = async (props) => {
-		const payload = conversations.filter(conv => {
+		const payload = conversations.filter((conv) => {
 			return !props?.listOpenConversations || conv.listable === CONVERSATION.LISTABLE.USERS
 		})
 

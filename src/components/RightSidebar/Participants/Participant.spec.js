@@ -285,7 +285,7 @@ describe('Participant.vue', () => {
 			if (icon) {
 				expect(wrapper.findComponent(icon).exists()).toBeTruthy()
 			} else {
-				components.forEach(component => {
+				components.forEach((component) => {
 					expect(wrapper.findComponent(component).exists()).toBeFalsy()
 				})
 			}

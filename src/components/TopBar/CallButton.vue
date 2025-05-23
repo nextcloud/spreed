@@ -414,7 +414,7 @@ export default {
 
 			if (this.isPhoneRoom) {
 				const attendeeId = this.$store.getters.participantsList(this.token)
-					.find(participant => participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES)
+					.find((participant) => participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES)
 					?.attendeeId
 				if (attendeeId) {
 					this.dialOutPhoneNumber(attendeeId)

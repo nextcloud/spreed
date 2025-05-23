@@ -76,7 +76,7 @@ export default {
 				return ''
 			}
 			const selectedRoom = JSON.parse(this.modelValue || this.value).t
-			const newValue = this.roomOptions.find(option => option.token === selectedRoom)
+			const newValue = this.roomOptions.find((option) => option.token === selectedRoom)
 			if (typeof newValue === 'undefined') {
 				return ''
 			}
@@ -88,7 +88,7 @@ export default {
 				return this.modeOptions[0]
 			}
 			const selectedMode = JSON.parse(this.modelValue || this.value).m
-			const newValue = this.modeOptions.find(option => option.id === selectedMode)
+			const newValue = this.modeOptions.find((option) => option.id === selectedMode)
 			if (typeof newValue === 'undefined') {
 				return this.modeOptions[0]
 			}

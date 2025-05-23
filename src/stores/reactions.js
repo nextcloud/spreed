@@ -116,7 +116,7 @@ export const useReactionsStore = defineStore('reactions', {
 			const actors = this.reactions[token][messageId][reaction] ?? []
 			// Find if actor is already in the list
 			// This is needed when loading as revoking messages fully updates the list
-			if (actors.some(a => a.actorId === actor.actorId && a.actorType === actor.actorType)) {
+			if (actors.some((a) => a.actorId === actor.actorId && a.actorType === actor.actorType)) {
 				return
 			}
 			actors.push(actor)
@@ -162,11 +162,11 @@ export const useReactionsStore = defineStore('reactions', {
 			}
 
 			// Handle removed reactions
-			const removedReactions = Object.keys(storedReactions).filter(reaction => {
+			const removedReactions = Object.keys(storedReactions).filter((reaction) => {
 				return !reactionsDetails[reaction]
 			})
 
-			removedReactions.forEach(reaction => {
+			removedReactions.forEach((reaction) => {
 				this.removeReaction({ token, messageId, reaction })
 			})
 

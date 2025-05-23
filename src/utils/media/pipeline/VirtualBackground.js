@@ -263,7 +263,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		}
 
 		this._jitsiStreamBackgroundEffect.stopEffect()
-		this._outputStream.getTracks().forEach(track => {
+		this._outputStream.getTracks().forEach((track) => {
 			this._disableRemoveTrackWhenEnded(track)
 
 			track.stop()

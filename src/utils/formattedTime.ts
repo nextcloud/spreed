@@ -36,7 +36,7 @@ function formattedTime(time: number, condensed: boolean = false): string {
 		hours,
 		minutes.toString().padStart(2, '0'),
 		seconds.toString().padStart(2, '0'),
-	].filter(num => !!num).join(condensed ? ':' : ' : ')
+	].filter((num) => !!num).join(condensed ? ':' : ' : ')
 }
 
 /**

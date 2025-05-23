@@ -69,7 +69,7 @@ export default {
 		 */
 		supportedReactions: {
 			type: Array,
-			validator: (prop) => prop.every(e => typeof e === 'string'),
+			validator: (prop) => prop.every((e) => typeof e === 'string'),
 			required: true,
 		},
 	},

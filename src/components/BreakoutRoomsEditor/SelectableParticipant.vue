@@ -85,7 +85,7 @@ export default {
 		// Defines list of locked participants (can not be removed manually
 		const lockedParticipants = inject('lockedParticipants', ref([]))
 
-		const isLocked = computed(() => lockedParticipants.value.some(item => {
+		const isLocked = computed(() => lockedParticipants.value.some((item) => {
 			return item.id === props.participant.id && item.source === props.participant.source
 		}))
 

@@ -101,7 +101,7 @@ export const useSessionStore = defineStore('session', {
 		},
 
 		orphanSessions: (state) => {
-			return Object.values(state.sessions).filter(session => !session.attendeeId)
+			return Object.values(state.sessions).filter((session) => !session.attendeeId)
 		},
 	},
 

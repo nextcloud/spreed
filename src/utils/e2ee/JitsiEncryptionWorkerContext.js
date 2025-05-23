@@ -147,7 +147,7 @@ export class Context {
 				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength)
 			}, this._cryptoKeyRing[keyIndex].encryptionKey, new Uint8Array(encodedFrame.data,
 				UNENCRYPTED_BYTES[encodedFrame.type]))
-				.then(cipherText => {
+				.then((cipherText) => {
 					const newData = new ArrayBuffer(frameHeader.byteLength + cipherText.byteLength
 						+ iv.byteLength + frameTrailer.byteLength);
 					const newUint8 = new Uint8Array(newData);
@@ -164,7 +164,7 @@ export class Context {
 					encodedFrame.data = newData;
 
 					return controller.enqueue(encodedFrame);
-				}, e => {
+				}, (e) => {
 					// TODO: surface this to the app.
 					console.error(e);
 

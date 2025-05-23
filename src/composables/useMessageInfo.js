@@ -53,7 +53,7 @@ export function useMessageInfo(message = ref({})) {
 		isConversationModifiable,
 	} = useConversationInfo({ item: conversation })
 
-	const isObjectShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('object')))
+	const isObjectShare = computed(() => Object.keys(Object(message.value.messageParameters)).some((key) => key.startsWith('object')))
 
 	const isCurrentUserOwnMessage = computed(() =>
 		message.value.actorId === currentActorId
@@ -79,7 +79,7 @@ export function useMessageInfo(message = ref({})) {
 		return (Date.now() - message.value.timestamp * 1000 < ONE_DAY_IN_MS)
 	})
 
-	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('file')))
+	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some((key) => key.startsWith('file')))
 
 	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters)).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
 

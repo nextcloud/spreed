@@ -125,13 +125,13 @@ export default {
 
 		sourceTree() {
 			const tree = {}
-			const uniqueSourceLanguages = Array.from(new Set(this.availableLanguages?.map(element => element.from)))
+			const uniqueSourceLanguages = Array.from(new Set(this.availableLanguages?.map((element) => element.from)))
 
-			uniqueSourceLanguages.forEach(language => {
+			uniqueSourceLanguages.forEach((language) => {
 				tree[language] = {
 					id: language,
-					label: this.availableLanguages?.find(element => element.from === language)?.fromLabel,
-					translations: this.availableLanguages?.filter(element => element.from === language).map(model => ({
+					label: this.availableLanguages?.find((element) => element.from === language)?.fromLabel,
+					translations: this.availableLanguages?.filter((element) => element.from === language).map((model) => ({
 						id: model.to,
 						label: model.toLabel,
 					})),
@@ -143,13 +143,13 @@ export default {
 
 		translationTree() {
 			const tree = {}
-			const uniqueTranslateLanguages = Array.from(new Set(this.availableLanguages?.map(element => element.to)))
+			const uniqueTranslateLanguages = Array.from(new Set(this.availableLanguages?.map((element) => element.to)))
 
-			uniqueTranslateLanguages.forEach(language => {
+			uniqueTranslateLanguages.forEach((language) => {
 				tree[language] = {
 					id: language,
-					label: this.availableLanguages?.find(element => element.to === language)?.toLabel,
-					sources: this.availableLanguages?.filter(element => element.to === language).map(model => ({
+					label: this.availableLanguages?.find((element) => element.to === language)?.toLabel,
+					sources: this.availableLanguages?.filter((element) => element.to === language).map((model) => ({
 						id: model.from,
 						label: model.fromLabel,
 					})),
@@ -162,7 +162,7 @@ export default {
 		optionsFrom() {
 			return this.selectedTo?.id
 				? this.translationTree[this.selectedTo?.id]?.sources
-				: Object.values(this.sourceTree).map(model => ({
+				: Object.values(this.sourceTree).map((model) => ({
 						id: model.id,
 						label: model.label,
 					}))
@@ -171,7 +171,7 @@ export default {
 		optionsTo() {
 			return this.selectedFrom?.id
 				? this.sourceTree[this.selectedFrom?.id]?.translations
-				: Object.values(this.translationTree).map(model => ({
+				: Object.values(this.translationTree).map((model) => ({
 						id: model.id,
 						label: model.label,
 					}))
@@ -194,7 +194,7 @@ export default {
 	},
 
 	mounted() {
-		this.selectedTo = this.optionsTo.find(language => language.id === this.userLanguage) || null
+		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) || null
 
 		if (this.selectedTo) {
 			this.translateMessage()

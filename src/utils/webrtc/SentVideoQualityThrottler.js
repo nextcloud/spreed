@@ -84,7 +84,7 @@ SentVideoQualityThrottler.prototype = {
 		this._callParticipantCollection.on('add', this._handleAddParticipantBound)
 		this._callParticipantCollection.on('remove', this._handleRemoveParticipantBound)
 
-		this._callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+		this._callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 			callParticipantModel.on('change:videoAvailable', this._adjustVideoQualityIfNeededBound)
 			callParticipantModel.on('change:audioAvailable', this._adjustVideoQualityIfNeededBound)
 		})
@@ -103,7 +103,7 @@ SentVideoQualityThrottler.prototype = {
 		this._callParticipantCollection.off('add', this._handleAddParticipantBound)
 		this._callParticipantCollection.off('remove', this._handleRemoveParticipantBound)
 
-		this._callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+		this._callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:videoAvailable', this._adjustVideoQualityIfNeededBound)
 			callParticipantModel.off('change:audioAvailable', this._adjustVideoQualityIfNeededBound)
 		})
@@ -171,7 +171,7 @@ SentVideoQualityThrottler.prototype = {
 
 		let availableVideosCount = 0
 		let availableAudiosCount = 0
-		this._callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+		this._callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 			if (callParticipantModel.get('videoAvailable')) {
 				availableVideosCount++
 			}

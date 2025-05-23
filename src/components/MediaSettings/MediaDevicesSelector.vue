@@ -36,8 +36,8 @@ const emit = defineEmits<{
 }>()
 
 const deviceOptions = computed<NcSelectOption[]>(() => {
-	const kindDevices = props.devices.filter(device => device.kind === props.kind)
-		.map(device => ({
+	const kindDevices = props.devices.filter((device) => device.kind === props.kind)
+		.map((device) => ({
 			id: device.deviceId,
 			label: device.label ? device.label : device.fallbackLabel,
 		}))
@@ -67,7 +67,7 @@ const deviceSelectorPlaceholder = computed(() => {
 
 const deviceSelectedOption = computed<NcSelectOption | null>({
 	get: () => {
-		return deviceOptions.value.find(option => option.id === props.deviceId) ?? null
+		return deviceOptions.value.find((option) => option.id === props.deviceId) ?? null
 	},
 	set: (value) => {
 		updateDeviceId(value?.id ?? null)
@@ -89,7 +89,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 	// The previous selected option changed due to the device being
 	// disconnected, so ignore it as it was not explicitly changed by
 	// the user.
-	if (props.deviceId && !deviceOptions.value.find(option => option.id === props.deviceId)) {
+	if (props.deviceId && !deviceOptions.value.find((option) => option.id === props.deviceId)) {
 		return
 	}
 

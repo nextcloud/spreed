@@ -30,7 +30,7 @@ jest.mock('../../services/coreService', () => ({
 }))
 
 // short-circuit debounce
-jest.mock('debounce', () => jest.fn().mockImplementation(fn => fn))
+jest.mock('debounce', () => jest.fn().mockImplementation((fn) => fn))
 
 describe('LeftSidebar.vue', () => {
 	let store
@@ -166,7 +166,7 @@ describe('LeftSidebar.vue', () => {
 			// move on past the fetchConversation call
 			await flushPromises()
 
-			const normalConversationsList = conversationsList.filter(conversation => !conversation.isArchived)
+			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
 			const conversationListItems = wrapper.findAll('.vue-recycle-scroller-STUB-item')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
 			expect(conversationListItems.at(0).text()).toStrictEqual(normalConversationsList[0].displayName)
@@ -355,19 +355,19 @@ describe('LeftSidebar.vue', () => {
 		function prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, remainedCaption, circlesEnabled = true, startConversations = true) {
 			// Check all conversations, users, groups and circles
 			const conversationList = conversationsList
-				.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
-				.map(item => { return item.name })
+				.filter((item) => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
+				.map((item) => { return item.name })
 			const searchedUsersResults = usersResults
-				.filter(item => item.label.includes(SEARCH_TERM) && item.id !== 'current-user' && item.source === 'users')
-				.map(item => { return item.label })
+				.filter((item) => item.label.includes(SEARCH_TERM) && item.id !== 'current-user' && item.source === 'users')
+				.map((item) => { return item.label })
 			const searchedGroupsResults = groupsResults
-				.filter(item => item.label.includes(SEARCH_TERM))
-				.map(item => { return item.label })
+				.filter((item) => item.label.includes(SEARCH_TERM))
+				.map((item) => { return item.label })
 			const searchedCirclesResults = circlesResults
-				.filter(item => item.label.includes(SEARCH_TERM))
-				.map(item => { return item.label })
+				.filter((item) => item.label.includes(SEARCH_TERM))
+				.map((item) => { return item.label })
 			const searchedFederatedUsersResults = usersResults
-				.filter(item => item.label.includes(SEARCH_TERM) && item.id === 'current-user' && item.source === 'remotes')
+				.filter((item) => item.label.includes(SEARCH_TERM) && item.id === 'current-user' && item.source === 'remotes')
 
 			const itemsListNames = []
 			if (conversationList.length > 0) {
@@ -379,7 +379,7 @@ describe('LeftSidebar.vue', () => {
 				itemsListNames.push(SEARCH_TERM)
 			}
 			if (listedResults.length > 0) {
-				itemsListNames.push('Open conversations', ...listedResults.map(item => item.name))
+				itemsListNames.push('Open conversations', ...listedResults.map((item) => item.name))
 			}
 			if (searchedUsersResults.length > 0) {
 				itemsListNames.push('Users', ...searchedUsersResults)
@@ -433,7 +433,7 @@ describe('LeftSidebar.vue', () => {
 				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
 				expect(itemsList.exists()).toBeTruthy()
 				expect(itemsList).toHaveLength(itemsListNames.length)
-				expect(itemsListNames.filter(item => ['Groups', 'Teams', 'Federated users', SEARCH_TERM].includes(item)).length).toBe(0)
+				expect(itemsListNames.filter((item) => ['Groups', 'Teams', 'Federated users', SEARCH_TERM].includes(item)).length).toBe(0)
 				itemsListNames.forEach((name, index) => {
 					expect(itemsList.at(index).text()).toStrictEqual(name)
 				})
@@ -454,7 +454,7 @@ describe('LeftSidebar.vue', () => {
 				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
 				expect(itemsList.exists()).toBeTruthy()
 				expect(itemsList).toHaveLength(itemsListNames.length)
-				expect(itemsListNames.filter(item => ['Teams'].includes(item)).length).toBe(0)
+				expect(itemsListNames.filter((item) => ['Teams'].includes(item)).length).toBe(0)
 				itemsListNames.forEach((name, index) => {
 					expect(itemsList.at(index).text()).toStrictEqual(name)
 				})

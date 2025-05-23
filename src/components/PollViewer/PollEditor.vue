@@ -168,7 +168,7 @@ const pollForm = reactive<createPollParams>({
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
 })
 
-const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
+const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter((option) => Boolean(option)).length >= 2)
 const dialogName = computed(() => {
 	return editingDraftId.value ? t('spreed', 'Edit poll draft') : t('spreed', 'Create new poll')
 })

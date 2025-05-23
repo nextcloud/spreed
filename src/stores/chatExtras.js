@@ -64,7 +64,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		getChatSummary: (state) => (token) => {
-			return Object.values(Object(state.chatSummary[token])).map(task => task.summary).join('\n\n')
+			return Object.values(Object(state.chatSummary[token])).map((task) => task.summary).join('\n\n')
 				|| t('spreed', 'Error occurred during a summary generation')
 		},
 	},
@@ -179,7 +179,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		initiateEditingMessage({ token, id, message, messageParameters }) {
 			this.setMessageIdToEdit(token, id)
-			const isFileShareOnly = Object.keys(Object(messageParameters)).some(key => key.startsWith('file'))
+			const isFileShareOnly = Object.keys(Object(messageParameters)).some((key) => key.startsWith('file'))
 				&& message === '{file}'
 			if (isFileShareOnly) {
 				this.setChatEditInput({ token, text: '' })

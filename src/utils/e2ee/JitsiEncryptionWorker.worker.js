@@ -56,7 +56,7 @@ function handleTransform(context, operation, readableStream, writableStream) {
 	}
 }
 
-onmessage = async event => {
+onmessage = async (event) => {
 	const { operation } = event.data;
 
 	if (operation === 'initialize') {
@@ -92,7 +92,7 @@ onmessage = async event => {
 
 // Operations using RTCRtpScriptTransform.
 if (self.RTCTransformEvent) {
-	self.onrtctransform = event => {
+	self.onrtctransform = (event) => {
 		const transformer = event.transformer;
 		const { operation, participantId } = transformer.options;
 		const context = getParticipantContext(participantId);

@@ -71,7 +71,7 @@ const upcomingEvents = computed(() => {
 	const now = convertToUnix(Date.now())
 	return groupwareStore.getAllEvents(props.token)
 		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
-		.map(event => {
+		.map((event) => {
 			const start = event.start
 				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
 				: ''
@@ -82,7 +82,7 @@ const upcomingEvents = computed(() => {
 })
 
 type CalendarOption = { value: string, label: string, color: string }
-const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeableCalendars.map(calendar => ({
+const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeableCalendars.map((calendar) => ({
 	value: calendar.uri,
 	label: calendar.displayname,
 	color: calendar.color ?? usernameToColor(calendar.uri).color
@@ -123,7 +123,7 @@ const attendeeHint = computed(() => {
 
 	const list: Participant[] = selectedParticipants.value.slice(0, 2)
 	const remainingCount = selectedParticipants.value.length - list.length
-	const summary = list.map(participant => getDisplayNameWithFallback(participant.displayName, participant.actorType))
+	const summary = list.map((participant) => getDisplayNameWithFallback(participant.displayName, participant.actorType))
 
 	if (remainingCount === 0) {
 		// Amount is 2 or less
@@ -214,7 +214,7 @@ watch(isFormOpen, (value) => {
 	}
 
 	// Reset the default form values
-	selectedCalendar.value = calendarOptions.value.find(o => o.value === groupwareStore.defaultCalendarUri) ?? null
+	selectedCalendar.value = calendarOptions.value.find((o) => o.value === groupwareStore.defaultCalendarUri) ?? null
 	selectedDateTimeStart.value = getCurrentDateInStartOfNthHour(1)
 	selectedDateTimeEnd.value = getCurrentDateInStartOfNthHour(2)
 	newMeetingTitle.value = ''
@@ -258,7 +258,7 @@ function toggleAll(value: boolean) {
  * @param value switch value
  */
 function removeSelectedParticipant(value: Participant) {
-	selectedAttendeeIds.value = selectedAttendeeIds.value.filter(id => value.attendeeId !== id)
+	selectedAttendeeIds.value = selectedAttendeeIds.value.filter((id) => value.attendeeId !== id)
 }
 
 /**

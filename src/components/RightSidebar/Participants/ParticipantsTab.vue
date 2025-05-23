@@ -187,7 +187,7 @@ export default {
 		filteredParticipants() {
 			const isMatch = (string) => string.toLowerCase().includes(this.searchText.toLowerCase())
 
-			return this.participants.filter(participant => {
+			return this.participants.filter((participant) => {
 				return isMatch(participant.displayName)
 					|| (![ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType) && isMatch(participant.actorId))
 					|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && participant.invitedActorId && isMatch(participant.invitedActorId))
@@ -273,8 +273,8 @@ export default {
 	methods: {
 		t,
 		async updateUsers(usersList) {
-			const currentUser = usersList.flat().find(user => user.userId === this.userId)
-			const currentParticipant = this.participants.find(user => user.userId === this.userId)
+			const currentUser = usersList.flat().find((user) => user.userId === this.userId)
+			const currentParticipant = this.participants.find((user) => user.userId === this.userId)
 			if (!currentUser) {
 				return
 			}
@@ -374,7 +374,7 @@ export default {
 				return
 			}
 
-			const participant = this.participants.find(participant => participant.actorId === state.userId)
+			const participant = this.participants.find((participant) => participant.actorId === state.userId)
 			if (participant && (participant.status !== state.status
 				|| participant.statusMessage !== state.message
 				|| participant.statusIcon !== state.icon

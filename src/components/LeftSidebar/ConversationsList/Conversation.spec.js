@@ -338,7 +338,7 @@ describe('Conversation.vue', () => {
 		 */
 		function findNcActionButton(wrapper, text) {
 			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			const items = actionButtons.filter(actionButton => {
+			const items = actionButtons.filter((actionButton) => {
 				return actionButton.text() === text
 			})
 			if (!items.exists()) {

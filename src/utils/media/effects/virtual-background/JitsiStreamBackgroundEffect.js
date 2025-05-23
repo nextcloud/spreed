@@ -473,7 +473,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		this._frameRate = parseInt(frameRate, 10)
 
-		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch(error => {
+		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch((error) => {
 			console.error('Frame rate could not be adjusted in background effect', error)
 		})
 

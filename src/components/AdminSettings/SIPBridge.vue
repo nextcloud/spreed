@@ -137,7 +137,7 @@ export default {
 			return this.currentSetup.sharedSecret !== this.sharedSecret
 				|| this.currentSetup.dialInInfo !== this.dialInInfo
 				|| this.currentSetup.dialOutEnabled !== this.dialOutEnabled
-				|| this.currentSetup.sipGroups !== this.sipGroups.map(group => group.id).join('_')
+				|| this.currentSetup.sipGroups !== this.sipGroups.map((group) => group.id).join('_')
 		}
 	},
 
@@ -186,7 +186,7 @@ export default {
 				sharedSecret: this.sharedSecret,
 				dialInInfo: this.dialInInfo,
 				dialOutEnabled: this.dialOutEnabled,
-				sipGroups: this.sipGroups.map(group => group.id).join('_')
+				sipGroups: this.sipGroups.map((group) => group.id).join('_')
 			}
 			EventBus.emit('sip-settings-updated', this.currentSetup)
 		},
@@ -195,7 +195,7 @@ export default {
 			this.loading = true
 			this.saveLabel = t('spreed', 'Saving …')
 
-			const sipGroups = this.sipGroups.map(group => {
+			const sipGroups = this.sipGroups.map((group) => {
 				return group.id
 			})
 

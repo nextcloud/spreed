@@ -126,7 +126,7 @@ export default {
 		},
 
 		selectedTemplate() {
-			return this.templates.find(template => template.fileid === this.checked)
+			return this.templates.find((template) => template.fileid === this.checked)
 		},
 
 		style() {

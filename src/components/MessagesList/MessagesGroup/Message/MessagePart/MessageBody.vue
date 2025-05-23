@@ -402,7 +402,7 @@ export default {
 			if (!codeBlocks) {
 				return
 			}
-			const index = codeBlocks.findIndex(item => item.contains(event.target))
+			const index = codeBlocks.findIndex((item) => item.contains(event.target))
 			if (index !== -1) {
 				this.currentCodeBlock = index
 				const el = codeBlocks[index]

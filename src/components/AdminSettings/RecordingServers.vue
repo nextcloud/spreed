@@ -208,7 +208,7 @@ export default {
 		async updateServers() {
 			this.loading = true
 
-			this.servers = this.servers.filter(server => server.server.trim() !== '')
+			this.servers = this.servers.filter((server) => server.server.trim() !== '')
 
 			OCP.AppConfig.setValue('spreed', 'recording_servers', JSON.stringify({
 				servers: this.servers,

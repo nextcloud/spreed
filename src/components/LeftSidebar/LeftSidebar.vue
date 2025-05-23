@@ -463,7 +463,7 @@ export default {
 
 		showArchivedConversationsBubble() {
 			return this.archivedConversationsList
-				.some(conversation => hasUnreadMentions(conversation) || hasCall(conversation))
+				.some((conversation) => hasUnreadMentions(conversation) || hasCall(conversation))
 		},
 
 		filteredConversationsList() {
@@ -489,7 +489,7 @@ export default {
 		},
 
 		hasNoteToSelf() {
-			return this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
+			return this.conversationsList.find((conversation) => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 		},
 
 		pendingInvitationsCount() {
@@ -631,11 +631,11 @@ export default {
 				this.filters = []
 			} else {
 				if (this.filters.includes(filter)) {
-					this.filters = this.filters.filter(f => f !== filter)
+					this.filters = this.filters.filter((f) => f !== filter)
 				} else {
 					// Hardcode 'unread' and 'mentions' to behave like radio buttons
 					if (filter === 'unread' || filter === 'mentions') {
-						this.filters = [...this.filters.filter(f => f !== 'unread' && f !== 'mentions'), filter]
+						this.filters = [...this.filters.filter((f) => f !== 'unread' && f !== 'mentions'), filter]
 					} else {
 						this.filters = [...this.filters, filter]
 					}
@@ -746,7 +746,7 @@ export default {
 				this.$router.push({
 					name: 'conversation',
 					params: { token: conversation.token },
-				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types, show the modal directly
 				this.$refs.newConversationDialog.showModalForItem(item)
@@ -759,7 +759,7 @@ export default {
 			this.$router.push({
 				name: 'conversation',
 				params: { token: conversation.token },
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async createConversation(roomName) {
@@ -945,7 +945,7 @@ export default {
 
 		showTalkDashboard() {
 			this.$router.push({ name: 'root' })
-				.catch(err => console.debug(`Error while pushing the dashboard route: ${err}`))
+				.catch((err) => console.debug(`Error while pushing the dashboard route: ${err}`))
 		}
 	},
 }

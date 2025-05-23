@@ -184,7 +184,7 @@ function startCall(signaling, configuration, silent, recordingConsent, silentFor
 
 	signaling.joinCall(pendingJoinCallToken, flags, silent, recordingConsent, silentFor).then(() => {
 		startedCall(flags)
-	}).catch(error => {
+	}).catch((error) => {
 		signalingLeaveCall(pendingJoinCallToken)
 		failedToStartCall(error)
 	})
@@ -205,7 +205,7 @@ function setupWebRtc() {
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
 
-	signaling.on('sessionId', sessionId => {
+	signaling.on('sessionId', (sessionId) => {
 		localCallParticipantModel.setPeerId(sessionId)
 	})
 }

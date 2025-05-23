@@ -233,12 +233,12 @@ export default {
 		},
 
 		getNextMessageId(message) {
-			const nextMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) + 1]
+			const nextMessage = this.messages[this.messages.findIndex((searchedMessage) => searchedMessage.id === message.id) + 1]
 			return nextMessage?.id || this.nextMessageId
 		},
 
 		getPrevMessageId(message) {
-			const prevMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) - 1]
+			const prevMessage = this.messages[this.messages.findIndex((searchedMessage) => searchedMessage.id === message.id) - 1]
 			return prevMessage?.id || this.previousMessageId
 		},
 	},

@@ -114,7 +114,7 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 	async function getMentions(token: string, search: string, isDarkTheme: boolean): Promise<AutocompleteChatMention[]> {
 		try {
 			const response = await searchPossibleMentions(token, search)
-			return response.data.ocs.data.map(possibleMention => parseMention(possibleMention, token, isDarkTheme))
+			return response.data.ocs.data.map((possibleMention) => parseMention(possibleMention, token, isDarkTheme))
 		} catch (error) {
 			console.error('Error while searching possible mentions: ', error)
 			return []

@@ -123,17 +123,17 @@ const state = {
 }
 
 const getters = {
-	conversations: state => state.conversations,
+	conversations: (state) => state.conversations,
 	/**
 	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
 	 *
 	 * @param {object} state state
 	 * @return {object[]} sorted conversations list
 	 */
-	conversationsList: state => {
+	conversationsList: (state) => {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
-			.filter(conversation => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 			// Sort by isFavorite and lastActivity
 			.sort((conversation1, conversation2) => {
 				if (conversation1.isFavorite !== conversation2.isFavorite) {
@@ -150,7 +150,7 @@ const getters = {
 	 * @return {object[]} sorted conversations list
 	 */
 	archivedConversationsList: (state, getters) => {
-		return getters.conversationsList.filter(conversation => conversation.isArchived)
+		return getters.conversationsList.filter((conversation) => conversation.isArchived)
 	},
 	/**
 	 * Get a conversation providing its token
@@ -158,8 +158,8 @@ const getters = {
 	 * @param {object} state state object
 	 * @return {Function} The callback function returning the conversation object
 	 */
-	conversation: state => token => state.conversations[token],
-	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
+	conversation: (state) => (token) => state.conversations[token],
+	dummyConversation: (state) => Object.assign({}, DUMMY_CONVERSATION),
 	isModerator: (state, getters, rootState, rootGetters) => {
 		const conversation = getters.conversation(rootGetters.getToken())
 		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
@@ -185,7 +185,7 @@ const getters = {
 			.find((conversation) => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 	},
 
-	conversationsInitialised: state => state.conversationsInitialised,
+	conversationsInitialised: (state) => state.conversationsInitialised,
 }
 
 const mutations = {
@@ -1054,7 +1054,7 @@ const actions = {
 			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
 			...newParticipants,
 		]
-		const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
+		const roomName = getDisplayNamesList(participants.map((participant) => participant.label), CONVERSATION.MAX_NAME_LENGTH)
 
 		return context.dispatch('createGroupConversation', {
 			roomName,

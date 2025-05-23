@@ -167,7 +167,7 @@ export default {
 
 		turnSchemes: {
 			get() {
-				return this.schemesOptions.find(i => i.value === this.schemes)
+				return this.schemesOptions.find((i) => i.value === this.schemes)
 			},
 
 			set(value) {
@@ -177,7 +177,7 @@ export default {
 
 		turnProtocols: {
 			get() {
-				return this.protocolOptions.find(i => i.value === this.protocols)
+				return this.protocolOptions.find((i) => i.value === this.protocols)
 			},
 
 			set(value) {

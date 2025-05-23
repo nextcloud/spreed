@@ -118,8 +118,8 @@ export default {
 		n,
 		prepareNamesList() {
 			return this.visibleParticipants.reverse()
-				.map(participant => this.getParticipantName(participant))
-				.map(name => name ? `<strong>${escapeHtml(name)}</strong>` : undefined)
+				.map((participant) => this.getParticipantName(participant))
+				.map((name) => name ? `<strong>${escapeHtml(name)}</strong>` : undefined)
 		},
 
 		// TODO implement model from signaling here

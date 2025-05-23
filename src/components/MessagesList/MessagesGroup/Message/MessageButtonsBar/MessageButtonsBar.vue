@@ -465,7 +465,7 @@ export default {
 		},
 
 		messageFile() {
-			const firstFileKey = (Object.keys(this.message.messageParameters).find(key => key.startsWith('file')))
+			const firstFileKey = (Object.keys(this.message.messageParameters).find((key) => key.startsWith('file')))
 			return this.message.messageParameters[firstFileKey]
 		},
 
@@ -576,7 +576,7 @@ export default {
 					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: moment(nextWeekTime).format('ddd LT') }),
 					ariaLabel: t('spreed', 'Set reminder for next week'),
 				},
-			].filter(option => option.timestamp !== null)
+			].filter((option) => option.timestamp !== null)
 		},
 
 		clearReminderLabel() {
@@ -614,7 +614,7 @@ export default {
 		async handlePrivateReply() {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.message.actorId)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async handleCopyMessageText() {
@@ -709,7 +709,7 @@ export default {
 		// Making sure that the click is outside the MessageButtonsBar
 		handleClickOutside(event) {
 			// check if click is inside the emoji picker
-			if (event.composedPath().some(element => element.classList?.contains('v-popper__popper--shown'))) {
+			if (event.composedPath().some((element) => element.classList?.contains('v-popper__popper--shown'))) {
 				return
 			}
 
@@ -724,7 +724,7 @@ export default {
 		},
 
 		updateFrequentlyUsedEmojis() {
-			this.frequentlyUsedEmojis = emojiSearch('', 5).map(emoji => emoji.native)
+			this.frequentlyUsedEmojis = emojiSearch('', 5).map((emoji) => emoji.native)
 		},
 
 		async getReminder() {

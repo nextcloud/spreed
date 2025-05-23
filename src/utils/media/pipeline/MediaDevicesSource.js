@@ -292,7 +292,7 @@ export default class MediaDevicesSource extends TrackSource {
 			}
 		}
 
-		mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
+		mediaDevicesManager.getUserMedia({ audio: true }).then((stream) => {
 			// According to the specification "getUserMedia({ audio: true })" will
 			// return a single audio track.
 			const track = stream.getTracks()[0]
@@ -362,7 +362,7 @@ export default class MediaDevicesSource extends TrackSource {
 		const constraints = { video: true }
 		this._adjustVideoConstraintsForChromium(constraints)
 
-		mediaDevicesManager.getUserMedia(constraints).then(stream => {
+		mediaDevicesManager.getUserMedia(constraints).then((stream) => {
 			// According to the specification "getUserMedia({ video: true })" will
 			// return a single video track.
 			const track = stream.getTracks()[0]

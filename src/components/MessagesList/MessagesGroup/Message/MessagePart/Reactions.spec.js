@@ -255,7 +255,7 @@ describe('Reactions.vue', () => {
 
 			const removedReaction = {
 				...reactionsStored,
-				'🔥': [...reactionsStored['🔥'].filter(obj => obj.actorId !== 'admin')] // remove the current user
+				'🔥': [...reactionsStored['🔥'].filter((obj) => obj.actorId !== 'admin')] // remove the current user
 			}
 			const responseRemoved = generateOCSResponse({ payload: removedReaction })
 			removeReactionFromMessage.mockResolvedValue(responseRemoved)

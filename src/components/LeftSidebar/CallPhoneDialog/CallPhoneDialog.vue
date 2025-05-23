@@ -168,7 +168,7 @@ export default {
 				// request above could be cancelled, if there is parallel request, and return null
 				// in that case participants list will be fetched anyway and keeped in the store
 				const participantsList = response?.data.ocs.data || this.$store.getters.participantsList(token)
-				const attendeeId = participantsList.find(participant => participant.phoneNumber === phoneNumber)?.attendeeId
+				const attendeeId = participantsList.find((participant) => participant.phoneNumber === phoneNumber)?.attendeeId
 
 				await callSIPDialOut(token, attendeeId)
 			} catch (error) {

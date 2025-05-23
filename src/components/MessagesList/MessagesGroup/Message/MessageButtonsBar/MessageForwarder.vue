@@ -138,7 +138,7 @@ export default {
 					params: {
 						token: `${this.selectedConversationToken}`,
 					},
-				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			}
 
 			this.showForwardedConfirmation = false

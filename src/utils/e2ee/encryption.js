@@ -658,7 +658,7 @@ class Encryption {
 	 * @private
 	 */
 	_findReceiverForTrack(pc, track) {
-		return pc && pc.getReceivers().find(r => r.track === track)
+		return pc && pc.getReceivers().find((r) => r.track === track)
 	}
 
 	/**

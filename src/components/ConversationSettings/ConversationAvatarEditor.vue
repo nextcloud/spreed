@@ -324,7 +324,7 @@ export default {
 
 			const blob = await new Promise((resolve, reject) => {
 				this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas()
-					.toBlob(blob => blob === null
+					.toBlob((blob) => blob === null
 						? reject(new Error(t('spreed', 'Error cropping conversation picture')))
 						: resolve(blob))
 			})

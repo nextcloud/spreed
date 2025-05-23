@@ -163,7 +163,7 @@ describe('messagesStore', () => {
 				},
 			}]
 
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				store.dispatch('processMessage', { token: TOKEN, message })
 			})
 
@@ -473,7 +473,7 @@ describe('messagesStore', () => {
 			deleteMessage.mockRejectedValueOnce(error)
 
 			await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
-				.catch(error => {
+				.catch((error) => {
 					expect(error.status).toBe(400)
 
 					expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
@@ -935,7 +935,7 @@ describe('messagesStore', () => {
 			const expectedMessages = lookIntoFuture
 				? [originalMessagesList[0], ...newMessagesList]
 				: [...oldMessagesList, originalMessagesList[0]]
-			const expectedMessageFromGuest = expectedMessages.find(message => message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
+			const expectedMessageFromGuest = expectedMessages.find((message) => message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
 
 			await store.dispatch('fetchMessages', {
 				token: TOKEN,

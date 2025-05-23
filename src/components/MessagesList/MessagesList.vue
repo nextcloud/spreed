@@ -448,7 +448,7 @@ export default {
 		softUpdateByDateGroups(oldDateGroups, newDateGroups) {
 			const dateTimestamps = new Set([...Object.keys(oldDateGroups), ...Object.keys(newDateGroups)])
 
-			dateTimestamps.forEach(dateTimestamp => {
+			dateTimestamps.forEach((dateTimestamp) => {
 				if (newDateGroups[dateTimestamp]) {
 					if (oldDateGroups[dateTimestamp]) {
 						// the group by date has changed, we update its content (groups by author)
@@ -467,7 +467,7 @@ export default {
 		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
 			const groupIds = new Set([...Object.keys(oldGroups), ...Object.keys(newGroups)])
 
-			groupIds.forEach(id => {
+			groupIds.forEach((id) => {
 				if (oldGroups[id] && !newGroups[id]) {
 					// group no longer exists, remove
 					this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], id)
@@ -1220,7 +1220,7 @@ export default {
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
 					const focusedId = this.getMessageIdFromHash(to.hash)
-					if (this.messagesList.find(m => m.id === focusedId)) {
+					if (this.messagesList.find((m) => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
 						// after the browser's native "scroll to anchor" from
 						// the hash
@@ -1264,7 +1264,7 @@ export default {
 			setTimeout(() => {
 				this.refreshReadMarkerPosition()
 				// Regenerate relative date separators
-				Object.keys(this.dateSeparatorLabels).forEach(dateTimestamp => {
+				Object.keys(this.dateSeparatorLabels).forEach((dateTimestamp) => {
 					this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
 				})
 			}, 2)

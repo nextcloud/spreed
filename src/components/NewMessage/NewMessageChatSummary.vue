@@ -108,7 +108,7 @@ watch(chatSummaryMessage, () => {
 }, { immediate: true })
 
 onBeforeUnmount(() => {
-	Object.values(cancelGetTask).forEach(cancelFn => cancelFn())
+	Object.values(cancelGetTask).forEach((cancelFn) => cancelFn())
 })
 
 watch(token, (newValue, oldValue) => {
@@ -202,7 +202,7 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
  *
  */
 function dismissSummary() {
-	Object.values(cancelGetTask).forEach(cancelFn => cancelFn())
+	Object.values(cancelGetTask).forEach((cancelFn) => cancelFn())
 	clearInterval(getTaskInterval)
 	getTaskInterval = undefined
 	chatExtrasStore.dismissChatSummary(token.value)

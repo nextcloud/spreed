@@ -58,7 +58,7 @@ export const useSoundsStore = defineStore('sounds', {
 				this.initAudioObjects()
 			}
 			this.audioObjectsPromises[key] = this.audioObjects[key].play()
-			this.audioObjectsPromises[key].catch(error => {
+			this.audioObjectsPromises[key].catch((error) => {
 				console.error(error)
 			})
 		},

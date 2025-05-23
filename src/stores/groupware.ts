@@ -66,7 +66,7 @@ export const useGroupwareStore = defineStore('groupware', {
 			return state.upcomingEvents[token]?.[0]
 		},
 		writeableCalendars: (state) => {
-			return Object.values(state.calendars).filter(calendar => {
+			return Object.values(state.calendars).filter((calendar) => {
 				return calendar.isWriteable() && calendar.components.includes('VEVENT')
 			})
 		},
@@ -120,7 +120,7 @@ export const useGroupwareStore = defineStore('groupware', {
 			try {
 				await initializeCalDavClient()
 				const calendars = await getPersonalCalendars()
-				calendars.forEach(calendar => {
+				calendars.forEach((calendar) => {
 					const calendarWithUri = Object.assign(calendar, { uri: convertUrlToUri(calendar.url) })
 					Vue.set(this.calendars, calendarWithUri.uri, calendarWithUri)
 				})

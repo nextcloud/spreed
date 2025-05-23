@@ -25,7 +25,7 @@ export function requestRoomSelection(containerId, roomSelectorProps) {
 		const RoomSelector = defineAsyncComponent(() => import('../components/RoomSelector.vue'))
 
 		const vm = new Vue({
-			render: h => h(RoomSelector, {
+			render: (h) => h(RoomSelector, {
 				props: {
 					isPlugin: true,
 					...roomSelectorProps,

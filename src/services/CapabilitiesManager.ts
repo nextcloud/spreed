@@ -30,7 +30,7 @@ function generateTokenMap() {
 		return {}
 	}
 	const cachedConversations = JSON.parse(storageValue) as Conversation[]
-	cachedConversations.forEach(conversation => {
+	cachedConversations.forEach((conversation) => {
 		tokenMap[conversation.token] = conversation.remoteServer || null
 	})
 
@@ -199,7 +199,7 @@ function checkRemoteCapabilitiesHasChanged(newObject: Capabilities['spreed'], ol
 			}
 		}
 
-		const features = object.features.filter(feature => !object['features-local'].includes(feature)).sort()
+		const features = object.features.filter((feature) => !object['features-local'].includes(feature)).sort()
 
 		return { config, features }
 	}

@@ -38,7 +38,7 @@ const randomId = Math.random().toString(36).substring(7)
 const getRefId = (scope: 'tab' | 'panel', key: string) => `tab-${randomId}-${scope}-${key}`
 
 /** Index of the active tab for the transition effect */
-const activeIndex = computed(() => props.tabs.findIndex(tab => tab.id === props.active))
+const activeIndex = computed(() => props.tabs.findIndex((tab) => tab.id === props.active))
 /** Inline styles to shift tabs */
 const tabStyles = computed<CSSProperties | undefined>(() => {
 	return activeIndex.value !== -1

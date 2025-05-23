@@ -79,7 +79,7 @@ const searchResultsVirtual = computed(() => {
 	const virtualList = []
 
 	const lowerSearchText = props.searchText.toLowerCase()
-	const searchResultsConversationList = props.conversationsList.filter(conversation =>
+	const searchResultsConversationList = props.conversationsList.filter((conversation) =>
 		conversation.displayName.toLowerCase().includes(lowerSearchText)
 		|| conversation.name.toLowerCase().includes(lowerSearchText)
 	)
@@ -171,7 +171,7 @@ function iconData(item: ParticipantSearchResult) {
 }
 
 const hasSourcesWithoutResults = computed(() => {
-	return !searchResultsVirtual.value.some(item => item.type === 'user' || item.type === 'group'
+	return !searchResultsVirtual.value.some((item) => item.type === 'user' || item.type === 'group'
 		|| (item.type === 'circle' && isCirclesEnabled))
 })
 

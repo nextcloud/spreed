@@ -103,7 +103,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		addSharedItemsFromMessages(token, type, messages) {
 			this.checkForExistence(token, type)
 
-			messages.forEach(message => {
+			messages.forEach((message) => {
 				if (!this.sharedItemsPool[token][type][message.id]) {
 					Vue.set(this.sharedItemsPool[token][type], message.id, message)
 				}

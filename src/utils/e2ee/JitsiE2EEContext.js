@@ -34,7 +34,7 @@ export default class E2EEcontext {
 	constructor({ sharedKey } = {}) {
 		this._worker = new Worker();
 
-		this._worker.onerror = e => console.error(e);
+		this._worker.onerror = (e) => console.error(e);
 
 		this._worker.postMessage({
 			operation: 'initialize',

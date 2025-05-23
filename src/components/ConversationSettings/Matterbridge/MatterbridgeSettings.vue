@@ -235,7 +235,7 @@ export default {
 
 		async editBridge() {
 			this.loading = true
-			this.parts.forEach(part => {
+			this.parts.forEach((part) => {
 				part.editing = false
 			})
 			try {

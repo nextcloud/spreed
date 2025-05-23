@@ -139,7 +139,7 @@ describe('MessagesList.vue', () => {
 		 * @param {Array} messagesGroups List of messages that should be grouped
 		 */
 		function testGrouped(...messagesGroups) {
-			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			messagesGroups.flat().forEach((message) => store.commit('addMessage', { token: TOKEN, message }))
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
@@ -164,7 +164,7 @@ describe('MessagesList.vue', () => {
 		 * @param {Array} messages List of messages that should not be grouped
 		 */
 		function testNotGrouped(messages) {
-			messages.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			messages.forEach((message) => store.commit('addMessage', { token: TOKEN, message }))
 
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
@@ -399,7 +399,7 @@ describe('MessagesList.vue', () => {
 		 * @param {Array} messagesGroups initial messages groups
 		 */
 		function renderMessagesList(...messagesGroups) {
-			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			messagesGroups.flat().forEach((message) => store.commit('addMessage', { token: TOKEN, message }))
 			return shallowMount(MessagesList, {
 				localVue,
 				store,
@@ -465,7 +465,7 @@ describe('MessagesList.vue', () => {
 			const wrapper = renderMessagesList(messagesGroup1)
 
 			// Act: add new group to the store
-			messagesGroup2.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			messagesGroup2.forEach((message) => store.commit('addMessage', { token: TOKEN, message }))
 			await wrapper.vm.$nextTick()
 
 			// Assert: old group nextMessageId is updated, new group is added
