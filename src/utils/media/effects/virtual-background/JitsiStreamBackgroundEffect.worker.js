@@ -22,7 +22,9 @@ self.onmessage = (e) => {
 			makeTFLite(e.data.simd)
 			break
 		case 'resizeSource':
-			if (!self.compiled) return
+			if (!self.compiled) {
+				return
+			}
 			resizeSource(e.data.imageData, e.data.frameId)
 			break
 		case 'runInference':
