@@ -210,7 +210,6 @@ export default {
 		},
 
 		async handleFileInput(event) {
-
 			// Make file path
 			const file = event.target.files[0]
 
@@ -240,7 +239,6 @@ export default {
 				})
 
 				this.handleSelectBackground(previewURL)
-
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Error while uploading the file'))

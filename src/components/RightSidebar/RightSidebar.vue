@@ -254,12 +254,15 @@ export default {
 		isSidebarAvailable() {
 			return this.token && !this.isInLobby
 		},
+
 		show() {
 			return this.sidebarStore.show
 		},
+
 		opened() {
 			return this.isSidebarAvailable && this.show
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
@@ -358,6 +361,7 @@ export default {
 		unreadMessagesCounter() {
 			return this.conversation.unreadMessages
 		},
+
 		hasUnreadMentions() {
 			return this.conversation.unreadMention
 		},
@@ -453,6 +457,7 @@ export default {
 				// FIXME collapse for group conversations until we show anything useful there
 				this.contentModeIndex = this.isOneToOne ? 1 : 0
 			},
+
 			immediate: true,
 		},
 

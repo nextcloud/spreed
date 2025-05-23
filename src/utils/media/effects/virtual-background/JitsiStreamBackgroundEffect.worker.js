@@ -76,7 +76,6 @@ async function makeTFLite(isSimd) {
 		self.compiled = true
 
 		self.postMessage({ message: 'loaded' })
-
 	} catch (error) {
 		console.error(error)
 		console.error('JitsiStreamBackgroundEffect.worker: tflite compilation failed. The web server may not be properly configured to send wasm and/or tflite files.')
@@ -108,7 +107,6 @@ function runInference(frameId) {
 	const segmentationMaskData = []
 	// All consts in Worker in obj array.
 	for (let i = 0; i < self.segmentationPixelCount; i++) {
-
 		const person = self.tflite.HEAPF32[outputMemoryOffset + i]
 
 		segmentationMaskData.push({

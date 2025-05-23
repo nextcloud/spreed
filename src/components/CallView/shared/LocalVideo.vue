@@ -96,46 +96,57 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		localMediaModel: {
 			type: Object,
 			required: true,
 		},
+
 		localCallParticipantModel: {
 			type: Object,
 			required: true,
 		},
+
 		isGrid: {
 			type: Boolean,
 			default: false,
 		},
+
 		isStripe: {
 			type: Boolean,
 			default: false,
 		},
+
 		fitVideo: {
 			type: Boolean,
 			default: false,
 		},
+
 		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
+
 		showControls: {
 			type: Boolean,
 			default: true,
 		},
+
 		unSelectable: {
 			type: Boolean,
 			default: false,
 		},
+
 		isBig: {
 			type: Boolean,
 			default: false,
 		},
+
 		isSmall: {
 			type: Boolean,
 			default: false,
 		},
+
 		isPresenterOverlay: {
 			type: Boolean,
 			default: false,

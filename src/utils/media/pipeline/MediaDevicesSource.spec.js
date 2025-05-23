@@ -168,7 +168,6 @@ describe('MediaDevicesSource', () => {
 	})
 
 	describe('start', () => {
-
 		/**
 		 * Checks the expected output tracks and event listeners.
 		 */

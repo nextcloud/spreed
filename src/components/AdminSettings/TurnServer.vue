@@ -112,26 +112,31 @@ export default {
 			default: '',
 			required: true,
 		},
+
 		server: {
 			type: String,
 			default: '',
 			required: true,
 		},
+
 		secret: {
 			type: String,
 			default: '',
 			required: true,
 		},
+
 		protocols: {
 			type: String,
 			default: '',
 			required: true,
 		},
+
 		index: {
 			type: Number,
 			default: -1,
 			required: true,
 		},
+
 		loading: {
 			type: Boolean,
 			default: false,
@@ -154,34 +159,42 @@ export default {
 			get() {
 				return this.server
 			},
+
 			set(value) {
 				this.updateServer(value)
 			}
 		},
+
 		turnSchemes: {
 			get() {
 				return this.schemesOptions.find(i => i.value === this.schemes)
 			},
+
 			set(value) {
 				this.updateSchemes(value)
 			}
 		},
+
 		turnProtocols: {
 			get() {
 				return this.protocolOptions.find(i => i.value === this.protocols)
 			},
+
 			set(value) {
 				this.updateProtocols(value)
 			}
 		},
+
 		turnSecret: {
 			get() {
 				return this.secret
 			},
+
 			set(value) {
 				this.updateSecret(value)
 			},
 		},
+
 		turnServerError() {
 			if (this.schemes.includes('turns') && /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$/.test(this.server.trim())) {
 				return t('spreed', '{schema} scheme must be used with a domain', { schema: 'turns:' })
@@ -189,6 +202,7 @@ export default {
 
 			return false
 		},
+
 		protocolOptions() {
 			return [
 				{ value: 'udp,tcp', label: t('spreed', '{option1} and {option2}', { option1: 'UDP', option2: 'TCP' }) },
@@ -196,6 +210,7 @@ export default {
 				{ value: 'tcp', label: t('spreed', '{option} only', { option: 'TCP' }) },
 			]
 		},
+
 		schemesOptions() {
 			return [
 				{ value: 'turn,turns', label: t('spreed', '{option1} and {option2}', { option1: 'turn:', option2: 'turns:' }) },
@@ -203,6 +218,7 @@ export default {
 				{ value: 'turns', label: t('spreed', '{option} only', { option: 'turns:' }) },
 			]
 		},
+
 		testIconClasses() {
 			return {
 				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
@@ -211,6 +227,7 @@ export default {
 				'icon-checkmark': this.testingSuccess,
 			}
 		},
+
 		testResult() {
 			if (this.testingSuccess) {
 				return t('spreed', 'OK: Successful ICE candidates returned by the TURN server')
@@ -221,6 +238,7 @@ export default {
 			}
 			return t('spreed', 'Test this server')
 		},
+
 		testAvailable() {
 			const schemes = this.schemes.split(',')
 			const protocols = this.protocols.split(',')
@@ -275,6 +293,7 @@ export default {
 				iceServers: [
 					iceServer,
 				],
+
 				iceTransportPolicy: 'relay',
 			}
 			const offerOptions = {
@@ -386,18 +405,22 @@ export default {
 		removeServer() {
 			this.$emit('remove-server', this.index)
 		},
+
 		updateSchemes(event) {
 			this.$emit('update:schemes', event.value)
 			this.debounceTestServer()
 		},
+
 		updateServer(value) {
 			this.$emit('update:server', value)
 			this.debounceTestServer()
 		},
+
 		updateSecret(value) {
 			this.$emit('update:secret', value)
 			this.debounceTestServer()
 		},
+
 		updateProtocols(event) {
 			this.$emit('update:protocols', event.value)
 			this.debounceTestServer()

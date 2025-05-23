@@ -58,6 +58,7 @@ export default {
 				render: (h) => h(LoadingComponent, { class: 'tab-loading' }),
 			},
 		}),
+
 		NcButton,
 	},
 
@@ -84,15 +85,19 @@ export default {
 		fileInfo() {
 			return this.Talk.fileInfo || {}
 		},
+
 		fileId() {
 			return this.fileInfo.id
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		fileIdForToken() {
 			return this.$store.getters.getFileIdForToken()
 		},
+
 		isChatTheActiveTab() {
 			// FIXME check for empty active tab is currently needed because the
 			// activeTab is not set when opening the sidebar from the "Details"

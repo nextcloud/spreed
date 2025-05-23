@@ -517,6 +517,7 @@ export default {
 				this.isNavigating = true
 			}
 		},
+
 		isCompact(value) {
 			if (!value) {
 				// Last messages are likely missing from the store, need to fetch with modifiedSince=0

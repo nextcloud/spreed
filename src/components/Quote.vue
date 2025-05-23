@@ -92,11 +92,13 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		// Whether to show remove / cancel action
 		canCancel: {
 			type: Boolean,
 			default: false,
 		},
+
 		// Whether to show edit actions
 		editMessage: {
 			type: Boolean,

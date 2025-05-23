@@ -220,6 +220,7 @@ export default {
 				}
 			}
 		},
+
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker

@@ -19,7 +19,6 @@ export default [
 			'@stylistic/array-bracket-spacing': 'off', // changes array formatting
 			'@stylistic/array-element-newline': 'off', // changes 132 files
 			'@stylistic/arrow-parens': 'off', // changes 132 files
-			'@stylistic/block-spacing': 'off',
 			'@stylistic/comma-dangle': 'off', // changes 125 files
 			'@stylistic/function-call-argument-newline': 'off', // changes 125 files
 			'@stylistic/function-paren-newline': 'off', // weird formatting
@@ -29,8 +28,6 @@ export default [
 			'@stylistic/linebreak-style': 'off', // changes 25 files -> indent
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@stylistic/member-delimiter-style': 'off', // removes commas from types
-			'@stylistic/no-multiple-empty-lines': 'off',
-			'@stylistic/padded-blocks': 'off',
 			'@stylistic/quote-props': 'off', // removes quotes from types
 			'@stylistic/semi': 'off', // changes e2ee files
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
@@ -66,7 +63,6 @@ export default [
 			'vue/comma-dangle': 'off', // changes commas
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
 			'vue/multi-word-component-names': 'off', // non-fixable
-			'vue/new-line-between-multi-line-property': 'off',
 			'vue/no-boolean-default': 'off', // non-fixable
 			'vue/no-required-prop-with-default': 'off', // non-fixable
 			'vue/no-unused-properties': 'off', // non-fixable
@@ -74,7 +70,6 @@ export default [
 			'vue/no-useless-mustaches': 'off', // changes template
 			'vue/object-curly-newline': 'off', // changes newlines
 			'vue/order-in-components': 'off', // moves code
-			'vue/padding-line-between-blocks': 'off',
 			'vue/quote-props': 'off', // changes template
 		},
 	},

@@ -180,6 +180,7 @@ export default {
 			clearInterval(this.stateLoop)
 			this.stateLoop = setInterval(() => this.getBridgeProcessState(token), 60000)
 		},
+
 		clickAddPart(event) {
 			const typeKey = event.type
 			const type = this.matterbridgeTypes[typeKey]
@@ -192,26 +193,31 @@ export default {
 			}
 			this.parts.unshift(newPart)
 		},
+
 		onDelete(i) {
 			this.parts.splice(i, 1)
 			this.save()
 		},
+
 		onEditClicked(i) {
 			this.parts[i].editing = !this.parts[i].editing
 			if (!this.parts[i].editing) {
 				this.save()
 			}
 		},
+
 		onEnabled(checked) {
 			this.enabled = checked
 			this.save()
 		},
+
 		save() {
 			if (this.parts.length === 0) {
 				this.enabled = false
 			}
 			this.editBridge(this.token, this.enabled, this.parts)
 		},
+
 		async getBridge(token) {
 			this.loading = true
 			try {
@@ -226,6 +232,7 @@ export default {
 			}
 			this.loading = false
 		},
+
 		async editBridge() {
 			this.loading = true
 			this.parts.forEach(part => {
@@ -241,6 +248,7 @@ export default {
 			}
 			this.loading = false
 		},
+
 		async getBridgeProcessState(token) {
 			try {
 				const result = await getBridgeProcessState(token)
@@ -250,6 +258,7 @@ export default {
 				console.error(exception)
 			}
 		},
+
 		showLogContent() {
 			this.getBridgeProcessState(this.token)
 			this.logModal = true

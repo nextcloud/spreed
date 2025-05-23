@@ -13,7 +13,6 @@ import EmitterMixin from '../../EmitterMixin.js'
  *
  */
 export default function LocalCallParticipantModel() {
-
 	this._superEmitterMixin()
 
 	this.attributes = reactive({
@@ -27,7 +26,6 @@ export default function LocalCallParticipantModel() {
 
 	this._handleForcedMuteBound = this._handleForcedMute.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)
-
 }
 
 LocalCallParticipantModel.prototype = {

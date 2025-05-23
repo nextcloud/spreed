@@ -268,6 +268,7 @@ export default {
 				this.onWindowFocus()
 			}
 		},
+
 		chatIdentifier: {
 			immediate: true,
 			handler(newValue, oldValue) {
@@ -307,7 +308,6 @@ export default {
 						this.updateTasksCount()
 					}
 				})
-
 			},
 		},
 
@@ -596,7 +596,6 @@ export default {
 			} else {
 				return moment(startOfDay).format('LL')
 			}
-
 		},
 
 		/**
@@ -700,7 +699,6 @@ export default {
 
 				// Once the history is received, starts looking for new messages.
 				await this.pollNewMessages(token)
-
 			} else {
 				this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 			}
@@ -1195,6 +1193,7 @@ export default {
 			}
 			return '0'
 		},
+
 		/**
 		 * gets the first message's id.
 		 *
@@ -1218,7 +1217,6 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation'
 				&& from.params.token === to.params.token
 				&& from.hash !== to.hash) {
-
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
 					const focusedId = this.getMessageIdFromHash(to.hash)

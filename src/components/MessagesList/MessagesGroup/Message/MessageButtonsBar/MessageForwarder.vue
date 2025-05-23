@@ -71,6 +71,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		id: {
 			type: [String, Number],
 			required: true,

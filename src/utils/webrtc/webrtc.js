@@ -1404,7 +1404,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			localStreamRequestedTimeoutNotification.hideToast()
 			localStreamRequestedTimeoutNotification = null
 		}
-
 	}
 
 	const clearErrorNotification = function() {

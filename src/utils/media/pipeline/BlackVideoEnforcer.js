@@ -29,7 +29,6 @@ import TrackSinkSource from './TrackSinkSource.js'
  *        --------------------
  */
 export default class BlackVideoEnforcer extends TrackSinkSource {
-
 	constructor() {
 		super()
 
@@ -149,5 +148,4 @@ export default class BlackVideoEnforcer extends TrackSinkSource {
 
 		this._outputStream = null
 	}
-
 }

@@ -54,6 +54,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		/**
 		 * The messages object.
 		 */

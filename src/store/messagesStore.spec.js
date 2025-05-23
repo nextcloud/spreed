@@ -924,7 +924,6 @@ describe('messagesStore', () => {
 			[false, CHAT.FETCH_NEW, newMessagesList, 100, 102],
 		]
 		test.each(testCasesOld)('fetches messages from server: including last known - %s, look into future - %s', async (includeLastKnown, lookIntoFuture, payload, firstKnown, lastKnown) => {
-
 			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
@@ -1887,7 +1886,6 @@ describe('messagesStore', () => {
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 		})
-
 	})
 
 	describe('hasMoreMessagesToLoad', () => {
@@ -2052,7 +2050,6 @@ describe('messagesStore', () => {
 					referenceId: '',
 				},
 			)
-
 		})
 		test('forwards a message with mentions and remove the latter', () => {
 			// Arrange

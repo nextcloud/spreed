@@ -164,11 +164,13 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		textFieldLabel() {
 			return this.canModerateSipDialOut
 				? t('spreed', 'Search participants or phone numbers')
 				: t('spreed', 'Search participants')
 		},
+
 		cancelSearchLabel() {
 			return t('spreed', 'Cancel search')
 		},

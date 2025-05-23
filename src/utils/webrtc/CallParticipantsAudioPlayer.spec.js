@@ -57,7 +57,6 @@ function MediaStreamMock(id) {
 }
 
 describe('CallParticipantsAudioPlayer', () => {
-
 	let callParticipantCollection
 	let callParticipantsAudioPlayer
 

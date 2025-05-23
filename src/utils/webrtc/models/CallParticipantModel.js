@@ -23,7 +23,6 @@ export const ConnectionState = {
  * @param {object} options.webRtc The WebRTC connection to the participant
  */
 export default function CallParticipantModel(options) {
-
 	this._superEmitterMixin()
 
 	this.attributes = {

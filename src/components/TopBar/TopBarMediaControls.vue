@@ -157,14 +157,17 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		model: {
 			type: Object,
 			required: true,
 		},
+
 		localCallParticipantModel: {
 			type: Object,
 			required: true,
 		},
+
 		isSidebar: {
 			type: Boolean,
 			default: false,

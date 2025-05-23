@@ -263,6 +263,7 @@ export default {
 
 			this.showModal()
 		},
+
 		/**
 		 * Reinitialise the component to it's initial state. This is necessary
 		 * because once the component is mounted its data would persist even if

@@ -245,7 +245,6 @@ export function useCombinedSystemMessage() {
 					}
 				}
 			}
-
 		}
 
 		// Handle cases when actor promoted several users to moderators

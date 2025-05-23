@@ -156,6 +156,7 @@ export default {
 				this.newFileTitle = value.label + value.extension
 			},
 		},
+
 		selectedTemplate: {
 			deep: true,
 			handler(value) {

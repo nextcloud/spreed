@@ -41,7 +41,6 @@
  * needed, inheriters check its enabled state when an input track is set.
  */
 export default (function() {
-
 	/**
 	 * Mixin constructor.
 	 *

@@ -124,6 +124,7 @@ export default {
 				mentionsDirect: 0,
 			})
 		},
+
 		getUserId() {
 			return this.$store.getters.getUserId()
 		},
@@ -621,6 +622,7 @@ export default {
 				this.isRefreshingCurrentConversation = false
 			}
 		},
+
 		// Upon pressing Ctrl+F, focus SearchBox native input in the LeftSidebar
 		handleAppSearch() {
 			emit('toggle-navigation', {

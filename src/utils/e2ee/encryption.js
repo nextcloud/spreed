@@ -37,7 +37,6 @@ const TYPE_ENCRYPTION_GOT_KEY = 'encryption.gotkey'
 const TYPE_ENCRYPTION_ERROR = 'encryption.error'
 
 class Encryption {
-
 	/**
 	 * Check if the current browser supports encryption.
 	 *
@@ -680,7 +679,6 @@ class Encryption {
 			this.context.handleReceiver(receiver, receiver.track.kind, peer.id)
 		})
 	}
-
 }
 
 export default Encryption

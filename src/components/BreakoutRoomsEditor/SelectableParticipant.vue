@@ -100,6 +100,7 @@ export default {
 			get() {
 				return this.checked
 			},
+
 			set(value) {
 				if (this.isLocked) {
 					return

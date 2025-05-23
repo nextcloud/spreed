@@ -515,7 +515,6 @@ export default {
 				this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
 			} else {
 				this.openViewer(this.internalAbsolutePath, [this.file], this.file)
-
 			}
 		},
 	},

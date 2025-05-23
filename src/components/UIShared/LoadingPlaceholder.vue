@@ -33,6 +33,7 @@ export default {
 				return ['conversations', 'messages', 'participants', 'event-cards'].includes(value)
 			},
 		},
+
 		count: {
 			type: Number,
 			default: 5,

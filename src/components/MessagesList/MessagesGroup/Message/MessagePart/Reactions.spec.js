@@ -51,7 +51,6 @@ describe('Reactions.vue', () => {
 	let message
 
 	beforeEach(() => {
-
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		localVue = createLocalVue()
@@ -110,7 +109,6 @@ describe('Reactions.vue', () => {
 			canReact: true,
 			id: messageId,
 		}
-
 	})
 
 	afterEach(() => {
@@ -139,7 +137,6 @@ describe('Reactions.vue', () => {
 			// Assert dropdown contains "You" when you have reacted
 			const summary = wrapper.vm.getReactionSummary('🔥')
 			expect(summary).toContain('You')
-
 		})
 
 		test('shows reaction buttons with count but without emoji picker when no react permission', () => {
@@ -280,7 +277,6 @@ describe('Reactions.vue', () => {
 				selectedEmoji: '🔥',
 			})
 		})
-
 	})
 	describe('reactions fetching', () => {
 		test('fetches reactions details when they are not available', async () => {
@@ -311,6 +307,5 @@ describe('Reactions.vue', () => {
 			// Assert
 			expect(reactionsStore.fetchReactions).toHaveBeenCalled()
 		})
-
 	})
 })

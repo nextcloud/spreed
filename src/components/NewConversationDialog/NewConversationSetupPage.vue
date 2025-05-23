@@ -98,10 +98,12 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		password: {
 			type: String,
 			required: true,
 		},
+
 		listable: {
 			type: Number,
 			required: true,
@@ -122,6 +124,7 @@ export default {
 			get() {
 				return this.newConversation.displayName
 			},
+
 			set(displayName) {
 				this.updateNewConversation({ displayName })
 			},
@@ -131,6 +134,7 @@ export default {
 			get() {
 				return this.newConversation.description
 			},
+
 			set(description) {
 				this.updateNewConversation({ description })
 			},
@@ -154,6 +158,7 @@ export default {
 			get() {
 				return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
 			},
+
 			async set(value) {
 				if (value) {
 					this.updateNewConversation({ type: CONVERSATION.TYPE.PUBLIC, hasPassword: this.forcePasswordProtection ?? false })
@@ -171,6 +176,7 @@ export default {
 			get() {
 				return this.newConversation.hasPassword
 			},
+
 			set(value) {
 				this.updateNewConversation({ hasPassword: value })
 				if (!value) {
@@ -183,6 +189,7 @@ export default {
 			get() {
 				return this.password
 			},
+
 			set(value) {
 				this.$emit('update:password', value)
 			},
@@ -192,6 +199,7 @@ export default {
 			get() {
 				return this.listable
 			},
+
 			set(value) {
 				this.$emit('update:listable', value)
 			},

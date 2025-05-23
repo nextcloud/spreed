@@ -337,6 +337,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		item: {
 			type: Object,
 			default() {

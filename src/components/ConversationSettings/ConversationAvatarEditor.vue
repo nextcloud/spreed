@@ -154,6 +154,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Shows or hides the editing buttons.
 		 */
@@ -161,6 +162,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * Force component to emit signals and be used from parent components
 		 */
@@ -196,6 +198,7 @@ export default {
 				minContainerWidth: 300,
 				minContainerHeight: 300,
 			},
+
 			backgroundColor: '',
 			emojiAvatar: '',
 		}
@@ -233,6 +236,7 @@ export default {
 				this.$emit('avatar-edited', value)
 			}
 		},
+
 		emojiAvatar(value) {
 			if (this.controlled) {
 				this.$emit('avatar-edited', !!value)

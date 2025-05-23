@@ -48,7 +48,6 @@
  * needed.
  */
 export default (function() {
-
 	/**
 	 * Mixin constructor.
 	 *
