@@ -8,10 +8,12 @@
 	<component :is="filePreviewElement"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
-		:class="{ 'file-preview--viewer-available': isViewerAvailable,
+		:class="{
+			'file-preview--viewer-available': isViewerAvailable,
 			'file-preview--upload-editor': isUploadEditor,
 			'file-preview--shared-items-grid': isSharedItems && !rowLayout,
-			'file-preview--row-layout': rowLayout }"
+			'file-preview--row-layout': rowLayout,
+		}"
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">

@@ -26,7 +26,8 @@
 				<LTooltip :options="{
 					direction: 'top',
 					permanent: 'true',
-					offset: [-16, -14] }">
+					offset: [-16, -14],
+				}">
 					{{ name }}
 				</LTooltip>
 			</LMarker>
