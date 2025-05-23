@@ -16,7 +16,6 @@ export default [
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
 			'@stylistic/array-bracket-newline': 'off', // changes array formatting
-			'@stylistic/function-call-argument-newline': 'off', // changes 125 files
 			'@stylistic/function-paren-newline': 'off', // weird formatting
 			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable

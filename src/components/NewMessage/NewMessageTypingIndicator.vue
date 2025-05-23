@@ -93,23 +93,18 @@ export default {
 			const [user1, user2, user3] = this.prepareNamesList()
 
 			if (this.typingParticipants.length === 1) {
-				return t('spreed', '{user1} is typing …',
-					{ user1 }, undefined, { escape: false })
+				return t('spreed', '{user1} is typing …', { user1 }, undefined, { escape: false })
 			}
 
 			if (this.typingParticipants.length === 2) {
-				return t('spreed', '{user1} and {user2} are typing …',
-					{ user1, user2 }, undefined, { escape: false })
+				return t('spreed', '{user1} and {user2} are typing …', { user1, user2 }, undefined, { escape: false })
 			}
 
 			if (this.typingParticipants.length === 3) {
-				return t('spreed', '{user1}, {user2} and {user3} are typing …',
-					{ user1, user2, user3 }, undefined, { escape: false })
+				return t('spreed', '{user1}, {user2} and {user3} are typing …', { user1, user2, user3 }, undefined, { escape: false })
 			}
 
-			return n('spreed', '{user1}, {user2}, {user3} and %n other are typing …',
-				'{user1}, {user2}, {user3} and %n others are typing …',
-				this.hiddenParticipantsCount, { user1, user2, user3 }, { escape: false })
+			return n('spreed', '{user1}, {user2}, {user3} and %n other are typing …', '{user1}, {user2}, {user3} and %n others are typing …', this.hiddenParticipantsCount, { user1, user2, user3 }, { escape: false })
 		},
 	},
 
