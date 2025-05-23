@@ -216,8 +216,7 @@ export function useConversationInfo({
 		return item.value.readOnly === CONVERSATION.STATE.READ_ONLY
 	})
 
-	const isConversationModifiable = computed(() =>
-		!isConversationReadOnly.value
+	const isConversationModifiable = computed(() => !isConversationReadOnly.value
 		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST
 		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR)
 

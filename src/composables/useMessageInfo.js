@@ -55,11 +55,9 @@ export function useMessageInfo(message = ref({})) {
 
 	const isObjectShare = computed(() => Object.keys(Object(message.value.messageParameters)).some((key) => key.startsWith('object')))
 
-	const isCurrentUserOwnMessage = computed(() =>
-		message.value.actorId === currentActorId
+	const isCurrentUserOwnMessage = computed(() => message.value.actorId === currentActorId
 		&& message.value.actorType === currentActorType)
-	const isBotInOneToOne = computed(() =>
-		message.value.actorId.startsWith(ATTENDEE.BOT_PREFIX)
+	const isBotInOneToOne = computed(() => message.value.actorId.startsWith(ATTENDEE.BOT_PREFIX)
 		&& message.value.actorType === ATTENDEE.ACTOR_TYPE.BOTS
 		&& (conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
 			|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
@@ -83,8 +81,7 @@ export function useMessageInfo(message = ref({})) {
 
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
-	const isDeleteable = computed(() =>
-		(hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
+	const isDeleteable = computed(() => (hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
 		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)
