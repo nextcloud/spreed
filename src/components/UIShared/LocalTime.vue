@@ -4,10 +4,8 @@
 -->
 
 <script setup lang="ts">
+import { getCanonicalLocale, t } from '@nextcloud/l10n'
 import { computed } from 'vue'
-
-import { t, getCanonicalLocale } from '@nextcloud/l10n'
-
 import { useCurrentTime } from '../../composables/useCurrentTime.ts'
 
 const props = defineProps<{

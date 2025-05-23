@@ -11,7 +11,6 @@ import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
 } from '@nextcloud/router'
-
 import { PARTICIPANT } from '../constants.ts'
 import {
 	signalingJoinConversation,
@@ -271,22 +270,22 @@ const setTyping = (typing) => {
 }
 
 export {
-	joinConversation,
-	rejoinConversation,
-	leaveConversation,
-	leaveConversationSync,
 	addParticipant,
-	removeCurrentUserFromConversation,
-	removeAttendeeFromConversation,
-	promoteToModerator,
 	demoteFromModerator,
 	fetchParticipants,
-	setGuestUserName,
+	grantAllPermissionsToParticipant,
 	importEmails,
+	joinConversation,
+	leaveConversation,
+	leaveConversationSync,
+	promoteToModerator,
+	rejoinConversation,
+	removeAllPermissionsFromParticipant,
+	removeAttendeeFromConversation,
+	removeCurrentUserFromConversation,
 	resendInvitations,
 	sendCallNotification,
-	grantAllPermissionsToParticipant,
-	removeAllPermissionsFromParticipant,
+	setGuestUserName,
 	setPermissions,
 	setSessionState,
 	setTyping,

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { STAT_VALUE_TYPE, AverageStatValue } from './AverageStatValue.js'
 import EmitterMixin from '../../EmitterMixin.js'
+import { AverageStatValue, STAT_VALUE_TYPE } from './AverageStatValue.js'
 
 const CONNECTION_QUALITY = {
 	UNKNOWN: 0,

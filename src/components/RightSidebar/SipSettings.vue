@@ -4,12 +4,11 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import type { Conversation, SignalingSettings } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { EventBus } from '../../services/EventBus.ts'
-import type { Conversation, SignalingSettings } from '../../types/index.ts'
 import { readableNumber } from '../../utils/readableNumber.ts'
 
 const props = defineProps<{

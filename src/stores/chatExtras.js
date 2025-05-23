@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import { t } from '@nextcloud/l10n'
-
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
-import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
+import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 /**
  * @typedef {string} Token

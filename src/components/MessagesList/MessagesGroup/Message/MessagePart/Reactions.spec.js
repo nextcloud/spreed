@@ -1,25 +1,21 @@
+import { showError } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import { setActivePinia, createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { showError } from '@nextcloud/dialogs'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-
 import Reactions from './Reactions.vue'
-
 import { ATTENDEE } from '../../../../../constants.ts'
 import {
 	addReactionToMessage,
-	removeReactionFromMessage,
 	getReactionsDetails,
+	removeReactionFromMessage,
 } from '../../../../../services/reactionsService.ts'
 import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'

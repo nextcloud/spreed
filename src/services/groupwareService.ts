@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import type {
 	getMutualEventsResponse,
 	OutOfOfficeResponse,
-	UpcomingEventsResponse,
 	scheduleMeetingParams,
 	scheduleMeetingResponse,
+	UpcomingEventsResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Get upcoming events for a given conversation within the next 31 days.

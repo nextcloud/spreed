@@ -58,32 +58,27 @@
 </template>
 
 <script>
+import Axios from '@nextcloud/axios'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { n, t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
-
-import Message from 'vue-material-design-icons/Message.vue'
-
-import Axios from '@nextcloud/axios'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t, n } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
-
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
-import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
-import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-
+import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
+import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
-import { ONE_DAY_IN_MS, convertToUnix } from '../../utils/formattedTime.ts'
+import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 

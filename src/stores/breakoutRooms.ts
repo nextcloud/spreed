@@ -3,36 +3,35 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import { useSidebarStore } from './sidebar.ts'
-import {
-	configureBreakoutRooms,
-	deleteBreakoutRooms,
-	getBreakoutRooms,
-	startBreakoutRooms,
-	stopBreakoutRooms,
-	broadcastMessageToBreakoutRooms,
-	fetchBreakoutRoomsParticipants,
-	requestAssistance,
-	dismissRequestAssistance,
-	reorganizeAttendees,
-	switchToBreakoutRoom,
-} from '../services/breakoutRoomsService.ts'
-import store from '../store/index.js'
 import type {
-	Conversation,
-	Participant,
 	BreakoutRoom,
 	broadcastChatMessageParams,
 	configureBreakoutRoomsParams,
+	Conversation,
+	Participant,
 	reorganizeAttendeesParams,
 	switchToBreakoutRoomParams,
 } from '../types/index.ts'
+
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+import { defineStore } from 'pinia'
+import Vue from 'vue'
+import {
+	broadcastMessageToBreakoutRooms,
+	configureBreakoutRooms,
+	deleteBreakoutRooms,
+	dismissRequestAssistance,
+	fetchBreakoutRoomsParticipants,
+	getBreakoutRooms,
+	reorganizeAttendees,
+	requestAssistance,
+	startBreakoutRooms,
+	stopBreakoutRooms,
+	switchToBreakoutRoom,
+} from '../services/breakoutRoomsService.ts'
+import store from '../store/index.js'
+import { useSidebarStore } from './sidebar.ts'
 
 type Payload<T> = T & { token: string }
 type State = {

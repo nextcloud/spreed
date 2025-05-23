@@ -4,7 +4,6 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../coreService.ts'
 

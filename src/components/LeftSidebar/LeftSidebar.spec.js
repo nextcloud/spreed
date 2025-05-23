@@ -1,3 +1,5 @@
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -8,12 +10,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
-
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
-
 import LeftSidebar from './LeftSidebar.vue'
-
 import router from '../../__mocks__/router.js'
 import { searchListedConversations } from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'

@@ -34,7 +34,6 @@
 
 <script>
 import Message from './Message/Message.vue'
-
 import { useCombinedSystemMessage } from '../../../composables/useCombinedSystemMessage.js'
 
 export default {

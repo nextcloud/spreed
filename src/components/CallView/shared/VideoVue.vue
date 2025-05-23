@@ -82,23 +82,18 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { inject, ref } from 'vue'
-
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'

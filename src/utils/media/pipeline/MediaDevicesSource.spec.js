@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import MediaDevicesSource from './MediaDevicesSource.js'
 import { mediaDevicesManager } from '../../webrtc/index.js'
+import MediaDevicesSource from './MediaDevicesSource.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes and

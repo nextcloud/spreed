@@ -106,27 +106,22 @@
 </template>
 
 <script>
+import { showMessage } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import escapeHtml from 'escape-html'
-
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
 import IconBlurOff from 'vue-material-design-icons/BlurOff.vue'
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconMonitorOff from 'vue-material-design-icons/MonitorOff.vue'
 import IconMonitorShare from 'vue-material-design-icons/MonitorShare.vue'
 import IconNetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
-
-import { showMessage } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-
 import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
-
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../constants.ts'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'

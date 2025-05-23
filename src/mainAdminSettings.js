@@ -4,7 +4,6 @@
  */
 
 import Vue from 'vue'
-
 import AdminSettings from './views/AdminSettings.vue'
 
 import '@nextcloud/dialogs/style.css'

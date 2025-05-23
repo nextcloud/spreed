@@ -4,22 +4,21 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { CHAT } from '../../constants.ts'
 import {
+	deleteMessage,
+	editMessage,
 	fetchMessages,
 	getMessageContext,
 	pollNewMessages,
 	postNewMessage,
-	deleteMessage,
-	editMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../messagesService.ts'
 import {
 	addReactionToMessage,
-	removeReactionFromMessage,
 	getReactionsDetails,
+	removeReactionFromMessage,
 } from '../reactionsService.ts'
 import {
 	getTranslationLanguages,

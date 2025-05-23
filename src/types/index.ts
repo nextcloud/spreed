@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import type { AxiosError } from '@nextcloud/axios'
-
 import type { AutocompleteResult } from './core.ts'
 import type {
 	components as componentsAdmin,
@@ -371,8 +370,8 @@ export type {
 	DavCalendar,
 	DavCalendarHome,
 	DavPrincipal,
-	OutOfOfficeResult,
 	OutOfOfficeResponse,
+	OutOfOfficeResult,
 	UpcomingEvent,
 	UpcomingEventsResponse,
 } from './core.ts'
@@ -390,10 +389,10 @@ export type EventTimeRange = {
 
 // User profile / preferences response
 export type {
-	UserProfileData,
-	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
+	UserProfileData,
+	UserProfileResponse,
 } from './core.ts'
 
 // Settings
@@ -414,23 +413,23 @@ export type UserFilterObject = {
 
 // Autocomplete API
 export type {
-	AutocompleteResult,
 	AutocompleteParams,
 	AutocompleteResponse,
+	AutocompleteResult,
 } from './core.ts'
 
 // Unified Search API
 export type {
 	SearchMessagePayload,
-	UnifiedSearchResultEntry,
 	UnifiedSearchResponse,
+	UnifiedSearchResultEntry,
 } from './core.ts'
 
 // Files API
 export type {
-	getFileTemplatesListResponse,
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
+	getFileTemplatesListResponse,
 } from './core.ts'
 
 // Files sharing API

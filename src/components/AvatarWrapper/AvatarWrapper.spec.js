@@ -1,15 +1,11 @@
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { shallowMount } from '@vue/test-utils'
-
-import { t } from '@nextcloud/l10n'
-
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-
 import AvatarWrapper from './AvatarWrapper.vue'
-
 import { ATTENDEE, AVATAR } from '../../constants.ts'
 
 describe('AvatarWrapper.vue', () => {

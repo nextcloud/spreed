@@ -50,15 +50,11 @@
 
 <script>
 
+import { isRTL, t } from '@nextcloud/l10n'
 import { ref } from 'vue'
 import VueDraggableResizable from 'vue-draggable-resizable'
-
-import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
-
-import { t, isRTL } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'
 

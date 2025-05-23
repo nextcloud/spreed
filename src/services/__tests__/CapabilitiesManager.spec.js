@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createPinia, setActivePinia } from 'pinia'
-
 import { mockedCapabilities, mockedRemotes } from '../../__mocks__/capabilities.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { generateOCSResponse } from '../../test-helpers.js'
 import BrowserStorage from '../BrowserStorage.js'
 import {
-	hasTalkFeature,
 	getTalkConfig,
+	hasTalkFeature,
 	setRemoteCapabilities,
 	setRemoteCapabilitiesIfEmpty,
 } from '../CapabilitiesManager.ts'

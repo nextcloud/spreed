@@ -1,13 +1,11 @@
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
 import {
 	ATTENDEE,
 	CHAT,
@@ -20,12 +18,12 @@ import { EventBus } from '../services/EventBus.ts'
 import {
 	deleteMessage,
 	editMessage,
-	updateLastReadMessage,
 	fetchMessages,
-	pollNewMessages,
 	getMessageContext,
+	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
+	updateLastReadMessage,
 } from '../services/messagesService.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'

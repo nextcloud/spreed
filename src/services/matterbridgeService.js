@@ -65,9 +65,9 @@ const getMatterbridgeVersion = async function() {
 
 export {
 	editBridge,
+	enableMatterbridgeApp,
 	getBridge,
 	getBridgeProcessState,
-	stopAllBridges,
 	getMatterbridgeVersion,
-	enableMatterbridgeApp,
+	stopAllBridges,
 }

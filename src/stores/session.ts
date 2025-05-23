@@ -3,14 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Hex from 'crypto-js/enc-hex.js'
-import SHA1 from 'crypto-js/sha1.js'
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
-import { useGuestNameStore } from './guestName.js'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
-import store from '../store/index.js'
 import type {
 	InternalSignalingSession,
 	Participant,
@@ -18,6 +10,14 @@ import type {
 	StandaloneSignalingLeaveSession,
 	StandaloneSignalingUpdateSession,
 } from '../types/index.ts'
+
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
+import { defineStore } from 'pinia'
+import Vue from 'vue'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import store from '../store/index.js'
+import { useGuestNameStore } from './guestName.js'
 
 type Session = {
 	attendeeId: number | undefined

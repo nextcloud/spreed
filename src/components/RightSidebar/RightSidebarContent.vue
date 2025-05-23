@@ -4,37 +4,33 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-
-import IconAccount from 'vue-material-design-icons/Account.vue'
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
-
-import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
-import { generateUrl } from '@nextcloud/router'
-
-import NcActionLink from '@nextcloud/vue/components/NcActionLink'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
-import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
-import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
-import LocalTime from '../UIShared/LocalTime.vue'
-
-import { useStore } from '../../composables/useStore.js'
-import { CONVERSATION } from '../../constants.ts'
-import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
-import { useGroupwareStore } from '../../stores/groupware.ts'
 import type {
 	Conversation,
 	DashboardEvent,
 	UserProfileData,
 } from '../../types/index.ts'
+
+import { t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
+import { generateUrl } from '@nextcloud/router'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
+import { computed, ref, watch } from 'vue'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
+import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import IconAccount from 'vue-material-design-icons/Account.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
+import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
+import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
+import LocalTime from '../UIShared/LocalTime.vue'
+import { useStore } from '../../composables/useStore.js'
+import { CONVERSATION } from '../../constants.ts'
+import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
+import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 

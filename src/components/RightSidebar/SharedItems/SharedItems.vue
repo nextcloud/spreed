@@ -50,7 +50,6 @@ import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckC
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
 import Poll from '../../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
-
 import { SHARED_ITEM } from '../../../constants.ts'
 
 export default {

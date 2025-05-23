@@ -1,18 +1,16 @@
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { ref, nextTick, computed, watch, onBeforeUnmount, onMounted } from 'vue'
-
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-
-import { useDocumentVisibility } from './useDocumentVisibility.ts'
-import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { CONFIG, CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useSessionStore } from '../stores/session.ts'
+import { useDocumentVisibility } from './useDocumentVisibility.ts'
+import { useIsInCall } from './useIsInCall.js'
+import { useStore } from './useStore.js'
 
 const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.UPDATE_PARTICIPANTS
 

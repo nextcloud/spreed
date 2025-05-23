@@ -2,8 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
 import vuexStore from '../../store/index.js'
 import { useGuestNameStore } from '../guestName.js'

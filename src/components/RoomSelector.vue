@@ -48,22 +48,17 @@
 </template>
 
 <script>
-import { provide, ref } from 'vue'
-
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { provide, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
-
 import { CONVERSATION } from '../constants.ts'
-import { searchListedConversations, fetchConversations } from '../services/conversationsService.ts'
+import { fetchConversations, searchListedConversations } from '../services/conversationsService.ts'
 
 export default {
 	name: 'RoomSelector',

@@ -7,14 +7,11 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
 import Vuex, { Store } from 'vuex'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
-
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'

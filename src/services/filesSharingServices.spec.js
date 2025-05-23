@@ -4,7 +4,6 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { shareFile } from './filesSharingServices.ts'
 
 jest.mock('@nextcloud/axios', () => ({

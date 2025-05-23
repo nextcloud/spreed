@@ -84,24 +84,20 @@
 </template>
 
 <script setup lang="ts">
-import debounce from 'debounce'
-import { computed, ref, onBeforeUnmount } from 'vue'
-
-import Plus from 'vue-material-design-icons/Plus.vue'
+import type { InitialState } from '../../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-
+import Plus from 'vue-material-design-icons/Plus.vue'
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-
 import { SIGNALING } from '../../constants.ts'
-import type { InitialState } from '../../types/index.ts'
 
 const isCacheConfigured = loadState('spreed', 'has_cache_configured')
 const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION

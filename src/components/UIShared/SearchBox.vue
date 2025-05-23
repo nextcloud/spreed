@@ -24,11 +24,9 @@
 </template>
 
 <script>
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 
 export default {
 	name: 'SearchBox',

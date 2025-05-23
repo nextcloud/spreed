@@ -1,3 +1,6 @@
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -5,11 +8,6 @@
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import Vue from 'vue'
-
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
@@ -19,19 +17,19 @@ import {
 import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
-	promoteToModerator,
 	demoteFromModerator,
-	removeAttendeeFromConversation,
-	resendInvitations,
-	sendCallNotification,
+	fetchParticipants,
+	grantAllPermissionsToParticipant,
 	joinConversation,
 	leaveConversation,
-	removeCurrentUserFromConversation,
-	grantAllPermissionsToParticipant,
+	promoteToModerator,
 	removeAllPermissionsFromParticipant,
+	removeAttendeeFromConversation,
+	removeCurrentUserFromConversation,
+	resendInvitations,
+	sendCallNotification,
 	setPermissions,
 	setTyping,
-	fetchParticipants,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'

@@ -1,3 +1,4 @@
+import { emit } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -9,11 +10,6 @@ import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { emit } from '@nextcloud/event-bus'
-
-import storeConfig from './storeConfig.js'
-import participantsStore from './participantsStore.js'
 import { PARTICIPANT } from '../constants.ts'
 import {
 	joinCall,
@@ -22,20 +18,22 @@ import {
 import { fetchConversation } from '../services/conversationsService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
-	promoteToModerator,
 	demoteFromModerator,
-	removeAttendeeFromConversation,
-	resendInvitations,
+	fetchParticipants,
+	grantAllPermissionsToParticipant,
 	joinConversation,
 	leaveConversation,
-	fetchParticipants,
-	removeCurrentUserFromConversation,
-	grantAllPermissionsToParticipant,
+	promoteToModerator,
 	removeAllPermissionsFromParticipant,
+	removeAttendeeFromConversation,
+	removeCurrentUserFromConversation,
+	resendInvitations,
 } from '../services/participantsService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
+import participantsStore from './participantsStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),

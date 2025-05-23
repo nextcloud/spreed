@@ -65,18 +65,15 @@
 </template>
 
 <script>
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import { getTranslationLanguages, translateText } from '../../../../../services/translationService.js'
 
 export default {

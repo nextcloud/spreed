@@ -37,14 +37,10 @@
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
-
-import IconCheck from 'vue-material-design-icons/Check.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { computed, inject, ref } from 'vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { ATTENDEE } from '../../constants.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.ts'
 

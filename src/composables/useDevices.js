@@ -5,7 +5,6 @@
 
 import createHark from 'hark'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'

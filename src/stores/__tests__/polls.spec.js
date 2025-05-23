@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import flushPromises from 'flush-promises'
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { ATTENDEE } from '../../constants.ts'
 import {
 	createPoll,
 	createPollDraft,
+	endPoll,
 	getPollData,
 	getPollDrafts,
 	submitVote,
-	endPoll,
 } from '../../services/pollService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { usePollsStore } from '../polls.ts'

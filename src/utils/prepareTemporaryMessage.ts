@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { ChatMessage, File } from '../types/index.ts'
+
 import Hex from 'crypto-js/enc-hex.js'
 import SHA256 from 'crypto-js/sha256.js'
-
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import type { ChatMessage, File } from '../types/index.ts'
 
 export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'message'

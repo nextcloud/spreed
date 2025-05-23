@@ -7,7 +7,6 @@ import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, imagePath } from '@nextcloud/router'
-
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
 import '@nextcloud/dialogs/style.css'

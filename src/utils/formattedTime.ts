@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { t, n } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
@@ -71,9 +71,9 @@ function futureRelativeTime(time: number): string {
 }
 
 export {
-	ONE_HOUR_IN_MS,
-	ONE_DAY_IN_MS,
 	convertToUnix,
 	formattedTime,
 	futureRelativeTime,
+	ONE_DAY_IN_MS,
+	ONE_HOUR_IN_MS,
 }

@@ -66,23 +66,18 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
-import CancelIcon from 'vue-material-design-icons/Cancel.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import WebIcon from 'vue-material-design-icons/Web.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-
+import CancelIcon from 'vue-material-design-icons/Cancel.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import WebIcon from 'vue-material-design-icons/Web.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import Mention from '../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
-
 import { CONVERSATION } from '../../constants.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 

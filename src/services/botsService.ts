@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { Bot, disableBotResponse, enableBotResponse, getBotsAdminResponse, getBotsResponse } from '../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
-import type { Bot, getBotsResponse, getBotsAdminResponse, enableBotResponse, disableBotResponse } from '../types/index.ts'
 
 /**
  * Get information about available bots for this instance
@@ -45,8 +45,8 @@ const disableBotForConversation = async function(token: string, id: Bot['id']): 
 }
 
 export {
+	disableBotForConversation,
+	enableBotForConversation,
 	getAllBots,
 	getConversationBots,
-	enableBotForConversation,
-	disableBotForConversation,
 }

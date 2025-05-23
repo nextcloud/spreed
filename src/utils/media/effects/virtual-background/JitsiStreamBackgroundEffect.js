@@ -4,14 +4,14 @@
  */
 // @flow
 
+import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
-	TIMEOUT_TICK,
 	SET_TIMEOUT,
+	TIMEOUT_TICK,
 	timerWorkerScript,
 } from './TimerWorker.js'
-import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 
 /**
  * Represents a modified MediaStream that adds effects to video background.

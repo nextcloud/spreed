@@ -36,15 +36,14 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import {
 	LControlAttribution,
-	LTooltip,
 	LMap,
 	LMarker,
 	LTileLayer,
+	LTooltip,
 } from 'vue2-leaflet'
-
-import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'Location',

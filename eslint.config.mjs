@@ -40,9 +40,6 @@ export default [
 			'no-use-before-define': 'off', // non-fixable
 			'no-useless-concat': 'off', // non-fixable
 			'object-shorthand': 'off', // changes Vue watchers
-			'perfectionist/sort-imports': 'off',
-			'perfectionist/sort-named-exports': 'off',
-			'perfectionist/sort-named-imports': 'off',
 			'prefer-const': 'off', // non-fixable
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign

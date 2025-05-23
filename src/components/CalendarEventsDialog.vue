@@ -4,19 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeMount, provide, ref, watch } from 'vue'
-
-import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
-import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconReload from 'vue-material-design-icons/Reload.vue'
+import type { Conversation, Participant } from '../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import { computed, onBeforeMount, provide, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
@@ -27,20 +22,21 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
-
+import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
+import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
-
 import { useStore } from '../composables/useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
-import type { Conversation, Participant } from '../types/index.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 

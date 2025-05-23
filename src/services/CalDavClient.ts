@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getRequestToken } from '@nextcloud/auth'
-import DavClient from '@nextcloud/cdav-library'
-import { generateRemoteUrl } from '@nextcloud/router'
-
 import type {
 	DavCalendar,
 	DavCalendarHome,
 	DavPrincipal,
 } from '../types/index.ts'
+
+import { getRequestToken } from '@nextcloud/auth'
+import DavClient from '@nextcloud/cdav-library'
+import { generateRemoteUrl } from '@nextcloud/router'
 
 /**
  * Copied from:
@@ -110,8 +110,8 @@ const getDefaultCalendarUri = () => {
 }
 
 export {
-	initializeCalDavClient,
-	getPersonalCalendars,
-	getDefaultCalendarUri,
 	convertUrlToUri,
+	getDefaultCalendarUri,
+	getPersonalCalendars,
+	initializeCalDavClient,
 }

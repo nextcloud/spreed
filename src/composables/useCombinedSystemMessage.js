@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { n, t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
-
-import { t, n } from '@nextcloud/l10n'
-
 import { useStore } from './useStore.js'
 
 /**

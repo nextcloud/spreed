@@ -67,15 +67,12 @@
 </template>
 
 <script>
-import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
-import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
-
-import { t, getLocale } from '@nextcloud/l10n'
-
+import { getLocale, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-
+import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
+import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
 import { regionCodes } from '../../regionCodes.js'
 
 const allowedKeys = /^[0-9+\-()*#\s]+$/

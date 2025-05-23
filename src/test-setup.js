@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import 'regenerator-runtime/runtime'
 import Vue from 'vue'
-
 import { mockedCapabilities } from './__mocks__/capabilities.ts'
+
+import 'regenerator-runtime/runtime'
 
 jest.mock('extendable-media-recorder', () => ({
 	MediaRecorder: jest.fn(),

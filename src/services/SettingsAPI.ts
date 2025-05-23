@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { readonly, ref, markRaw } from 'vue'
 import type { Ref } from 'vue'
 
 import { emit } from '@nextcloud/event-bus'
+import { markRaw, readonly, ref } from 'vue'
 
 type TalkSettingsSection = {
 	/**

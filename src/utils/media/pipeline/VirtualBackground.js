@@ -4,10 +4,9 @@
  */
 
 import * as wasmCheck from 'wasm-check'
-
-import TrackSinkSource from './TrackSinkSource.js'
 import { VIRTUAL_BACKGROUND } from '../../../constants.ts'
 import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
+import TrackSinkSource from './TrackSinkSource.js'
 
 /**
  * Processor node to set a virtual background on a video track.

@@ -42,19 +42,15 @@
 </template>
 
 <script>
-import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-
 import { getCurrentUser } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
+import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { AVATAR } from '../../constants.ts'
 
 export default {

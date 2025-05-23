@@ -60,19 +60,14 @@
 </template>
 
 <script>
-import { inject, ref } from 'vue'
-
-import AccountOff from 'vue-material-design-icons/AccountOff.vue'
-
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
-import VideoBackground from './VideoBackground.vue'
+import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-
+import VideoBackground from './VideoBackground.vue'
 import { AVATAR } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import attachMediaStream from '../../../utils/attachmediastream.js'

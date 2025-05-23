@@ -5,9 +5,8 @@
 import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
-
-import actorStore from './actorStore.js'
 import { PARTICIPANT } from '../constants.ts'
+import actorStore from './actorStore.js'
 
 describe('actorStore', () => {
 	let localVue = null

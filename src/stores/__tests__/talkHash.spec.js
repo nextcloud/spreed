@@ -1,12 +1,10 @@
+import { showError } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import mockConsole from 'jest-mock-console'
 import { createPinia, setActivePinia } from 'pinia'
-
-import { showError } from '@nextcloud/dialogs'
-
 import { useTalkHashStore } from '../talkHash.js'
 
 jest.mock('@nextcloud/dialogs', () => ({

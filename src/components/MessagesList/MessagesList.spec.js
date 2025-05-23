@@ -6,9 +6,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
 import MessagesList from './MessagesList.vue'
-
 import { ATTENDEE } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
 

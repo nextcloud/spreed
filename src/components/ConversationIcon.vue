@@ -53,18 +53,14 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { ref } from 'vue'
-
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconWeb from 'vue-material-design-icons/Web.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'

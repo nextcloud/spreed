@@ -1,14 +1,12 @@
+import { getCurrentUser } from '@nextcloud/auth'
+import { showError, showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import Vue from 'vue'
-
-import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
 import {
 	ATTENDEE,
 	CALL,
@@ -17,43 +15,43 @@ import {
 	WEBINAR,
 } from '../constants.ts'
 import {
+	deleteConversationAvatar,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
-	deleteConversationAvatar,
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
-import { hasTalkFeature, getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import {
-	makeConversationPublic,
-	makeConversationPrivate,
-	setSIPEnabled,
-	setRecordingConsent,
+	addToFavorites,
+	archiveConversation,
+	changeListable,
 	changeLobbyState,
 	changeReadOnlyState,
-	changeListable,
-	createLegacyConversation,
 	createConversation,
-	addToFavorites,
-	removeFromFavorites,
-	markAsImportant,
-	markAsUnimportant,
-	markAsSensitive,
-	markAsInsensitive,
-	archiveConversation,
-	unarchiveConversation,
-	fetchConversations,
-	fetchConversation,
-	setConversationName,
-	setConversationDescription,
+	createLegacyConversation,
 	deleteConversation,
-	unbindConversationFromObject,
-	setNotificationLevel,
-	setNotificationCalls,
-	setConversationPermissions,
+	fetchConversation,
+	fetchConversations,
+	makeConversationPrivate,
+	makeConversationPublic,
+	markAsImportant,
+	markAsInsensitive,
+	markAsSensitive,
+	markAsUnimportant,
+	removeFromFavorites,
 	setCallPermissions,
-	setMessageExpiration,
+	setConversationDescription,
+	setConversationName,
 	setConversationPassword,
+	setConversationPermissions,
 	setMentionPermissions,
+	setMessageExpiration,
+	setNotificationCalls,
+	setNotificationLevel,
+	setRecordingConsent,
+	setSIPEnabled,
+	unarchiveConversation,
+	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
 import {
 	clearConversationHistory,

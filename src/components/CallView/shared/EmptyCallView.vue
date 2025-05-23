@@ -26,15 +26,12 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 

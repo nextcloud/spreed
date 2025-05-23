@@ -4,10 +4,9 @@
  */
 
 import { reactive } from 'vue'
-
-import { ConnectionState } from './CallParticipantModel.js'
 import store from '../../../store/index.js'
 import EmitterMixin from '../../EmitterMixin.js'
+import { ConnectionState } from './CallParticipantModel.js'
 
 /**
  *
