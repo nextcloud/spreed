@@ -713,6 +713,8 @@ export interface operations {
                 y?: number;
                 /** @description Whether to not crop the preview */
                 a?: 0 | 1;
+                /** @description Whether to fallback to the mime icon if no preview is available */
+                mimeFallback?: 0 | 1;
             };
             header?: never;
             path: {
@@ -731,6 +733,14 @@ export interface operations {
                 content: {
                     "*/*": string;
                 };
+            };
+            /** @description Redirect to the mime icon url if mimeFallback is true */
+            303: {
+                headers: {
+                    Location?: string;
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Getting preview is not possible */
             400: {
