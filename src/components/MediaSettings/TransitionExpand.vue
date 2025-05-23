@@ -5,13 +5,13 @@
 
 <script setup lang="ts">
 defineProps<{
-	show: boolean,
-	direction: 'vertical' | 'horizontal',
+	show: boolean
+	direction: 'vertical' | 'horizontal'
 }>()
 
 const emit = defineEmits<{
-	(event: 'after-enter'): void,
-	(event: 'after-leave'): void,
+	(event: 'after-enter'): void
+	(event: 'after-leave'): void
 }>()
 </script>
 

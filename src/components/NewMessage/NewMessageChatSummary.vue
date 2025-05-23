@@ -76,12 +76,12 @@ import type { TaskProcessingResponse, SummarizeChatTask } from '../../types/inde
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
 type TaskProcessingCancelableRequest = {
-	request: (taskId: number) => TaskProcessingResponse,
-	cancel: () => void,
+	request: (taskId: number) => TaskProcessingResponse
+	cancel: () => void
 }
 
 type ChatTask = SummarizeChatTask & {
-	fromMessageId: number,
+	fromMessageId: number
 	summary?: string
 }
 

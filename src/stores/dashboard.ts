@@ -17,10 +17,10 @@ import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 
 type State = {
-	eventRooms: DashboardEventRoom[],
-	upcomingReminders: UpcomingReminder[],
-	eventRoomsInitialised: boolean,
-	upcomingRemindersInitialised: boolean,
+	eventRooms: DashboardEventRoom[]
+	upcomingReminders: UpcomingReminder[]
+	eventRoomsInitialised: boolean
+	upcomingRemindersInitialised: boolean
 }
 export const useDashboardStore = defineStore('dashboard', {
 	state: (): State => ({

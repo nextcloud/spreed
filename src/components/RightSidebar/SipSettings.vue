@@ -13,7 +13,7 @@ import type { Conversation, SignalingSettings } from '../../types/index.ts'
 import { readableNumber } from '../../utils/readableNumber.ts'
 
 const props = defineProps<{
-	conversation: Conversation,
+	conversation: Conversation
 }>()
 
 const dialInInfo = ref(t('spreed', 'Loading …'))

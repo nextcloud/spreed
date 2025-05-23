@@ -16,9 +16,9 @@ import { getShares, acceptShare, rejectShare } from '../services/federationServi
 import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
 type State = {
-	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,
-	acceptedShares: Record<string, FederationInvite>,
-	pendingSharesCount: number,
+	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>
+	acceptedShares: Record<string, FederationInvite>
+	pendingSharesCount: number
 }
 export const useFederationStore = defineStore('federation', {
 	state: (): State => ({

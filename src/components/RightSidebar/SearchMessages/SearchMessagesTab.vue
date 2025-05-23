@@ -43,7 +43,7 @@ import type {
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 const props = defineProps<{
-	isActive: boolean,
+	isActive: boolean
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void
@@ -57,12 +57,12 @@ const isFocused = ref(false)
 const searchResults = ref<(UnifiedSearchResultEntry &
 	{
 		to: {
-			name: string;
-			hash: string;
+			name: string
+			hash: string
 			params: {
-				token: string;
-				skipLeaveWarning: boolean;
-			};
+				token: string
+				skipLeaveWarning: boolean
+			}
 		}
 	})[]>([])
 const searchText = ref('')
@@ -83,7 +83,7 @@ const participantsInitialised = computed(() => store.getters.participantsInitial
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)
 		.filter(({ actorType }: Participant) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string }) => ({
+		.map(({ actorId, displayName, actorType }: { actorId: string, displayName: string, actorType: string }) => ({
 			id: actorId,
 			displayName,
 			isNoUser: actorType !== 'users',
@@ -157,8 +157,8 @@ function fetchNewSearchResult() {
 let cancelSearchFn = () => {}
 
 type SearchMessageCancelableRequest = {
-	request: (payload: SearchMessagePayload) => UnifiedSearchResponse,
-	cancel: () => void,
+	request: (payload: SearchMessagePayload) => UnifiedSearchResponse
+	cancel: () => void
 }
 
 /**

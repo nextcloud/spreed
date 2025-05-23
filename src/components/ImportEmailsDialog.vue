@@ -23,11 +23,11 @@ const loading = ref(false)
 const listImport = ref<HTMLInputElement | null>(null)
 
 const props = defineProps<{
-	token: string,
-	container?: string,
+	token: string
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 
 const importedFile = ref<File | null>(null)

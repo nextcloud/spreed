@@ -16,12 +16,12 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'actorType'
 	| 'actorDisplayName'
 > & {
-	uploadId: string,
-	index: number,
-	file: File & { newName?: string },
-	localUrl: string,
-	messageType?: 'voice-message' | 'comment',
-	parent: Omit<ChatMessage, 'parent'>,
+	uploadId: string
+	index: number
+	file: File & { newName?: string }
+	localUrl: string
+	messageType?: 'voice-message' | 'comment'
+	parent: Omit<ChatMessage, 'parent'>
 }
 
 /**

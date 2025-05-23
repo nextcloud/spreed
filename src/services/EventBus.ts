@@ -19,48 +19,48 @@ import type { components } from '../types/openapi/openapi-full.ts'
 
 // List of used events across the app
 export type Events = {
-	[key: EventType]: unknown,
-	'audio-player-ended': number,
-	'conversations-received': { singleConversation: boolean },
-	'session-conflict-confirmation': string,
-	'deleted-session-detected': void,
-	'duplicate-session-detected': void,
-	'editing-message': void,
-	'editing-message-processing': { messageId: number, value: boolean },
-	'focus-chat-input': void,
-	'focus-message': number, // TODO: listener method can receive ...[messageId, smooth, highlightAnimation]
-	'forbidden-route': { error: string },
-	'joined-conversation': { token: string },
-	'message-height-changed': { heightDiff: number },
-	'poll-drafts-open': { selector?: string },
-	'poll-editor-open': { id: number | null, fromDrafts: boolean, action?: string, selector?: string },
-	'refresh-peer-list': void,
-	'retry-message': number,
-	'route-change': { from: Route, to: Route },
-	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean },
-	'should-refresh-chat-messages': void,
-	'should-refresh-conversations': { token: string, properties: Partial<Conversation> } | { all: true } | void,
-	'signaling-join-call': [string, number],
-	'signaling-join-call-failed': [string, { meta: components['schemas']['OCSMeta'], data: { error: string } }],
-	'signaling-join-room': [string],
-	'signaling-participant-list-changed': void,
-	'signaling-participant-list-updated': void,
-	'signaling-recording-status-changed': [string, number],
-	'signaling-settings-updated': [SignalingSettings],
-	'signaling-users-changed': [StandaloneSignalingUpdateSession[]],
-	'signaling-users-in-room': [InternalSignalingSession[]],
-	'signaling-users-joined': [StandaloneSignalingJoinSession[]],
-	'signaling-users-left': [string[]],
-	'signaling-all-users-changed-in-call-to-disconnected': void,
-	'smart-picker-open': void,
-	'switch-to-conversation': { token: string },
-	'talk:poll-added': { token: string, message: ChatMessage },
-	'upload-discard': void,
-	'upload-finished': void,
-	'upload-start': void,
-	'new-conversation-dialog:show': void,
-	'open-conversations-list:show': void,
-	'call-phone-dialog:show': void,
+	[key: EventType]: unknown
+	'audio-player-ended': number
+	'conversations-received': { singleConversation: boolean }
+	'session-conflict-confirmation': string
+	'deleted-session-detected': void
+	'duplicate-session-detected': void
+	'editing-message': void
+	'editing-message-processing': { messageId: number, value: boolean }
+	'focus-chat-input': void
+	'focus-message': number // TODO: listener method can receive ...[messageId, smooth, highlightAnimation]
+	'forbidden-route': { error: string }
+	'joined-conversation': { token: string }
+	'message-height-changed': { heightDiff: number }
+	'poll-drafts-open': { selector?: string }
+	'poll-editor-open': { id: number | null, fromDrafts: boolean, action?: string, selector?: string }
+	'refresh-peer-list': void
+	'retry-message': number
+	'route-change': { from: Route, to: Route }
+	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean }
+	'should-refresh-chat-messages': void
+	'should-refresh-conversations': { token: string, properties: Partial<Conversation> } | { all: true } | void
+	'signaling-join-call': [string, number]
+	'signaling-join-call-failed': [string, { meta: components['schemas']['OCSMeta'], data: { error: string } }]
+	'signaling-join-room': [string]
+	'signaling-participant-list-changed': void
+	'signaling-participant-list-updated': void
+	'signaling-recording-status-changed': [string, number]
+	'signaling-settings-updated': [SignalingSettings]
+	'signaling-users-changed': [StandaloneSignalingUpdateSession[]]
+	'signaling-users-in-room': [InternalSignalingSession[]]
+	'signaling-users-joined': [StandaloneSignalingJoinSession[]]
+	'signaling-users-left': [string[]]
+	'signaling-all-users-changed-in-call-to-disconnected': void
+	'smart-picker-open': void
+	'switch-to-conversation': { token: string }
+	'talk:poll-added': { token: string, message: ChatMessage }
+	'upload-discard': void
+	'upload-finished': void
+	'upload-start': void
+	'new-conversation-dialog:show': void
+	'open-conversations-list:show': void
+	'call-phone-dialog:show': void
 }
 
 // Extended types for mitt() library

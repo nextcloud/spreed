@@ -31,7 +31,7 @@ import type { DashboardEventRoom } from '../../types/index.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const props = defineProps<{
-	eventRoom: DashboardEventRoom,
+	eventRoom: DashboardEventRoom
 }>()
 const store = useStore()
 const router = useRouter()

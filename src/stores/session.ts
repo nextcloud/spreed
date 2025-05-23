@@ -20,11 +20,11 @@ import type {
 } from '../types/index.ts'
 
 type Session = {
-	attendeeId: number | undefined,
-	token: string,
-	signalingSessionId: string,
-	sessionId: string,
-	inCall: number | undefined,
+	attendeeId: number | undefined
+	token: string
+	signalingSessionId: string
+	sessionId: string
+	inCall: number | undefined
 }
 
 type SignalingSessionPayload =
@@ -33,21 +33,21 @@ type SignalingSessionPayload =
 	| StandaloneSignalingUpdateSession
 
 type ParticipantUpdatePayload = {
-	displayName?: string,
-	inCall: number,
-	lastPing: number,
-	permissions: number,
-	participantType?: number,
-	sessionIds?: string[],
+	displayName?: string
+	inCall: number
+	lastPing: number
+	permissions: number
+	participantType?: number
+	sessionIds?: string[]
 }
 
 type ParticipantStandaloneJoinPayload = {
-	displayName: string,
-	sessionIds: string[],
+	displayName: string
+	sessionIds: string[]
 }
 
 type State = {
-	sessions: Record<string, Session>,
+	sessions: Record<string, Session>
 }
 
 function isInternalSignalingSession(item: SignalingSessionPayload): item is InternalSignalingSession

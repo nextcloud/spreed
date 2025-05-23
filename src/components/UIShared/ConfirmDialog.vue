@@ -7,28 +7,28 @@
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 
 type NcDialogButtonProps = {
-	label: string,
-	callback?: () => unknown | false | Promise<unknown | false>,
-	disabled?: boolean,
-	icon?: string,
+	label: string
+	callback?: () => unknown | false | Promise<unknown | false>
+	disabled?: boolean
+	icon?: string
 	// FIXME deprecated, use type since 8.24.0
-	nativeType?: string,
+	nativeType?: string
 	// FIXME deprecated, use variant since 8.24.0
-	type?: string,
-	variant?: string,
+	type?: string
+	variant?: string
 }
 type NcDialogProps = {
-	name: string,
-	buttons: NcDialogButtonProps[],
-	container?: string,
-	message?: string,
-	size?: string,
+	name: string
+	buttons: NcDialogButtonProps[]
+	container?: string
+	message?: string
+	size?: string
 }
 
 const props = defineProps<NcDialogProps>()
 
 const emit = defineEmits<{
-	(event: 'close', value?: unknown): void,
+	(event: 'close', value?: unknown): void
 }>()
 
 /**

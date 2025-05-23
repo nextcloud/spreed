@@ -14,14 +14,14 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import TransitionExpand from './TransitionExpand.vue'
 
 type TabDefinition = {
-	id: string,
-	label: string,
-	icon: Component,
+	id: string
+	label: string
+	icon: Component
 }
 
 const props = defineProps<{
-	tabs: TabDefinition[],
-	active?: string,
+	tabs: TabDefinition[]
+	active?: string
 }>()
 
 const emit = defineEmits<{

@@ -17,7 +17,7 @@ import { AVATAR } from '../../constants.ts'
 import type { Participant, ParticipantSearchResult } from '../../types/index.ts'
 
 const props = defineProps<{
-	participant: Participant | ParticipantSearchResult,
+	participant: Participant | ParticipantSearchResult
 }>()
 const emit = defineEmits(['update'])
 

@@ -21,10 +21,10 @@ type NcSelectOption = { id: string | null, label: string }
 type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }
 
 const props = withDefaults(defineProps<{
-	kind: 'audioinput' | 'audiooutput' | 'videoinput',
-	devices: MediaDeviceInfoWithFallbackLabel[],
-	deviceId?: string | null,
-	enabled?: boolean,
+	kind: 'audioinput' | 'audiooutput' | 'videoinput'
+	devices: MediaDeviceInfoWithFallbackLabel[]
+	deviceId?: string | null
+	enabled?: boolean
 }>(), {
 	deviceId: undefined,
 	enabled: true,

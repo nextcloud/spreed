@@ -18,10 +18,10 @@ import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type Payload = {
-	item: Ref<Conversation> | ComputedRef<Conversation>,
-	isSearchResult: Ref<boolean | null>,
-	exposeMessagesRef: Ref<boolean | null>,
-	exposeDescriptionRef: Ref<boolean | null>,
+	item: Ref<Conversation> | ComputedRef<Conversation>
+	isSearchResult: Ref<boolean | null>
+	exposeMessagesRef: Ref<boolean | null>
+	exposeDescriptionRef: Ref<boolean | null>
 }
 
 const TITLE_MAX_LENGTH = 1000

@@ -37,12 +37,12 @@ import type {
 
 type State = {
 	absence: Record<string, OutOfOfficeResult>
-	calendars: Record<string, DavCalendar & { uri: string }>,
-	defaultCalendarUri: string | null,
-	upcomingEvents: Record<string, UpcomingEvent[]>,
-	mutualEvents: Record<string, DashboardEvent[]>,
-	supportProfileInfo: boolean,
-	profileInfo: Record<string, UserProfileData>,
+	calendars: Record<string, DavCalendar & { uri: string }>
+	defaultCalendarUri: string | null
+	upcomingEvents: Record<string, UpcomingEvent[]>
+	mutualEvents: Record<string, DashboardEvent[]>
+	supportProfileInfo: boolean
+	profileInfo: Record<string, UserProfileData>
 }
 
 const supportsMutualEvents = hasTalkFeature('local', 'mutual-calendar-events')
