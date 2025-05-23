@@ -98,6 +98,7 @@ export default {
 				this.joinConversation()
 			}
 		},
+
 		conversation(conversation) {
 			if (!conversation) {
 				this.isWaitingToClose = true

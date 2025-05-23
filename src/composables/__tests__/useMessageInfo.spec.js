@@ -153,7 +153,6 @@ describe('message actions', () => {
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isDeleteable.value).toBe(false)
-
 	})
 
 	test('can edit own message', () => {
@@ -420,5 +419,4 @@ describe('message actions', () => {
 			expect(result.lastEditor.value).toBe('(edited by you)')
 		})
 	})
-
 })

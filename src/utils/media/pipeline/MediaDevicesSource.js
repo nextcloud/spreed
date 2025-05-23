@@ -34,7 +34,6 @@ import { mediaDevicesManager } from '../../webrtc/index.js'
  *        --------------------
  */
 export default class MediaDevicesSource extends TrackSource {
-
 	constructor(outputCount) {
 		super()
 
@@ -386,5 +385,4 @@ export default class MediaDevicesSource extends TrackSource {
 			resetPendingVideoInputIdChangedCount()
 		})
 	}
-
 }

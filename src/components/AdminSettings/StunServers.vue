@@ -107,7 +107,6 @@ export default {
 			const servers = []
 
 			this.servers.forEach((server) => {
-
 				if (server.startsWith('https://')) {
 					server = server.slice(8)
 				} else if (server.startsWith('http://')) {

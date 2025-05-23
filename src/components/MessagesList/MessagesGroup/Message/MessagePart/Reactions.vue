@@ -112,6 +112,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		/**
 		 * Whether the current user can react to the message.
 		 */
@@ -119,6 +120,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * The message id.
 		 */
@@ -277,6 +279,7 @@ export default {
 	}
 }
 </script>
+
 <style lang="scss" scoped>
 .reactions-wrapper {
 	--minimal-button-width: 48px;

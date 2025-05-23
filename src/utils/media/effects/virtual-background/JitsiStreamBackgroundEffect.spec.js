@@ -6,7 +6,6 @@
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect.js'
 
 describe('JitsiStreamBackgroundEffect', () => {
-
 	describe('getSourcePropertiesForDrawingBackgroundImage', () => {
 		test.each([
 			['landscape source and landscape destination, wider aspect ratio source, wider and higher source', [1200, 500], [300, 200], [225, 0], [750, 500]],

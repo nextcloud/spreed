@@ -1399,7 +1399,6 @@ const actions = {
 		}
 
 		return await postNewMessage(message, { silent: false })
-
 	},
 
 	async removeExpiredMessages(context, { token }) {

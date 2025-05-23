@@ -190,7 +190,6 @@ export class Context {
         const keyIndex = data[encodedFrame.data.byteLength - 1];
 
         if (this._cryptoKeyRing[keyIndex]) {
-
             const decodedFrame = await this._decryptFrame(
                 encodedFrame,
                 keyIndex);
@@ -216,7 +215,6 @@ export class Context {
             keyIndex,
             initialKey = undefined,
             ratchetCount = 0) {
-
         const { encryptionKey } = this._cryptoKeyRing[keyIndex];
         let { material } = this._cryptoKeyRing[keyIndex];
 
@@ -291,7 +289,6 @@ export class Context {
             // TODO: notify the application about error status.
         }
     }
-
 
     /**
      * Construct the IV used for AES-GCM and sent (in plain) with the packet similar to

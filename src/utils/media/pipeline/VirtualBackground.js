@@ -46,7 +46,6 @@ import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStre
  *        -------------------
  */
 export default class VirtualBackground extends TrackSinkSource {
-
 	static _wasmSupported
 	static _wasmSimd
 	static _canvasFilterSupported
@@ -303,5 +302,4 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._jitsiStreamBackgroundEffect.setVirtualBackground(virtualBackground)
 	}
-
 }

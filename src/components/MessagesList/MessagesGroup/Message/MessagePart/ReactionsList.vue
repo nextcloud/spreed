@@ -163,6 +163,7 @@ export default {
 	},
 }
 </script>
+
 <style lang="scss" scoped>
 .reactions__modal {
 	min-height: 450px;

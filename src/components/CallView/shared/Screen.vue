@@ -52,18 +52,22 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		localMediaModel: {
 			type: Object,
 			default: null,
 		},
+
 		callParticipantModel: {
 			type: Object,
 			default: null,
 		},
+
 		sharedData: {
 			type: Object,
 			required: true,
 		},
+
 		isBig: {
 			type: Boolean,
 			default: false,

@@ -84,16 +84,19 @@ export default {
 			default: '',
 			required: true,
 		},
+
 		verify: {
 			type: Boolean,
 			default: false,
 			required: true,
 		},
+
 		index: {
 			type: Number,
 			default: -1,
 			required: true,
 		},
+
 		loading: {
 			type: Boolean,
 			default: false,
@@ -127,6 +130,7 @@ export default {
 			get() {
 				return this.server
 			},
+
 			set(value) {
 				this.$emit('update:server', value)
 			}
@@ -152,6 +156,7 @@ export default {
 		removeServer() {
 			this.$emit('remove-server', this.index)
 		},
+
 		updateVerify(checked) {
 			this.$emit('update:verify', checked)
 		},

@@ -90,6 +90,7 @@ export default {
 					return option.id === this.conversation.messageExpiration
 				}) ?? this.expirationOptions.at(-1)
 			},
+
 			set(value) {
 				this.changeExpiration(value)
 			}

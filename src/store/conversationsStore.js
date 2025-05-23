@@ -667,7 +667,6 @@ const actions = {
 			} else {
 				showSuccess(t('spreed', 'Conversation password has been removed'))
 			}
-
 		} catch (error) {
 			console.error('Error while setting a password for conversation: ', error)
 			if (error?.response?.data?.ocs?.data?.message) {
@@ -675,7 +674,6 @@ const actions = {
 			} else {
 				showError(t('spreed', 'Error occurred while saving conversation password'))
 			}
-
 		}
 	},
 

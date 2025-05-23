@@ -144,7 +144,6 @@ export default {
 		},
 
 		toggleSave() {
-
 			this.saved = true
 			setTimeout(() => {
 				this.saved = false

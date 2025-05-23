@@ -940,6 +940,7 @@ export default {
 				this.disabled = false
 			}
 		},
+
 		async holdPhoneNumber() {
 			try {
 				await callSIPHoldPhone(this.sessionIds[0])
@@ -951,6 +952,7 @@ export default {
 				showError(t('spreed', 'Phone number could not be put on hold'))
 			}
 		},
+
 		async mutePhoneNumber() {
 			try {
 				await callSIPMutePhone(this.sessionIds[0])
@@ -962,6 +964,7 @@ export default {
 				showError(t('spreed', 'Phone number could not be muted'))
 			}
 		},
+
 		async unmutePhoneNumber() {
 			try {
 				await callSIPUnmutePhone(this.sessionIds[0])
@@ -973,6 +976,7 @@ export default {
 				showError(t('spreed', 'Phone number could not be unmuted'))
 			}
 		},
+
 		async dialType(value) {
 			try {
 				await callSIPSendDTMF(this.sessionIds[0], value)

@@ -39,6 +39,7 @@ export default {
 			default: '',
 			type: String,
 		},
+
 		// keep "value" for backwards compatibility, up to NC 31
 		value: {
 			default: JSON.stringify({ m: '0', t: '' }),
@@ -64,9 +65,11 @@ export default {
 					text: t('spreed', 'Mention everyone'),
 				},
 			],
+
 			roomOptions: [],
 		}
 	},
+
 	computed: {
 		currentRoom() {
 			if (this.modelValue === '' && this.value === '') {
@@ -79,6 +82,7 @@ export default {
 			}
 			return newValue
 		},
+
 		currentMode() {
 			if (this.modelValue === '' && this.value === '') {
 				return this.modeOptions[0]
@@ -91,9 +95,11 @@ export default {
 			return newValue
 		},
 	},
+
 	beforeMount() {
 		this.fetchRooms()
 	},
+
 	methods: {
 		t,
 		fetchRooms() {
@@ -105,6 +111,7 @@ export default {
 				})
 			})
 		},
+
 		emitEvents(mode, token) {
 			if (mode === null || token === null) {
 				return

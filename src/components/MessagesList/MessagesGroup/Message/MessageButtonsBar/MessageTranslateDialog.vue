@@ -98,6 +98,7 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		richParameters: {
 			type: Object,
 			required: true,
@@ -181,6 +182,7 @@ export default {
 		selectedTo() {
 			this.translatedMessage = ''
 		},
+
 		selectedFrom() {
 			this.translatedMessage = ''
 		},

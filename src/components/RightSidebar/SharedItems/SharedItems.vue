@@ -96,21 +96,27 @@ export default {
 		itemsToDisplay() {
 			return Object.values(this.items).reverse().slice(0, this.limit)
 		},
+
 		isLocation() {
 			return this.type === SHARED_ITEM.TYPES.LOCATION
 		},
+
 		isDeckCard() {
 			return this.type === SHARED_ITEM.TYPES.DECK_CARD
 		},
+
 		isPoll() {
 			return this.type === SHARED_ITEM.TYPES.POLL
 		},
+
 		isOther() {
 			return this.type === SHARED_ITEM.TYPES.OTHER
 		},
+
 		isMedia() {
 			return this.type === SHARED_ITEM.TYPES.MEDIA
 		},
+
 		hasListLayout() {
 			return !this.isMedia && (this.tabView || (!this.isLocation && !this.isDeckCard && !this.isPoll))
 		},

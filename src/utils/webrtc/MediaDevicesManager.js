@@ -337,7 +337,6 @@ MediaDevicesManager.prototype = {
 				BrowserStorage.setItem('videoInputDevicePreferred', true)
 			}
 		}
-
 	},
 
 	/**

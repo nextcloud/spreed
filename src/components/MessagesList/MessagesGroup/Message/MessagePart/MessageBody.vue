@@ -196,14 +196,17 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		richParameters: {
 			type: Object,
 			required: true,
 		},
+
 		isDeleting: {
 			type: Boolean,
 			default: false,
 		},
+
 		hasCall: {
 			type: Boolean,
 			default: false,

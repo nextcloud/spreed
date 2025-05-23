@@ -92,7 +92,6 @@ const eventDateLabel = computed(() => {
 			hour: 'numeric',
 			minute: 'numeric',
 		}).formatRange(startDate, endDate)
-
 	}
 
 	return time
@@ -129,6 +128,7 @@ function handleJoin({ call = false } = {}) {
 }
 
 </script>
+
 <template>
 	<div class="event-card"
 		:class="{
@@ -204,6 +204,7 @@ function handleJoin({ call = false } = {}) {
 		</span>
 	</div>
 </template>
+
 <style scoped lang="scss">
 .event-card {
 	position: relative;

@@ -94,7 +94,6 @@ function newRTCStatsReport(stats) {
 }
 
 describe('PeerConnectionAnalyzer', () => {
-
 	let peerConnectionAnalyzer
 	let changeConnectionQualityAudioHandler
 	let changeConnectionQualityVideoHandler
@@ -121,7 +120,6 @@ describe('PeerConnectionAnalyzer', () => {
 	})
 
 	describe('analyze sender connection', () => {
-
 		let logStatsMock
 
 		let expectLogStatsToHaveBeenCalled
@@ -3593,7 +3591,6 @@ describe('PeerConnectionAnalyzer', () => {
 		})
 
 		describe('distribute staged stats', () => {
-
 			const expectRelativeStagedStats = (kind, index, expectedPackets, expectedPacketsLost, expectedTimestamps, expectedRoundTripTime) => {
 				expect(peerConnectionAnalyzer._stagedPackets[kind][index]).toBe(expectedPackets)
 				expect(peerConnectionAnalyzer._stagedPacketsLost[kind][index]).toBe(expectedPacketsLost)
@@ -3764,7 +3761,6 @@ describe('PeerConnectionAnalyzer', () => {
 	})
 
 	describe('log stats', () => {
-
 		let consoleDebugMock
 
 		beforeEach(() => {
@@ -3828,7 +3824,6 @@ describe('PeerConnectionAnalyzer', () => {
 		})
 
 		describe('log RTC stats', () => {
-
 			beforeEach(() => {
 				peerConnection._setIceConnectionState('connected')
 				peerConnection._setConnectionState('connected')

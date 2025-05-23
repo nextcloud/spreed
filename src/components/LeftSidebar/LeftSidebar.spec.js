@@ -437,7 +437,6 @@ describe('LeftSidebar.vue', () => {
 				itemsListNames.forEach((name, index) => {
 					expect(itemsList.at(index).text()).toStrictEqual(name)
 				})
-
 			})
 
 			test('does not show circles results when circles are disabled', async () => {
@@ -599,7 +598,6 @@ describe('LeftSidebar.vue', () => {
 			const wrapper = mountComponent()
 			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
 			expect(newConversationbutton.exists()).toBeTruthy()
-
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
 			loadStateSettings.start_conversations = false

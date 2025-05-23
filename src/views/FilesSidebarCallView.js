@@ -15,7 +15,6 @@
  * current file changes.
  */
 export default class FilesSidebarCallView {
-
 	constructor() {
 		this.callViewInstance = OCA.Talk.newCallView()
 
@@ -35,5 +34,4 @@ export default class FilesSidebarCallView {
 		// instance.
 		this.callViewInstance.$children[0].setFileInfo(fileInfo)
 	}
-
 }

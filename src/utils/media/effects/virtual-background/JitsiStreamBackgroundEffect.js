@@ -19,7 +19,6 @@ import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
  * video stream.
  */
 export default class JitsiStreamBackgroundEffect {
-
 	// _model: Object;
 	// _options: Object;
 	// _stream: Object;
@@ -220,7 +219,6 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	runPostProcessing() {
-
 		const height = this._inputVideoElement.videoHeight
 		const width = this._inputVideoElement.videoWidth
 		const { backgroundType } = this._options.virtualBackground
@@ -502,5 +500,4 @@ export default class JitsiStreamBackgroundEffect {
 			this._virtualVideo.pause()
 		}
 	}
-
 }

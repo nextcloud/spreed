@@ -20,12 +20,10 @@ import EmitterMixin from '../../EmitterMixin.js'
  *        -------------
  */
 export default class TrackSource {
-
 	constructor() {
 		this._superEmitterMixin()
 		this._superTrackSourceMixin()
 	}
-
 }
 
 EmitterMixin.apply(TrackSource.prototype)

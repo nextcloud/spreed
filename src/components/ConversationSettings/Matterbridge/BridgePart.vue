@@ -100,22 +100,27 @@ export default {
 			type: Number,
 			required: true,
 		},
+
 		part: {
 			type: Object,
 			required: true,
 		},
+
 		type: {
 			type: Object,
 			required: true,
 		},
+
 		container: {
 			type: String,
 			required: true,
 		},
+
 		editing: {
 			type: Boolean,
 			default: false,
 		},
+
 		editable: {
 			type: Boolean,
 			default: true,

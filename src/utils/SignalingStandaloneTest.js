@@ -13,7 +13,6 @@ import { generateOcsUrl } from '@nextcloud/router'
  */
 
 class StandaloneTest {
-
 	constructor(settings, url) {
 		this.settings = settings
 		this.features = null
@@ -155,7 +154,6 @@ class StandaloneTest {
 			this.socket.send(JSON.stringify({ type: 'bye', bye: {} }))
 		}
 	}
-
 }
 
 /**

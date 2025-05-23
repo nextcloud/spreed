@@ -34,22 +34,27 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		id: {
 			type: String,
 			required: true,
 		},
+
 		name: {
 			type: String,
 			required: true,
 		},
+
 		boardname: {
 			type: String,
 			required: true,
 		},
+
 		stackname: {
 			type: String,
 			required: true,
 		},
+
 		link: {
 			type: String,
 			required: true,
@@ -68,6 +73,7 @@ export default {
 				board: this.boardname,
 			})
 		},
+
 		deckCardAriaLabel() {
 			return t('spreed', 'Deck Card')
 		},

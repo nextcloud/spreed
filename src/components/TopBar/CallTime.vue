@@ -201,7 +201,6 @@ export default {
 		},
 
 		showCallDurationHint() {
-
 			this.showPopover = true
 			this.isCallDurationHintShown = true
 

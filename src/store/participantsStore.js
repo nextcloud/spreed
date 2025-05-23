@@ -952,7 +952,6 @@ const actions = {
 			callViewStore.handleJoinCall(getters.conversation(token))
 		} catch (e) {
 			console.error('Error while joining call: ', e)
-
 		}
 	},
 
@@ -1010,7 +1009,6 @@ const actions = {
 				showError(t('spreed', 'Error occurred when sending invitations'))
 			}
 		}
-
 	},
 
 	/**

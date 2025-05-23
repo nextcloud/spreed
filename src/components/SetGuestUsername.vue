@@ -78,14 +78,17 @@ export default {
 		actorDisplayName() {
 			return this.$store.getters.getDisplayName() || t('spreed', 'Guest')
 		},
+
 		displayNameLabel() {
 			return t('spreed', 'Display name: {name}', {
 				name: `<strong>${escapeHtml(this.actorDisplayName)}</strong>`,
 			}, undefined, { escape: false })
 		},
+
 		actorId() {
 			return this.$store.getters.getActorId()
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
@@ -99,6 +102,7 @@ export default {
 				this.delayHandleUserNameFromBrowserStorage = false
 			}
 		},
+
 		// Update the input field text
 		actorDisplayName(newName) {
 			this.guestUserName = newName

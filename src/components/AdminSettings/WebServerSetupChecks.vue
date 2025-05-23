@@ -140,6 +140,7 @@ export default {
 				virtualBackground: {
 					type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				},
+
 				simd: VirtualBackground.isWasmSimd(),
 			}
 

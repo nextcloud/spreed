@@ -213,16 +213,20 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		isNextcloudTalkHashDirty() {
 			return this.talkHashStore.isNextcloudTalkHashDirty
 				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
 		showButtonText() {
 			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
 		},
+
 		showRecordingWarning() {
 			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
 				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)

@@ -60,7 +60,6 @@ export const useGuestNameStore = defineStore('guestName', {
 		addGuestName({ token, actorId, actorDisplayName }, { noUpdate }) {
 			if (!this.guestNames[token]) {
 				Vue.set(this.guestNames, token, {})
-
 			}
 			if (!this.guestNames[token][actorId] || actorDisplayName === '') {
 				Vue.set(this.guestNames[token], actorId, t('spreed', 'Guest'))
