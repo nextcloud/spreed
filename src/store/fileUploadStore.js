@@ -127,7 +127,7 @@ const mutations = {
 			status: 'initialised',
 			totalSize: file.size,
 			temporaryMessage,
-		 })
+		})
 		if (localUrl) {
 			Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
 		}

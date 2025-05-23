@@ -24,7 +24,6 @@ describe('MessagesSystemGroup.vue', () => {
 		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
-		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})
 
@@ -261,9 +260,7 @@ describe('MessagesSystemGroup.vue', () => {
 				previousMessageId: 90,
 				nextMessageId: 200,
 			})
-
 		})
-
 	})
 
 	describe('renders grouped system message of user actions', () => {
@@ -475,5 +472,4 @@ describe('MessagesSystemGroup.vue', () => {
 			testGroupedSystemMessages(wrapper, '{actor} demoted {user0} and {user1} from moderators')
 		})
 	})
-
 })

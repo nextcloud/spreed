@@ -74,7 +74,7 @@
 		</div>
 		<NcDialog v-if="showDialog"
 			:open.sync="showDialog"
-			:name="t('spreed','Delete breakout rooms')"
+			:name="t('spreed', 'Delete breakout rooms')"
 			:message="dialogMessage"
 			container=".participants-editor">
 			<template #actions>
@@ -166,8 +166,8 @@ export default {
 		participants() {
 			return this.$store.getters.participantsList(this.token).filter(participant => {
 				return (participant.participantType === PARTICIPANT.TYPE.USER
-						|| participant.participantType === PARTICIPANT.TYPE.GUEST)
-					&& participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+					|| participant.participantType === PARTICIPANT.TYPE.GUEST)
+				&& participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 			})
 		},
 

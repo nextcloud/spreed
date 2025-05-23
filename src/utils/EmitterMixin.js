@@ -19,7 +19,6 @@
  * instead).
  */
 export default (function() {
-
 	/**
 	 * Mixin constructor.
 	 *

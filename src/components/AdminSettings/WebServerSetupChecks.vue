@@ -16,7 +16,7 @@
 				{{ t('spreed', 'Files required for virtual background can be loaded') }}
 				<NcButton type="tertiary"
 					class="vue-button-inline"
-					:class="{'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false}"
+					:class="{ 'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false }"
 					:title="virtualBackgroundAvailableTitle"
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">
@@ -140,10 +140,9 @@ export default {
 				virtualBackground: {
 					type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				},
+
 				simd: VirtualBackground.isWasmSimd(),
 			}
-
-			/* eslint-disable no-undef, camelcase */
 
 			// When the worker is loaded from Talk its URL starts with
 			// "apps/spreed/js". However, when it is loaded from the
@@ -162,8 +161,6 @@ export default {
 			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
 
 			__webpack_public_path__ = __webpack_public_path__saved
-
-			/* eslint-enable no-undef, camelcase */
 
 			jitsiStreamBackgroundEffect.load().then(() => {
 				this.virtualBackgroundLoaded = true

@@ -137,7 +137,6 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 
 				// Get the participants of the breakout rooms
 				await this.fetchBreakoutRoomsParticipants(token)
-
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while re-ordering the attendees'))

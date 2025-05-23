@@ -108,11 +108,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator added you, {user0} and %n more participant',
-							'An administrator added you, {user0} and %n more participants', usersCounter - 2)
+								'An administrator added you, {user0} and %n more participant',
+								'An administrator added you, {user0} and %n more participants', usersCounter - 2)
 						: n('spreed',
-							'{actor} added you, {user0} and %n more participant',
-							'{actor} added you, {user0} and %n more participants', usersCounter - 2)
+								'{actor} added you, {user0} and %n more participant',
+								'{actor} added you, {user0} and %n more participants', usersCounter - 2)
 				}
 			} else {
 				if (usersCounter === 2) {
@@ -122,11 +122,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator added {user0}, {user1} and %n more participant',
-							'An administrator added {user0}, {user1} and %n more participants', usersCounter - 2)
+								'An administrator added {user0}, {user1} and %n more participant',
+								'An administrator added {user0}, {user1} and %n more participants', usersCounter - 2)
 						: n('spreed',
-							'{actor} added {user0}, {user1} and %n more participant',
-							'{actor} added {user0}, {user1} and %n more participants', usersCounter - 2)
+								'{actor} added {user0}, {user1} and %n more participant',
+								'{actor} added {user0}, {user1} and %n more participants', usersCounter - 2)
 				}
 			}
 		}
@@ -159,11 +159,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator removed you, {user0} and %n more participant',
-							'An administrator removed you, {user0} and %n more participants', usersCounter - 2)
+								'An administrator removed you, {user0} and %n more participant',
+								'An administrator removed you, {user0} and %n more participants', usersCounter - 2)
 						: n('spreed',
-							'{actor} removed you, {user0} and %n more participant',
-							'{actor} removed you, {user0} and %n more participants', usersCounter - 2)
+								'{actor} removed you, {user0} and %n more participant',
+								'{actor} removed you, {user0} and %n more participants', usersCounter - 2)
 				}
 			} else {
 				if (usersCounter === 2) {
@@ -173,11 +173,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator removed {user0}, {user1} and %n more participant',
-							'An administrator removed {user0}, {user1} and %n more participants', usersCounter - 2)
+								'An administrator removed {user0}, {user1} and %n more participant',
+								'An administrator removed {user0}, {user1} and %n more participants', usersCounter - 2)
 						: n('spreed',
-							'{actor} removed {user0}, {user1} and %n more participant',
-							'{actor} removed {user0}, {user1} and %n more participants', usersCounter - 2)
+								'{actor} removed {user0}, {user1} and %n more participant',
+								'{actor} removed {user0}, {user1} and %n more participants', usersCounter - 2)
 				}
 			}
 		}
@@ -245,7 +245,6 @@ export function useCombinedSystemMessage() {
 					}
 				}
 			}
-
 		}
 
 		// Handle cases when actor promoted several users to moderators
@@ -276,11 +275,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator promoted you, {user0} and %n more participant to moderators',
-							'An administrator promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
+								'An administrator promoted you, {user0} and %n more participant to moderators',
+								'An administrator promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
 						: n('spreed',
-							'{actor} promoted you, {user0} and %n more participant to moderators',
-							'{actor} promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
+								'{actor} promoted you, {user0} and %n more participant to moderators',
+								'{actor} promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
 				}
 			} else {
 				if (usersCounter === 2) {
@@ -290,11 +289,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator promoted {user0}, {user1} and %n more participant to moderators',
-							'An administrator promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
+								'An administrator promoted {user0}, {user1} and %n more participant to moderators',
+								'An administrator promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
 						: n('spreed',
-							'{actor} promoted {user0}, {user1} and %n more participant to moderators',
-							'{actor} promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
+								'{actor} promoted {user0}, {user1} and %n more participant to moderators',
+								'{actor} promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
 				}
 			}
 		}
@@ -327,11 +326,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator demoted you, {user0} and %n more participant from moderators',
-							'An administrator demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
+								'An administrator demoted you, {user0} and %n more participant from moderators',
+								'An administrator demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
 						: n('spreed',
-							'{actor} demoted you, {user0} and %n more participant from moderators',
-							'{actor} demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
+								'{actor} demoted you, {user0} and %n more participant from moderators',
+								'{actor} demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
 				}
 			} else {
 				if (usersCounter === 2) {
@@ -341,11 +340,11 @@ export function useCombinedSystemMessage() {
 				} else {
 					combinedMessage.message = actorIsAdministrator
 						? n('spreed',
-							'An administrator demoted {user0}, {user1} and %n more participant from moderators',
-							'An administrator demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
+								'An administrator demoted {user0}, {user1} and %n more participant from moderators',
+								'An administrator demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
 						: n('spreed',
-							'{actor} demoted {user0}, {user1} and %n more participant from moderators',
-							'{actor} demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
+								'{actor} demoted {user0}, {user1} and %n more participant from moderators',
+								'{actor} demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
 				}
 			}
 		}

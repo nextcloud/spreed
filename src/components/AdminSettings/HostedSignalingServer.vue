@@ -171,30 +171,34 @@ export default {
 				&& this.hostedHPBLanguage !== ''
 				&& this.hostedHPBCountry !== ''
 		},
+
 		disclaimerHint() {
 			return t('spreed', 'By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}.')
 				.replace('{linkstart}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://www.spreed.eu/nextcloud-talk-high-performance-backend/">')
 				.replace('{linkend}', ' ↗</a>')
 		},
+
 		translatedStatus() {
 			switch (this.trialAccount.status) {
-			case 'pending':
-				return t('spreed', 'Pending')
-			case 'error':
-				return t('spreed', 'Error')
-			case 'blocked':
-				return t('spreed', 'Blocked')
-			case 'active':
-				return t('spreed', 'Active')
-			case 'expired':
-				return t('spreed', 'Expired')
+				case 'pending':
+					return t('spreed', 'Pending')
+				case 'error':
+					return t('spreed', 'Error')
+				case 'blocked':
+					return t('spreed', 'Blocked')
+				case 'active':
+					return t('spreed', 'Active')
+				case 'expired':
+					return t('spreed', 'Expired')
 			}
 
 			return ''
 		},
+
 		expiryDate() {
 			return moment(this.trialAccount.expires).format('L')
 		},
+
 		createdDate() {
 			return moment(this.trialAccount.created).format('L')
 		},

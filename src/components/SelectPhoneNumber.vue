@@ -82,12 +82,12 @@ export default {
 
 		errorHint() {
 			switch (validatePhoneNumberLength(this.value)) {
-			case 'INVALID_LENGTH': return t('spreed', 'Number length is not valid')
-			case 'INVALID_COUNTRY': return t('spreed', 'Region code is not valid')
-			case 'TOO_SHORT': return t('spreed', 'Number length is too short')
-			case 'TOO_LONG': return t('spreed', 'Number length is too long')
-			case 'NOT_A_NUMBER': return t('spreed', 'Number is not valid')
-			default: return ''
+				case 'INVALID_LENGTH': return t('spreed', 'Number length is not valid')
+				case 'INVALID_COUNTRY': return t('spreed', 'Region code is not valid')
+				case 'TOO_SHORT': return t('spreed', 'Number length is too short')
+				case 'TOO_LONG': return t('spreed', 'Number length is too long')
+				case 'NOT_A_NUMBER': return t('spreed', 'Number is not valid')
+				default: return ''
 			}
 		},
 	},

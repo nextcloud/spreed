@@ -46,7 +46,6 @@ export const Sounds = {
 			console.debug('Playing waiting sound')
 			soundsStore.playAudio('wait')
 			this.playedWaiting++
-
 		}, 15000)
 	},
 

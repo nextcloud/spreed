@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="participants-search-results" :class="{'scrollable': scrollable }">
+	<div class="participants-search-results" :class="{ 'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
@@ -119,10 +119,12 @@ export default {
 			type: Array,
 			required: true,
 		},
+
 		contactsLoading: {
 			type: Boolean,
 			required: true,
 		},
+
 		/**
 		 * Token of current conversation (if provided).
 		 */
@@ -130,6 +132,7 @@ export default {
 			type: String,
 			default: '',
 		},
+
 		/**
 		 * Display no-results state instead of list.
 		 */
@@ -137,6 +140,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * Display only results from internal users.
 		 */
@@ -144,6 +148,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/**
 		 * Display loading state instead of list.
 		 */
@@ -151,14 +156,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		scrollable: {
 			type: Boolean,
 			default: false,
 		},
+
 		showSearchHints: {
 			type: Boolean,
 			default: false,
 		},
+
 		searchText: {
 			type: String,
 			default: '',
@@ -225,15 +233,19 @@ export default {
 			return this.searchResults.filter(item => item.source === ATTENDEE.ACTOR_TYPE.USERS)
 				.filter(user => !this.participants.some(participant => user.id === participant.userId))
 		},
+
 		addableGroups() {
 			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.GROUPS)
 		},
+
 		addableEmails() {
 			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
+
 		addableCircles() {
 			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
 		},
+
 		addableRemotes() {
 			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.REMOTES)
 				.map((item) => {
@@ -242,11 +254,11 @@ export default {
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
 					? this.addableUsers.map(user => ({
-						...user,
-						id: user.id + '@' + window.location.host,
-						label: user.id + '@' + window.location.host,
-						source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
-					}))
+							...user,
+							id: user.id + '@' + window.location.host,
+							label: user.id + '@' + window.location.host,
+							source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
+						}))
 					: [])
 		},
 
@@ -254,6 +266,7 @@ export default {
 			return !this.contactsLoading && this.searchText === ''
 		},
 	},
+
 	methods: {
 		t,
 		handleClickParticipant(participant) {

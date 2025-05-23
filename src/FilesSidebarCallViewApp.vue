@@ -32,6 +32,7 @@ export default {
 				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
 			},
 		}),
+
 		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
 

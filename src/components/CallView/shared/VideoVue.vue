@@ -129,53 +129,65 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		placeholderForPromoted: {
 			type: Boolean,
 			default: false,
 		},
+
 		model: {
 			type: Object,
 			required: true,
 		},
+
 		sharedData: {
 			type: Object,
 			required: true,
 		},
+
 		showVideoOverlay: {
 			type: Boolean,
 			default: true,
 		},
+
 		isGrid: {
 			type: Boolean,
 			default: false,
 		},
+
 		fitVideo: {
 			type: Boolean,
 			default: false,
 		},
+
 		isPresenterOverlay: {
 			type: Boolean,
 			default: false,
 		},
+
 		isBig: {
 			type: Boolean,
 			default: false,
 		},
+
 		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
 			default: false,
 		},
+
 		// The current promoted participant
 		isPromoted: {
 			type: Boolean,
 			default: false,
 		},
+
 		// Is the current selected participant
 		isSelected: {
 			type: Boolean,
 			default: false,
 		},
+
 		// True when this component is used as main video in the sidebar
 		isSidebar: {
 			type: Boolean,
@@ -500,7 +512,6 @@ export default {
 				} else {
 					return this.hasVideo
 				}
-
 			}
 		},
 
@@ -516,7 +527,6 @@ export default {
 			} else {
 				return false
 			}
-
 		},
 
 		showBackgroundAndAvatar() {
@@ -578,7 +588,6 @@ export default {
 	methods: {
 		t,
 		_setStream(stream) {
-
 			if (!stream) {
 				// Do not clear the srcObject of the video element, just leave
 				// the previous stream as a frozen image.

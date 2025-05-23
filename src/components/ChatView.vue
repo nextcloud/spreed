@@ -153,6 +153,7 @@ export default {
 				return t('spreed', 'Drop your files to upload')
 			}
 		},
+
 		isReadOnly() {
 			if (this.conversation) {
 				return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY

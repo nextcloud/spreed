@@ -50,18 +50,18 @@ const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 
 const deviceIcon = computed<ComponentPublicInstance | null>(() => {
 	switch (props.kind) {
-	case 'audioinput': return IconMicrophone
-	case 'audiooutput': return IconVolumeHigh
-	case 'videoinput': return IconVideo
-	default: return null
+		case 'audioinput': return IconMicrophone
+		case 'audiooutput': return IconVolumeHigh
+		case 'videoinput': return IconVideo
+		default: return null
 	}
 })
 const deviceSelectorPlaceholder = computed(() => {
 	switch (props.kind) {
-	case 'audioinput': return deviceOptionsAvailable.value ? t('spreed', 'Select microphone') : t('spreed', 'No microphone available')
-	case 'audiooutput': return deviceOptionsAvailable.value ? t('spreed', 'Select speaker') : t('spreed', 'No speaker available')
-	case 'videoinput': return deviceOptionsAvailable.value ? t('spreed', 'Select camera') : t('spreed', 'No camera available')
-	default: return ''
+		case 'audioinput': return deviceOptionsAvailable.value ? t('spreed', 'Select microphone') : t('spreed', 'No microphone available')
+		case 'audiooutput': return deviceOptionsAvailable.value ? t('spreed', 'Select speaker') : t('spreed', 'No speaker available')
+		case 'videoinput': return deviceOptionsAvailable.value ? t('spreed', 'Select camera') : t('spreed', 'No camera available')
+		default: return ''
 	}
 })
 

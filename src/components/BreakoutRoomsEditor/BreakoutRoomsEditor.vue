@@ -4,11 +4,11 @@
 -->
 
 <template>
-	<NcModal :class="{'modal-mask__participants-step': isEditingParticipants}"
+	<NcModal :class="{ 'modal-mask__participants-step': isEditingParticipants }"
 		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"
-			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
+			:class="{ 'breakout-rooms-editor__participants-step': isEditingParticipants }">
 			<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 				{{ modalTitle }}
 			</h2>

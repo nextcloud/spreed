@@ -87,14 +87,14 @@ function Peer(options) {
 		}
 
 		switch (self.pc.iceConnectionState) {
-		case 'failed':
+			case 'failed':
 			// currently, in chrome only the initiator goes to failed
 			// so we need to signal this to the peer
-			if (self.pc.localDescription.type === 'offer') {
-				self.parent.emit('iceFailed', self)
-				self.send('connectivityError')
-			}
-			break
+				if (self.pc.localDescription.type === 'offer') {
+					self.parent.emit('iceFailed', self)
+					self.send('connectivityError')
+				}
+				break
 		}
 	})
 	this.pc.addEventListener('connectionstatechange', function() {

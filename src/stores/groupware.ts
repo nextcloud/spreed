@@ -79,7 +79,7 @@ export const useGroupwareStore = defineStore('groupware', {
 		 * @param payload.token The conversation token
 		 * @param payload.userId The id of user
 		 */
-		async getUserAbsence({ token, userId } : { token: string, userId: string}) {
+		async getUserAbsence({ token, userId }: { token: string, userId: string }) {
 			try {
 				const response = await getUserAbsence(userId)
 				Vue.set(this.absence, token, response.data.ocs.data)

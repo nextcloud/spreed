@@ -232,6 +232,7 @@ export default {
 			get() {
 				return this.voteToSubmit
 			},
+
 			set(value) {
 				this.voteToSubmit = Array.isArray(value) ? value : [value]
 			},

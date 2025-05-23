@@ -124,10 +124,12 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
 		canSearch: {
 			type: Boolean,
 			required: true,
 		},
+
 		canAdd: {
 			type: Boolean,
 			required: true,
@@ -205,31 +207,39 @@ export default {
 		show() {
 			return this.sidebarStore.show
 		},
+
 		opened() {
 			return !!this.token && this.show
 		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
 		isOneToOneConversation() {
 			return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(this.conversation.type)
 		},
+
 		userId() {
 			return this.$store.getters.getUserId()
 		},
+
 		canAddPhones() {
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
-					&& getTalkConfig(this.token, 'call', 'sip-enabled')
-					&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
-					&& getTalkConfig(this.token, 'call', 'can-enable-sip')
+				&& getTalkConfig(this.token, 'call', 'sip-enabled')
+				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
+				&& getTalkConfig(this.token, 'call', 'can-enable-sip')
 			return canModerateSipDialOut && this.conversation.canEnableSIP
 		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		noResults() {
 			return this.searchResults.length === 0
 		},

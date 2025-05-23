@@ -92,7 +92,6 @@ const eventDateLabel = computed(() => {
 			hour: 'numeric',
 			minute: 'numeric',
 		}).formatRange(startDate, endDate)
-
 	}
 
 	return time
@@ -129,6 +128,7 @@ function handleJoin({ call = false } = {}) {
 }
 
 </script>
+
 <template>
 	<div class="event-card"
 		:class="{
@@ -177,7 +177,7 @@ function handleJoin({ call = false } = {}) {
 			</span>
 			<NcButton v-if="(hasCall && !isInCall)"
 				type="primary"
-				@click="handleJoin({call: true})">
+				@click="handleJoin({ call: true })">
 				<template #icon>
 					<IconVideo :size="20" />
 				</template>
@@ -204,6 +204,7 @@ function handleJoin({ call = false } = {}) {
 		</span>
 	</div>
 </template>
+
 <style scoped lang="scss">
 .event-card {
 	position: relative;

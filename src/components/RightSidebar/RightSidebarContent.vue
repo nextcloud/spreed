@@ -187,7 +187,7 @@ function handleHeaderClick() {
 
 <template>
 	<div class="content"
-		:class="{['content--' + mode]: state === 'default'}">
+		:class="{ ['content--' + mode]: state === 'default' }">
 		<template v-if="state === 'default'">
 			<div v-if="isUser" class="content__actions">
 				<NcActions v-if="profileActions.length" force-menu>

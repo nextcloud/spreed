@@ -207,7 +207,7 @@ const postRichObjectToConversation = async function(token: string, { objectType,
  * @param lastReadMessage id of the last read message to set
  * @param options request options
  */
-const updateLastReadMessage = async function(token: string, lastReadMessage?: number|null, options?: object): setReadMarkerResponse {
+const updateLastReadMessage = async function(token: string, lastReadMessage?: number | null, options?: object): setReadMarkerResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }, options), {
 		lastReadMessage,
 	} as setReadMarkerParams, options)

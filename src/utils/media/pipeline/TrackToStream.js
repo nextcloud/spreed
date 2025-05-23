@@ -34,7 +34,6 @@ import EmitterMixin from '../../EmitterMixin.js'
  *        ---------------
  */
 export default class TrackToStream extends TrackSink {
-
 	constructor() {
 		super()
 		this._superEmitterMixin()
@@ -97,7 +96,6 @@ export default class TrackToStream extends TrackSink {
 
 		this._trigger('trackEnabled', [this.getInputTrack(trackId), enabled])
 	}
-
 }
 
 EmitterMixin.apply(TrackToStream.prototype)

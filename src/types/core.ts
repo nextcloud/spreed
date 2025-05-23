@@ -1,23 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import type {
 	components as componentsCore,
 	operations as operationsCore,
-} from './openapi_core.ts'
+} from './openapi/core/openapi_core.ts'
 import type {
 	components as componentsDav,
 	operations as operationsDav,
-} from './openapi_dav.ts'
+} from './openapi/core/openapi_dav.ts'
 import type {
 	components as componentsFiles,
 	operations as operationsFiles,
-} from './openapi_files.ts'
+} from './openapi/core/openapi_files.ts'
 import type {
 	components as componentsShare,
 	operations as operationsShare,
-} from './openapi_files_sharing.ts'
+} from './openapi/core/openapi_files_sharing.ts'
 import type {
 	components as componentsProv,
 	operations as operationsProv,
-} from './openapi_provisioning_api.ts'
+} from './openapi/core/openapi_provisioning_api.ts'
 
 type ApiResponse<T> = Promise<{ data: T }>
 
@@ -79,12 +83,12 @@ export type UserPreferencesResponse = ApiResponse<operationsProv['preferences-se
 export type TaskProcessingResponse = ApiResponse<operationsCore['task_processing_api-get-task']['responses'][200]['content']['application/json']>
 
 // Profile API
-export type UserProfileData =  componentsCore['schemas']['ProfileData']
+export type UserProfileData = componentsCore['schemas']['ProfileData']
 export type UserProfileResponse = ApiResponse<operationsCore['profile_api-get-profile-fields']['responses'][200]['content']['application/json']>
 
 // Autocomplete API
-export type AutocompleteResult =  componentsCore['schemas']['AutocompleteResult']
-export type AutocompleteParams =  operationsCore['auto_complete-get']['parameters']['query']
+export type AutocompleteResult = componentsCore['schemas']['AutocompleteResult']
+export type AutocompleteParams = operationsCore['auto_complete-get']['parameters']['query']
 export type AutocompleteResponse = ApiResponse<operationsCore['auto_complete-get']['responses'][200]['content']['application/json']>
 
 // Unified Search API
@@ -107,9 +111,9 @@ export type UnifiedSearchResultEntry = componentsCore['schemas']['UnifiedSearchR
 }
 export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-search']['responses'][200]['content']['application/json'] & {
 	ocs: {
-		meta: componentsCore["schemas"]["OCSMeta"],
-		data: componentsCore["schemas"]["UnifiedSearchResult"] & {
-			entries: (componentsCore["schemas"]["UnifiedSearchResultEntry"] & {
+		meta: componentsCore['schemas']['OCSMeta'],
+		data: componentsCore['schemas']['UnifiedSearchResult'] & {
+			entries: (componentsCore['schemas']['UnifiedSearchResultEntry'] & {
 				attributes: MessageSearchResultAttributes
 			})[],
 		},

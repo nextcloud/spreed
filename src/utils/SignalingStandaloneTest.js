@@ -13,7 +13,6 @@ import { generateOcsUrl } from '@nextcloud/router'
  */
 
 class StandaloneTest {
-
 	constructor(settings, url) {
 		this.settings = settings
 		this.features = null
@@ -82,18 +81,18 @@ class StandaloneTest {
 				}
 
 				switch (data.type) {
-				case 'welcome':
-					this.welcomeResponseReceived(data)
-					break
-				case 'hello':
-					this.helloResponseReceived(data)
-					break
-				case 'error':
-					console.error('Received error', data)
-					break
-				default:
-					console.debug('Ignore unexpected event', data)
-					break
+					case 'welcome':
+						this.welcomeResponseReceived(data)
+						break
+					case 'hello':
+						this.helloResponseReceived(data)
+						break
+					case 'error':
+						console.error('Received error', data)
+						break
+					default:
+						console.debug('Ignore unexpected event', data)
+						break
 				}
 			}
 		})
@@ -155,7 +154,6 @@ class StandaloneTest {
 			this.socket.send(JSON.stringify({ type: 'bye', bye: {} }))
 		}
 	}
-
 }
 
 /**

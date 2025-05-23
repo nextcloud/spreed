@@ -14,7 +14,6 @@ import EmitterMixin from '../../EmitterMixin.js'
  *
  */
 export default function LocalMediaModel() {
-
 	this._superEmitterMixin()
 
 	this.attributes = reactive({
@@ -58,7 +57,6 @@ export default function LocalMediaModel() {
 	this._handleVirtualBackgroundOffBound = this._handleVirtualBackgroundOff.bind(this)
 	this._handleLocalScreenBound = this._handleLocalScreen.bind(this)
 	this._handleLocalScreenStoppedBound = this._handleLocalScreenStopped.bind(this)
-
 }
 
 LocalMediaModel.prototype = {

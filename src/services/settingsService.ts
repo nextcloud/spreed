@@ -68,7 +68,7 @@ const setSIPSettings = async function({ sipGroups, sharedSecret, dialInInfo }: s
 	} as setSipSettingsParams)
 }
 
-const setPlaySounds = async function(hasUserAccount: boolean, value: 'yes'|'no') {
+const setPlaySounds = async function(hasUserAccount: boolean, value: 'yes' | 'no') {
 	if (hasUserAccount) {
 		return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 			key: 'play_sounds',

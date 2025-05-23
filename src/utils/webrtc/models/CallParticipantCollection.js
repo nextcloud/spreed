@@ -12,12 +12,10 @@ import EmitterMixin from '../../EmitterMixin.js'
  *
  */
 export default function CallParticipantCollection() {
-
 	this._superEmitterMixin()
 
 	// FIXME: use reactive instead of ref after migration to vue 3
 	this.callParticipantModels = ref([])
-
 }
 
 CallParticipantCollection.prototype = {

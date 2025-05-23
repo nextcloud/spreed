@@ -252,9 +252,9 @@ const getters = {
 		// Fallback, sometimes actorId and actorType are set before the attendeeId
 		return Object.entries(state.attendees[token]).find(([attendeeId, attendee]) => {
 			return (participantIdentifier.actorType && participantIdentifier.actorId
-					&& attendee.actorType === participantIdentifier.actorType
-					&& attendee.actorId === participantIdentifier.actorId)
-				|| (participantIdentifier.sessionId && attendee.sessionIds.includes(participantIdentifier.sessionId))
+				&& attendee.actorType === participantIdentifier.actorType
+				&& attendee.actorId === participantIdentifier.actorId)
+			|| (participantIdentifier.sessionId && attendee.sessionIds.includes(participantIdentifier.sessionId))
 		})?.[1] ?? null
 	},
 	getPeer: (state) => (token, sessionId, userId) => {
@@ -952,7 +952,6 @@ const actions = {
 			callViewStore.handleJoinCall(getters.conversation(token))
 		} catch (e) {
 			console.error('Error while joining call: ', e)
-
 		}
 	},
 
@@ -1010,7 +1009,6 @@ const actions = {
 				showError(t('spreed', 'Error occurred when sending invitations'))
 			}
 		}
-
 	},
 
 	/**

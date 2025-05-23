@@ -16,7 +16,7 @@ type PROPFINDException = {
  *
  * @param exception error object
  */
-async function parseUploadError(exception : PROPFINDException) {
+async function parseUploadError(exception: PROPFINDException) {
 	try {
 		const responseText = await exception.response.text()
 		const parser = new DOMParser()

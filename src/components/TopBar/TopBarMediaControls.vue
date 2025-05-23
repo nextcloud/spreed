@@ -157,14 +157,17 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		model: {
 			type: Object,
 			required: true,
 		},
+
 		localCallParticipantModel: {
 			type: Object,
 			required: true,
 		},
+
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -273,19 +276,19 @@ export default {
 		senderConnectionQualityAudioIsBad() {
 			return callAnalyzer
 				&& (callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+					|| callAnalyzer.attributes.senderConnectionQualityAudio === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 		},
 
 		senderConnectionQualityVideoIsBad() {
 			return callAnalyzer
 				&& (callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+					|| callAnalyzer.attributes.senderConnectionQualityVideo === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 		},
 
 		senderConnectionQualityScreenIsBad() {
 			return callAnalyzer
 				&& (callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.VERY_BAD
-				 || callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
+					|| callAnalyzer.attributes.senderConnectionQualityScreen === CONNECTION_QUALITY.NO_TRANSMITTED_DATA)
 		},
 
 		qualityWarningAriaLabel() {
@@ -446,33 +449,33 @@ export default {
 				let extensionURL = null
 
 				switch (err.name) {
-				case 'HTTPS_REQUIRED':
-					showMessage(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
-					break
-				case 'PERMISSION_DENIED':
-				case 'NotAllowedError':
-				case 'CEF_GETSCREENMEDIA_CANCELED': // Experimental, may go away in the future.
-					break
-				case 'FF52_REQUIRED':
-					showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
-					break
-				case 'EXTENSION_UNAVAILABLE':
-					if (window.chrome) { // Chrome
-						extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol'
-					}
+					case 'HTTPS_REQUIRED':
+						showMessage(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
+						break
+					case 'PERMISSION_DENIED':
+					case 'NotAllowedError':
+					case 'CEF_GETSCREENMEDIA_CANCELED': // Experimental, may go away in the future.
+						break
+					case 'FF52_REQUIRED':
+						showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
+						break
+					case 'EXTENSION_UNAVAILABLE':
+						if (window.chrome) { // Chrome
+							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol'
+						}
 
-					if (extensionURL) {
-						const text = t('spreed', 'Screensharing extension is required to share your screen.')
-						const element = '<a href="' + extensionURL + '" target="_blank">' + escapeHtml(text) + '</a>'
+						if (extensionURL) {
+							const text = t('spreed', 'Screensharing extension is required to share your screen.')
+							const element = '<a href="' + extensionURL + '" target="_blank">' + escapeHtml(text) + '</a>'
 
-						showMessage(element, { isHTML: true })
-					} else {
-						showMessage(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
-					}
-					break
-				default:
-					showMessage(t('spreed', 'An error occurred while starting screensharing.'))
-					break
+							showMessage(element, { isHTML: true })
+						} else {
+							showMessage(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
+						}
+						break
+					default:
+						showMessage(t('spreed', 'An error occurred while starting screensharing.'))
+						break
 				}
 			})
 		},

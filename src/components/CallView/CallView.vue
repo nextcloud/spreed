@@ -18,7 +18,7 @@
 			<div id="videos">
 				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					class="video__promoted"
-					:class="{'full-page': showFullPage}">
+					:class="{ 'full-page': showFullPage }">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="`promoted-${selectedVideoPeerId}`"
@@ -186,11 +186,13 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		// Determines whether this component is used in the sidebar
 		isSidebar: {
 			type: Boolean,
 			default: false,
 		},
+
 		// Determines whether this component is used in the recording view
 		isRecording: {
 			type: Boolean,
@@ -238,6 +240,7 @@ export default {
 			localSharedData: {
 				screenVisible: true,
 			},
+
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
 			forcePromotedModel: null,
@@ -368,9 +371,8 @@ export default {
 
 		shouldShowPresenterOverlay() {
 			return (this.showLocalScreen && this.hasLocalVideo)
-			|| ((this.showRemoteScreen || this.showSelectedScreen)
-			&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
-
+				|| ((this.showRemoteScreen || this.showSelectedScreen)
+					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
 		},
 
 		presenterModel() {
@@ -444,7 +446,6 @@ export default {
 
 		screens() {
 			this._setScreenVisible()
-
 		},
 
 		callParticipantModelsWithScreen(newValue, previousValue) {
@@ -456,6 +457,7 @@ export default {
 				this.callViewStore.stopPresentation(this.token)
 			}
 		},
+
 		showLocalScreen(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
@@ -465,6 +467,7 @@ export default {
 				this.callViewStore.stopPresentation(this.token)
 			}
 		},
+
 		hasLocalVideo(newValue) {
 			if (this.selectedVideoPeerId === 'local') {
 				if (!newValue) {
@@ -732,6 +735,7 @@ export default {
 				clearLast: false,
 			})
 		},
+
 		handleClickLocalVideo() {
 			// DO nothing if no video
 			if (!this.hasLocalVideo || this.isSidebar) {

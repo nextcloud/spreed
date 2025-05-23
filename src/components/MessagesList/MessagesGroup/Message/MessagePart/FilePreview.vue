@@ -17,7 +17,7 @@
 		@keydown.enter="handleClick">
 		<span :title="file.name"
 			class="image-container"
-			:class="{'playable': isPlayable}"
+			:class="{ 'playable': isPlayable }"
 			:style="imageContainerStyle">
 			<img class="file-preview__image"
 				:class="previewImageClass"
@@ -411,18 +411,18 @@ export default {
 
 		uploadProgress() {
 			switch (this.uploadFile?.status) {
-			case 'shared':
-			case 'sharing':
-			case 'successUpload':
-				return 100
-			case 'uploading':
-				return this.upload
-					? this.upload._uploaded / this.upload._size * 100
-					: 100 // file was removed from the upload queue, so considering done
-			case 'pendingUpload':
-			case 'initialised':
-			default:
-				return 0
+				case 'shared':
+				case 'sharing':
+				case 'successUpload':
+					return 100
+				case 'uploading':
+					return this.upload
+						? this.upload._uploaded / this.upload._size * 100
+						: 100 // file was removed from the upload queue, so considering done
+				case 'pendingUpload':
+				case 'initialised':
+				default:
+					return 0
 			}
 		},
 
@@ -515,7 +515,6 @@ export default {
 				this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
 			} else {
 				this.openViewer(this.internalAbsolutePath, [this.file], this.file)
-
 			}
 		},
 	},

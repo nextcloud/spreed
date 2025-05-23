@@ -54,12 +54,12 @@ const autocompleteQuery = async function({
 	const shareTypes: ShareType[] = onlyUsers
 		? [SHARE.TYPE.USER]
 		: [
-			SHARE.TYPE.USER,
-			SHARE.TYPE.GROUP,
-			SHARE.TYPE.CIRCLE,
-			...(token !== 'new' ? [SHARE.TYPE.EMAIL] : []),
-			...(canInviteToFederation ? [SHARE.TYPE.REMOTE] : []),
-		]
+				SHARE.TYPE.USER,
+				SHARE.TYPE.GROUP,
+				SHARE.TYPE.CIRCLE,
+				...(token !== 'new' ? [SHARE.TYPE.EMAIL] : []),
+				...(canInviteToFederation ? [SHARE.TYPE.REMOTE] : []),
+			]
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {
 		...options,

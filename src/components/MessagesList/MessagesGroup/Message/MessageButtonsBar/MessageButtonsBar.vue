@@ -372,14 +372,17 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
 		isEmojiPickerOpen: {
 			type: Boolean,
 			required: true,
 		},
+
 		isReactionsMenuOpen: {
 			type: Boolean,
 			required: true,
 		},
+
 		isForwarderOpen: {
 			type: Boolean,
 			required: true,
@@ -508,6 +511,7 @@ export default {
 			get() {
 				return new Date(this.customReminderTimestamp)
 			},
+
 			set(value) {
 				if (value !== null) {
 					this.customReminderTimestamp = value.valueOf()

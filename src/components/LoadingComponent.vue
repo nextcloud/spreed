@@ -6,6 +6,7 @@
 <template>
 	<div class="icon-loading spinner" />
 </template>
+
 <script>
 export default {
 

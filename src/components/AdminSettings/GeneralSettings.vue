@@ -116,9 +116,11 @@ export default {
 		isConversationsFilesChecked() {
 			return this.conversationsFiles
 		},
+
 		isConversationsFilesPublicSharesChecked() {
 			return this.conversationsFilesPublicShares
 		},
+
 		canEnableE2EECalls() {
 			return this.hasFeatureJoinFeatures || !this.hasSIPBridge
 		},
@@ -167,6 +169,7 @@ export default {
 				},
 			})
 		},
+
 		saveConversationsFiles(checked) {
 			this.loadingConversationsFiles = true
 			this.conversationsFiles = checked
@@ -187,6 +190,7 @@ export default {
 				},
 			})
 		},
+
 		saveConversationsFilesPublicShares(checked) {
 			this.loadingConversationsFiles = true
 			this.conversationsFilesPublicShares = checked
@@ -200,6 +204,7 @@ export default {
 	},
 }
 </script>
+
 <style scoped lang="scss">
 
 h3 {

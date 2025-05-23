@@ -21,7 +21,6 @@ const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'e
  * @param {boolean} isTopBar whether the component is the top bar
  */
 export function useGetParticipants(isActive = ref(true), isTopBar = true) {
-
 	// Encapsulation
 	const sessionStore = useSessionStore()
 	const store = useStore()

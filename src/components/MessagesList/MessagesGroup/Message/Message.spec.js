@@ -565,7 +565,6 @@ describe('Message.vue', () => {
 	})
 
 	describe('actions', () => {
-
 		beforeEach(() => {
 			store = new Store(testStoreConfig)
 		})
