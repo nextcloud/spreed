@@ -781,7 +781,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				{
 					timeout: TOAST_PERMANENT_TIMEOUT,
 					isHTML: true,
-				}
+				},
 			)
 			showedTURNWarning = true
 		}

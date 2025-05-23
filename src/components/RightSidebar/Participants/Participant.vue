@@ -788,7 +788,7 @@ export default {
 			if (!value || !(value === 'ringing' || value === 'accepted')) {
 				this.disabled = false
 			}
-		}
+		},
 	},
 
 	methods: {
@@ -922,7 +922,7 @@ export default {
 				this.disabled = false
 				if (error?.response?.data?.ocs?.data?.message) {
 					showError(t('spreed', 'Phone number could not be called: {error}', {
-						error: error?.response?.data?.ocs?.data?.message
+						error: error?.response?.data?.ocs?.data?.message,
 					}))
 				} else {
 					console.error(error)

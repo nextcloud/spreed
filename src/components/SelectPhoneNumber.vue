@@ -106,14 +106,14 @@ export default {
 				label: phoneNumber,
 				phoneNumber,
 			})
-		}
+		},
 	},
 
 	methods: {
 		t,
 		selectPhoneNumber() {
 			this.$emit('select', this.participantPhoneItem)
-		}
+		},
 	},
 }
 </script>

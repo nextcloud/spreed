@@ -42,7 +42,7 @@ const importListDescription = t('spreed', 'Content format is comma-separated val
 	undefined,
 	undefined, {
 		escape: true,
-		sanitize: true
+		sanitize: true,
 	})
 
 /**

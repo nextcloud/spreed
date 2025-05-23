@@ -5,7 +5,7 @@
 
 import axios from '@nextcloud/axios'
 import {
-	showWarning
+	showWarning,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import {
@@ -39,12 +39,12 @@ const joinConversation = async ({ token, forceJoin = false }, options) => {
 		console.error(
 			'Remote address is bruteforce throttled: '
 			+ response.headers.get('X-Nextcloud-Bruteforce-Throttled')
-			+ ' (Request ID: ' + response.headers.get('X-Request-ID') + ')'
+			+ ' (Request ID: ' + response.headers.get('X-Request-ID') + ')',
 		)
 		const throttleMs = parseInt(response.headers.get('X-Nextcloud-Bruteforce-Throttled'), 10)
 		if (throttleMs > 5000) {
 			showWarning(
-				t('spreed', 'Your requests are throttled at the moment due to brute force protection')
+				t('spreed', 'Your requests are throttled at the moment due to brute force protection'),
 			)
 		}
 	}
@@ -187,8 +187,8 @@ const importEmails = async (token, file, testRun = false) => {
 
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/import-emails', { token }), data, {
 		headers: {
-			'Content-Type': 'multipart/form-data'
-		}
+			'Content-Type': 'multipart/form-data',
+		},
 	})
 }
 
@@ -201,7 +201,7 @@ const importEmails = async (token, file, testRun = false) => {
  */
 const setSessionState = async (token, state) => {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/state', { token }),
-		{ state }
+		{ state },
 	)
 }
 

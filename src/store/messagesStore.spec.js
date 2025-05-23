@@ -61,7 +61,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 			'features-local': [],
 			'config-local': { chat: [] },
 		},
-	}))
+	})),
 }))
 
 describe('messagesStore', () => {
@@ -413,7 +413,7 @@ describe('messagesStore', () => {
 				id: 11,
 				token: TOKEN,
 				message: 'reply to hello',
-				parent: cloneDeep(message)
+				parent: cloneDeep(message),
 			}
 			store.dispatch('processMessage', { token: TOKEN, message: childMessage })
 
@@ -542,7 +542,7 @@ describe('messagesStore', () => {
 				id: 11,
 				token: TOKEN,
 				message: 'reply to hello',
-				parent: cloneDeep(message)
+				parent: cloneDeep(message),
 			}
 			store.dispatch('processMessage', { token: TOKEN, message: childMessage })
 			const editedParent = {
@@ -786,7 +786,7 @@ describe('messagesStore', () => {
 				payload: {
 					unreadMessages: 0,
 					unreadMention: false,
-				}
+				},
 			})
 			updateLastReadMessage.mockResolvedValue(response)
 
@@ -814,7 +814,7 @@ describe('messagesStore', () => {
 				payload: {
 					unreadMessages: 0,
 					unreadMention: false,
-				}
+				},
 			})
 			updateLastReadMessage.mockResolvedValue(response)
 
@@ -1728,7 +1728,7 @@ describe('messagesStore', () => {
 				payload: {
 					unreadMessages: 0,
 					unreadMention: false,
-				}
+				},
 			})
 			updateLastReadMessage.mockResolvedValue(response2)
 			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {
@@ -1808,7 +1808,7 @@ describe('messagesStore', () => {
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(
-				store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })
+				store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }),
 			).rejects.toMatchObject({ response })
 
 			expect(store.getters.isSendingMessages).toBe(false)

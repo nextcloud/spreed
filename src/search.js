@@ -35,7 +35,7 @@ function init() {
 					id: 'talk-message',
 					payload: conversation,
 					filterUpdateText: t('spreed', 'Search in conversation: {conversation}', { conversation: conversation.displayName }),
-					filterParams: { conversation: conversation.token }
+					filterParams: { conversation: conversation.token },
 				})
 			}
 		},

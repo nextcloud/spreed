@@ -104,7 +104,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 			if (response?.status === 503 && !this.maintenanceWarningToast) {
 				this.maintenanceWarningToast = showError(
 					t('spreed', 'Nextcloud is in maintenance mode.') + '\n' + messagePleaseReload,
-					{ timeout: TOAST_PERMANENT_TIMEOUT }
+					{ timeout: TOAST_PERMANENT_TIMEOUT },
 				)
 			}
 		},
@@ -128,5 +128,5 @@ export const useTalkHashStore = defineStore('talkHash', {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		},
-	}
+	},
 })

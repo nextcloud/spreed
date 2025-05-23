@@ -1412,7 +1412,7 @@ const actions = {
 
 	loadedMessagesOfConversation(context, { token }) {
 		context.commit('loadedMessagesOfConversation', { token })
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

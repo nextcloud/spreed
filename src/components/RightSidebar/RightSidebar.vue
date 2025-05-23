@@ -237,7 +237,7 @@ export default {
 			contentModeIndex,
 			sidebar,
 			sidebarContent,
-			sidebarStore: useSidebarStore()
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -370,7 +370,7 @@ export default {
 			return {
 				'data-theme-dark': true,
 				'aria-label': t('spreed', 'Open chat'),
-				title: t('spreed', 'Open chat')
+				title: t('spreed', 'Open chat'),
 			}
 		},
 	},

@@ -76,7 +76,7 @@ export default {
 				default:
 					return t('spreed', 'All participants are allowed to mention @all')
 			}
-		}
+		},
 	},
 
 	watch: {

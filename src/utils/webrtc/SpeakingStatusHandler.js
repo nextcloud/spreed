@@ -120,7 +120,7 @@ export default class SpeakingStatusHandler {
 	#handleSpeaking(callParticipantModel, speaking) {
 		const attendeeId = this.#store.getters.findParticipant(
 			this.#store.getters.getToken(),
-			{ sessionId: callParticipantModel.attributes.nextcloudSessionId }
+			{ sessionId: callParticipantModel.attributes.nextcloudSessionId },
 		)?.attendeeId
 
 		if (!attendeeId) {

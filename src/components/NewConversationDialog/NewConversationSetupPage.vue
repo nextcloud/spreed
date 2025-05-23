@@ -107,7 +107,7 @@ export default {
 		listable: {
 			type: Number,
 			required: true,
-		}
+		},
 	},
 
 	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter', 'is-password-valid'],

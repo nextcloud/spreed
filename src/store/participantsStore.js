@@ -898,7 +898,7 @@ const actions = {
 			finishConnecting()
 			commit('connectionFailed', {
 				token,
-				payload
+				payload,
 			})
 			commit('setInCall', {
 				token,
@@ -1243,7 +1243,7 @@ const actions = {
 		Object.values(phoneStates).forEach((phoneState) => {
 			context.commit('setPhoneState', {
 				callid: phoneState.callid,
-				value: phoneState
+				value: phoneState,
 			})
 		})
 	},
@@ -1258,7 +1258,7 @@ const actions = {
 
 	clearConnectionFailed(context, token) {
 		context.commit('clearConnectionFailed', token)
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

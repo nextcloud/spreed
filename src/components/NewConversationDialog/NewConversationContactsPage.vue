@@ -277,7 +277,7 @@ export default {
 			}
 
 			this.updateSelectedParticipants(this.participantPhoneItem)
-		}
+		},
 	},
 }
 </script>

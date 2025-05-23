@@ -284,7 +284,7 @@ export default {
 			await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message: temporaryMessage.message })
 			showSuccess(t('spreed', 'The message was sent to all breakout rooms'))
 			this.isSendMessageDialogOpened = false
-		}
+		},
 	},
 }
 </script>

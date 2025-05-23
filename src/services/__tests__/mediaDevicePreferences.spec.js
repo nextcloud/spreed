@@ -138,7 +138,7 @@ describe('mediaDevicePreferences', () => {
 					kind: 'audioinput',
 					devices: allDevices,
 					inputList: audioInputPreferenceList,
-					inputId: id
+					inputId: id,
 				})
 			}
 
@@ -153,7 +153,7 @@ describe('mediaDevicePreferences', () => {
 				kind: 'audioinput',
 				devices: allDevices,
 				inputList: audioInputPreferenceList,
-				inputId: audioInputDeviceA.deviceId
+				inputId: audioInputDeviceA.deviceId,
 			})
 
 			// Assert: should put device A on top of default device
@@ -165,7 +165,7 @@ describe('mediaDevicePreferences', () => {
 				kind: 'audioinput',
 				devices: allDevices.filter((device) => !['da1234567890', 'da4567890123'].includes(device.deviceId)),
 				inputList: audioInputPreferenceList,
-				inputId: audioInputDeviceA.deviceId
+				inputId: audioInputDeviceA.deviceId,
 			})
 
 			// Assert
@@ -177,7 +177,7 @@ describe('mediaDevicePreferences', () => {
 				kind: 'audioinput',
 				devices: allDevices.filter((device) => !['audioinput', 'videoinput'].includes(device.kind)),
 				inputList: audioInputPreferenceList,
-				inputId: audioInputDeviceA.deviceId
+				inputId: audioInputDeviceA.deviceId,
 			})
 
 			// Assert
@@ -189,7 +189,7 @@ describe('mediaDevicePreferences', () => {
 				kind: 'audioinput',
 				devices: allDevices.filter((device) => !['default', 'da1234567890', 'da4567890123'].includes(device.deviceId)),
 				inputList: [audioInputDeviceDefault, audioInputDeviceA],
-				inputId: audioInputDeviceB.deviceId
+				inputId: audioInputDeviceB.deviceId,
 			})
 
 			// Assert: should put device C on top of device B, but not the device A

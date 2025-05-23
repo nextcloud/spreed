@@ -170,7 +170,7 @@ export default {
 
 			set(value) {
 				this.saveLobbyTimer(value)
-			}
+			},
 		},
 
 		dateTimePickerAttrs() {
@@ -252,7 +252,7 @@ export default {
 
 		openPollDraftHandler() {
 			EventBus.emit('poll-drafts-open', { selector: '#settings-section_meeting' })
-		}
+		},
 	},
 }
 </script>

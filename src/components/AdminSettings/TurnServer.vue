@@ -162,7 +162,7 @@ export default {
 
 			set(value) {
 				this.updateServer(value)
-			}
+			},
 		},
 
 		turnSchemes: {
@@ -172,7 +172,7 @@ export default {
 
 			set(value) {
 				this.updateSchemes(value)
-			}
+			},
 		},
 
 		turnProtocols: {
@@ -182,7 +182,7 @@ export default {
 
 			set(value) {
 				this.updateProtocols(value)
-			}
+			},
 		},
 
 		turnSecret: {

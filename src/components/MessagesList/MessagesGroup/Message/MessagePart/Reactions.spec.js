@@ -68,7 +68,7 @@ describe('Reactions.vue', () => {
 			reactions: { '🎄': 2, '🔥': 2, '🔒': 2 },
 			reactionsSelf: ['🔥'],
 			timestamp: 1703668230,
-			token
+			token,
 		}
 		messageMock = jest.fn().mockReturnValue(message)
 		testStoreConfig.modules.messagesStore.getters.message = () => messageMock
@@ -86,22 +86,22 @@ describe('Reactions.vue', () => {
 		reactionsStored = {
 			'🎄': [
 				{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' },
-				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'guests' }
+				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'guests' },
 			],
 			'🔥': [
 				{ actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' },
-				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' }
+				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' },
 			],
 			'🔒': [
 				{ actorDisplayName: 'user3', actorId: 'actorId3', actorType: 'users' },
-				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' }
+				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' },
 			],
 		}
 
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: reactionsStored
+			reactionsDetails: reactionsStored,
 		})
 
 		reactionsProps = {
@@ -176,7 +176,7 @@ describe('Reactions.vue', () => {
 				reactions: {},
 				reactionsSelf: [],
 				timestamp: 1703668230,
-				token
+				token,
 			})
 			testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 			store = new Vuex.Store(testStoreConfig)
@@ -255,7 +255,7 @@ describe('Reactions.vue', () => {
 
 			const removedReaction = {
 				...reactionsStored,
-				'🔥': [...reactionsStored['🔥'].filter((obj) => obj.actorId !== 'admin')] // remove the current user
+				'🔥': [...reactionsStored['🔥'].filter((obj) => obj.actorId !== 'admin')], // remove the current user
 			}
 			const responseRemoved = generateOCSResponse({ payload: removedReaction })
 			removeReactionFromMessage.mockResolvedValue(responseRemoved)

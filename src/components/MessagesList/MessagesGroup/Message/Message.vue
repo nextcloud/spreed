@@ -294,7 +294,7 @@ export default {
 				const mimetype = this.message.messageParameters[p].mimetype
 				const itemType = getItemTypeFromMessage({
 					messageParameters: this.message.messageParameters,
-					messageType: this.message.messageType
+					messageType: this.message.messageType,
 				})
 				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
@@ -464,7 +464,7 @@ export default {
 			this.loading = true
 			await this.chatExtrasStore.requestChatSummary(this.message.token, this.message.id)
 			this.loading = false
-		}
+		},
 	},
 }
 </script>

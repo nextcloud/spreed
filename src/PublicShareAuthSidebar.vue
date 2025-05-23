@@ -43,7 +43,7 @@ import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import {
 	leaveConversationSync,
-	setGuestUserName
+	setGuestUserName,
 } from './services/participantsService.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -74,7 +74,7 @@ export default {
 		return {
 			fetchCurrentConversationIntervalId: null,
 			isWaitingToClose: false,
-			recordingConsentGiven: false
+			recordingConsentGiven: false,
 		}
 	},
 
@@ -206,7 +206,7 @@ export default {
 			// by the guest name addition event.
 			emit('talk:media-settings:show', 'video-verification')
 			unsubscribe('talk:guest-name:added', this.showGuestMediaSettings)
-		}
+		},
 	},
 }
 </script>

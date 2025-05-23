@@ -162,7 +162,7 @@ export default {
 				this.$emit('click-participant', this.participant)
 			}
 		},
-	}
+	},
 }
 </script>
 

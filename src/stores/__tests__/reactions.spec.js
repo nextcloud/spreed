@@ -43,22 +43,22 @@ describe('reactionsStore', () => {
 		reactions = {
 			'🎄': [
 				{ displayName: 'user1', actorId: 'actorId1', actorType: 'users' },
-				{ displayName: 'user2', actorId: 'actorId2', actorType: 'users' }
+				{ displayName: 'user2', actorId: 'actorId2', actorType: 'users' },
 			],
 			'🔥': [
 				{ displayName: 'user3', actorId: 'actorId3', actorType: 'users' },
-				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' }
+				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' },
 			],
 			'🔒': [
 				{ displayName: 'user3', actorId: 'actorId3', actorType: 'users' },
-				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' }
+				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' },
 			],
 		}
 
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: reactions
+			reactionsDetails: reactions,
 		})
 	})
 
@@ -87,23 +87,23 @@ describe('reactionsStore', () => {
 			],
 			'😅': [
 				{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' },
-				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'users' }
+				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'users' },
 			],
 			'💜': [
 				{ actorDisplayName: 'user3', actorId: 'actorId3', actorType: 'users' },
-				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' }
-			]
+				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' },
+			],
 		}
 		// Act
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: newReactions
+			reactionsDetails: newReactions,
 		})
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: newReactions
+			reactionsDetails: newReactions,
 		})
 
 		// Assert
@@ -117,7 +117,7 @@ describe('reactionsStore', () => {
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: emptyReactions
+			reactionsDetails: emptyReactions,
 		})
 		// Assert
 		expect(reactionsStore.getReactions(token, messageId)).toEqual(undefined)
@@ -132,9 +132,9 @@ describe('reactionsStore', () => {
 			timestamp: Date.now(),
 			token,
 			parent: {
-				id: messageId
+				id: messageId,
 			},
-			message: '😅'
+			message: '😅',
 		}
 		expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒'])
 		// Act
@@ -153,9 +153,9 @@ describe('reactionsStore', () => {
 			timestamp: Date.now(),
 			token,
 			parent: {
-				id: messageId
+				id: messageId,
 			},
-			message: '🎄'
+			message: '🎄',
 		}
 		expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒'])
 		// Act
@@ -175,19 +175,19 @@ describe('reactionsStore', () => {
 			timestamp: Date.now(),
 			token,
 			parent: {
-				id: messageId
+				id: messageId,
 			},
-			message: 'reaction removed'
+			message: 'reaction removed',
 		}
 		const actualReactions = {
 			'🎄': [
 				{ displayName: 'user1', actorId: 'actorId1' },
-				{ displayName: 'user2', actorId: 'actorId2' }
+				{ displayName: 'user2', actorId: 'actorId2' },
 			],
 			'🔥': [
 				{ displayName: 'user3', actorId: 'actorId3' },
-				{ displayName: 'user4', actorId: 'actorId4' }
-			]
+				{ displayName: 'user4', actorId: 'actorId4' },
+			],
 		}
 		const response = generateOCSResponse({ payload: actualReactions })
 		getReactionsDetails.mockResolvedValue(response)
@@ -218,9 +218,9 @@ describe('reactionsStore', () => {
 			timestamp: Date.now(),
 			token,
 			parent: {
-				id: messageId
+				id: messageId,
 			},
-			message: 'reaction removed'
+			message: 'reaction removed',
 		}
 
 		// Act
@@ -246,7 +246,7 @@ describe('reactionsStore', () => {
 				reactions: { '🎄': 2, '🔥': 2, '🔒': 2 },
 				reactionsSelf: ['🔥'],
 				timestamp: 1703668230,
-				token
+				token,
 			}
 			vuexStore.commit('addMessage', { token, message }) // add a message to the store
 
@@ -257,13 +257,13 @@ describe('reactionsStore', () => {
 			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'addReactionToMessage', {
 				token,
 				messageId,
-				reaction: '😅'
+				reaction: '😅',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'removeReactionFromMessage', {
 				token,
 				messageId,
-				reaction: '😅'
+				reaction: '😅',
 			})
 			expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒']) // no reaction added
 		})
@@ -283,7 +283,7 @@ describe('reactionsStore', () => {
 				reactions: { '🎄': 2, '🔥': 2, '🔒': 2 },
 				reactionsSelf: ['🔥'],
 				timestamp: 1703668230,
-				token
+				token,
 			}
 
 			vuexStore.commit('addMessage', { token, message }) // add a message to the store
@@ -295,13 +295,13 @@ describe('reactionsStore', () => {
 			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'removeReactionFromMessage', {
 				token,
 				messageId,
-				reaction: '🎄'
+				reaction: '🎄',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'addReactionToMessage', {
 				token,
 				messageId,
-				reaction: '🎄'
+				reaction: '🎄',
 			})
 			expect(reactionsStore.getReactions(token, messageId)['🎄'].length).toEqual(2) // no reaction removed
 		})

@@ -153,7 +153,7 @@ describe('CapabilitiesManager', () => {
 			const remoteHash = 'abc123'
 			const joinRoomResponseMock = generateOCSResponse({
 				headers: { 'x-nextcloud-talk-proxy-hash': remoteHash },
-				payload: { token, remoteServer }
+				payload: { token, remoteServer },
 			})
 			const responseMock = generateOCSResponse({ payload: mockedCapabilities.spreed })
 			getRemoteCapabilities.mockReturnValue(responseMock)
@@ -165,13 +165,13 @@ describe('CapabilitiesManager', () => {
 		it('should update capabilities from server response and mark talk proxy hash as dirty', async () => {
 			const joinRoomResponseMock = generateOCSResponse({
 				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}002` },
-				payload: { token, remoteServer }
+				payload: { token, remoteServer },
 			})
 			const responseMock = generateOCSResponse({
 				payload: {
 					...mockedCapabilities.spreed,
 					features: [...mockedCapabilities.spreed.features, 'new-feature'],
-				}
+				},
 			})
 			getRemoteCapabilities.mockReturnValue(responseMock)
 			await setRemoteCapabilities(joinRoomResponseMock)
@@ -182,23 +182,23 @@ describe('CapabilitiesManager', () => {
 		it('should reset dirty proxy hash after second fetch and negative check for changes', async () => {
 			const joinRoomResponseMock = generateOCSResponse({
 				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}003` },
-				payload: { token, remoteServer }
+				payload: { token, remoteServer },
 			})
 			const joinRoomResponseMock2 = generateOCSResponse({
 				headers: { 'x-nextcloud-talk-proxy-hash': `${remoteCapabilities.hash}004` },
-				payload: { token, remoteServer }
+				payload: { token, remoteServer },
 			})
 			const responseMock = generateOCSResponse({
 				payload: {
 					...mockedCapabilities.spreed,
 					features: [...mockedCapabilities.spreed.features, 'new-feature', 'new-feature-2'],
-				}
+				},
 			})
 			const responseMock2 = generateOCSResponse({
 				payload: {
 					...mockedCapabilities.spreed,
 					features: [...mockedCapabilities.spreed.features, 'new-feature', 'new-feature-2'],
-				}
+				},
 			})
 			getRemoteCapabilities.mockReturnValueOnce(responseMock).mockReturnValueOnce(responseMock2)
 			await setRemoteCapabilities(joinRoomResponseMock)

@@ -21,15 +21,15 @@ export async function deriveKeys(material) {
 		name: 'HKDF',
 		salt: textEncoder.encode('TalkFrameEncryptionKey'),
 		hash: 'SHA-256',
-		info
+		info,
 	}, material, {
 		name: 'AES-GCM',
-		length: 128
+		length: 128,
 	}, false, ['encrypt', 'decrypt']);
 
 	return {
 		material,
-		encryptionKey
+		encryptionKey,
 	};
 }
 
@@ -47,7 +47,7 @@ export async function ratchet(material) {
 		name: 'HKDF',
 		salt: textEncoder.encode('TalkFrameRatchetKey'),
 		hash: 'SHA-256',
-		info: new ArrayBuffer()
+		info: new ArrayBuffer(),
 	}, material, 256);
 }
 

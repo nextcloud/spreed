@@ -285,7 +285,7 @@ export default {
 				return
 			}
 			this.$emit('bottom-bar-hover', value)
-		}
+		},
 	},
 
 	methods: {

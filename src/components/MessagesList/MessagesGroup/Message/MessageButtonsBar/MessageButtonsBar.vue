@@ -594,7 +594,7 @@ export default {
 
 		canReply() {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-		}
+		},
 	},
 
 	watch: {
@@ -693,7 +693,7 @@ export default {
 		async forwardToNote() {
 			try {
 				await this.$store.dispatch('forwardMessage', {
-					messageToBeForwarded: this.$store.getters.message(this.message.token, this.message.id)
+					messageToBeForwarded: this.$store.getters.message(this.message.token, this.message.id),
 				})
 				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {

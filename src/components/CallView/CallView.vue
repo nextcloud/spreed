@@ -405,7 +405,7 @@ export default {
 			}
 
 			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
-		}
+		},
 	},
 
 	watch: {
@@ -485,7 +485,7 @@ export default {
 			handler(value) {
 				this.callViewStore.setIsEmptyCallView(value)
 			},
-		}
+		},
 	},
 
 	created() {

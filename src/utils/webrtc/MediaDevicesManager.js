@@ -296,7 +296,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceAudioInputList,
-				inputId: this.attributes.audioInputId
+				inputId: this.attributes.audioInputId,
 			})
 
 			if (newAudioInputList) {
@@ -311,7 +311,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceAudioOutputList,
-				inputId: this.attributes.audioOutputId
+				inputId: this.attributes.audioOutputId,
 			})
 
 			if (newAudioOutputList) {
@@ -326,7 +326,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceVideoInputList,
-				inputId: this.attributes.videoInputId
+				inputId: this.attributes.videoInputId,
 			})
 
 			if (newVideoInputList) {

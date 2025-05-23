@@ -27,7 +27,7 @@ const KEYRING_SIZE = 16;
 const UNENCRYPTED_BYTES = {
 	key: 10,
 	delta: 3,
-	undefined: 1 // frame.type is not set on audio
+	undefined: 1, // frame.type is not set on audio
 };
 const ENCRYPTION_ALGORITHM = 'AES-GCM';
 
@@ -144,7 +144,7 @@ export class Context {
 			return crypto.subtle.encrypt({
 				name: ENCRYPTION_ALGORITHM,
 				iv,
-				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength)
+				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength),
 			}, this._cryptoKeyRing[keyIndex].encryptionKey, new Uint8Array(encodedFrame.data,
 				UNENCRYPTED_BYTES[encodedFrame.type]))
 				.then((cipherText) => {
@@ -243,7 +243,7 @@ export class Context {
 			const plainText = await crypto.subtle.decrypt({
 				name: 'AES-GCM',
 				iv,
-				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength)
+				additionalData: new Uint8Array(encodedFrame.data, 0, frameHeader.byteLength),
 			},
 			encryptionKey,
 			new Uint8Array(encodedFrame.data, cipherTextStart, cipherTextLength));

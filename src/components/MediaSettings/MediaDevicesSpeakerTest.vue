@@ -38,7 +38,7 @@ export default {
 
 	setup() {
 		return {
-			soundsStore: useSoundsStore()
+			soundsStore: useSoundsStore(),
 		}
 	},
 
@@ -62,7 +62,7 @@ export default {
 					animationDelay: Math.random() * -2 + 's',
 				},
 			}))
-		}
+		},
 	},
 
 	beforeDestroy() {

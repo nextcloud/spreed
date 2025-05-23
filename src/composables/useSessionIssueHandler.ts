@@ -80,7 +80,7 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 					label: t('spreed', 'Join here'),
 					type: 'primary',
 					callback: () => true,
-				}
+				},
 			],
 		}, (result?: boolean) => {
 			if (result) {

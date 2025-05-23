@@ -344,7 +344,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.selectAttachmentFolder(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 	},
@@ -395,7 +395,7 @@ export default {
 			this.privacyLoading = true
 			try {
 				await this.settingsStore.updateReadStatusPrivacy(
-					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
@@ -408,7 +408,7 @@ export default {
 			this.privacyLoading = true
 			try {
 				await this.settingsStore.updateTypingStatusPrivacy(
-					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
@@ -421,7 +421,7 @@ export default {
 			this.appearanceLoading = true
 			try {
 				await this.settingsStore.setConversationsListStyle(
-					value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES
+					value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES,
 				)
 				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {

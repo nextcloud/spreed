@@ -224,7 +224,7 @@ export const mockedCapabilities: Capabilities = {
 			],
 		},
 		version: '20.0.0-dev.0',
-	}
+	},
 }
 
 export const mockedRemotes = {

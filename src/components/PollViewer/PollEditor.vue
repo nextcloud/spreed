@@ -189,7 +189,7 @@ const isAnonymous = computed({
 	},
 	set(value) {
 		pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
-	}
+	},
 })
 
 const isMultipleAnswer = computed({
@@ -198,7 +198,7 @@ const isMultipleAnswer = computed({
 	},
 	set(value) {
 		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
-	}
+	},
 })
 
 const exportPollURI = computed(() => convertToJSONDataURI(pollForm))

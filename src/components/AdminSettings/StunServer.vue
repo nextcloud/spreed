@@ -84,7 +84,7 @@ export default {
 
 			set(value) {
 				this.$emit('update:server', value)
-			}
+			},
 		},
 
 		isValidServer() {

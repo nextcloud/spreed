@@ -794,7 +794,7 @@ PeerConnectionAnalyzer.prototype = {
 				console.debug('%s: %i-%i: %s', tag, i, j, JSON.stringify(rtcStat))
 			})
 		})
-	}
+	},
 
 }
 

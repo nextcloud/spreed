@@ -194,7 +194,7 @@ export default {
 				if (this.token && this.active && this.isSidebarOpen) {
 					this.sharedItemsStore.getSharedItemsOverview(this.token)
 				}
-			}
+			},
 		},
 	},
 
@@ -215,7 +215,7 @@ export default {
 
 		openPollDraftHandler() {
 			EventBus.emit('poll-drafts-open', {})
-		}
+		},
 	},
 }
 </script>

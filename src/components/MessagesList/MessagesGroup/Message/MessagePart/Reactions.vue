@@ -187,7 +187,7 @@ export default {
 			const detailedReactionsSimplified = Object.fromEntries(
 				Object.entries(this.detailedReactions)
 					.sort() // Plain reactions come sorted
-					.map(([key, value]) => [key, value.length])
+					.map(([key, value]) => [key, value.length]),
 			)
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
@@ -276,7 +276,7 @@ export default {
 			}
 			return n('spreed', 'and %n other participant', 'and %n other participants', this.reactionsCount(reaction) - 3)
 		},
-	}
+	},
 }
 </script>
 

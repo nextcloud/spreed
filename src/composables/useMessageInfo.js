@@ -57,13 +57,13 @@ export function useMessageInfo(message = ref({})) {
 
 	const isCurrentUserOwnMessage = computed(() =>
 		message.value.actorId === currentActorId
-		&& message.value.actorType === currentActorType
+		&& message.value.actorType === currentActorType,
 	)
 	const isBotInOneToOne = computed(() =>
 		message.value.actorId.startsWith(ATTENDEE.BOT_PREFIX)
 		&& message.value.actorType === ATTENDEE.ACTOR_TYPE.BOTS
 		&& (conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
-			|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)
+			|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER),
 	)
 
 	const isEditable = computed(() => {

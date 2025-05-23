@@ -142,7 +142,7 @@ export default {
 
 		canEditPollDraft() {
 			return this.draft && hasTalkFeature(this.token, 'edit-draft-poll')
-		}
+		},
 	},
 
 	methods: {

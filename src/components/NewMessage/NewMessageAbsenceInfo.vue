@@ -104,7 +104,7 @@ export default {
 		userAbsenceCaption() {
 			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName }, undefined, {
 				escape: false,
-				sanitize: false
+				sanitize: false,
 			})
 		},
 
@@ -163,7 +163,7 @@ export default {
 				name: 'root',
 				query: {
 					callUser: this.userAbsence.replacementUserId,
-				}
+				},
 			}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},

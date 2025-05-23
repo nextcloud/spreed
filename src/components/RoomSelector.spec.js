@@ -127,7 +127,7 @@ describe('RoomSelector', () => {
 			const wrapper = await mountRoomSelector()
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/room'),
-				{ params: { includeStatus: 1 } }
+				{ params: { includeStatus: 1 } },
 			)
 
 			// Assert
@@ -143,7 +143,7 @@ describe('RoomSelector', () => {
 			const wrapper = await mountRoomSelector({ listOpenConversations: true })
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/listed-room'),
-				{ params: { searchTerm: '' } }
+				{ params: { searchTerm: '' } },
 			)
 
 			// Assert

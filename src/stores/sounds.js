@@ -126,5 +126,5 @@ export const useSoundsStore = defineStore('sounds', {
 				console.error(error)
 			}
 		},
-	}
+	},
 })

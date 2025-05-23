@@ -45,7 +45,7 @@ function handleTransform(context, operation, readableStream, writableStream) {
 	if (operation === 'encode' || operation === 'decode') {
 		const transformFn = operation === 'encode' ? context.encodeFunction : context.decodeFunction;
 		const transformStream = new TransformStream({
-			transform: transformFn.bind(context)
+			transform: transformFn.bind(context),
 		});
 
 		readableStream

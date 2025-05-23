@@ -178,7 +178,7 @@ export default {
 				escape: false,
 				sanitize: false,
 			})
-		}
+		},
 	},
 
 	methods: {

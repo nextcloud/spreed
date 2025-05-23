@@ -751,7 +751,7 @@ export const regionCodes = {
 	NA: {
 		name: 'Namibia',
 		dial_code: '+264',
-		code: 'NA'
+		code: 'NA',
 	},
 	NR: {
 		name: 'Nauru',

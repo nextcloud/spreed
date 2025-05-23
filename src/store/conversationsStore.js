@@ -415,7 +415,7 @@ const actions = {
 
 		const currentConversations = context.state.conversations
 		const newConversations = Object.fromEntries(
-			conversations.map((conversation) => [conversation.token, conversation])
+			conversations.map((conversation) => [conversation.token, conversation]),
 		)
 
 		// Remove conversations that are not in the new list
@@ -938,7 +938,7 @@ const actions = {
 				callFlag: hasCall ? PARTICIPANT.CALL_FLAG.IN_CALL : PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				lastActivity,
 				callStartTime: hasCall ? lastActivity : 0,
-			}
+			},
 		})
 	},
 
@@ -1284,7 +1284,7 @@ const actions = {
 			console.error('Error while unbinding conversation from object: ', error)
 			showError(t('spreed', 'Could not remove the automatic expiration'))
 		}
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

@@ -630,7 +630,7 @@ describe('Participant.vue', () => {
 					token: 'current-token',
 					attendeeId: 'alice-attendee-id',
 					banParticipant: true,
-					internalNote
+					internalNote,
 				})
 			}
 

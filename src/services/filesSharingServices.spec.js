@@ -31,7 +31,7 @@ describe('filesSharingServices', () => {
 				shareWith: 'XXTOKENXX',
 				path: 'path/to/file',
 				referenceId: 'the-reference-id',
-			}
+			},
 		)
 	})
 })

@@ -16,7 +16,6 @@ export default [
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
 			'@stylistic/array-bracket-newline': 'off', // changes array formatting
-			'@stylistic/comma-dangle': 'off', // changes 125 files
 			'@stylistic/function-call-argument-newline': 'off', // changes 125 files
 			'@stylistic/function-paren-newline': 'off', // weird formatting
 			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
@@ -54,7 +53,6 @@ export default [
 			'prefer-const': 'off', // non-fixable
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign
-			'vue/comma-dangle': 'off', // changes commas
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
 			'vue/multi-word-component-names': 'off', // non-fixable
 			'vue/no-boolean-default': 'off', // non-fixable

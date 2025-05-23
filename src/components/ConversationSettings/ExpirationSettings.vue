@@ -93,7 +93,7 @@ export default {
 
 			set(value) {
 				this.changeExpiration(value)
-			}
+			},
 		},
 	},
 

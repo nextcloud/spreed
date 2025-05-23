@@ -236,7 +236,7 @@ export default {
 	watch: {
 		avatarUrl() {
 			this.failed = false
-		}
+		},
 	},
 
 	methods: {

@@ -301,7 +301,7 @@ export default {
 					return
 				}
 				this.groupwareStore.getUpcomingEvents(value)
-			}
+			},
 		},
 	},
 
