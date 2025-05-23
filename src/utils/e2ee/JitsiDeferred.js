@@ -19,23 +19,23 @@ export default class Deferred {
 	constructor() {
 		this.promise = new Promise((resolve, reject) => {
 			this.resolve = (...args) => {
-				this.clearRejectTimeout();
-				resolve(...args);
-			};
+				this.clearRejectTimeout()
+				resolve(...args)
+			}
 			this.reject = (...args) => {
-				this.clearRejectTimeout();
-				reject(...args);
-			};
-		});
-		this.then = this.promise.then.bind(this.promise);
-		this.catch = this.promise.catch.bind(this.promise);
+				this.clearRejectTimeout()
+				reject(...args)
+			}
+		})
+		this.then = this.promise.then.bind(this.promise)
+		this.catch = this.promise.catch.bind(this.promise)
 	}
 
 	/**
 	 * Clears the reject timeout.
 	 */
 	clearRejectTimeout() {
-		clearTimeout(this._timeout);
+		clearTimeout(this._timeout)
 	}
 
 	/**
@@ -43,7 +43,7 @@ export default class Deferred {
 	 */
 	setRejectTimeout(ms) {
 		this._timeout = setTimeout(() => {
-			this.reject(new Error('timeout'));
-		}, ms);
+			this.reject(new Error('timeout'))
+		}, ms)
 	}
 }
