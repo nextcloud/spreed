@@ -98,8 +98,7 @@ export default (function() {
 	 *        source
 	 */
 	function disconnectTrackSource(inputTrackId, trackSource, outputTrackId = 'default') {
-		const connectedTrackSourceIndex = this._connectedTrackSources.findIndex((connected) =>
-			connected.trackSource === trackSource
+		const connectedTrackSourceIndex = this._connectedTrackSources.findIndex((connected) => connected.trackSource === trackSource
 			&& connected.outputTrackId === outputTrackId
 			&& connected.inputTrackId === inputTrackId)
 		if (connectedTrackSourceIndex === -1) {

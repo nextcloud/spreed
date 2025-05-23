@@ -16,7 +16,6 @@ export default [
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
 			'@stylistic/array-bracket-newline': 'off', // changes array formatting
-			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable

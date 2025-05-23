@@ -79,8 +79,7 @@ const searchResultsVirtual = computed(() => {
 	const virtualList = []
 
 	const lowerSearchText = props.searchText.toLowerCase()
-	const searchResultsConversationList = props.conversationsList.filter((conversation) =>
-		conversation.displayName.toLowerCase().includes(lowerSearchText)
+	const searchResultsConversationList = props.conversationsList.filter((conversation) => conversation.displayName.toLowerCase().includes(lowerSearchText)
 		|| conversation.name.toLowerCase().includes(lowerSearchText))
 
 	// Add conversations section

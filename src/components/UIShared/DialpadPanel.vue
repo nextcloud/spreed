@@ -156,8 +156,7 @@ export default {
 	emits: ['dial:type', 'update:value', 'submit'],
 
 	setup(props) {
-		const options = Object.values(regionCodes).map((region) =>
-			({ ...region, dial_and_name: region.dial_code + ' ' + region.name }))
+		const options = Object.values(regionCodes).map((region) => ({ ...region, dial_and_name: region.dial_code + ' ' + region.name }))
 
 		const buttons = props.dialing
 			? buttonsDigits.concat(buttonsDialOption)
