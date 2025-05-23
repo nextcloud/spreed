@@ -125,7 +125,7 @@ export default {
 
 		invitationsLoadedCount() {
 			return Object.keys(this.invitations).length
-		}
+		},
 	},
 
 	expose: ['showModal'],
@@ -171,8 +171,8 @@ export default {
 			return {
 				user: {
 					component: Mention,
-					props: { id, name: item.inviterDisplayName, server, token: item.token || 'new', type: 'user' }
-				}
+					props: { id, name: item.inviterDisplayName, server, token: item.token || 'new', type: 'user' },
+				},
 			}
 		},
 	},

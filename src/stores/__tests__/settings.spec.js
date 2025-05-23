@@ -85,7 +85,7 @@ describe('settingsStore', () => {
 			// Act
 			const results = [settingsStore.getShowMediaSettings('token-1'),
 				settingsStore.getShowMediaSettings('token-2'),
-				settingsStore.getShowMediaSettings('token-3'),]
+				settingsStore.getShowMediaSettings('token-3')]
 
 			// Assert
 			expect(results).toEqual([true, true, false])

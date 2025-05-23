@@ -74,7 +74,7 @@ const eventDateLabel = computed(() => {
 			// TRANSLATORS: e.g. "Tomorrow 10:00 - 11:00"
 			time = t('spreed', '{dayPrefix} {dateTime}', {
 				dayPrefix: isToday ? relativeFormatter.format(0, 'day') : relativeFormatter.format(1, 'day'),
-				dateTime: timeRange
+				dateTime: timeRange,
 			})
 		} else {
 			time = Intl.DateTimeFormat(getCanonicalLocale(), {

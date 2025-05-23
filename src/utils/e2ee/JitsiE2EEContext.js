@@ -38,7 +38,7 @@ export default class E2EEcontext {
 
 		this._worker.postMessage({
 			operation: 'initialize',
-			sharedKey
+			sharedKey,
 		});
 	}
 
@@ -51,7 +51,7 @@ export default class E2EEcontext {
 	cleanup(participantId) {
 		this._worker.postMessage({
 			operation: 'cleanup',
-			participantId
+			participantId,
 		});
 	}
 
@@ -61,7 +61,7 @@ export default class E2EEcontext {
 	 */
 	cleanupAll() {
 		this._worker.postMessage({
-			operation: 'cleanupAll'
+			operation: 'cleanupAll',
 		});
 	}
 
@@ -82,7 +82,7 @@ export default class E2EEcontext {
 		if (window.RTCRtpScriptTransform) {
 			const options = {
 				operation: 'decode',
-				participantId
+				participantId,
 			};
 
 			receiver.transform = new RTCRtpScriptTransform(this._worker, options);
@@ -93,7 +93,7 @@ export default class E2EEcontext {
 				operation: 'decode',
 				readableStream: receiverStreams.readable,
 				writableStream: receiverStreams.writable,
-				participantId
+				participantId,
 			}, [receiverStreams.readable, receiverStreams.writable]);
 		}
 	}
@@ -115,7 +115,7 @@ export default class E2EEcontext {
 		if (window.RTCRtpScriptTransform) {
 			const options = {
 				operation: 'encode',
-				participantId
+				participantId,
 			};
 
 			sender.transform = new RTCRtpScriptTransform(this._worker, options);
@@ -126,7 +126,7 @@ export default class E2EEcontext {
 				operation: 'encode',
 				readableStream: senderStreams.readable,
 				writableStream: senderStreams.writable,
-				participantId
+				participantId,
 			}, [senderStreams.readable, senderStreams.writable]);
 		}
 	}
@@ -143,7 +143,7 @@ export default class E2EEcontext {
 			operation: 'setKey',
 			key,
 			keyIndex,
-			participantId
+			participantId,
 		});
 	}
 }

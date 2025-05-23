@@ -25,44 +25,44 @@ import { useDashboardStore } from '../../../stores/dashboard.ts'
 const props = defineProps({
 	messageId: {
 		type: [Number, String],
-		default: ''
+		default: '',
 	},
 	title: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	to: {
 		type: Object,
-		default: () => ({})
+		default: () => ({}),
 	},
 	subline: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	actorId: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	actorType: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	token: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	timestamp: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	messageParameters: {
 		type: [Array, Object],
-		default: () => ([])
+		default: () => ([]),
 	},
 	isReminder: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
 const store = useStore()
@@ -76,7 +76,7 @@ const name = computed(() => {
 	}
 	return t('spreed', '{actor} in {conversation}',
 		{ actor: props.title, conversation: conversation.value.displayName },
-		{ escape: false, sanitize: false }
+		{ escape: false, sanitize: false },
 	)
 })
 const richSubline = computed(() => {

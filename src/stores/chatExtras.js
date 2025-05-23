@@ -187,7 +187,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				this.setChatEditInput({
 					token,
 					text: message,
-					parameters: messageParameters
+					parameters: messageParameters,
 				})
 			}
 			EventBus.emit('editing-message')

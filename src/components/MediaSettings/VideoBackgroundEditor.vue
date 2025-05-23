@@ -43,7 +43,7 @@
 				class="background-editor__element"
 				:class="{ 'background-editor__element--selected': selectedBackground === path }"
 				:style="{
-					'background-image': 'url(' + path + ')'
+					'background-image': 'url(' + path + ')',
 				}"
 				@click="handleSelectBackground(path)">
 				<IconCheckBold v-if="selectedBackground === path"
@@ -168,7 +168,7 @@ export default {
 			return [{
 				label: t('spreed', 'Confirm'),
 				callback: (nodes) => this.handleFileChoose(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 	},

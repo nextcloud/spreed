@@ -163,6 +163,6 @@ export const useCallViewStore = defineStore('callView', {
 		resetCallHasJustEnded() {
 			clearTimeout(this.callEndedTimeout)
 			this.callEndedTimeout = undefined
-		}
+		},
 	},
 })

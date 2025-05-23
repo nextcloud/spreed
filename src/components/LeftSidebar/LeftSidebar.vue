@@ -525,7 +525,7 @@ export default {
 				this.forceFullRoomListRefreshAfterXLoops = 10
 				this.fetchConversations()
 			}
-		}
+		},
 	},
 
 	beforeMount() {
@@ -946,7 +946,7 @@ export default {
 		showTalkDashboard() {
 			this.$router.push({ name: 'root' })
 				.catch((err) => console.debug(`Error while pushing the dashboard route: ${err}`))
-		}
+		},
 	},
 }
 </script>

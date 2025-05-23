@@ -60,7 +60,7 @@ describe('LeftSidebar.vue', () => {
 			router,
 			store,
 			provide: {
-				'NcContent:setHasAppNavigation': () => {}
+				'NcContent:setHasAppNavigation': () => {},
 			},
 			stubs: {
 				// to prevent user status fetching

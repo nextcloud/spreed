@@ -6,7 +6,7 @@
 import {
 	PEER_DIRECTION,
 	PEER_TYPE,
-	PeerConnectionAnalyzer
+	PeerConnectionAnalyzer,
 } from './PeerConnectionAnalyzer.js'
 import EmitterMixin from '../../EmitterMixin.js'
 

@@ -111,14 +111,14 @@ const profileInformation = computed(() => {
 		fields.push({
 			key: 'person',
 			icon: IconAccount,
-			label: joinFields(profileInfo.value.role, profileInfo.value.pronouns)
+			label: joinFields(profileInfo.value.role, profileInfo.value.pronouns),
 		})
 	}
 	if (profileInfo.value.organisation || profileInfo.value.address) {
 		fields.push({
 			key: 'organisation',
 			icon: IconOfficeBuilding,
-			label: joinFields(profileInfo.value.organisation, profileInfo.value.address)
+			label: joinFields(profileInfo.value.organisation, profileInfo.value.address),
 		})
 	}
 

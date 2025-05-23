@@ -86,7 +86,7 @@ export default {
 		return {
 			supportsAvatar,
 			CONVERSATION,
-			maxDescriptionLength
+			maxDescriptionLength,
 		}
 	},
 

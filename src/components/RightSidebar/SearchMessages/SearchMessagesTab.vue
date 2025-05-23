@@ -225,11 +225,11 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 						hash: `#message_${entry.attributes.messageId}`,
 						params: {
 							token: entry.attributes.conversation,
-							skipLeaveWarning: true
-						}
-					}
+							skipLeaveWarning: true,
+						},
+					},
 				}
-			})
+			}),
 			)
 			nextTick(() => initializeNavigation())
 		}

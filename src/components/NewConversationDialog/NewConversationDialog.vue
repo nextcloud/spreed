@@ -227,7 +227,7 @@ export default {
 				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
 			}
 			return ''
-		}
+		},
 	},
 
 	watch: {

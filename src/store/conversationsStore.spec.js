@@ -233,7 +233,7 @@ describe('conversationsStore', () => {
 			]
 
 			BrowserStorage.getItem.mockReturnValueOnce(
-				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
+				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]',
 			)
 
 			await store.dispatch('restoreConversations')
@@ -928,7 +928,7 @@ describe('conversationsStore', () => {
 					...testConversation,
 					unreadMessages: 0,
 					unreadMention: false,
-				}
+				},
 			})
 			updateLastReadMessage.mockResolvedValue(response)
 

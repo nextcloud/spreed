@@ -1111,7 +1111,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
 				timeout: TOAST_PERMANENT_TIMEOUT,
-			}
+			},
 		)
 		console.error('The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.')
 	}

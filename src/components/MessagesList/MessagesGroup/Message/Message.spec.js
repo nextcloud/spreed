@@ -95,7 +95,7 @@ describe('Message.vue', () => {
 				systemMessage: '',
 				messageType: 'comment',
 				reactions: [],
-			}
+			},
 		}
 	})
 
@@ -370,7 +370,7 @@ describe('Message.vue', () => {
 							component: Mention,
 							props: mentions['mention-call1'],
 						},
-					}
+					},
 				)
 			})
 
@@ -397,7 +397,7 @@ describe('Message.vue', () => {
 							component: FilePreview,
 							props: { file: params.file },
 						},
-					}
+					},
 				)
 			})
 
@@ -425,7 +425,7 @@ describe('Message.vue', () => {
 							component: FilePreview,
 							props: { file: params.file },
 						},
-					}
+					},
 				)
 
 				expect(messageEl.props('text')).toBe('{file}' + '\n\n' + caption)
@@ -454,7 +454,7 @@ describe('Message.vue', () => {
 							component: DeckCard,
 							props: params['deck-card'],
 						},
-					}
+					},
 				)
 			})
 
@@ -472,7 +472,7 @@ describe('Message.vue', () => {
 							component: Location,
 							props: params['geo-location'],
 						},
-					}
+					},
 				)
 			})
 
@@ -499,7 +499,7 @@ describe('Message.vue', () => {
 							component: DefaultParameter,
 							props: params.unknown,
 						},
-					}
+					},
 				)
 			})
 		})

@@ -454,7 +454,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.handleFileShare(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 
@@ -485,7 +485,7 @@ export default {
 
 		canEditMessage() {
 			return hasTalkFeature(this.token, 'edit-messages')
-		}
+		},
 	},
 
 	watch: {
@@ -552,7 +552,7 @@ export default {
 				this.clearTypingInterval()
 				this.checkAbsenceStatus()
 				this.clearSilentState()
-			}
+			},
 		},
 	},
 
@@ -629,7 +629,7 @@ export default {
 				this.chatExtrasStore.setChatEditInput({
 					token: this.token,
 					text,
-					parameters: this.messageToEdit.messageParameters
+					parameters: this.messageToEdit.messageParameters,
 				})
 			} else if (text && text !== this.chatInput) {
 				this.chatExtrasStore.setChatInput({ token: this.token, text })
@@ -953,7 +953,7 @@ export default {
 			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
 				this.toggleSilentChat()
 			}
-		}
+		},
 	},
 }
 </script>

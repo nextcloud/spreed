@@ -118,7 +118,7 @@ export default {
 			}
 			this.$emit('input', JSON.stringify({ m: mode, t: token }))
 			this.$emit('update:model-value', JSON.stringify({ m: mode, t: token }))
-		}
+		},
 	},
 }
 

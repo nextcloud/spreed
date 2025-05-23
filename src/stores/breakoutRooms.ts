@@ -293,5 +293,5 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				showError(t('spreed', 'An error occurred while joining breakout room'))
 			}
 		},
-	}
+	},
 })

@@ -135,7 +135,7 @@ describe('chatExtrasStore', () => {
 			chatExtrasStore.setChatEditInput({
 				token: 'token-1',
 				text: 'Hello {mention-call1} and {mention-user1}',
-				parameters
+				parameters,
 			})
 			// Assert
 			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @"all" and @"alice"')
@@ -166,7 +166,7 @@ describe('chatExtrasStore', () => {
 				token: 'token-1',
 				id: 'id-1',
 				message: 'Hello, world!',
-				messageParameters: {}
+				messageParameters: {},
 			}
 			const emitSpy = jest.spyOn(EventBus, 'emit')
 
@@ -185,7 +185,7 @@ describe('chatExtrasStore', () => {
 				token: 'token-1',
 				id: 'id-1',
 				message: '{file}',
-				messageParameters: { file0: 'file-path' }
+				messageParameters: { file0: 'file-path' },
 			}
 
 			// Act

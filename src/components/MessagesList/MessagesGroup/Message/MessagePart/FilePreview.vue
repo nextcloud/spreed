@@ -298,7 +298,7 @@ export default {
 
 			const sizeMultiplicator = Math.min(
 				(heightConstraint > parseInt(this.file.height, 10) ? 1 : (heightConstraint / parseInt(this.file.height, 10))),
-				(widthConstraint > parseInt(this.file.width, 10) ? 1 : (widthConstraint / parseInt(this.file.width, 10)))
+				(widthConstraint > parseInt(this.file.width, 10) ? 1 : (widthConstraint / parseInt(this.file.width, 10))),
 			)
 
 			return {

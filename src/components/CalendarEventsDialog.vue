@@ -85,7 +85,7 @@ type CalendarOption = { value: string, label: string, color: string }
 const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeableCalendars.map((calendar) => ({
 	value: calendar.uri,
 	label: calendar.displayname,
-	color: calendar.color ?? usernameToColor(calendar.uri).color
+	color: calendar.color ?? usernameToColor(calendar.uri).color,
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
@@ -190,7 +190,7 @@ const selectedParticipants = computed(() => participants.value
 			return a.displayName ? -1 : 1
 		}
 		return 0
-	})
+	}),
 )
 
 const isOneToOneConversation = computed(() => {

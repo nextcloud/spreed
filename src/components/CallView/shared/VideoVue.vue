@@ -329,13 +329,13 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-big': this.isBig,
 				'one-to-one': this.isOneToOne,
-				'presenter-overlay': this.isPresenterOverlay
+				'presenter-overlay': this.isPresenterOverlay,
 			}
 		},
 
 		videoWrapperClass() {
 			return {
-				'presenter-overlay': this.isPresenterOverlay
+				'presenter-overlay': this.isPresenterOverlay,
 			}
 		},
 
@@ -630,7 +630,7 @@ export default {
 
 		handleHoverEvent(value) {
 			this.$emit('force-promote-video', value ? this.model : null)
-		}
+		},
 	},
 
 }

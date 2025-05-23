@@ -18,7 +18,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 			features: ['edit-messages', 'edit-messages-note-to-self'],
 			'features-local': [],
 		},
-	}))
+	})),
 }))
 jest.mock('../useStore.js')
 jest.mock('../useConversationInfo.ts')

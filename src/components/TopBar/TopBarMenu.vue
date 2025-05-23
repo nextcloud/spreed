@@ -478,7 +478,7 @@ export default {
 				{
 					sessionId: this.$store.getters.getSessionId(),
 					raisedHand: this.model.attributes.raisedHand,
-				}
+				},
 			)
 			// If the current conversation is a break-out room and the user is not a moderator,
 			// also send request for assistance to the moderators.

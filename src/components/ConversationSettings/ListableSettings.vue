@@ -89,7 +89,7 @@ export default {
 				default:
 					return t('spreed', 'This conversation is limited to the current participants')
 			}
-		}
+		},
 	},
 
 	watch: {

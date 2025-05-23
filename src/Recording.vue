@@ -23,7 +23,7 @@ export default {
 
 	setup() {
 		return {
-			soundsStore: useSoundsStore()
+			soundsStore: useSoundsStore(),
 		}
 	},
 

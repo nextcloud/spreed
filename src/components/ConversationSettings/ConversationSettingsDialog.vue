@@ -268,7 +268,7 @@ export default {
 
 		recordingConsentRequired() {
 			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
-		}
+		},
 	},
 
 	beforeMount() {

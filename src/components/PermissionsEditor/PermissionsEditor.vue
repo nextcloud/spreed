@@ -171,7 +171,7 @@ export default {
 			return loadState(
 				'spreed',
 				'default_permissions',
-				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE,
 			)
 		},
 

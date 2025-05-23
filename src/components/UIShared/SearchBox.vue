@@ -91,7 +91,7 @@ export default {
 
 			set(value) {
 				this.updateValue(value)
-			}
+			},
 		},
 
 		isSearching() {
@@ -187,7 +187,7 @@ export default {
 			} else {
 				this.getTrailingButton()?.setAttribute('tabindex', '-1')
 			}
-		}
+		},
 
 	},
 }

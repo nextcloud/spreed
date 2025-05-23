@@ -71,7 +71,7 @@ const deviceSelectedOption = computed<NcSelectOption | null>({
 	},
 	set: (value) => {
 		updateDeviceId(value?.id ?? null)
-	}
+	},
 })
 
 /**

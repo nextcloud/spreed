@@ -425,7 +425,7 @@ describe('MessageButtonsBar.vue', () => {
 				apiVersion: 'v3',
 				message: messageProps.message,
 				metadata: conversationProps,
-			},)
+			})
 
 			const actionButton2 = findNcActionButton(wrapper, 'second action')
 			expect(actionButton2.exists()).toBeTruthy()

@@ -129,7 +129,7 @@ export default {
 							actorDisplayNameWithFallback,
 							actorId: actor.actorId,
 							actorType: actor.actorType,
-							reaction: [reaction]
+							reaction: [reaction],
 						}
 					}
 				})

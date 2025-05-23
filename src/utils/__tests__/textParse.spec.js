@@ -5,7 +5,7 @@
 import { parseMentions, parseSpecialSymbols } from '../textParse.ts'
 
 jest.mock('@nextcloud/router', () => ({
-	getBaseUrl: jest.fn().mockReturnValue('https://server2.com')
+	getBaseUrl: jest.fn().mockReturnValue('https://server2.com'),
 }))
 
 describe('textParse', () => {
@@ -38,7 +38,7 @@ describe('textParse', () => {
 					type: 'user',
 					server: 'https://server2.com',
 					'mention-id': 'federated_user/alice@server2.com',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -82,7 +82,7 @@ describe('textParse', () => {
 					id: 'alice space@mail.com',
 					name: 'Out of space Alice',
 					type: 'user',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -100,7 +100,7 @@ describe('textParse', () => {
 					id: 'space talk',
 					name: 'Out of space Talk Group',
 					type: 'user-group',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -118,7 +118,7 @@ describe('textParse', () => {
 					id: 'space talk',
 					name: 'Out of space Talk Group',
 					type: 'team',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -136,7 +136,7 @@ describe('textParse', () => {
 					id: 'guest/efgh',
 					name: 'Guest E',
 					type: 'guest',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -154,7 +154,7 @@ describe('textParse', () => {
 					id: 'efgh',
 					name: 'Email Guest E',
 					type: 'email',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -167,8 +167,8 @@ describe('textParse', () => {
 					id: 'alice',
 					name: 'Feder Alice',
 					type: 'federated_user',
-					server: 'https://server3.com'
-				}
+					server: 'https://server3.com',
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})
@@ -181,7 +181,7 @@ describe('textParse', () => {
 					id: 'alice',
 					name: 'Feder Alice',
 					type: 'user',
-				}
+				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
 		})

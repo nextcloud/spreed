@@ -136,7 +136,7 @@ export default function(mode, constraints, cb) {
 						constraints.video.mandatory.chromeMediaSourceId = data.sourceId
 						getUserMedia(constraints, callback)
 					}
-				}
+				},
 			)
 		} else if (window.cefGetScreenMedia) {
 			// window.cefGetScreenMedia is experimental - may be removed without notice

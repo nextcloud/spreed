@@ -92,7 +92,7 @@ export default {
 		Message,
 		NcEmptyContent,
 		NcLoadingIcon,
-		TransitionWrapper
+		TransitionWrapper,
 	},
 
 	provide() {
@@ -259,7 +259,7 @@ export default {
 		isChatBeginningReached() {
 			return this.stopFetchingOldMessages || (this.messagesList?.[0]?.messageType === 'system'
 				&& ['conversation_created', 'history_cleared'].includes(this.messagesList[0].systemMessage))
-		}
+		},
 	},
 
 	watch: {

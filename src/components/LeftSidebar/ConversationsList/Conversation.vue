@@ -13,7 +13,7 @@
 		:class="{
 			'conversation--active': isActive,
 			'conversation--compact': compact,
-			'conversation--compact__read': compact && !item.unreadMessages
+			'conversation--compact__read': compact && !item.unreadMessages,
 		}"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
@@ -456,13 +456,13 @@ export default {
 				return {
 					component: 'IconVideo',
 					color: '#E9322D',
-					text: t('spreed', 'Call in progress')
+					text: t('spreed', 'Call in progress'),
 				}
 			} else if (this.item.isFavorite) {
 				return {
 					component: 'IconStar',
 					color: '#FFCC00',
-					text: t('spreed', 'Favorite')
+					text: t('spreed', 'Favorite'),
 				}
 			}
 			return null

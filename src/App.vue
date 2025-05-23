@@ -180,7 +180,7 @@ export default {
 				} else {
 					toggle?.removeAttribute('data-theme-dark')
 				}
-			}
+			},
 		},
 
 		unreadCountsMap: {
@@ -189,7 +189,7 @@ export default {
 			handler(value) {
 				emit('talk:unread:updated', value)
 			},
-		}
+		},
 	},
 
 	beforeCreate() {
@@ -430,7 +430,7 @@ export default {
 							callback: () => {
 								beforeRouteChangeListener(to, from, next)
 							},
-						}
+						},
 					],
 				})
 			}

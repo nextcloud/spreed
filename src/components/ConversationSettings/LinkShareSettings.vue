@@ -264,7 +264,7 @@ export default {
 			// Turn on password protection and set a password
 			await this.togglePassword(true)
 			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests: true, password: this.password })
-		}
+		},
 	},
 }
 </script>

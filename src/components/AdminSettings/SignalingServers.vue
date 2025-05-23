@@ -127,7 +127,7 @@ const serversProxy = computed({
 	},
 	set(value) {
 		emit('update:servers', value)
-	}
+	},
 })
 const secretProxy = computed({
 	get() {
@@ -135,7 +135,7 @@ const secretProxy = computed({
 	},
 	set(value) {
 		emit('update:secret', value)
-	}
+	},
 })
 /** Opposite value of hideWarning */
 const showWarningProxy = computed({
@@ -144,7 +144,7 @@ const showWarningProxy = computed({
 	},
 	set(value) {
 		emit('update:hideWarning', !value)
-	}
+	},
 })
 
 const debounceUpdateServers = debounce(updateServers, 1000)

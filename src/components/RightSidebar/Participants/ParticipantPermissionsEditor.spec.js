@@ -135,7 +135,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 						| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 						| PARTICIPANT.PERMISSIONS.CUSTOM,
-				})
+				}),
 			)
 		})
 
@@ -156,7 +156,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 						| PARTICIPANT.PERMISSIONS.CALL_JOIN
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 						| PARTICIPANT.PERMISSIONS.CUSTOM,
-				})
+				}),
 			)
 		})
 	})

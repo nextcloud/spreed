@@ -58,7 +58,7 @@ const descriptionLabel = computed(() => {
 		return t('spreed', 'Would you like to delete this conversation?')
 	}
 	const expirationDurationFormatted = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'always' }).format(
-		expirationDuration.value, 'days'
+		expirationDuration.value, 'days',
 	)
 	return t('spreed', 'This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity.', { expirationDurationFormatted })
 })
@@ -104,7 +104,7 @@ async function showConfirmationDialog() {
 				callback: () => {
 					deleteEventConversation()
 				},
-			}
+			},
 		],
 	})
 }

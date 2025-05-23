@@ -22,5 +22,5 @@ window.OCA.WorkflowEngine.registerOperator({
 	color: '#0082c9',
 	operation: '',
 	element: customElementId,
-	options: FlowPostToConversation // backward "compatibility"
+	options: FlowPostToConversation, // backward "compatibility"
 })

@@ -46,7 +46,7 @@ describe('MessagesSystemGroup.vue', () => {
 					id: 'actor-1',
 					displayName: 'actor one',
 					type: ATTENDEE.ACTOR_TYPE.USERS,
-				}
+				},
 			},
 			systemMessage: 'call_left',
 			timestamp: 2000,
@@ -64,7 +64,7 @@ describe('MessagesSystemGroup.vue', () => {
 					id: 'actor-1',
 					displayName: 'actor one',
 					type: ATTENDEE.ACTOR_TYPE.USERS,
-				}
+				},
 			},
 			systemMessage: 'call_joined',
 			timestamp: 1000,
@@ -100,7 +100,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-1',
 						displayName: 'actor one',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 			},
 			previousMessageId: 90,
@@ -134,7 +134,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-1',
 						displayName: 'actor one',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'call_joined',
 				timestamp: 2000,
@@ -152,7 +152,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-2',
 						displayName: 'actor two',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'call_joined',
 				timestamp: 1000,
@@ -170,7 +170,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-3',
 						displayName: 'actor three',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'call_joined',
 				timestamp: 300,
@@ -326,7 +326,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-4',
 						displayName: 'actor four',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'user_removed',
 				timestamp: 100,
@@ -349,7 +349,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-5',
 						displayName: 'actor five',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'user_removed',
 				timestamp: 200,
@@ -372,7 +372,7 @@ describe('MessagesSystemGroup.vue', () => {
 						id: 'actor-6',
 						displayName: 'actor six',
 						type: ATTENDEE.ACTOR_TYPE.USERS,
-					}
+					},
 				},
 				systemMessage: 'user_removed',
 				timestamp: 300,

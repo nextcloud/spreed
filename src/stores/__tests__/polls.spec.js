@@ -69,9 +69,9 @@ describe('pollsStore', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				actorId: 'user',
 				actorDisplayName: 'User',
-				optionId: 0
-			}
-		]
+				optionId: 0,
+			},
+		],
 	}
 	const messageWithPoll = {
 		id: 123,
@@ -91,7 +91,7 @@ describe('pollsStore', () => {
 				type: 'talk-poll',
 				id: poll.id,
 				name: poll.question,
-			}
+			},
 		},
 	}
 

@@ -169,14 +169,14 @@ export default {
 		localSharedData: {
 			type: Object,
 			required: true,
-			default: () => {}
+			default: () => {},
 		},
 
 		screens: {
 			type: Array,
 			required: false,
 			default: () => [],
-		}
+		},
 	},
 
 	setup() {
@@ -213,7 +213,7 @@ export default {
 		computedStyle() {
 			return {
 				[isRTL() ? 'left' : 'right']: this.position[isRTL() ? 'left' : 'right'] + 'px',
-				bottom: this.position.bottom + 'px'
+				bottom: this.position.bottom + 'px',
 			}
 		},
 	},

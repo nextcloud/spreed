@@ -244,7 +244,7 @@ export default class JitsiStreamBackgroundEffect {
 			0,
 			0,
 			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight
+			this._inputVideoElement.videoHeight,
 		)
 		this._outputCanvasCtx.globalCompositeOperation = 'source-in'
 		this._outputCanvasCtx.filter = 'none'
@@ -287,7 +287,7 @@ export default class JitsiStreamBackgroundEffect {
 				0,
 				0,
 				destinationWidth,
-				destinationHeight
+				destinationHeight,
 			)
 		} else {
 			this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
@@ -392,14 +392,14 @@ export default class JitsiStreamBackgroundEffect {
 			0,
 			0,
 			this._options.width,
-			this._options.height
+			this._options.height,
 		)
 
 		const imageData = this._segmentationMaskCtx.getImageData(
 			0,
 			0,
 			this._options.width,
-			this._options.height
+			this._options.height,
 		)
 
 		this._model.postMessage({ message: 'resizeSource', imageData, frameId: this._frameId })

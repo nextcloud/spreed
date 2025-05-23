@@ -271,8 +271,8 @@ export default {
 	props: {
 		recordingConsentGiven: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	emits: ['update:recording-consent-given'],

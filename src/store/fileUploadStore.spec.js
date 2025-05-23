@@ -268,7 +268,7 @@ describe('fileUploadStore', () => {
 				token: 'XXTOKENXX',
 				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
-				reason: 'failed-upload'
+				reason: 'failed-upload',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
@@ -309,7 +309,7 @@ describe('fileUploadStore', () => {
 				token: 'XXTOKENXX',
 				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
-				reason: 'failed-share'
+				reason: 'failed-share',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()

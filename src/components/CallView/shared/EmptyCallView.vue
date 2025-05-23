@@ -7,7 +7,7 @@
 	<div class="empty-call-view"
 		:class="{
 			'empty-call-view--sidebar': isSidebar,
-			'empty-call-view--small': isSmall
+			'empty-call-view--small': isSmall,
 		}"
 		data-theme-dark>
 		<component :is="emptyCallViewIcon" :size="isSidebar ? 32 : 64" class="empty-call-view__icon" />
