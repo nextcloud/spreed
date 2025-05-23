@@ -56,7 +56,6 @@ export default [
 			'vue/no-unused-properties': 'off', // non-fixable
 			'vue/no-unused-refs': 'off', // non-fixable
 			'vue/no-useless-mustaches': 'off', // changes template
-			'vue/object-curly-newline': 'off', // changes newlines
 			'vue/order-in-components': 'off', // moves code
 		},
 	},
