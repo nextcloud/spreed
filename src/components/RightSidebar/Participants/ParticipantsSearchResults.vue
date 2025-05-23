@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="participants-search-results" :class="{ 'scrollable': scrollable }">
+	<div class="participants-search-results" :class="{ scrollable: scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"

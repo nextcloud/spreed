@@ -283,7 +283,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		</div>
 		<div class="talk-dashboard__chats">
 			<div class="talk-dashboard__unread-mentions"
-				:class="{ 'loading': !conversationsInitialised }">
+				:class="{ loading: !conversationsInitialised }">
 				<h3 class="title">
 					{{ t('spreed', 'Unread mentions') }}
 				</h3>

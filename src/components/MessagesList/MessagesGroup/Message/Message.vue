@@ -17,7 +17,7 @@
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div :class="{ 'normal-message-body': !isSystemMessage && !isDeletedMessage,
-			'system': isSystemMessage,
+			system: isSystemMessage,
 			'combined-system': isCombinedSystemMessage }"
 			class="message-body">
 			<MessageBody :rich-parameters="richParameters"

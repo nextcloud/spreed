@@ -21,13 +21,12 @@ export default [
 			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@stylistic/member-delimiter-style': 'off', // removes commas from types
-			'@stylistic/quote-props': 'off', // removes quotes from types
 			'@stylistic/semi': 'off', // changes e2ee files
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
 			curly: 'off', // adds brackets
-			'eqeqeq': 'off', // non-fixable
+			eqeqeq: 'off', // non-fixable
 			'jsdoc/check-param-names': 'off', // need to respect JS
 			'jsdoc/check-tag-names': 'off', // need to respect JS
 			'jsdoc/check-types': 'off', // need to respect JS
@@ -62,7 +61,6 @@ export default [
 			'vue/no-useless-mustaches': 'off', // changes template
 			'vue/object-curly-newline': 'off', // changes newlines
 			'vue/order-in-components': 'off', // moves code
-			'vue/quote-props': 'off', // changes template
 		},
 	},
 ]

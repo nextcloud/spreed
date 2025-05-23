@@ -62,10 +62,10 @@ export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilit
 // Initial state
 export type InitialState = {
 	spreed: {
-		'has_cache_configured': boolean,
-		'has_valid_subscription': boolean,
-		'signaling_mode': string,
-		'signaling_servers': {
+		has_cache_configured: boolean,
+		has_valid_subscription: boolean,
+		signaling_mode: string,
+		signaling_servers: {
 			hideWarning: boolean,
 			secret: string,
 			servers: { server: string, verify: boolean }[],
@@ -223,10 +223,10 @@ export type importEmailsResponse = ApiResponse<operations['room-import-emails-as
 // Chats
 export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
 export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
-	'etag': string,
-	'permissions': string,
-	'width': string,
-	'height': string,
+	etag: string,
+	permissions: string,
+	width: string,
+	height: string,
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
