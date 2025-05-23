@@ -280,7 +280,7 @@ class AdminSettings implements ISettings {
 			['code' => 'MF', 'name' => $this->l10n->t('Saint Martin (French part)')],
 			['code' => 'MG', 'name' => $this->l10n->t('Madagascar')],
 			['code' => 'MH', 'name' => $this->l10n->t('Marshall Islands')],
-			['code' => 'MK', 'name' => $this->l10n->t('Macedonia, the former Yugoslav Republic of')],
+			['code' => 'MK', 'name' => $this->l10n->t('North Macedonia')],
 			['code' => 'ML', 'name' => $this->l10n->t('Mali')],
 			['code' => 'MM', 'name' => $this->l10n->t('Myanmar')],
 			['code' => 'MN', 'name' => $this->l10n->t('Mongolia')],
