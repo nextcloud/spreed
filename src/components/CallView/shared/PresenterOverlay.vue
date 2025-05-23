@@ -25,7 +25,7 @@
 			@click-presenter="$emit('click')" />
 		<VideoVue v-else
 			:token="token"
-			:class="{ 'dragging': isDragging }"
+			:class="{ dragging: isDragging }"
 			class="presenter-overlay__video"
 			:model="model"
 			:shared-data="sharedData"

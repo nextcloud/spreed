@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, 'transparent': isLessThanTwoVideos }">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, transparent: isLessThanTwoVideos }">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -45,7 +45,7 @@
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
 								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{ 'video': !isStripe }"
+									:class="{ video: !isStripe }"
 									:show-video-overlay="showVideoOverlay"
 									:token="token"
 									:model="callParticipantModel"

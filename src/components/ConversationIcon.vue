@@ -6,7 +6,7 @@
 <template>
 	<div class="conversation-icon"
 		:style="{ '--icon-size': `${size}px` }"
-		:class="[themeClass, { 'offline': offline }]">
+		:class="[themeClass, { offline: offline }]">
 		<template v-if="!isOneToOne">
 			<div v-if="iconClass"
 				class="avatar icon"

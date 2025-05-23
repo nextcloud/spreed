@@ -10,8 +10,8 @@
 		target="_blank">
 		<img v-if="contactPhotoFromBase64"
 			:class="{
-				'contact__image': contactHasPhoto,
-				'contact__icon': !contactHasPhoto,
+				contact__image: contactHasPhoto,
+				contact__icon: !contactHasPhoto,
 			}"
 			alt=""
 			:src="contactPhotoFromBase64">

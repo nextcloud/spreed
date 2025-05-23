@@ -8,7 +8,7 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"
-		:class="{ 'wide': wide }"
+		:class="{ wide: wide }"
 		:aria-label="linkAriaLabel">
 		<LMap :zoom="previewZoom"
 			:center="center"

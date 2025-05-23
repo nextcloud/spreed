@@ -12,7 +12,7 @@
 				<div class="reactions-list__navigation">
 					<NcButton v-for="reaction in reactionsMenu"
 						:key="reaction"
-						:class="{ 'active': reactionFilter === reaction, 'all-reactions__button': reaction === '♡' }"
+						:class="{ active: reactionFilter === reaction, 'all-reactions__button': reaction === '♡' }"
 						type="tertiary"
 						@click="handleTabClick(reaction)">
 						<HeartOutlineIcon v-if="reaction === '♡'" :size="15" />
