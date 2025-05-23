@@ -174,6 +174,8 @@ export default {
 
 	emits: ['avatar-edited'],
 
+	expose: ['saveAvatar'],
+
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
 		return {
@@ -243,8 +245,6 @@ export default {
 			}
 		},
 	},
-
-	expose: ['saveAvatar'],
 
 	methods: {
 		t,
