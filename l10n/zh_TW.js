@@ -1230,7 +1230,6 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "啟用電話與 SIP 撥入",
     "Allow to dial-in without a PIN" : "允許在沒有 PIN 碼的情況下撥入",
     "Ongoing" : "持續進行",
-    "Today" : "今天",
     "_%n person accepted_::_%n people accepted_" : ["已接受 %n 個人"],
     "_%n person declined_::_%n people declined_" : ["已拒絕 %n 個人"],
     "With" : "與",
@@ -1256,7 +1255,7 @@ OC.L10N.register(
     "All caught up!" : "全都搞定了！",
     "You have no unread mentions" : "您沒有未讀的提及",
     "Upcoming reminders" : "即將到來的提醒",
-    "No Reminders Scheduled" : "未安排提醒",
+    "No reminders scheduled" : "沒有排定的提醒",
     "You have no reminders scheduled" : "您沒有排定的提醒",
     "Start a group conversation" : "開始群組對話",
     "Create conversation" : "建立對話",
@@ -1468,6 +1467,7 @@ OC.L10N.register(
     "Show all reactions" : "顯示所有反應",
     "Add more reactions" : "新增更多反應",
     "Reactions" : "反應",
+    "Today" : "今天",
     "Yesterday" : "昨天",
     "A week ago" : "一週前",
     "_%n day ago_::_%n days ago_" : ["%n 天前"],
@@ -2087,7 +2087,6 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "嘗試分享您的檔案時發生錯誤",
     "Failed to join the conversation. Try to reload the page." : "加入對話失敗。請嘗試重新載入頁面。",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud 處於維護模式，請重新整理頁面",
-    "Lost connection to signaling server. Try to reload the page manually." : "遺失與訊號伺服器的連線。嘗試手動重新載入頁面。",
-    "No reminders scheduled" : "沒有排定的提醒"
+    "Lost connection to signaling server. Try to reload the page manually." : "遺失與訊號伺服器的連線。嘗試手動重新載入頁面。"
 },
 "nplurals=1; plural=0;");

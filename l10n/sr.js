@@ -1230,7 +1230,6 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "Уљкучи телефонски и SIP приступ",
     "Allow to dial-in without a PIN" : "Дозволи приступ без PIN",
     "Ongoing" : "Траје",
-    "Today" : "Данас",
     "_%n person accepted_::_%n people accepted_" : ["%n особа је прихватила","%n особа су прихватиле","%n особа је прихватило"],
     "_%n person declined_::_%n people declined_" : ["%n особа је одбила","%n особа су одбиле","%n особа је одбило"],
     "With" : "Са",
@@ -1256,7 +1255,7 @@ OC.L10N.register(
     "All caught up!" : "Све је обухваћено!",
     "You have no unread mentions" : "Немате помињања која нисте прочитали",
     "Upcoming reminders" : "Предстојећи подсетници",
-    "No Reminders Scheduled" : "Није заказан ниједан подсетник",
+    "No reminders scheduled" : "Није заказан ниједан подсетник",
     "You have no reminders scheduled" : "Немате ниједан заказан подсетник",
     "Start a group conversation" : "Започни групни разговор",
     "Create conversation" : "Креирај разговор",
@@ -1468,6 +1467,7 @@ OC.L10N.register(
     "Show all reactions" : "Прикажи сва реаговања",
     "Add more reactions" : "Додај још реакција",
     "Reactions" : "Реакције",
+    "Today" : "Данас",
     "Yesterday" : "Јуче",
     "A week ago" : "Пре недељу дана",
     "_%n day ago_::_%n days ago_" : ["пре %n дан","пре %n дана","пре %n дана"],
@@ -2087,7 +2087,6 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Дошло је до грешке током покушавања да се подели ваш фајл",
     "Failed to join the conversation. Try to reload the page." : "Није успело приступање разговору. Покушајте да поново учитате страницу.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud је у режиму одржавања, молимо вас да поново учитате страницу",
-    "Lost connection to signaling server. Try to reload the page manually." : "Изгубљена је веза са сервером за сигнализирање. Покушајте да поново учитате страницу ручно.",
-    "No reminders scheduled" : "Није заказан ниједан подсетник"
+    "Lost connection to signaling server. Try to reload the page manually." : "Изгубљена је веза са сервером за сигнализирање. Покушајте да поново учитате страницу ручно."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
