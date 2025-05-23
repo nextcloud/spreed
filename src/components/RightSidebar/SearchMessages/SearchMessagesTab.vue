@@ -55,16 +55,16 @@ const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessa
 
 const isFocused = ref(false)
 const searchResults = ref<(UnifiedSearchResultEntry &
-{
-	to: {
-		name: string;
-		hash: string;
-		params: {
-			token: string;
-			skipLeaveWarning: boolean;
-		};
-	}
-})[]>([])
+	{
+		to: {
+			name: string;
+			hash: string;
+			params: {
+				token: string;
+				skipLeaveWarning: boolean;
+			};
+		}
+	})[]>([])
 const searchText = ref('')
 const fromUser = ref<UserFilterObject | null>(null)
 const sinceDate = ref<Date | null>(null)

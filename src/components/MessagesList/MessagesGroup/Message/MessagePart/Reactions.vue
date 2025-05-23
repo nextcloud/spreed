@@ -143,7 +143,7 @@ export default {
 		return {
 			guestNameStore,
 			reactionsStore,
-		 }
+		}
 	},
 
 	data() {
@@ -190,7 +190,7 @@ export default {
 					.map(([key, value]) => [key, value.length])
 			)
 			return this.hasReactionsLoaded
-					&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
+				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},
 	},
 

@@ -174,7 +174,7 @@ export default {
 				return
 			}
 
-			 // Blur in other cases
+			// Blur in other cases
 			this.$emit('blur', event)
 			if (!this.isSearching) {
 				this.$emit('update:is-focused', false)

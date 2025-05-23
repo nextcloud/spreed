@@ -276,57 +276,57 @@ CallParticipantModel.prototype = {
 		// "completed").
 
 		switch (extendedIceConnectionState) {
-		case 'new':
-			this.set('connectionState', ConnectionState.NEW)
-			this.set('connecting', true)
-			this.set('audioAvailable', undefined)
-			this.set('speaking', undefined)
-			this.set('videoAvailable', undefined)
-			break
-		case 'checking':
-			this.set('connectionState', ConnectionState.CHECKING)
-			this.set('connecting', true)
-			this.set('audioAvailable', undefined)
-			this.set('speaking', undefined)
-			this.set('videoAvailable', undefined)
-			break
-		case 'connected':
-			this.set('connectionState', ConnectionState.CONNECTED)
-			this.set('connecting', false)
-			this.set('initialConnection', false)
-			this.set('connectedAtLeastOnce', true)
-			setNameForUserFromPeerNick()
-			break
-		case 'completed':
-			this.set('connectionState', ConnectionState.COMPLETED)
-			this.set('connecting', false)
-			this.set('initialConnection', false)
-			this.set('connectedAtLeastOnce', true)
-			setNameForUserFromPeerNick()
-			break
-		case 'disconnected':
-			this.set('connectionState', ConnectionState.DISCONNECTED)
-			break
-		case 'disconnected-long':
-			this.set('connectionState', ConnectionState.DISCONNECTED_LONG)
-			break
-		case 'failed':
-			this.set('connectionState', ConnectionState.FAILED)
-			this.set('connecting', false)
-			this.set('initialConnection', false)
-			break
-		case 'failed-no-restart':
-			this.set('connectionState', ConnectionState.FAILED_NO_RESTART)
-			this.set('connecting', false)
-			this.set('initialConnection', false)
-			break
-		case 'closed':
-			this.set('connectionState', ConnectionState.CLOSED)
-			this.set('connecting', false)
-			this.set('initialConnection', false)
-			break
-		default:
-			console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
+			case 'new':
+				this.set('connectionState', ConnectionState.NEW)
+				this.set('connecting', true)
+				this.set('audioAvailable', undefined)
+				this.set('speaking', undefined)
+				this.set('videoAvailable', undefined)
+				break
+			case 'checking':
+				this.set('connectionState', ConnectionState.CHECKING)
+				this.set('connecting', true)
+				this.set('audioAvailable', undefined)
+				this.set('speaking', undefined)
+				this.set('videoAvailable', undefined)
+				break
+			case 'connected':
+				this.set('connectionState', ConnectionState.CONNECTED)
+				this.set('connecting', false)
+				this.set('initialConnection', false)
+				this.set('connectedAtLeastOnce', true)
+				setNameForUserFromPeerNick()
+				break
+			case 'completed':
+				this.set('connectionState', ConnectionState.COMPLETED)
+				this.set('connecting', false)
+				this.set('initialConnection', false)
+				this.set('connectedAtLeastOnce', true)
+				setNameForUserFromPeerNick()
+				break
+			case 'disconnected':
+				this.set('connectionState', ConnectionState.DISCONNECTED)
+				break
+			case 'disconnected-long':
+				this.set('connectionState', ConnectionState.DISCONNECTED_LONG)
+				break
+			case 'failed':
+				this.set('connectionState', ConnectionState.FAILED)
+				this.set('connecting', false)
+				this.set('initialConnection', false)
+				break
+			case 'failed-no-restart':
+				this.set('connectionState', ConnectionState.FAILED_NO_RESTART)
+				this.set('connecting', false)
+				this.set('initialConnection', false)
+				break
+			case 'closed':
+				this.set('connectionState', ConnectionState.CLOSED)
+				this.set('connecting', false)
+				this.set('initialConnection', false)
+				break
+			default:
+				console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState)
 		}
 	},
 

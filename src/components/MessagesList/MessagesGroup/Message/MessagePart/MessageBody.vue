@@ -282,8 +282,8 @@ export default {
 
 		hasRetentionPeriod() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT
-			|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY
-			|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING
+				|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY
+				|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING
 		},
 
 		showConversationActionsShortcut() {

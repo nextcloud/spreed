@@ -254,11 +254,11 @@ export default {
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
 					? this.addableUsers.map(user => ({
-						...user,
-						id: user.id + '@' + window.location.host,
-						label: user.id + '@' + window.location.host,
-						source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
-					}))
+							...user,
+							id: user.id + '@' + window.location.host,
+							label: user.id + '@' + window.location.host,
+							source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
+						}))
 					: [])
 		},
 

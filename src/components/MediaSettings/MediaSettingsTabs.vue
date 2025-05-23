@@ -20,12 +20,12 @@ type TabDefinition = {
 }
 
 const props = defineProps<{
-    tabs: TabDefinition[],
-    active?: string,
+	tabs: TabDefinition[],
+	active?: string,
 }>()
 
 const emit = defineEmits<{
-    (event: 'update:active', value?: string): void
+	(event: 'update:active', value?: string): void
 }>()
 
 /** Whether the tab panel is open */

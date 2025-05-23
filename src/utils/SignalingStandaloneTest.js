@@ -81,18 +81,18 @@ class StandaloneTest {
 				}
 
 				switch (data.type) {
-				case 'welcome':
-					this.welcomeResponseReceived(data)
-					break
-				case 'hello':
-					this.helloResponseReceived(data)
-					break
-				case 'error':
-					console.error('Received error', data)
-					break
-				default:
-					console.debug('Ignore unexpected event', data)
-					break
+					case 'welcome':
+						this.welcomeResponseReceived(data)
+						break
+					case 'hello':
+						this.helloResponseReceived(data)
+						break
+					case 'error':
+						console.error('Received error', data)
+						break
+					default:
+						console.debug('Ignore unexpected event', data)
+						break
 				}
 			}
 		})

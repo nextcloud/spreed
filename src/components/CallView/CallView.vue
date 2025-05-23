@@ -371,8 +371,8 @@ export default {
 
 		shouldShowPresenterOverlay() {
 			return (this.showLocalScreen && this.hasLocalVideo)
-			|| ((this.showRemoteScreen || this.showSelectedScreen)
-			&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
+				|| ((this.showRemoteScreen || this.showSelectedScreen)
+					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
 		},
 
 		presenterModel() {

@@ -536,13 +536,13 @@ export default {
 
 		notificationLevelIcon(value) {
 			switch (value) {
-			case PARTICIPANT.NOTIFY.ALWAYS:
-				return IconVolumeHigh
-			case PARTICIPANT.NOTIFY.MENTION:
-				return IconAccount
-			case PARTICIPANT.NOTIFY.NEVER:
-			default:
-				return IconVolumeOff
+				case PARTICIPANT.NOTIFY.ALWAYS:
+					return IconVolumeHigh
+				case PARTICIPANT.NOTIFY.MENTION:
+					return IconAccount
+				case PARTICIPANT.NOTIFY.NEVER:
+				default:
+					return IconVolumeOff
 			}
 		},
 

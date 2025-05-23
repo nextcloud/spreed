@@ -478,33 +478,33 @@ export default {
 				return undefined
 			}
 			switch (this.$store.getters.getPhoneMute(this.participant.callId)) {
-			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
-				return 'muted'
-			}
-			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
-				return 'hold'
-			}
-			case PARTICIPANT.SIP_DIALOUT_FLAG.NONE:
-			default: {
-				return undefined
-			}
+				case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+					return 'muted'
+				}
+				case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+					return 'hold'
+				}
+				case PARTICIPANT.SIP_DIALOUT_FLAG.NONE:
+				default: {
+					return undefined
+				}
 			}
 		},
 
 		statusMessage() {
 			if (this.isInCall && this.phoneCallStatus) {
 				switch (this.phoneCallStatus) {
-				case 'ringing':
-					return '📞 ' + t('spreed', 'Ringing …')
-				case 'rejected':
-					return '⚠️ ' + t('spreed', 'Call rejected')
-				case 'accepted':
-				case 'cleared':
-					return ''
-				case 'connected':
-				default:
+					case 'ringing':
+						return '📞 ' + t('spreed', 'Ringing …')
+					case 'rejected':
+						return '⚠️ ' + t('spreed', 'Call rejected')
+					case 'accepted':
+					case 'cleared':
+						return ''
+					case 'connected':
+					default:
 					// Fall through to show the talking time
-					break
+						break
 				}
 			}
 
@@ -677,28 +677,28 @@ export default {
 
 		removeParticipantLabel() {
 			switch (this.participant.actorType) {
-			case ATTENDEE.ACTOR_TYPE.GROUPS:
-				return t('spreed', 'Remove group and members')
-			case ATTENDEE.ACTOR_TYPE.CIRCLES:
-				return t('spreed', 'Remove team and members')
-			case ATTENDEE.ACTOR_TYPE.USERS:
-			default:
-				return t('spreed', 'Remove participant')
+				case ATTENDEE.ACTOR_TYPE.GROUPS:
+					return t('spreed', 'Remove group and members')
+				case ATTENDEE.ACTOR_TYPE.CIRCLES:
+					return t('spreed', 'Remove team and members')
+				case ATTENDEE.ACTOR_TYPE.USERS:
+				default:
+					return t('spreed', 'Remove participant')
 			}
 		},
 
 		removeDialogMessage() {
 			switch (this.participant.actorType) {
-			case ATTENDEE.ACTOR_TYPE.GROUPS:
-				return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?',
-					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
-			case ATTENDEE.ACTOR_TYPE.CIRCLES:
-				return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?',
-					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
-			case ATTENDEE.ACTOR_TYPE.USERS:
-			default:
-				return t('spreed', 'Do you really want to remove {displayName} from this conversation?',
-					{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+				case ATTENDEE.ACTOR_TYPE.GROUPS:
+					return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?',
+						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+				case ATTENDEE.ACTOR_TYPE.CIRCLES:
+					return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?',
+						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
+				case ATTENDEE.ACTOR_TYPE.USERS:
+				default:
+					return t('spreed', 'Do you really want to remove {displayName} from this conversation?',
+						{ displayName: this.computedName }, undefined, { escape: false, sanitize: false })
 			}
 		},
 

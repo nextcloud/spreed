@@ -172,7 +172,7 @@ function iconData(item: ParticipantSearchResult) {
 
 const hasSourcesWithoutResults = computed(() => {
 	return !searchResultsVirtual.value.some(item => item.type === 'user' || item.type === 'group'
-	|| (item.type === 'circle' && isCirclesEnabled))
+		|| (item.type === 'circle' && isCirclesEnabled))
 })
 
 /**

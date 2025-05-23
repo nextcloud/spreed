@@ -114,7 +114,7 @@ export default {
 				const response = await this.$store.dispatch('forwardMessage', {
 					targetToken: this.selectedConversationToken,
 					messageToBeForwarded: this.$store.getters.message(this.token, this.id),
-				 })
+				})
 				this.forwardedMessageID = response.data.ocs.data.id
 				this.showForwardedConfirmation = true
 			} catch (error) {

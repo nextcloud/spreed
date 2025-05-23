@@ -20,25 +20,25 @@ export function placeholderImage(i: number) {
  */
 export function placeholderName(i: number, showKey: boolean = false): string {
 	switch (i % 9) {
-	case 0:
-		return 'Sandra McKinney' + (showKey ? ` | ${i}` : '')
-	case 1:
-		return 'Chris Wurst' + (showKey ? ` | ${i}` : '')
-	case 2:
-		return 'Edeltraut Bobb' + (showKey ? ` | ${i}` : '')
-	case 3:
-		return 'Arthur Blitz' + (showKey ? ` | ${i}` : '')
-	case 4:
-		return 'Roeland Douma' + (showKey ? ` | ${i}` : '')
-	case 5:
-		return 'Vanessa Steg' + (showKey ? ` | ${i}` : '')
-	case 6:
-		return 'Emily Grant' + (showKey ? ` | ${i}` : '')
-	case 7:
-		return 'Tobias Kaminsky' + (showKey ? ` | ${i}` : '')
-	case 8:
-	default:
-		return 'Adrian Ada' + (showKey ? ` | ${i}` : '')
+		case 0:
+			return 'Sandra McKinney' + (showKey ? ` | ${i}` : '')
+		case 1:
+			return 'Chris Wurst' + (showKey ? ` | ${i}` : '')
+		case 2:
+			return 'Edeltraut Bobb' + (showKey ? ` | ${i}` : '')
+		case 3:
+			return 'Arthur Blitz' + (showKey ? ` | ${i}` : '')
+		case 4:
+			return 'Roeland Douma' + (showKey ? ` | ${i}` : '')
+		case 5:
+			return 'Vanessa Steg' + (showKey ? ` | ${i}` : '')
+		case 6:
+			return 'Emily Grant' + (showKey ? ` | ${i}` : '')
+		case 7:
+			return 'Tobias Kaminsky' + (showKey ? ` | ${i}` : '')
+		case 8:
+		default:
+			return 'Adrian Ada' + (showKey ? ` | ${i}` : '')
 	}
 }
 
