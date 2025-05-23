@@ -27,6 +27,8 @@ export default {
 		RoomSelector,
 	},
 
+	expose: ['showModal'],
+
 	setup() {
 		provide('exposeDescription', ref(true))
 	},
@@ -43,8 +45,6 @@ export default {
 		},
 
 	},
-
-	expose: ['showModal'],
 
 	methods: {
 		t,

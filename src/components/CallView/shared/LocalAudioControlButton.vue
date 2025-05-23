@@ -90,6 +90,8 @@ export default {
 		},
 	},
 
+	expose: ['toggleAudio'],
+
 	setup(props) {
 		const boundaryElement = document.querySelector('.main-view')
 
@@ -181,8 +183,6 @@ export default {
 	beforeDestroy() {
 		unsubscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
 	},
-
-	expose: ['toggleAudio'],
 
 	methods: {
 		t,

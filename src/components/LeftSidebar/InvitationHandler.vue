@@ -102,6 +102,8 @@ export default {
 		WebIcon,
 	},
 
+	expose: ['showModal'],
+
 	setup() {
 		const modal = ref(false)
 		const isLoading = ref(true)
@@ -127,8 +129,6 @@ export default {
 			return Object.keys(this.invitations).length
 		},
 	},
-
-	expose: ['showModal'],
 
 	methods: {
 		t,

@@ -79,9 +79,9 @@ export default {
 		},
 	},
 
-	expose: ['focus'],
-
 	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
+
+	expose: ['focus'],
 
 	computed: {
 		modelValue: {

@@ -72,6 +72,8 @@ export default {
 		SelectPhoneNumber,
 	},
 
+	expose: ['showModal'],
+
 	data() {
 		return {
 			modal: false,
@@ -80,8 +82,6 @@ export default {
 			participantPhoneItem: {},
 		}
 	},
-
-	expose: ['showModal'],
 
 	watch: {
 		modal(value) {

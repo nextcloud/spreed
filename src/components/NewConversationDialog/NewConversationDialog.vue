@@ -156,6 +156,8 @@ export default {
 		},
 	},
 
+	expose: ['showModalForItem', 'showModal'],
+
 	setup() {
 		const isInCall = useIsInCall()
 		const selectedParticipants = ref([])
@@ -240,8 +242,6 @@ export default {
 			})
 		},
 	},
-
-	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
 		t,
