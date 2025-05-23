@@ -160,7 +160,9 @@ export default {
 				return t('spreed', 'Edit default permissions for participants in <strong>{conversationName}</strong>', {
 					conversationName: this.conversationName,
 				})
-			} else throw Error('you need to fill either the conversationName or the displayName props')
+			} else {
+				throw Error('you need to fill either the conversationName or the displayName props')
+			}
 		},
 
 		permissionsWithDefault() {

@@ -259,7 +259,9 @@ export default {
 
 			if (peer) {
 				return !peer.sessionIds.length
-			} else return false
+			} else {
+				return false
+			}
 		},
 
 		participantsInCall() {
