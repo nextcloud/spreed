@@ -89,6 +89,9 @@
 </template>
 
 <script>
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
@@ -96,14 +99,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-
 import { PARTICIPANT } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -285,7 +281,7 @@ export default {
 				return
 			}
 			this.$emit('bottom-bar-hover', value)
-		}
+		},
 	},
 
 	methods: {

@@ -5,7 +5,6 @@
 
 import createHark from 'hark'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
@@ -235,7 +234,7 @@ export function useDevices(video, initializeOnMounted) {
 			return
 		}
 
-		audioStream.value.getTracks().forEach(track => track.stop())
+		audioStream.value.getTracks().forEach((track) => track.stop())
 		audioStream.value = null
 		audioStreamError.value = null
 
@@ -284,16 +283,16 @@ export function useDevices(video, initializeOnMounted) {
 		pendingGetUserMediaAudioCount = 1
 
 		mediaDevicesManager.getUserMedia({ audio: true })
-			.then(stream => {
+			.then((stream) => {
 				if (!initialized) {
 					// The promise was fulfilled once the stream is no
 					// longer needed, so just discard it.
-					stream.getTracks().forEach(track => track.stop())
+					stream.getTracks().forEach((track) => track.stop())
 				} else {
 					setAudioStream(stream)
 				}
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error('Error getting audio stream: ' + error.name + ': ' + error.message)
 				audioStreamError.value = error
 				setAudioStream(null)
@@ -333,7 +332,7 @@ export function useDevices(video, initializeOnMounted) {
 			return
 		}
 
-		videoStream.value.getTracks().forEach(track => track.stop())
+		videoStream.value.getTracks().forEach((track) => track.stop())
 		videoStream.value = null
 		videoStreamError.value = null
 
@@ -380,16 +379,16 @@ export function useDevices(video, initializeOnMounted) {
 		pendingGetUserMediaVideoCount = 1
 
 		mediaDevicesManager.getUserMedia({ video: true })
-			.then(stream => {
+			.then((stream) => {
 				if (!initialized) {
 					// The promise was fulfilled once the stream is no
 					// longer needed, so just discard it.
-					stream.getTracks().forEach(track => track.stop())
+					stream.getTracks().forEach((track) => track.stop())
 				} else {
 					setVideoStream(stream)
 				}
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error('Error getting video stream: ' + error.name + ': ' + error.message)
 				videoStreamError.value = error
 				setVideoStream(null)

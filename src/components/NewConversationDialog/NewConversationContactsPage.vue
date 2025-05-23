@@ -61,24 +61,19 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import debounce from 'debounce'
 import { ref } from 'vue'
-
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-
 import ParticipantsSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults.vue'
 import SelectPhoneNumber from '../SelectPhoneNumber.vue'
 import ContactSelectionBubble from '../UIShared/ContactSelectionBubble.vue'
 import DialpadPanel from '../UIShared/DialpadPanel.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
@@ -259,11 +254,11 @@ export default {
 		},
 
 		updateSelectedParticipants(participant) {
-			const isSelected = this.selectedParticipants.some(selected => {
+			const isSelected = this.selectedParticipants.some((selected) => {
 				return selected.id === participant.id && selected.source === participant.source
 			})
 			const payload = isSelected
-				? this.selectedParticipants.filter(selected => {
+				? this.selectedParticipants.filter((selected) => {
 						return selected.id !== participant.id || selected.source !== participant.source
 					})
 				: [...this.selectedParticipants, participant]
@@ -277,7 +272,7 @@ export default {
 			}
 
 			this.updateSelectedParticipants(this.participantPhoneItem)
-		}
+		},
 	},
 }
 </script>

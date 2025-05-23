@@ -3,22 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
+import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getBaseUrl } from '@nextcloud/router'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { FEDERATION } from '../constants.ts'
 import { setRemoteCapabilitiesIfEmpty } from '../services/CapabilitiesManager.ts'
-import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
-import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
+import { acceptShare, getShares, rejectShare } from '../services/federationService.ts'
 
 type State = {
-	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,
-	acceptedShares: Record<string, FederationInvite>,
-	pendingSharesCount: number,
+	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>
+	acceptedShares: Record<string, FederationInvite>
+	pendingSharesCount: number
 }
 export const useFederationStore = defineStore('federation', {
 	state: (): State => ({
@@ -36,7 +35,7 @@ export const useFederationStore = defineStore('federation', {
 				const response = await getShares()
 				const acceptedShares: State['acceptedShares'] = {}
 				const pendingShares: State['pendingShares'] = {}
-				response.data.ocs.data.forEach(item => {
+				response.data.ocs.data.forEach((item) => {
 					if (item.state === FEDERATION.STATE.ACCEPTED) {
 						acceptedShares[item.id] = item
 					} else {

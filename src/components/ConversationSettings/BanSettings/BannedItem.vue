@@ -28,7 +28,6 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 
 export default {

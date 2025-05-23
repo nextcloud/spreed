@@ -21,10 +21,8 @@
 <script>
 import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
-
-import Conversation from './Conversation.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
-
+import Conversation from './Conversation.vue'
 import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -142,7 +140,7 @@ export default {
 		 * @return {void}
 		 */
 		scrollToConversation(token) {
-			const index = this.conversations.findIndex(conversation => conversation.token === token)
+			const index = this.conversations.findIndex((conversation) => conversation.token === token)
 			if (index !== -1) {
 				this.scrollToItem(index)
 			}

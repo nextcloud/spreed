@@ -4,16 +4,15 @@
 -->
 
 <script setup lang="ts">
+import { t } from '@nextcloud/l10n'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 
-import { t } from '@nextcloud/l10n'
-
 const props = defineProps<{
-	name: string | null,
-	start: string | null,
-	color: string,
-	isRecurring?: boolean,
-	href?: string,
+	name: string | null
+	start: string | null
+	color: string
+	isRecurring?: boolean
+	href?: string
 }>()
 </script>
 

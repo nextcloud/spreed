@@ -18,15 +18,12 @@
 </template>
 
 <script>
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 

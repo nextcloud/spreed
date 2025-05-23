@@ -98,16 +98,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -178,7 +175,7 @@ export default {
 				escape: false,
 				sanitize: false,
 			})
-		}
+		},
 	},
 
 	methods: {

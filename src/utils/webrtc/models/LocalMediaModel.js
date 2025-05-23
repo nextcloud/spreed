@@ -4,7 +4,6 @@
  */
 
 import { reactive } from 'vue'
-
 import { VIRTUAL_BACKGROUND } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import store from '../../../store/index.js'

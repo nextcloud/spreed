@@ -4,22 +4,21 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { CHAT } from '../../constants.ts'
 import {
+	deleteMessage,
+	editMessage,
 	fetchMessages,
 	getMessageContext,
 	pollNewMessages,
 	postNewMessage,
-	deleteMessage,
-	editMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../messagesService.ts'
 import {
 	addReactionToMessage,
-	removeReactionFromMessage,
 	getReactionsDetails,
+	removeReactionFromMessage,
 } from '../reactionsService.ts'
 import {
 	getTranslationLanguages,
@@ -59,7 +58,7 @@ describe('messagesService', () => {
 					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 0,
 				},
-			}
+			},
 		)
 	})
 
@@ -83,7 +82,7 @@ describe('messagesService', () => {
 					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 1,
 				},
-			}
+			},
 		)
 	})
 
@@ -102,7 +101,7 @@ describe('messagesService', () => {
 				params: {
 					limit: CHAT.FETCH_LIMIT / 2,
 				},
-			}
+			},
 		)
 	})
 
@@ -126,7 +125,7 @@ describe('messagesService', () => {
 					includeLastKnown: 0,
 					markNotificationsAsRead: 0,
 				},
-			}
+			},
 		)
 	})
 
@@ -153,7 +152,7 @@ describe('messagesService', () => {
 			},
 			{
 				dummyOption: true,
-			}
+			},
 		)
 	})
 
@@ -165,7 +164,7 @@ describe('messagesService', () => {
 
 		expect(axios.delete).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234'),
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -179,7 +178,7 @@ describe('messagesService', () => {
 		expect(axios.put).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234'),
 			{ message: 'edited message text' },
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -199,7 +198,7 @@ describe('messagesService', () => {
 				metaData: '{"x":1}',
 				referenceId: 'reference-id',
 			},
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -218,7 +217,7 @@ describe('messagesService', () => {
 				metaData: '{"x":1}',
 				referenceId: expect.stringMatching(/^[a-z0-9]{64}$/),
 			},
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -230,7 +229,7 @@ describe('messagesService', () => {
 			{
 				lastReadMessage: 1234,
 			},
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -242,7 +241,7 @@ describe('messagesService', () => {
 			{
 				reaction: '👍',
 			},
-			{ dummyOption: true }
+			{ dummyOption: true },
 		)
 	})
 
@@ -256,7 +255,7 @@ describe('messagesService', () => {
 				params: {
 					reaction: '👍',
 				},
-			}
+			},
 		)
 	})
 
@@ -267,7 +266,7 @@ describe('messagesService', () => {
 			generateOcsUrl('apps/spreed/api/v1/reaction/XXTOKENXX/1234'),
 			{
 				dummyOption: true,
-			}
+			},
 		)
 	})
 
@@ -278,7 +277,7 @@ describe('messagesService', () => {
 			generateOcsUrl('translation/languages'),
 			{
 				dummyOption: true,
-			}
+			},
 		)
 	})
 
@@ -294,7 +293,7 @@ describe('messagesService', () => {
 			},
 			{
 				dummyOption: true,
-			}
+			},
 		)
 	})
 })

@@ -38,29 +38,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-import IconPoll from 'vue-material-design-icons/Poll.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
-
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{
-	token: string,
-	editorOpened?: boolean,
-	container?: string,
+	token: string
+	editorOpened?: boolean
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 
 const pollsStore = usePollsStore()

@@ -3,27 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getRequestToken } from '@nextcloud/auth'
+import { emit } from '@nextcloud/event-bus'
+import { generateFilePath } from '@nextcloud/router'
 import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue, { watch } from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
-
-import { getRequestToken } from '@nextcloud/auth'
-import { emit } from '@nextcloud/event-bus'
-import { generateFilePath } from '@nextcloud/router'
-
 import App from './App.vue'
-
-import './init.js'
 import router from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import { useSidebarStore } from './stores/sidebar.ts'
 
+import './init.js'
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-
 import 'leaflet-defaulticon-compatibility'
 
 if (!IS_DESKTOP) {
@@ -54,7 +50,7 @@ const instance = new Vue({
 	propsData: {
 		fileInfo: null,
 	},
-	render: h => h(App),
+	render: (h) => h(App),
 })
 
 window.store = store

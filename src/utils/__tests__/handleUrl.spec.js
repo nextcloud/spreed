@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { showError, showSuccess } from '@nextcloud/dialogs'
-
 import {
+	copyConversationLinkToClipboard,
 	generateAbsoluteUrl,
 	generateFullConversationLink,
-	copyConversationLinkToClipboard,
 } from '../handleUrl.ts'
 
 jest.mock('@nextcloud/dialogs', () => ({

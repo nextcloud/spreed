@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import TrackSink from './TrackSink.js'
 import EmitterMixin from '../../EmitterMixin.js'
+import TrackSink from './TrackSink.js'
 
 /**
  * Sink node to add one or more tracks to a single stream.

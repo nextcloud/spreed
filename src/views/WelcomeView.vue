@@ -4,18 +4,14 @@
 -->
 
 <script lang="ts" setup>
-import { ref, computed, watchEffect } from 'vue'
-import { useRouter, useRoute } from 'vue-router/composables'
-
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { computed, ref, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router/composables'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
 import TalkDashboard from '../components/Dashboard/TalkDashboard.vue'
 import EmptyView from '../components/EmptyView.vue'
-
 import IconTalk from '../../img/app-dark.svg?raw'
 import { useStore } from '../composables/useStore.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'

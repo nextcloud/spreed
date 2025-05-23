@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
+import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import { MENTION } from '../../../../../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
 
@@ -150,7 +149,7 @@ export default {
 
 	mounted() {
 		this.size = parseInt(window.getComputedStyle(this.$refs.mention).fontSize, 10) * 4 / 3 ?? 20
-	}
+	},
 }
 </script>
 

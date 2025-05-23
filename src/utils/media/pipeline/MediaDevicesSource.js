@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import TrackSource from './TrackSource.js'
 import { isChromium } from '../../browserCheck.ts'
 import { mediaDevicesManager } from '../../webrtc/index.js'
+import TrackSource from './TrackSource.js'
 
 /**
  * Source node to get audio and video tracks from MediaDevicesManager.
@@ -292,7 +292,7 @@ export default class MediaDevicesSource extends TrackSource {
 			}
 		}
 
-		mediaDevicesManager.getUserMedia({ audio: true }).then(stream => {
+		mediaDevicesManager.getUserMedia({ audio: true }).then((stream) => {
 			// According to the specification "getUserMedia({ audio: true })" will
 			// return a single audio track.
 			const track = stream.getTracks()[0]
@@ -362,7 +362,7 @@ export default class MediaDevicesSource extends TrackSource {
 		const constraints = { video: true }
 		this._adjustVideoConstraintsForChromium(constraints)
 
-		mediaDevicesManager.getUserMedia(constraints).then(stream => {
+		mediaDevicesManager.getUserMedia(constraints).then((stream) => {
 			// According to the specification "getUserMedia({ video: true })" will
 			// return a single video track.
 			const track = stream.getTracks()[0]

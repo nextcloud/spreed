@@ -4,17 +4,19 @@
 -->
 
 <script setup lang="ts">
-import debounce from 'debounce'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
-
-import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
-import IconFilter from 'vue-material-design-icons/Filter.vue'
-import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
+import type {
+	Participant,
+	SearchMessagePayload,
+	UnifiedSearchResponse,
+	UnifiedSearchResultEntry,
+	UserFilterObject,
+} from '../../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
@@ -22,28 +24,22 @@ import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNa
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-
-import SearchMessageItem from './SearchMessageItem.vue'
+import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
+import IconFilter from 'vue-material-design-icons/Filter.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-
+import SearchMessageItem from './SearchMessageItem.vue'
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.ts'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import type {
-	UnifiedSearchResultEntry,
-	UserFilterObject,
-	SearchMessagePayload,
-	UnifiedSearchResponse,
-	Participant,
-} from '../../../types/index.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 const props = defineProps<{
-	isActive: boolean,
+	isActive: boolean
 }>()
 const emit = defineEmits<{
 	(event: 'close'): void
@@ -57,12 +53,12 @@ const isFocused = ref(false)
 const searchResults = ref<(UnifiedSearchResultEntry &
 	{
 		to: {
-			name: string;
-			hash: string;
+			name: string
+			hash: string
 			params: {
-				token: string;
-				skipLeaveWarning: boolean;
-			};
+				token: string
+				skipLeaveWarning: boolean
+			}
 		}
 	})[]>([])
 const searchText = ref('')
@@ -83,7 +79,7 @@ const participantsInitialised = computed(() => store.getters.participantsInitial
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)
 		.filter(({ actorType }: Participant) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string }) => ({
+		.map(({ actorId, displayName, actorType }: { actorId: string, displayName: string, actorType: string }) => ({
 			id: actorId,
 			displayName,
 			isNoUser: actorType !== 'users',
@@ -157,8 +153,8 @@ function fetchNewSearchResult() {
 let cancelSearchFn = () => {}
 
 type SearchMessageCancelableRequest = {
-	request: (payload: SearchMessagePayload) => UnifiedSearchResponse,
-	cancel: () => void,
+	request: (payload: SearchMessagePayload) => UnifiedSearchResponse
+	cancel: () => void
 }
 
 /**
@@ -225,12 +221,11 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 						hash: `#message_${entry.attributes.messageId}`,
 						params: {
 							token: entry.attributes.conversation,
-							skipLeaveWarning: true
-						}
-					}
+							skipLeaveWarning: true,
+						},
+					},
 				}
-			})
-			)
+			}))
 			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {

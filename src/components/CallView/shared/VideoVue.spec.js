@@ -7,9 +7,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
 import VideoVue from './VideoVue.vue'
-
 import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
 import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'

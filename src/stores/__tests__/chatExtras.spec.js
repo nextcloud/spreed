@@ -2,8 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../chatExtras.js'
@@ -135,7 +134,7 @@ describe('chatExtrasStore', () => {
 			chatExtrasStore.setChatEditInput({
 				token: 'token-1',
 				text: 'Hello {mention-call1} and {mention-user1}',
-				parameters
+				parameters,
 			})
 			// Assert
 			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @"all" and @"alice"')
@@ -166,7 +165,7 @@ describe('chatExtrasStore', () => {
 				token: 'token-1',
 				id: 'id-1',
 				message: 'Hello, world!',
-				messageParameters: {}
+				messageParameters: {},
 			}
 			const emitSpy = jest.spyOn(EventBus, 'emit')
 
@@ -185,7 +184,7 @@ describe('chatExtrasStore', () => {
 				token: 'token-1',
 				id: 'id-1',
 				message: '{file}',
-				messageParameters: { file0: 'file-path' }
+				messageParameters: { file0: 'file-path' },
 			}
 
 			// Act

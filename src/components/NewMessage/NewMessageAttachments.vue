@@ -63,18 +63,15 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import SlashForwardBox from 'vue-material-design-icons/SlashForwardBox.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-
 import { EventBus } from '../../services/EventBus.ts'
 
 export default {

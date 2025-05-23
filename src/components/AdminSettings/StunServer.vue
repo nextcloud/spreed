@@ -37,13 +37,11 @@
 </template>
 
 <script>
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'StunServer',
@@ -84,7 +82,7 @@ export default {
 
 			set(value) {
 				this.$emit('update:server', value)
-			}
+			},
 		},
 
 		isValidServer() {

@@ -8,15 +8,14 @@ import base64js from 'base64-js'
 import debounce from 'debounce'
 import { isEqual } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import Signaling from '../signaling.js'
+import Peer from '../webrtc/simplewebrtc/peer.js'
+import SimpleWebRTC from '../webrtc/simplewebrtc/simplewebrtc.js'
 import { importKey, ratchet } from './crypto-utils.js'
 import Deferred from './JitsiDeferred.js'
 import E2EEcontext from './JitsiE2EEContext.js'
 import initializeOlm from './olm.js'
-import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import Signaling from '../signaling.js'
-import Peer from '../webrtc/simplewebrtc/peer.js'
-import SimpleWebRTC from '../webrtc/simplewebrtc/simplewebrtc.js'
 
 const supportsTransform
 	// Firefox
@@ -658,7 +657,7 @@ class Encryption {
 	 * @private
 	 */
 	_findReceiverForTrack(pc, track) {
-		return pc && pc.getReceivers().find(r => r.track === track)
+		return pc && pc.getReceivers().find((r) => r.track === track)
 	}
 
 	/**

@@ -1,11 +1,9 @@
+import { loadState } from '@nextcloud/initial-state'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
-import { loadState } from '@nextcloud/initial-state'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
@@ -85,7 +83,7 @@ describe('settingsStore', () => {
 			// Act
 			const results = [settingsStore.getShowMediaSettings('token-1'),
 				settingsStore.getShowMediaSettings('token-2'),
-				settingsStore.getShowMediaSettings('token-3'),]
+				settingsStore.getShowMediaSettings('token-3')]
 
 			// Assert
 			expect(results).toEqual([true, true, false])

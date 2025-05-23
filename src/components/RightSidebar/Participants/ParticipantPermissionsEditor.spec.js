@@ -5,11 +5,9 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
-
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'
-
-import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
+import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 
 describe('ParticipantPermissionsEditor.vue', () => {
@@ -135,7 +133,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 						| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 						| PARTICIPANT.PERMISSIONS.CUSTOM,
-				})
+				}),
 			)
 		})
 
@@ -156,7 +154,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 						| PARTICIPANT.PERMISSIONS.CALL_JOIN
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 						| PARTICIPANT.PERMISSIONS.CUSTOM,
-				})
+				}),
 			)
 		})
 	})

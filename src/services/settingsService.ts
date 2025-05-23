@@ -3,10 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
-import BrowserStorage from './BrowserStorage.js'
 import type {
 	setSipSettingsParams,
 	setSipSettingsResponse,
@@ -15,6 +11,10 @@ import type {
 	UserPreferencesParams,
 	UserPreferencesResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import BrowserStorage from './BrowserStorage.js'
 
 /**
  * Sets the attachment folder setting for the user
@@ -108,10 +108,10 @@ export {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
 	setConversationsListStyle,
-	setReadStatusPrivacy,
-	setTypingStatusPrivacy,
-	setSIPSettings,
 	setPlaySounds,
+	setReadStatusPrivacy,
+	setSIPSettings,
 	setStartWithoutMedia,
+	setTypingStatusPrivacy,
 	setUserConfig,
 }

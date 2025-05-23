@@ -1,9 +1,10 @@
+import type { ChatMessage } from '../types/index.ts'
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { SHARED_ITEM } from '../constants.ts'
-import type { ChatMessage } from '../types/index.ts'
 
 export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	if (message.messageParameters?.object) {

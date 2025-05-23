@@ -110,18 +110,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
-
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Close from 'vue-material-design-icons/Close.vue'
-import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { computed, nextTick, reactive, ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -129,23 +122,27 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
-import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
-	token: string,
-	canCreatePollDrafts: boolean,
-	container?: string,
+	token: string
+	canCreatePollDrafts: boolean
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 defineExpose({
 	fillPollEditorFromDraft,
@@ -168,7 +165,7 @@ const pollForm = reactive<createPollParams>({
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
 })
 
-const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
+const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter((option) => Boolean(option)).length >= 2)
 const dialogName = computed(() => {
 	return editingDraftId.value ? t('spreed', 'Edit poll draft') : t('spreed', 'Create new poll')
 })
@@ -178,8 +175,7 @@ const createPollLabel = computed(() => {
 	}
 
 	return store.getters.getToken() !== props.token
-		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName },
-				undefined, { escape: false, sanitize: false })
+		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName }, undefined, { escape: false, sanitize: false })
 		: t('spreed', 'Create poll')
 })
 
@@ -189,7 +185,7 @@ const isAnonymous = computed({
 	},
 	set(value) {
 		pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
-	}
+	},
 })
 
 const isMultipleAnswer = computed({
@@ -198,7 +194,7 @@ const isMultipleAnswer = computed({
 	},
 	set(value) {
 		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
-	}
+	},
 })
 
 const exportPollURI = computed(() => convertToJSONDataURI(pollForm))

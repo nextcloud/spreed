@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
+import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
 
-import { getRemoteCapabilities } from './federationService.ts'
+import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { acceptShareResponse, Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
+import { getRemoteCapabilities } from './federationService.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & { hash?: string }
@@ -30,7 +30,7 @@ function generateTokenMap() {
 		return {}
 	}
 	const cachedConversations = JSON.parse(storageValue) as Conversation[]
-	cachedConversations.forEach(conversation => {
+	cachedConversations.forEach((conversation) => {
 		tokenMap[conversation.token] = conversation.remoteServer || null
 	})
 
@@ -199,7 +199,7 @@ function checkRemoteCapabilitiesHasChanged(newObject: Capabilities['spreed'], ol
 			}
 		}
 
-		const features = object.features.filter(feature => !object['features-local'].includes(feature)).sort()
+		const features = object.features.filter((feature) => !object['features-local'].includes(feature)).sort()
 
 		return { config, features }
 	}

@@ -132,14 +132,12 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-import { provide, ref } from 'vue'
-
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
+import { provide, ref } from 'vue'
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LocalVideo from './shared/LocalVideo.vue'
@@ -149,9 +147,6 @@ import Screen from './shared/Screen.vue'
 import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
-
-import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
-import { useWakeLock } from './useWakeLock.ts'
 import { SIMULCAST } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
@@ -160,8 +155,10 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
-import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
+import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
+import { useWakeLock } from './useWakeLock.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
 const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
@@ -253,11 +250,11 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+			return callParticipantCollection.callParticipantModels.value.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
 		},
 
 		callParticipantModelsWithScreen() {
-			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
+			return this.callParticipantModels.filter((callParticipantModel) => callParticipantModel.attributes.screen)
 		},
 
 		localScreen() {
@@ -284,7 +281,7 @@ export default {
 			if (!this.showSelectedVideo || !this.selectedVideoPeerId) {
 				return null
 			}
-			return this.callParticipantModels.find(callParticipantModel => {
+			return this.callParticipantModels.find((callParticipantModel) => {
 				return callParticipantModel.attributes.peerId === this.selectedVideoPeerId
 			})
 		},
@@ -364,7 +361,7 @@ export default {
 			if (!this.shownRemoteScreenPeerId) {
 				return null
 			}
-			return this.callParticipantModels.find(callParticipantModel => {
+			return this.callParticipantModels.find((callParticipantModel) => {
 				return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
 			})
 		},
@@ -405,7 +402,7 @@ export default {
 			}
 
 			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
-		}
+		},
 	},
 
 	watch: {
@@ -485,7 +482,7 @@ export default {
 			handler(value) {
 				this.callViewStore.setIsEmptyCallView(value)
 			},
-		}
+		},
 	},
 
 	created() {
@@ -533,10 +530,10 @@ export default {
 		 * @param {Array} models the array of CallParticipantModels
 		 */
 		updateDataFromCallParticipantModels(models) {
-			const addedModels = models.filter(model => !this.sharedDatas[model.attributes.peerId])
-			const removedModelIds = Object.keys(this.sharedDatas).filter(sharedDataId => models.find(model => model.attributes.peerId === sharedDataId) === undefined)
+			const addedModels = models.filter((model) => !this.sharedDatas[model.attributes.peerId])
+			const removedModelIds = Object.keys(this.sharedDatas).filter((sharedDataId) => models.find((model) => model.attributes.peerId === sharedDataId) === undefined)
 
-			removedModelIds.forEach(removedModelId => {
+			removedModelIds.forEach((removedModelId) => {
 				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
 
 				this.$delete(this.sharedDatas, removedModelId)
@@ -553,13 +550,13 @@ export default {
 				// Not reactive, but not a problem
 				delete this.raisedHandUnwatchers[removedModelId]
 
-				const index = this.speakers.findIndex(speaker => speaker.id === removedModelId)
+				const index = this.speakers.findIndex((speaker) => speaker.id === removedModelId)
 				this.speakers.splice(index, 1)
 
 				this._setScreenAvailable(removedModelId, false)
 			})
 
-			addedModels.forEach(addedModel => {
+			addedModels.forEach((addedModel) => {
 				const sharedData = {
 					promoted: false,
 					remoteVideoBlocker: new RemoteVideoBlocker(addedModel),
@@ -601,7 +598,7 @@ export default {
 		_setSpeaking(peerId, speaking) {
 			if (speaking) {
 				// Move the speaker to the first element of the list
-				const index = this.speakers.findIndex(speaker => speaker.id === peerId)
+				const index = this.speakers.findIndex((speaker) => speaker.id === peerId)
 				const speaker = this.speakers[index]
 				speaker.active = true
 				this.speakers.splice(index, 1)
@@ -611,7 +608,7 @@ export default {
 			}
 
 			// Set the speaker as not speaking
-			const index = this.speakers.findIndex(speaker => speaker.id === peerId)
+			const index = this.speakers.findIndex((speaker) => speaker.id === peerId)
 			const speaker = this.speakers[index]
 			speaker.active = false
 
@@ -619,7 +616,7 @@ export default {
 			if (index === 0) {
 				this.speakers.shift()
 
-				const firstInactiveSpeakerIndex = this.speakers.findIndex(speaker => !speaker.active)
+				const firstInactiveSpeakerIndex = this.speakers.findIndex((speaker) => !speaker.active)
 				if (firstInactiveSpeakerIndex === -1) {
 					this.speakers.push(speaker)
 				} else {
@@ -669,7 +666,7 @@ export default {
 		},
 
 		_setPromotedParticipant() {
-			Object.values(this.sharedDatas).forEach(sharedData => {
+			Object.values(this.sharedDatas).forEach((sharedData) => {
 				sharedData.promoted = false
 			})
 
@@ -706,7 +703,7 @@ export default {
 		_setScreenVisible() {
 			this.localSharedData.screenVisible = false
 
-			Object.values(this.sharedDatas).forEach(sharedData => {
+			Object.values(this.sharedDatas).forEach((sharedData) => {
 				sharedData.screenVisible = false
 			})
 
@@ -778,7 +775,7 @@ export default {
 		},
 
 		adjustSimulcastQuality() {
-			this.callParticipantModels.forEach(callParticipantModel => {
+			this.callParticipantModels.forEach((callParticipantModel) => {
 				this.adjustSimulcastQualityForParticipant(callParticipantModel)
 			})
 		},

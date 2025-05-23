@@ -4,24 +4,22 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import type { CSSProperties, Component } from 'vue'
+import type { Component, CSSProperties } from 'vue'
 
 import { isRTL } from '@nextcloud/l10n'
-
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
 import TransitionExpand from './TransitionExpand.vue'
 
 type TabDefinition = {
-	id: string,
-	label: string,
-	icon: Component,
+	id: string
+	label: string
+	icon: Component
 }
 
 const props = defineProps<{
-	tabs: TabDefinition[],
-	active?: string,
+	tabs: TabDefinition[]
+	active?: string
 }>()
 
 const emit = defineEmits<{
@@ -38,7 +36,7 @@ const randomId = Math.random().toString(36).substring(7)
 const getRefId = (scope: 'tab' | 'panel', key: string) => `tab-${randomId}-${scope}-${key}`
 
 /** Index of the active tab for the transition effect */
-const activeIndex = computed(() => props.tabs.findIndex(tab => tab.id === props.active))
+const activeIndex = computed(() => props.tabs.findIndex((tab) => tab.id === props.active))
 /** Inline styles to shift tabs */
 const tabStyles = computed<CSSProperties | undefined>(() => {
 	return activeIndex.value !== -1

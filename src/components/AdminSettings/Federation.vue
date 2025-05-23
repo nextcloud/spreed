@@ -84,13 +84,11 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
-
+import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
@@ -204,8 +202,8 @@ export default {
 				})
 
 				// repopulate allowed groups with full group objects to show display name
-				const allowedGroupIds = this.allowedGroups.map(group => typeof group === 'object' ? group.id : group)
-				this.allowedGroups = this.groups.filter(group => allowedGroupIds.includes(group.id))
+				const allowedGroupIds = this.allowedGroups.map((group) => typeof group === 'object' ? group.id : group)
+				this.allowedGroups = this.groups.filter((group) => allowedGroupIds.includes(group.id))
 			} catch (err) {
 				console.error('Could not fetch groups', err)
 			} finally {
@@ -218,7 +216,7 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
-			const groups = this.allowedGroups.map(group => typeof group === 'object' ? group.id : group)
+			const groups = this.allowedGroups.map((group) => typeof group === 'object' ? group.id : group)
 
 			OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(groups), {
 				success: () => {

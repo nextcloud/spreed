@@ -1,14 +1,12 @@
+import { getCurrentUser } from '@nextcloud/auth'
+import { showError, showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import Vue from 'vue'
-
-import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
 import {
 	ATTENDEE,
 	CALL,
@@ -17,43 +15,43 @@ import {
 	WEBINAR,
 } from '../constants.ts'
 import {
+	deleteConversationAvatar,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
-	deleteConversationAvatar,
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
-import { hasTalkFeature, getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import {
-	makeConversationPublic,
-	makeConversationPrivate,
-	setSIPEnabled,
-	setRecordingConsent,
+	addToFavorites,
+	archiveConversation,
+	changeListable,
 	changeLobbyState,
 	changeReadOnlyState,
-	changeListable,
-	createLegacyConversation,
 	createConversation,
-	addToFavorites,
-	removeFromFavorites,
-	markAsImportant,
-	markAsUnimportant,
-	markAsSensitive,
-	markAsInsensitive,
-	archiveConversation,
-	unarchiveConversation,
-	fetchConversations,
-	fetchConversation,
-	setConversationName,
-	setConversationDescription,
+	createLegacyConversation,
 	deleteConversation,
-	unbindConversationFromObject,
-	setNotificationLevel,
-	setNotificationCalls,
-	setConversationPermissions,
+	fetchConversation,
+	fetchConversations,
+	makeConversationPrivate,
+	makeConversationPublic,
+	markAsImportant,
+	markAsInsensitive,
+	markAsSensitive,
+	markAsUnimportant,
+	removeFromFavorites,
 	setCallPermissions,
-	setMessageExpiration,
+	setConversationDescription,
+	setConversationName,
 	setConversationPassword,
+	setConversationPermissions,
 	setMentionPermissions,
+	setMessageExpiration,
+	setNotificationCalls,
+	setNotificationLevel,
+	setRecordingConsent,
+	setSIPEnabled,
+	unarchiveConversation,
+	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
 import {
 	clearConversationHistory,
@@ -123,17 +121,17 @@ const state = {
 }
 
 const getters = {
-	conversations: state => state.conversations,
+	conversations: (state) => state.conversations,
 	/**
 	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
 	 *
 	 * @param {object} state state
 	 * @return {object[]} sorted conversations list
 	 */
-	conversationsList: state => {
+	conversationsList: (state) => {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
-			.filter(conversation => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 			// Sort by isFavorite and lastActivity
 			.sort((conversation1, conversation2) => {
 				if (conversation1.isFavorite !== conversation2.isFavorite) {
@@ -150,7 +148,7 @@ const getters = {
 	 * @return {object[]} sorted conversations list
 	 */
 	archivedConversationsList: (state, getters) => {
-		return getters.conversationsList.filter(conversation => conversation.isArchived)
+		return getters.conversationsList.filter((conversation) => conversation.isArchived)
 	},
 	/**
 	 * Get a conversation providing its token
@@ -158,8 +156,8 @@ const getters = {
 	 * @param {object} state state object
 	 * @return {Function} The callback function returning the conversation object
 	 */
-	conversation: state => token => state.conversations[token],
-	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
+	conversation: (state) => (token) => state.conversations[token],
+	dummyConversation: (state) => Object.assign({}, DUMMY_CONVERSATION),
 	isModerator: (state, getters, rootState, rootGetters) => {
 		const conversation = getters.conversation(rootGetters.getToken())
 		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
@@ -185,7 +183,7 @@ const getters = {
 			.find((conversation) => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 	},
 
-	conversationsInitialised: state => state.conversationsInitialised,
+	conversationsInitialised: (state) => state.conversationsInitialised,
 }
 
 const mutations = {
@@ -414,9 +412,7 @@ const actions = {
 		const breakoutRoomsStore = useBreakoutRoomsStore()
 
 		const currentConversations = context.state.conversations
-		const newConversations = Object.fromEntries(
-			conversations.map((conversation) => [conversation.token, conversation])
-		)
+		const newConversations = Object.fromEntries(conversations.map((conversation) => [conversation.token, conversation]))
 
 		// Remove conversations that are not in the new list
 		if (withRemoving) {
@@ -938,7 +934,7 @@ const actions = {
 				callFlag: hasCall ? PARTICIPANT.CALL_FLAG.IN_CALL : PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				lastActivity,
 				callStartTime: hasCall ? lastActivity : 0,
-			}
+			},
 		})
 	},
 
@@ -1054,7 +1050,7 @@ const actions = {
 			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
 			...newParticipants,
 		]
-		const roomName = getDisplayNamesList(participants.map(participant => participant.label), CONVERSATION.MAX_NAME_LENGTH)
+		const roomName = getDisplayNamesList(participants.map((participant) => participant.label), CONVERSATION.MAX_NAME_LENGTH)
 
 		return context.dispatch('createGroupConversation', {
 			roomName,
@@ -1284,7 +1280,7 @@ const actions = {
 			console.error('Error while unbinding conversation from object: ', error)
 			showError(t('spreed', 'Could not remove the automatic expiration'))
 		}
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

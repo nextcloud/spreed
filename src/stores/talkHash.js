@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
@@ -104,7 +102,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 			if (response?.status === 503 && !this.maintenanceWarningToast) {
 				this.maintenanceWarningToast = showError(
 					t('spreed', 'Nextcloud is in maintenance mode.') + '\n' + messagePleaseReload,
-					{ timeout: TOAST_PERMANENT_TIMEOUT }
+					{ timeout: TOAST_PERMANENT_TIMEOUT },
 				)
 			}
 		},
@@ -128,5 +126,5 @@ export const useTalkHashStore = defineStore('talkHash', {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		},
-	}
+	},
 })

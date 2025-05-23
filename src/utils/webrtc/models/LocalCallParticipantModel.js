@@ -4,10 +4,9 @@
  */
 
 import { reactive } from 'vue'
-
-import { ConnectionState } from './CallParticipantModel.js'
 import store from '../../../store/index.js'
 import EmitterMixin from '../../EmitterMixin.js'
+import { ConnectionState } from './CallParticipantModel.js'
 
 /**
  *
@@ -56,7 +55,7 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', null)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
-		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
+		this._unwatchDisplayNameChange = store.watch((state) => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
 	setPeerId(peerId) {

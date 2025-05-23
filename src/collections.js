@@ -4,7 +4,6 @@
  */
 
 import { t } from '@nextcloud/l10n'
-
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
 __webpack_nonce__ = btoa(OC.requestToken)

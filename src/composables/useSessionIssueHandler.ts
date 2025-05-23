@@ -3,16 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { nextTick, onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 import type { DeepReadonly, Ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-
+import { nextTick, onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
-
 import { useStore } from '../composables/useStore.js'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
@@ -80,7 +77,7 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 					label: t('spreed', 'Join here'),
 					type: 'primary',
 					callback: () => true,
-				}
+				},
 			],
 		}, (result?: boolean) => {
 			if (result) {

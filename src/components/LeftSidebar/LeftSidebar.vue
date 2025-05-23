@@ -232,7 +232,9 @@
 							<IconArchive :size="20" />
 						</template>
 						{{ t('spreed', 'Archived conversations') }}
-						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">{{ '⬤' }}</span>
+						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
+							⬤
+						</span>
 					</NcButton>
 				</template>
 
@@ -248,9 +250,22 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
 import { ref } from 'vue'
-
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcChip from '@nextcloud/vue/components/NcChip'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 import IconArchive from 'vue-material-design-icons/Archive.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
@@ -267,32 +282,14 @@ import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcChip from '@nextcloud/vue/components/NcChip'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-
+import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import SearchBox from '../UIShared/SearchBox.vue'
+import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
-import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
-import SearchBox from '../UIShared/SearchBox.vue'
-import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -309,7 +306,7 @@ import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, hasCall, filterConversation, shouldIncludeArchived } from '../../utils/conversation.ts'
+import { filterConversation, hasCall, hasUnreadMentions, shouldIncludeArchived } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -463,7 +460,7 @@ export default {
 
 		showArchivedConversationsBubble() {
 			return this.archivedConversationsList
-				.some(conversation => hasUnreadMentions(conversation) || hasCall(conversation))
+				.some((conversation) => hasUnreadMentions(conversation) || hasCall(conversation))
 		},
 
 		filteredConversationsList() {
@@ -489,7 +486,7 @@ export default {
 		},
 
 		hasNoteToSelf() {
-			return this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
+			return this.conversationsList.find((conversation) => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 		},
 
 		pendingInvitationsCount() {
@@ -525,7 +522,7 @@ export default {
 				this.forceFullRoomListRefreshAfterXLoops = 10
 				this.fetchConversations()
 			}
-		}
+		},
 	},
 
 	beforeMount() {
@@ -631,11 +628,11 @@ export default {
 				this.filters = []
 			} else {
 				if (this.filters.includes(filter)) {
-					this.filters = this.filters.filter(f => f !== filter)
+					this.filters = this.filters.filter((f) => f !== filter)
 				} else {
 					// Hardcode 'unread' and 'mentions' to behave like radio buttons
 					if (filter === 'unread' || filter === 'mentions') {
-						this.filters = [...this.filters.filter(f => f !== 'unread' && f !== 'mentions'), filter]
+						this.filters = [...this.filters.filter((f) => f !== 'unread' && f !== 'mentions'), filter]
 					} else {
 						this.filters = [...this.filters, filter]
 					}
@@ -746,7 +743,7 @@ export default {
 				this.$router.push({
 					name: 'conversation',
 					params: { token: conversation.token },
-				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types, show the modal directly
 				this.$refs.newConversationDialog.showModalForItem(item)
@@ -759,7 +756,7 @@ export default {
 			this.$router.push({
 				name: 'conversation',
 				params: { token: conversation.token },
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async createConversation(roomName) {
@@ -945,8 +942,8 @@ export default {
 
 		showTalkDashboard() {
 			this.$router.push({ name: 'root' })
-				.catch(err => console.debug(`Error while pushing the dashboard route: ${err}`))
-		}
+				.catch((err) => console.debug(`Error while pushing the dashboard route: ${err}`))
+		},
 	},
 }
 </script>

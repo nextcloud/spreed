@@ -97,23 +97,18 @@
 
 <script>
 import { Portal } from '@linusborg/vue-simple-portal'
-
+import { isRTL, t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-
-import { t, isRTL } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
 import Screen from './Screen.vue'
 import VideoVue from './VideoVue.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 
@@ -169,14 +164,14 @@ export default {
 		localSharedData: {
 			type: Object,
 			required: true,
-			default: () => {}
+			default: () => {},
 		},
 
 		screens: {
 			type: Array,
 			required: false,
 			default: () => [],
-		}
+		},
 	},
 
 	setup() {
@@ -213,7 +208,7 @@ export default {
 		computedStyle() {
 			return {
 				[isRTL() ? 'left' : 'right']: this.position[isRTL() ? 'left' : 'right'] + 'px',
-				bottom: this.position.bottom + 'px'
+				bottom: this.position.bottom + 'px',
 			}
 		},
 	},

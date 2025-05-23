@@ -19,20 +19,17 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-import { provide } from 'vue'
-
 import { getCurrentUser } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcContent from '@nextcloud/vue/components/NcContent'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-
+import debounce from 'debounce'
+import { provide } from 'vue'
+import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+import NcContent from '@nextcloud/vue/components/NcContent'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
@@ -40,7 +37,6 @@ import PollManager from './components/PollViewer/PollManager.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
-
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
@@ -180,7 +176,7 @@ export default {
 				} else {
 					toggle?.removeAttribute('data-theme-dark')
 				}
-			}
+			},
 		},
 
 		unreadCountsMap: {
@@ -189,7 +185,7 @@ export default {
 			handler(value) {
 				emit('talk:unread:updated', value)
 			},
-		}
+		},
 	},
 
 	beforeCreate() {
@@ -430,7 +426,7 @@ export default {
 							callback: () => {
 								beforeRouteChangeListener(to, from, next)
 							},
-						}
+						},
 					],
 				})
 			}

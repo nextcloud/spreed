@@ -16,9 +16,11 @@
 		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div :class="{ 'normal-message-body': !isSystemMessage && !isDeletedMessage,
-			'system': isSystemMessage,
-			'combined-system': isCombinedSystemMessage }"
+		<div :class="{
+				'normal-message-body': !isSystemMessage && !isDeletedMessage,
+				system: isSystemMessage,
+				'combined-system': isCombinedSystemMessage,
+			}"
 			class="message-body">
 			<MessageBody :rich-parameters="richParameters"
 				:is-deleting="isDeleting"
@@ -97,18 +99,14 @@
 </template>
 
 <script>
+import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
 import IconUnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import IconUnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
-
-import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -121,7 +119,6 @@ import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
-
 import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
@@ -294,7 +291,7 @@ export default {
 				const mimetype = this.message.messageParameters[p].mimetype
 				const itemType = getItemTypeFromMessage({
 					messageParameters: this.message.messageParameters,
-					messageType: this.message.messageType
+					messageType: this.message.messageType,
 				})
 				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
@@ -464,7 +461,7 @@ export default {
 			this.loading = true
 			await this.chatExtrasStore.requestChatSummary(this.message.token, this.message.id)
 			this.loading = false
-		}
+		},
 	},
 }
 </script>

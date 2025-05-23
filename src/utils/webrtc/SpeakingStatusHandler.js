@@ -57,7 +57,7 @@ export default class SpeakingStatusHandler {
 		this.#callParticipantCollection.off('add', this.#handleAddParticipantBound)
 		this.#callParticipantCollection.off('remove', this.#handleRemoveParticipantBound)
 
-		this.#callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+		this.#callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:speaking', this.#handleSpeakingBound)
 			callParticipantModel.off('change:stoppedSpeaking', this.#handleSpeakingBound)
 		})
@@ -120,7 +120,7 @@ export default class SpeakingStatusHandler {
 	#handleSpeaking(callParticipantModel, speaking) {
 		const attendeeId = this.#store.getters.findParticipant(
 			this.#store.getters.getToken(),
-			{ sessionId: callParticipantModel.attributes.nextcloudSessionId }
+			{ sessionId: callParticipantModel.attributes.nextcloudSessionId },
 		)?.attendeeId
 
 		if (!attendeeId) {

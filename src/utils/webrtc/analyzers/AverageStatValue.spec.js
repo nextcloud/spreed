@@ -45,7 +45,7 @@ describe('AverageStatValue', () => {
 			let stat2
 
 			const addValues = (values) => {
-				values.forEach(val => {
+				values.forEach((val) => {
 					stat.add(val)
 					stat2.add(val)
 				})

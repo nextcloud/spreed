@@ -5,9 +5,8 @@
 
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
-
-import SignalingTypingHandler from './SignalingTypingHandler.js'
 import storeConfig from '../store/storeConfig.js'
+import SignalingTypingHandler from './SignalingTypingHandler.js'
 
 describe('SignalingTypingHandler', () => {
 	let store

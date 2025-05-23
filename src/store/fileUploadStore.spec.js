@@ -1,3 +1,5 @@
+import { showError } from '@nextcloud/dialogs'
+import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,16 +9,12 @@ import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
-
-import storeConfig from './storeConfig.js'
-import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
+import fileUploadStore from './fileUploadStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/DavClient', () => ({
 	getDavClient: jest.fn(),
@@ -214,7 +212,7 @@ describe('fileUploadStore', () => {
 				expect(findUniquePath).toHaveBeenNthCalledWith(+index + 1, client, '/files/current-user', '/Talk/' + files[index].name, undefined)
 				expect(uploadMock).toHaveBeenNthCalledWith(+index + 1, `/Talk/${files[index].name}uniq`, files[index])
 			}
-			const referenceIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.referenceId)
+			const referenceIds = store.getters.getUploadsArray('upload-id1').map((entry) => entry[1].temporaryMessage.referenceId)
 
 			expect(shareFile).toHaveBeenCalledTimes(2)
 			expect(shareFile).toHaveBeenNthCalledWith(1, {
@@ -268,7 +266,7 @@ describe('fileUploadStore', () => {
 				token: 'XXTOKENXX',
 				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
-				reason: 'failed-upload'
+				reason: 'failed-upload',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
@@ -309,7 +307,7 @@ describe('fileUploadStore', () => {
 				token: 'XXTOKENXX',
 				id: store.getters.getUploadsArray('upload-id1')[0][1].temporaryMessage.id,
 				uploadId: 'upload-id1',
-				reason: 'failed-share'
+				reason: 'failed-share',
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
@@ -337,7 +335,7 @@ describe('fileUploadStore', () => {
 				files,
 			})
 
-			const fileIds = store.getters.getUploadsArray('upload-id1').map(entry => entry[1].temporaryMessage.id)
+			const fileIds = store.getters.getUploadsArray('upload-id1').map((entry) => entry[1].temporaryMessage.id)
 			await store.dispatch('removeFileFromSelection', fileIds[1])
 
 			const uploads = store.getters.getInitialisedUploads('upload-id1')

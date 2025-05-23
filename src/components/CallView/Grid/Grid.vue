@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, 'transparent': isLessThanTwoVideos }">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, transparent: isLessThanTwoVideos }">
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
@@ -45,7 +45,7 @@
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
 								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{ 'video': !isStripe }"
+									:class="{ video: !isStripe }"
 									:show-video-overlay="showVideoOverlay"
 									:token="token"
 									:model="callParticipantModel"
@@ -149,28 +149,23 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { inject, ref } from 'vue'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-
-import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
-
-import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
-import { PARTICIPANT, ATTENDEE } from '../../../constants.ts'
+import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
@@ -530,7 +525,7 @@ export default {
 				modelsWithNoPermissions: [],
 			}
 			const screensSet = new Set(this.screens)
-			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map(model => model.attributes.nextcloudSessionId))
+			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map((model) => model.attributes.nextcloudSessionId))
 			const videoTilesMap = new Map()
 			const audioTilesMap = new Map()
 
@@ -559,11 +554,11 @@ export default {
 		},
 
 		speakers() {
-			return this.callParticipantModels.filter(model => model.attributes.speaking)
+			return this.callParticipantModels.filter((model) => model.attributes.speaking)
 		},
 
 		speakersWithAudioOff() {
-			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
+			return this.tempPromotedModels.filter((model) => !model.attributes.audioAvailable)
 		},
 
 		devStripe: {
@@ -602,14 +597,14 @@ export default {
 		},
 
 		speakers(models) {
-			models.forEach(model => {
+			models.forEach((model) => {
 				this.promoteSpeaker(model)
 				clearTimeout(this.unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
 			})
 		},
 
 		speakersWithAudioOff(newModels, oldModels) {
-			newModels.forEach(speaker => {
+			newModels.forEach((speaker) => {
 				if (oldModels.includes(speaker)) {
 					return
 				}
@@ -906,7 +901,7 @@ export default {
 			const id = model.attributes.nextcloudSessionId
 
 			// if model is already in the first page, do nothing
-			if (this.orderedVideos.slice(0, this.slots).find(video => video.attributes.nextcloudSessionId === id)) {
+			if (this.orderedVideos.slice(0, this.slots).find((video) => video.attributes.nextcloudSessionId === id)) {
 				return
 			}
 
@@ -934,7 +929,7 @@ export default {
 			const orderedTiles = []
 			const rest = []
 			// Get the ordered tiles
-			orderMask.forEach(id => {
+			orderMask.forEach((id) => {
 				if (tilesMap.has(id)) {
 					orderedTiles.push(tilesMap.get(id))
 				}

@@ -106,20 +106,17 @@
 </template>
 
 <script>
-import IconClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
-import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
-import IconEmail from 'vue-material-design-icons/Email.vue'
-
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-
+import IconClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import IconEmail from 'vue-material-design-icons/Email.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import generatePassword from '../../utils/generatePassword.ts'
@@ -264,7 +261,7 @@ export default {
 			// Turn on password protection and set a password
 			await this.togglePassword(true)
 			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests: true, password: this.password })
-		}
+		},
 	},
 }
 </script>

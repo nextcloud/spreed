@@ -55,24 +55,19 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import { provide } from 'vue'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 import IconTrayArrowUp from 'vue-material-design-icons/TrayArrowUp.vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
-
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'

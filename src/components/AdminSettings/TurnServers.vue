@@ -44,16 +44,12 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-
-import Plus from 'vue-material-design-icons/Plus.vue'
-
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import Plus from 'vue-material-design-icons/Plus.vue'
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 

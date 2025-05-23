@@ -6,7 +6,6 @@
 import mockconsole from 'mockconsole'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
-
 import WebRTC from './webrtc.js'
 
 /**

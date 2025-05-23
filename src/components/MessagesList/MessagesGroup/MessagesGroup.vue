@@ -28,13 +28,10 @@
 </template>
 
 <script>
-import { toRefs, computed } from 'vue'
-
 import { t } from '@nextcloud/l10n'
-
-import Message from './Message/Message.vue'
+import { computed, toRefs } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-
+import Message from './Message/Message.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
@@ -89,7 +86,7 @@ export default {
 
 		const actorInfo = computed(() => {
 			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
-				.filter(value => value).join(' ')
+				.filter((value) => value).join(' ')
 		})
 
 		return {

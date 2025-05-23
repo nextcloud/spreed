@@ -112,27 +112,23 @@
 </template>
 
 <script>
-import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
-
 import { emit } from '@nextcloud/event-bus'
-import { t, n } from '@nextcloud/l10n'
-
+import { n, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-
+import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+import CalendarEventsDialog from '../CalendarEventsDialog.vue'
+import ConversationIcon from '../ConversationIcon.vue'
+import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
 import ReactionMenu from './ReactionMenu.vue'
 import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
-import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
-import CalendarEventsDialog from '../CalendarEventsDialog.vue'
-import ConversationIcon from '../ConversationIcon.vue'
-import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
-
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -259,7 +255,9 @@ export default {
 
 			if (peer) {
 				return !peer.sessionIds.length
-			} else return false
+			} else {
+				return false
+			}
 		},
 
 		participantsInCall() {
@@ -301,7 +299,7 @@ export default {
 					return
 				}
 				this.groupwareStore.getUpcomingEvents(value)
-			}
+			},
 		},
 	},
 

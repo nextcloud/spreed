@@ -25,14 +25,10 @@
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { Fragment } from 'vue-frag'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {

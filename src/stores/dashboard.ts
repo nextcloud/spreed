@@ -3,24 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
+import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getDashboardEventRooms } from '../services/dashboardService.ts'
 import { getUpcomingReminders, removeMessageReminder } from '../services/remindersService.js'
-import type { DashboardEventRoom, UpcomingReminder } from '../types/index.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
 
 type State = {
-	eventRooms: DashboardEventRoom[],
-	upcomingReminders: UpcomingReminder[],
-	eventRoomsInitialised: boolean,
-	upcomingRemindersInitialised: boolean,
+	eventRooms: DashboardEventRoom[]
+	upcomingReminders: UpcomingReminder[]
+	eventRoomsInitialised: boolean
+	upcomingRemindersInitialised: boolean
 }
 export const useDashboardStore = defineStore('dashboard', {
 	state: (): State => ({
@@ -59,7 +58,7 @@ export const useDashboardStore = defineStore('dashboard', {
 		async removeReminder(token: string, messageId: number) {
 			try {
 				await removeMessageReminder(token, messageId)
-				Vue.set(this, 'upcomingReminders', this.upcomingReminders.filter(reminder => {
+				Vue.set(this, 'upcomingReminders', this.upcomingReminders.filter((reminder) => {
 					return reminder.messageId !== messageId
 				}))
 				showSuccess(t('spreed', 'A reminder was successfully removed'))

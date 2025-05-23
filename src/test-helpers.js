@@ -4,7 +4,6 @@
  */
 
 import { cloneDeep } from 'lodash'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -19,8 +18,8 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 function findNcActionButton(wrapper, text) {
 	const actionButtons = wrapper.findAllComponents(NcActionButton)
 	const items = (Array.isArray(text))
-		? actionButtons.filter(actionButton => text.includes(actionButton.text()))
-		: actionButtons.filter(actionButton => actionButton.text() === text)
+		? actionButtons.filter((actionButton) => text.includes(actionButton.text()))
+		: actionButtons.filter((actionButton) => actionButton.text() === text)
 	if (!items.exists()) {
 		return items
 	}
@@ -36,8 +35,8 @@ function findNcActionButton(wrapper, text) {
 function findNcButton(wrapper, text) {
 	const buttons = wrapper.findAllComponents(NcButton)
 	const items = (Array.isArray(text))
-		? buttons.filter(button => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
-		: buttons.filter(button => button.text() === text || button.vm.ariaLabel === text)
+		? buttons.filter((button) => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
+		: buttons.filter((button) => button.text() === text || button.vm.ariaLabel === text)
 	if (!items.exists()) {
 		return items
 	}
@@ -53,8 +52,8 @@ function findNcButton(wrapper, text) {
 function findNcListItems(wrapper, text) {
 	const listItems = wrapper.findAllComponents(NcListItem)
 	return (Array.isArray(text))
-		? listItems.filter(listItem => text.includes(listItem.vm.name))
-		: listItems.filter(listItem => listItem.vm.name === text)
+		? listItems.filter((listItem) => text.includes(listItem.vm.name))
+		: listItems.filter((listItem) => listItem.vm.name === text)
 }
 
 /**
@@ -120,6 +119,6 @@ export {
 	findNcActionButton,
 	findNcButton,
 	findNcListItems,
-	generateOCSResponse,
 	generateOCSErrorResponse,
+	generateOCSResponse,
 }

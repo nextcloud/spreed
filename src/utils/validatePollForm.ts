@@ -12,7 +12,7 @@ const REQUIRED_KEYS = ['question', 'options', 'resultMode', 'maxVotes'] as const
  * @param payload payload to check
  */
 function isStringArray(payload: unknown): payload is string[] {
-	return Array.isArray(payload) && payload.every(opt => typeof opt === 'string')
+	return Array.isArray(payload) && payload.every((opt) => typeof opt === 'string')
 }
 
 /**

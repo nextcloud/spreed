@@ -34,12 +34,9 @@
 </template>
 
 <script>
-import { inject, toRefs, ref } from 'vue'
-
+import { inject, ref, toRefs } from 'vue'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-
 import ConversationIcon from './../../ConversationIcon.vue'
-
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 
 export default {

@@ -50,18 +50,15 @@
 </template>
 
 <script>
-import IconAlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
-import IconReload from 'vue-material-design-icons/Reload.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import IconAlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 import { getWelcomeMessage } from '../../services/recordingService.js'
 
 export default {
@@ -133,7 +130,7 @@ export default {
 
 			set(value) {
 				this.$emit('update:server', value)
-			}
+			},
 		},
 	},
 

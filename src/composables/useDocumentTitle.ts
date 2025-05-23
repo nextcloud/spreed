@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, ref, watch } from 'vue'
 import type { Route } from 'vue-router'
-import { useRouter, useRoute } from 'vue-router/composables'
+import type { Conversation } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router/composables'
+import { EventBus } from '../services/EventBus.ts'
+import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useStore } from './useStore.js'
-import { EventBus } from '../services/EventBus.ts'
-import type { Conversation } from '../types/index.ts'
-import { hasUnreadMentions, hasCall } from '../utils/conversation.ts'
 
 type LastMessageMap = {
 	[token: string]: {
@@ -51,7 +50,7 @@ export function useDocumentTitle() {
 		 * - a conversation is newly added to lastMessageMap
 		 * - a conversation has a different last message id then previously
 		 */
-		const shouldShowAsterisk = Object.keys(newLastMessageMap).some(token => {
+		const shouldShowAsterisk = Object.keys(newLastMessageMap).some((token) => {
 			return savedLastMessageMap.value[token] === undefined // Conversation is new
 				|| (savedLastMessageMap.value[token].lastMessageId !== newLastMessageMap[token].lastMessageId // Last message changed
 					&& savedLastMessageMap.value[token].unreadMessages !== newLastMessageMap[token].unreadMessages // Unread messages changed

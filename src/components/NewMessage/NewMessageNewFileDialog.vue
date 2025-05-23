@@ -51,14 +51,11 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
-
 import { useViewer } from '../../composables/useViewer.js'
 import { createNewFile, shareFile } from '../../services/filesSharingServices.ts'
 
@@ -126,7 +123,7 @@ export default {
 		},
 
 		selectedTemplate() {
-			return this.templates.find(template => template.fileid === this.checked)
+			return this.templates.find((template) => template.fileid === this.checked)
 		},
 
 		style() {

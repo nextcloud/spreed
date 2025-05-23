@@ -1,23 +1,19 @@
+import { showError, showSuccess } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
-
-import { showSuccess, showError } from '@nextcloud/dialogs'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-
 import Conversation from './Conversation.vue'
-
 import router from '../../../__mocks__/router.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcButton } from '../../../test-helpers.js'
@@ -338,7 +334,7 @@ describe('Conversation.vue', () => {
 		 */
 		function findNcActionButton(wrapper, text) {
 			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			const items = actionButtons.filter(actionButton => {
+			const items = actionButtons.filter((actionButton) => {
 				return actionButton.text() === text
 			})
 			if (!items.exists()) {

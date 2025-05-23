@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import {
-	getFileExtension,
-	getFileSuffix,
 	extractFileName,
-	getFileNamePrompt,
 	findUniquePath,
+	getFileExtension,
+	getFileNamePrompt,
+	getFileSuffix,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
 } from '../fileUpload.js'
@@ -54,7 +54,7 @@ describe('fileUpload', () => {
 
 		it('should return the correctly extracted file name without extension and digit suffix', () => {
 			const paths = ['file (1).txt', 'file (1)', 'file.txt', 'file (10).txt', 'file 1.txt', 'file (1) (2).txt', 'file (N).txt']
-			const fileNames = paths.map(path => extractFileName(path))
+			const fileNames = paths.map((path) => extractFileName(path))
 			expect(fileNames).toStrictEqual(['file', 'file', 'file', 'file', 'file 1', 'file (1)', 'file (N)'])
 		})
 	})

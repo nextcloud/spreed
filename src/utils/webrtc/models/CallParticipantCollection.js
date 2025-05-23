@@ -4,9 +4,8 @@
  */
 
 import { ref } from 'vue'
-
-import CallParticipantModel from './CallParticipantModel.js'
 import EmitterMixin from '../../EmitterMixin.js'
+import CallParticipantModel from './CallParticipantModel.js'
 
 /**
  *

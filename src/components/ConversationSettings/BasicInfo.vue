@@ -46,17 +46,14 @@
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
-import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
+import { Fragment } from 'vue-frag'
 import EditableTextField from '../UIShared/EditableTextField.vue'
-
+import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import { CONVERSATION } from '../../constants.ts'
-import { hasTalkFeature, getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
@@ -86,7 +83,7 @@ export default {
 		return {
 			supportsAvatar,
 			CONVERSATION,
-			maxDescriptionLength
+			maxDescriptionLength,
 		}
 	},
 

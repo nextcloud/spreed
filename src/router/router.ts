@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { generateUrl, getRootUrl } from '@nextcloud/router'
 import Vue from 'vue'
 import Router from 'vue-router'
-
-import { getRootUrl, generateUrl } from '@nextcloud/router'
-
 import CallView from '../components/CallView/CallView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'

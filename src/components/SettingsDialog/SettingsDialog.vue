@@ -215,22 +215,18 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
+import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-
 import MediaDevicesPreview from './MediaDevicesPreview.vue'
-
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -344,7 +340,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.selectAttachmentFolder(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 	},
@@ -394,9 +390,7 @@ export default {
 		async toggleReadStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.settingsStore.updateReadStatusPrivacy(
-					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
-				)
+				await this.settingsStore.updateReadStatusPrivacy(this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
@@ -407,9 +401,7 @@ export default {
 		async toggleTypingStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.settingsStore.updateTypingStatusPrivacy(
-					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
-				)
+				await this.settingsStore.updateTypingStatusPrivacy(this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting typing status privacy'))
@@ -420,9 +412,7 @@ export default {
 		async toggleConversationsListStyle(value) {
 			this.appearanceLoading = true
 			try {
-				await this.settingsStore.setConversationsListStyle(
-					value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES
-				)
+				await this.settingsStore.setConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
 				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting personal setting'))

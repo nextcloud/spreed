@@ -24,9 +24,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-
 import { CONVERSATION } from '../../constants.ts'
 
 export default {
@@ -76,7 +74,7 @@ export default {
 				default:
 					return t('spreed', 'All participants are allowed to mention @all')
 			}
-		}
+		},
 	},
 
 	watch: {

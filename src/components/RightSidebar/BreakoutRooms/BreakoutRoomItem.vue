@@ -60,21 +60,17 @@
 </template>
 
 <script>
+import { showSuccess, showWarning } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-
-import { showSuccess, showWarning } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'

@@ -33,7 +33,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, options = 
 	 * @type {import('vue').Ref<HTMLElement[]>}
 	 */
 	const itemElements = ref([])
-	const itemElementsIdMap = computed(() => itemElements.value.map(item => {
+	const itemElementsIdMap = computed(() => itemElements.value.map((item) => {
 		return item.getAttribute('data-nav-id')
 	}))
 

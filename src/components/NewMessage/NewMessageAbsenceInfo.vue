@@ -42,19 +42,15 @@
 </template>
 
 <script>
-import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-
 import { getCurrentUser } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
-import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-
+import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { AVATAR } from '../../constants.ts'
 
 export default {
@@ -104,7 +100,7 @@ export default {
 		userAbsenceCaption() {
 			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName }, undefined, {
 				escape: false,
-				sanitize: false
+				sanitize: false,
 			})
 		},
 
@@ -163,8 +159,8 @@ export default {
 				name: 'root',
 				query: {
 					callUser: this.userAbsence.replacementUserId,
-				}
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				},
+			}).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }

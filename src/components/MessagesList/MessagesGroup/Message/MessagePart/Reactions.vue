@@ -76,19 +76,15 @@
 </template>
 
 <script>
-import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
-import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
-
 import { showError } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
-
+import { n, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-
+import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import ReactionsList from './ReactionsList.vue'
-
 import { ATTENDEE } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
@@ -184,11 +180,9 @@ export default {
 		 * Compare the plain reactions with the simplified detailed reactions.
 		 */
 		hasOutdatedDetails() {
-			const detailedReactionsSimplified = Object.fromEntries(
-				Object.entries(this.detailedReactions)
-					.sort() // Plain reactions come sorted
-					.map(([key, value]) => [key, value.length])
-			)
+			const detailedReactionsSimplified = Object.fromEntries(Object.entries(this.detailedReactions)
+				.sort() // Plain reactions come sorted
+				.map(([key, value]) => [key, value.length]))
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},
@@ -276,7 +270,7 @@ export default {
 			}
 			return n('spreed', 'and %n other participant', 'and %n other participants', this.reactionsCount(reaction) - 3)
 		},
-	}
+	},
 }
 </script>
 

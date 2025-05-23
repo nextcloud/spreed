@@ -169,35 +169,30 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-import { toRefs, nextTick } from 'vue'
-
-import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import SendIcon from 'vue-material-design-icons/Send.vue'
-
 import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
-
+import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import debounce from 'debounce'
+import { nextTick, toRefs } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-
+import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import SendIcon from 'vue-material-design-icons/Send.vue'
+import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
-import Quote from '../Quote.vue'
-
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
@@ -210,7 +205,7 @@ import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
-import { getCurrentSelectionRange, selectRange, insertTextInElement } from '../../utils/selectionRange.ts'
+import { getCurrentSelectionRange, insertTextInElement, selectRange } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {
@@ -454,7 +449,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.handleFileShare(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 
@@ -485,7 +480,7 @@ export default {
 
 		canEditMessage() {
 			return hasTalkFeature(this.token, 'edit-messages')
-		}
+		},
 	},
 
 	watch: {
@@ -552,7 +547,7 @@ export default {
 				this.clearTypingInterval()
 				this.checkAbsenceStatus()
 				this.clearSilentState()
-			}
+			},
 		},
 	},
 
@@ -629,7 +624,7 @@ export default {
 				this.chatExtrasStore.setChatEditInput({
 					token: this.token,
 					text,
-					parameters: this.messageToEdit.messageParameters
+					parameters: this.messageToEdit.messageParameters,
 				})
 			} else if (text && text !== this.chatInput) {
 				this.chatExtrasStore.setChatInput({ token: this.token, text })
@@ -740,7 +735,7 @@ export default {
 		},
 
 		sleep(ms) {
-			return new Promise(resolve => setTimeout(resolve, ms))
+			return new Promise((resolve) => setTimeout(resolve, ms))
 		},
 
 		handleRetryMessage(id) {
@@ -897,7 +892,7 @@ export default {
 			}
 
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
+			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast((message) => {
 				return message.actorId === this.$store.getters.getUserId()
 					&& message.actorType === this.$store.getters.getActorType()
 					&& !message.isTemporary && !message.systemMessage
@@ -953,7 +948,7 @@ export default {
 			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
 				this.toggleSilentChat()
 			}
-		}
+		},
 	},
 }
 </script>

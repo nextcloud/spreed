@@ -4,7 +4,6 @@
  */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../coreService.ts'
 
@@ -21,7 +20,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 			config: { federation: { enabled: true, 'outgoing-enabled': true } },
 			'config-local': { federation: [] },
 		},
-	}))
+	})),
 }))
 
 describe('coreService', () => {
@@ -44,7 +43,7 @@ describe('coreService', () => {
 			},
 			{
 				dummyOption: true,
-			}
+			},
 		)
 		expect(axios.get).toHaveBeenCalledWith(
 			generateOcsUrl('core/autocomplete/get'),
@@ -56,7 +55,7 @@ describe('coreService', () => {
 					search: 'search-text',
 					shareTypes: expectedShareTypes,
 				},
-			}
+			},
 		)
 	}
 

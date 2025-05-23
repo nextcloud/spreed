@@ -4,39 +4,35 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
-
-import IconChatPlus from 'vue-material-design-icons/ChatPlus.vue'
+import type { ParticipantSearchResult, Conversation as TypeConversation } from '../../../types/index.ts'
 
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import { computed, ref } from 'vue'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-
+import IconChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import Hint from '../../UIShared/Hint.vue'
 import Conversation from '../ConversationsList/Conversation.vue'
-
-import { ATTENDEE, CONVERSATION, AVATAR } from '../../../constants.ts'
+import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useSettingsStore } from '../../../stores/settings.js'
-import type { Conversation as TypeConversation, ParticipantSearchResult } from '../../../types/index.ts'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
 const props = defineProps<{
-	searchText: string,
-	conversationsList: TypeConversation[],
-	contactsLoading: boolean,
-	searchResultsListedConversations: TypeConversation[],
-	searchResults: ParticipantSearchResult[],
+	searchText: string
+	conversationsList: TypeConversation[]
+	contactsLoading: boolean
+	searchResultsListedConversations: TypeConversation[]
+	searchResults: ParticipantSearchResult[]
 }>()
 
 const emit = defineEmits<{
-	(event: 'abort-search'): void,
-	(event: 'create-new-conversation', searchText: string): void,
-	(event: 'create-and-join-conversation', item: TypeConversation): void,
+	(event: 'abort-search'): void
+	(event: 'create-new-conversation', searchText: string): void
+	(event: 'create-and-join-conversation', item: TypeConversation): void
 }>()
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
@@ -68,10 +64,10 @@ const sections = [
 ] as const
 
 type SubListType = {
-	user: ParticipantSearchResult[],
-	group: ParticipantSearchResult[],
-	circle: ParticipantSearchResult[],
-	federated: ParticipantSearchResult[],
+	user: ParticipantSearchResult[]
+	group: ParticipantSearchResult[]
+	circle: ParticipantSearchResult[]
+	federated: ParticipantSearchResult[]
 }
 
 const searchResultsVirtual = computed(() => {
@@ -79,10 +75,8 @@ const searchResultsVirtual = computed(() => {
 	const virtualList = []
 
 	const lowerSearchText = props.searchText.toLowerCase()
-	const searchResultsConversationList = props.conversationsList.filter(conversation =>
-		conversation.displayName.toLowerCase().includes(lowerSearchText)
-		|| conversation.name.toLowerCase().includes(lowerSearchText)
-	)
+	const searchResultsConversationList = props.conversationsList.filter((conversation) => conversation.displayName.toLowerCase().includes(lowerSearchText)
+		|| conversation.name.toLowerCase().includes(lowerSearchText))
 
 	// Add conversations section
 	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
@@ -171,7 +165,7 @@ function iconData(item: ParticipantSearchResult) {
 }
 
 const hasSourcesWithoutResults = computed(() => {
-	return !searchResultsVirtual.value.some(item => item.type === 'user' || item.type === 'group'
+	return !searchResultsVirtual.value.some((item) => item.type === 'user' || item.type === 'group'
 		|| (item.type === 'circle' && isCirclesEnabled))
 })
 

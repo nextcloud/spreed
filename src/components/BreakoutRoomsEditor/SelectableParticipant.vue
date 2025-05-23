@@ -37,14 +37,10 @@
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
-
-import IconCheck from 'vue-material-design-icons/Check.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { computed, inject, ref } from 'vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { ATTENDEE } from '../../constants.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.ts'
 
@@ -85,7 +81,7 @@ export default {
 		// Defines list of locked participants (can not be removed manually
 		const lockedParticipants = inject('lockedParticipants', ref([]))
 
-		const isLocked = computed(() => lockedParticipants.value.some(item => {
+		const isLocked = computed(() => lockedParticipants.value.some((item) => {
 			return item.id === props.participant.id && item.source === props.participant.source
 		}))
 
@@ -162,7 +158,7 @@ export default {
 				this.$emit('click-participant', this.participant)
 			}
 		},
-	}
+	},
 }
 </script>
 

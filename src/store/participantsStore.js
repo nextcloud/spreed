@@ -1,3 +1,6 @@
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -5,11 +8,6 @@
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import Vue from 'vue'
-
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
@@ -19,19 +17,19 @@ import {
 import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
-	promoteToModerator,
 	demoteFromModerator,
-	removeAttendeeFromConversation,
-	resendInvitations,
-	sendCallNotification,
+	fetchParticipants,
+	grantAllPermissionsToParticipant,
 	joinConversation,
 	leaveConversation,
-	removeCurrentUserFromConversation,
-	grantAllPermissionsToParticipant,
+	promoteToModerator,
 	removeAllPermissionsFromParticipant,
+	removeAttendeeFromConversation,
+	removeCurrentUserFromConversation,
+	resendInvitations,
+	sendCallNotification,
 	setPermissions,
 	setTyping,
-	fetchParticipants,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
@@ -135,7 +133,7 @@ const getters = {
 			return []
 		}
 
-		return Object.keys(state.typing[token]).filter(sessionId => rootGetters.getSessionId() !== sessionId)
+		return Object.keys(state.typing[token]).filter((sessionId) => rootGetters.getSessionId() !== sessionId)
 	},
 
 	/**
@@ -152,7 +150,7 @@ const getters = {
 			return false
 		}
 
-		return Object.keys(state.typing[rootGetters.getToken()]).some(sessionId => rootGetters.getSessionId() === sessionId)
+		return Object.keys(state.typing[rootGetters.getToken()]).some((sessionId) => rootGetters.getSessionId() === sessionId)
 	},
 
 	/**
@@ -170,7 +168,7 @@ const getters = {
 			return []
 		}
 
-		return getters.participantsList(token).filter(attendee => {
+		return getters.participantsList(token).filter((attendee) => {
 			// Check if participant's sessionId matches with any of sessionIds from signaling...
 			return getters.externalTypingSignals(token).some((sessionId) => attendee.sessionIds.includes(sessionId))
 				// ... and it's not the participant with same actorType and actorId as yourself
@@ -292,13 +290,13 @@ const getters = {
 
 	participantsInCall: (state) => (token) => {
 		if (state.attendees[token]) {
-			return Object.values(state.attendees[token]).filter(attendee => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
+			return Object.values(state.attendees[token]).filter((attendee) => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
 		}
 		return 0
 	},
 
 	getParticipantBySessionId: (state) => (token, sessionId) => {
-		return Object.values(Object(state.attendees[token])).find(attendee => attendee.sessionIds.includes(sessionId))
+		return Object.values(Object(state.attendees[token])).find((attendee) => attendee.sessionIds.includes(sessionId))
 	},
 }
 
@@ -758,12 +756,12 @@ const actions = {
 
 		const currentParticipants = context.state.attendees[token]
 		for (const attendeeId of Object.keys(Object(currentParticipants))) {
-			if (!newParticipants.some(participant => participant.attendeeId === +attendeeId)) {
+			if (!newParticipants.some((participant) => participant.attendeeId === +attendeeId)) {
 				context.commit('deleteParticipant', { token, attendeeId })
 			}
 		}
 
-		newParticipants.forEach(participant => {
+		newParticipants.forEach((participant) => {
 			if (context.state.attendees[token]?.[participant.attendeeId]) {
 				context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
 			} else {
@@ -776,7 +774,7 @@ const actions = {
 			// Heal unknown sessions from participants request
 			// If session.inCall is undefined, this is the best attempt to get the data; but in that case
 			// it will be the same for different sessions, otherwise we trust signaling messages
-			const sessionsToUpdate = sessionStore.orphanSessions.filter(session => participant.sessionIds.includes(session.sessionId))
+			const sessionsToUpdate = sessionStore.orphanSessions.filter((session) => participant.sessionIds.includes(session.sessionId))
 			for (const session of sessionsToUpdate) {
 				sessionStore.updateSession(session.signalingSessionId, {
 					attendeeId: participant.attendeeId,
@@ -898,7 +896,7 @@ const actions = {
 			finishConnecting()
 			commit('connectionFailed', {
 				token,
-				payload
+				payload,
 			})
 			commit('setInCall', {
 				token,
@@ -908,7 +906,7 @@ const actions = {
 		}
 
 		const handleParticipantsListReceived = (payload, key) => {
-			const participant = payload[0].find(p => p[key] === sessionId)
+			const participant = payload[0].find((p) => p[key] === sessionId)
 			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				if (state.joiningCall[token]?.[sessionId]) {
 					isParticipantsListReceived = true
@@ -1240,10 +1238,10 @@ const actions = {
 	},
 
 	addPhonesStates(context, { phoneStates }) {
-		Object.values(phoneStates).forEach(phoneState => {
+		Object.values(phoneStates).forEach((phoneState) => {
 			context.commit('setPhoneState', {
 				callid: phoneState.callid,
-				value: phoneState
+				value: phoneState,
 			})
 		})
 	},
@@ -1258,7 +1256,7 @@ const actions = {
 
 	clearConnectionFailed(context, token) {
 		context.commit('clearConnectionFailed', token)
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

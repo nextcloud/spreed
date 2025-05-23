@@ -11,7 +11,6 @@
  */
 
 import { loadState } from '@nextcloud/initial-state'
-
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { getTeams } from '../services/teamsService.ts'
 
@@ -194,7 +193,7 @@ const actions = {
 
 		try {
 			const response = await getTeams()
-			const teams = response.data.ocs.data.map(team => team.id)
+			const teams = response.data.ocs.data.map((team) => team.id)
 			context.commit('setCurrentUserTeams', teams)
 		} catch (error) {
 			console.error(error)

@@ -46,7 +46,7 @@ if (window.MediaStream) {
 
 	window.MediaStream.prototype.dispatchEvent = function(event) {
 		if (this._listeners && this._listeners[event.type]) {
-			this._listeners[event.type].forEach(listener => {
+			this._listeners[event.type].forEach((listener) => {
 				listener.apply(this, [event])
 			})
 		}

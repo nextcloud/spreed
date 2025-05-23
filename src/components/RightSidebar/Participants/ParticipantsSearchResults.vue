@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="participants-search-results" :class="{ 'scrollable': scrollable }">
+	<div class="participants-search-results" :class="{ scrollable: scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
@@ -83,19 +83,15 @@
 </template>
 
 <script>
-import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import AccountSearch from 'vue-material-design-icons/AccountSearch.vue'
-
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-
-import ParticipantsList from './ParticipantsList.vue'
+import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+import AccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 import Hint from '../../UIShared/Hint.vue'
-
+import ParticipantsList from './ParticipantsList.vue'
 import { ATTENDEE } from '../../../constants.ts'
 import { useIntegrationsStore } from '../../../stores/integrations.js'
 
@@ -230,8 +226,8 @@ export default {
 		},
 
 		addableUsers() {
-			return this.searchResults.filter(item => item.source === ATTENDEE.ACTOR_TYPE.USERS)
-				.filter(user => !this.participants.some(participant => user.id === participant.userId))
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.USERS)
+				.filter((user) => !this.participants.some((participant) => user.id === participant.userId))
 		},
 
 		addableGroups() {
@@ -253,7 +249,7 @@ export default {
 				})
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
-					? this.addableUsers.map(user => ({
+					? this.addableUsers.map((user) => ({
 							...user,
 							id: user.id + '@' + window.location.host,
 							label: user.id + '@' + window.location.host,

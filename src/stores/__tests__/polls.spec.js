@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import flushPromises from 'flush-promises'
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { ATTENDEE } from '../../constants.ts'
 import {
 	createPoll,
 	createPollDraft,
+	endPoll,
 	getPollData,
 	getPollDrafts,
 	submitVote,
-	endPoll,
 } from '../../services/pollService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { usePollsStore } from '../polls.ts'
@@ -69,9 +68,9 @@ describe('pollsStore', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				actorId: 'user',
 				actorDisplayName: 'User',
-				optionId: 0
-			}
-		]
+				optionId: 0,
+			},
+		],
 	}
 	const messageWithPoll = {
 		id: 123,
@@ -91,7 +90,7 @@ describe('pollsStore', () => {
 				type: 'talk-poll',
 				id: poll.id,
 				name: poll.question,
-			}
+			},
 		},
 	}
 

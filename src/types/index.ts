@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import type { AxiosError } from '@nextcloud/axios'
-
 import type { AutocompleteResult } from './core.ts'
 import type {
 	components as componentsAdmin,
@@ -40,21 +39,21 @@ type SpreedCapabilities = components['schemas']['Capabilities']
 
 // From https://github.com/nextcloud/password_policy/blob/master/lib/Capabilities.php
 type PasswordPolicyCapabilities = {
-	minLength: number,
-	enforceNonCommonPassword: boolean,
-	enforceNumericCharacters: boolean,
-	enforceSpecialCharacters: boolean,
-	enforceUpperLowerCase: boolean,
+	minLength: number
+	enforceNonCommonPassword: boolean
+	enforceNumericCharacters: boolean
+	enforceSpecialCharacters: boolean
+	enforceUpperLowerCase: boolean
 	api: {
-		generate: string,
-		validate: string,
-	},
+		generate: string
+		validate: string
+	}
 }
 
 // Capabilities
 export type Capabilities = {
-	spreed: SpreedCapabilities,
-	password_policy?: PasswordPolicyCapabilities,
+	spreed: SpreedCapabilities
+	password_policy?: PasswordPolicyCapabilities
 }
 
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
@@ -62,44 +61,44 @@ export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilit
 // Initial state
 export type InitialState = {
 	spreed: {
-		'has_cache_configured': boolean,
-		'has_valid_subscription': boolean,
-		'signaling_mode': string,
-		'signaling_servers': {
-			hideWarning: boolean,
-			secret: string,
-			servers: { server: string, verify: boolean }[],
-		},
-	},
+		has_cache_configured: boolean
+		has_valid_subscription: boolean
+		signaling_mode: string
+		signaling_servers: {
+			hideWarning: boolean
+			secret: string
+			servers: { server: string, verify: boolean }[]
+		}
+	}
 }
 
 // Notifications
 type NotificationAction = {
-	label: string,
-	link: string,
-	type: 'WEB' | 'POST' | 'DELETE' | string,
-	primary: boolean,
+	label: string
+	link: string
+	type: 'WEB' | 'POST' | 'DELETE' | string
+	primary: boolean
 }
 
 type RichObjectParameter = components['schemas']['RichObjectParameter']
 type RichObject<T extends keyof RichObjectParameter = 'id' | 'name' | 'type'> = Pick<RichObjectParameter, 'id' | 'name' | 'type' | T>
 export type Notification<T = Record<string, RichObject & Record<string, unknown>>> = {
-	notificationId: number,
-	app: string,
-	user: string,
-	datetime: string,
-	objectType: string,
-	objectId: string,
-	subject: string,
-	message: string,
-	link: string,
-	subjectRich: string,
-	subjectRichParameters: T,
-	messageRich: string,
-	messageRichParameters: T,
-	icon: string,
-	shouldNotify: true,
-	actions: NotificationAction[],
+	notificationId: number
+	app: string
+	user: string
+	datetime: string
+	objectType: string
+	objectId: string
+	subject: string
+	message: string
+	link: string
+	subjectRich: string
+	subjectRichParameters: T
+	messageRich: string
+	messageRichParameters: T
+	icon: string
+	shouldNotify: true
+	actions: NotificationAction[]
 }
 
 // Signaling
@@ -110,14 +109,14 @@ export type InternalSignalingSession = components['schemas']['SignalingSession']
 // Based on https://github.com/strukturag/nextcloud-spreed-signaling/blob/master/api_signaling.go:
 // EventServerMessage - room - Join
 export type StandaloneSignalingJoinSession = {
-	userid: string,
+	userid: string
 	user?:
 		| { displayname: string }
-		| { callid: string, number: string, type: string }, // Phone number
-	sessionid: string, // Standalone signaling id
-	roomsessionid?: string, // Nextcloud id
-	features?: string[],
-	federated?: boolean,
+		| { callid: string, number: string, type: string } // Phone number
+	sessionid: string // Standalone signaling id
+	roomsessionid?: string // Nextcloud id
+	features?: string[]
+	federated?: boolean
 }
 
 // EventServerMessage - room - Leave
@@ -125,22 +124,22 @@ export type StandaloneSignalingLeaveSession = string // Standalone signaling id
 
 // EventServerMessage - participants - Update
 export type StandaloneSignalingUpdateSession = {
-	inCall: number,
-	lastPing: number,
-	sessionId: string, // Standalone signaling id
-	nextcloudSessionId?: string, // Nextcloud id
-	participantPermissions?: number,
-	participantType?: number,
-	userId?: string,
+	inCall: number
+	lastPing: number
+	sessionId: string // Standalone signaling id
+	nextcloudSessionId?: string // Nextcloud id
+	participantPermissions?: number
+	participantType?: number
+	userId?: string
 	// Since Talk v20, treat as optional
-	actorId?: string,
-	actorType?: string,
-	displayName?: string,
+	actorId?: string
+	actorType?: string
+	displayName?: string
 	// Internal participant (Recording server, phone number)
-	features?: string[],
-	internal?: boolean,
+	features?: string[]
+	internal?: boolean
 	// Phone number only
-	virtual?: boolean,
+	virtual?: boolean
 }
 
 // Conversations
@@ -201,20 +200,20 @@ export type markConversationAsSensitiveResponse = ApiResponse<operations['room-m
 export type markConversationAsInsensitiveResponse = ApiResponse<operations['room-mark-conversation-as-insensitive']['responses'][200]['content']['application/json']>
 
 export type JoinRoomFullResponse = {
-	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>,
+	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>
 	data: operations['room-join-room']['responses']['200']['content']['application/json']
 }
 
 // Participants
 export type ParticipantStatus = {
-	status?: string | null,
-	message?: string | null,
-	icon?: string | null,
-	clearAt?: number | null,
+	status?: string | null
+	message?: string | null
+	icon?: string | null
+	clearAt?: number | null
 }
 export type Participant = components['schemas']['Participant']
 export type ParticipantSearchResult = AutocompleteResult & {
-	status: ParticipantStatus | '',
+	status: ParticipantStatus | ''
 }
 
 export type importEmailsParams = Required<operations['room-import-emails-as-participants']>['requestBody']['content']['application/json']
@@ -223,10 +222,10 @@ export type importEmailsResponse = ApiResponse<operations['room-import-emails-as
 // Chats
 export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
 export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
-	'etag': string,
-	'permissions': string,
-	'width': string,
-	'height': string,
+	etag: string
+	permissions: string
+	width: string
+	height: string
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
@@ -284,9 +283,9 @@ export type certificateExpirationResponse = ApiResponse<operationsAdmin['certifi
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
-	user1: RichObject<'server'>,
-	roomName: RichObject,
-	remoteServer: RichObject,
+	user1: RichObject<'server'>
+	roomName: RichObject
+	remoteServer: RichObject
 }
 export type NotificationInvite = Notification<FederationInviteRichParameters>
 
@@ -303,7 +302,7 @@ export type deleteReactionResponse = ApiResponse<operations['reaction-delete']['
 
 // Breakout rooms
 export type BreakoutRoom = components['schemas']['Room'] & {
-	objectType: 'room',
+	objectType: 'room'
 }
 
 export type configureBreakoutRoomsParams = operations['breakout_room-configure-breakout-rooms']['requestBody']['content']['application/json']
@@ -352,16 +351,16 @@ export type {
 
 // Teams (circles)
 export type TeamProbe = {
-	id: string,
-	name: string,
-	displayName: string,
-	sanitizedName: string,
-	source: number,
-	population: number,
-	config: number,
-	description: string,
-	url: string,
-	creation: number,
+	id: string
+	name: string
+	displayName: string
+	sanitizedName: string
+	source: number
+	population: number
+	config: number
+	description: string
+	url: string
+	creation: number
 	initiator: null
 }
 export type getTeamsProbeResponse = ApiResponseUnwrapped<TeamProbe[]>
@@ -371,8 +370,8 @@ export type {
 	DavCalendar,
 	DavCalendarHome,
 	DavPrincipal,
-	OutOfOfficeResult,
 	OutOfOfficeResponse,
+	OutOfOfficeResult,
 	UpcomingEvent,
 	UpcomingEventsResponse,
 } from './core.ts'
@@ -390,10 +389,10 @@ export type EventTimeRange = {
 
 // User profile / preferences response
 export type {
-	UserProfileData,
-	UserProfileResponse,
 	UserPreferencesParams,
 	UserPreferencesResponse,
+	UserProfileData,
+	UserProfileResponse,
 } from './core.ts'
 
 // Settings
@@ -404,33 +403,33 @@ export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-
 
 // Payload for NcSelect with `user-select`
 export type UserFilterObject = {
-	id: string,
-	displayName: string,
-	isNoUser: boolean,
-	user: string,
-	disableMenu: boolean,
-	showUserStatus: boolean,
+	id: string
+	displayName: string
+	isNoUser: boolean
+	user: string
+	disableMenu: boolean
+	showUserStatus: boolean
 }
 
 // Autocomplete API
 export type {
-	AutocompleteResult,
 	AutocompleteParams,
 	AutocompleteResponse,
+	AutocompleteResult,
 } from './core.ts'
 
 // Unified Search API
 export type {
 	SearchMessagePayload,
-	UnifiedSearchResultEntry,
 	UnifiedSearchResponse,
+	UnifiedSearchResultEntry,
 } from './core.ts'
 
 // Files API
 export type {
-	getFileTemplatesListResponse,
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
+	getFileTemplatesListResponse,
 } from './core.ts'
 
 // Files sharing API

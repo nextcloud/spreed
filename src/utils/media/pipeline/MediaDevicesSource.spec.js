@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import MediaDevicesSource from './MediaDevicesSource.js'
 import { mediaDevicesManager } from '../../webrtc/index.js'
+import MediaDevicesSource from './MediaDevicesSource.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes and
@@ -66,10 +66,10 @@ function newMediaStreamMock(id) {
 			return this._tracks
 		})
 		this.getAudioTracks = jest.fn(() => {
-			return this._tracks.filter(track => track.kind === 'audio')
+			return this._tracks.filter((track) => track.kind === 'audio')
 		})
 		this.getVideoTracks = jest.fn(() => {
-			return this._tracks.filter(track => track.kind === 'video')
+			return this._tracks.filter((track) => track.kind === 'video')
 		})
 	}
 	return new MediaStreamMock()

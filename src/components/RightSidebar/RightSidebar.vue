@@ -115,9 +115,14 @@
 </template>
 
 <script>
+import { showMessage } from '@nextcloud/dialogs'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
-
+import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
+import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
@@ -125,15 +130,8 @@ import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleIma
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconMessage from 'vue-material-design-icons/Message.vue'
 import IconMessageText from 'vue-material-design-icons/MessageText.vue'
-
-import { showMessage } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
-import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
-import NcButton from '@nextcloud/vue/components/NcButton'
-
+import ChatView from '../ChatView.vue'
+import SetGuestUsername from '../SetGuestUsername.vue'
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import InternalSignalingHint from './InternalSignalingHint.vue'
 import LobbyStatus from './LobbyStatus.vue'
@@ -142,10 +140,7 @@ import RightSidebarContent from './RightSidebarContent.vue'
 import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
-import ChatView from '../ChatView.vue'
-import SetGuestUsername from '../SetGuestUsername.vue'
-
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.ts'
+import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 
@@ -237,7 +232,7 @@ export default {
 			contentModeIndex,
 			sidebar,
 			sidebarContent,
-			sidebarStore: useSidebarStore()
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -370,7 +365,7 @@ export default {
 			return {
 				'data-theme-dark': true,
 				'aria-label': t('spreed', 'Open chat'),
-				title: t('spreed', 'Open chat')
+				title: t('spreed', 'Open chat'),
 			}
 		},
 	},

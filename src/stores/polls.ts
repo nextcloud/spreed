@@ -1,3 +1,14 @@
+import type {
+	ChatMessage,
+	createPollParams,
+	Poll,
+	PollDraft,
+	updatePollDraftParams,
+	votePollParams,
+} from '../types/index.ts'
+
+import { showError, showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -5,36 +16,24 @@
 import debounce from 'debounce'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import { showError, showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
 import {
 	createPoll,
 	createPollDraft,
-	updatePollDraft,
-	getPollDrafts,
-	getPollData,
-	submitVote,
-	endPoll,
 	deletePollDraft,
+	endPoll,
+	getPollData,
+	getPollDrafts,
+	submitVote,
+	updatePollDraft,
 } from '../services/pollService.ts'
-import type {
-	ChatMessage,
-	createPollParams,
-	votePollParams,
-	updatePollDraftParams,
-	Poll,
-	PollDraft,
-} from '../types/index.ts'
 
 type submitVotePayload = { token: string, pollId: string } & Pick<votePollParams, 'optionIds'>
 type State = {
-	polls: Record<string, Record<string, Poll>>,
-	drafts: Record<string, Record<string, PollDraft>>,
-	debouncedFunctions: Record<string, Record<string, () => void>>,
-	activePoll: null,
-	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>,
+	polls: Record<string, Record<string, Poll>>
+	drafts: Record<string, Record<string, PollDraft>>
+	debouncedFunctions: Record<string, Record<string, () => void>>
+	activePoll: null
+	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>
 }
 export const usePollsStore = defineStore('polls', {
 	state: (): State => ({

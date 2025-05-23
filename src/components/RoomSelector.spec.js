@@ -1,19 +1,15 @@
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
-
 import { CONVERSATION } from '../constants.ts'
 import { generateOCSResponse } from '../test-helpers.js'
 
@@ -101,7 +97,7 @@ describe('RoomSelector', () => {
 	})
 
 	const mountRoomSelector = async (props) => {
-		const payload = conversations.filter(conv => {
+		const payload = conversations.filter((conv) => {
 			return !props?.listOpenConversations || conv.listable === CONVERSATION.LISTABLE.USERS
 		})
 
@@ -127,7 +123,7 @@ describe('RoomSelector', () => {
 			const wrapper = await mountRoomSelector()
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/room'),
-				{ params: { includeStatus: 1 } }
+				{ params: { includeStatus: 1 } },
 			)
 
 			// Assert
@@ -143,7 +139,7 @@ describe('RoomSelector', () => {
 			const wrapper = await mountRoomSelector({ listOpenConversations: true })
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/listed-room'),
-				{ params: { searchTerm: '' } }
+				{ params: { searchTerm: '' } },
 			)
 
 			// Assert

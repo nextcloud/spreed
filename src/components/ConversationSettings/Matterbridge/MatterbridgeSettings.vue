@@ -81,26 +81,22 @@
 </template>
 
 <script>
-import Message from 'vue-material-design-icons/Message.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-
 import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-
+import Message from 'vue-material-design-icons/Message.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import BridgePart from './BridgePart.vue'
-
-import { matterbridgeTypes } from './matterbridgeTypes.ts'
 import {
 	editBridge,
 	getBridge,
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
+import { matterbridgeTypes } from './matterbridgeTypes.ts'
 
 export default {
 	name: 'MatterbridgeSettings',
@@ -235,7 +231,7 @@ export default {
 
 		async editBridge() {
 			this.loading = true
-			this.parts.forEach(part => {
+			this.parts.forEach((part) => {
 				part.editing = false
 			})
 			try {

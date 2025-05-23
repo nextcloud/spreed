@@ -3,18 +3,27 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosError } from '@nextcloud/axios'
+import type {
+	ApiErrorResponse,
+	Conversation,
+	DashboardEvent,
+	DavCalendar,
+	OutOfOfficeResult,
+	scheduleMeetingParams,
+	UpcomingEvent,
+	UserProfileData,
+} from '../types/index.ts'
+
+import { generateUrl, getBaseUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import type { AxiosError } from '@nextcloud/axios'
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
-
 import { CONVERSATION } from '../constants.ts'
 import {
-	initializeCalDavClient,
-	getPersonalCalendars,
-	getDefaultCalendarUri,
 	convertUrlToUri,
+	getDefaultCalendarUri,
+	getPersonalCalendars,
+	initializeCalDavClient,
 } from '../services/CalDavClient.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getUserProfile } from '../services/coreService.ts'
@@ -24,25 +33,15 @@ import {
 	getUserAbsence,
 	scheduleMeeting,
 } from '../services/groupwareService.ts'
-import type {
-	ApiErrorResponse,
-	Conversation,
-	DavCalendar,
-	DashboardEvent,
-	OutOfOfficeResult,
-	UpcomingEvent,
-	UserProfileData,
-	scheduleMeetingParams,
-} from '../types/index.ts'
 
 type State = {
 	absence: Record<string, OutOfOfficeResult>
-	calendars: Record<string, DavCalendar & { uri: string }>,
-	defaultCalendarUri: string | null,
-	upcomingEvents: Record<string, UpcomingEvent[]>,
-	mutualEvents: Record<string, DashboardEvent[]>,
-	supportProfileInfo: boolean,
-	profileInfo: Record<string, UserProfileData>,
+	calendars: Record<string, DavCalendar & { uri: string }>
+	defaultCalendarUri: string | null
+	upcomingEvents: Record<string, UpcomingEvent[]>
+	mutualEvents: Record<string, DashboardEvent[]>
+	supportProfileInfo: boolean
+	profileInfo: Record<string, UserProfileData>
 }
 
 const supportsMutualEvents = hasTalkFeature('local', 'mutual-calendar-events')
@@ -66,7 +65,7 @@ export const useGroupwareStore = defineStore('groupware', {
 			return state.upcomingEvents[token]?.[0]
 		},
 		writeableCalendars: (state) => {
-			return Object.values(state.calendars).filter(calendar => {
+			return Object.values(state.calendars).filter((calendar) => {
 				return calendar.isWriteable() && calendar.components.includes('VEVENT')
 			})
 		},
@@ -120,7 +119,7 @@ export const useGroupwareStore = defineStore('groupware', {
 			try {
 				await initializeCalDavClient()
 				const calendars = await getPersonalCalendars()
-				calendars.forEach(calendar => {
+				calendars.forEach((calendar) => {
 					const calendarWithUri = Object.assign(calendar, { uri: convertUrlToUri(calendar.url) })
 					Vue.set(this.calendars, calendarWithUri.uri, calendarWithUri)
 				})

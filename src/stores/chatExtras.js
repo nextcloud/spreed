@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
-
-import { t } from '@nextcloud/l10n'
-
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
-import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
+import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 /**
  * @typedef {string} Token
@@ -64,7 +62,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		getChatSummary: (state) => (token) => {
-			return Object.values(Object(state.chatSummary[token])).map(task => task.summary).join('\n\n')
+			return Object.values(Object(state.chatSummary[token])).map((task) => task.summary).join('\n\n')
 				|| t('spreed', 'Error occurred during a summary generation')
 		},
 	},
@@ -179,7 +177,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		initiateEditingMessage({ token, id, message, messageParameters }) {
 			this.setMessageIdToEdit(token, id)
-			const isFileShareOnly = Object.keys(Object(messageParameters)).some(key => key.startsWith('file'))
+			const isFileShareOnly = Object.keys(Object(messageParameters)).some((key) => key.startsWith('file'))
 				&& message === '{file}'
 			if (isFileShareOnly) {
 				this.setChatEditInput({ token, text: '' })
@@ -187,7 +185,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				this.setChatEditInput({
 					token,
 					text: message,
-					parameters: messageParameters
+					parameters: messageParameters,
 				})
 			}
 			EventBus.emit('editing-message')
