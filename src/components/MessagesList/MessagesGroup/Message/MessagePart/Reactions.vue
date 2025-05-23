@@ -184,11 +184,9 @@ export default {
 		 * Compare the plain reactions with the simplified detailed reactions.
 		 */
 		hasOutdatedDetails() {
-			const detailedReactionsSimplified = Object.fromEntries(
-				Object.entries(this.detailedReactions)
-					.sort() // Plain reactions come sorted
-					.map(([key, value]) => [key, value.length]),
-			)
+			const detailedReactionsSimplified = Object.fromEntries(Object.entries(this.detailedReactions)
+				.sort() // Plain reactions come sorted
+				.map(([key, value]) => [key, value.length]))
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},

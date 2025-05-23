@@ -339,7 +339,8 @@ describe('messagesStore', () => {
 			[1, 400, 200, 399, 200, 299],
 		]
 
-		it.each(testCases)('eases list from [%s - %s] to [%s - %s] (length: %s) with lastReadMessage %s',
+		it.each(testCases)(
+			'eases list from [%s - %s] to [%s - %s] (length: %s) with lastReadMessage %s',
 			(oldFirst, oldLast, newFirst, newLast, length, lastReadMessage) => {
 			// Arrange
 				conversationMock.mockReturnValue({ lastReadMessage })
@@ -361,7 +362,8 @@ describe('messagesStore', () => {
 				if (oldFirst < lastReadMessage && lastReadMessage < oldLast) {
 					expect(store.getters.message(TOKEN, lastReadMessage)).toBeDefined()
 				}
-			})
+			},
+		)
 	})
 
 	describe('delete message', () => {
@@ -1807,9 +1809,7 @@ describe('messagesStore', () => {
 			console.error = jest.fn()
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
-			await expect(
-				store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }),
-			).rejects.toMatchObject({ response })
+			await expect(store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })).rejects.toMatchObject({ response })
 
 			expect(store.getters.isSendingMessages).toBe(false)
 

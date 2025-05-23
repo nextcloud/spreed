@@ -203,7 +203,8 @@ describe('Participant.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
 		]
 
-		it.each(testCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
+		it.each(testCases)(
+			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
 			(displayName, actorId, actorType, participantType, regexp) => {
 				checkUserNameRendered({
 					...participant,
@@ -212,9 +213,11 @@ describe('Participant.vue', () => {
 					participantType,
 					displayName,
 				}, regexp)
-			})
+			},
+		)
 
-		it.each(testLobbyCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\' with lobby enabled',
+		it.each(testLobbyCases)(
+			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\' with lobby enabled',
 			(displayName, actorId, actorType, participantType, regexp) => {
 				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
 				checkUserNameRendered({
@@ -224,7 +227,8 @@ describe('Participant.vue', () => {
 					participantType,
 					displayName,
 				}, regexp)
-			})
+			},
+		)
 	})
 
 	describe('user status', () => {
@@ -253,7 +257,8 @@ describe('Participant.vue', () => {
 			['away', '🌧️', '', '🌧️ Away'],
 		]
 
-		it.each(testCases)('renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
+		it.each(testCases)(
+			'renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
 			(status, statusIcon, statusMessage, result) => {
 				checkUserSubnameRendered({
 					...participant,
@@ -261,7 +266,8 @@ describe('Participant.vue', () => {
 					statusIcon,
 					statusMessage,
 				}, result)
-			})
+			},
+		)
 
 		it('renders email as status for email guest', async () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS

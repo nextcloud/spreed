@@ -74,8 +74,7 @@ const name = computed(() => {
 	if (!props.isReminder || isOneToOneConversation.value) {
 		return props.title
 	}
-	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value.displayName }, { escape: false, sanitize: false },
-	)
+	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value.displayName }, { escape: false, sanitize: false })
 })
 const richSubline = computed(() => {
 	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {

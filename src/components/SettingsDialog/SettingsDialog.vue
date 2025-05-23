@@ -394,9 +394,7 @@ export default {
 		async toggleReadStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.settingsStore.updateReadStatusPrivacy(
-					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
-				)
+				await this.settingsStore.updateReadStatusPrivacy(this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
@@ -407,9 +405,7 @@ export default {
 		async toggleTypingStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.settingsStore.updateTypingStatusPrivacy(
-					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
-				)
+				await this.settingsStore.updateTypingStatusPrivacy(this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting typing status privacy'))
@@ -420,9 +416,7 @@ export default {
 		async toggleConversationsListStyle(value) {
 			this.appearanceLoading = true
 			try {
-				await this.settingsStore.setConversationsListStyle(
-					value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES,
-				)
+				await this.settingsStore.setConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
 				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting personal setting'))

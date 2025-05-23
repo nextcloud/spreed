@@ -10,7 +10,8 @@ import { generateRemoteUrl } from '@nextcloud/router'
 
 // init webdav client on default dav endpoint
 export const getDavClient = () => {
-	return createClient(generateRemoteUrl('dav'),
+	return createClient(
+		generateRemoteUrl('dav'),
 		{ headers: { requesttoken: getRequestToken() || '' } },
 	)
 }

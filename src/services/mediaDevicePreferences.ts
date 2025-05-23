@@ -40,10 +40,12 @@ type PromotePayload = {
  * @param videoInputList list of registered video devices in order of preference
  * @return {string} preference list in readable format
  */
-function listMediaDevices(attributes: Attributes,
+function listMediaDevices(
+	attributes: Attributes,
 	audioInputList: MediaDeviceInfo[],
 	audioOutputList: MediaDeviceInfo[],
-	videoInputList: MediaDeviceInfo[]): string {
+	videoInputList: MediaDeviceInfo[],
+): string {
 	const availableDevices = attributes.devices.map((device) => device.deviceId)
 
 	const getDeviceString = (device: MediaDeviceInfo, index: number) => {
@@ -160,10 +162,12 @@ function promoteMediaDevice({ kind, devices, inputList, inputId }: PromotePayloa
  * @param videoInputList list of registered video devices in order of preference
  * @return {InputLists} object with updated devices lists (null, if they have not been changed)
  */
-function populateMediaDevicesPreferences(devices: MediaDeviceInfo[],
+function populateMediaDevicesPreferences(
+	devices: MediaDeviceInfo[],
 	audioInputList: MediaDeviceInfo[],
 	audioOutputList: MediaDeviceInfo[],
-	videoInputList: MediaDeviceInfo[]): InputLists {
+	videoInputList: MediaDeviceInfo[],
+): InputLists {
 	let newAudioInputList = null
 	let newAudioOutputList = null
 	let newVideoInputList = null

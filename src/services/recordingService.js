@@ -23,10 +23,12 @@ const getWelcomeMessage = async (serverId) => {
  * @param {number} callRecording the type of the recording being started (@see constants CALL.RECORDING.*)
  */
 const startCallRecording = async (token, callRecording) => {
-	await axios.post(generateOcsUrl('apps/spreed/api/v1/recording/{token}', { token }),
+	await axios.post(
+		generateOcsUrl('apps/spreed/api/v1/recording/{token}', { token }),
 		{
 			status: callRecording,
-		})
+		},
+	)
 }
 
 /**

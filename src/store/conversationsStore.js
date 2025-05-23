@@ -414,9 +414,7 @@ const actions = {
 		const breakoutRoomsStore = useBreakoutRoomsStore()
 
 		const currentConversations = context.state.conversations
-		const newConversations = Object.fromEntries(
-			conversations.map((conversation) => [conversation.token, conversation]),
-		)
+		const newConversations = Object.fromEntries(conversations.map((conversation) => [conversation.token, conversation]))
 
 		// Remove conversations that are not in the new list
 		if (withRemoving) {

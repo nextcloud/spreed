@@ -157,8 +157,7 @@ export default {
 
 	setup(props) {
 		const options = Object.values(regionCodes).map((region) =>
-			({ ...region, dial_and_name: region.dial_code + ' ' + region.name }),
-		)
+			({ ...region, dial_and_name: region.dial_code + ' ' + region.name }))
 
 		const buttons = props.dialing
 			? buttonsDigits.concat(buttonsDialOption)
