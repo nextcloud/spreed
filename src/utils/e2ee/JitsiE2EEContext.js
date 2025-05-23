@@ -12,7 +12,7 @@ import Worker from './JitsiEncryptionWorker.worker.js'
 
 // Flag to set on senders / receivers to avoid setting up the encryption transform
 // more than once.
-const kJitsiE2EE = Symbol('kJitsiE2EE');
+const kJitsiE2EE = Symbol('kJitsiE2EE')
 
 /**
  * Context encapsulating the cryptography bits required for E2EE.
@@ -32,14 +32,14 @@ export default class E2EEcontext {
 	 * @param {boolean} [options.sharedKey] - whether there is a uniques key shared amoung all participants.
 	 */
 	constructor({ sharedKey } = {}) {
-		this._worker = new Worker();
+		this._worker = new Worker()
 
-		this._worker.onerror = (e) => console.error(e);
+		this._worker.onerror = (e) => console.error(e)
 
 		this._worker.postMessage({
 			operation: 'initialize',
 			sharedKey,
-		});
+		})
 	}
 
 	/**
@@ -52,7 +52,7 @@ export default class E2EEcontext {
 		this._worker.postMessage({
 			operation: 'cleanup',
 			participantId,
-		});
+		})
 	}
 
 	/**
@@ -62,7 +62,7 @@ export default class E2EEcontext {
 	cleanupAll() {
 		this._worker.postMessage({
 			operation: 'cleanupAll',
-		});
+		})
 	}
 
 	/**
@@ -75,26 +75,26 @@ export default class E2EEcontext {
 	 */
 	handleReceiver(receiver, kind, participantId) {
 		if (receiver[kJitsiE2EE]) {
-			return;
+			return
 		}
-		receiver[kJitsiE2EE] = true;
+		receiver[kJitsiE2EE] = true
 
 		if (window.RTCRtpScriptTransform) {
 			const options = {
 				operation: 'decode',
 				participantId,
-			};
+			}
 
-			receiver.transform = new RTCRtpScriptTransform(this._worker, options);
+			receiver.transform = new RTCRtpScriptTransform(this._worker, options)
 		} else {
-			const receiverStreams = receiver.createEncodedStreams();
+			const receiverStreams = receiver.createEncodedStreams()
 
 			this._worker.postMessage({
 				operation: 'decode',
 				readableStream: receiverStreams.readable,
 				writableStream: receiverStreams.writable,
 				participantId,
-			}, [receiverStreams.readable, receiverStreams.writable]);
+			}, [receiverStreams.readable, receiverStreams.writable])
 		}
 	}
 
@@ -108,26 +108,26 @@ export default class E2EEcontext {
 	 */
 	handleSender(sender, kind, participantId) {
 		if (sender[kJitsiE2EE]) {
-			return;
+			return
 		}
-		sender[kJitsiE2EE] = true;
+		sender[kJitsiE2EE] = true
 
 		if (window.RTCRtpScriptTransform) {
 			const options = {
 				operation: 'encode',
 				participantId,
-			};
+			}
 
-			sender.transform = new RTCRtpScriptTransform(this._worker, options);
+			sender.transform = new RTCRtpScriptTransform(this._worker, options)
 		} else {
-			const senderStreams = sender.createEncodedStreams();
+			const senderStreams = sender.createEncodedStreams()
 
 			this._worker.postMessage({
 				operation: 'encode',
 				readableStream: senderStreams.readable,
 				writableStream: senderStreams.writable,
 				participantId,
-			}, [senderStreams.readable, senderStreams.writable]);
+			}, [senderStreams.readable, senderStreams.writable])
 		}
 	}
 
@@ -144,6 +144,6 @@ export default class E2EEcontext {
 			key,
 			keyIndex,
 			participantId,
-		});
+		})
 	}
 }

@@ -12,8 +12,8 @@
  * See https://tools.ietf.org/html/draft-omara-sframe-00#section-4.3.1
  */
 export async function deriveKeys(material) {
-	const info = new ArrayBuffer();
-	const textEncoder = new TextEncoder();
+	const info = new ArrayBuffer()
+	const textEncoder = new TextEncoder()
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey#HKDF
 	// https://developer.mozilla.org/en-US/docs/Web/API/HkdfParams
@@ -25,12 +25,12 @@ export async function deriveKeys(material) {
 	}, material, {
 		name: 'AES-GCM',
 		length: 128,
-	}, false, ['encrypt', 'decrypt']);
+	}, false, ['encrypt', 'decrypt'])
 
 	return {
 		material,
 		encryptionKey,
-	};
+	}
 }
 
 /**
@@ -40,7 +40,7 @@ export async function deriveKeys(material) {
  * @returns {Promise<ArrayBuffer>} - ratcheted key material
  */
 export async function ratchet(material) {
-	const textEncoder = new TextEncoder();
+	const textEncoder = new TextEncoder()
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveBits
 	return crypto.subtle.deriveBits({
@@ -48,7 +48,7 @@ export async function ratchet(material) {
 		salt: textEncoder.encode('TalkFrameRatchetKey'),
 		hash: 'SHA-256',
 		info: new ArrayBuffer(),
-	}, material, 256);
+	}, material, 256)
 }
 
 /**
@@ -60,5 +60,5 @@ export async function ratchet(material) {
  */
 export async function importKey(keyBytes) {
 	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
-	return crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveBits', 'deriveKey']);
+	return crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveBits', 'deriveKey'])
 }
