@@ -81,13 +81,13 @@ export default {
 
 		summaryLabel() {
 			switch (this.listable) {
-			case CONVERSATION.LISTABLE.ALL:
-				return t('spreed', 'This conversation is open to both registered users and users created with the Guests app')
-			case CONVERSATION.LISTABLE.USERS:
-				return t('spreed', 'This conversation is open to registered users')
-			case CONVERSATION.LISTABLE.NONE:
-			default:
-				return t('spreed', 'This conversation is limited to the current participants')
+				case CONVERSATION.LISTABLE.ALL:
+					return t('spreed', 'This conversation is open to both registered users and users created with the Guests app')
+				case CONVERSATION.LISTABLE.USERS:
+					return t('spreed', 'This conversation is open to registered users')
+				case CONVERSATION.LISTABLE.NONE:
+				default:
+					return t('spreed', 'This conversation is limited to the current participants')
 			}
 		}
 	},

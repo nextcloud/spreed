@@ -545,26 +545,26 @@ export default {
 		talkBroadcastChannel.addEventListener('message', (event) => {
 			if (this.isCurrentTabLeader) {
 				switch (event.data.message) {
-				case 'force-fetch-all-conversations':
-					if (event.data.options?.all) {
-						this.roomListModifiedBefore = 0
-						this.forceFullRoomListRefreshAfterXLoops = 10
-					}
-					this.debounceFetchConversations()
-					break
+					case 'force-fetch-all-conversations':
+						if (event.data.options?.all) {
+							this.roomListModifiedBefore = 0
+							this.forceFullRoomListRefreshAfterXLoops = 10
+						}
+						this.debounceFetchConversations()
+						break
 				}
 			} else {
 				switch (event.data.message) {
-				case 'update-conversations':
-					this.$store.dispatch('patchConversations', {
-						conversations: event.data.conversations,
-						withRemoving: event.data.withRemoving,
-					})
-					this.federationStore.updatePendingSharesCount(event.data.invites)
-					break
-				case 'update-nextcloud-talk-hash':
-					this.talkHashStore.setNextcloudTalkHash(event.data.hash)
-					break
+					case 'update-conversations':
+						this.$store.dispatch('patchConversations', {
+							conversations: event.data.conversations,
+							withRemoving: event.data.withRemoving,
+						})
+						this.federationStore.updatePendingSharesCount(event.data.invites)
+						break
+					case 'update-nextcloud-talk-hash':
+						this.talkHashStore.setNextcloudTalkHash(event.data.hash)
+						break
 				}
 			}
 		})

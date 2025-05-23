@@ -169,26 +169,26 @@ export default {
 				return ''
 			}
 			switch (this.source) {
-			case ATTENDEE.ACTOR_TYPE.USERS:
-			case ATTENDEE.ACTOR_TYPE.BRIDGED:
-				return !this.failed ? '' : 'icon-user'
-			case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
-				return (this.token && !this.failed) ? '' : 'icon-user'
-			case ATTENDEE.ACTOR_TYPE.EMAILS:
-				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
-			case ATTENDEE.ACTOR_TYPE.GUESTS:
-				return this.hasCustomName ? '' : 'icon-user'
-			case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
-				return 'icon-user'
-			case ATTENDEE.ACTOR_TYPE.PHONES:
-				return 'icon-phone'
-			case ATTENDEE.ACTOR_TYPE.BOTS:
-				return [ATTENDEE.CHANGELOG_BOT_ID, ATTENDEE.SAMPLE_BOT_ID].includes(this.id) ? 'icon-changelog' : ''
-			case ATTENDEE.ACTOR_TYPE.CIRCLES:
-				return 'icon-team'
-			case ATTENDEE.ACTOR_TYPE.GROUPS:
-			default:
-				return 'icon-contacts'
+				case ATTENDEE.ACTOR_TYPE.USERS:
+				case ATTENDEE.ACTOR_TYPE.BRIDGED:
+					return !this.failed ? '' : 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
+					return (this.token && !this.failed) ? '' : 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.EMAILS:
+					return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
+				case ATTENDEE.ACTOR_TYPE.GUESTS:
+					return this.hasCustomName ? '' : 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
+					return 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.PHONES:
+					return 'icon-phone'
+				case ATTENDEE.ACTOR_TYPE.BOTS:
+					return [ATTENDEE.CHANGELOG_BOT_ID, ATTENDEE.SAMPLE_BOT_ID].includes(this.id) ? 'icon-changelog' : ''
+				case ATTENDEE.ACTOR_TYPE.CIRCLES:
+					return 'icon-team'
+				case ATTENDEE.ACTOR_TYPE.GROUPS:
+				default:
+					return 'icon-contacts'
 			}
 		},
 

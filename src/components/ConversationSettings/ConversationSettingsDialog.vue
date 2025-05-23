@@ -235,7 +235,7 @@ export default {
 		canFullModerate() {
 			return this.selfIsOwnerOrModerator
 				&& (this.conversation.type === CONVERSATION.TYPE.GROUP
-				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
+					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
 		},
 
 		canDeleteConversation() {

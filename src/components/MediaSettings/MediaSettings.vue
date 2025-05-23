@@ -465,8 +465,8 @@ export default {
 		showUpdateChangesButton() {
 			return (this.isInTalkDashboard || this.isInCall)
 				&& (this.updatedBackground
-				|| this.audioDeviceStateChanged
-				|| this.videoDeviceStateChanged)
+					|| this.audioDeviceStateChanged
+					|| this.videoDeviceStateChanged)
 		},
 
 		connectionFailed() {

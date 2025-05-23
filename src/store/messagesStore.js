@@ -546,10 +546,10 @@ const actions = {
 		const sharedItemsStore = useSharedItemsStore()
 
 		if (message.systemMessage === 'message_deleted'
-				|| message.systemMessage === 'reaction'
-				|| message.systemMessage === 'reaction_deleted'
-				|| message.systemMessage === 'reaction_revoked'
-				|| message.systemMessage === 'message_edited') {
+			|| message.systemMessage === 'reaction'
+			|| message.systemMessage === 'reaction_deleted'
+			|| message.systemMessage === 'reaction_revoked'
+			|| message.systemMessage === 'message_edited') {
 			if (!message.parent) {
 				return
 			}

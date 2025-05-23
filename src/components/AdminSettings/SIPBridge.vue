@@ -135,9 +135,9 @@ export default {
 	computed: {
 		isEdited() {
 			return this.currentSetup.sharedSecret !== this.sharedSecret
-					|| this.currentSetup.dialInInfo !== this.dialInInfo
-					|| this.currentSetup.dialOutEnabled !== this.dialOutEnabled
-					|| this.currentSetup.sipGroups !== this.sipGroups.map(group => group.id).join('_')
+				|| this.currentSetup.dialInInfo !== this.dialInInfo
+				|| this.currentSetup.dialOutEnabled !== this.dialOutEnabled
+				|| this.currentSetup.sipGroups !== this.sipGroups.map(group => group.id).join('_')
 		}
 	},
 

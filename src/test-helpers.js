@@ -74,15 +74,15 @@ function generateOCSResponse({ headers = {}, payload = {}, status = 200 }) {
 				data: cloneDeep(payload),
 				meta: (status >= 200 && status < 400)
 					? {
-						status: 'ok',
-						statuscode: status,
-						message: 'OK',
-					}
+							status: 'ok',
+							statuscode: status,
+							message: 'OK',
+						}
 					: {
-						status: 'failure',
-						statuscode: status,
-						message: '',
-					},
+							status: 'failure',
+							statuscode: status,
+							message: '',
+						},
 			},
 		},
 	}

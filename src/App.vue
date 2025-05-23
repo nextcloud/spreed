@@ -482,55 +482,55 @@ export default {
 			}
 
 			switch (event.action.type) {
-			case 'WEB': {
-				const load = event.action.url.split('/call/').pop()
-				if (!load) {
-					return
+				case 'WEB': {
+					const load = event.action.url.split('/call/').pop()
+					if (!load) {
+						return
+					}
+
+					const [token, hash] = load.split('#')
+					this.$router.push({
+						name: 'conversation',
+						hash: hash ? `#${hash}` : '',
+						params: {
+							token,
+						},
+					})
+
+					event.cancelAction = true
+					break
 				}
-
-				const [token, hash] = load.split('#')
-				this.$router.push({
-					name: 'conversation',
-					hash: hash ? `#${hash}` : '',
-					params: {
-						token,
-					},
-				})
-
-				event.cancelAction = true
-				break
-			}
-			case 'POST': {
+				case 'POST': {
 				// Federation invitation handling
-				if (event.notification.objectType === 'remote_talk_share') {
-					try {
-						event.cancelAction = true
-						this.federationStore.addInvitationFromNotification(event.notification)
-						const conversation = await this.federationStore.acceptShare(event.notification.objectId)
-						if (conversation.token) {
-							this.$store.dispatch('addConversation', conversation)
-							this.$router.push({ name: 'conversation', params: { token: conversation.token } })
+					if (event.notification.objectType === 'remote_talk_share') {
+						try {
+							event.cancelAction = true
+							this.federationStore.addInvitationFromNotification(event.notification)
+							const conversation = await this.federationStore.acceptShare(event.notification.objectId)
+							if (conversation.token) {
+								this.$store.dispatch('addConversation', conversation)
+								this.$router.push({ name: 'conversation', params: { token: conversation.token } })
+							}
+						} catch (error) {
+							console.error(error)
 						}
-					} catch (error) {
-						console.error(error)
 					}
+					break
 				}
-				break
-			}
-			case 'DELETE': {
+				case 'DELETE': {
 				// Federation invitation handling
-				if (event.notification.objectType === 'remote_talk_share') {
-					try {
-						event.cancelAction = true
-						this.federationStore.addInvitationFromNotification(event.notification)
-						await this.federationStore.rejectShare(event.notification.objectId)
-					} catch (error) {
-						console.error(error)
+					if (event.notification.objectType === 'remote_talk_share') {
+						try {
+							event.cancelAction = true
+							this.federationStore.addInvitationFromNotification(event.notification)
+							await this.federationStore.rejectShare(event.notification.objectId)
+						} catch (error) {
+							console.error(error)
+						}
 					}
+					break
 				}
-				break
-			}
-			default: break
+				default: break
 			}
 		},
 
@@ -547,29 +547,29 @@ export default {
 			}
 
 			switch (event.notification.objectType) {
-			case 'chat': {
-				if (event.notification.subjectRichParameters?.reaction) {
+				case 'chat': {
+					if (event.notification.subjectRichParameters?.reaction) {
 					// Ignore reaction notifications in case of one-to-one and always-notify
-					return
-				}
+						return
+					}
 
-				this.$store.dispatch('updateConversationLastMessageFromNotification', {
-					notification: event.notification,
-				})
-				break
-			}
-			case 'call': {
-				this.$store.dispatch('updateCallStateFromNotification', {
-					notification: event.notification,
-				})
-				break
-			}
-			// Federation invitation handling
-			case 'remote_talk_share': {
-				this.federationStore.addInvitationFromNotification(event.notification)
-				break
-			}
-			default: break
+					this.$store.dispatch('updateConversationLastMessageFromNotification', {
+						notification: event.notification,
+					})
+					break
+				}
+				case 'call': {
+					this.$store.dispatch('updateCallStateFromNotification', {
+						notification: event.notification,
+					})
+					break
+				}
+				// Federation invitation handling
+				case 'remote_talk_share': {
+					this.federationStore.addInvitationFromNotification(event.notification)
+					break
+				}
+				default: break
 			}
 		},
 

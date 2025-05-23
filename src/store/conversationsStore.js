@@ -163,8 +163,8 @@ const getters = {
 	isModerator: (state, getters, rootState, rootGetters) => {
 		const conversation = getters.conversation(rootGetters.getToken())
 		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
-				|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+			|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR
+			|| conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 	},
 	isModeratorOrUser: (state, getters, rootState, rootGetters) => {
 		const conversation = getters.conversation(rootGetters.getToken())
@@ -176,9 +176,9 @@ const getters = {
 	isInLobby: (state, getters, rootState, rootGetters) => {
 		const conversation = getters.conversation(rootGetters.getToken())
 		return conversation
-				&& conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
-				&& !getters.isModerator
-				&& (conversation.permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) === 0
+			&& conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+			&& !getters.isModerator
+			&& (conversation.permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) === 0
 	},
 	getConversationForUser: (state, getters) => {
 		return (userId) => getters.conversationsList
@@ -800,13 +800,13 @@ const actions = {
 		 * 3. It's not a deletion of a message
 		 */
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
-				|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
-			&& lastMessage.systemMessage !== 'reaction'
-			&& lastMessage.systemMessage !== 'poll_voted'
-			&& lastMessage.systemMessage !== 'reaction_deleted'
-			&& lastMessage.systemMessage !== 'reaction_revoked'
-			&& lastMessage.systemMessage !== 'message_deleted'
-			&& lastMessage.systemMessage !== 'message_edited') {
+			|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
+		&& lastMessage.systemMessage !== 'reaction'
+		&& lastMessage.systemMessage !== 'poll_voted'
+		&& lastMessage.systemMessage !== 'reaction_deleted'
+		&& lastMessage.systemMessage !== 'reaction_revoked'
+		&& lastMessage.systemMessage !== 'message_deleted'
+		&& lastMessage.systemMessage !== 'message_edited') {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},

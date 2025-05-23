@@ -23,9 +23,6 @@ export default [
 			'@stylistic/function-call-argument-newline': 'off', // changes 125 files
 			'@stylistic/function-paren-newline': 'off', // weird formatting
 			'@stylistic/implicit-arrow-linebreak': 'off', // weird formatting
-			'@stylistic/indent': 'off', // weird formatting
-			'@stylistic/indent-binary-ops': 'off', // changes 66 files -> switch-case, tabs
-			'@stylistic/linebreak-style': 'off', // changes 25 files -> indent
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@stylistic/member-delimiter-style': 'off', // removes commas from types
 			'@stylistic/quote-props': 'off', // removes quotes from types

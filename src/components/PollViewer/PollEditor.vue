@@ -179,7 +179,7 @@ const createPollLabel = computed(() => {
 
 	return store.getters.getToken() !== props.token
 		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName },
-			undefined, { escape: false, sanitize: false })
+				undefined, { escape: false, sanitize: false })
 		: t('spreed', 'Create poll')
 })
 

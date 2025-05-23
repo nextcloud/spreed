@@ -264,8 +264,8 @@ export default {
 			})
 			const payload = isSelected
 				? this.selectedParticipants.filter(selected => {
-					return selected.id !== participant.id || selected.source !== participant.source
-				})
+						return selected.id !== participant.id || selected.source !== participant.source
+					})
 				: [...this.selectedParticipants, participant]
 
 			this.$emit('update:selected-participants', payload)

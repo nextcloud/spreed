@@ -180,16 +180,16 @@ export default {
 
 		translatedStatus() {
 			switch (this.trialAccount.status) {
-			case 'pending':
-				return t('spreed', 'Pending')
-			case 'error':
-				return t('spreed', 'Error')
-			case 'blocked':
-				return t('spreed', 'Blocked')
-			case 'active':
-				return t('spreed', 'Active')
-			case 'expired':
-				return t('spreed', 'Expired')
+				case 'pending':
+					return t('spreed', 'Pending')
+				case 'error':
+					return t('spreed', 'Error')
+				case 'blocked':
+					return t('spreed', 'Blocked')
+				case 'active':
+					return t('spreed', 'Active')
+				case 'expired':
+					return t('spreed', 'Expired')
 			}
 
 			return ''

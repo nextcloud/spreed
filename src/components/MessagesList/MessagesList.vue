@@ -542,9 +542,9 @@ export default {
 
 			if (!message1IsSystem // System messages are grouped independently of author
 				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
-						|| message1.actorId !== message2.actorId)
-					|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
-						&& message1.actorDisplayName !== message2.actorDisplayName))) {
+					|| message1.actorId !== message2.actorId)
+				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
+					&& message1.actorDisplayName !== message2.actorDisplayName))) {
 				return false
 			}
 
@@ -562,14 +562,14 @@ export default {
 
 		getRelativePrefix(diffDays) {
 			switch (diffDays) {
-			case 0:
-				return t('spreed', 'Today')
-			case 1:
-				return t('spreed', 'Yesterday')
-			case 7:
-				return t('spreed', 'A week ago')
-			default:
-				return n('spreed', '%n day ago', '%n days ago', diffDays)
+				case 0:
+					return t('spreed', 'Today')
+				case 1:
+					return t('spreed', 'Yesterday')
+				case 7:
+					return t('spreed', 'A week ago')
+				default:
+					return n('spreed', '%n day ago', '%n days ago', diffDays)
 			}
 		},
 

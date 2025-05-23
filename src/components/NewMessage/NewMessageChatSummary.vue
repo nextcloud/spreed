@@ -81,8 +81,8 @@ type TaskProcessingCancelableRequest = {
 }
 
 type ChatTask = SummarizeChatTask & {
-  fromMessageId: number,
-  summary?: string
+	fromMessageId: number,
+	summary?: string
 }
 
 let getTaskInterval: NodeJS.Timeout | undefined
@@ -166,29 +166,29 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 		const response = await request(task.taskId)
 		const status = response.data.ocs.data.task.status
 		switch (status) {
-		case TASK_PROCESSING.STATUS.SUCCESSFUL: {
+			case TASK_PROCESSING.STATUS.SUCCESSFUL: {
 			// Task is completed, proceed to the next task
-			const summary = response.data.ocs.data.task.output?.output || ''
-			chatExtrasStore.storeChatSummary(token, task.fromMessageId, summary)
-			clearInterval(getTaskInterval)
-			getTaskInterval = undefined
-			checkScheduledTasks(token)
-			break
-		}
-		case TASK_PROCESSING.STATUS.FAILED:
-		case TASK_PROCESSING.STATUS.UNKNOWN:
-		case TASK_PROCESSING.STATUS.CANCELLED: {
+				const summary = response.data.ocs.data.task.output?.output || ''
+				chatExtrasStore.storeChatSummary(token, task.fromMessageId, summary)
+				clearInterval(getTaskInterval)
+				getTaskInterval = undefined
+				checkScheduledTasks(token)
+				break
+			}
+			case TASK_PROCESSING.STATUS.FAILED:
+			case TASK_PROCESSING.STATUS.UNKNOWN:
+			case TASK_PROCESSING.STATUS.CANCELLED: {
 			// Task is likely failed, proceed to the next task
-			showError(t('spreed', 'Error occurred during a summary generation'))
-			cancelSummary()
-			break
-		}
-		case TASK_PROCESSING.STATUS.SCHEDULED:
-		case TASK_PROCESSING.STATUS.RUNNING:
-		default: {
+				showError(t('spreed', 'Error occurred during a summary generation'))
+				cancelSummary()
+				break
+			}
+			case TASK_PROCESSING.STATUS.SCHEDULED:
+			case TASK_PROCESSING.STATUS.RUNNING:
+			default: {
 			// Task is still processing, scheduling next request
-			break
-		}
+				break
+			}
 		}
 	} catch (error) {
 		if (CancelableRequest.isCancel(error)) {
@@ -215,7 +215,7 @@ async function cancelSummary() {
 	cancelling.value = true
 	const taskQueue: ChatTask[] = chatExtrasStore.getChatSummaryTaskQueue(token.value)
 	for await (const task of taskQueue) {
-		 await deleteTaskById(task.taskId)
+		await deleteTaskById(task.taskId)
 	}
 	cancelling.value = false
 	dismissSummary()

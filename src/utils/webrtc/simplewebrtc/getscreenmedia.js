@@ -60,26 +60,26 @@ export default function(mode, constraints, cb) {
 				// "entire-desktop:0:0" is a custom sourceId for this specific case
 				const constraints = (sourceId === 'entire-desktop:0:0')
 					? {
-						audio: {
-							mandatory: {
-								chromeMediaSource: 'desktop',
+							audio: {
+								mandatory: {
+									chromeMediaSource: 'desktop',
+								},
 							},
-						},
-						video: {
-							mandatory: {
-								chromeMediaSource: 'desktop',
+							video: {
+								mandatory: {
+									chromeMediaSource: 'desktop',
+								},
 							},
-						},
-					}
+						}
 					: {
-						audio: false,
-						video: {
-							mandatory: {
-								chromeMediaSource: 'desktop',
-								chromeMediaSourceId: sourceId,
+							audio: false,
+							video: {
+								mandatory: {
+									chromeMediaSource: 'desktop',
+									chromeMediaSourceId: sourceId,
+								},
 							},
-						},
-					}
+						}
 				return navigator.mediaDevices.getUserMedia(constraints)
 			})
 			.then((stream) => callback(null, stream))

@@ -53,9 +53,9 @@ type PasswordPolicyCapabilities = {
 
 // Capabilities
 export type Capabilities = {
-		spreed: SpreedCapabilities,
-		password_policy?: PasswordPolicyCapabilities,
-	}
+	spreed: SpreedCapabilities,
+	password_policy?: PasswordPolicyCapabilities,
+}
 
 export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 

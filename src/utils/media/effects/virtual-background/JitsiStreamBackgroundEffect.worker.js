@@ -17,21 +17,21 @@ self.compiled = false
 self.onmessage = (e) => {
 	const message = e.data.message
 	switch (message) {
-	case 'makeTFLite':
-		self.segmentationPixelCount = e.data.segmentationPixelCount
-		makeTFLite(e.data.simd)
-		break
-	case 'resizeSource':
-		if (!self.compiled) return
-		resizeSource(e.data.imageData, e.data.frameId)
-		break
-	case 'runInference':
-		runInference()
-		break
-	default:
-		console.error('JitsiStreamBackgroundEffect.worker: Message unknown.')
-		console.error(message)
-		break
+		case 'makeTFLite':
+			self.segmentationPixelCount = e.data.segmentationPixelCount
+			makeTFLite(e.data.simd)
+			break
+		case 'resizeSource':
+			if (!self.compiled) return
+			resizeSource(e.data.imageData, e.data.frameId)
+			break
+		case 'runInference':
+			runInference()
+			break
+		default:
+			console.error('JitsiStreamBackgroundEffect.worker: Message unknown.')
+			console.error(message)
+			break
 	}
 }
 
@@ -41,16 +41,16 @@ self.onmessage = (e) => {
 async function makeTFLite(isSimd) {
 	try {
 		switch (isSimd) {
-		case true:
-			self.wasmUrl = withSIMD.split('/').pop()
-			self.tflite = await createTFLiteSIMDModule({ locateFile: (path) => { return self.wasmUrl } })
-			break
-		case false:
-			self.wasmUrl = withoutSIMD.split('/').pop()
-			self.tflite = await createTFLiteModule({ locateFile: (path) => { return self.wasmUrl } })
-			break
-		default:
-			return
+			case true:
+				self.wasmUrl = withSIMD.split('/').pop()
+				self.tflite = await createTFLiteSIMDModule({ locateFile: (path) => { return self.wasmUrl } })
+				break
+			case false:
+				self.wasmUrl = withoutSIMD.split('/').pop()
+				self.tflite = await createTFLiteModule({ locateFile: (path) => { return self.wasmUrl } })
+				break
+			default:
+				return
 		}
 		self.modelBufferOffset = self.tflite._getModelBufferMemoryOffset()
 		self.modelResponse = await fetch(models.modelLandscape)

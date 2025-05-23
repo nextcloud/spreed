@@ -22,7 +22,7 @@ const supportsTransform
 	// Firefox
 	= (window.RTCRtpScriptTransform && window.RTCRtpSender && 'transform' in RTCRtpSender.prototype)
 	// Chrome
-	|| (window.RTCRtpReceiver && 'createEncodedStreams' in RTCRtpReceiver.prototype && window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype)
+		|| (window.RTCRtpReceiver && 'createEncodedStreams' in RTCRtpReceiver.prototype && window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype)
 
 // Period which we'll wait before updating / rotating our keys when a participant
 // joins or leaves.
@@ -196,21 +196,21 @@ class Encryption {
 	_handleMessage(message) {
 		const sender = message.from
 		switch (message.payload?.type) {
-		case TYPE_ENCRYPTION_START:
-			this._processStartSession(sender, message)
-			break
-		case TYPE_ENCRYPTION_FINISH:
-			this._processFinishSession(sender, message)
-			break
-		case TYPE_ENCRYPTION_SET_KEY:
-			this._processSessionSetKey(sender, message)
-			break
-		case TYPE_ENCRYPTION_GOT_KEY:
-			this._processSessionGotKey(sender, message)
-			break
-		case TYPE_ENCRYPTION_ERROR:
-			this._processError(sender, message)
-			break
+			case TYPE_ENCRYPTION_START:
+				this._processStartSession(sender, message)
+				break
+			case TYPE_ENCRYPTION_FINISH:
+				this._processFinishSession(sender, message)
+				break
+			case TYPE_ENCRYPTION_SET_KEY:
+				this._processSessionSetKey(sender, message)
+				break
+			case TYPE_ENCRYPTION_GOT_KEY:
+				this._processSessionGotKey(sender, message)
+				break
+			case TYPE_ENCRYPTION_ERROR:
+				this._processError(sender, message)
+				break
 		}
 	}
 

@@ -91,7 +91,7 @@ export function getEventTimeRange(conversation: Conversation): EventTimeRange {
  */
 export function shouldIncludeEvents(conversation: Conversation): boolean {
 	return !isEvent(conversation)
-	|| (conversation.objectId?.includes('#') && shouldEventBeVisible(conversation))
+		|| (conversation.objectId?.includes('#') && shouldEventBeVisible(conversation))
 }
 
 /**

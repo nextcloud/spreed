@@ -163,18 +163,18 @@ export default {
 			return this.selectedTo?.id
 				? this.translationTree[this.selectedTo?.id]?.sources
 				: Object.values(this.sourceTree).map(model => ({
-					id: model.id,
-					label: model.label,
-				}))
+						id: model.id,
+						label: model.label,
+					}))
 		},
 
 		optionsTo() {
 			return this.selectedFrom?.id
 				? this.sourceTree[this.selectedFrom?.id]?.translations
 				: Object.values(this.translationTree).map(model => ({
-					id: model.id,
-					label: model.label,
-				}))
+						id: model.id,
+						label: model.label,
+					}))
 		},
 	},
 
