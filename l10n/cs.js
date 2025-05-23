@@ -1212,6 +1212,7 @@ OC.L10N.register(
     "Mention permissions" : "Oprávnění pro zmiňování",
     "Notifications" : "Upozornění",
     "Notify about calls in this conversation" : "Upozorňovat na volání v této konverzaci",
+    "Important conversation" : "Důležitá konverzace",
     "Recording consent is required for calls in this conversation" : "Souhlas s nahráváním je vyžadován pro volání v této konverzaci",
     "Recording consent is not required for calls in this conversation" : "Souhlas s nahráváním není pro volání v této konverzaci vyžadován",
     "Recording consent requirement was updated" : "Požadavek na souhlas s nahráváním byl zaktualizován",
@@ -1229,7 +1230,6 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "Zapnout volání do konverzace telefonem a přes SIP protokol",
     "Allow to dial-in without a PIN" : "Umožnit zavolání do hovoru bez zadávání PIN kódu",
     "Ongoing" : "Probíhající",
-    "Today" : "Dnes",
     "_%n person accepted_::_%n people accepted_" : ["%n osoba přijala","%n lidé přijali","%n lidí přijalo","%n lidé přijaly"],
     "_%n person declined_::_%n people declined_" : ["%n osoba odmítla","%n lidé odmítli","%n lidí odmítlo","%n lidé odmítli"],
     "With" : "S",
@@ -1255,7 +1255,7 @@ OC.L10N.register(
     "All caught up!" : "Vše dohnáno!",
     "You have no unread mentions" : "Nemáte žádná nepřečtená zmínění",
     "Upcoming reminders" : "Nadcházející připomínky",
-    "No Reminders Scheduled" : "Nenaplánované žádné připomínky",
+    "No reminders scheduled" : "Nenaplánované žádné připomínky",
     "You have no reminders scheduled" : "Nemáte naplánovány žádná připomínky",
     "Start a group conversation" : "Zahájit skupinovou konverzaci",
     "Create conversation" : "Vytvořit konverzaci",
@@ -1467,6 +1467,7 @@ OC.L10N.register(
     "Show all reactions" : "Zobrazit veškeré reakce",
     "Add more reactions" : "Přidat další reakce",
     "Reactions" : "Reakce",
+    "Today" : "Dnes",
     "Yesterday" : "Včera",
     "A week ago" : "Před týdnem",
     "_%n day ago_::_%n days ago_" : ["včera","před %n dny","před %n dny","před %n dny"],
@@ -2086,7 +2087,6 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Při pokusu o sdílení vašeho souboru došlo k chybě",
     "Failed to join the conversation. Try to reload the page." : "Ke konverzaci se nepodařilo připojit. Zkuste stránku znovu načíst.",
     "Nextcloud is in maintenance mode, please reload the page" : "V Nexcloud probíhá údržba – načtěte stránku znovu",
-    "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu.",
-    "No reminders scheduled" : "Nenaplánované žádné připomínky"
+    "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

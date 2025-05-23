@@ -1230,7 +1230,6 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "Cumasaigh guthán agus SIP diailithe",
     "Allow to dial-in without a PIN" : "Ceadaigh diailiú isteach gan UAP",
     "Ongoing" : "Ar siúl",
-    "Today" : "Inniu",
     "_%n person accepted_::_%n people accepted_" : ["%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha"],
     "_%n person declined_::_%n people declined_" : ["Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine"],
     "With" : "Le",
@@ -1256,7 +1255,7 @@ OC.L10N.register(
     "All caught up!" : "Gach rud gafa suas!",
     "You have no unread mentions" : "Níl aon trácht neamhléite agat",
     "Upcoming reminders" : "Upcoming reminders",
-    "No Reminders Scheduled" : "Gan aon mheabhrúcháin sceidealaithe",
+    "No reminders scheduled" : "Níl aon mheabhrúcháin sceidealaithe",
     "You have no reminders scheduled" : "Níl aon mheabhrúcháin sceidealaithe agat",
     "Start a group conversation" : "Cuir tús le comhrá grúpa",
     "Create conversation" : "Cruthaigh comhrá",
@@ -1468,6 +1467,7 @@ OC.L10N.register(
     "Show all reactions" : "Taispeáin gach imoibriú",
     "Add more reactions" : "Cuir tuilleadh imoibrithe leis",
     "Reactions" : "Imoibrithe",
+    "Today" : "Inniu",
     "Yesterday" : "Inné",
     "A week ago" : "Seachtain ó shin",
     "_%n day ago_::_%n days ago_" : ["%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin"],
@@ -2087,7 +2087,6 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Tharla earráid agus tú ag iarraidh do chomhad a roinnt",
     "Failed to join the conversation. Try to reload the page." : "Theip ar páirt a ghlacadh sa chomhrá. Déan iarracht an leathanach a athlódáil.",
     "Nextcloud is in maintenance mode, please reload the page" : "Tá Nextcloud i mód cothabhála, le do thoil athlódáil an leathanach",
-    "Lost connection to signaling server. Try to reload the page manually." : "Ceangal caillte leis an bhfreastalaí comharthaíochta. Déan iarracht an leathanach a athlódáil de láimh.",
-    "No reminders scheduled" : "Níl aon mheabhrúcháin sceidealaithe"
+    "Lost connection to signaling server. Try to reload the page manually." : "Ceangal caillte leis an bhfreastalaí comharthaíochta. Déan iarracht an leathanach a athlódáil de láimh."
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");
