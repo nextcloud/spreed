@@ -55,7 +55,6 @@ export default [
 			'vue/no-required-prop-with-default': 'off', // non-fixable
 			'vue/no-unused-properties': 'off', // non-fixable
 			'vue/no-unused-refs': 'off', // non-fixable
-			'vue/no-useless-mustaches': 'off', // changes template
 			'vue/order-in-components': 'off', // moves code
 		},
 	},

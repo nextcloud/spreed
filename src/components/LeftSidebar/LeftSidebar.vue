@@ -232,7 +232,9 @@
 							<IconArchive :size="20" />
 						</template>
 						{{ t('spreed', 'Archived conversations') }}
-						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">{{ '⬤' }}</span>
+						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
+							⬤
+						</span>
 					</NcButton>
 				</template>
 
