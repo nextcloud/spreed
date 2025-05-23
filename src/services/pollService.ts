@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import type {
 	closePollResponse,
 	createPollDraftResponse,
@@ -14,11 +11,14 @@ import type {
 	deletePollDraftResponse,
 	getPollDraftsResponse,
 	getPollResponse,
-	votePollParams,
-	votePollResponse,
 	updatePollDraftParams,
 	updatePollDraftResponse,
+	votePollParams,
+	votePollResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 type createPollPayload = { token: string } & createPollParams
 type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraftParams
@@ -121,10 +121,10 @@ const deletePollDraft = async (token: string, pollId: string): deletePollDraftRe
 export {
 	createPoll,
 	createPollDraft,
-	updatePollDraft,
-	getPollDrafts,
-	getPollData,
-	submitVote,
-	endPoll,
 	deletePollDraft,
+	endPoll,
+	getPollData,
+	getPollDrafts,
+	submitVote,
+	updatePollDraft,
 }

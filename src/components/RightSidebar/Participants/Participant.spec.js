@@ -7,12 +7,6 @@ import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import Phone from 'vue-material-design-icons/Phone.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -21,10 +15,12 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-
-import Participant from './Participant.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import Phone from 'vue-material-design-icons/Phone.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-
+import Participant from './Participant.vue'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
@@ -203,7 +199,8 @@ describe('Participant.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
 		]
 
-		it.each(testCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
+		it.each(testCases)(
+			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
 			(displayName, actorId, actorType, participantType, regexp) => {
 				checkUserNameRendered({
 					...participant,
@@ -212,9 +209,11 @@ describe('Participant.vue', () => {
 					participantType,
 					displayName,
 				}, regexp)
-			})
+			},
+		)
 
-		it.each(testLobbyCases)('renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\' with lobby enabled',
+		it.each(testLobbyCases)(
+			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\' with lobby enabled',
 			(displayName, actorId, actorType, participantType, regexp) => {
 				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
 				checkUserNameRendered({
@@ -224,7 +223,8 @@ describe('Participant.vue', () => {
 					participantType,
 					displayName,
 				}, regexp)
-			})
+			},
+		)
 	})
 
 	describe('user status', () => {
@@ -253,7 +253,8 @@ describe('Participant.vue', () => {
 			['away', '🌧️', '', '🌧️ Away'],
 		]
 
-		it.each(testCases)('renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
+		it.each(testCases)(
+			'renders status for participant \'%s\', \'%s\', \'%s\' - \'%s\'',
 			(status, statusIcon, statusMessage, result) => {
 				checkUserSubnameRendered({
 					...participant,
@@ -261,7 +262,8 @@ describe('Participant.vue', () => {
 					statusIcon,
 					statusMessage,
 				}, result)
-			})
+			},
+		)
 
 		it('renders email as status for email guest', async () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
@@ -285,7 +287,7 @@ describe('Participant.vue', () => {
 			if (icon) {
 				expect(wrapper.findComponent(icon).exists()).toBeTruthy()
 			} else {
-				components.forEach(component => {
+				components.forEach((component) => {
 					expect(wrapper.findComponent(component).exists()).toBeFalsy()
 				})
 			}
@@ -630,7 +632,7 @@ describe('Participant.vue', () => {
 					token: 'current-token',
 					attendeeId: 'alice-attendee-id',
 					banParticipant: true,
-					internalNote
+					internalNote,
 				})
 			}
 

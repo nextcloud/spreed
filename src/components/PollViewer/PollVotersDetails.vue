@@ -43,12 +43,9 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
 import { AVATAR } from '../../constants.ts'
 import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 

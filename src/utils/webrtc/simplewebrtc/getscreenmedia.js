@@ -114,8 +114,10 @@ export default function(mode, constraints, cb) {
 		// this has to be set after installation unless the contest
 		// script does that
 		if (sessionStorage.getScreenMediaJSExtensionId) {
-			chrome.runtime.sendMessage(sessionStorage.getScreenMediaJSExtensionId,
-				{ type: 'getScreen', id: 1 }, null,
+			chrome.runtime.sendMessage(
+				sessionStorage.getScreenMediaJSExtensionId,
+				{ type: 'getScreen', id: 1 },
+				null,
 				function(data) {
 					if (!data || data.sourceId === '') { // user canceled
 						const error = new Error('NavigatorUserMediaError')
@@ -136,7 +138,7 @@ export default function(mode, constraints, cb) {
 						constraints.video.mandatory.chromeMediaSourceId = data.sourceId
 						getUserMedia(constraints, callback)
 					}
-				}
+				},
 			)
 		} else if (window.cefGetScreenMedia) {
 			// window.cefGetScreenMedia is experimental - may be removed without notice

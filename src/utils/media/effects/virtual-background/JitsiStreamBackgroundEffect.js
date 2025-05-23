@@ -4,14 +4,14 @@
  */
 // @flow
 
+import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
-	TIMEOUT_TICK,
 	SET_TIMEOUT,
+	TIMEOUT_TICK,
 	timerWorkerScript,
 } from './TimerWorker.js'
-import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 
 /**
  * Represents a modified MediaStream that adds effects to video background.
@@ -244,7 +244,7 @@ export default class JitsiStreamBackgroundEffect {
 			0,
 			0,
 			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight
+			this._inputVideoElement.videoHeight,
 		)
 		this._outputCanvasCtx.globalCompositeOperation = 'source-in'
 		this._outputCanvasCtx.filter = 'none'
@@ -287,7 +287,7 @@ export default class JitsiStreamBackgroundEffect {
 				0,
 				0,
 				destinationWidth,
-				destinationHeight
+				destinationHeight,
 			)
 		} else {
 			this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
@@ -392,14 +392,14 @@ export default class JitsiStreamBackgroundEffect {
 			0,
 			0,
 			this._options.width,
-			this._options.height
+			this._options.height,
 		)
 
 		const imageData = this._segmentationMaskCtx.getImageData(
 			0,
 			0,
 			this._options.width,
-			this._options.height
+			this._options.height,
 		)
 
 		this._model.postMessage({ message: 'resizeSource', imageData, frameId: this._frameId })
@@ -473,7 +473,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		this._frameRate = parseInt(frameRate, 10)
 
-		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch(error => {
+		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch((error) => {
 			console.error('Frame rate could not be adjusted in background effect', error)
 		})
 

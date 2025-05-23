@@ -7,12 +7,10 @@ import flushPromises from 'flush-promises' // TODO fix after migration to @vue/t
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex, { Store } from 'vuex'
-
+import NcButton from '@nextcloud/vue/components/NcButton'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-
+import Quote from '../../../Quote.vue'
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -21,10 +19,8 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import Quote from '../../../Quote.vue'
-
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 
@@ -95,7 +91,7 @@ describe('Message.vue', () => {
 				systemMessage: '',
 				messageType: 'comment',
 				reactions: [],
-			}
+			},
 		}
 	})
 
@@ -370,7 +366,7 @@ describe('Message.vue', () => {
 							component: Mention,
 							props: mentions['mention-call1'],
 						},
-					}
+					},
 				)
 			})
 
@@ -388,7 +384,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{file}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -397,7 +394,7 @@ describe('Message.vue', () => {
 							component: FilePreview,
 							props: { file: params.file },
 						},
-					}
+					},
 				)
 			})
 
@@ -416,7 +413,8 @@ describe('Message.vue', () => {
 				}
 				const messageEl = renderRichObject(
 					caption,
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -425,7 +423,7 @@ describe('Message.vue', () => {
 							component: FilePreview,
 							props: { file: params.file },
 						},
-					}
+					},
 				)
 
 				expect(messageEl.props('text')).toBe('{file}' + '\n\n' + caption)
@@ -445,7 +443,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{deck-card}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -454,7 +453,7 @@ describe('Message.vue', () => {
 							component: DeckCard,
 							props: params['deck-card'],
 						},
-					}
+					},
 				)
 			})
 
@@ -467,12 +466,13 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{geo-location}',
-					params, {
+					params,
+					{
 						'geo-location': {
 							component: Location,
 							props: params['geo-location'],
 						},
-					}
+					},
 				)
 			})
 
@@ -490,7 +490,8 @@ describe('Message.vue', () => {
 				}
 				renderRichObject(
 					'{unknown}',
-					params, {
+					params,
+					{
 						actor: {
 							component: Mention,
 							props: params.actor,
@@ -499,7 +500,7 @@ describe('Message.vue', () => {
 							component: DefaultParameter,
 							props: params.unknown,
 						},
-					}
+					},
 				)
 			})
 		})

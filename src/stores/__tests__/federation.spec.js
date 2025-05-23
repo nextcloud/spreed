@@ -2,10 +2,9 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { setActivePinia, createPinia } from 'pinia'
-
+import { createPinia, setActivePinia } from 'pinia'
 import { mockedCapabilities } from '../../__mocks__/capabilities.ts'
-import { getShares, acceptShare, rejectShare, getRemoteCapabilities } from '../../services/federationService.ts'
+import { acceptShare, getRemoteCapabilities, getShares, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useFederationStore } from '../federation.ts'
 
@@ -28,7 +27,7 @@ describe('federationStore', () => {
 			remoteAttendeeId: 11,
 			inviterCloudId: 'user2@remote.nextcloud.com',
 			inviterDisplayName: 'User Two',
-			roomName: 'Federation room 2'
+			roomName: 'Federation room 2',
 		},
 		{
 			id: 1,
@@ -40,7 +39,7 @@ describe('federationStore', () => {
 			remoteAttendeeId: 11,
 			inviterCloudId: 'user1@remote.nextcloud.com',
 			inviterDisplayName: 'User One',
-			roomName: 'Federation room 1'
+			roomName: 'Federation room 1',
 		},
 	]
 	const notifications = [
@@ -55,12 +54,12 @@ describe('federationStore', () => {
 					type: 'user',
 					id: 'user2',
 					name: 'User Two',
-					server: 'remote.nextcloud.com'
+					server: 'remote.nextcloud.com',
 				},
 				roomName: {
 					type: 'highlight',
 					id: 'remote.nextcloud.com::TOKEN_2',
-					name: 'Federation room 2'
+					name: 'Federation room 2',
 				},
 			},
 		},
@@ -75,15 +74,15 @@ describe('federationStore', () => {
 					type: 'user',
 					id: 'user3',
 					name: 'User Three',
-					server: 'remote.nextcloud.com'
+					server: 'remote.nextcloud.com',
 				},
 				roomName: {
 					type: 'highlight',
 					id: 'remote.nextcloud.com::TOKEN_3',
-					name: 'Federation room 3'
+					name: 'Federation room 3',
 				},
 			},
-		}
+		},
 	]
 	let federationStore
 
@@ -184,7 +183,7 @@ describe('federationStore', () => {
 
 		const room = {
 			id: 10,
-			token: 'TOKEN_LOCAL_2'
+			token: 'TOKEN_LOCAL_2',
 		}
 		const acceptResponse = generateOCSResponse({ payload: room })
 		acceptShare.mockResolvedValueOnce(acceptResponse)

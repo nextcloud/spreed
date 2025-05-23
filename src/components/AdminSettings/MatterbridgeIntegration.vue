@@ -47,14 +47,12 @@
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-
 import {
 	enableMatterbridgeApp,
-	stopAllBridges,
 	getMatterbridgeVersion,
+	stopAllBridges,
 } from '../../services/matterbridgeService.js'
 
 export default {

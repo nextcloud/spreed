@@ -5,7 +5,6 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import { PARTICIPANT } from '../constants.ts'
 import {
 	signalingJoinCall,
@@ -130,13 +129,13 @@ const callSIPSendCallMessage = async function(sessionId, data) {
 }
 
 export {
-	joinCall,
-	leaveCall,
-	fetchPeers,
 	callSIPDialOut,
 	callSIPHangupPhone,
-	callSIPMutePhone,
-	callSIPUnmutePhone,
 	callSIPHoldPhone,
+	callSIPMutePhone,
 	callSIPSendDTMF,
+	callSIPUnmutePhone,
+	fetchPeers,
+	joinCall,
+	leaveCall,
 }

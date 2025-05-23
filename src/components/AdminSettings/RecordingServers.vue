@@ -97,23 +97,18 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-
-import Plus from 'vue-material-design-icons/Plus.vue'
-
 import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-
+import Plus from 'vue-material-design-icons/Plus.vue'
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-
 import { CONFIG } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -208,7 +203,7 @@ export default {
 		async updateServers() {
 			this.loading = true
 
-			this.servers = this.servers.filter(server => server.server.trim() !== '')
+			this.servers = this.servers.filter((server) => server.server.trim() !== '')
 
 			OCP.AppConfig.setValue('spreed', 'recording_servers', JSON.stringify({
 				servers: this.servers,

@@ -147,6 +147,6 @@ AverageStatValue.prototype = {
 }
 
 export {
-	STAT_VALUE_TYPE,
 	AverageStatValue,
+	STAT_VALUE_TYPE,
 }

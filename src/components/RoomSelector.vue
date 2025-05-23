@@ -48,22 +48,17 @@
 </template>
 
 <script>
-import { provide, ref } from 'vue'
-
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { provide, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
-
 import { CONVERSATION } from '../constants.ts'
-import { searchListedConversations, fetchConversations } from '../services/conversationsService.ts'
+import { fetchConversations, searchListedConversations } from '../services/conversationsService.ts'
 
 export default {
 	name: 'RoomSelector',
@@ -145,13 +140,12 @@ export default {
 
 	computed: {
 		availableRooms() {
-			return this.rooms.filter(room => room.type !== CONVERSATION.TYPE.CHANGELOG
+			return this.rooms.filter((room) => room.type !== CONVERSATION.TYPE.CHANGELOG
 				&& room.objectType !== CONVERSATION.OBJECT_TYPE.FILE
 				&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 				&& (!this.currentRoom || this.currentRoom !== room.token)
 				&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
-				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase()))
-			)
+				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase())))
 		},
 
 		noMatchFoundTitle() {
@@ -188,7 +182,7 @@ export default {
 				// Federated conversations do not support:
 				// - open conversations
 				// - 3rd app integrations (e.g. Deck / Maps)
-				.filter(conversation => this.allowFederation || !conversation.remoteServer)
+				.filter((conversation) => this.allowFederation || !conversation.remoteServer)
 			this.loading = false
 		},
 

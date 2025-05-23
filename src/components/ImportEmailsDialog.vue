@@ -4,30 +4,27 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import type { ApiErrorResponse } from '../types/index.ts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
-
+import { n, t } from '@nextcloud/l10n'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import { importEmails } from '../services/participantsService.js'
-import type { ApiErrorResponse } from '../types/index.ts'
 
 const loading = ref(false)
 const listImport = ref<HTMLInputElement | null>(null)
 
 const props = defineProps<{
-	token: string,
-	container?: string,
+	token: string
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 
 const importedFile = ref<File | null>(null)
@@ -38,12 +35,10 @@ const uploadResultCaption = computed(() => {
 		: { class: 'import-list__caption--success', label: t('spreed', 'Uploaded file is verified') }
 })
 
-const importListDescription = t('spreed', 'Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>"name","email"</samp> or just <samp>"email"</samp><br/>- One entry per line (e.g. <samp>"John Doe","john@example.tld"</samp>)',
-	undefined,
-	undefined, {
-		escape: true,
-		sanitize: true
-	})
+const importListDescription = t('spreed', 'Content format is comma-separated values (CSV):<br/>- Header line is required and must match <samp>"name","email"</samp> or just <samp>"email"</samp><br/>- One entry per line (e.g. <samp>"John Doe","john@example.tld"</samp>)', undefined, undefined, {
+	escape: true,
+	sanitize: true,
+})
 
 /**
  * Call native input[type='file'] to import a file

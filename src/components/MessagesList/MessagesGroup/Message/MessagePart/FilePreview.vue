@@ -8,16 +8,18 @@
 	<component :is="filePreviewElement"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
-		:class="{ 'file-preview--viewer-available': isViewerAvailable,
+		:class="{
+			'file-preview--viewer-available': isViewerAvailable,
 			'file-preview--upload-editor': isUploadEditor,
 			'file-preview--shared-items-grid': isSharedItems && !rowLayout,
-			'file-preview--row-layout': rowLayout }"
+			'file-preview--row-layout': rowLayout,
+		}"
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<span :title="file.name"
 			class="image-container"
-			:class="{ 'playable': isPlayable }"
+			:class="{ playable: isPlayable }"
 			:style="imageContainerStyle">
 			<img class="file-preview__image"
 				:class="previewImageClass"
@@ -62,23 +64,18 @@
 </template>
 
 <script>
-import { decode } from 'blurhash'
-
-import Close from 'vue-material-design-icons/Close.vue'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
-
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
-import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
+import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
-
+import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-
-import AudioPlayer from './AudioPlayer.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
-
+import AudioPlayer from './AudioPlayer.vue'
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
@@ -298,7 +295,7 @@ export default {
 
 			const sizeMultiplicator = Math.min(
 				(heightConstraint > parseInt(this.file.height, 10) ? 1 : (heightConstraint / parseInt(this.file.height, 10))),
-				(widthConstraint > parseInt(this.file.width, 10) ? 1 : (widthConstraint / parseInt(this.file.width, 10)))
+				(widthConstraint > parseInt(this.file.width, 10) ? 1 : (widthConstraint / parseInt(this.file.width, 10))),
 			)
 
 			return {
@@ -406,7 +403,7 @@ export default {
 		},
 
 		upload() {
-			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile?.sharePath))
+			return this.uploadManager?.queue.find((item) => item._source.includes(this.uploadFile?.sharePath))
 		},
 
 		uploadProgress() {
@@ -502,7 +499,7 @@ export default {
 
 			if (this.itemType === SHARED_ITEM.TYPES.MEDIA) {
 				const getRevertedList = (items) => Object.values(items).reverse()
-					.map(item => item.messageParameters.file)
+					.map((item) => item.messageParameters.file)
 
 				// Get available media files from store and put them to the list to navigate through slides
 				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media

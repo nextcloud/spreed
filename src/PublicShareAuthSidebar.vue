@@ -28,7 +28,6 @@ import { getCurrentUser, getGuestNickname } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
@@ -37,13 +36,12 @@ import PollViewer from './components/PollViewer/PollViewer.vue'
 import InternalSignalingHint from './components/RightSidebar/InternalSignalingHint.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
-
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import {
 	leaveConversationSync,
-	setGuestUserName
+	setGuestUserName,
 } from './services/participantsService.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -74,7 +72,7 @@ export default {
 		return {
 			fetchCurrentConversationIntervalId: null,
 			isWaitingToClose: false,
-			recordingConsentGiven: false
+			recordingConsentGiven: false,
 		}
 	},
 
@@ -206,7 +204,7 @@ export default {
 			// by the guest name addition event.
 			emit('talk:media-settings:show', 'video-verification')
 			unsubscribe('talk:guest-name:added', this.showGuestMediaSettings)
-		}
+		},
 	},
 }
 </script>

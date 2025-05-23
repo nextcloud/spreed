@@ -20,10 +20,8 @@
 
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
-
-import Participant from './Participant.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
-
+import Participant from './Participant.vue'
 import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'

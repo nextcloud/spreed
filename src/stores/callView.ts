@@ -3,30 +3,30 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-
-import { CONVERSATION } from '../constants.ts'
-import BrowserStorage from '../services/BrowserStorage.js'
 import type { Conversation } from '../types/index.ts'
 
+import { defineStore } from 'pinia'
+import { CONVERSATION } from '../constants.ts'
+import BrowserStorage from '../services/BrowserStorage.js'
+
 type State = {
-	forceCallView: boolean,
-	isViewerOverlay: boolean,
-	isGrid: boolean,
-	isStripeOpen: boolean,
-	isEmptyCallView: boolean,
-	lastIsGrid: boolean | null,
-	lastIsStripeOpen: boolean | null,
-	presentationStarted: boolean,
-	selectedVideoPeerId: string | null,
-	callEndedTimeout: NodeJS.Timeout | number | undefined,
+	forceCallView: boolean
+	isViewerOverlay: boolean
+	isGrid: boolean
+	isStripeOpen: boolean
+	isEmptyCallView: boolean
+	lastIsGrid: boolean | null
+	lastIsStripeOpen: boolean | null
+	presentationStarted: boolean
+	selectedVideoPeerId: string | null
+	callEndedTimeout: NodeJS.Timeout | number | undefined
 }
 
 type CallViewModePayload = {
-	token: string,
-	isGrid?: boolean | null,
-	isStripeOpen?: boolean | null,
-	clearLast?: boolean,
+	token: string
+	isGrid?: boolean | null
+	isStripeOpen?: boolean | null
+	clearLast?: boolean
 }
 
 export const useCallViewStore = defineStore('callView', {
@@ -163,6 +163,6 @@ export const useCallViewStore = defineStore('callView', {
 		resetCallHasJustEnded() {
 			clearTimeout(this.callEndedTimeout)
 			this.callEndedTimeout = undefined
-		}
+		},
 	},
 })

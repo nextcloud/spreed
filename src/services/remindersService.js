@@ -59,7 +59,7 @@ const getUpcomingReminders = async function() {
 
 export {
 	getMessageReminder,
-	setMessageReminder,
-	removeMessageReminder,
 	getUpcomingReminders,
+	removeMessageReminder,
+	setMessageReminder,
 }

@@ -69,26 +69,21 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-import { ref, toRefs } from 'vue'
-
-import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
-
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
+import { ref, toRefs } from 'vue'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-
-import ParticipantsList from './ParticipantsList.vue'
-import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
-import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 import Hint from '../../UIShared/Hint.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
-
+import ParticipantsList from './ParticipantsList.vue'
+import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
+import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useId } from '../../../composables/useId.ts'
@@ -187,7 +182,7 @@ export default {
 		filteredParticipants() {
 			const isMatch = (string) => string.toLowerCase().includes(this.searchText.toLowerCase())
 
-			return this.participants.filter(participant => {
+			return this.participants.filter((participant) => {
 				return isMatch(participant.displayName)
 					|| (![ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType) && isMatch(participant.actorId))
 					|| (participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS && participant.invitedActorId && isMatch(participant.invitedActorId))
@@ -273,8 +268,8 @@ export default {
 	methods: {
 		t,
 		async updateUsers(usersList) {
-			const currentUser = usersList.flat().find(user => user.userId === this.userId)
-			const currentParticipant = this.participants.find(user => user.userId === this.userId)
+			const currentUser = usersList.flat().find((user) => user.userId === this.userId)
+			const currentParticipant = this.participants.find((user) => user.userId === this.userId)
 			if (!currentUser) {
 				return
 			}
@@ -374,7 +369,7 @@ export default {
 				return
 			}
 
-			const participant = this.participants.find(participant => participant.actorId === state.userId)
+			const participant = this.participants.find((participant) => participant.actorId === state.userId)
 			if (participant && (participant.status !== state.status
 				|| participant.statusMessage !== state.message
 				|| participant.statusIcon !== state.icon

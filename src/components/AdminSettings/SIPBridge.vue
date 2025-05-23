@@ -79,21 +79,18 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-
 import axios from '@nextcloud/axios'
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
-
+import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-
 import { EventBus } from '../../services/EventBus.ts'
 import { setSIPSettings } from '../../services/settingsService.ts'
 import { getWelcomeMessage } from '../../services/signalingService.js'
@@ -137,8 +134,8 @@ export default {
 			return this.currentSetup.sharedSecret !== this.sharedSecret
 				|| this.currentSetup.dialInInfo !== this.dialInInfo
 				|| this.currentSetup.dialOutEnabled !== this.dialOutEnabled
-				|| this.currentSetup.sipGroups !== this.sipGroups.map(group => group.id).join('_')
-		}
+				|| this.currentSetup.sipGroups !== this.sipGroups.map((group) => group.id).join('_')
+		},
 	},
 
 	mounted() {
@@ -186,7 +183,7 @@ export default {
 				sharedSecret: this.sharedSecret,
 				dialInInfo: this.dialInInfo,
 				dialOutEnabled: this.dialOutEnabled,
-				sipGroups: this.sipGroups.map(group => group.id).join('_')
+				sipGroups: this.sipGroups.map((group) => group.id).join('_'),
 			}
 			EventBus.emit('sip-settings-updated', this.currentSetup)
 		},
@@ -195,7 +192,7 @@ export default {
 			this.loading = true
 			this.saveLabel = t('spreed', 'Saving …')
 
-			const sipGroups = this.sipGroups.map(group => {
+			const sipGroups = this.sipGroups.map((group) => {
 				return group.id
 			})
 

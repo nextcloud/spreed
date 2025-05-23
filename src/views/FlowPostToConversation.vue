@@ -23,10 +23,8 @@
 import axios from '@nextcloud/axios'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-
-import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { CONVERSATION, FLOW, PARTICIPANT } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 const supportFederationV1 = hasTalkFeature('local', 'federation-v1')
@@ -76,7 +74,7 @@ export default {
 				return ''
 			}
 			const selectedRoom = JSON.parse(this.modelValue || this.value).t
-			const newValue = this.roomOptions.find(option => option.token === selectedRoom)
+			const newValue = this.roomOptions.find((option) => option.token === selectedRoom)
 			if (typeof newValue === 'undefined') {
 				return ''
 			}
@@ -88,7 +86,7 @@ export default {
 				return this.modeOptions[0]
 			}
 			const selectedMode = JSON.parse(this.modelValue || this.value).m
-			const newValue = this.modeOptions.find(option => option.id === selectedMode)
+			const newValue = this.modeOptions.find((option) => option.id === selectedMode)
 			if (typeof newValue === 'undefined') {
 				return this.modeOptions[0]
 			}
@@ -118,7 +116,7 @@ export default {
 			}
 			this.$emit('input', JSON.stringify({ m: mode, t: token }))
 			this.$emit('update:model-value', JSON.stringify({ m: mode, t: token }))
-		}
+		},
 	},
 }
 

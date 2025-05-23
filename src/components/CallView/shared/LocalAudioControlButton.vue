@@ -34,17 +34,13 @@
 </template>
 
 <script>
-import { onBeforeUnmount, ref, watch } from 'vue'
-
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-
+import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
-
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -89,6 +85,8 @@ export default {
 			required: true,
 		},
 	},
+
+	expose: ['toggleAudio'],
 
 	setup(props) {
 		const boundaryElement = document.querySelector('.main-view')
@@ -181,8 +179,6 @@ export default {
 	beforeDestroy() {
 		unsubscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
 	},
-
-	expose: ['toggleAudio'],
 
 	methods: {
 		t,

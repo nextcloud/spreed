@@ -113,26 +113,21 @@
 </template>
 
 <script>
+import { showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { ref } from 'vue'
-
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-
-import { showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcModal from '@nextcloud/vue/components/NcModal'
-
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
@@ -284,7 +279,7 @@ export default {
 			await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message: temporaryMessage.message })
 			showSuccess(t('spreed', 'The message was sent to all breakout rooms'))
 			this.isSendMessageDialogOpened = false
-		}
+		},
 	},
 }
 </script>

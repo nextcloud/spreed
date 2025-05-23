@@ -199,8 +199,16 @@
 </template>
 
 <script>
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import { computed, markRaw, ref } from 'vue'
-
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconBell from 'vue-material-design-icons/Bell.vue'
 import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
@@ -208,27 +216,14 @@ import IconCreation from 'vue-material-design-icons/Creation.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
-
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-
-import MediaDevicesSelector from './MediaDevicesSelector.vue'
-import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
-import MediaSettingsTabs from './MediaSettingsTabs.vue'
-import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
-
+import MediaDevicesSelector from './MediaDevicesSelector.vue'
+import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
+import MediaSettingsTabs from './MediaSettingsTabs.vue'
+import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import { useDevices } from '../../composables/useDevices.js'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -271,8 +266,8 @@ export default {
 	props: {
 		recordingConsentGiven: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	emits: ['update:recording-consent-given'],
@@ -428,8 +423,10 @@ export default {
 		},
 
 		isCurrentlyRecording() {
-			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
-				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
+			return [CALL.RECORDING.VIDEO_STARTING,
+				CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO,
+				CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
 		},
 
 		canFullModerate() {

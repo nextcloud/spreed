@@ -75,17 +75,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcModal from '@nextcloud/vue/components/NcModal'
-
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
-
 import { useId } from '../../composables/useId.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 

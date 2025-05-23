@@ -19,12 +19,9 @@
 </template>
 
 <script>
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import { useSoundsStore } from '../../stores/sounds.js'
 
 export default {
@@ -38,7 +35,7 @@ export default {
 
 	setup() {
 		return {
-			soundsStore: useSoundsStore()
+			soundsStore: useSoundsStore(),
 		}
 	},
 
@@ -55,14 +52,14 @@ export default {
 		},
 
 		equalizerBars() {
-			return Array.from(Array(4).keys()).map(item => ({
+			return Array.from(Array(4).keys()).map((item) => ({
 				key: item,
 				style: {
 					height: Math.random() * 100 + '%',
 					animationDelay: Math.random() * -2 + 's',
 				},
 			}))
-		}
+		},
 	},
 
 	beforeDestroy() {

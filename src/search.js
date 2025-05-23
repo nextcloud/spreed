@@ -7,7 +7,6 @@ import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, imagePath } from '@nextcloud/router'
-
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
 import '@nextcloud/dialogs/style.css'
@@ -35,7 +34,7 @@ function init() {
 					id: 'talk-message',
 					payload: conversation,
 					filterUpdateText: t('spreed', 'Search in conversation: {conversation}', { conversation: conversation.displayName }),
-					filterParams: { conversation: conversation.token }
+					filterParams: { conversation: conversation.token },
 				})
 			}
 		},

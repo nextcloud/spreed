@@ -4,16 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { nextTick, computed, onMounted, onBeforeUnmount, ref } from 'vue'
+import type { Events } from '../../services/EventBus.ts'
 
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import PollDraftHandler from './PollDraftHandler.vue'
 import PollEditor from './PollEditor.vue'
-
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import type { Events } from '../../services/EventBus.ts'
 
 const store = useStore()
 

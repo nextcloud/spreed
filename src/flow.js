@@ -5,7 +5,6 @@
 
 import wrap from '@vue/web-component-wrapper'
 import Vue from 'vue'
-
 import FlowPostToConversation from './views/FlowPostToConversation.vue'
 
 const FlowPostToConversationComponent = wrap(Vue, FlowPostToConversation)
@@ -22,5 +21,5 @@ window.OCA.WorkflowEngine.registerOperator({
 	color: '#0082c9',
 	operation: '',
 	element: customElementId,
-	options: FlowPostToConversation // backward "compatibility"
+	options: FlowPostToConversation, // backward "compatibility"
 })

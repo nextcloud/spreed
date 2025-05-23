@@ -1,11 +1,9 @@
+import { emit } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { defineStore } from 'pinia'
-
-import { emit } from '@nextcloud/event-bus'
-
 import BrowserStorage from '../services/BrowserStorage.js'
 
 export const useSidebarStore = defineStore('sidebar', {

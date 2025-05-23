@@ -63,20 +63,17 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+import { getBaseUrl } from '@nextcloud/router'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconAlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
-
-import { t } from '@nextcloud/l10n'
-import { getBaseUrl } from '@nextcloud/router'
-
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-
 import { EventBus } from '../../services/EventBus.ts'
 import { fetchSignalingSettings, getWelcomeMessage } from '../../services/signalingService.js'
 import { createConnection } from '../../utils/SignalingStandaloneTest.js'
@@ -156,8 +153,8 @@ export default {
 
 			set(value) {
 				this.$emit('update:server', value)
-			}
-		}
+			},
+		},
 	},
 
 	watch: {

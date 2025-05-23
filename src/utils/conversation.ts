@@ -1,11 +1,12 @@
+import type { Conversation, EventTimeRange } from '../types/index.ts'
+
+import { CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
-import { CONVERSATION, PARTICIPANT } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import type { EventTimeRange, Conversation } from '../types/index.ts'
 
 type Filter = 'unread' | 'mentions' | 'events'
 
@@ -76,7 +77,7 @@ export function getEventTimeRange(conversation: Conversation): EventTimeRange {
 		return { start: null, end: null }
 	}
 
-	const [start, end] = parts.map(time => Number(time) * 1000)
+	const [start, end] = parts.map((time) => Number(time) * 1000)
 	if (isNaN(start) || isNaN(end)) {
 		return { start: null, end: null }
 	}

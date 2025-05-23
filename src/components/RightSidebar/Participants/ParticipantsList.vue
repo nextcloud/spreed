@@ -19,10 +19,9 @@
 <script>
 
 import { inject } from 'vue'
-
-import Participant from './Participant.vue'
 import SelectableParticipant from '../../BreakoutRoomsEditor/SelectableParticipant.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
+import Participant from './Participant.vue'
 
 export default {
 	name: 'ParticipantsList',

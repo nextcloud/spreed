@@ -94,13 +94,13 @@ SignalingParticipantList.prototype = {
 
 			participants.push(participant)
 
-			if (!this._participants.find(oldParticipant => oldParticipant.signalingSessionId === participant.signalingSessionId)) {
+			if (!this._participants.find((oldParticipant) => oldParticipant.signalingSessionId === participant.signalingSessionId)) {
 				participantsJoined.push(participant)
 			}
 		}
 
 		for (const oldParticipant of this._participants) {
-			if (!participants.find(participant => participant.signalingSessionId === oldParticipant.signalingSessionId)) {
+			if (!participants.find((participant) => participant.signalingSessionId === oldParticipant.signalingSessionId)) {
 				participantsLeft.push(oldParticipant)
 			}
 		}
@@ -141,7 +141,7 @@ SignalingParticipantList.prototype = {
 		const participantsLeft = []
 
 		for (const sessionId of sessionIds) {
-			const index = this._participants.findIndex(participant => participant.signalingSessionId === sessionId)
+			const index = this._participants.findIndex((participant) => participant.signalingSessionId === sessionId)
 			if (index >= 0) {
 				participantsLeft.push(this._participants[index])
 

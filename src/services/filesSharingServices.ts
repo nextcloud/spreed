@@ -1,11 +1,3 @@
-/**
- * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
-import { SHARE } from '../constants.ts'
 import type {
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
@@ -13,6 +5,14 @@ import type {
 	createFileShareResponse,
 	getFileTemplatesListResponse,
 } from '../types/index.ts'
+
+/**
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import { SHARE } from '../constants.ts'
 
 /**
  * Appends a file as a message to the messages list
@@ -55,7 +55,7 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
 }
 
 export {
-	shareFile,
-	getFileTemplates,
 	createNewFile,
+	getFileTemplates,
+	shareFile,
 }

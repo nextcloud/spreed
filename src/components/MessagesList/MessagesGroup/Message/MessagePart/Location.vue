@@ -8,7 +8,7 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"
-		:class="{ 'wide': wide }"
+		:class="{ wide: wide }"
 		:aria-label="linkAriaLabel">
 		<LMap :zoom="previewZoom"
 			:center="center"
@@ -26,7 +26,8 @@
 				<LTooltip :options="{
 					direction: 'top',
 					permanent: 'true',
-					offset: [-16, -14] }">
+					offset: [-16, -14],
+				}">
 					{{ name }}
 				</LTooltip>
 			</LMarker>
@@ -35,15 +36,14 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import {
 	LControlAttribution,
-	LTooltip,
 	LMap,
 	LMarker,
 	LTileLayer,
+	LTooltip,
 } from 'vue2-leaflet'
-
-import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'Location',

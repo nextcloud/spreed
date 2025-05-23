@@ -90,23 +90,18 @@
 </template>
 
 <script>
-import { provide } from 'vue'
-
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import Reload from 'vue-material-design-icons/Reload.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { provide } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-
-import SelectableParticipant from './SelectableParticipant.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import Reload from 'vue-material-design-icons/Reload.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
-
+import SelectableParticipant from './SelectableParticipant.vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 
@@ -164,7 +159,7 @@ export default {
 
 	computed: {
 		participants() {
-			return this.$store.getters.participantsList(this.token).filter(participant => {
+			return this.$store.getters.participantsList(this.token).filter((participant) => {
 				return (participant.participantType === PARTICIPANT.TYPE.USER
 					|| participant.participantType === PARTICIPANT.TYPE.GUEST)
 				&& participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
@@ -181,7 +176,7 @@ export default {
 			}
 			// Flatten assignments array
 			const assignedParticipants = this.assignments.flat()
-			return this.participants.filter(participant => {
+			return this.participants.filter((participant) => {
 				return !assignedParticipants.includes(participant.attendeeId)
 			})
 		},
@@ -247,13 +242,13 @@ export default {
 		 */
 		initialiseAssignments(forceReset) {
 			if (this.isReorganizingAttendees && !forceReset) {
-				this.assignments = this.breakoutRooms.map(room => {
+				this.assignments = this.breakoutRooms.map((room) => {
 					const participantInBreakoutRoomActorIdList = this.$store.getters.participantsList(room.token)
-						.map(participant => participant.actorId)
+						.map((participant) => participant.actorId)
 
-					return this.participants.filter(participant => {
+					return this.participants.filter((participant) => {
 						return participantInBreakoutRoomActorIdList.includes(participant.actorId)
-					}).map(participant => participant.attendeeId)
+					}).map((participant) => participant.attendeeId)
 				})
 			} else {
 				this.assignments = Array.from(Array(this.isReorganizingAttendees
@@ -263,19 +258,19 @@ export default {
 		},
 
 		assignAttendees(roomIndex) {
-			this.selectedParticipants.forEach(attendeeId => {
-				if (this.unassignedParticipants.find(participant => participant.attendeeId === attendeeId)) {
+			this.selectedParticipants.forEach((attendeeId) => {
+				if (this.unassignedParticipants.find((participant) => participant.attendeeId === attendeeId)) {
 					this.assignments[roomIndex].push(attendeeId)
 					return
 				}
 
-				const assignedRoomIndex = this.assignments.findIndex(room => room.includes(attendeeId))
+				const assignedRoomIndex = this.assignments.findIndex((room) => room.includes(attendeeId))
 
 				if (assignedRoomIndex === roomIndex) {
 					return
 				}
 
-				this.assignments[assignedRoomIndex].splice(this.assignments[assignedRoomIndex].findIndex(id => id === attendeeId), 1)
+				this.assignments[assignedRoomIndex].splice(this.assignments[assignedRoomIndex].findIndex((id) => id === attendeeId), 1)
 				this.assignments[roomIndex].push(attendeeId)
 			})
 
@@ -304,7 +299,7 @@ export default {
 		createAttendeeMap() {
 			const attendeeMap = {}
 			this.assignments.forEach((room, index) => {
-				room.forEach(attendeeId => {
+				room.forEach((attendeeId) => {
 					attendeeMap[attendeeId] = index
 				})
 			})

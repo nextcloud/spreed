@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { watch, computed } from 'vue'
-
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { computed, watch } from 'vue'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 

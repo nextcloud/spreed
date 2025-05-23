@@ -24,11 +24,9 @@
 </template>
 
 <script>
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 
 export default {
 	name: 'SearchBox',
@@ -79,9 +77,9 @@ export default {
 		},
 	},
 
-	expose: ['focus'],
-
 	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
+
+	expose: ['focus'],
 
 	computed: {
 		modelValue: {
@@ -91,7 +89,7 @@ export default {
 
 			set(value) {
 				this.updateValue(value)
-			}
+			},
 		},
 
 		isSearching() {
@@ -170,7 +168,7 @@ export default {
 			}
 
 			// Blur triggered by clicking on a conversation item
-			if (this.listRef?.length && this.listRef.some(list => list?.$el?.contains(event.relatedTarget))) {
+			if (this.listRef?.length && this.listRef.some((list) => list?.$el?.contains(event.relatedTarget))) {
 				return
 			}
 
@@ -187,7 +185,7 @@ export default {
 			} else {
 				this.getTrailingButton()?.setAttribute('tabindex', '-1')
 			}
-		}
+		},
 
 	},
 }

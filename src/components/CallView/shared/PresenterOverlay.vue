@@ -25,7 +25,7 @@
 			@click-presenter="$emit('click')" />
 		<VideoVue v-else
 			:token="token"
-			:class="{ 'dragging': isDragging }"
+			:class="{ dragging: isDragging }"
 			class="presenter-overlay__video"
 			:model="model"
 			:shared-data="sharedData"
@@ -50,15 +50,11 @@
 
 <script>
 
+import { isRTL, t } from '@nextcloud/l10n'
 import { ref } from 'vue'
 import VueDraggableResizable from 'vue-draggable-resizable'
-
-import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
-
-import { t, isRTL } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'
 

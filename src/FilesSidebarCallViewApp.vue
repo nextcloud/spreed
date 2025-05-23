@@ -16,7 +16,6 @@
 
 <script>
 import LoadingComponent from './components/LoadingComponent.vue'
-
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'

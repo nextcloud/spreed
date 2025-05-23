@@ -4,10 +4,8 @@
 -->
 
 <script lang="ts" setup>
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import EmptyView from '../components/EmptyView.vue'
 </script>
 

@@ -4,27 +4,24 @@
 -->
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
-
-import { t } from '@nextcloud/l10n'
-
-import NcChip from '@nextcloud/vue/components/NcChip'
-
-import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
-
-import { AVATAR } from '../../constants.ts'
 import type { Participant, ParticipantSearchResult } from '../../types/index.ts'
 
+import { t } from '@nextcloud/l10n'
+import { computed, inject, ref } from 'vue'
+import NcChip from '@nextcloud/vue/components/NcChip'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
+import { AVATAR } from '../../constants.ts'
+
 const props = defineProps<{
-	participant: Participant | ParticipantSearchResult,
+	participant: Participant | ParticipantSearchResult
 }>()
 const emit = defineEmits(['update'])
 
 // Defines list of locked participants (can not be removed manually
 const lockedParticipants = inject<Ref<(Participant | ParticipantSearchResult)[]>>('lockedParticipants', ref([]))
 
-const isLocked = computed(() => lockedParticipants.value.some(item => {
+const isLocked = computed(() => lockedParticipants.value.some((item) => {
 	if ('actorId' in props.participant) {
 		return ('actorId' in item)
 			? item.actorId === props.participant.actorId && item.actorType === props.participant.actorType

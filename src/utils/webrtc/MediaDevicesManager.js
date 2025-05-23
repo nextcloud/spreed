@@ -4,7 +4,6 @@
  */
 
 import { t } from '@nextcloud/l10n'
-
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	getFirstAvailableMediaDevice,
@@ -198,7 +197,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_updateDevices() {
-		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then(devices => {
+		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then((devices) => {
 			const previousAudioInputId = this.attributes.audioInputId
 			const previousAudioOutputId = this.attributes.audioOutputId
 			const previousVideoInputId = this.attributes.videoInputId
@@ -206,17 +205,17 @@ MediaDevicesManager.prototype = {
 			const previousFirstAvailableAudioOutputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioOutputList)
 			const previousFirstAvailableVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList)
 
-			const removedDevices = this.attributes.devices.filter(oldDevice => !devices.find(device => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
-			const updatedDevices = devices.filter(device => this.attributes.devices.find(oldDevice => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
-			const addedDevices = devices.filter(device => !this.attributes.devices.find(oldDevice => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
+			const removedDevices = this.attributes.devices.filter((oldDevice) => !devices.find((device) => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
+			const updatedDevices = devices.filter((device) => this.attributes.devices.find((oldDevice) => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
+			const addedDevices = devices.filter((device) => !this.attributes.devices.find((oldDevice) => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
 
-			removedDevices.forEach(removedDevice => {
+			removedDevices.forEach((removedDevice) => {
 				this._removeDevice(removedDevice)
 			})
-			updatedDevices.forEach(updatedDevice => {
+			updatedDevices.forEach((updatedDevice) => {
 				this._updateDevice(updatedDevice)
 			})
-			addedDevices.forEach(addedDevice => {
+			addedDevices.forEach((addedDevice) => {
 				this._addDevice(addedDevice)
 			})
 
@@ -232,15 +231,15 @@ MediaDevicesManager.prototype = {
 			// returned, which will not be registered in the preference list.
 			let deviceIdChanged = false
 			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
-				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList) || devices.find(device => device.kind === 'audioinput')?.deviceId
+				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList) || devices.find((device) => device.kind === 'audioinput')?.deviceId
 				deviceIdChanged = true
 			}
 			if (this.attributes.audioOutputId === undefined || this.attributes.audioOutputId === previousFirstAvailableAudioOutputId) {
-				this.attributes.audioOutputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioOutputList) || devices.find(device => device.kind === 'audiooutput')?.deviceId
+				this.attributes.audioOutputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioOutputList) || devices.find((device) => device.kind === 'audiooutput')?.deviceId
 				deviceIdChanged = true
 			}
 			if (this.attributes.videoInputId === undefined || this.attributes.videoInputId === previousFirstAvailableVideoInputId) {
-				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList) || devices.find(device => device.kind === 'videoinput')?.deviceId
+				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList) || devices.find((device) => device.kind === 'videoinput')?.deviceId
 				deviceIdChanged = true
 			}
 
@@ -296,7 +295,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceAudioInputList,
-				inputId: this.attributes.audioInputId
+				inputId: this.attributes.audioInputId,
 			})
 
 			if (newAudioInputList) {
@@ -311,7 +310,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceAudioOutputList,
-				inputId: this.attributes.audioOutputId
+				inputId: this.attributes.audioOutputId,
 			})
 
 			if (newAudioOutputList) {
@@ -326,7 +325,7 @@ MediaDevicesManager.prototype = {
 				kind,
 				devices: this.attributes.devices,
 				inputList: this._preferenceVideoInputList,
-				inputId: this.attributes.videoInputId
+				inputId: this.attributes.videoInputId,
 			})
 
 			if (newVideoInputList) {
@@ -347,7 +346,7 @@ MediaDevicesManager.prototype = {
 		if (this.attributes.devices.length) {
 			console.info(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceAudioOutputList, this._preferenceVideoInputList))
 		} else {
-			navigator.mediaDevices.enumerateDevices().then(devices => {
+			navigator.mediaDevices.enumerateDevices().then((devices) => {
 				console.info(listMediaDevices(
 					{
 						devices,
@@ -364,7 +363,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_removeDevice(removedDevice) {
-		const removedDeviceIndex = this.attributes.devices.findIndex(oldDevice => oldDevice.deviceId === removedDevice.deviceId && oldDevice.kind === removedDevice.kind)
+		const removedDeviceIndex = this.attributes.devices.findIndex((oldDevice) => oldDevice.deviceId === removedDevice.deviceId && oldDevice.kind === removedDevice.kind)
 		if (removedDeviceIndex >= 0) {
 			this.attributes.devices.splice(removedDeviceIndex, 1)
 		}
@@ -378,7 +377,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_updateDevice(updatedDevice) {
-		const oldDevice = this.attributes.devices.find(oldDevice => oldDevice.deviceId === updatedDevice.deviceId && oldDevice.kind === updatedDevice.kind)
+		const oldDevice = this.attributes.devices.find((oldDevice) => oldDevice.deviceId === updatedDevice.deviceId && oldDevice.kind === updatedDevice.kind)
 
 		// Only update the label if it has a value, as it may have been
 		// removed if there is currently no active stream.
@@ -413,11 +412,11 @@ MediaDevicesManager.prototype = {
 			if (addedDevice.deviceId === 'default' || addedDevice.deviceId === '') {
 				addedDevice.fallbackLabel = t('spreed', 'Default')
 			} else if (addedDevice.kind === 'audioinput') {
-				addedDevice.fallbackLabel = t('spreed', 'Microphone {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'audioinput' && device.deviceId !== '').length + 1 })
+				addedDevice.fallbackLabel = t('spreed', 'Microphone {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioinput' && device.deviceId !== '').length + 1 })
 			} else if (addedDevice.kind === 'videoinput') {
-				addedDevice.fallbackLabel = t('spreed', 'Camera {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'videoinput' && device.deviceId !== '').length + 1 })
+				addedDevice.fallbackLabel = t('spreed', 'Camera {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'videoinput' && device.deviceId !== '').length + 1 })
 			} else if (addedDevice.kind === 'audiooutput') {
-				addedDevice.fallbackLabel = t('spreed', 'Speaker {number}', { number: Object.values(this._knownDevices).filter(device => device.kind === 'audioutput' && device.deviceId !== '').length + 1 })
+				addedDevice.fallbackLabel = t('spreed', 'Speaker {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioutput' && device.deviceId !== '').length + 1 })
 			}
 		}
 
@@ -485,7 +484,7 @@ MediaDevicesManager.prototype = {
 
 		this._stopIncompatibleTracks(constraints)
 
-		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+		return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
 			this._registerStream(stream)
 
 			// In Firefox the dialog to grant media permissions allows the user
@@ -499,7 +498,7 @@ MediaDevicesManager.prototype = {
 			this._updateDevices()
 
 			return stream
-		}).catch(error => {
+		}).catch((error) => {
 			// The list of devices is also updated in case of failure, as even
 			// if getting the stream failed the permissions may have been
 			// permanently granted.
@@ -510,7 +509,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_stopIncompatibleTracks(constraints) {
-		this._tracks.forEach(track => {
+		this._tracks.forEach((track) => {
 			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
 				const constraintsAudioDeviceId = constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId
 				const settings = track.getSettings()
@@ -530,7 +529,7 @@ MediaDevicesManager.prototype = {
 	},
 
 	_registerStream(stream) {
-		stream.getTracks().forEach(track => {
+		stream.getTracks().forEach((track) => {
 			this._registerTrack(track)
 		})
 	},
@@ -545,7 +544,7 @@ MediaDevicesManager.prototype = {
 			}
 		})
 
-		track.addEventListener('cloned', event => {
+		track.addEventListener('cloned', (event) => {
 			this._registerTrack(event.detail)
 		})
 	},

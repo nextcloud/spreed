@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import type {
-	getBansResponse,
 	banActorParams,
 	banActorResponse,
+	getBansResponse,
 	unbanActorResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Get information about configured bans for this conversation
@@ -46,7 +46,7 @@ const unbanActor = async function(token: string, banId: number, options?: object
 }
 
 export {
-	getConversationBans,
 	banActor,
+	getConversationBans,
 	unbanActor,
 }

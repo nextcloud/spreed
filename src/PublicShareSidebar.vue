@@ -38,10 +38,8 @@
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-
 import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
@@ -52,7 +50,6 @@ import InternalSignalingHint from './components/RightSidebar/InternalSignalingHi
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
-
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'

@@ -61,15 +61,12 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
-
 import { useId } from '../../composables/useId.ts'
 import { PARTICIPANT } from '../../constants.ts'
 
@@ -160,7 +157,9 @@ export default {
 				return t('spreed', 'Edit default permissions for participants in <strong>{conversationName}</strong>', {
 					conversationName: this.conversationName,
 				})
-			} else throw Error('you need to fill either the conversationName or the displayName props')
+			} else {
+				throw Error('you need to fill either the conversationName or the displayName props')
+			}
 		},
 
 		permissionsWithDefault() {
@@ -171,7 +170,7 @@ export default {
 			return loadState(
 				'spreed',
 				'default_permissions',
-				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE,
 			)
 		},
 

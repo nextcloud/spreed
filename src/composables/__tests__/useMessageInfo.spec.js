@@ -4,7 +4,6 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
-
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.ts'
@@ -18,7 +17,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 			features: ['edit-messages', 'edit-messages-note-to-self'],
 			'features-local': [],
 		},
-	}))
+	})),
 }))
 jest.mock('../useStore.js')
 jest.mock('../useConversationInfo.ts')

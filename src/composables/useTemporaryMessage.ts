@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { useStore } from './useStore.js'
+import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
+
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
-import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
+import { useStore } from './useStore.js'
 
 /**
  * Composable to generate temporary messages using defined in store information

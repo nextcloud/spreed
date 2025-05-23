@@ -3,18 +3,15 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
-import { computed, watch, watchEffect, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router/composables'
-
 import { emit } from '@nextcloud/event-bus'
-
+import { computed, onMounted, watch, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router/composables'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
-
 import { useIsInCall } from '../composables/useIsInCall.js'
 import { useStore } from '../composables/useStore.js'
 

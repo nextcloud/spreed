@@ -3,23 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getRequestToken } from '@nextcloud/auth'
+import { generateFilePath } from '@nextcloud/router'
 import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-import { getRequestToken } from '@nextcloud/auth'
-import { generateFilePath } from '@nextcloud/router'
-
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
-
-import './init.js'
 import store from './store/index.js'
 
+import './init.js'
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-
 import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
@@ -42,14 +38,14 @@ const pinia = createPinia()
 const newCallView = () => new Vue({
 	store,
 	pinia,
-	render: h => h(FilesSidebarCallViewApp),
+	render: (h) => h(FilesSidebarCallViewApp),
 })
 
 const newTab = () => new Vue({
 	store,
 	pinia,
 	id: 'talk-chat-tab',
-	render: h => h(FilesSidebarTabApp),
+	render: (h) => h(FilesSidebarTabApp),
 })
 
 if (!window.OCA.Talk) {

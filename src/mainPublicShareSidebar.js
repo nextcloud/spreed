@@ -3,24 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue, { reactive } from 'vue'
-import Vuex from 'vuex'
-
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { getSharingToken } from '@nextcloud/sharing/public'
-
+import { createPinia, PiniaVuePlugin } from 'pinia'
+import Vue, { reactive } from 'vue'
+import Vuex from 'vuex'
 import PublicShareSidebar from './PublicShareSidebar.vue'
 import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
-
-import './init.js'
 import store from './store/index.js'
 
+import './init.js'
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-
 import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading

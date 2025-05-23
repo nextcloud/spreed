@@ -104,22 +104,17 @@
 </template>
 
 <script>
-import { provide, ref } from 'vue'
-
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { provide, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
-
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
+import LoadingComponent from '../LoadingComponent.vue'
 import NewConversationContactsPage from './NewConversationContactsPage.vue'
 import NewConversationSetupPage from './NewConversationSetupPage.vue'
-import LoadingComponent from '../LoadingComponent.vue'
-
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.ts'
@@ -155,6 +150,8 @@ export default {
 			default: false,
 		},
 	},
+
+	expose: ['showModalForItem', 'showModal'],
 
 	setup() {
 		const isInCall = useIsInCall()
@@ -227,7 +224,7 @@ export default {
 				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
 			}
 			return ''
-		}
+		},
 	},
 
 	watch: {
@@ -240,8 +237,6 @@ export default {
 			})
 		},
 	},
-
-	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
 		t,
@@ -332,7 +327,7 @@ export default {
 			if (!this.isInCall) {
 				// Push the newly created conversation's route.
 				this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
-					.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+					.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 
 				// Get complete participant list in advance
 				this.$store.dispatch('fetchParticipants', { token: this.newConversation.token })

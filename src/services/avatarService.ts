@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import type {
 	deleteAvatarResponse,
 	setEmojiAvatarParams,
 	setEmojiAvatarResponse,
 	setFileAvatarResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 const getConversationAvatarOcsUrl = function(token: string, isDarkTheme: boolean, avatarVersion?: string): string {
 	return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '') + (avatarVersion ? '?v={avatarVersion}' : ''), { token, avatarVersion })
@@ -37,9 +37,9 @@ const deleteConversationAvatar = async function(token: string): deleteAvatarResp
 }
 
 export {
+	deleteConversationAvatar,
 	getConversationAvatarOcsUrl,
 	getUserProxyAvatarOcsUrl,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
-	deleteConversationAvatar,
 }

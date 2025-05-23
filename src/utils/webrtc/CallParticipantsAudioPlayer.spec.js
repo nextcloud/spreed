@@ -4,9 +4,8 @@
  */
 
 import { ref } from 'vue'
-
-import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
 import EmitterMixin from '../EmitterMixin.js'
+import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
 
 /**
  * Stub of CallParticipantModel with just the attributes and methods used by

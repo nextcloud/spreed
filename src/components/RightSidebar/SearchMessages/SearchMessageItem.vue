@@ -4,20 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
-
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
+import { computed } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-
+import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
-
 import { useStore } from '../../../composables/useStore.js'
 import { CONVERSATION } from '../../../constants.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
@@ -25,44 +20,44 @@ import { useDashboardStore } from '../../../stores/dashboard.ts'
 const props = defineProps({
 	messageId: {
 		type: [Number, String],
-		default: ''
+		default: '',
 	},
 	title: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	to: {
 		type: Object,
-		default: () => ({})
+		default: () => ({}),
 	},
 	subline: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	actorId: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	actorType: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	token: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	timestamp: {
 		type: String,
-		default: ''
+		default: '',
 	},
 	messageParameters: {
 		type: [Array, Object],
-		default: () => ([])
+		default: () => ([]),
 	},
 	isReminder: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
 const store = useStore()
@@ -74,10 +69,7 @@ const name = computed(() => {
 	if (!props.isReminder || isOneToOneConversation.value) {
 		return props.title
 	}
-	return t('spreed', '{actor} in {conversation}',
-		{ actor: props.title, conversation: conversation.value.displayName },
-		{ escape: false, sanitize: false }
-	)
+	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value.displayName }, { escape: false, sanitize: false })
 })
 const richSubline = computed(() => {
 	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {

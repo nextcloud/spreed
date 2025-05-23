@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { DeepReadonly, Ref } from 'vue'
+
 import { register } from 'extendable-media-recorder'
 import { connect } from 'extendable-media-recorder-wav-encoder'
 import { readonly, ref } from 'vue'
-import type { Ref, DeepReadonly } from 'vue'
 
 let requiresInit = true
 const encoderReady = ref(false)

@@ -32,16 +32,12 @@
 </template>
 
 <script>
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import Participant from '../Participants/Participant.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
-import Participant from '../Participants/Participant.vue'
-
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
 

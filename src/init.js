@@ -8,7 +8,6 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
@@ -87,18 +86,17 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 		return
 	}
 
-	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter(key => key.startsWith('audioDisabled_')
+	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter((key) => key.startsWith('audioDisabled_')
 		|| key.startsWith('videoDisabled_')
 		|| key.startsWith('virtualBackgroundEnabled_')
 		|| key.startsWith('virtualBackgroundType_')
 		|| key.startsWith('virtualBackgroundBlurStrength_')
-		|| key.startsWith('virtualBackgroundUrl_')
-	)
+		|| key.startsWith('virtualBackgroundUrl_'))
 
 	if (storageKeys.length) {
 		console.debug('Migrating localStorage keys to BrowserStorage', storageKeys)
 
-		storageKeys.forEach(key => {
+		storageKeys.forEach((key) => {
 			BrowserStorage.setItem(key, localStorage.getItem(key))
 			localStorage.removeItem(key)
 

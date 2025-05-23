@@ -67,40 +67,37 @@
 </template>
 
 <script>
-import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
-import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
-
-import { t, getLocale } from '@nextcloud/l10n'
-
+import { getLocale, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-
+import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
+import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
 import { regionCodes } from '../../regionCodes.js'
 
 const allowedKeys = /^[0-9+\-()*#\s]+$/
 
 const buttonsDigits = [
-	{ value: '1', label: '1', },
-	{ value: '2', label: '2', },
-	{ value: '3', label: '3', },
-	{ value: '4', label: '4', },
-	{ value: '5', label: '5', },
-	{ value: '6', label: '6', },
-	{ value: '7', label: '7', },
-	{ value: '8', label: '8', },
-	{ value: '9', label: '9', },
+	{ value: '1', label: '1' },
+	{ value: '2', label: '2' },
+	{ value: '3', label: '3' },
+	{ value: '4', label: '4' },
+	{ value: '5', label: '5' },
+	{ value: '6', label: '6' },
+	{ value: '7', label: '7' },
+	{ value: '8', label: '8' },
+	{ value: '9', label: '9' },
 ]
 
 const buttonsNumberOption = [
-	{ value: '+', label: '+', },
-	{ value: '0', label: '0', },
+	{ value: '+', label: '+' },
+	{ value: '0', label: '0' },
 ]
 
 const buttonsDialOption = [
-	{ value: '*', label: '*', },
-	{ value: '0', label: '0', },
-	{ value: '#', label: '#', },
+	{ value: '*', label: '*' },
+	{ value: '0', label: '0' },
+	{ value: '#', label: '#' },
 ]
 
 export default {
@@ -150,15 +147,13 @@ export default {
 		disabled: {
 			type: Boolean,
 			default: false,
-		}
+		},
 	},
 
 	emits: ['dial:type', 'update:value', 'submit'],
 
 	setup(props) {
-		const options = Object.values(regionCodes).map(region =>
-			({ ...region, dial_and_name: region.dial_code + ' ' + region.name })
-		)
+		const options = Object.values(regionCodes).map((region) => ({ ...region, dial_and_name: region.dial_code + ' ' + region.name }))
 
 		const buttons = props.dialing
 			? buttonsDigits.concat(buttonsDialOption)
@@ -227,7 +222,7 @@ export default {
 
 		handleBackspace() {
 			this.$emit('update:value', this.value.slice(0, -1))
-		}
+		},
 	},
 }
 </script>

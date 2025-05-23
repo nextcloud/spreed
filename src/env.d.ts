@@ -8,17 +8,17 @@ type RequestFullscreen = typeof document.documentElement.requestFullscreen
 
 declare global {
 	interface Document {
-		webkitExitFullscreen: ExitFullscreen;
+		webkitExitFullscreen: ExitFullscreen
 	}
 
 	interface HTMLElement {
-		webkitRequestFullscreen: RequestFullscreen;
+		webkitRequestFullscreen: RequestFullscreen
 	}
 
 	const OCP: {
 		AppConfig: {
-			setValue: (app: string, key: string, value: string | number | boolean, options?: { success?: () => void, error?: () => void }) => void,
-		},
+			setValue: (app: string, key: string, value: string | number | boolean, options?: { success?: () => void, error?: () => void }) => void
+		}
 	}
 
 	declare module '*.svg?raw' {

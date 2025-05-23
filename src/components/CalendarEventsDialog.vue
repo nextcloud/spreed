@@ -4,19 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeMount, provide, ref, watch } from 'vue'
-
-import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
-import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconReload from 'vue-material-design-icons/Reload.vue'
+import type { Conversation, Participant } from '../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import { computed, onBeforeMount, provide, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
@@ -27,29 +22,30 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
-
+import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
+import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
-
 import { useStore } from '../composables/useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
-import type { Conversation, Participant } from '../types/index.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
-	token: string,
-	container?: string,
+	token: string
+	container?: string
 }>()
 const emit = defineEmits<{
-	(event: 'close'): void,
+	(event: 'close'): void
 }>()
 
 const hideTriggers = (triggers: string[]) => [...triggers, 'click']
@@ -71,7 +67,7 @@ const upcomingEvents = computed(() => {
 	const now = convertToUnix(Date.now())
 	return groupwareStore.getAllEvents(props.token)
 		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
-		.map(event => {
+		.map((event) => {
 			const start = event.start
 				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
 				: ''
@@ -82,10 +78,10 @@ const upcomingEvents = computed(() => {
 })
 
 type CalendarOption = { value: string, label: string, color: string }
-const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeableCalendars.map(calendar => ({
+const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeableCalendars.map((calendar) => ({
 	value: calendar.uri,
 	label: calendar.displayname,
-	color: calendar.color ?? usernameToColor(calendar.uri).color
+	color: calendar.color ?? usernameToColor(calendar.uri).color,
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
@@ -123,24 +119,22 @@ const attendeeHint = computed(() => {
 
 	const list: Participant[] = selectedParticipants.value.slice(0, 2)
 	const remainingCount = selectedParticipants.value.length - list.length
-	const summary = list.map(participant => getDisplayNameWithFallback(participant.displayName, participant.actorType))
+	const summary = list.map((participant) => getDisplayNameWithFallback(participant.displayName, participant.actorType))
 
 	if (remainingCount === 0) {
 		// Amount is 2 or less
 		switch (summary.length) {
 			case 1: {
-				return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] },
-					undefined, {
-						escape: false,
-						sanitize: false,
-					})
+				return t('spreed', '{participant0} will receive an invitation', { participant0: summary[0] }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
 			}
 			case 2: {
-				return t('spreed', '{participant0} and {participant1} will receive invitations',
-					{ participant0: summary[0], participant1: summary[1] }, undefined, {
-						escape: false,
-						sanitize: false,
-					})
+				return t('spreed', '{participant0} and {participant1} will receive invitations', { participant0: summary[0], participant1: summary[1] }, undefined, {
+					escape: false,
+					sanitize: false,
+				})
 			}
 			case 0:
 			default: {
@@ -148,12 +142,10 @@ const attendeeHint = computed(() => {
 			}
 		}
 	} else {
-		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations',
-			'{participant0}, {participant1} and %n others will receive invitations', remainingCount,
-			{ participant0: summary[0], participant1: summary[1] }, {
-				escape: false,
-				sanitize: false,
-			})
+		return n('spreed', '{participant0}, {participant1} and %n other will receive invitations', '{participant0}, {participant1} and %n others will receive invitations', remainingCount, { participant0: summary[0], participant1: summary[1] }, {
+			escape: false,
+			sanitize: false,
+		})
 	}
 })
 
@@ -190,8 +182,7 @@ const selectedParticipants = computed(() => participants.value
 			return a.displayName ? -1 : 1
 		}
 		return 0
-	})
-)
+	}))
 
 const isOneToOneConversation = computed(() => {
 	return conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
@@ -214,7 +205,7 @@ watch(isFormOpen, (value) => {
 	}
 
 	// Reset the default form values
-	selectedCalendar.value = calendarOptions.value.find(o => o.value === groupwareStore.defaultCalendarUri) ?? null
+	selectedCalendar.value = calendarOptions.value.find((o) => o.value === groupwareStore.defaultCalendarUri) ?? null
 	selectedDateTimeStart.value = getCurrentDateInStartOfNthHour(1)
 	selectedDateTimeEnd.value = getCurrentDateInStartOfNthHour(2)
 	newMeetingTitle.value = ''
@@ -258,7 +249,7 @@ function toggleAll(value: boolean) {
  * @param value switch value
  */
 function removeSelectedParticipant(value: Participant) {
-	selectedAttendeeIds.value = selectedAttendeeIds.value.filter(id => value.attendeeId !== id)
+	selectedAttendeeIds.value = selectedAttendeeIds.value.filter((id) => value.attendeeId !== id)
 }
 
 /**

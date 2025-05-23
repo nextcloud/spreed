@@ -5,15 +5,14 @@
 
 import {
 	showError,
-	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
+	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
-import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
+import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -38,7 +37,7 @@ let sendCurrentStateWithRepetitionTimeout = null
  * @param {Array} b Object to find all items in
  */
 function arrayDiff(a, b) {
-	return a.filter(i => !b.includes(i))
+	return a.filter((i) => !b.includes(i))
 }
 
 /**
@@ -781,7 +780,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				{
 					timeout: TOAST_PERMANENT_TIMEOUT,
 					isHTML: true,
-				}
+				},
 			)
 			showedTURNWarning = true
 		}
@@ -1023,7 +1022,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	}
 
 	const reconnectOnPermissionsChange = (users) => {
-		const currentParticipant = users.find(user => {
+		const currentParticipant = users.find((user) => {
 			const sessionId = user.sessionId || user.sessionid
 			return sessionId === signaling.getSessionId()
 		})
@@ -1048,7 +1047,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		let hasAudioSenders = false
 		let hasVideoSenders = false
 
-		webrtc.webrtc.getPeers(null, 'video').forEach(peer => {
+		webrtc.webrtc.getPeers(null, 'video').forEach((peer) => {
 			// Look for any sender of each kind, even if the sender no longer
 			// has a track attached to it.
 			const audioSender = peer.pc.getSenders().find((sender) => sender.kind === 'audio' || (sender.track && sender.track.kind === 'audio') || (sender.trackDisabled && sender.trackDisabled.kind === 'audio'))

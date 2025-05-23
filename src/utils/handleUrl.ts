@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { UrlOptions } from '@nextcloud/router'
+
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
-import type { UrlOptions } from '@nextcloud/router'
 
 /**
  * Generate a full absolute link with @nextcloud/router.generateUrl

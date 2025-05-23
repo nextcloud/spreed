@@ -150,6 +150,17 @@
 </template>
 
 <script>
+import { showWarning } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import { generateOcsUrl } from '@nextcloud/router'
+import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -164,26 +175,11 @@ import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
 import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
-
-import { showWarning } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import { generateOcsUrl } from '@nextcloud/router'
-
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/components/NcActionLink'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
-
 import {
-	useDocumentFullscreen,
-	enableFullscreen,
 	disableFullscreen,
+	enableFullscreen,
+	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
@@ -430,7 +426,7 @@ export default {
 	methods: {
 		t,
 		forceMuteOthers() {
-			callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+			callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
 				callParticipantModel.forceMute()
 			})
 		},
@@ -442,7 +438,7 @@ export default {
 
 			// Don't toggle fullscreen if there is an open modal
 			// FIXME won't be needed without Fulscreen API
-			if (Array.from(document.body.childNodes).filter(child => {
+			if (Array.from(document.body.childNodes).filter((child) => {
 				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
 					&& window.getComputedStyle(child).display !== 'none'
 			}).length !== 0) {
@@ -478,13 +474,13 @@ export default {
 				{
 					sessionId: this.$store.getters.getSessionId(),
 					raisedHand: this.model.attributes.raisedHand,
-				}
+				},
 			)
 			// If the current conversation is a break-out room and the user is not a moderator,
 			// also send request for assistance to the moderators.
 			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
 				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
-					.filter(sessionId => sessionId !== this.$store.getters.getSessionId())
+					.filter((sessionId) => sessionId !== this.$store.getters.getSessionId())
 					.length !== 0
 				if (hasRaisedHands) {
 					return // Assistance is already requested by someone in the room

@@ -84,33 +84,29 @@
 </template>
 
 <script setup lang="ts">
-import debounce from 'debounce'
-import { computed, ref, onBeforeUnmount } from 'vue'
-
-import Plus from 'vue-material-design-icons/Plus.vue'
+import type { InitialState } from '../../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-
+import debounce from 'debounce'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-
+import Plus from 'vue-material-design-icons/Plus.vue'
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-
 import { SIGNALING } from '../../constants.ts'
-import type { InitialState } from '../../types/index.ts'
 
 const isCacheConfigured = loadState('spreed', 'has_cache_configured')
 const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
 
 const props = defineProps<{
-	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning'],
-	secret: InitialState['spreed']['signaling_servers']['secret'],
-	servers: InitialState['spreed']['signaling_servers']['servers'],
-	hasValidSubscription: InitialState['spreed']['has_valid_subscription'],
+	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning']
+	secret: InitialState['spreed']['signaling_servers']['secret']
+	servers: InitialState['spreed']['signaling_servers']['servers']
+	hasValidSubscription: InitialState['spreed']['has_valid_subscription']
 }>()
 
 const emit = defineEmits<{
@@ -127,7 +123,7 @@ const serversProxy = computed({
 	},
 	set(value) {
 		emit('update:servers', value)
-	}
+	},
 })
 const secretProxy = computed({
 	get() {
@@ -135,7 +131,7 @@ const secretProxy = computed({
 	},
 	set(value) {
 		emit('update:secret', value)
-	}
+	},
 })
 /** Opposite value of hideWarning */
 const showWarningProxy = computed({
@@ -144,7 +140,7 @@ const showWarningProxy = computed({
 	},
 	set(value) {
 		emit('update:hideWarning', !value)
-	}
+	},
 })
 
 const debounceUpdateServers = debounce(updateServers, 1000)
@@ -193,7 +189,7 @@ function updateServers() {
 	loading.value = true
 
 	OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-		servers: serversProxy.value.filter(server => server.server.trim() !== ''),
+		servers: serversProxy.value.filter((server) => server.server.trim() !== ''),
 		secret: secretProxy.value,
 	}), {
 		success: () => {

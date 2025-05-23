@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import Vue from 'vue'
-
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { generateFilePath } from '@nextcloud/router'
-
+import { defineStore } from 'pinia'
+import Vue from 'vue'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { setPlaySounds } from '../services/settingsService.ts'
 
@@ -58,7 +56,7 @@ export const useSoundsStore = defineStore('sounds', {
 				this.initAudioObjects()
 			}
 			this.audioObjectsPromises[key] = this.audioObjects[key].play()
-			this.audioObjectsPromises[key].catch(error => {
+			this.audioObjectsPromises[key].catch((error) => {
 				console.error(error)
 			})
 		},
@@ -126,5 +124,5 @@ export const useSoundsStore = defineStore('sounds', {
 				console.error(error)
 			}
 		},
-	}
+	},
 })

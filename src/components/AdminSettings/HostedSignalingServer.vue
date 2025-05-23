@@ -121,14 +121,12 @@
 <script>
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import { t, n } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateOcsUrl } from '@nextcloud/router'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
 import { EventBus } from '../../services/EventBus.ts'
 
 export default {
@@ -218,8 +216,8 @@ export default {
 		// list of {code: "France", name: "France"}
 		this.countries = languagesAndCountries.countries
 
-		this.hostedHPBLanguage = this.languages.find(language => language.code === state.language) ?? this.languages[0]
-		this.hostedHPBCountry = this.countries.find(country => country.code === state.country) ?? this.countries[0]
+		this.hostedHPBLanguage = this.languages.find((language) => language.code === state.language) ?? this.languages[0]
+		this.hostedHPBCountry = this.countries.find((country) => country.code === state.country) ?? this.countries[0]
 	},
 
 	methods: {

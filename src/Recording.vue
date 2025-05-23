@@ -10,7 +10,6 @@
 
 <script>
 import CallView from './components/CallView/CallView.vue'
-
 import { useSoundsStore } from './stores/sounds.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -23,7 +22,7 @@ export default {
 
 	setup() {
 		return {
-			soundsStore: useSoundsStore()
+			soundsStore: useSoundsStore(),
 		}
 	},
 

@@ -60,15 +60,12 @@
 </template>
 
 <script>
-import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
-import IconStop from 'vue-material-design-icons/Stop.vue'
-
 import { t } from '@nextcloud/l10n'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-
+import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import IconStop from 'vue-material-design-icons/Stop.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { CALL } from '../../constants.ts'
 import { formattedTime } from '../../utils/formattedTime.ts'

@@ -1,12 +1,10 @@
+import { setGuestNickname } from '@nextcloud/auth'
+import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createPinia, setActivePinia } from 'pinia'
-
-import { setGuestNickname } from '@nextcloud/auth'
-import { t } from '@nextcloud/l10n'
-
 import { setGuestUserName } from '../../services/participantsService.js'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'

@@ -4,25 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { provide, ref, watch } from 'vue'
-import { useRouter } from 'vue-router/composables'
-
-import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
-
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-
+import { provide, ref, watch } from 'vue'
+import { useRouter } from 'vue-router/composables'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-
+import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 import NewConversationContactsPage from './NewConversationDialog/NewConversationContactsPage.vue'
-
 import { useStore } from '../composables/useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 
 const props = defineProps<{
-	token: string,
-	container?: string,
+	token: string
+	container?: string
 }>()
 
 const store = useStore()

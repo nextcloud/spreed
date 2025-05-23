@@ -7,14 +7,11 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
 import Vuex, { Store } from 'vuex'
-
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
-
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
-
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
@@ -404,7 +401,7 @@ describe('MessageButtonsBar.vue', () => {
 				{ label: 'second action', icon: 'some-icon2', callback: handler2 },
 			]
 			const integrationsStore = useIntegrationsStore()
-			actionsGetterMock.forEach(action => integrationsStore.addMessageAction(action))
+			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
 			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {
@@ -425,7 +422,7 @@ describe('MessageButtonsBar.vue', () => {
 				apiVersion: 'v3',
 				message: messageProps.message,
 				metadata: conversationProps,
-			},)
+			})
 
 			const actionButton2 = findNcActionButton(wrapper, 'second action')
 			expect(actionButton2.exists()).toBeTruthy()

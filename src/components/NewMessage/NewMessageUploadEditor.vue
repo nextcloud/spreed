@@ -77,20 +77,15 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
-import Plus from 'vue-material-design-icons/Plus.vue'
-
 import { t } from '@nextcloud/l10n'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
-
-import NewMessage from './NewMessage.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-
+import NewMessage from './NewMessage.vue'
 import { useId } from '../../composables/useId.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 

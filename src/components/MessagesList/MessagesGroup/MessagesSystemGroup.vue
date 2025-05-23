@@ -34,7 +34,6 @@
 
 <script>
 import Message from './Message/Message.vue'
-
 import { useCombinedSystemMessage } from '../../../composables/useCombinedSystemMessage.js'
 
 export default {
@@ -92,7 +91,7 @@ export default {
 	computed: {
 		lastReadMessageId() {
 			return this.$store.getters.conversation(this.token)?.lastReadMessage
-		}
+		},
 	},
 
 	watch: {
@@ -233,12 +232,12 @@ export default {
 		},
 
 		getNextMessageId(message) {
-			const nextMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) + 1]
+			const nextMessage = this.messages[this.messages.findIndex((searchedMessage) => searchedMessage.id === message.id) + 1]
 			return nextMessage?.id || this.nextMessageId
 		},
 
 		getPrevMessageId(message) {
-			const prevMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) - 1]
+			const prevMessage = this.messages[this.messages.findIndex((searchedMessage) => searchedMessage.id === message.id) - 1]
 			return prevMessage?.id || this.previousMessageId
 		},
 	},

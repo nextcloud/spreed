@@ -23,15 +23,12 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import panzoom from 'panzoom'
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
-
-import { t } from '@nextcloud/l10n'
-
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import VideoBottomBar from './VideoBottomBar.vue'
-
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 

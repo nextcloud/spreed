@@ -7,19 +7,19 @@ import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 
 type InputField = {
-	type: 'url' | 'text' | 'password',
-	placeholder: string,
-	icon: string,
+	type: 'url' | 'text' | 'password'
+	placeholder: string
+	icon: string
 } | {
-	type: 'checkbox',
-	labelText: string,
+	type: 'checkbox'
+	labelText: string
 }
 type MatterbridgeType = {
-	name: string,
-	iconUrl: string,
-	infoTarget: string,
+	name: string
+	iconUrl: string
+	infoTarget: string
 	fields: Record<string, InputField>
-	mainField: string,
+	mainField: string
 }
 
 export const matterbridgeTypes: Record<string, MatterbridgeType> = {

@@ -52,19 +52,14 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
-import Check from 'vue-material-design-icons/CheckBold.vue'
-
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-
+import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-
+import Check from 'vue-material-design-icons/CheckBold.vue'
 import ConversationIcon from './ConversationIcon.vue'
-
 import { useId } from '../composables/useId.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 

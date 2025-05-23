@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
-import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
-import { SHARE } from '../constants.ts'
 import type {
 	AutocompleteParams,
 	AutocompleteResponse,
-	TaskProcessingResponse,
-	UserProfileResponse,
-	UnifiedSearchResponse,
 	SearchMessagePayload,
+	TaskProcessingResponse,
+	UnifiedSearchResponse,
+	UserProfileResponse,
 } from '../types/index.ts'
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import { SHARE } from '../constants.ts'
+import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 
 const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
 	&& getTalkConfig('local', 'federation', 'enabled')
@@ -93,8 +93,8 @@ const searchMessages = async function(params: SearchMessagePayload, options: obj
 
 export {
 	autocompleteQuery,
-	getUserProfile,
-	getTaskById,
 	deleteTaskById,
+	getTaskById,
+	getUserProfile,
 	searchMessages,
 }

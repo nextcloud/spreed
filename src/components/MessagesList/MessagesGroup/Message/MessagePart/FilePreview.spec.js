@@ -1,3 +1,5 @@
+import { generateRemoteUrl, imagePath } from '@nextcloud/router'
+import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -6,16 +8,9 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
-
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
-
-import { imagePath, generateRemoteUrl } from '@nextcloud/router'
-import { getUploader } from '@nextcloud/upload'
-
 import NcButton from '@nextcloud/vue/components/NcButton'
-
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
-
 import storeConfig from '../../../../../store/storeConfig.js'
 
 describe('FilePreview.vue', () => {
