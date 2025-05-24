@@ -237,6 +237,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "סן מרטן (העבר הצרפתי)",
     "Madagascar" : "מדגסקר",
     "Marshall Islands" : "איי מרשל",
+    "North Macedonia" : "מקדוניה הצפונית",
     "Mali" : "מאלי",
     "Myanmar" : "מיאנמר",
     "Mongolia" : "מונגוליה",

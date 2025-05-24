@@ -388,7 +388,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Sveti Martin (francuski dio)",
     "Madagascar" : "Madagaskar",
     "Marshall Islands" : "Maršalovi Otoci",
-    "Macedonia, the former Yugoslav Republic of" : "Makedonija, bivša jugoslavenska republika",
+    "North Macedonia" : "Sjeverna Makedonija",
     "Mali" : "Mali",
     "Myanmar" : "Mjanmar",
     "Mongolia" : "Mongolija",

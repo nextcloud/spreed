@@ -508,7 +508,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Sveti Martin (francoski del)",
     "Madagascar" : "Madagaskar",
     "Marshall Islands" : "Maršalovi otoki",
-    "Macedonia, the former Yugoslav Republic of" : "Severna Makedonija",
+    "North Macedonia" : "Severna Makedonija",
     "Mali" : "Mali",
     "Myanmar" : "Mjanmar",
     "Mongolia" : "Mongolija",

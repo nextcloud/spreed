@@ -507,7 +507,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Szent Márton-sziget (Francia rész)",
     "Madagascar" : "Madagaszkár",
     "Marshall Islands" : "Marshall-szigetek",
-    "Macedonia, the former Yugoslav Republic of" : "Macedónia",
+    "North Macedonia" : "Észak-Macedónia",
     "Mali" : "Mali",
     "Myanmar" : "Mianmar",
     "Mongolia" : "Mongólia",
