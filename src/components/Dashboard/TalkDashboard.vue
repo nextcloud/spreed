@@ -501,7 +501,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .secondary_text {
 	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
+	font-size: var(--font-size-small);
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
