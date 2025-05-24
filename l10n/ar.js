@@ -607,7 +607,6 @@ OC.L10N.register(
     "Saint Martin (French part)" : "سانت مارتن (الجزء الفرنسي)",
     "Madagascar" : "مدغشقر",
     "Marshall Islands" : "جزر مارشال",
-    "Macedonia, the former Yugoslav Republic of" : "مقدونيا ، جمهورية يوغوسلافيا السابقة",
     "Mali" : "مالي",
     "Myanmar" : "ميانمار",
     "Mongolia" : "منغوليا",

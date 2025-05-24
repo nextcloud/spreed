@@ -627,7 +627,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Naomh Máirtín (cuid Fraincise)",
     "Madagascar" : "Madagascar",
     "Marshall Islands" : "Oileáin Mharshall",
-    "Macedonia, the former Yugoslav Republic of" : "An Mhacadóin, Poblacht Iar-Iúgslavach na",
+    "North Macedonia" : "An Mhacadóin Thuaidh",
     "Mali" : "Mailí",
     "Myanmar" : "Maenmar",
     "Mongolia" : "an Mhongóil",

@@ -322,7 +322,6 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Saint-Martin (Antilhez)",
     "Madagascar" : "Madagaskar",
     "Marshall Islands" : "Inizi Marshall",
-    "Macedonia, the former Yugoslav Republic of" : "Makedonia an Norzh",
     "Mali" : "Mali",
     "Myanmar" : "Myanmar",
     "Mongolia" : "Mongolia",

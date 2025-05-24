@@ -557,7 +557,7 @@ OC.L10N.register(
     "Saint Martin (French part)" : "سانت مارتىن (فىرانسۇزچە قىسمى)",
     "Madagascar" : "ماداغاسقار",
     "Marshall Islands" : "مارشال تاقىم ئاراللىرى",
-    "Macedonia, the former Yugoslav Republic of" : "ماكېدونىيە ، سابىق يۇگوسلاۋىيە جۇمھۇرىيىتى",
+    "North Macedonia" : "شىمالىي ماكېدونىيە",
     "Mali" : "مالى",
     "Myanmar" : "بېرما",
     "Mongolia" : "موڭغۇلىيە",

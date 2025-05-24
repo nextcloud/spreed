@@ -529,7 +529,6 @@ OC.L10N.register(
     "Saint Martin (French part)" : "Saint Martin (French part)",
     "Madagascar" : "Madagascar",
     "Marshall Islands" : "Marshall Islands",
-    "Macedonia, the former Yugoslav Republic of" : "Macedonia, the former Yugoslav Republic of",
     "Mali" : "Mali",
     "Myanmar" : "Myanmar",
     "Mongolia" : "Mongolia",
