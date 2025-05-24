@@ -7,8 +7,8 @@
 
 import type { DashboardEventRoom } from '../../types/index.ts'
 
-import { getCanonicalLocale, n, t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
+import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
+import { imagePath } from '@nextcloud/router'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { useNow } from '@vueuse/core'
 import { computed } from 'vue'
@@ -17,7 +17,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
-import IconTextBox from 'vue-material-design-icons/TextBox.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
@@ -53,23 +52,22 @@ const eventDateLabel = computed(() => {
 	}
 	const startDate = new Date(props.eventRoom.start * 1000)
 	const endDate = new Date(props.eventRoom.end * 1000)
-	const isToday = startDate.toDateString() === new Date().toDateString()
 	const isTomorrow = startDate.toDateString() === new Date(Date.now() + ONE_DAY_IN_MS).toDateString()
 
 	let time
 	if (startDate.toDateString() === endDate.toDateString()) {
-		if (isToday || isTomorrow) {
+		if (isToday.value || isTomorrow) {
 			// show the time only
 			const timeRange = Intl.DateTimeFormat(getCanonicalLocale(), {
 				hour: 'numeric',
 				minute: 'numeric',
 			}).formatRange(startDate, endDate)
 
-			const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+			const relativeFormatter = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'auto' })
 
 			// TRANSLATORS: e.g. "Tomorrow 10:00 - 11:00"
 			time = t('spreed', '{dayPrefix} {dateTime}', {
-				dayPrefix: isToday ? relativeFormatter.format(0, 'day') : relativeFormatter.format(1, 'day'),
+				dayPrefix: isToday.value ? relativeFormatter.format(0, 'day') : relativeFormatter.format(1, 'day'),
 				dateTime: timeRange,
 			})
 		} else {
@@ -93,9 +91,7 @@ const eventDateLabel = computed(() => {
 	return time
 })
 
-const hasAttachments = computed(() => {
-	return Object.keys(props.eventRoom.eventAttachments).length > 0
-})
+const totalAttachments = computed(() => Object.values(props.eventRoom.eventAttachments))
 
 const invitesLabel = computed(() => {
 	const acceptedInvites = props.eventRoom.accepted ? n('spreed', '%n person accepted', '%n people accepted', props.eventRoom.accepted) : ''
@@ -107,6 +103,28 @@ const invitesLabel = computed(() => {
 const hasCall = computed(() => {
 	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
 		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
+})
+
+const attachmentInfo = computed(() => {
+	if (!totalAttachments.value.length) {
+		return null
+	}
+	const file = totalAttachments.value[0]
+
+	return {
+		icon: OC.MimeType.getIconUrl(file.fmttype) || imagePath('core', 'filetypes/file'),
+		label: file.filename.replace(/^\//, ''),
+		extraLabel: totalAttachments.value.length > 1
+			? n('spreed', 'and %n other attachment', 'and %n other attachments', totalAttachments.value.length - 1)
+			: '',
+		url: file.previewLink ?? undefined,
+	}
+})
+
+const roomLabel = computed(() => {
+	return props.eventRoom.roomType === CONVERSATION.TYPE.ONE_TO_ONE
+		? t('spreed', 'With {displayName}', { displayName: props.eventRoom.roomDisplayName }, { escape: false, sanitize: false })
+		: t('spreed', 'In {conversation}', { conversation: props.eventRoom.roomDisplayName }, { escape: false, sanitize: false })
 })
 
 /**
@@ -148,12 +166,9 @@ function handleJoin({ call = false } = {}) {
 			</template>
 		</p>
 		<span class="event-card__room secondary_text">
-			<span class="event-card__room-prefix">
-				{{ props.eventRoom.roomType === CONVERSATION.TYPE.ONE_TO_ONE ? t('spreed', 'With') : t('spreed', 'In') }}
-			</span>
 			<NcChip type="tertiary"
-				no-close
-				:text="props.eventRoom.roomDisplayName">
+				:text="roomLabel"
+				no-close>
 				<template #icon>
 					<ConversationIcon :item="conversation"
 						hide-user-status
@@ -162,12 +177,22 @@ function handleJoin({ call = false } = {}) {
 			</NcChip>
 		</span>
 		<span class="event-card__description">{{ props.eventRoom.eventDescription }}</span>
-		<span v-if="hasAttachments" class="event-card__attachment">
-			<IconTextBox :size="15" />
-			<!--FIXME-->
-			{{ Object.entries(props.eventRoom.eventAttachments)[0]?.[1]?.filename }}
-		</span>
-		<span class="event-card__invitation-info initial">
+		<template v-if="attachmentInfo">
+			<a class="event-card__attachment"
+				role="link"
+				:href="attachmentInfo.url"
+				:title="t('spreed', 'View attachment')"
+				target="_blank">
+				<img class="file-preview__image"
+					:alt="attachmentInfo.label"
+					:src="attachmentInfo.icon">
+				<span> {{ attachmentInfo.label }} </span>
+			</a>
+			<span v-if="attachmentInfo.extraLabel" class="secondary_text">
+				{{ attachmentInfo.extraLabel }}
+			</span>
+		</template>
+		<span class="event-card__invitation-info">
 			<span v-if="invitesLabel && !hasCall" class="secondary_text">
 				{{ invitesLabel }}
 			</span>
@@ -204,7 +229,7 @@ function handleJoin({ call = false } = {}) {
 <style scoped lang="scss">
 .event-card {
 	position: relative;
-	height: 225px;
+	height: 250px;
 	display: flex;
 	flex-direction: column;
 	flex: 0 0 100%;
@@ -212,6 +237,7 @@ function handleJoin({ call = false } = {}) {
 	border: 3px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
 	border-radius: var(--border-radius-large);
+	background-color: var(--color-main-background);
 
 	&--highlighted {
 		background-color: var(--color-primary-light);
@@ -225,12 +251,9 @@ function handleJoin({ call = false } = {}) {
 		border-color: var(--color-primary) !important;
 	}
 
-	&:not(.event-card--in-call):hover > .event-card__invitation-info.initial {
-		display: none;
-	}
-
 	&:not(.event-card--in-call):hover > .event-card__invitation-info.hovered {
 		display: flex;
+		background-color: inherit;
 	}
 
 	&__date {
@@ -255,36 +278,33 @@ function handleJoin({ call = false } = {}) {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: normal;
-		margin-block: 8px;
+		margin-block: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__room {
 		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
-
-		&-prefix {
-			line-height: var(--chip-size);
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			flex-shrink: 0;
-		}
 	}
 
 	&__attachment {
-		display: block;
+		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-weight: 500;
-		margin-block: var(--default-grid-baseline);
+		margin-block-start: var(--default-grid-baseline);
+		padding: var(--default-grid-baseline) calc(var(--default-grid-baseline) / 2);
 
-		& > * {
-			display: inline-block;
-			vertical-align: middle;
+		& > span {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-weight: 500;
+			font-size: var(--font-size-small);
+		}
+
+		&:hover {
+			background-color: var(--color-background-hover);
+			border-radius: var(--border-radius-large);
 		}
 	}
 
@@ -296,6 +316,7 @@ function handleJoin({ call = false } = {}) {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		border-radius: var(--border-radius-large);
 		padding: calc(var(--default-grid-baseline) * 2);
 
 		&.hovered {
@@ -322,7 +343,7 @@ function handleJoin({ call = false } = {}) {
 
 .secondary_text {
 	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
+	font-size: var(--font-size-small);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
