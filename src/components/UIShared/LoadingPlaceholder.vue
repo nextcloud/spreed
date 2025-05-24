@@ -178,7 +178,7 @@ export default {
 
 			&-line {
 				margin: 0;
-				height: 225px;
+				height: 250px;
 				background-color: var(--color-placeholder-light);
 				border-radius: var(--border-radius-large);
 			}
