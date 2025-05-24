@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2cdd8bb423ad2fc15bc2d52ca37ae61",
+    "content-hash": "676fccbf2612c10f28a3785789913e86",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.15.0",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "c3cb63a35bb0c0b1b130117cd8962def1ede9e6f"
+                "reference": "acbda7ff3c25e5749f1e04ed183b3795434264c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/c3cb63a35bb0c0b1b130117cd8962def1ede9e6f",
-                "reference": "c3cb63a35bb0c0b1b130117cd8962def1ede9e6f",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/acbda7ff3c25e5749f1e04ed183b3795434264c0",
+                "reference": "acbda7ff3c25e5749f1e04ed183b3795434264c0",
                 "shasum": ""
             },
             "require": {
@@ -131,7 +131,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.15.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.16.1"
             },
             "funding": [
                 {
@@ -139,7 +139,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-30T22:35:46+00:00"
+            "time": "2025-05-19T13:46:02+00:00"
         },
         {
             "name": "cweagans/composer-patches",
@@ -563,10 +563,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
