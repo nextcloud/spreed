@@ -1233,6 +1233,7 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "Ativar discagem por telefone e SIP",
     "Allow to dial-in without a PIN" : "Permitir discar sem um PIN",
     "Ongoing" : "Em andamento",
+    "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n pessoa aceitou","%n pessoas aceitaram","%n pessoas aceitaram"],
     "_%n person declined_::_%n people declined_" : ["%n pessoa recusou","%n pessoas recusaram","%n pessoas recusaram"],
     "With" : "Com",
