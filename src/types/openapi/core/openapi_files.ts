@@ -109,6 +109,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/files/api/v1/templates/fields/{fileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the fields for the template specified by the given file ID */
+        get: operations["template-list-template-fields"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/files/api/v1/templates/create": {
         parameters: {
             query?: never;
@@ -683,6 +700,39 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["TemplateFileCreatorWithTemplates"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "template-list-template-fields": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                /** @description File ID of the template */
+                fileId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Fields returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["TemplateField"];
+                            };
                         };
                     };
                 };
