@@ -1237,6 +1237,7 @@ OC.L10N.register(
     "Enable phone and SIP dial-in" : "啟用電話及 SIP 撥入",
     "Allow to dial-in without a PIN" : "允許在沒有密碼的情況下撥入",
     "Ongoing" : "持續進行",
+    "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["已接受 %n 個人"],
     "_%n person declined_::_%n people declined_" : ["已拒絕 %n 個人"],
     "With" : "與",
