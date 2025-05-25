@@ -96,6 +96,25 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 
 		/**
 		 * @param {Token} token conversation token
+		 * @param {string} messageId id of message to be deleted
+		 */
+		deleteSharedItemFromMessage(token, messageId) {
+			if (!this.sharedItemsPool[token]) {
+				return
+			}
+
+			for (const type of Object.keys(this.sharedItemsPool[token])) {
+				if (this.sharedItemsPool[token][type][messageId]) {
+					Vue.delete(this.sharedItemsPool[token][type], messageId)
+					if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
+						Vue.delete(this.sharedItemsPool[token], type)
+					}
+				}
+			}
+		},
+
+		/**
+		 * @param {Token} token conversation token
 		 * @param {Type} type type of shared item
 		 * @param {Message[]} messages message with shared items
 		 */
@@ -107,6 +126,35 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 					Vue.set(this.sharedItemsPool[token][type], message.id, message)
 				}
 			})
+		},
+
+		/**
+		 * @param {Token} token conversation token
+		 * @param {string} messageId starting message id to purge shared items from older messages
+		 * If messageId is not provided, all shared items in this conversation will be deleted.
+		 */
+		purgeSharedItemsStore(token, messageId = null) {
+			if (!this.sharedItemsPool[token]) {
+				return
+			}
+			if (messageId) {
+				// Delete older messages starting from messageId
+				for (const type of Object.keys(this.sharedItemsPool[token])) {
+					for (const id of Object.keys(this.sharedItemsPool[token][type])) {
+						if (+id < +messageId) {
+							Vue.delete(this.sharedItemsPool[token][type], id)
+						}
+					}
+					if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
+						Vue.delete(this.sharedItemsPool[token], type)
+					}
+				}
+				if (Object.keys(this.sharedItemsPool[token]).length === 0) {
+					Vue.delete(this.sharedItemsPool, token)
+				}
+			} else {
+				Vue.delete(this.sharedItemsPool, token)
+			}
 		},
 
 		/**
