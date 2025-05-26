@@ -4,12 +4,33 @@
  */
 
 import { recommendedVue2 } from '@nextcloud/eslint-config'
+import globals from 'globals'
 
 export default [
 	...recommendedVue2,
 	// Skip OpenAPI generated files
 	{
 		ignores: ['src/types/openapi/*'],
+	},
+	// Global overrides
+	{
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				...globals.node,
+				IS_DESKTOP: 'readonly',
+				__webpack_public_path__: 'writable',
+			},
+		},
+	},
+	// Global overrides for Jest tests and utils
+	{
+		files: ['src/__mocks__/*.js', '**/*.spec.js', 'src/test-setup.js'],
+		languageOptions: {
+			globals: {
+				...globals.jest,
+			},
+		},
 	},
 	// Disabled rules from recommendedVue2 pack
 	{
@@ -29,7 +50,6 @@ export default [
 			'jsdoc/require-param-description': 'off', // need to respect JS
 			'jsdoc/tag-lines': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable
-			'no-undef': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
 			'object-shorthand': 'off', // changes Vue watchers
