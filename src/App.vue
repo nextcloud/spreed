@@ -376,7 +376,7 @@ export default {
 			}
 		})
 
-		const beforeRouteChangeListener = (to, from, next) => {
+		const beforeRouteChangeListener = async (to, from, next) => {
 			if (this.isNextcloudTalkHashDirty) {
 				// Nextcloud Talk configuration changed, reload the page when changing configuration
 				window.location = generateUrl('call/' + to.params.token)
@@ -387,6 +387,15 @@ export default {
 			 * This runs whenever the new route is a conversation.
 			 */
 			if (to.name === 'conversation') {
+				// Fetch conversation object, if it's not known yet to the client
+				if (!this.$store.getters.conversation(to.params.token)) {
+					const result = await this.fetchSingleConversation(to.params.token)
+					if (!result) {
+						// If the conversation is not found, block further navigation,
+						// it is handled in the fetchSingleConversation method
+						return
+					}
+				}
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', to.params.token)
 			}
@@ -596,13 +605,13 @@ export default {
 				return
 			}
 			this.isRefreshingCurrentConversation = true
-
+			let isSuccessfullyFetched = false
 			try {
 				/**
 				 * Fetches a single conversation
 				 */
 				await this.$store.dispatch('fetchConversation', { token })
-
+				isSuccessfullyFetched = true
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
@@ -617,6 +626,7 @@ export default {
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
+			return isSuccessfullyFetched
 		},
 
 		// Upon pressing Ctrl+F, focus SearchBox native input in the LeftSidebar
