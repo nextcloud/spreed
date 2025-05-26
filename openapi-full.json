@@ -753,7 +753,8 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DashboardEventCalendar"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "eventName": {
                         "type": "string"
@@ -763,8 +764,8 @@
                         "nullable": true
                     },
                     "eventAttachments": {
-                        "type": "array",
-                        "items": {
+                        "type": "object",
+                        "additionalProperties": {
                             "$ref": "#/components/schemas/DashboardEventAttachment"
                         }
                     },
@@ -828,16 +829,17 @@
                     "calendars",
                     "fmttype",
                     "filename",
-                    "fileId",
-                    "hasPreview",
-                    "previewUrl"
+                    "fileid",
+                    "preview",
+                    "previewLink"
                 ],
                 "properties": {
                     "calendars": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "minItems": 1
                     },
                     "fmttype": {
                         "type": "string"
@@ -845,14 +847,14 @@
                     "filename": {
                         "type": "string"
                     },
-                    "fileId": {
+                    "fileid": {
                         "type": "integer",
                         "format": "int64"
                     },
-                    "hasPreview": {
+                    "preview": {
                         "type": "boolean"
                     },
-                    "previewUrl": {
+                    "previewLink": {
                         "type": "string",
                         "nullable": true
                     }
