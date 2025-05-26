@@ -33,7 +33,7 @@ const isCertificateValid = async (host: certificateExpirationParams['host']): Pr
 		// Null if unable to retrieve the certificates expiration, otherwise the expiration in days (negative if already expired)
 		const expiration = response.data.ocs.data.expiration_in_days
 
-		if (expiration == null) {
+		if (expiration === null) {
 			console.warn('Unable to check certificate of', host)
 			return false
 		} else if (expiration < 0) {
