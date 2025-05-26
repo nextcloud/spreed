@@ -6,60 +6,52 @@ import { readableNumber, stringChop } from '../readableNumber.ts'
 
 describe('readableNumber', () => {
 	describe('stringChop', () => {
-		it('should return the correct array of numbers', () => {
-			const numbers = {
-				1: { number: '123456789', size: 3 },
-				2: { number: '12345678', size: 3 },
-				3: { number: '1234567', size: 3 },
-				4: { number: '123456', size: 2 },
-				5: { number: '123456', size: 1 },
-				6: { number: '123456', size: 0 },
-				7: { number: '123456', size: 6 },
-				8: { number: '123456', size: 7 },
-				9: { number: '', size: 3 },
-			}
+		const TEST_CASES = [
+			['123456789', 3, false, ['123', '456', '789']],
+			['12345678', 3, false, ['123', '456', '78']],
+			['1234567', 3, false, ['123', '456', '7']],
+			['123456', 2, false, ['12', '34', '56']],
+			['123456', 1, false, ['1', '2', '3', '4', '5', '6']],
+			['123456', 0, false, ['123456']],
+			['123456', 6, false, ['123456']],
+			['123456', 7, false, ['123456']],
+			['', 3, false, []],
+			['123456789', 3, true, ['123', '456', '789']],
+			['12345678', 3, true, ['12', '345', '678']],
+			['1234567', 3, true, ['1', '234', '567']],
+			['123456', 2, true, ['12', '34', '56']],
+			['123456', 1, true, ['1', '2', '3', '4', '5', '6']],
+			['123456', 0, true, ['123456']],
+			['123456', 6, true, ['123456']],
+			['123456', 7, true, ['123456']],
+			['', 3, true, []],
+		]
 
-			const outputTypes = {
-				1: ['123', '456', '789'],
-				2: ['123', '456', '78'],
-				3: ['123', '456', '7'],
-				4: ['12', '34', '56'],
-				5: ['1', '2', '3', '4', '5', '6'],
-				6: ['123456'],
-				7: ['123456'],
-				8: ['123456'],
-				9: [''],
-			}
-
-			for (const i in numbers) {
-				const output = i + ': ' + stringChop(numbers[i].number, numbers[i].size)
-				expect(output).toBe(i + ': ' + outputTypes[i])
-			}
-		})
+		it.each(TEST_CASES)(
+			'should return correct array for %s with chunk size %d',
+			(string, size, fromRight, output) => {
+				expect(output).toMatchObject(stringChop(string, size, fromRight))
+			},
+		)
 	})
 
 	describe('readableNumber', () => {
-		it('should return the correct readable number', () => {
-			const numbers = {
-				1: 123456789,
-				2: '123456789',
-				3: '12345678',
-				4: '1234567',
-				5: '',
-			}
+		const TEST_CASES = [
+			[123456789, false, '123 456 789'],
+			['123456789', false, '123 456 789'],
+			['12345678', false, '123 456 78'],
+			['12345678', true, '12 345 678'],
+			['1234567', false, '123 4567'],
+			['1234567', true, '1 234 567'],
+			['', false, ''],
+			['', true, ''],
+		]
 
-			const outputTypes = {
-				1: '123 456 789',
-				2: '123 456 789',
-				3: '123 456 78',
-				4: '123 4567',
-				5: '',
-			}
-
-			for (const i in numbers) {
-				const output = i + ': ' + readableNumber(numbers[i])
-				expect(output).toBe(i + ': ' + outputTypes[i])
-			}
-		})
+		it.each(TEST_CASES)(
+			'should return correct readable number for %s',
+			(string, fromRight, output) => {
+				expect(output).toBe(readableNumber(string, fromRight))
+			},
+		)
 	})
 })

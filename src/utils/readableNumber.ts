@@ -11,14 +11,21 @@
  *
  * @param str The string to chop
  * @param size Size of the chunks
+ * @param fromRight Whether to parse chunks from right side (e.g. a thousand delimiter)
  */
-function stringChop(str: string, size: number): string[] {
+function stringChop(str: string, size: number, fromRight = false): string[] {
 	if (size <= 0) {
 		return [str]
 	}
 	const chunks: string[] = []
-	for (let i = 0; i < str.length; i += size) {
-		chunks.push(str.slice(i, i + size))
+	if (fromRight) {
+		for (let i = str.length; i > 0; i -= size) {
+			chunks.unshift(str.slice(Math.max(0, i - size), i))
+		}
+	} else {
+		for (let i = 0; i < str.length; i += size) {
+			chunks.push(str.slice(i, i + size))
+		}
 	}
 
 	return chunks
@@ -33,9 +40,10 @@ function stringChop(str: string, size: number): string[] {
  * 9432670284 => 943 267 0284
  *
  * @param number The number to make readable
+ * @param fromRight Whether to parse chunks from right side (e.g. a thousand delimiter)
  */
-function readableNumber(number: string | number): string {
-	const chunks = stringChop(number.toString(), 3)
+function readableNumber(number: string | number, fromRight = false): string {
+	const chunks = stringChop(number.toString(), 3, fromRight)
 
 	const lastChunk = chunks.pop()
 	const shouldConcatLastChunk = !lastChunk?.length || lastChunk.length <= 1
