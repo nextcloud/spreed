@@ -546,6 +546,7 @@ const actions = {
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
+				sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id)
 			} else {
 				reactionsStore.processReaction(token, message)
 			}
@@ -593,6 +594,7 @@ const actions = {
 		}
 
 		if (message.systemMessage === 'history_cleared') {
+			sharedItemsStore.purgeSharedItemsStore(token, message.id)
 			context.commit('clearMessagesHistory', {
 				token,
 				id: message.id,

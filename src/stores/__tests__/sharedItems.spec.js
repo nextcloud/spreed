@@ -212,4 +212,76 @@ describe('sharedItemsStore', () => {
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
 		})
 	})
+
+	describe('cleanup operations', () => {
+		it('deletes shared items of a message from store', () => {
+			// Arrange: add some shared items to the store
+			const message1 = {
+				id: 1,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}
+			const message2 = {
+				id: 2,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}
+			sharedItemsStore.addSharedItemFromMessage(token, message1)
+			sharedItemsStore.addSharedItemFromMessage(token, message2)
+			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 1: message1, 2: message2 } })
+			// Act: delete shared items from the store
+			sharedItemsStore.deleteSharedItemFromMessage(token, message1.id)
+			// Assert: shared items store should not contain deleted item
+			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 2: message2 } })
+		})
+
+		it('purges the store when e.g. a chat history is cleared', () => {
+			// Arrange: add some shared items to the store
+			const message1 = {
+				id: 1,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}
+			sharedItemsStore.addSharedItemFromMessage(token, message1)
+			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 1: message1 } })
+			// Act: purge the store
+			sharedItemsStore.purgeSharedItemsStore(token)
+			// Assert: shared items store should be empty
+			expect(sharedItemsStore.sharedItems(token)).toEqual({})
+		})
+
+		it('purges shared items from store starting from a particular message id backwards', () => {
+			// Arrange:
+			const messages = [{
+				id: 1,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}, {
+				id: 2,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}, {
+				id: 3,
+				token,
+				message: 'history cleared',
+				systemMessage: 'history_cleared',
+			}, {
+				id: 4,
+				token,
+				message: '{file}',
+				messageParameters: { file: { mimetype: 'image/jpeg' } },
+			}]
+			messages.filter((message) => !message.systemMessage).forEach((message) => sharedItemsStore.addSharedItemFromMessage(token, message))
+			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 1: messages[0], 2: messages[1], 4: messages[3] } })
+			// Act: purge shared items from the store by message id
+			sharedItemsStore.purgeSharedItemsStore(token, messages[2].id)
+			// Assert: shared items store should not contain items from the deleted message
+			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 4: messages[3] } })
+		})
+	})
 })
