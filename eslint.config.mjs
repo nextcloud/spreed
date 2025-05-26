@@ -31,7 +31,6 @@ export default [
 			'no-console': 'off', // non-fixable
 			'no-constant-condition': 'off', // non-fixable
 			'no-empty': 'off', // non-fixable
-			'no-redeclare': 'off', // non-fixable
 			'no-undef': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
