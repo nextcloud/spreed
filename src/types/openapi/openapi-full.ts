@@ -2308,7 +2308,9 @@ export type components = {
             calendars: components["schemas"]["DashboardEventCalendar"][];
             eventName: string;
             eventDescription: string | null;
-            eventAttachments: components["schemas"]["DashboardEventAttachment"][];
+            eventAttachments: {
+                [key: string]: components["schemas"]["DashboardEventAttachment"];
+            };
             eventLink: string;
             /** Format: int64 */
             start: number;
@@ -2336,9 +2338,9 @@ export type components = {
             fmttype: string;
             filename: string;
             /** Format: int64 */
-            fileId: number;
-            hasPreview: boolean;
-            previewUrl: string | null;
+            fileid: number;
+            preview: boolean;
+            previewLink: string | null;
         };
         DashboardEventCalendar: {
             principalUri: string;
