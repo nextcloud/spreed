@@ -29,7 +29,6 @@ export default [
 			'jsdoc/require-param-description': 'off', // need to respect JS
 			'jsdoc/tag-lines': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable
-			'no-constant-condition': 'off', // non-fixable
 			'no-empty': 'off', // non-fixable
 			'no-undef': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
