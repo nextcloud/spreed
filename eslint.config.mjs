@@ -36,7 +36,6 @@ export default [
 			'no-undef': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
-			'no-useless-concat': 'off', // non-fixable
 			'object-shorthand': 'off', // changes Vue watchers
 			'prefer-const': 'off', // non-fixable
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
