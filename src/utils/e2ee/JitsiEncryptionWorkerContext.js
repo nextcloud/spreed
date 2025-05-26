@@ -7,7 +7,7 @@
 
 /* global BigInt */
 
-import { deriveKeys, importKey, ratchet } from './crypto-utils'
+import { deriveKeys, importKey, ratchet } from './crypto-utils.js'
 
 // We use a ringbuffer of keys so we can change them and still decode packets that were
 // encrypted with an old key. We use a size of 16 which corresponds to the four bits
