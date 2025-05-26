@@ -426,7 +426,7 @@ describe('Message.vue', () => {
 					},
 				)
 
-				expect(messageEl.props('text')).toBe('{file}' + '\n\n' + caption)
+				expect(messageEl.props('text')).toBe('{file}\n\n' + caption)
 			})
 
 			test('renders deck cards', () => {

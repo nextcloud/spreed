@@ -6,8 +6,6 @@
  * the worker from Nextcloud.
  */
 
-/* global RTCRtpScriptTransform */
-
 import Worker from './JitsiEncryptionWorker.worker.js'
 
 // Flag to set on senders / receivers to avoid setting up the encryption transform

@@ -148,7 +148,7 @@ export default {
 	},
 
 	mounted() {
-		this.size = parseInt(window.getComputedStyle(this.$refs.mention).fontSize, 10) * 4 / 3 ?? 20
+		this.size = parseInt(window.getComputedStyle(this.$refs.mention).fontSize ?? 15, 10) * 4 / 3
 	},
 }
 </script>

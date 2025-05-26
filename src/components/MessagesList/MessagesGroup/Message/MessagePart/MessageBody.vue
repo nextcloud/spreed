@@ -245,7 +245,7 @@ export default {
 		renderedMessage() {
 			if (this.isFileShare && this.message.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
-				return '{file}' + '\n\n' + this.message.message
+				return '{file}\n\n' + this.message.message
 			} else {
 				return this.message.message
 			}
