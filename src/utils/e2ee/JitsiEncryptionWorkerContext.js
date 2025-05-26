@@ -5,8 +5,6 @@
  * Based on code from https://github.com/jitsi/jitsi-meet
  */
 
-/* global BigInt */
-
 import { deriveKeys, importKey, ratchet } from './crypto-utils.js'
 
 // We use a ringbuffer of keys so we can change them and still decode packets that were
