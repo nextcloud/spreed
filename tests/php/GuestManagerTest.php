@@ -21,6 +21,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -113,9 +114,7 @@ class GuestManagerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataImportEmails
-	 */
+	#[DataProvider('dataImportEmails')]
 	public function testImportEmails(string $fileName, int $invites, int $duplicates, array $invited, ?string $reason = null, array $invalidLines = []): void {
 		$this->mailer->method('validateMailAddress')
 			->willReturnCallback(static fn (string $email): bool => str_starts_with($email, 'valid'));

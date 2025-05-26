@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\TalkSession;
 use OCP\ISession;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -33,9 +34,7 @@ class TalkSessionTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGet
-	 */
+	#[DataProvider('dataGet')]
 	public function testGetSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
@@ -44,9 +43,7 @@ class TalkSessionTest extends TestCase {
 		$this->assertSame($expected, $this->talkSession->getSessionForRoom('t1'));
 	}
 
-	/**
-	 * @dataProvider dataGet
-	 */
+	#[DataProvider('dataGet')]
 	public function testGetPasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
@@ -64,9 +61,7 @@ class TalkSessionTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSet
-	 */
+	#[DataProvider('dataSet')]
 	public function testSetSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
@@ -78,9 +73,7 @@ class TalkSessionTest extends TestCase {
 		$this->talkSession->setSessionForRoom('t1', 'd1');
 	}
 
-	/**
-	 * @dataProvider dataSet
-	 */
+	#[DataProvider('dataSet')]
 	public function testSetPasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
@@ -101,9 +94,7 @@ class TalkSessionTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataRemove
-	 */
+	#[DataProvider('dataRemove')]
 	public function testRemoveSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
@@ -115,9 +106,7 @@ class TalkSessionTest extends TestCase {
 		$this->talkSession->removeSessionForRoom('t1');
 	}
 
-	/**
-	 * @dataProvider dataRemove
-	 */
+	#[DataProvider('dataRemove')]
 	public function testRemovePasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')

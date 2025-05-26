@@ -49,7 +49,7 @@ use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\UserStatus\IManager as IUserStatusManager;
-use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -94,8 +94,7 @@ class ChatControllerTest extends TestCase {
 
 	private ?ChatController $controller = null;
 
-	/** @var Callback */
-	private $newMessageDateTimeConstraint;
+	private Callback $newMessageDateTimeConstraint;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -427,8 +426,8 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(2))
 			->method('parseMessage')
 			->willReturnCallback(function () use ($expectedCalls, &$i): void {
-				Assert::assertArrayHasKey($i, $expectedCalls);
-				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$this->assertArrayHasKey($i, $expectedCalls);
+				$this->assertSame($expectedCalls[$i], func_get_args());
 				$i++;
 			});
 
@@ -772,8 +771,8 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
 			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
-				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
-				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+				$this->assertArrayHasKey(4 - $i, $expectedCalls);
+				$this->assertSame($expectedCalls[4 - $i], func_get_args());
 
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
@@ -841,8 +840,8 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
 			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
-				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
-				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+				$this->assertArrayHasKey(4 - $i, $expectedCalls);
+				$this->assertSame($expectedCalls[4 - $i], func_get_args());
 
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
@@ -913,8 +912,8 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
 			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
-				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
-				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+				$this->assertArrayHasKey(4 - $i, $expectedCalls);
+				$this->assertSame($expectedCalls[4 - $i], func_get_args());
 
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
@@ -993,8 +992,8 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(count($expectedCalls)))
 			->method('createMessage')
 			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
-				Assert::assertArrayHasKey($i - 1, $expectedCalls);
-				Assert::assertSame($expectedCalls[$i - 1], func_get_args());
+				$this->assertArrayHasKey($i - 1, $expectedCalls);
+				$this->assertSame($expectedCalls[$i - 1], func_get_args());
 
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
@@ -1122,9 +1121,7 @@ class ChatControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataMentions
-	 */
+	#[DataProvider('dataMentions')]
 	public function testMentions(string $search, int $limit, array $result, array $expected): void {
 		$participant = $this->createMock(Participant::class);
 		$this->room->expects($this->any())

@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\ChecksumVerificationService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Test\TestCase;
 
 class ChecksumVerificationServiceTest extends TestCase {
@@ -36,9 +37,7 @@ class ChecksumVerificationServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataValidateRequest
-	 */
+	#[DataProvider('dataValidateRequest')]
 	public function testValidateRequest(string $random, string $checksum, string $secret, string $token, string $exceptionMessage, bool $expectedReturn): void {
 		if ($exceptionMessage) {
 			$this->expectException(UnauthorizedException::class);

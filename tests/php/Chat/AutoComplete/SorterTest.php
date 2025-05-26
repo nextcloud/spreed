@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\CommentsManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -67,9 +68,7 @@ class SorterTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSort
-	 */
+	#[DataProvider('dataSort')]
 	public function testSort(string $search, array $toSort, array $comments, array $expected): void {
 		$this->commentsManager->expects(isset($toSort['users']) ? $this->once() : $this->never())
 			->method('getLastCommentDateByActor')

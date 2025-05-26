@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -41,6 +43,7 @@ use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -187,9 +190,7 @@ class SignalingControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetSettingsStunServer
-	 */
+	#[DataProvider('dataGetSettingsStunServer')]
 	public function testGetSettingsStunServer(array $stunServersConfig, array $expectedStunServers): void {
 		$this->config = $this->createMock(Config::class);
 		$this->recreateSignalingController();
@@ -350,9 +351,7 @@ class SignalingControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetSettingsTurnServer
-	 */
+	#[DataProvider('dataGetSettingsTurnServer')]
 	public function testGetSettingsTurnServer(array $turnServersConfig, array $expectedTurnServers): void {
 		$this->config = $this->createMock(Config::class);
 		$this->recreateSignalingController();
@@ -528,9 +527,7 @@ class SignalingControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataIsTryingToPublishMedia
-	 */
+	#[DataProvider('dataIsTryingToPublishMedia')]
 	public function testIsTryingToPublishMedia(string $sdp, bool $expectedAudioResult, bool $expectedVideoResult) {
 		$this->assertSame($expectedAudioResult, self::invokePrivate($this->controller, 'isTryingToPublishMedia', [$sdp, 'audio']));
 		$this->assertSame($expectedVideoResult, self::invokePrivate($this->controller, 'isTryingToPublishMedia', [$sdp, 'video']));
@@ -1089,9 +1086,7 @@ class SignalingControllerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataBackendRoomUserPublicPermissions
-	 */
+	#[DataProvider('dataBackendRoomUserPublicPermissions')]
 	public function testBackendRoomUserPublicPermissions(int $permissions, array $expectedBackendPermissions): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';

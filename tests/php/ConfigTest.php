@@ -21,6 +21,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -339,9 +340,7 @@ class ConfigTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataTicketV2Algorithm
-	 */
+	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2User(string $algo): void {
 		$config = \OCP\Server::get(IConfig::class);
 		/** @var MockObject|IAppConfig $appConfig */
@@ -403,9 +402,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame(['displayname' => 'Jane Doe'], (array)$decoded->userdata);
 	}
 
-	/**
-	 * @dataProvider dataTicketV2Algorithm
-	 */
+	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2Anonymous(string $algo): void {
 		/** @var IConfig $config */
 		$config = \OCP\Server::get(IConfig::class);

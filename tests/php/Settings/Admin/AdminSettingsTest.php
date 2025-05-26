@@ -20,7 +20,6 @@ use OCP\IL10N;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Support\Subscription\IRegistry;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -151,8 +150,8 @@ class AdminSettingsTest extends TestCase {
 		$this->initialState->expects($this->exactly(2))
 			->method('provideInitialState')
 			->willReturnCallback(function () use ($expectedCalls, &$i): void {
-				Assert::assertArrayHasKey($i, $expectedCalls);
-				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$this->assertArrayHasKey($i, $expectedCalls);
+				$this->assertSame($expectedCalls[$i], func_get_args());
 				$i++;
 			});
 

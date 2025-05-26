@@ -33,6 +33,7 @@ use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -194,9 +195,7 @@ class RoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateConversationInvalidNames
-	 */
+	#[DataProvider('dataCreateConversationInvalidNames')]
 	public function testCreateConversationInvalidNames(string $name): void {
 		$this->manager->expects($this->never())
 			->method('createRoom');
@@ -215,9 +214,7 @@ class RoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateConversationInvalidTypes
-	 */
+	#[DataProvider('dataCreateConversationInvalidTypes')]
 	public function testCreateConversationInvalidTypes(int $type): void {
 		$this->manager->expects($this->never())
 			->method('createRoom');
@@ -236,9 +233,7 @@ class RoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateConversationInvalidObjects
-	 */
+	#[DataProvider('dataCreateConversationInvalidObjects')]
 	public function testCreateConversationInvalidObjects(string $type, string $id, string $exception): void {
 		$this->manager->expects($this->never())
 			->method('createRoom');
@@ -258,9 +253,7 @@ class RoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateConversation
-	 */
+	#[DataProvider('dataCreateConversation')]
 	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId, string $password): void {
 		$room = $this->createMock(Room::class);
 
@@ -311,9 +304,7 @@ class RoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataPrepareConversationName
-	 */
+	#[DataProvider('dataPrepareConversationName')]
 	public function testPrepareConversationName(string $input, string $expected): void {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
 	}

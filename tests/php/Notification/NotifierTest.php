@@ -42,7 +42,7 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
-use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -185,9 +185,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataPrepareGroup
-	 */
+	#[DataProvider('dataPrepareGroup')]
 	public function testPrepareGroup(int $type, string $uid, string $displayName, string $name, string $parsedSubject): void {
 		$roomId = $type;
 		/** @var INotification&MockObject $n */
@@ -305,9 +303,7 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($n, 'de');
 	}
 
-	/**
-	 * @dataProvider dataPrepareGroup
-	 */
+	#[DataProvider('dataPrepareGroup')]
 	public function testPrepareGroupMultipleTimesOnlyGetsTheRoomOnce(int $type, string $uid, string $displayName, string $name, string $parsedSubject): void {
 		$roomId = $type;
 		/** @var INotification&MockObject $n */
@@ -792,9 +788,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataPrepareChatMessage
-	 */
+	#[DataProvider('dataPrepareChatMessage')]
 	public function testPrepareChatMessage(string $subject, int $roomType, array $subjectParameters, ?string $displayName, string $roomName, string $parsedSubject, array $richSubject, bool $deletedUser = false, ?string $guestName = null, bool $isPushNotification = false): void {
 		/** @var INotification&MockObject $notification */
 		$notification = $this->createMock(INotification::class);
@@ -871,8 +865,8 @@ class NotifierTest extends TestCase {
 		$this->userManager->expects($this->exactly(count($userManagerGet['with'])))
 			->method('getDisplayName')
 			->willReturnCallback(function () use ($userManagerGet, &$i) {
-				Assert::assertArrayHasKey($i, $userManagerGet['with']);
-				Assert::assertSame($userManagerGet['with'][$i], func_get_args());
+				$this->assertArrayHasKey($i, $userManagerGet['with']);
+				$this->assertSame($userManagerGet['with'][$i], func_get_args());
 				$i++;
 				return $userManagerGet['willReturn'][$i - 1];
 			});
@@ -1010,9 +1004,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataPrepareThrows
-	 */
+	#[DataProvider('dataPrepareThrows')]
 	public function testPrepareThrows(string $message, string $app, ?bool $isDisabledForUser, ?bool $validRoom, ?string $subject, ?array $params, ?string $objectType, string $token = 'roomToken'): void {
 		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
