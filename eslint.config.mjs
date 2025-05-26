@@ -4,12 +4,33 @@
  */
 
 import { recommendedVue2 } from '@nextcloud/eslint-config'
+import globals from 'globals'
 
 export default [
 	...recommendedVue2,
 	// Skip OpenAPI generated files
 	{
 		ignores: ['src/types/openapi/*'],
+	},
+	// Global overrides
+	{
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				...globals.node,
+				IS_DESKTOP: 'readonly',
+				__webpack_public_path__: 'writable',
+			},
+		},
+	},
+	// Global overrides for Jest tests and utils
+	{
+		files: ['src/__mocks__/*.js', '**/*.spec.js', 'src/test-setup.js'],
+		languageOptions: {
+			globals: {
+				...globals.jest,
+			},
+		},
 	},
 	// Disabled rules from recommendedVue2 pack
 	{
@@ -20,7 +41,6 @@ export default [
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
-			eqeqeq: 'off', // non-fixable
 			'jsdoc/check-param-names': 'off', // need to respect JS
 			'jsdoc/check-tag-names': 'off', // need to respect JS
 			'jsdoc/check-types': 'off', // need to respect JS
@@ -30,17 +50,9 @@ export default [
 			'jsdoc/require-param-description': 'off', // need to respect JS
 			'jsdoc/tag-lines': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable
-			'no-constant-binary-expression': 'off', // non-fixable
-			'no-constant-condition': 'off', // non-fixable
-			'no-empty': 'off', // non-fixable
-			'no-redeclare': 'off', // non-fixable
-			'no-restricted-imports': 'off', // non-fixable
-			'no-undef': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
-			'no-useless-concat': 'off', // non-fixable
 			'object-shorthand': 'off', // changes Vue watchers
-			'prefer-const': 'off', // non-fixable
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files

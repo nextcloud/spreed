@@ -5,8 +5,6 @@
  * Based on code from https://github.com/jitsi/jitsi-meet
  */
 
-/* global TransformStream */
-
 // Worker for E2EE/Insertable streams.
 
 import { Context } from './JitsiEncryptionWorkerContext.js'
