@@ -1,8 +1,0 @@
-# SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
-# SPDX-License-Identifier: CC0-1.0
-/js/*
-/src/types/openapi/*
-/src/utils/e2ee/crypto-utils.js
-/src/utils/e2ee/Jitsi*.js
-/src/utils/media/effects/virtual-background/vendor/*
-/tests/*
