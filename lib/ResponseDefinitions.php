@@ -365,12 +365,12 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
- *      calendars: list<string>,
+ *      calendars: non-empty-list<string>,
  *      fmttype: string,
  *      filename: string,
- *      fileId: int,
- *      hasPreview: boolean,
- *      previewUrl: ?string,
+ *      fileid: int,
+ *      preview: boolean,
+ *      previewLink: ?string,
  * }
  *
  * @psalm-type TalkDashboardEventCalendar = array{
@@ -380,10 +380,10 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkDashboardEvent = array{
- *     calendars: list<TalkDashboardEventCalendar>,
+ *     calendars: non-empty-list<TalkDashboardEventCalendar>,
  *     eventName: string,
  *     eventDescription: ?string,
- *     eventAttachments: list<TalkDashboardEventAttachment>,
+ *     eventAttachments: array<string, TalkDashboardEventAttachment>,
  *     eventLink: string,
  *     start: int,
  *     end: int,
