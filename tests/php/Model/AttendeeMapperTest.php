@@ -13,6 +13,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Test\TestCase;
 
 /**
@@ -339,9 +340,7 @@ class AttendeeMapperTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataModifyPermissions
-	 */
+	#[DataProvider('dataModifyPermissions')]
 	public function testModifyPermissions(array $attendees, string $mode, int $permission, array $expected): void {
 		$roomId = 12345678;
 

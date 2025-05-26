@@ -36,6 +36,7 @@ use OCP\Security\RateLimiting\ILimiter;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -203,9 +204,7 @@ class ChatManagerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSendMessage
-	 */
+	#[DataProvider('dataSendMessage')]
 	public function testSendMessage(string $userId, string $message, string $referenceId, string $parentId): void {
 		$creationDateTime = new \DateTime();
 
@@ -696,9 +695,7 @@ class ChatManagerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSearchIsPartOfConversationNameOrAtAll
-	 */
+	#[DataProvider('dataSearchIsPartOfConversationNameOrAtAll')]
 	public function testSearchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName, bool $expected): void {
 		$actual = self::invokePrivate($this->chatManager, 'searchIsPartOfConversationNameOrAtAll', [$search, $roomDisplayName]);
 		$this->assertEquals($expected, $actual);
@@ -766,9 +763,7 @@ class ChatManagerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataAddConversationNotify
-	 */
+	#[DataProvider('dataAddConversationNotify')]
 	public function testAddConversationNotify(string $search, array $roomMocks, array $participantMocks, ?int $totalCount, array $expected): void {
 		$room = $this->createMock(Room::class);
 		foreach ($roomMocks as $method => $return) {
@@ -793,9 +788,7 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $actual);
 	}
 
-	/**
-	 * @dataProvider dataIsSharedFile
-	 */
+	#[DataProvider('dataIsSharedFile')]
 	public function testIsSharedFile(string $message, bool $expected): void {
 		$actual = $this->chatManager->isSharedFile($message);
 		$this->assertEquals($expected, $actual);
@@ -815,9 +808,7 @@ class ChatManagerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataFilterCommentsWithNonExistingFiles
-	 */
+	#[DataProvider('dataFilterCommentsWithNonExistingFiles')]
 	public function testFilterCommentsWithNonExistingFiles(array $list, int $expectedCount): void {
 		// Transform text messages in instance of comment and mock with the message
 		foreach ($list as $key => $message) {

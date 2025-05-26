@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,7 +30,7 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
-use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -243,8 +245,8 @@ class ListenerTest extends TestCase {
 			$this->chatManager->expects($this->exactly(count($consecutive)))
 				->method('addSystemMessage')
 				->willReturnCallback(function () use ($consecutive, &$i) {
-					Assert::assertArrayHasKey($i, $consecutive);
-					Assert::assertSame($consecutive[$i], func_get_args());
+					$this->assertArrayHasKey($i, $consecutive);
+					$this->assertSame($consecutive[$i], func_get_args());
 					$i++;
 					return $this->createMock(IComment::class);
 				});
@@ -309,9 +311,7 @@ class ListenerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataParticipantTypeChange
-	 */
+	#[DataProvider('dataParticipantTypeChange')]
 	public function testAfterParticipantTypeSet(string $actorType, int $oldParticipantType, int $newParticipantType, array $expectedMessages): void {
 		$this->mockLoggedInUser('alice_actor');
 
@@ -346,8 +346,8 @@ class ListenerTest extends TestCase {
 			$this->chatManager->expects($this->exactly(count($consecutive)))
 				->method('addSystemMessage')
 				->willReturnCallback(function () use ($consecutive, &$i) {
-					Assert::assertArrayHasKey($i, $consecutive);
-					Assert::assertSame($consecutive[$i], func_get_args());
+					$this->assertArrayHasKey($i, $consecutive);
+					$this->assertSame($consecutive[$i], func_get_args());
 					$i++;
 					return $this->createMock(IComment::class);
 				});
@@ -588,9 +588,7 @@ class ListenerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCallRecordingChange
-	 */
+	#[DataProvider('dataCallRecordingChange')]
 	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
 		$this->mockLoggedInUser('logged_in_user');
 

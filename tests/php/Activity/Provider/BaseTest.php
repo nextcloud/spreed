@@ -22,6 +22,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -86,9 +87,7 @@ class BaseTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataPreParse
-	 */
+	#[DataProvider('dataPreParse')]
 	public function testPreParse(string $appId, bool $hasUser, bool $disabledForUser, bool $willThrowException): void {
 		$user = $hasUser ? $this->createMock(IUser::class) : null;
 
@@ -142,9 +141,7 @@ class BaseTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSetSubject
-	 */
+	#[DataProvider('dataSetSubject')]
 	public function testSetSubject(string $subject, array $parameters, string $parsedSubject): void {
 		$provider = $this->getProvider();
 
@@ -172,9 +169,7 @@ class BaseTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetRoom
-	 */
+	#[DataProvider('dataGetRoom')]
 	public function testGetRoom(int $type, int $id, string $name, string $expectedName, string $expectedType): void {
 		$provider = $this->getProvider();
 
@@ -215,9 +210,7 @@ class BaseTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetUser
-	 */
+	#[DataProvider('dataGetUser')]
 	public function testGetUser(string $uid, bool $validUser, string $name): void {
 		$provider = $this->getProvider();
 

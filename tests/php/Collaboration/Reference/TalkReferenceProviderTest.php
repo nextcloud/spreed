@@ -17,6 +17,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -69,9 +70,7 @@ class TalkReferenceProviderTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetTalkAppLinkToken
-	 */
+	#[DataProvider('dataGetTalkAppLinkToken')]
 	public function testGetTalkAppLinkToken(string $reference, ?array $expected): void {
 		$this->urlGenerator->expects($this->any())
 			->method('getAbsoluteURL')

@@ -38,6 +38,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -120,9 +121,7 @@ class RecordingServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataValidateFileFormat
-	 */
+	#[DataProvider('dataValidateFileFormat')]
 	public function testValidateFileFormat(string $fileName, string $fileRealPath, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
@@ -145,9 +144,7 @@ class RecordingServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetResourceFromFileArray
-	 */
+	#[DataProvider('dataGetResourceFromFileArray')]
 	public function testGetResourceFromFileArray(array $file, string $expected, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);

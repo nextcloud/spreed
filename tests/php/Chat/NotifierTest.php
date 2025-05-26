@@ -24,6 +24,7 @@ use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -164,9 +165,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataNotifyMentionedUsers
-	 */
+	#[DataProvider('dataNotifyMentionedUsers')]
 	public function testNotifyMentionedUsers(string $message, array $alreadyNotifiedUsers, array $notify, array $expectedReturn): void {
 		if (count($notify)) {
 			$this->notificationManager->expects($this->exactly(count($notify)))
@@ -200,9 +199,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataShouldParticipantBeNotified
-	 */
+	#[DataProvider('dataShouldParticipantBeNotified')]
 	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $isImportant, int $expected): void {
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getActorType')
@@ -343,9 +340,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataAddMentionAllToList
-	 */
+	#[DataProvider('dataAddMentionAllToList')]
 	public function testAddMentionAllToList(array $usersToNotify, array $participants, int $mentionPermissions, bool $moderatorPermissions, array $return): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getMentionPermissions')
@@ -386,9 +381,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataNotifyReacted
-	 */
+	#[DataProvider('dataNotifyReacted')]
 	public function testNotifyReacted(int $notify, int $notifyType, int $roomType, string $authorId): void {
 		$this->notificationManager->expects($this->exactly($notify))
 			->method('notify');
@@ -440,9 +433,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetMentionedUsers
-	 */
+	#[DataProvider('dataGetMentionedUsers')]
 	public function testGetMentionedUsers(string $message, array $expectedReturn): void {
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
@@ -460,9 +451,7 @@ class NotifierTest extends TestCase {
 		return $return;
 	}
 
-	/**
-	 * @dataProvider dataGetMentionedUserIds
-	 */
+	#[DataProvider('dataGetMentionedUserIds')]
 	public function testGetMentionedUserIds(string $message, array $expectedReturn): void {
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);

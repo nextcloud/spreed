@@ -22,6 +22,7 @@ use OCP\Collaboration\Resources\ResourceException;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -143,9 +144,7 @@ class ConversationProviderTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCanAccessResourceYes
-	 */
+	#[DataProvider('dataCanAccessResourceYes')]
 	public function testCanAccessResourceYes(int $participantType): void {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->once())

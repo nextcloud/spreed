@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Activity;
 
 use OCA\Talk\Activity\Setting;
 use OCP\Activity\ISetting;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Test\TestCase;
 
 class SettingTest extends TestCase {
@@ -19,35 +20,27 @@ class SettingTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testImplementsInterface(string $settingClass): void {
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertInstanceOf(ISetting::class, $setting);
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testGetIdentifier(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsString($setting->getIdentifier());
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testGetName(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsString($setting->getName());
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testGetPriority(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
@@ -57,36 +50,28 @@ class SettingTest extends TestCase {
 		$this->assertLessThanOrEqual(100, $priority);
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testCanChangeStream(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->canChangeStream());
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testIsDefaultEnabledStream(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->isDefaultEnabledStream());
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testCanChangeMail(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->canChangeMail());
 	}
 
-	/**
-	 * @dataProvider dataSettings
-	 */
+	#[DataProvider('dataSettings')]
 	public function testIsDefaultEnabledMail(string $settingClass): void {
 		/** @var ISetting $setting */
 		$setting = \OCP\Server::get($settingClass);

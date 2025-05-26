@@ -16,6 +16,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -66,9 +67,7 @@ class ProxyCacheMessageServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataDeleteExpiredMessages
-	 */
+	#[DataProvider('dataDeleteExpiredMessages')]
 	public function testDeleteExpiredMessages(?int $messageTime, int $currentTime, bool $expired): void {
 		$room = $this->createMock(Room::class);
 		$room->method('isFederatedConversation')

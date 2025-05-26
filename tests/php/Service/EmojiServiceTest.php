@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Service\EmojiService;
 use OCP\IEmojiHelper;
 use OCP\Server;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Test\TestCase;
 
 /**
@@ -35,9 +36,7 @@ class EmojiServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetFirstCombinedEmoji
-	 */
+	#[DataProvider('dataGetFirstCombinedEmoji')]
 	public function testGetFirstCombinedEmoji(string $roomName, string $avatarEmoji): void {
 		$this->assertSame($avatarEmoji, self::invokePrivate($this->service, 'getFirstCombinedEmoji', [$roomName]));
 	}

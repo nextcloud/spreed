@@ -21,6 +21,7 @@ use OCA\Talk\Service\RoomService;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\IL10N;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -274,9 +275,7 @@ EOD;
 		$this->listener->handle($event);
 	}
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testRoomNotFound(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
@@ -304,9 +303,7 @@ EOD;
 		$this->listener->handle($event);
 	}
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testUserNotParticipant(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
@@ -334,9 +331,7 @@ EOD;
 		$this->listener->handle($event);
 	}
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testUserNotModerator(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
@@ -366,9 +361,7 @@ EOD;
 		$this->listener->handle($event);
 	}
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testRoomNotEventRoom(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
@@ -474,9 +467,7 @@ EOF;
 		$this->listener->handle($event);
 	}
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testHasExistingRooms(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
@@ -512,9 +503,7 @@ EOF;
 	}
 
 
-	/**
-	 * @dataProvider roomUrl
-	 */
+	#[DataProvider('roomUrl')]
 	public function testTime(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);

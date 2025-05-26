@@ -15,6 +15,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\IConfig;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -45,9 +46,7 @@ class RestrictStartingCallsTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCheckStartCallPermissions
-	 */
+	#[DataProvider('dataCheckStartCallPermissions')]
 	public function testCheckStartCallPermissions(int $roomType, string $roomObjectType, bool $canStart, bool $hasParticipants, bool $throws): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getType')

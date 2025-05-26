@@ -18,6 +18,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -63,9 +64,7 @@ class AvatarServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetAvatarVersion
-	 */
+	#[DataProvider('dataGetAvatarVersion')]
 	public function testGetAvatarVersion(string $avatar, string $expected): void {
 		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
