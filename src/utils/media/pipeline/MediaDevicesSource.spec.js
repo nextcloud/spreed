@@ -639,6 +639,7 @@ describe('MediaDevicesSource', () => {
 			try {
 				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
+				// expected Error: Audio and/or video is required
 			}
 
 			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio', 'audio-device')
@@ -661,6 +662,7 @@ describe('MediaDevicesSource', () => {
 			try {
 				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
+				// expected Error: Audio and/or video is required
 			}
 
 			jest.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
@@ -684,6 +686,7 @@ describe('MediaDevicesSource', () => {
 			try {
 				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
+				// expected Error: Audio and/or video is required
 			}
 
 			mediaDevicesSource.setAudioAllowed(false)
@@ -928,6 +931,7 @@ describe('MediaDevicesSource', () => {
 			try {
 				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
+				// expected Error: Audio and/or video is required
 			}
 
 			mediaDevicesSource.stop()
