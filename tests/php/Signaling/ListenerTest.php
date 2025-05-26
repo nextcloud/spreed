@@ -27,6 +27,7 @@ use OCA\Talk\Signaling\Messages;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -166,9 +167,7 @@ class ListenerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataRoomLobbyModified
-	 */
+	#[DataProvider('dataRoomLobbyModified')]
 	public function testRoomLobbyModified(int $newValue, int $oldValue, ?\DateTime $lobbyTimer, bool $timerReached): void {
 		$room = $this->createMock(Room::class);
 

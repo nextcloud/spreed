@@ -24,6 +24,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -126,9 +127,7 @@ class InvitationTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataParse
-	 */
+	#[DataProvider('dataParse')]
 	public function testParse(string $lang, bool $roomExists, array $params, array $expectedParams): void {
 		$provider = $this->getProvider(['setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
 

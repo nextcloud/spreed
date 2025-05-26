@@ -16,7 +16,6 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -100,8 +99,8 @@ class CheckHostedSignalingServerTest extends TestCase {
 		$this->config->expects($this->exactly(count($expectedCalls)))
 			->method('setAppValue')
 			->willReturnCallback(function () use ($expectedCalls, &$i): void {
-				Assert::assertArrayHasKey($i, $expectedCalls);
-				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$this->assertArrayHasKey($i, $expectedCalls);
+				$this->assertSame($expectedCalls[$i], func_get_args());
 				$i++;
 			});
 

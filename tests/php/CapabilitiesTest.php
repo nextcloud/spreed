@@ -26,6 +26,7 @@ use OCP\TaskProcessing\TaskTypes\TextToTextFormalization;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
 use OCP\Translation\ITranslationManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -214,9 +215,7 @@ class CapabilitiesTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetCapabilitiesUserAllowed
-	 */
+	#[DataProvider('dataGetCapabilitiesUserAllowed')]
 	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
 		$capabilities = $this->getCapabilities();
 
@@ -452,9 +451,7 @@ class CapabilitiesTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataTestConfigRecording
-	 */
+	#[DataProvider('dataTestConfigRecording')]
 	public function testConfigRecording(bool $enabled): void {
 		$capabilities = $this->getCapabilities();
 

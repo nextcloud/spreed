@@ -20,6 +20,7 @@ use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IShare;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -212,9 +213,7 @@ class RoomPluginTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSearch
-	 */
+	#[DataProvider('dataSearch')]
 	public function testSearch(
 		string $searchTerm,
 		int $limit,

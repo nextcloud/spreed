@@ -25,6 +25,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -200,9 +201,7 @@ class UserMentionTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataGetRichMessageWithMentionsFullyIncludedInOtherMentions
-	 */
+	#[DataProvider('dataGetRichMessageWithMentionsFullyIncludedInOtherMentions')]
 	public function testGetRichMessageWithMentionsFullyIncludedInOtherMentions(string $baseId, string $longerId, bool $quoted): void {
 		$mentions = [
 			['type' => 'user', 'id' => $baseId],
