@@ -16,6 +16,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\Config\IUserMountCache;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -77,9 +78,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataDeleteIfFileIsRemoved
-	 */
+	#[DataProvider('dataDeleteIfFileIsRemoved')]
 	public function testDeleteIfFileIsRemoved(string $objectType, array $fileList, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
@@ -113,9 +112,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataDeleteIfIsEmpty
-	 */
+	#[DataProvider('dataDeleteIfIsEmpty')]
 	public function testDeleteIfIsEmpty(string $objectType, int $actorsCount, int $inviteCount, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
@@ -144,9 +141,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	/**
-	 * @dataProvider dataCallback
-	 */
+	#[DataProvider('dataCallback')]
 	public function testCallback(int $roomType, string $objectType, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 		$room = $this->createMock(Room::class);

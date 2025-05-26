@@ -18,6 +18,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -73,9 +74,7 @@ class BreakoutRoomServiceTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataParseAttendeeMap
-	 */
+	#[DataProvider('dataParseAttendeeMap')]
 	public function testParseAttendeeMap(string $json, int $max, ?array $expected, bool $throws): void {
 		if ($throws) {
 			$this->expectException(\InvalidArgumentException::class);

@@ -23,6 +23,7 @@ use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -198,9 +199,7 @@ class SearchPluginTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSearchGuests
-	 */
+	#[DataProvider('dataSearchGuests')]
 	public function testSearchGuests(string $search, array $guests, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 		$result->expects($this->once())
@@ -245,9 +244,7 @@ class SearchPluginTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateResult
-	 */
+	#[DataProvider('dataCreateResult')]
 	public function testCreateResult(string $type, string $uid, string $name, ?string $managerName, array $expected): void {
 		if ($managerName !== null) {
 			$this->userManager->expects($this->any())
@@ -273,9 +270,7 @@ class SearchPluginTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCreateGuestResult
-	 */
+	#[DataProvider('dataCreateGuestResult')]
 	public function testCreateGuestResult(string $actorId, string $name, array $expected): void {
 		$plugin = $this->getPlugin();
 		$this->assertEquals($expected, self::invokePrivate($plugin, 'createGuestResult', [$actorId, $name]));
@@ -294,9 +289,7 @@ class SearchPluginTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataSearchGroups
-	 */
+	#[DataProvider('dataSearchGroups')]
 	public function testSearchGroups(string $search, array $groups, bool $isGroup, int $totalMatches, int $totalExactMatches): void {
 		$plugin = $this->getPlugin(['createGroupResult']);
 		$plugin->expects($this->any())
