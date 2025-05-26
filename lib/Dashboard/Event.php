@@ -16,7 +16,7 @@ use OCA\Talk\ResponseDefinitions;
  * @psalm-import-type TalkDashboardEventAttachment from ResponseDefinitions
  */
 class Event implements \JsonSerializable {
-	/** @var list<TalkDashboardEventCalendar> */
+	/** @var non-empty-list<TalkDashboardEventCalendar> */
 	protected array $calendars = [];
 	protected string $eventName = '';
 	protected string $eventLink = '';
@@ -28,7 +28,7 @@ class Event implements \JsonSerializable {
 	protected string $roomDisplayName = '';
 	protected int $roomType = 0;
 	protected ?string $eventDescription = null;
-	/** @var list<TalkDashboardEventAttachment> */
+	/** @var array<string, TalkDashboardEventAttachment> */
 	protected array $eventAttachments = [];
 	protected ?int $roomActiveSince = null;
 	protected ?int $accepted = null;
@@ -40,7 +40,7 @@ class Event implements \JsonSerializable {
 	}
 
 	/**
-	 * @return list<TalkDashboardEventCalendar>
+	 * @return non-empty-list<TalkDashboardEventCalendar>
 	 */
 	public function getCalendars(): array {
 		return $this->calendars;
@@ -63,7 +63,7 @@ class Event implements \JsonSerializable {
 	}
 
 	/**
-	 * @return list<TalkDashboardEventAttachment>
+	 * @return array<string, TalkDashboardEventAttachment>
 	 */
 	public function getEventAttachments(): array {
 		return $this->eventAttachments;
@@ -186,11 +186,11 @@ class Event implements \JsonSerializable {
 
 			$this->eventAttachments[$attachment[0]] = [
 				'calendars' => [$calendarName],
-				'fmttype' => $params['FMTTYPE']?->getValue(),
-				'filename' => $params['FILENAME']?->getValue(),
-				'fileid' => $params['X-NC-FILE-ID']?->getValue(),
-				'preview' => $params['X-NC-HAS-PREVIEW']?->getValue(),
-				'previewLink' => (bool)$params['X-NC-HAS-PREVIEW']?->getValue() ? $attachment[0] : null,
+				'fmttype' => $params['FMTTYPE']?->getValue() ?? '',
+				'filename' => $params['FILENAME']?->getValue() ?? '',
+				'fileid' => $params['X-NC-FILE-ID']->getValue(),
+				'preview' => $params['X-NC-HAS-PREVIEW']?->getValue() ?? false,
+				'previewLink' => $params['X-NC-HAS-PREVIEW']?->getValue() ? $attachment[0] : null,
 			];
 		}
 	}
