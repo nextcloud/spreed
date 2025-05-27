@@ -254,7 +254,7 @@ export default {
 		},
 
 		isChatBeginningReached() {
-			return this.stopFetchingOldMessages || (this.messagesList?.[0]?.messageType === 'system'
+			return this.stopFetchingOldMessages || (this.messagesList?.[0]?.messageType === MESSAGE.TYPE.SYSTEM
 				&& ['conversation_created', 'history_cleared'].includes(this.messagesList[0].systemMessage))
 		},
 	},

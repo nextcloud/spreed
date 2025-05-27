@@ -11,6 +11,7 @@ import {
 	ATTENDEE,
 	CALL,
 	CONVERSATION,
+	MESSAGE,
 	PARTICIPANT,
 	WEBINAR,
 } from '../constants.ts'
@@ -846,7 +847,7 @@ const actions = {
 			// Inaccurate but best effort from here on:
 			expirationTimestamp: 0,
 			isReplyable: true,
-			messageType: 'comment',
+			messageType: MESSAGE.TYPE.COMMENT,
 			reactions: {},
 			referenceId: '',
 			systemMessage: '',
@@ -915,7 +916,7 @@ const actions = {
 			message: notification.subjectRich,
 			messageParameters: notification.subjectRichParameters,
 			timestamp: activeSince,
-			messageType: 'system',
+			messageType: MESSAGE.TYPE.SYSTEM,
 			systemMessage: 'call_started',
 			expirationTimestamp: 0,
 			isReplyable: false,

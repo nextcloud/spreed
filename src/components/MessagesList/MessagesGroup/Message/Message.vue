@@ -119,7 +119,7 @@ import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
-import { CONVERSATION, MENTION, PARTICIPANT } from '../../../../constants.ts'
+import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
@@ -263,7 +263,7 @@ export default {
 		},
 
 		isDeletedMessage() {
-			return this.message.messageType === 'comment_deleted'
+			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
 		},
 
 		conversation() {
@@ -371,8 +371,8 @@ export default {
 		canReact() {
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-				&& this.message.messageType !== 'command'
-				&& this.message.messageType !== 'comment_deleted'
+				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
+				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},
 	},
 

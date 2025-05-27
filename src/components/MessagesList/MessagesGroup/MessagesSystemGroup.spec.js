@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 import MessagesSystemGroup from './MessagesSystemGroup.vue'
-import { ATTENDEE } from '../../../constants.ts'
+import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 
 describe('MessagesSystemGroup.vue', () => {
@@ -38,7 +38,7 @@ describe('MessagesSystemGroup.vue', () => {
 			actorDisplayName: 'actor one',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			message: 'Actor left the call',
-			messageType: 'system',
+			messageType: MESSAGE.TYPE.SYSTEM,
 			messageParameters: {
 				actor: {
 					id: 'actor-1',
@@ -56,7 +56,7 @@ describe('MessagesSystemGroup.vue', () => {
 			actorDisplayName: 'actor one',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			message: 'Actor joined the call',
-			messageType: 'system',
+			messageType: MESSAGE.TYPE.SYSTEM,
 			messageParameters: {
 				actor: {
 					id: 'actor-1',
@@ -126,7 +126,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor one',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Actor joined the call',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-1',
@@ -144,7 +144,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor two',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Actor joined the call',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-2',
@@ -162,7 +162,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor three',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Actor joined the call',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-3',
@@ -313,7 +313,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor one',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'actor-1 removed {user}',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-1',
@@ -336,7 +336,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor one',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'actor-1 removed {user}',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-1',
@@ -359,7 +359,7 @@ describe('MessagesSystemGroup.vue', () => {
 				actorDisplayName: 'actor three',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'actor-3 removed {user}',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				messageParameters: {
 					actor: {
 						id: 'actor-3',

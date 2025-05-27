@@ -11,7 +11,7 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
@@ -68,7 +68,7 @@ describe('MessageButtonsBar.vue', () => {
 				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
 				token: TOKEN,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 			},
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,

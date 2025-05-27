@@ -10,7 +10,7 @@ import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 import Vue from 'vue'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
-import { SHARED_ITEM } from '../constants.ts'
+import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.ts'
 import {
@@ -256,7 +256,7 @@ const actions = {
 				index,
 				file,
 				localUrl,
-				messageType: isVoiceMessage ? 'voice-message' : 'comment',
+				messageType: isVoiceMessage ? MESSAGE.TYPE.VOICE_MESSAGE : MESSAGE.TYPE.COMMENT,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
 			context.commit('addFileToBeUploaded', { file, temporaryMessage, localUrl, token })
@@ -450,7 +450,7 @@ const actions = {
 			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
 
 			const talkMetaData = JSON.stringify(Object.assign(
-				messageType !== 'comment' ? { messageType } : {},
+				messageType !== MESSAGE.TYPE.COMMENT ? { messageType } : {},
 				caption && index === lastIndex ? { caption } : {},
 				options?.silent ? { silent: options.silent } : {},
 				parent ? { replyTo: parent.id } : {},
