@@ -603,7 +603,7 @@ const actions = {
 
 		context.commit('addMessage', { token, message })
 
-		if (message.messageParameters && (message.messageType === 'comment' || message.messageType === 'voice-message')) {
+		if (message.messageParameters && ['comment', 'voice-message', 'record-audio', 'record-video'].includes(message.messageType)) {
 			if (message.messageParameters?.object || message.messageParameters?.file) {
 				// Handle voice messages, shares with single file, polls, deck cards, e.t.c
 				sharedItemsStore.addSharedItemFromMessage(token, message)
