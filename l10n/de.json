@@ -1823,7 +1823,7 @@
     "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Diese Konversation wird für alle seit {expirationDurationFormatted} Inaktiven automatisch gelöscht.",
     "Are you sure you want to delete this conversation?" : "Soll diese Unterhaltung wirklich gelöscht werden?",
     "Delete now" : "Jetzt löschen",
-    "Keep" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Keep" : "Behalten",
     "Open dialpad" : "Wählfeld öffnen",
     "Select a region" : "Eine Region auswählen",
     "Submit" : "Übermitteln",
