@@ -80,7 +80,7 @@ export function useMessageInfo(message = ref({})) {
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
 	const isDeleteable = computed(() => (hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
-		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
+		&& ['comment', 'voice-message', 'record-audio', 'record-video'].includes(message.value.messageType)
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)
 
