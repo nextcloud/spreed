@@ -12,6 +12,8 @@ use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -20,6 +22,7 @@ use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IL10N;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 use Sabre\VObject\ParseException;
 use Sabre\VObject\Property\ICalendar\Date;
@@ -36,6 +39,7 @@ class CalDavEventListener implements IEventListener {
 		private TimezoneService $timezoneService,
 		private ParticipantService $participantService,
 		private IL10N $l10n,
+		private IUserManager $userManager,
 	) {
 
 	}
@@ -52,8 +56,8 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if ($principaluri === 'principals/system/system') {
-			$this->logger->debug('System calendar, skipping for calendar event integration');
+		if (!str_starts_with($principaluri, 'principals/users/')) {
+			$this->logger->debug('Calendar not a user calendar, skipping for calendar event integration');
 			return;
 		}
 
@@ -104,6 +108,12 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
+		// get room type and if it is not Room Object Event, return
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_EVENT) {
+			$this->logger->debug("Room $roomToken not an event room for calendar event integration");
+			return;
+		}
+
 		try {
 			$participant = $this->participantService->getParticipant($room, $userId, false);
 		} catch (ParticipantNotFoundException) {
@@ -111,16 +121,13 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if (!$participant->hasModeratorPermissions()) {
+		if ($participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
 			$this->logger->debug('Participant ' . $userId . ' does not have moderator permissions for calendar event integration');
 			return;
 		}
 
-		// get room type and if it is not Room Object Event, return
-		if ($room->getObjectType() !== Room::OBJECT_TYPE_EVENT) {
-			$this->logger->debug("Room $roomToken not an event room for calendar event integration");
-			return;
-		}
+		$rrule = $vevent->RRULE;
+		$recurrenceId = $vevent->{'RECURRENCE-ID'}?->getValue();
 
 		$name = $vevent->SUMMARY?->getValue();
 		if ($name !== null) {
@@ -132,8 +139,6 @@ class CalDavEventListener implements IEventListener {
 			$description = strlen($description) > 1999 ? substr($description, 0, 1999) . "\u{2026}" : $description;
 		}
 
-		$rrule = $vevent->RRULE;
-		$recurrenceId = $vevent->{'RECURRENCE-ID'}?->getValue();
 		// We don't handle events with RRULEs
 		// And you cannot create an event room for a recurrence exception
 		if (!empty($rrule) || !empty($recurrenceId)) {
@@ -189,5 +194,32 @@ class CalDavEventListener implements IEventListener {
 
 		$objectId = $start . '#' . $end;
 		$this->roomService->setObject($room, Room::OBJECT_TYPE_EVENT, $objectId);
+
+		if ($vevent->{'ATTENDEE'} === null || !$event instanceof CalendarObjectUpdatedEvent) {
+			return;
+		}
+
+		$invitedUserIds = [];
+		foreach ($vevent->ATTENDEE as $a) {
+			$users = $this->userManager->getByEmail(substr($a->getValue(), 7));
+			if (!empty($users)) {
+				$invitedUserIds[] = $users[0]->getUID();
+			}
+		}
+
+		if (empty($invitedUserIds)) {
+			return;
+		}
+
+		// Add the current user
+		$invitedUserIds[] = $userId;
+		// Remove all participants that are no longer in the invitation
+		$parts = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_USERS);
+		/** @var Participant $part */
+		foreach ($parts as $part) {
+			if (!in_array($part->getAttendee()->getActorId(), $invitedUserIds)) {
+				$this->participantService->removeAttendee($room, $part, '');
+			}
+		}
 	}
 }
