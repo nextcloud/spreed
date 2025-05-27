@@ -10,7 +10,7 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { toRef } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
@@ -126,7 +126,7 @@ export function useConversationInfo({
 			// Check if there is a message to display
 			const store = useStore()
 			const hasHumanMessage = item.value.unreadMessages !== 0 || store.getters.messagesList(item.value.token).some((message: ChatMessage) => {
-				return message.systemMessage === '' && message.messageType !== 'comment_deleted'
+				return message.systemMessage === '' && message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 			})
 
 			if (!hasHumanMessage && startTime - Date.now() < ONE_DAY_IN_MS) {

@@ -299,7 +299,7 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
@@ -476,11 +476,11 @@ export default {
 		},
 
 		isDeletedMessage() {
-			return this.message.messageType === 'comment_deleted'
+			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
 		},
 
 		isPollMessage() {
-			return this.message.messageType === 'comment'
+			return this.message.messageType === MESSAGE.TYPE.COMMENT
 				&& this.message.messageParameters?.object?.type === 'talk-poll'
 		},
 

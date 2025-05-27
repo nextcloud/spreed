@@ -160,6 +160,17 @@ export const ATTENDEE = {
 export const MESSAGE = {
 	CHAT_BEGIN_ID: -2,
 	CHAT_MIGRATION_ID: -1,
+
+	TYPE: {
+		COMMENT: 'comment',
+		SYSTEM: 'system',
+		OBJECT_SHARED: 'object_shared',
+		COMMAND: 'command',
+		COMMENT_DELETED: 'comment_deleted',
+		VOICE_MESSAGE: 'voice-message',
+		RECORD_AUDIO: 'record-audio',
+		RECORD_VIDEO: 'record-video',
+	},
 } as const
 
 export const PARTICIPANT = {

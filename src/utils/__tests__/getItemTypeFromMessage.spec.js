@@ -2,24 +2,24 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { SHARED_ITEM } from '../../constants.ts'
+import { MESSAGE, SHARED_ITEM } from '../../constants.ts'
 import { getItemTypeFromMessage } from '../getItemTypeFromMessage.ts'
 
 describe('getItemTypeFromMessage', () => {
 	it('should return the correct item type for a messages', () => {
 		const messages = {
-			1: { messageType: 'comment', messageParameters: { object: { type: 'geo-location' } } },
-			2: { messageType: 'comment', messageParameters: { object: { type: 'deck-card' } } },
-			3: { messageType: 'comment', messageParameters: { object: { type: 'talk-poll' } } },
-			4: { messageType: 'comment', messageParameters: { object: { type: 'some-type' } } },
-			5: { messageType: 'record-audio', messageParameters: { file: { mimetype: 'audio/mp3' } } },
-			6: { messageType: 'record-video', messageParameters: { file: { mimetype: 'video/mp4' } } },
-			7: { messageType: 'voice-message', messageParameters: { file: { mimetype: 'audio/mp3' } } },
-			8: { messageType: 'comment', messageParameters: { file: { mimetype: 'audio/mp3' } } },
-			9: { messageType: 'comment', messageParameters: { file: { mimetype: 'image/jpg' } } },
-			10: { messageType: 'comment', messageParameters: { file: { mimetype: 'video/mp4' } } },
-			11: { messageType: 'comment', messageParameters: { file: { mimetype: 'text/markdown' } } },
-			12: { messageType: 'comment', message: 'simple message' },
+			1: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'geo-location' } } },
+			2: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'deck-card' } } },
+			3: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'talk-poll' } } },
+			4: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'some-type' } } },
+			5: { messageType: MESSAGE.TYPE.RECORD_AUDIO, messageParameters: { file: { mimetype: 'audio/mp3' } } },
+			6: { messageType: MESSAGE.TYPE.RECORD_VIDEO, messageParameters: { file: { mimetype: 'video/mp4' } } },
+			7: { messageType: MESSAGE.TYPE.VOICE_MESSAGE, messageParameters: { file: { mimetype: 'audio/mp3' } } },
+			8: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { file: { mimetype: 'audio/mp3' } } },
+			9: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { file: { mimetype: 'image/jpg' } } },
+			10: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { file: { mimetype: 'video/mp4' } } },
+			11: { messageType: MESSAGE.TYPE.COMMENT, messageParameters: { file: { mimetype: 'text/markdown' } } },
+			12: { messageType: MESSAGE.TYPE.COMMENT, message: 'simple message' },
 		}
 
 		const outputTypes = {

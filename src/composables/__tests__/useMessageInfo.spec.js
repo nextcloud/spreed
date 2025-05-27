@@ -4,7 +4,7 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
-import { ATTENDEE, CONVERSATION } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.js'
@@ -44,7 +44,7 @@ describe('message actions', () => {
 			timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
 			token: TOKEN,
 			systemMessage: '',
-			messageType: 'comment',
+			messageType: MESSAGE.TYPE.COMMENT,
 		})
 		conversationProps = {
 			token: TOKEN,
@@ -377,7 +377,7 @@ describe('message actions', () => {
 				timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
 				token: TOKEN,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 			})
 		})
 		test('return last editor when message is edited', () => {
