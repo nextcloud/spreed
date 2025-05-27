@@ -4,7 +4,7 @@
  */
 import flushPromises from 'flush-promises'
 import { createPinia, setActivePinia } from 'pinia'
-import { ATTENDEE } from '../../constants.ts'
+import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import {
 	createPoll,
 	createPollDraft,
@@ -79,7 +79,7 @@ describe('pollsStore', () => {
 		actorId: 'user',
 		actorDisplayName: 'User',
 		message: '{object}',
-		messageType: 'comment',
+		messageType: MESSAGE.TYPE.COMMENT,
 		messageParameters: {
 			actor: {
 				type: 'user',

@@ -7,6 +7,7 @@ import type { ChatMessage, File } from '../types/index.ts'
 
 import Hex from 'crypto-js/enc-hex.js'
 import SHA256 from 'crypto-js/sha256.js'
+import { MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
@@ -20,7 +21,7 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	index: number
 	file: File & { newName?: string }
 	localUrl: string
-	messageType?: 'voice-message' | 'comment'
+	messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
 	parent: Omit<ChatMessage, 'parent'>
 }
 
@@ -48,7 +49,7 @@ export function prepareTemporaryMessage({
 	index,
 	file,
 	localUrl,
-	messageType = 'comment',
+	messageType = MESSAGE.TYPE.COMMENT,
 	actorId,
 	actorType,
 	actorDisplayName,

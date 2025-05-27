@@ -20,7 +20,7 @@ import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 
@@ -89,7 +89,7 @@ describe('Message.vue', () => {
 				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
 				token: TOKEN,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 				reactions: [],
 			},
 		}
@@ -240,7 +240,7 @@ describe('Message.vue', () => {
 		})
 
 		test('renders deleted system message', () => {
-			messageProps.message.systemMessage = 'comment_deleted'
+			messageProps.message.systemMessage = 'message_deleted'
 			messageProps.message.message = 'message deleted'
 			conversationProps.hasCall = true
 
@@ -605,7 +605,7 @@ describe('Message.vue', () => {
 		})
 
 		test('does not render actions for deleted messages', async () => {
-			messageProps.message.messageType = 'comment_deleted'
+			messageProps.message.messageType = MESSAGE.TYPE.COMMENT_DELETED
 
 			const wrapper = shallowMount(Message, {
 				localVue,
