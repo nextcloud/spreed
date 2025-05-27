@@ -21,6 +21,7 @@ use OCA\Talk\Service\RoomService;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\IL10N;
+use OCP\IUserManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -63,6 +64,7 @@ class CalDavEventListenerTest extends TestCase {
 		$this->userId = '123';
 		$this->userUri = 'principals/users/' . $this->userId;
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 		$this->calData = <<<EOD
 BEGIN:VCALENDAR
 PRODID:-//IDN nextcloud.com//Calendar app 5.2.0-dev.1//EN
@@ -107,6 +109,7 @@ EOD;
 			$this->timezoneService,
 			$this->participantService,
 			$this->l10n,
+			$this->userManager,
 		);
 	}
 
