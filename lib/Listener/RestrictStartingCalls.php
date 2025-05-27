@@ -54,6 +54,15 @@ class RestrictStartingCalls implements IEventListener {
 			return;
 		}
 
+		if (in_array($room->getObjectType(), [
+			Room::OBJECT_TYPE_PHONE_LEGACY,
+			Room::OBJECT_TYPE_PHONE_TEMPORARY,
+			Room::OBJECT_TYPE_PHONE_PERSIST,
+		], true) && $room->getObjectId() === Room::OBJECT_ID_PHONE_INCOMING) {
+			// Always allow guests to use the direct-dialin
+			return;
+		}
+
 		if (!$event->getParticipant()->canStartCall($this->serverConfig)
 			&& !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
