@@ -148,7 +148,7 @@ import ConversationActionsShortcut from '../../../../UIShared/ConversationAction
 import Poll from './Poll.vue'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION } from '../../../../../constants.ts'
+import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
@@ -256,7 +256,7 @@ export default {
 		},
 
 		isDeletedMessage() {
-			return this.message.messageType === 'comment_deleted'
+			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
 		},
 
 		isNewPollMessage() {

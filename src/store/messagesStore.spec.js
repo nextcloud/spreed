@@ -9,7 +9,9 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 import {
-	ATTENDEE, CHAT,
+	ATTENDEE,
+	CHAT,
+	MESSAGE,
 } from '../constants.ts'
 import {
 	fetchNoteToSelfConversation,
@@ -177,7 +179,7 @@ describe('messagesStore', () => {
 				id: 2,
 				token: TOKEN,
 				parent: parentMessage,
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 			}
 
 			store.dispatch('processMessage', { token: TOKEN, message: message1 })
@@ -264,7 +266,7 @@ describe('messagesStore', () => {
 				id: 4,
 				token: TOKEN,
 				message: '👍',
-				messageType: 'system',
+				messageType: MESSAGE.TYPE.SYSTEM,
 				systemMessage: 'reaction',
 				parent: {
 					id: 2,
@@ -389,7 +391,7 @@ describe('messagesStore', () => {
 					id: 10,
 					token: TOKEN,
 					message: 'parent message deleted',
-					messageType: 'comment_deleted',
+					messageType: MESSAGE.TYPE.COMMENT_DELETED,
 				},
 			}
 			const response = generateOCSResponse({ payload })
@@ -404,7 +406,7 @@ describe('messagesStore', () => {
 				id: 10,
 				token: TOKEN,
 				message: 'parent message deleted',
-				messageType: 'comment_deleted',
+				messageType: MESSAGE.TYPE.COMMENT_DELETED,
 			}])
 		})
 
@@ -421,7 +423,7 @@ describe('messagesStore', () => {
 				id: 10,
 				token: TOKEN,
 				message: 'parent message deleted',
-				messageType: 'comment_deleted',
+				messageType: MESSAGE.TYPE.COMMENT_DELETED,
 			}
 			const payload = {
 				id: 12,
@@ -454,7 +456,7 @@ describe('messagesStore', () => {
 					id: 9,
 					token: TOKEN,
 					message: 'parent message deleted',
-					messageType: 'comment_deleted',
+					messageType: MESSAGE.TYPE.COMMENT_DELETED,
 				},
 			}
 			const response = generateOCSResponse({ payload })
@@ -491,7 +493,7 @@ describe('messagesStore', () => {
 				id: 10,
 				token: TOKEN,
 				message: 'placeholder-message',
-				messageType: 'comment_deleted',
+				messageType: MESSAGE.TYPE.COMMENT_DELETED,
 			}])
 		})
 	})
@@ -519,7 +521,7 @@ describe('messagesStore', () => {
 					id: 10,
 					token: TOKEN,
 					message: 'hello edited',
-					messageType: 'comment',
+					messageType: MESSAGE.TYPE.COMMENT,
 				},
 			}
 			const response = generateOCSResponse({ payload })
@@ -533,7 +535,7 @@ describe('messagesStore', () => {
 				id: 10,
 				token: TOKEN,
 				message: 'hello edited',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 			}])
 		})
 
@@ -549,7 +551,7 @@ describe('messagesStore', () => {
 				id: 10,
 				token: TOKEN,
 				message: 'hello edited',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 			}
 			const payload = {
 				id: 12,
@@ -604,7 +606,7 @@ describe('messagesStore', () => {
 				id: 'temp-1577908800000',
 				timestamp: 0,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 				message: 'original',
 			}
 
@@ -621,7 +623,7 @@ describe('messagesStore', () => {
 				id: 'temp-1577908800000',
 				timestamp: 0,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 				message: 'original',
 			}
 
@@ -644,7 +646,7 @@ describe('messagesStore', () => {
 				id: 'temp-1577908800000',
 				timestamp: 0,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 				message: 'original',
 			}
 
@@ -660,7 +662,7 @@ describe('messagesStore', () => {
 				id: 'temp-1577908800000',
 				timestamp: 0,
 				systemMessage: '',
-				messageType: 'comment',
+				messageType: MESSAGE.TYPE.COMMENT,
 				message: 'original',
 				referenceId: 'reference-1',
 			}

@@ -326,7 +326,7 @@ const mutations = {
 		if (!state.messages[token][id]) {
 			return
 		}
-		Vue.set(state.messages[token][id], 'messageType', 'comment_deleted')
+		Vue.set(state.messages[token][id], 'messageType', MESSAGE.TYPE.COMMENT_DELETED)
 		Vue.set(state.messages[token][id], 'message', placeholder)
 	},
 	/**
@@ -636,7 +636,7 @@ const actions = {
 
 		context.commit('addMessage', { token, message })
 
-		if (message.messageParameters && (message.messageType === 'comment' || message.messageType === 'voice-message')) {
+		if (message.messageParameters && [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_AUDIO, MESSAGE.TYPE.RECORD_VIDEO].includes(message.messageType)) {
 			if (message.messageParameters?.object || message.messageParameters?.file) {
 				// Handle voice messages, shares with single file, polls, deck cards, e.t.c
 				sharedItemsStore.addSharedItemFromMessage(token, message)

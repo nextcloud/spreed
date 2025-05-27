@@ -4,7 +4,7 @@ import type { ChatMessage } from '../types/index.ts'
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { SHARED_ITEM } from '../constants.ts'
+import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 
 export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	if (message.messageParameters?.object) {
@@ -20,9 +20,9 @@ export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	} else if (message.messageParameters?.file) {
 		const messageType = message.messageType
 		const mimetype = message.messageParameters.file.mimetype || ''
-		if (messageType === 'record-audio' || messageType === 'record-video') {
+		if (messageType === MESSAGE.TYPE.RECORD_AUDIO || messageType === MESSAGE.TYPE.RECORD_VIDEO) {
 			return SHARED_ITEM.TYPES.RECORDING
-		} else if (messageType === 'voice-message') {
+		} else if (messageType === MESSAGE.TYPE.VOICE_MESSAGE) {
 			return SHARED_ITEM.TYPES.VOICE
 		} else if (mimetype.startsWith('audio/')) {
 			return SHARED_ITEM.TYPES.AUDIO

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { ATTENDEE } from '../../constants.ts'
+import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import { prepareTemporaryMessage } from '../prepareTemporaryMessage.ts'
 
 describe('prepareTemporaryMessage', () => {
@@ -33,7 +33,7 @@ describe('prepareTemporaryMessage', () => {
 		markdown: true,
 		message: 'message text',
 		messageParameters: {},
-		messageType: 'comment',
+		messageType: MESSAGE.TYPE.COMMENT,
 		parent: undefined,
 		reactions: {},
 		referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
@@ -86,7 +86,7 @@ describe('prepareTemporaryMessage', () => {
 	const audioFilePayload = {
 		...defaultPayload,
 		message: '{file}',
-		messageType: 'voice-message',
+		messageType: MESSAGE.TYPE.VOICE_MESSAGE,
 		uploadId: 'upload-id-1',
 		index: 'upload-index-1',
 		file: audioFile,
@@ -96,7 +96,7 @@ describe('prepareTemporaryMessage', () => {
 		...defaultResult,
 		id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
 		message: '{file}',
-		messageType: 'voice-message',
+		messageType: MESSAGE.TYPE.VOICE_MESSAGE,
 		messageParameters: {
 			file: {
 				type: 'file',

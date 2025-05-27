@@ -87,6 +87,7 @@ import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FileP
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import NewMessage from './NewMessage.vue'
 import { useId } from '../../composables/useId.ts'
+import { MESSAGE } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 export default {
@@ -148,7 +149,7 @@ export default {
 			if (!this.firstFile) {
 				return false
 			}
-			return this.firstFile.temporaryMessage.messageType === 'voice-message'
+			return this.firstFile.temporaryMessage.messageType === MESSAGE.TYPE.VOICE_MESSAGE
 		},
 
 		voiceMessageName() {

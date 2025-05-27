@@ -5,7 +5,7 @@
 
 import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
-import { ATTENDEE, CONVERSATION } from '../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { ONE_DAY_IN_MS, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
@@ -80,7 +80,7 @@ export function useMessageInfo(message = ref({})) {
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
 	const isDeleteable = computed(() => (hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
-		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
+		&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_AUDIO, MESSAGE.TYPE.RECORD_VIDEO].includes(message.value.messageType)
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)
 
