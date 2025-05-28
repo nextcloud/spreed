@@ -1240,8 +1240,6 @@ OC.L10N.register(
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha"],
     "_%n person declined_::_%n people declined_" : ["Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine","Dhiúltaigh %n duine"],
-    "With" : "Le",
-    "In" : "Isteach",
     "Join" : "Glac páirt",
     "View conversation" : "Féach ar an gcomhrá",
     "View event on Calendar" : "Féach ar an imeacht ar an bhFéilire",

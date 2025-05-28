@@ -1240,8 +1240,6 @@ OC.L10N.register(
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n osoba přijala","%n lidé přijali","%n lidí přijalo","%n lidé přijaly"],
     "_%n person declined_::_%n people declined_" : ["%n osoba odmítla","%n lidé odmítli","%n lidí odmítlo","%n lidé odmítli"],
-    "With" : "S",
-    "In" : "V",
     "Join" : "Připojit se",
     "View conversation" : "Zobrazit konverzaci",
     "View event on Calendar" : "Zobrazit událost v Kalendáři",

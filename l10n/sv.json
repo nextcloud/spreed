@@ -1238,8 +1238,6 @@
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n person har accepterat","%n personer har accepterat"],
     "_%n person declined_::_%n people declined_" : ["%n person har avböjt","%n personer har avböjt"],
-    "With" : "Med",
-    "In" : "Om",
     "Join" : "Gå med",
     "View conversation" : "Visa konversation",
     "View event on Calendar" : "Visa händelse i kalender",
