@@ -1232,8 +1232,6 @@ OC.L10N.register(
     "Ongoing" : "Траје",
     "_%n person accepted_::_%n people accepted_" : ["%n особа је прихватила","%n особа су прихватиле","%n особа је прихватило"],
     "_%n person declined_::_%n people declined_" : ["%n особа је одбила","%n особа су одбиле","%n особа је одбило"],
-    "With" : "Са",
-    "In" : "У",
     "Join" : "Придружи се",
     "View conversation" : "Прикажи разговор",
     "View event on Calendar" : "Прикажи догађај у Календару",

@@ -498,6 +498,7 @@ OC.L10N.register(
     "Grid view" : "Režģa izkārtojums",
     "Start recording" : "Uzsākt ierakstīšanu",
     "Open Calendar" : "Atvērt kalendāru",
+    "Would you like to delete this conversation?" : "Vai izdzēst šo sarunu?",
     "Keep" : "Paturēt",
     "Select a region" : "Izvēlieties reģionu",
     "Submit" : "Iesniegt",

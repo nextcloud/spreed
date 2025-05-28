@@ -1236,8 +1236,6 @@ OC.L10N.register(
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n pessoa aceitou","%n pessoas aceitaram","%n pessoas aceitaram"],
     "_%n person declined_::_%n people declined_" : ["%n pessoa recusou","%n pessoas recusaram","%n pessoas recusaram"],
-    "With" : "Com",
-    "In" : "Em",
     "Join" : "Entrar",
     "View conversation" : "Exibir conversa",
     "View event on Calendar" : "Exibir evento no Calendário",

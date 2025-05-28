@@ -1238,8 +1238,6 @@
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n 人接受"],
     "_%n person declined_::_%n people declined_" : ["%n 人拒绝"],
-    "With" : "与",
-    "In" : "在",
     "Join" : "加入",
     "View conversation" : "查看对话",
     "View event on Calendar" : "在日历上查看活动",

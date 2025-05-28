@@ -1230,8 +1230,6 @@
     "Ongoing" : "持續進行",
     "_%n person accepted_::_%n people accepted_" : ["已接受 %n 個人"],
     "_%n person declined_::_%n people declined_" : ["已拒絕 %n 個人"],
-    "With" : "與",
-    "In" : "在",
     "Join" : "加入",
     "View conversation" : "檢視對話",
     "View event on Calendar" : "在日曆上檢視活動",
