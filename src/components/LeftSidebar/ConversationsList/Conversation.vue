@@ -169,25 +169,23 @@
 
 					<NcActionButton v-if="supportImportantConversations"
 						type="checkbox"
-						class="conversation__action--with-subline"
-						:name="t('spreed', 'Important conversation')"
+						:description="labelImportantHint"
 						:model-value="item.isImportant"
 						@click="toggleImportant(!item.isImportant)">
 						<template #icon>
 							<IconMessageAlert :size="16" />
 						</template>
-						{{ labelImportantHint }}
+						{{ t('spreed', 'Important conversation') }}
 					</NcActionButton>
 					<NcActionButton v-if="supportSensitiveConversations"
 						type="checkbox"
-						class="conversation__action--with-subline"
-						:name="t('spreed', 'Sensitive conversation')"
+						:description="t('spreed', 'Hide message text')"
 						:model-value="item.isSensitive"
 						@click="toggleSensitive(!item.isSensitive)">
 						<template #icon>
 							<IconShieldLock :size="16" />
 						</template>
-						{{ t('spreed', 'Hide message text') }}
+						{{ t('spreed', 'Sensitive conversation') }}
 					</NcActionButton>
 				</template>
 			</template>
@@ -659,24 +657,6 @@ export default {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-		}
-	}
-
-	// FIXME: migrate to subline once it's ready
-	&__action--with-subline {
-		:deep(.action-button__longtext-wrapper) {
-			align-self: center;
-			padding-block: var(--default-grid-baseline);
-			line-height: 1;
-		}
-		:deep(.action-button__name) {
-			font-weight: 400;
-		}
-		:deep(.action-button__longtext) {
-			padding: 0;
-			color: var(--color-text-maxcontrast);
-			font-size: var(--font-size-small);
-			line-height: var(--default-font-size);
 		}
 	}
 }
