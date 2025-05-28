@@ -1059,8 +1059,6 @@ OC.L10N.register(
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n kasutaja võtis vastu","%n kasutajat võtsid vastu"],
     "_%n person declined_::_%n people declined_" : ["%n kasutaja keeldus","%n kasutajat keeldusid"],
-    "With" : "kasutajaga",
-    "In" : "vestlusgrupis",
     "Join" : "Liitu",
     "View conversation" : "Vaata vestlust",
     "View event on Calendar" : "Vaata sündmust kalendris",
