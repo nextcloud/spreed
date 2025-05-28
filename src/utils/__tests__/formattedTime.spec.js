@@ -8,6 +8,7 @@ import {
 	convertToUnix,
 	formattedTime,
 	futureRelativeTime,
+	getRelativeDay,
 } from '../formattedTime.ts'
 
 const TIME = (61 * 60 + 5) * 1000 // 1 hour, 1 minute, 5 seconds in ms
@@ -69,4 +70,32 @@ describe('futureRelativeTime', () => {
 		const result = futureRelativeTime(timeInFuture)
 		expect(result).toBe('In 1 hour and 15 minutes')
 	})
+})
+describe('getRelativeDay', () => {
+	beforeEach(() => {
+		vi.useFakeTimers().setSystemTime(new Date('2025-01-10T15:00:00Z'))
+	})
+
+	afterEach(() => {
+		vi.useRealTimers()
+	})
+
+	const testCases = [
+		[new Date('2025-01-10T00:00:00Z').valueOf(), 'today', false],
+		[new Date('2025-01-11T10:00:00Z').valueOf(), 'tomorrow', false],
+		[new Date('2025-01-09T10:00:00Z').valueOf(), 'yesterday', false],
+		[new Date('2025-01-08T10:00:00Z').valueOf(), '2 days ago', false],
+		[new Date('2025-01-03T10:00:00Z').valueOf(), '7 days ago', false],
+		[new Date('2025-01-03T10:00:00Z').valueOf(), '1 week ago', true],
+		[new Date('2025-01-02T10:00:00Z').valueOf(), '8 days ago', false],
+		[new Date('2025-01-02T10:00:00Z').valueOf(), '', true],
+	]
+
+	it.each(testCases)(
+		'for given timestamp %s and current time 2025-01-10T15:00:00Z returns relative prefix %s',
+		(date, output, limitToWeek) => {
+			const result = getRelativeDay(date, { limitToWeek })
+			expect(result).toBe(output)
+		},
+	)
 })
