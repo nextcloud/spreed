@@ -201,6 +201,7 @@ class CalDavEventListener implements IEventListener {
 
 		$invitedUserIds = [];
 		foreach ($vevent->ATTENDEE as $a) {
+			// Remove mailto prefix
 			$users = $this->userManager->getByEmail(substr($a->getValue(), 7));
 			if (!empty($users)) {
 				$invitedUserIds[] = $users[0]->getUID();
