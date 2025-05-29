@@ -100,7 +100,12 @@ export const useGroupwareStore = defineStore('groupware', {
 			const location = generateUrl('call/{token}', { token }, { baseURL: getBaseUrl() })
 			try {
 				const response = await getUpcomingEvents(location)
-				Vue.set(this.upcomingEvents, token, response.data.ocs.data.events)
+				const uniqueEvents = response.data.ocs.data.events.filter((event, index, array) => {
+					// Keep only first meeting with the same location and start time
+					return index === array.findIndex((item) => item.start === event.start)
+				})
+
+				Vue.set(this.upcomingEvents, token, uniqueEvents)
 			} catch (error) {
 				console.error(error)
 			}
