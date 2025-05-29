@@ -12,10 +12,13 @@ use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Webinary;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectDeletedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -41,7 +44,7 @@ class CalDavEventListener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if (!$event instanceof CalendarObjectCreatedEvent && !$event instanceof CalendarObjectUpdatedEvent) {
+		if (!$event instanceof CalendarObjectCreatedEvent && !$event instanceof CalendarObjectUpdatedEvent && !$event instanceof CalendarObjectDeletedEvent) {
 			return;
 		}
 
@@ -110,8 +113,8 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if (!$participant->hasModeratorPermissions()) {
-			$this->logger->debug('Participant ' . $userId . ' does not have moderator permissions for calendar event integration');
+		if ($participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+			$this->logger->debug('Participant ' . $userId . ' is not owner for calendar event integration');
 			return;
 		}
 
@@ -159,6 +162,13 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
+		// If the calendar event was deleted, we lock the room
+		if ($event instanceof CalendarObjectDeletedEvent) {
+			$this->roomService->setReadOnly($room, Room::READ_ONLY);
+			return;
+		}
+
+
 		// So we can unset names & descriptions in case the user deleted them
 		$this->roomService->setName($room, $name ?? $this->l10n->t('Talk conversation for event'));
 		$this->roomService->setDescription($room, $description ?? '');
@@ -188,5 +198,6 @@ class CalDavEventListener implements IEventListener {
 
 		$objectId = $start . '#' . $end;
 		$this->roomService->setObject($room, Room::OBJECT_TYPE_EVENT, $objectId);
+		$this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null);
 	}
 }

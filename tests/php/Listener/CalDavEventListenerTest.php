@@ -14,11 +14,14 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Listener\CalDavEventListener;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Webinary;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectDeletedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -36,6 +39,7 @@ class CalDavEventListenerTest extends TestCase {
 	private TimezoneService&MockObject $timezoneService;
 	private ParticipantService&MockObject $participantService;
 	private string $calData;
+	private Participant&MockObject $participant;
 	private string $userId;
 	private string $userUri;
 	private IL10N&MockObject $l10n;
@@ -99,6 +103,11 @@ END:STANDARD
 END:VTIMEZONE
 END:VCALENDAR
 EOD;
+
+		$attendee = new Attendee();
+		$attendee->setParticipantType(Participant::OWNER);
+		$this->participant = $this->createMock(Participant::class);
+		$this->participant->method('getAttendee')->willReturn($attendee);
 
 		$this->listener = new CalDavEventListener(
 			$this->manager,
@@ -332,11 +341,13 @@ EOD;
 	}
 
 	#[DataProvider('roomUrl')]
-	public function testUserNotModerator(string $roomUrl): void {
+	public function testUserNotOwner(string $roomUrl): void {
 		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$attendee = new Attendee();
+		$attendee->setParticipantType(Participant::USER);
 		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(false);
+		$participant->method('getAttendee')->willReturn($attendee);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken');
@@ -344,7 +355,8 @@ EOD;
 			->method('getParticipant')
 			->willReturn($participant);
 		$this->logger->expects(self::once())
-			->method('debug');
+			->method('debug')
+			->with("Participant $this->userId is not owner for calendar event integration");
 		$this->logger->expects(self::never())
 			->method('warning');
 		$this->roomService->expects(self::never())
@@ -367,15 +379,13 @@ EOD;
 		$event = new CalendarObjectUpdatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_PHONE_LEGACY);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->logger->expects(self::once())
 			->method('debug');
 		$this->logger->expects(self::never())
@@ -436,15 +446,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('resetObject')
 			->with($room);
@@ -473,15 +481,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('hasExistingCalendarEvents')
 			->willReturn(true);
@@ -502,6 +508,40 @@ EOF;
 		$this->listener->handle($event);
 	}
 
+	#[DataProvider('roomUrl')]
+	public function testDeletedEvents(string $roomUrl): void {
+		$calData = str_replace('{{{LOCATION}}}', $roomUrl, $this->calData);
+		$event = new CalendarObjectDeletedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
+
+		$this->manager->expects(self::once())
+			->method('getRoomForUserByToken')
+			->willReturn($room);
+		$this->participantService->expects(self::once())
+			->method('getParticipant')
+			->willReturn($this->participant);
+		$this->roomService->expects(self::once())
+			->method('hasExistingCalendarEvents')
+			->willReturn(false);
+		$this->roomService->expects(self::never())
+			->method('resetObject');
+		$this->roomService->expects(self::once())
+			->method('setReadOnly')
+			->with($room, Room::READ_ONLY);
+		$this->roomService->expects(self::never())
+			->method('setLobby');
+		$this->timezoneService->expects(self::never())
+			->method('getUserTimezone');
+		$this->logger->expects(self::never())
+			->method('debug');
+		$this->logger->expects(self::never())
+			->method('warning');
+		$this->timezoneService->expects(self::never())
+			->method('getDefaultTimezone');
+
+		$this->listener->handle($event);
+	}
 
 	#[DataProvider('roomUrl')]
 	public function testTime(string $roomUrl): void {
@@ -509,15 +549,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('hasExistingCalendarEvents')
 			->willReturn(false);
@@ -526,6 +564,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741942800#1741946400');
+		$this->roomService->expects(self::once())
+			->method('setLobby')
+			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::never())
 			->method('getUserTimezone');
 		$this->logger->expects(self::never())
@@ -561,15 +602,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('hasExistingCalendarEvents')
 			->willReturn(false);
@@ -578,6 +617,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
+		$this->roomService->expects(self::once())
+			->method('setLobby')
+			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn('Europe/Vienna');
@@ -614,15 +656,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('hasExistingCalendarEvents')
 			->willReturn(false);
@@ -631,6 +671,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
+		$this->roomService->expects(self::once())
+			->method('setLobby')
+			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);
@@ -668,15 +711,13 @@ EOF;
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
-		$participant = $this->createMock(Participant::class);
-		$participant->method('hasModeratorPermissions')->willReturn(true);
 
 		$this->manager->expects(self::once())
 			->method('getRoomForUserByToken')
 			->willReturn($room);
 		$this->participantService->expects(self::once())
 			->method('getParticipant')
-			->willReturn($participant);
+			->willReturn($this->participant);
 		$this->roomService->expects(self::once())
 			->method('hasExistingCalendarEvents')
 			->willReturn(false);
