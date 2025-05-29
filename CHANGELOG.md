@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.0-rc.4 – 2025-05-29
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(dashboard): Add attachment icon and link to the events on the dashboard
+  [#15238](https://github.com/nextcloud/spreed/issues/15238)
+- fix(meetings): Don't show duplicates for the same event in the upcoming meetings
+  [#15252](https://github.com/nextcloud/spreed/issues/15252)
+- fix(meetings): Lock conversation when meeting is cancelled
+  [#15253](https://github.com/nextcloud/spreed/issues/15253)
+- fix(sip): Allow guests to use direct-dial-in even when starting calls is restricted
+  [#15234](https://github.com/nextcloud/spreed/issues/15234)
+
 ## 21.1.0-rc.3 – 2025-05-22
 ### Added
 - 📲 🙊 Add option to mark a conversation as sensitive or important
