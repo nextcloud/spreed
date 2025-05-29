@@ -474,19 +474,6 @@ function handleHeaderClick() {
 		inset-inline-end: calc(var(--default-grid-baseline) + var(--app-sidebar-close-button-offset));
 		display: flex;
 		gap: var(--default-grid-baseline);
-
-		// Copy opaque styles of close button
-		:deep(.button-vue--icon-only),
-		:deep(.action-item) {
-			opacity: 0.7;
-
-			&:hover,
-			&:focus,
-			&:active,
-			&.action-item--open {
-				opacity: 1;
-			}
-		}
 	}
 
 	&__events {
