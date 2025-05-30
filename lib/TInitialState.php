@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OC\User\NoUserException;
+use OCA\Talk\Settings\UserPreference;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Files\IRootFolder;
@@ -115,7 +116,7 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'play_sounds',
-			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
+			$this->serverConfig->getUserValue($user->getUID(), 'spreed', UserPreference::PLAY_SOUNDS, 'yes') === 'yes'
 		);
 
 		$this->initialState->provideInitialState(
@@ -150,7 +151,7 @@ trait TInitialState {
 					$freeSpace = $folder->getFreeSpace();
 				} catch (NotPermittedException $e) {
 					$attachmentFolder = '/';
-					$this->serverConfig->setUserValue($user->getUID(), 'spreed', 'attachment_folder', '/');
+					$this->serverConfig->setUserValue($user->getUID(), 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
 					$freeSpace = $userFolder->getFreeSpace();
 				}
 			} catch (NoUserException $e) {
