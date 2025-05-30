@@ -70,7 +70,7 @@ class Config {
 	public function getUserReadPrivacy(string $userId): int {
 		return match ((int)$this->config->getUserValue(
 			$userId,
-			'spreed', 'read_status_privacy',
+			'spreed', UserPreference::READ_STATUS_PRIVACY,
 			(string)Participant::PRIVACY_PUBLIC)) {
 			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
 			default => Participant::PRIVACY_PRIVATE,
@@ -83,7 +83,7 @@ class Config {
 	public function getUserTypingPrivacy(string $userId): int {
 		return match ((int)$this->config->getUserValue(
 			$userId,
-			'spreed', 'typing_privacy',
+			'spreed', UserPreference::TYPING_PRIVACY,
 			(string)Participant::PRIVACY_PUBLIC)) {
 			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
 			default => Participant::PRIVACY_PRIVATE,
@@ -233,7 +233,7 @@ class Config {
 		return $this->config->getUserValue(
 			$userId,
 			'spreed',
-			'recording_folder',
+			UserPreference::RECORDING_FOLDER,
 			$this->getAttachmentFolder($userId) . '/Recording'
 		);
 	}
@@ -284,7 +284,7 @@ class Config {
 
 	public function getAttachmentFolder(string $userId): string {
 		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
-		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', $defaultAttachmentFolder);
+		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
 	/**

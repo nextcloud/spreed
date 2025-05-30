@@ -19,6 +19,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
+use OCA\Talk\Settings\UserPreference;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -425,7 +426,7 @@ class RecordingService {
 					'userId' => $owner,
 				]);
 
-				$this->serverConfig->setUserValue($owner, 'spreed', 'attachment_folder', '/');
+				$this->serverConfig->setUserValue($owner, 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
 			}
 		} catch (NotFoundException $e) {
 			/** @var Folder */
