@@ -30,7 +30,7 @@ import LocalTime from '../UIShared/LocalTime.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
@@ -39,7 +39,7 @@ type MutualEvent = {
 	uri: DashboardEvent['eventLink']
 	name: DashboardEvent['eventName']
 	start: string | number
-	href: DashboardEvent['eventLink']
+	href?: DashboardEvent['eventLink']
 	color: string
 }
 
@@ -55,6 +55,8 @@ const emit = defineEmits<{
 	(event: 'update:state', value: SidebarContentState): void
 	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
 }>()
+
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
@@ -156,7 +158,7 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 			uri: event.eventLink,
 			name: event.eventName,
 			start,
-			href: event.eventLink,
+			href: isCalendarEnabled ? event.eventLink : undefined,
 			color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
 		}
 	})
