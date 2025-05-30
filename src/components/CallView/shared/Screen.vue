@@ -186,7 +186,7 @@ export default {
 			// the store either until the connection was made.
 			if (!this.callParticipantModel.attributes.userId && !remoteParticipantName && remoteParticipantName !== undefined) {
 				remoteParticipantName = this.guestNameStore.getGuestName(
-					this.$store.getters.getToken(),
+					this.token,
 					this.remoteSessionHash,
 				)
 			}

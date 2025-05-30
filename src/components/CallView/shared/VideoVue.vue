@@ -355,7 +355,7 @@ export default {
 		},
 
 		peerData() {
-			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.nextcloudSessionId, this.model.attributes.userId)
+			let peerData = this.$store.getters.getPeer(this.token, this.nextcloudSessionId, this.model.attributes.userId)
 			if (!peerData.actorId) {
 				EventBus.emit('refresh-peer-list')
 				peerData = {
@@ -372,7 +372,7 @@ export default {
 			 * This only works for logged-in users. Guests can not load the data
 			 * via the participant list
 			 */
-			return this.$store.getters.findParticipant(this.$store.getters.getToken(), {
+			return this.$store.getters.findParticipant(this.token, {
 				sessionId: this.nextcloudSessionId,
 			}) || {}
 		},
@@ -435,7 +435,7 @@ export default {
 			// the store either until the connection was made.
 			if (!this.model.attributes.userId && !participantName && participantName !== undefined) {
 				participantName = this.guestNameStore.getGuestName(
-					this.$store.getters.getToken(),
+					this.token,
 					this.sessionHash,
 				)
 			}
