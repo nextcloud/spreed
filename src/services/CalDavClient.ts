@@ -9,18 +9,13 @@ import type {
 	DavPrincipal,
 } from '../types/index.ts'
 
-import { getRequestToken } from '@nextcloud/auth'
 import DavClient from '@nextcloud/cdav-library'
 import { generateRemoteUrl } from '@nextcloud/router'
 
 /**
  * Copied from:
  * - https://github.com/nextcloud/calendar/blob/main/src/services/caldavService.js
- * - https://github.com/nextcloud/server/blob/master/core/src/OC/xhr-error.js
- * Modified for usage in Talk and Talk Desktop:
  * - migrated to TypeScript
- * - removed jQuery dependency
- * - dropped Ajax Error processing via OC.registerXHRForErrorProcessing
  */
 const clients: Record<string, DavClient> = {}
 
@@ -34,40 +29,9 @@ const getClient = (headers: object = {}) => {
 
 	clients[clientKey] = new DavClient({
 		rootUrl: generateRemoteUrl('dav'),
-	}, () => {
-		const mergedHeaders: Record<string, string> = {
-			'X-Requested-With': 'XMLHttpRequest',
-			requesttoken: getRequestToken() as string,
+		defaultHeaders: {
 			'X-NC-CalDAV-Webcal-Caching': 'On',
-			...headers,
-		}
-		const xhr = new XMLHttpRequest()
-		const oldOpen = xhr.open
-
-		// override open() method to add headers
-		xhr.open = function() {
-			// @ts-expect-error: Vue: Argument of type IArguments is not assignable to parameter of type
-			// eslint-disable-next-line prefer-rest-params
-			const result = oldOpen.apply(this, arguments)
-			for (const name in mergedHeaders) {
-				xhr.setRequestHeader(name, mergedHeaders[name])
-			}
-
-			return result
-		}
-
-		xhr.onload = (event: ProgressEvent) => {
-			if (xhr.readyState !== 4) {
-				return
-			} else if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
-				return
-			}
-			console.error(event)
-		}
-		xhr.onerror = (event: ProgressEvent) => {
-			console.error(event)
-		}
-		return xhr
+		},
 	})
 
 	return clients[clientKey]
