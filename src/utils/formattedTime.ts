@@ -2,10 +2,21 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { n, t } from '@nextcloud/l10n'
+import { getLanguage, n, t } from '@nextcloud/l10n'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
+
+/** Formatters in user's language */
+
+/** '1 day ago', 'in 1 day' */
+const relativeTimeFormatter = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'always' })
+/** 'yesterday', 'tomorrow' */
+const idiomaticTimeFormatter = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'auto' })
+/** 'May 28' */
+const dateFormatter = new Intl.DateTimeFormat(getLanguage(), { month: 'long', day: 'numeric' })
+/** 'May 28, 2025' */
+const dateWithYearFormatter = new Intl.DateTimeFormat(getLanguage(), { year: 'numeric', month: 'long', day: 'numeric' })
 
 /**
  * Converts the given time to UNIX timestamp
@@ -70,10 +81,66 @@ function futureRelativeTime(time: number): string {
 	}
 }
 
+/**
+ * Calculates the relative time (in days) from now in user language
+ *
+ * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
+ * @param options function options
+ * @param options.showSameYear whether to show the same year
+ */
+function getFormattedDate(
+	dateOrTimestamp: Date | number,
+	{ showSameYear } = { showSameYear: false },
+): string {
+	const date = new Date(dateOrTimestamp)
+	const currentDate = new Date()
+
+	// compare the year:
+	const isSameYear = date.getFullYear() === currentDate.getFullYear()
+
+	return (!isSameYear || showSameYear)
+		? dateWithYearFormatter.format(date)
+		: dateFormatter.format(date)
+}
+
+/**
+ * Calculates the relative time (in days) from now in user language
+ *
+ * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
+ * @param options function options
+ * @param options.limitToWeek whether to return prefix for interval larger than a week
+ */
+function getRelativeDay(
+	dateOrTimestamp: Date | number,
+	{ limitToWeek } = { limitToWeek: false },
+): string {
+	const date = new Date(dateOrTimestamp)
+	const currentDate = new Date()
+
+	// drop the time part of Date objects
+	date.setHours(0, 0, 0, 0)
+	currentDate.setHours(0, 0, 0, 0)
+
+	const diffInMs = +date - +currentDate
+	const diffInDays = diffInMs > 0 ? Math.floor(diffInMs / ONE_DAY_IN_MS) : Math.ceil(diffInMs / ONE_DAY_IN_MS)
+
+	if (limitToWeek) {
+		if (Math.abs(diffInDays) === 7) {
+			return relativeTimeFormatter.format(diffInDays / 7, 'week')
+		} else if (Math.abs(diffInDays) > 7) {
+			return ''
+		}
+	}
+
+	return idiomaticTimeFormatter.format(diffInDays, 'day')
+}
+
 export {
 	convertToUnix,
 	formattedTime,
 	futureRelativeTime,
+	getFormattedDate,
+	getRelativeDay,
 	ONE_DAY_IN_MS,
 	ONE_HOUR_IN_MS,
 }
