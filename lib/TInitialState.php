@@ -94,6 +94,11 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
+			'calendar_enabled',
+			$appManager->isEnabledForUser('calendar', $user)
+		);
+
+		$this->initialState->provideInitialState(
 			'circles_enabled',
 			$appManager->isEnabledForUser('circles', $user)
 		);
