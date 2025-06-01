@@ -1339,6 +1339,7 @@ OC.L10N.register(
     "Keep" : "نگاه داشتن",
     "Select a region" : "Select a region",
     "Submit" : "ارسال",
+    "Local time: {time}" : "زمان محلی: {time}",
     "Search …" : "Search …",
     "Message without mention" : "Message without mention",
     "Mention myself" : "Mention myself",
