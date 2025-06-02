@@ -534,6 +534,7 @@ class RoomService {
 			Room::OBJECT_TYPE_EMAIL,
 			Room::OBJECT_TYPE_EVENT,
 			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
+			Room::OBJECT_TYPE_INSTANT_MEETING,
 		], true)) {
 			throw new LobbyException(LobbyException::REASON_OBJECT);
 		}
