@@ -29,18 +29,11 @@ const supportImportEmails = computed(() => hasTalkFeature(props.token, 'email-cs
  */
 async function disableLobby() {
 	isLobbyStateLoading.value = true
-	try {
-		await store.dispatch('toggleLobby', {
-			token: props.token,
-			enableLobby: false,
-		})
-		showSuccess(t('spreed', 'You opened the conversation to everyone'))
-	} catch (e) {
-		console.error('Error occurred when opening the conversation to everyone', e)
-		showError(t('spreed', 'An error occurred when opening the conversation to everyone'))
-	} finally {
-		isLobbyStateLoading.value = false
-	}
+	await store.dispatch('toggleLobby', {
+		token: props.token,
+		enableLobby: false,
+	})
+	isLobbyStateLoading.value = false
 }
 </script>
 

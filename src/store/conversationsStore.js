@@ -627,13 +627,20 @@ const actions = {
 			if (enableLobby) {
 				await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
 				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
+				showSuccess(t('spreed', 'You restricted the conversation to moderators'))
 			} else {
 				await changeLobbyState(token, WEBINAR.LOBBY.NONE)
 				conversation.lobbyState = WEBINAR.LOBBY.NONE
+				showSuccess(t('spreed', 'You opened the conversation to everyone'))
 			}
 			commit('addConversation', conversation)
 		} catch (error) {
-			console.error('Error while updating webinar lobby: ', error)
+			console.error('Error occurred while updating webinar lobby: ', error)
+			if (enableLobby) {
+				showError(t('spreed', 'Error occurred when restricting the conversation to moderator'))
+			} else {
+				showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
+			}
 		}
 	},
 

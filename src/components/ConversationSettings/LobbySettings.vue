@@ -205,27 +205,11 @@ export default {
 	methods: {
 		t,
 		async toggleLobby() {
-			const newLobbyState = this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS
 			this.isLobbyStateLoading = true
-			try {
-				await this.$store.dispatch('toggleLobby', {
-					token: this.token,
-					enableLobby: newLobbyState,
-				})
-				if (newLobbyState) {
-					showSuccess(t('spreed', 'You restricted the conversation to moderators'))
-				} else {
-					showSuccess(t('spreed', 'You opened the conversation to everyone'))
-				}
-			} catch (e) {
-				if (newLobbyState) {
-					console.error('Error occurred when restricting the conversation to moderator', e)
-					showError(t('spreed', 'Error occurred when restricting the conversation to moderator'))
-				} else {
-					console.error('Error occurred when opening the conversation to everyone', e)
-					showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
-				}
-			}
+			await this.$store.dispatch('toggleLobby', {
+				token: this.token,
+				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
+			})
 			this.isLobbyStateLoading = false
 		},
 
