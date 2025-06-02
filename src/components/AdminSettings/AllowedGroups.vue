@@ -129,10 +129,10 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.allowedGroups = loadState('spreed', 'allowed_groups').sort(function(a, b) {
+		this.allowedGroups = loadState('spreed', 'allowed_groups', []).sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
-		this.canStartConversations = loadState('spreed', 'start_conversations').sort(function(a, b) {
+		this.canStartConversations = loadState('spreed', 'start_conversations', []).sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
 		this.startCalls = startCallOptions[parseInt(loadState('spreed', 'start_calls'))]
