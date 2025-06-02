@@ -115,7 +115,8 @@ const filteredConversations = computed(() => store.getters.conversationsList.fil
 async function startMeeting() {
 	try {
 		const conversation = await store.dispatch('createGroupConversation', {
-			roomName: conversationName.value ?? t('spreed', 'Meeting'), // TRANSLATORS: Fallback for instant meeting name; it uses user language statically
+			// TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
+			roomName: conversationName.value || t('spreed', 'Meeting'),
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
 			objectId: Math.floor(Date.now() / 1000).toString(),
