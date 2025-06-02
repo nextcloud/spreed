@@ -2011,7 +2011,7 @@ OC.L10N.register(
     "An error occurred while requesting assistance" : "Es ist ein Fehler beim Anfordern der Unterstützung aufgetreten.",
     "An error occurred while resetting the request for assistance" : "Es ist ein Fehler beim Zurücksetzen der Hilfeanfrage aufgetreten.",
     "An error occurred while joining breakout room" : "Es ist ein Fehler beim Beitritt zum Gruppenraumraum aufgetreten",
-    "Error fetching upcoming events" : "Fehler beim Abrufen der anstehenden Veranstaltungen",
+    "Error fetching upcoming events" : "Fehler beim Abrufen der bevorstehenden Veranstaltungen",
     "Error fetching upcoming reminders" : "Fehler beim Abrufen der anstehenden Erinnerungen",
     "An error occurred while accepting an invitation" : "Es ist ein Fehler bei der Annahme einer Einladung aufgetreten",
     "An error occurred while rejecting an invitation" : "Es ist ein Fehler bei der Zurückweisung einer Einladung aufgetreten",
