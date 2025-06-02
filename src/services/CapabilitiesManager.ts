@@ -70,18 +70,17 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
  * @param key1 top-level key (e.g. 'attachments')
  * @param key2 second-level key (e.g. 'allowed')
  */
-export function getTalkConfig(token: string = 'local', key1: keyof Config, key2: string) {
+export function getTalkConfig<
+	T extends keyof Config,
+	K extends keyof Config[T],
+>(token: string = 'local', key1: T, key2: K): Config[T][K] | undefined {
 	const remoteCapabilities = getRemoteCapability(token)
-	const locals = localCapabilities?.spreed?.config?.[key1]
-	if (localCapabilities?.spreed?.['config-local']?.[key1]?.includes(key2)) {
-		// @ts-expect-error Vue: Element implicitly has an any type because expression of type string can't be used to index type
+	if (localCapabilities?.spreed?.['config-local']?.[key1]?.includes(String(key2))) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
 	} else if (token === 'local' || !remoteCapabilities) {
-		// @ts-expect-error Vue: Element implicitly has an any type because expression of type string can't be used to index type
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
 	} else {
 		// TODO discuss handling remote config (respect remote only / both / minimal)
-		// @ts-expect-error Vue: Element implicitly has an any type because expression of type string can't be used to index type
 		return remoteCapabilities?.spreed?.config?.[key1]?.[key2]
 	}
 }
