@@ -5,7 +5,6 @@
 <script lang="ts" setup>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { isRTL, t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -41,7 +40,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
-const canStartConversations = loadState('spreed', 'start_conversations')
+const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isDirectionRTL = isRTL()
 
 const store = useStore()
@@ -116,7 +115,8 @@ const filteredConversations = computed(() => store.getters.conversationsList.fil
 async function startMeeting() {
 	try {
 		const conversation = await store.dispatch('createGroupConversation', {
-			roomName: conversationName.value ?? t('spreed', 'Meeting'), // TRANSLATORS: Fallback for instant meeting name; it uses user language statically
+			// TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
+			roomName: conversationName.value || t('spreed', 'Meeting'),
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
 			objectId: Math.floor(Date.now() / 1000).toString(),
@@ -169,7 +169,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
 		</h2>
 		<div class="talk-dashboard__actions">
-			<NcPopover popup-role="dialog">
+			<NcPopover v-if="canStartConversations"
+				popup-role="dialog">
 				<template #trigger>
 					<NcButton type="primary">
 						<template #icon>
