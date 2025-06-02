@@ -307,6 +307,7 @@ export default {
 	padding: var(--default-grid-baseline) 0;
 	min-height: min-content;
 	max-height: 97px;
+	flex-shrink: 0;
 	overflow-y: auto;
 	align-content: flex-start;
 }
