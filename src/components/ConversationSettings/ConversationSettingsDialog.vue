@@ -47,7 +47,7 @@
 			<!-- Meeting: lobby and sip -->
 			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
 				id="meeting"
-				:name="t('spreed', 'Meeting')">
+				:name="meetingHeader">
 				<LobbySettings :token="token" />
 				<SipSettings v-if="canUserEnableSIP" />
 			</NcAppSettingsSection>
@@ -162,9 +162,11 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
+		const meetingHeader = t('spreed', 'Meeting') // TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
 		return {
 			supportsArchive,
 			settingsStore,
+			meetingHeader,
 		}
 	},
 

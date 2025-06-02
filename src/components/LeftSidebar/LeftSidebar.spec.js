@@ -26,6 +26,19 @@ jest.mock('../../services/coreService', () => ({
 	autocompleteQuery: jest.fn(),
 }))
 
+// Test actions with 'can-create' config
+let mockCanCreateConversations = true
+jest.mock('../../services/CapabilitiesManager', () => ({
+	...jest.requireActual('../../services/CapabilitiesManager'),
+	getTalkConfig: jest.fn((...args) => {
+		if (args[0] === 'local' && args[1] === 'conversations' && args[2] === 'can-create') {
+			return mockCanCreateConversations
+		} else {
+			return jest.requireActual('../../services/CapabilitiesManager').getTalkConfig(...args)
+		}
+	}),
+}))
+
 // short-circuit debounce
 jest.mock('debounce', () => jest.fn().mockImplementation((fn) => fn))
 
@@ -80,7 +93,6 @@ describe('LeftSidebar.vue', () => {
 
 		loadStateSettings = {
 			circles_enabled: true,
-			start_conversations: true,
 		}
 
 		loadState.mockImplementation((app, key) => {
@@ -108,6 +120,7 @@ describe('LeftSidebar.vue', () => {
 	})
 
 	afterEach(() => {
+		mockCanCreateConversations = true
 		jest.clearAllMocks()
 	})
 
@@ -403,7 +416,6 @@ describe('LeftSidebar.vue', () => {
 					listedResults,
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 				)
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources')
@@ -416,13 +428,14 @@ describe('LeftSidebar.vue', () => {
 			})
 
 			test('only shows user search results when cannot create conversations', async () => {
+				mockCanCreateConversations = false
+
 				const wrapper = await testSearch(
 					SEARCH_TERM,
 					[...usersResults, ...groupsResults, ...circlesResults],
 					listedResults,
 					{
 						circles_enabled: true,
-						start_conversations: false,
 					},
 				)
 
@@ -443,7 +456,6 @@ describe('LeftSidebar.vue', () => {
 					listedResults,
 					{
 						circles_enabled: false,
-						start_conversations: true,
 					},
 				)
 
@@ -492,7 +504,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Users, groups and teams',
 				)
@@ -504,7 +515,6 @@ describe('LeftSidebar.vue', () => {
 					listedResults,
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Users, groups and teams',
 				)
@@ -516,7 +526,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: false,
-						start_conversations: true,
 					},
 					'Users and groups',
 				)
@@ -528,7 +537,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Users and groups',
 				)
@@ -540,7 +548,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Users',
 				)
@@ -552,7 +559,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Groups',
 				)
@@ -564,7 +570,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Groups and teams',
 				)
@@ -576,7 +581,6 @@ describe('LeftSidebar.vue', () => {
 					[],
 					{
 						circles_enabled: true,
-						start_conversations: true,
 					},
 					'Users and teams',
 				)
@@ -590,14 +594,12 @@ describe('LeftSidebar.vue', () => {
 			fetchConversationsAction.mockResolvedValueOnce()
 		})
 		test('shows new conversation button if user can start conversations', () => {
-			loadStateSettings.start_conversations = true
-
 			const wrapper = mountComponent()
 			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
 			expect(newConversationbutton.exists()).toBeTruthy()
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
-			loadStateSettings.start_conversations = false
+			mockCanCreateConversations = false
 
 			const wrapper = mountComponent()
 			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
