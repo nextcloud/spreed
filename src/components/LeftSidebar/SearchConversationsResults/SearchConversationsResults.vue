@@ -18,6 +18,7 @@ import ConversationIcon from '../../ConversationIcon.vue'
 import Hint from '../../UIShared/Hint.vue'
 import Conversation from '../ConversationsList/Conversation.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
+import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../../stores/settings.js'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
@@ -36,7 +37,7 @@ const emit = defineEmits<{
 }>()
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
-const canStartConversations = loadState('spreed', 'start_conversations')
+const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const settingsStore = useSettingsStore()
 const isCompact = computed(() => settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT)
 

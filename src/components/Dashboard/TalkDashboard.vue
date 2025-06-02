@@ -5,7 +5,6 @@
 <script lang="ts" setup>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { isRTL, t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -41,7 +40,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
-const canStartConversations = loadState('spreed', 'start_conversations')
+const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isDirectionRTL = isRTL()
 
 const store = useStore()

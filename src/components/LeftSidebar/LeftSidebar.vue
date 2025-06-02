@@ -403,7 +403,7 @@ export default {
 			searchResultsListedConversations: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
-			canStartConversations: loadState('spreed', 'start_conversations'),
+			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
 			debounceFetchSearchResults: () => {},
