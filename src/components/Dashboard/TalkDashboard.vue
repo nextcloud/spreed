@@ -168,7 +168,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
 		</h2>
 		<div class="talk-dashboard__actions">
-			<NcPopover popup-role="dialog">
+			<NcPopover v-if="canStartConversations"
+				popup-role="dialog">
 				<template #trigger>
 					<NcButton type="primary">
 						<template #icon>

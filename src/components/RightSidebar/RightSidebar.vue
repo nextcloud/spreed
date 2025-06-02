@@ -141,9 +141,10 @@ import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 
+const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 const CONTENT_MODES = ['compact', 'preview', 'full']
@@ -288,7 +289,7 @@ export default {
 		canSearchParticipants() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION)
-				|| (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && supportConversationCreationAll)
+				|| (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && canStartConversations && supportConversationCreationAll)
 		},
 
 		canFullModerate() {

@@ -137,6 +137,7 @@ import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
+const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
 export default {
@@ -204,7 +205,7 @@ export default {
 		},
 
 		canExtendOneToOneConversation() {
-			return supportConversationCreationAll && this.isOneToOneConversation
+			return canStartConversations && supportConversationCreationAll && this.isOneToOneConversation
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
