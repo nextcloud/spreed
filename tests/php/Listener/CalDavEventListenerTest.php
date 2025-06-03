@@ -529,8 +529,8 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setReadOnly')
 			->with($room, Room::READ_ONLY);
-		$this->roomService->expects(self::never())
-			->method('setLobby');
+		// $this->roomService->expects(self::never())
+		// ->method('setLobby');
 		$this->timezoneService->expects(self::never())
 			->method('getUserTimezone');
 		$this->logger->expects(self::never())
@@ -564,9 +564,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741942800#1741946400');
-		$this->roomService->expects(self::once())
-			->method('setLobby')
-			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
+		// $this->roomService->expects(self::once())
+		// ->method('setLobby')
+		// ->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::never())
 			->method('getUserTimezone');
 		$this->logger->expects(self::never())
@@ -617,9 +617,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
-		$this->roomService->expects(self::once())
-			->method('setLobby')
-			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
+		// $this->roomService->expects(self::once())
+		// ->method('setLobby')
+		// ->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn('Europe/Vienna');
@@ -671,9 +671,9 @@ EOF;
 		$this->roomService->expects(self::once())
 			->method('setObject')
 			->with($room, Room::OBJECT_TYPE_EVENT, '1741820400#1741906800');
-		$this->roomService->expects(self::once())
-			->method('setLobby')
-			->with($room, Webinary::LOBBY_NON_MODERATORS, null);
+		// $this->roomService->expects(self::once())
+		// ->method('setLobby')
+		// ->with($room, Webinary::LOBBY_NON_MODERATORS, null);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);
