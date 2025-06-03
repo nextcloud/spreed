@@ -198,6 +198,10 @@ class CalDavEventListener implements IEventListener {
 
 		$objectId = $start . '#' . $end;
 		$this->roomService->setObject($room, Room::OBJECT_TYPE_EVENT, $objectId);
-		$this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null);
+		// TODO Reconsider the lobby later, but it needs more thoughts to:
+		// 1. Allow others to ping the owner/host
+		// 2. Automatically disable
+		//    but how to recover from adding a second event to a conversation then?
+		// $this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null);
 	}
 }
