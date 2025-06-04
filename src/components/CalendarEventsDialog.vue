@@ -7,6 +7,7 @@
 import type { Conversation, Participant } from '../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
 import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
@@ -27,7 +28,6 @@ import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconReload from 'vue-material-design-icons/Reload.vue'
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
@@ -39,6 +39,8 @@ import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
+
+const isCalendarEnabled = loadState('spreed', 'calendar_enabled', true)
 
 const props = defineProps<{
 	token: string
@@ -72,8 +74,9 @@ const upcomingEvents = computed(() => {
 				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
 				: ''
 			const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
+			const href = isCalendarEnabled ? (event.calendarAppUrl ?? undefined) : undefined
 
-			return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
+			return { ...event, start, color, href }
 		})
 })
 

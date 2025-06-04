@@ -7,6 +7,7 @@
 
 import type { DashboardEventRoom } from '../../types/index.ts'
 
+import { loadState } from '@nextcloud/initial-state'
 import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
@@ -24,6 +25,8 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+
+const isCalendarEnabled = loadState('spreed', 'calendar_enabled', true)
 
 const props = defineProps<{
 	eventRoom: DashboardEventRoom
@@ -213,7 +216,8 @@ function handleJoin({ call = false } = {}) {
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
-			<NcButton type="tertiary"
+			<NcButton v-if="isCalendarEnabled"
+				type="tertiary"
 				:href="props.eventRoom.eventLink"
 				target="_blank"
 				:title="t('spreed', 'View event on Calendar')"

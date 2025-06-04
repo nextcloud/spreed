@@ -6,7 +6,7 @@
 <template>
 	<Fragment>
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<p v-if="canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
+		<p v-if="isCalendarEnabled && canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
@@ -47,6 +47,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { Fragment } from 'vue-frag'
@@ -55,6 +56,7 @@ import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
+const isCalendarEnabled = loadState('spreed', 'calendar_enabled', true)
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 
@@ -81,6 +83,7 @@ export default {
 
 	setup() {
 		return {
+			isCalendarEnabled,
 			supportsAvatar,
 			CONVERSATION,
 			maxDescriptionLength,

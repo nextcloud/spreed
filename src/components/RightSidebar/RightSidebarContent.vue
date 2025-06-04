@@ -10,6 +10,7 @@ import type {
 	UserProfileData,
 } from '../../types/index.ts'
 
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
@@ -38,9 +39,11 @@ type MutualEvent = {
 	uri: DashboardEvent['eventLink']
 	name: DashboardEvent['eventName']
 	start: string
-	href: DashboardEvent['eventLink']
+	href?: DashboardEvent['eventLink']
 	color: string
 }
+
+const isCalendarEnabled = loadState('spreed', 'calendar_enabled', true)
 
 const props = defineProps<{
 	isUser: boolean
@@ -135,7 +138,7 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 			uri: event.eventLink,
 			name: event.eventName,
 			start,
-			href: event.eventLink,
+			href: isCalendarEnabled ? event.eventLink : undefined,
 			color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
 		}
 	})
