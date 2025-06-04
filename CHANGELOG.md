@@ -5,6 +5,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.0 – 2025-06-05
+### Added
+- 📅 Improve handling of event conversations: filtered until close to the meeting, default expiration, tracking of event name and description
+- 👥 Allow adding participants to one-to-one calls creating a new conversation
+- 🍱 Add a Talk Dashboard
+- 📇 Enhance right sidebar in one-to-one conversations with information about the participant
+- 📲 Allow SIP direct dial-in to start a new conversation with an existing Nextcloud account
+- 🖌️ Allow to provide custom images for virtual backgrounds for branding or corporate appearance
+- 🔈 Allow selecting the output device in the media settings
+- ☎️ Administration setting to enable SIP dial-in by default for new conversations
+- 📅 Allow creating instant meetings
+- 🔏 Add sensitive conversations which don't show chat messages in sublines and notifications
+- 📲 Add option to mark a conversation as important to still receive notifications during "Do not disturb"
+
+### Changed
+- Update translations
+- Update dependencies
+
 ## 21.1.0-rc.4 – 2025-05-29
 ### Changed
 - Update translations
