@@ -278,8 +278,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</NcButton>
 		</div>
 		<div class="talk-dashboard__chats">
-			<div class="talk-dashboard__unread-mentions"
-				:class="{ loading: !conversationsInitialised }">
+			<div class="talk-dashboard__unread-mentions">
 				<h3 class="title">
 					{{ t('spreed', 'Unread mentions') }}
 				</h3>
@@ -433,10 +432,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	height: var(--section-height);
 	width: var(--section-width);
 	flex-shrink: 0;
-
-	&.loading {
-		overflow: hidden;
-	}
 }
 
 .talk-dashboard__upcoming-reminders {

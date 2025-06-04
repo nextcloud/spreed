@@ -80,7 +80,7 @@ const supportConversationCreationAll = hasTalkFeature('local', 'conversation-cre
 
 const DUMMY_CONVERSATION = {
 	token: '',
-	displayName: '',
+	displayName: t('spreed', 'Loading …'),
 	isFavorite: false,
 	isArchived: false,
 	hasPassword: false,
