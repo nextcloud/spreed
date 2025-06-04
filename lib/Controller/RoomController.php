@@ -66,6 +66,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -192,6 +193,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->userId !== null) {
 			$values[] = $this->appConfig->getAppValueInt('experiments_users');
+			$values[] = $this->config->getUserValue($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
 		} else {
 			$values[] = $this->appConfig->getAppValueInt('experiments_guests');
 		}
