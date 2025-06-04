@@ -16,6 +16,12 @@ export const CONFIG = {
 		 * the data is generated from received signaling messages
 		 */
 		UPDATE_PARTICIPANTS: 1,
+		/**
+		 * Since 21.1.0
+		 * Make automatic attempts to recover suspended / expired signaling session
+		 * to allow join the call without page reload
+		 */
+		RECOVER_SESSION: 2,
 	},
 } as const
 
