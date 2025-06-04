@@ -924,7 +924,7 @@ class Notifier implements INotifier {
 			$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 		}
 
-		if ($richSubjectParameters['user'] === null) {
+		if (array_key_exists('user', $richSubjectParameters) && $richSubjectParameters['user'] === null) {
 			unset($richSubjectParameters['user']);
 		}
 
