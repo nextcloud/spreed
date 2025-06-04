@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 
-import type { DashboardEventRoom } from '../../types/index.ts'
+import type { Conversation, DashboardEventRoom } from '../../types/index.ts'
 
 import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
@@ -25,12 +25,32 @@ import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
+type ConversationFromEvent = Pick<Conversation, 'token' | 'type' | 'name' | 'displayName' | 'avatarVersion' | 'callStartTime' | 'hasCall'>
+
 const props = defineProps<{
 	eventRoom: DashboardEventRoom
 }>()
 const store = useStore()
 const router = useRouter()
 const isInCall = useIsInCall()
+
+const conversation = computed<ConversationFromEvent>(() => {
+	return store.getters.conversation(props.eventRoom.roomToken) ?? {
+		token: props.eventRoom.roomToken,
+		type: props.eventRoom.roomType,
+		name: props.eventRoom.roomName,
+		displayName: props.eventRoom.roomDisplayName,
+		avatarVersion: props.eventRoom.roomAvatarVersion,
+		callStartTime: props.eventRoom.roomActiveSince ?? 0,
+		hasCall: props.eventRoom.roomActiveSince !== null,
+	}
+})
+
+const hasCall = computed(() => {
+	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
+		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
+})
+
 const elapsedTime = computed(() => {
 	if (!hasCall.value || !(props.eventRoom.roomActiveSince ?? conversation.value.callStartTime)) {
 		return ''
@@ -40,10 +60,6 @@ const elapsedTime = computed(() => {
 
 const isToday = computed(() => {
 	return new Date(props.eventRoom.start * 1000).toDateString() === new Date().toDateString()
-})
-
-const conversation = computed(() => {
-	return store.getters.conversation(props.eventRoom.roomToken)
 })
 
 const eventDateLabel = computed(() => {
@@ -98,11 +114,6 @@ const invitesLabel = computed(() => {
 	const declinedInvites = props.eventRoom.declined ? n('spreed', '%n person declined', '%n people declined', props.eventRoom.declined) : ''
 	// FIXME should be a translated string ??
 	return [acceptedInvites, declinedInvites].filter(Boolean).join(', ')
-})
-
-const hasCall = computed(() => {
-	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
-		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
 })
 
 const attachmentInfo = computed(() => {
