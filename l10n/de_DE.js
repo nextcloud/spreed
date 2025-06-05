@@ -1337,7 +1337,7 @@ OC.L10N.register(
     "Users and teams" : "Benutzer und Teams",
     "Groups and teams" : "Gruppen und Teams",
     "Other sources" : "Andere Quellen",
-    "New group conversation" : "Neues Gruppenunterhaltung",
+    "New group conversation" : "Neue Gruppenunterhaltung",
     "The meeting will start soon" : "Das Meeting beginnt bald",
     "This meeting is scheduled for {startTime}" : "Dieses Meeting ist geplant für {startTime}",
     "You are currently waiting in the lobby" : "Sie warten derzeit in der Lobby",
