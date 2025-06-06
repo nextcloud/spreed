@@ -210,7 +210,7 @@ export default {
 		},
 
 		openPollDraftHandler() {
-			EventBus.emit('poll-drafts-open', {})
+			EventBus.emit('poll-drafts-open', { token: this.token })
 		},
 	},
 }

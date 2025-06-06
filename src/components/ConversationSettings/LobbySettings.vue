@@ -231,7 +231,7 @@ export default {
 		},
 
 		openPollDraftHandler() {
-			EventBus.emit('poll-drafts-open', { selector: '#settings-section_meeting' })
+			EventBus.emit('poll-drafts-open', { token: this.token, selector: '#settings-section_meeting' })
 		},
 	},
 }

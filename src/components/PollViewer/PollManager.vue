@@ -22,7 +22,7 @@ const showPollEditor = ref(false)
 const showPollDraftHandler = ref(false)
 const container = ref<string | undefined>(undefined)
 
-const token = computed(() => store.getters.getConversationSettingsToken() || store.getters.getToken())
+const token = ref('')
 const canCreatePollDrafts = computed(() => {
 	const { participantType, type } = store.getters.conversation(token.value) ?? {}
 	// TODO: getters.isModerator should accept token
@@ -44,26 +44,30 @@ onBeforeUnmount(() => {
 /**
  * Opens PollDraftHandler dialog
  * @param payload event payload
+ * @param payload.token conversation token
  * @param [payload.selector] selector to mount dialog to (body by default)
  */
-function openPollDraftHandler({ selector }: Events['poll-drafts-open']) {
-	container.value = selector
+function openPollDraftHandler(payload: Events['poll-drafts-open']) {
+	token.value = payload.token
+	container.value = payload.selector
 	showPollDraftHandler.value = true
 }
 
 /**
  * Opens PollEditor dialog
  * @param payload event payload
+ * @param payload.token conversation token
  * @param payload.id poll draft ID to fill form with (null for empty form)
  * @param payload.fromDrafts whether editor was opened from PollDraftHandler dialog
  * @param payload.action required action ('fill' from draft or 'edit' draft)
  * @param [payload.selector] selector to mount dialog to (body by default)
  */
-function openPollEditor({ id, fromDrafts, action, selector }: Events['poll-editor-open']) {
-	container.value = selector
+function openPollEditor(payload: Events['poll-editor-open']) {
+	token.value = payload.token
+	container.value = payload.selector
 	showPollEditor.value = true
 	nextTick(() => {
-		pollEditorRef.value?.fillPollEditorFromDraft(id, fromDrafts, action)
+		pollEditorRef.value?.fillPollEditorFromDraft(payload.id, payload.fromDrafts, payload.action)
 		// Wait for editor to be mounted and filled before unmounting drafts dialog to avoid issues when inserting nodes
 		showPollDraftHandler.value = false
 	})
