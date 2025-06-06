@@ -547,6 +547,8 @@ export interface operations {
                 darkTheme?: 0 | 1;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -577,6 +579,8 @@ export interface operations {
                 cloudId: string;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -609,6 +613,8 @@ export interface operations {
                 darkTheme?: 0 | 1;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -640,6 +646,8 @@ export interface operations {
                 cloudId: string;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -842,6 +850,8 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -899,6 +909,8 @@ export interface operations {
                 sessionId: string;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };

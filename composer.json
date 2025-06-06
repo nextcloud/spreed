@@ -20,7 +20,7 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
-		"openapi": "generate-spec --verbose && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
+		"openapi": "generate-spec && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"rector:check": "rector --dry-run",
 		"rector:fix": "rector",
 		"psalm": "psalm --no-cache --threads=$(nproc)",

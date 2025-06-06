@@ -981,6 +981,23 @@
                     {
                         "name": "x-nextcloud-federation",
                         "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
                         "schema": {
                             "type": "string"
                         }
@@ -1143,6 +1160,22 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^\\d{7,32}$"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1335,6 +1368,22 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1544,6 +1593,22 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1766,6 +1831,22 @@
                         }
                     },
                     {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -1969,6 +2050,22 @@
                         }
                     },
                     {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -2124,6 +2221,22 @@
                         "name": "options",
                         "in": "query",
                         "description": "Additional details to verify the validity of the request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-sipbridge-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
                         "schema": {
                             "type": "string"
                         }
