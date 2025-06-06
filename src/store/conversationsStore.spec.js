@@ -35,6 +35,7 @@ import {
 	setSIPEnabled,
 } from '../services/conversationsService.ts'
 import { setConversationUnread, updateLastReadMessage } from '../services/messagesService.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import storeConfig from './storeConfig.js'
@@ -87,12 +88,14 @@ describe('conversationsStore', () => {
 	let localVue = null
 	let store = null
 	let addParticipantOnceAction = null
+	let actorStore
 	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		actorStore = useActorStore()
 
 		testConversation = {
 			token: testToken,
@@ -139,7 +142,7 @@ describe('conversationsStore', () => {
 		})
 
 		test('adds conversation to the store, with current user as participant', () => {
-			store.dispatch('setCurrentUser', {
+			actorStore.setCurrentUser({
 				uid: 'current-user',
 				displayName: 'display-name',
 			})
@@ -169,7 +172,7 @@ describe('conversationsStore', () => {
 		})
 
 		test('adds conversation to the store, with empty user id for guests', () => {
-			store.dispatch('setCurrentParticipant', {
+			actorStore.setCurrentParticipant({
 				actorId: 'guestActorId',
 				sessionId: 'XXSESSIONIDXX',
 				participantType: PARTICIPANT.TYPE.GUEST,
@@ -201,7 +204,7 @@ describe('conversationsStore', () => {
 		})
 
 		test('deletes messages with conversation', () => {
-			store.dispatch('setCurrentUser', {
+			actorStore.setCurrentUser({
 				uid: 'current-user',
 				displayName: 'display-name',
 			})
@@ -910,7 +913,7 @@ describe('conversationsStore', () => {
 	describe('read marker', () => {
 		beforeEach(() => {
 			store = new Vuex.Store(testStoreConfig)
-			store.commit('setUserId', 'current-user')
+			actorStore.userId = 'current-user'
 		})
 
 		test('marks conversation as read by clearing unread counters', async () => {

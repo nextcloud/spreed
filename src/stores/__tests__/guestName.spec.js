@@ -8,6 +8,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { setGuestUserName } from '../../services/participantsService.js'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'
+import { useActorStore } from '../actor.ts'
 import { useGuestNameStore } from '../guestName.js'
 
 jest.mock('../../services/participantsService', () => ({
@@ -20,10 +21,12 @@ jest.mock('@nextcloud/auth', () => ({
 
 describe('guestNameStore', () => {
 	let store
+	let actorStore
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		store = useGuestNameStore()
+		actorStore = useActorStore()
 	})
 
 	afterEach(() => {
@@ -151,7 +154,7 @@ describe('guestNameStore', () => {
 			actorDisplayName: t('spreed', 'Guest'),
 		}
 
-		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+		actorStore.setCurrentUser({ uid: 'actor-id1' })
 
 		const newName = 'actor 1'
 
@@ -165,7 +168,7 @@ describe('guestNameStore', () => {
 		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
 		expect(setGuestNickname).toHaveBeenCalledWith(newName)
 		expect(store.getGuestName('token-1', 'actor-id1')).toBe('actor 1')
-		expect(vuexStore.getters.getDisplayName()).toBe('actor 1')
+		expect(actorStore.displayName).toBe('actor 1')
 	})
 
 	test('removes display name from local storage when user sumbits an empty new name', async () => {
@@ -177,7 +180,7 @@ describe('guestNameStore', () => {
 		}
 		const newName = ''
 
-		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+		actorStore.setCurrentUser({ uid: 'actor-id1' })
 
 		// Mock implementation of setGuestUserName
 		setGuestUserName.mockResolvedValue()
@@ -199,7 +202,7 @@ describe('guestNameStore', () => {
 		}
 		console.error = jest.fn()
 
-		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+		actorStore.setCurrentUser({ uid: 'actor-id1' })
 		store.addGuestName(actor1, { noUpdate: false })
 
 		const newName = 'actor 1'
@@ -213,6 +216,6 @@ describe('guestNameStore', () => {
 
 		// Assert
 		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
-		expect(vuexStore.getters.getDisplayName()).toBe(actor1.actorDisplayName)
+		expect(actorStore.displayName).toBe(actor1.actorDisplayName)
 	})
 })

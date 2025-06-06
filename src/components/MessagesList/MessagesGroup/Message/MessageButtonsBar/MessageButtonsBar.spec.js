@@ -13,6 +13,7 @@ import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
+import { useActorStore } from '../../../../../stores/actor.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
 
@@ -24,14 +25,13 @@ describe('MessageButtonsBar.vue', () => {
 	let messageProps
 	let injected
 	let conversationProps
-	let getActorTypeMock
-	let isActorUserMock
-	let isActorGuestMock
+	let actorStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		actorStore = useActorStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -46,14 +46,8 @@ describe('MessageButtonsBar.vue', () => {
 			= jest.fn().mockReturnValue(() => TOKEN)
 		testStoreConfig.modules.conversationsStore.getters.conversation
 			= jest.fn().mockReturnValue((token) => conversationProps)
-		testStoreConfig.modules.actorStore.getters.getActorId
-			= jest.fn().mockReturnValue(() => 'user-id-1')
-		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
-		isActorUserMock = jest.fn().mockReturnValue(() => true)
-		isActorGuestMock = jest.fn().mockReturnValue(() => false)
-		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
-		testStoreConfig.modules.actorStore.getters.isActorUser = isActorUserMock
-		testStoreConfig.modules.actorStore.getters.isActorGuest = isActorGuestMock
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		actorStore.actorId = 'user-id-1'
 
 		messageProps = {
 			previousMessageId: 100,
@@ -254,9 +248,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides private reply action when current user is a guest', async () => {
 				messageProps.message.actorId = 'another-user'
-				getActorTypeMock.mockClear().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
-				isActorUserMock.mockClear().mockReturnValue(() => false)
-				isActorGuestMock.mockClear().mockReturnValue(() => true)
+				actorStore.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 				testPrivateReplyActionVisible(false)
 			})
 		})
