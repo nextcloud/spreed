@@ -354,6 +354,7 @@ import {
 	callSIPUnmutePhone,
 } from '../../../services/callsService.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../../stores/actor.js'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
@@ -417,6 +418,7 @@ export default {
 	setup() {
 		return {
 			isInCall: useIsInCall(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -609,7 +611,7 @@ export default {
 			return this.$store.getters.conversation(this.token) || {
 				sessionId: '0',
 				participantFlags: 0,
-				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+				participantType: this.actorStore.isLoggedIn ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
 
@@ -625,7 +627,7 @@ export default {
 		},
 
 		isSelf() {
-			return this.participant.actorType === this.$store.getters.getActorType() && this.participant.actorId === this.$store.getters.getActorId()
+			return this.participant.actorType === this.actorStore.actorType && this.participant.actorId === this.actorStore.actorId
 		},
 
 		selfIsModerator() {
@@ -904,7 +906,7 @@ export default {
 					console.info('Joining call')
 					await this.$store.dispatch('joinCall', {
 						token: this.token,
-						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+						participantIdentifier: this.actorStore.getParticipantIdentifier,
 						flags,
 						silent: false,
 						recordingConsent: true,

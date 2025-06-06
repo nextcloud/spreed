@@ -20,6 +20,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import { MENTION } from '../../../../../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
+import { useActorStore } from '../../../../../stores/actor.js'
 
 export default {
 	name: 'Mention',
@@ -60,6 +61,7 @@ export default {
 
 		return {
 			isDarkTheme,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -97,9 +99,9 @@ export default {
 			// So when comparing a guest we have to prefix "guest/"
 			// when comparing the id
 			// However we do not prefix email accounts, so simply compare id
-			return this.$store.getters.isActorGuest()
-				&& (this.id === ('guest/' + this.$store.getters.getActorId())
-					|| this.id === this.$store.getters.getActorId())
+			return this.actorStore.isActorGuest
+				&& (this.id === ('guest/' + this.actorStore.actorId)
+					|| this.id === this.actorStore.actorId)
 		},
 
 		isCurrentUser() {
@@ -108,16 +110,16 @@ export default {
 				return false
 			}
 
-			return this.$store.getters.isActorUser()
-				&& this.id === this.$store.getters.getUserId()
+			return this.actorStore.isActorUser
+				&& this.id === this.actorStore.userId
 		},
 
 		isCurrentUserGroup() {
-			return this.isGroupMention && this.$store.getters.isActorMemberOfGroup(this.id)
+			return this.isGroupMention && this.actorStore.isActorMemberOfGroup(this.id)
 		},
 
 		isCurrentUserTeam() {
-			return this.isTeamMention && this.$store.getters.isActorMemberOfTeam(this.id)
+			return this.isTeamMention && this.actorStore.isActorMemberOfTeam(this.id)
 		},
 
 		primary() {

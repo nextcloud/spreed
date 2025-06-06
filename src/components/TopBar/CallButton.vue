@@ -106,6 +106,7 @@ import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -189,6 +190,7 @@ export default {
 
 	setup() {
 		return {
+			actorStore: useActorStore(),
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
@@ -395,7 +397,7 @@ export default {
 			})
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
-				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				participantIdentifier: this.actorStore.getParticipantIdentifier,
 				flags,
 				silent: this.hasCall ? true : this.silentCall,
 				recordingConsent: this.recordingConsentGiven,
@@ -436,7 +438,7 @@ export default {
 			})
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
-				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				participantIdentifier: this.actorStore.getParticipantIdentifier,
 				all: endMeetingForAll,
 			})
 			this.loading = false

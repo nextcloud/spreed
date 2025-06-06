@@ -33,6 +33,7 @@ import {
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useActorStore } from '../stores/actor.js'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
@@ -123,17 +124,14 @@ const getters = {
 	 * Gets the array of external session ids.
 	 *
 	 * @param {object} state - the state object.
-	 * @param {object} getters - the getters object.
-	 * @param {object} rootState - the rootState object.
-	 * @param {object} rootGetters - the rootGetters object.
 	 * @return {Array} the typing session IDs array.
 	 */
-	externalTypingSignals: (state, getters, rootState, rootGetters) => (token) => {
+	externalTypingSignals: (state) => (token) => {
 		if (!state.typing[token]) {
 			return []
 		}
-
-		return Object.keys(state.typing[token]).filter((sessionId) => rootGetters.getSessionId() !== sessionId)
+		const actorStore = useActorStore()
+		return Object.keys(state.typing[token]).filter((sessionId) => actorStore.sessionId !== sessionId)
 	},
 
 	/**
@@ -149,8 +147,8 @@ const getters = {
 		if (!state.typing[rootGetters.getToken()]) {
 			return false
 		}
-
-		return Object.keys(state.typing[rootGetters.getToken()]).some((sessionId) => rootGetters.getSessionId() === sessionId)
+		const actorStore = useActorStore()
+		return Object.keys(state.typing[rootGetters.getToken()]).some((sessionId) => actorStore.sessionId === sessionId)
 	},
 
 	/**
@@ -159,20 +157,19 @@ const getters = {
 	 *
 	 * @param {object} state - the state object.
 	 * @param {object} getters - the getters object.
-	 * @param {object} rootState - the rootState object.
-	 * @param {object} rootGetters - the rootGetters object.
 	 * @return {Array} the participants array (for registered users only).
 	 */
-	participantsListTyping: (state, getters, rootState, rootGetters) => (token) => {
+	participantsListTyping: (state, getters) => (token) => {
 		if (!getters.externalTypingSignals(token).length) {
 			return []
 		}
 
+		const actorStore = useActorStore()
 		return getters.participantsList(token).filter((attendee) => {
 			// Check if participant's sessionId matches with any of sessionIds from signaling...
 			return getters.externalTypingSignals(token).some((sessionId) => attendee.sessionIds.includes(sessionId))
 				// ... and it's not the participant with same actorType and actorId as yourself
-				&& (attendee.actorType !== rootGetters.getActorType() || attendee.actorId !== rootGetters.getActorId())
+				&& !actorStore.checkIfSelfIsActor(attendee)
 		})
 	},
 
@@ -1030,16 +1027,17 @@ const actions = {
 	 */
 	async joinConversation(context, { token }) {
 		const forceJoin = SessionStorage.getItem('joined_conversation') === token
+		const actorStore = useActorStore()
 
 		try {
 			const response = await joinConversation({ token, forceJoin })
 
 			// Update the participant and actor session after a force join
-			context.dispatch('setCurrentParticipant', response.data.ocs.data)
+			actorStore.setCurrentParticipant(response.data.ocs.data)
 			context.dispatch('addConversation', response.data.ocs.data)
 			context.dispatch('updateSessionId', {
 				token,
-				participantIdentifier: context.getters.getParticipantIdentifier(),
+				participantIdentifier: actorStore.getParticipantIdentifier,
 				sessionId: response.data.ocs.data.sessionId,
 			})
 
@@ -1087,10 +1085,11 @@ const actions = {
 	 * @param {string} data.token - conversation token.
 	 */
 	async leaveConversation(context, { token }) {
+		const actorStore = useActorStore()
 		if (context.getters.isInCall(token)) {
 			await context.dispatch('leaveCall', {
 				token,
-				participantIdentifier: context.getters.getParticipantIdentifier(),
+				participantIdentifier: actorStore.getParticipantIdentifier,
 			})
 		}
 

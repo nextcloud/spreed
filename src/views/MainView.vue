@@ -14,6 +14,7 @@ import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
 import { useStore } from '../composables/useStore.js'
+import { useActorStore } from '../stores/actor.js'
 
 const props = defineProps<{
 	token: string
@@ -23,6 +24,7 @@ const store = useStore()
 const isInCall = useIsInCall()
 const router = useRouter()
 const route = useRoute()
+const actorStore = useActorStore()
 
 const isInLobby = computed(() => store.getters.isInLobby)
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
@@ -32,7 +34,7 @@ watch(isInLobby, (isInLobby) => {
 	if (isInLobby && isInCall.value) {
 		store.dispatch('leaveCall', {
 			token: props.token,
-			participantIdentifier: store.getters.getParticipantIdentifier(),
+			participantIdentifier: actorStore.getParticipantIdentifier,
 		})
 	}
 })

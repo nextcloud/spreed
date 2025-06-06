@@ -42,6 +42,7 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
+import { useActorStore } from '../stores/actor.js'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
 export default {
@@ -53,6 +54,12 @@ export default {
 		NcRichText,
 		RoomService,
 		SetGuestUsername,
+	},
+
+	setup() {
+		return {
+			actorStore: useActorStore(),
+		}
 	},
 
 	computed: {
@@ -94,12 +101,11 @@ export default {
 
 		// Determines whether the current user is a guest user
 		currentUserIsGuest() {
-			return !this.$store.getters.getUserId()
+			return !this.actorStore.userId
 		},
 
 		isGuestWithoutDisplayName() {
-			const userName = this.$store.getters.getDisplayName()
-			return !userName && this.currentUserIsGuest
+			return !this.actorStore.displayName && this.currentUserIsGuest
 		},
 	},
 

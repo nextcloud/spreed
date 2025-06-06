@@ -94,6 +94,7 @@ import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesMan
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useActorStore } from '../../../stores/actor.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
@@ -155,6 +156,7 @@ export default {
 			isInCall,
 			cancelableGetParticipants,
 			sidebarStore: useSidebarStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -220,7 +222,7 @@ export default {
 		},
 
 		userId() {
-			return this.$store.getters.getUserId()
+			return this.actorStore.userId
 		},
 
 		canAddPhones() {

@@ -302,6 +302,7 @@ import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
+import { useActorStore } from '../../../../../stores/actor.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
@@ -406,6 +407,7 @@ export default {
 		const { message } = toRefs(props)
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
+		const actorStore = useActorStore()
 		const {
 			isEditable,
 			isDeleteable,
@@ -430,6 +432,7 @@ export default {
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
+			actorStore,
 		}
 	},
 
@@ -457,7 +460,7 @@ export default {
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
 				&& !this.isCurrentUserOwnMessage
 				&& this.message.actorType === ATTENDEE.ACTOR_TYPE.USERS
-				&& this.$store.getters.isActorUser()
+				&& !this.isCurrentGuest
 		},
 
 		messageFile() {
@@ -472,7 +475,7 @@ export default {
 		},
 
 		isCurrentGuest() {
-			return this.$store.getters.isActorGuest()
+			return this.actorStore.isActorGuest
 		},
 
 		isDeletedMessage() {

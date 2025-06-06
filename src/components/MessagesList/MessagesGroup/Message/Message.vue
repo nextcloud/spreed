@@ -122,6 +122,7 @@ import Reactions from './MessagePart/Reactions.vue'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
+import { useActorStore } from '../../../../stores/actor.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 
@@ -204,6 +205,7 @@ export default {
 		return {
 			isTranslationAvailable,
 			chatExtrasStore: useChatExtrasStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -279,8 +281,8 @@ export default {
 			return !this.isSystemMessage
 				&& !this.isTemporary
 				&& !this.isDeleting
-				&& this.message.actorType === this.$store.getters.getActorType()
-				&& this.message.actorId === this.$store.getters.getActorId()
+				&& this.message.actorType === this.actorStore.actorType
+				&& this.message.actorId === this.actorStore.actorId
 				&& !this.isDeletedMessage
 		},
 

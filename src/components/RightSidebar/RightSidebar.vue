@@ -142,6 +142,7 @@ import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -234,6 +235,7 @@ export default {
 			sidebar,
 			sidebarContent,
 			sidebarStore: useSidebarStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -279,7 +281,7 @@ export default {
 		},
 
 		getUserId() {
-			return this.$store.getters.getUserId()
+			return this.actorStore.userId
 		},
 
 		canAddParticipants() {

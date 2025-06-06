@@ -31,6 +31,7 @@ import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
@@ -46,6 +47,7 @@ const isDirectionRTL = isRTL()
 const store = useStore()
 const router = useRouter()
 const dashboardStore = useDashboardStore()
+const actorStore = useActorStore()
 const forwardScrollable = ref(false)
 const backwardScrollable = ref(false)
 const eventCardsWrapper = ref<HTMLDivElement | null>(null)
@@ -166,7 +168,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 <template>
 	<div class="talk-dashboard-wrapper">
 		<h2 class="talk-dashboard__header">
-			{{ t('spreed', 'Hello, {displayName}', { displayName: store.getters.getDisplayName() }, { escape: false }) }}
+			{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
 		</h2>
 		<div class="talk-dashboard__actions">
 			<NcPopover v-if="canStartConversations"

@@ -43,6 +43,7 @@ import {
 import { checkBrowser } from './utils/browserCheck.ts'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
+import { useActorStore } from './stores/actor.js'
 
 export default {
 
@@ -62,6 +63,7 @@ export default {
 	setup() {
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -142,7 +144,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.$store.dispatch('setCurrentUser', getCurrentUser())
+		this.actorStore.setCurrentUse(getCurrentUser())
 
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')

@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import store from '../../../store/index.js'
+import { useActorStore } from '../../../stores/actor.js'
+import pinia from '../../../stores/pinia.ts'
 import EmitterMixin from '../../EmitterMixin.js'
 import { ConnectionState } from './CallParticipantModel.js'
 
+const actorStore = useActorStore(pinia)
 /**
  *
  */
@@ -55,7 +58,10 @@ LocalCallParticipantModel.prototype = {
 		this.set('guestName', null)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
-		this._unwatchDisplayNameChange = store.watch((state) => state.actorStore.displayName, this.setGuestName.bind(this))
+		this._unwatchDisplayNameChange = watch(
+			() => actorStore.displayName,
+			this.setGuestName.bind(this),
+		)
 	},
 
 	setPeerId(peerId) {

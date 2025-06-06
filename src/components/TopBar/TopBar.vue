@@ -132,6 +132,7 @@ import TopBarMenu from './TopBarMenu.vue'
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
@@ -187,6 +188,7 @@ export default {
 			localMediaModel,
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
+			actorStore: useActorStore(),
 			CONVERSATION,
 		}
 	},
@@ -230,13 +232,6 @@ export default {
 		},
 
 		/**
-		 * Current actor id
-		 */
-		actorId() {
-			return this.$store.getters.getActorId()
-		},
-
-		/**
 		 * Online status of the peer in one to one conversation.
 		 */
 		isPeerInactive() {
@@ -249,7 +244,7 @@ export default {
 			let peer
 			const participants = this.$store.getters.participantsList(this.token)
 			for (const participant of participants) {
-				if (participant.actorId !== this.actorId) {
+				if (participant.actorId !== this.actorStore.actorId) {
 					peer = participant
 				}
 			}
@@ -287,7 +282,7 @@ export default {
 		},
 
 		getUserId() {
-			return this.$store.getters.getUserId()
+			return this.actorStore.userId
 		},
 	},
 
