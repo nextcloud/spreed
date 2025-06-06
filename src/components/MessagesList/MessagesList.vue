@@ -26,10 +26,12 @@
 			:data-date-timestamp="dateTimestamp"
 			class="scroller__content"
 			:class="{ 'has-sticky': dateTimestamp === stickyDate }">
-			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-group__date">
-				<span class="messages-group__date-text" role="heading" aria-level="3">
-					{{ dateSeparatorLabels[dateTimestamp] }}
-				</span>
+			<li :key="`${currentDay}_${dateTimestamp}`" class="messages-group__date">
+				<StaticDateTime
+					:time="dateTimestamp * 1000"
+					class="messages-group__date-text"
+					role="heading"
+					aria-level="3" />
 			</li>
 			<component :is="messagesGroupComponent(group)"
 				v-for="group in list"
@@ -61,7 +63,6 @@
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
@@ -69,6 +70,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import Message from 'vue-material-design-icons/Message.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
+import StaticDateTime from '../UIShared/StaticDateTime.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
@@ -78,7 +80,7 @@ import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
-import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 
@@ -89,6 +91,7 @@ export default {
 		Message,
 		NcEmptyContent,
 		NcLoadingIcon,
+		StaticDateTime,
 		TransitionWrapper,
 	},
 
@@ -171,8 +174,6 @@ export default {
 			isScrolling: null,
 
 			stickyDate: null,
-
-			dateSeparatorLabels: {},
 
 			endScrollTimeout: () => {},
 		}
@@ -405,10 +406,6 @@ export default {
 						dateTimestamp = convertToUnix(new Date(message.timestamp * 1000).setHours(0, 0, 0, 0))
 					}
 
-					if (!this.dateSeparatorLabels[dateTimestamp]) {
-						this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
-					}
-
 					if (!groupsByDate[dateTimestamp]) {
 						groupsByDate[dateTimestamp] = {}
 					}
@@ -555,44 +552,6 @@ export default {
 
 			// Only group messages within a short period of time (5 minutes), so unrelated messages are not grouped together
 			return Math.abs(date1 - date2) < 300000
-		},
-
-		getRelativePrefix(diffDays) {
-			switch (diffDays) {
-				case 0:
-					return t('spreed', 'Today')
-				case 1:
-					return t('spreed', 'Yesterday')
-				case 7:
-					return t('spreed', 'A week ago')
-				default:
-					return n('spreed', '%n day ago', '%n days ago', diffDays)
-			}
-		},
-
-		/**
-		 * Generate the date header between the messages
-		 *
-		 * @param {number} dateTimestamp The day and year timestamp (in UNIX format)
-		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
-		 */
-		generateDateSeparator(dateTimestamp) {
-			const startOfDay = new Date(dateTimestamp * 1000).setHours(0, 0, 0, 0)
-			const diffDays = Math.floor((Date.now() - startOfDay) / ONE_DAY_IN_MS)
-			// Relative date is only shown up to a week ago (inclusive)
-			if (diffDays <= 7) {
-				// TRANSLATORS: <Today>, <March 18th, 2024>
-				return t('spreed', '{relativeDate}, {absoluteDate}', {
-					relativeDate: this.getRelativePrefix(diffDays),
-					// 'LL' formats a localized date including day of month, month
-					// name and year
-					absoluteDate: moment(startOfDay).format('LL'),
-				}, undefined, {
-					escape: false, // French "Today" has a ' in it
-				})
-			} else {
-				return moment(startOfDay).format('LL')
-			}
 		},
 
 		/**
@@ -1261,9 +1220,6 @@ export default {
 			setTimeout(() => {
 				this.refreshReadMarkerPosition()
 				// Regenerate relative date separators
-				Object.keys(this.dateSeparatorLabels).forEach((dateTimestamp) => {
-					this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
-				})
 			}, 2)
 		},
 
