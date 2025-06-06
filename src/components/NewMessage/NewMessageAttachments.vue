@@ -138,7 +138,7 @@ export default {
 		},
 
 		showPollEditor() {
-			EventBus.emit('poll-editor-open', { id: null, fromDrafts: false })
+			EventBus.emit('poll-editor-open', { token: this.token, id: null, fromDrafts: false })
 		},
 	},
 }

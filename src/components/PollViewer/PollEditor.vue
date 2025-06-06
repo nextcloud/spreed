@@ -330,7 +330,7 @@ async function createPollDraft() {
  * Open a PollDraftHandler dialog
  */
 function openPollDraftHandler() {
-	EventBus.emit('poll-drafts-open', { selector: props.container })
+	EventBus.emit('poll-drafts-open', { token: props.token, selector: props.container })
 }
 
 /**

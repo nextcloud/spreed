@@ -5,7 +5,6 @@
 
 const state = {
 	token: '',
-	conversationSettingsToken: '',
 	fileIdForToken: null,
 	/**
 	 * The joining of a room with the signaling server always lags
@@ -20,9 +19,6 @@ const state = {
 const getters = {
 	getToken: (state) => () => {
 		return state.token
-	},
-	getConversationSettingsToken: (state) => () => {
-		return state.conversationSettingsToken
 	},
 	getFileIdForToken: (state) => () => {
 		return state.fileIdForToken
@@ -41,16 +37,6 @@ const mutations = {
 	 */
 	updateToken(state, newToken) {
 		state.token = newToken
-	},
-
-	/**
-	 * Updates the token of the conversation settings dialog
-	 *
-	 * @param {object} state current store state;
-	 * @param {string} newToken The token of the active conversation
-	 */
-	updateConversationSettingsToken(state, newToken) {
-		state.conversationSettingsToken = newToken
 	},
 
 	/**
@@ -81,16 +67,6 @@ const actions = {
 	 */
 	updateToken(context, newToken) {
 		context.commit('updateToken', newToken)
-	},
-
-	/**
-	 * Updates the token
-	 *
-	 * @param {object} context default store context;
-	 * @param {string} newToken The token of the active conversation
-	 */
-	updateConversationSettingsToken(context, newToken) {
-		context.commit('updateConversationSettingsToken', newToken)
 	},
 
 	/**
