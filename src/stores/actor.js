@@ -15,16 +15,22 @@ import { defineStore } from 'pinia'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { getTeams } from '../services/teamsService.ts'
 import { ref, computed } from 'vue'
+import type { Participant } from '../types/index.ts'
+
+interface NextcloudUser {
+  uid: string
+  displayName: string | null
+}
 
 export const useActorStore = defineStore('actor', () => {
-	const userId = ref(null)
-	const sessionId = ref(null)
-	const attendeeId = ref(null)
-	const actorId = ref(null)
-	const actorType = ref(null)
-	const displayName = ref('')
-	const actorGroups = ref(loadState('spreed', 'user_group_ids', []))
-	const actorTeams = ref([])
+	const userId = ref<string | null>(null)
+	const sessionId = ref<string | null>(null)
+	const attendeeId = ref<number | null>(null)
+	const actorId = ref<string | null>(null)
+	const actorType = ref<string | null>(null)
+	const displayName = ref<string>('')
+	const actorGroups = ref<string[]>(loadState('spreed', 'user_group_ids', []))
+	const actorTeams = ref<string[]>([])
 
 	const isActorUser = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.USERS)
 	const isActorGuest = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.GUESTS)
@@ -38,38 +44,38 @@ export const useActorStore = defineStore('actor', () => {
 	/**
 	 * Check if the actor is a member of a group
 	 *
-	 * @param {string} groupId The group id
+	 * @param groupId The group id
 	 */
-	function isActorMemberOfGroup(groupId) {
+	function isActorMemberOfGroup(groupId: string) {
 		return actorGroups.value.includes(groupId)
 	}
 
 	/**
 	 * Check if the actor is a member of a team
 	 *
-	 * @param {string} teamId The team id
+	 * @param teamId The team id
 	 */
-	function isActorMemberOfTeam(teamId) {
+	function isActorMemberOfTeam(teamId: string) {
 		return actorTeams.value.includes(teamId)
 	}
 
 	/**
-	 * Set the userId
+	 * Set the display name of the actor
 	 *
-	 * @param {string} displayName The name
+	 * @param displayName The name
 	 */
-	function setDisplayName(displayName) {
-		displayName.value = displayName
+	function setDisplayName(newDisplayName: string) {
+		displayName.value = newDisplayName
 	}
 
 	/**
 	 * Set the actor from the current user
 	 *
-	 * @param {object} user A NextcloudUser object as returned by @nextcloud/auth
-	 * @param {string} user.uid The user id of the user
-	 * @param {string|null} user.displayName The display name of the user
+	 * @param user A NextcloudUser object as returned by @nextcloud/auth
+	 * @param user.uid The user id of the user
+	 * @param user.displayName The display name of the user
 	 */
-	function setCurrentUser(user) {
+	function setCurrentUser(user: NextcloudUser) {
 		userId.value = user.uid
 		displayName.value = user.displayName || user.uid
 		actorType.value = ATTENDEE.ACTOR_TYPE.USERS
@@ -79,13 +85,13 @@ export const useActorStore = defineStore('actor', () => {
 	/**
 	 * Set the actor from the current participant
 	 *
-	 * @param {object} participant The participant data
-	 * @param {number} participant.attendeeId The attendee id of the participant
-	 * @param {number} participant.participantType The type of the participant
-	 * @param {string} participant.sessionId The session id of the participant
-	 * @param {string} participant.actorId The actor id of the participant
+	 * @param participant The participant data
+	 * @param participant.attendeeId The attendee id of the participant
+	 * @param participant.participantType The type of the participant
+	 * @param participant.sessionId The session id of the participant
+	 * @param participant.actorId The actor id of the participant
 	 */
-	function setCurrentParticipant(participant) {
+	function setCurrentParticipant(participant: Participant & { sessionId: string }) {
 		sessionId.value = participant.sessionId
 		attendeeId.value = participant.attendeeId
 
