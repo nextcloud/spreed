@@ -30,7 +30,7 @@ class Authenticator {
 	}
 
 	protected function readHeaders(): void {
-		$this->isFederationRequest = (bool)$this->request->getHeader('X-Nextcloud-Federation');
+		$this->isFederationRequest = (bool)$this->request->getHeader('x-nextcloud-federation');
 		if (!$this->isFederationRequest) {
 			$this->federationCloudId = '';
 			$this->accessToken = '';

@@ -36,6 +36,7 @@ use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\MessageTooLongException;
@@ -73,13 +74,15 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed used to generate the request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'Signature over the request body to verify authenticity')]
 	protected function getBotFromHeaders(string $token, string $message): Bot {
-		$random = $this->request->getHeader('X-Nextcloud-Talk-Bot-Random');
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->error('Invalid Random received from bot response');
 			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);
 		}
-		$checksum = $this->request->getHeader('X-Nextcloud-Talk-Bot-Signature');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
 		if (empty($checksum)) {
 			$this->logger->error('Invalid Signature received from bot response');
 			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);

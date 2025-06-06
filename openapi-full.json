@@ -13201,7 +13201,7 @@
                         }
                     },
                     {
-                        "name": "X-Nextcloud-Federation",
+                        "name": "x-nextcloud-federation",
                         "in": "header",
                         "schema": {
                             "type": "string"
@@ -19761,14 +19761,14 @@
                         }
                     },
                     {
-                        "name": "Talk-Recording-Random",
+                        "name": "talk-recording-random",
                         "in": "header",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "Talk-Recording-Checksum",
+                        "name": "talk-recording-checksum",
                         "in": "header",
                         "schema": {
                             "type": "string"

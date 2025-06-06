@@ -77,6 +77,7 @@ use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -392,6 +393,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI]
 	#[OpenAPI(scope: 'backend-sipbridge')]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
@@ -412,7 +416,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$action = 'talkRoomToken';
 			$participant = null;
 
-			$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
+			$isTalkFederation = $this->request->getHeader('x-nextcloud-federation');
 
 			if (!$isTalkFederation) {
 				$sessionId = $this->session->getSessionForRoom($token);
@@ -510,8 +514,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but is not valid
 	 */
 	private function validateSIPBridgeRequest(string $token): bool {
-		$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
-		$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
+		$random = $this->request->getHeader('talk-sipbridge-random');
+		$checksum = $this->request->getHeader('talk-sipbridge-checksum');
 		$secret = $this->talkConfig->getSIPSharedSecret();
 		return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $token);
 	}
@@ -860,6 +864,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 200: Call notification level updated successfully
 	 * 400: Updating call notification level is not possible
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function setNotificationCalls(int $level): DataResponse {
@@ -980,6 +985,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
@@ -1454,6 +1460,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function removeSelfFromRoom(): DataResponse {
 		return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 	}
@@ -1976,6 +1983,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function joinFederatedRoom(string $token, ?string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -2028,6 +2036,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function verifyDialInPin(string $pin): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2072,6 +2082,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2133,6 +2145,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2180,6 +2194,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -2219,6 +2235,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2322,6 +2340,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function leaveFederatedRoom(string $token, string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -2762,6 +2781,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	public function getCapabilities(): DataResponse {
 		$headers = [];
 		if ($this->room->isFederatedConversation()) {
