@@ -979,7 +979,7 @@
                         }
                     },
                     {
-                        "name": "X-Nextcloud-Federation",
+                        "name": "x-nextcloud-federation",
                         "in": "header",
                         "schema": {
                             "type": "string"

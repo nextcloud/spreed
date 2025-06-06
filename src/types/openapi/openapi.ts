@@ -6674,7 +6674,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                "X-Nextcloud-Federation"?: string;
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9251,8 +9251,8 @@ export interface operations {
                 token?: string;
             };
             header: {
-                "Talk-Recording-Random"?: string;
-                "Talk-Recording-Checksum"?: string;
+                "talk-recording-random"?: string;
+                "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
