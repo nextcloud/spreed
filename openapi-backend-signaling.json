@@ -380,6 +380,22 @@
                         }
                     },
                     {
+                        "name": "spreed-signaling-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "spreed-signaling-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the signaling backend",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",

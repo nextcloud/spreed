@@ -145,6 +145,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Random seed used to generate the request checksum */
+                "talk-recording-random"?: string;
+                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -235,6 +239,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Random seed used to generate the request checksum */
+                "talk-recording-random"?: string;
+                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
