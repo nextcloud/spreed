@@ -16,6 +16,7 @@ import { searchListedConversations } from '../../services/conversationsService.t
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
+import { useActorStore } from '../../stores/actor.js'
 import { findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
@@ -90,6 +91,7 @@ describe('LeftSidebar.vue', () => {
 		localVue.use(Vuex)
 		localVue.use(VueRouter)
 		setActivePinia(createPinia())
+		const actorStore = useActorStore()
 
 		loadStateSettings = {
 			circles_enabled: true,
@@ -109,8 +111,7 @@ describe('LeftSidebar.vue', () => {
 		fetchConversationsAction = jest.fn().mockReturnValue({ headers: {} })
 		addConversationAction = jest.fn()
 		createOneToOneConversationAction = jest.fn()
-		const getUserIdMock = jest.fn().mockReturnValue('current-user')
-		testStoreConfig.modules.actorStore.getters.getUserId = () => getUserIdMock
+		actorStore.userId = 'current-user'
 		testStoreConfig.modules.conversationsStore.getters.conversationsList = conversationsListMock
 		testStoreConfig.modules.conversationsStore.actions.fetchConversations = fetchConversationsAction
 		testStoreConfig.modules.conversationsStore.actions.addConversation = addConversationAction

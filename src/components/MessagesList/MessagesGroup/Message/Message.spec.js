@@ -23,6 +23,7 @@ import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
+import { useActorStore } from '../../../../stores/actor.js'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -45,13 +46,13 @@ describe('Message.vue', () => {
 	let messageProps
 	let conversationProps
 	let injected
-	let getActorTypeMock
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		const actorStore = useActorStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -65,17 +66,15 @@ describe('Message.vue', () => {
 			getMessagesListScroller: jest.fn(),
 		}
 
+		actorStore.actorId = 'user-id-1'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.tokenStore.getters.getToken
 			= jest.fn().mockReturnValue(() => TOKEN)
 		testStoreConfig.modules.conversationsStore.getters.conversation
 			= jest.fn().mockReturnValue((token) => conversationProps)
-		testStoreConfig.modules.actorStore.getters.getActorId
-			= jest.fn().mockReturnValue(() => 'user-id-1')
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
-		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
-		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
 
 		messageProps = {
 			message: {
