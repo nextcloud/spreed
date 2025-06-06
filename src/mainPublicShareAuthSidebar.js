@@ -5,12 +5,12 @@
 
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
 import store from './store/index.js'
+import pinia from './stores/pinia.ts'
 
 import './init.js'
 // Leaflet icon patch
@@ -30,10 +30,7 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
-Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
-
-const pinia = createPinia()
 
 /**
  * Wraps all the body contents in its own container.

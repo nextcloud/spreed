@@ -6,7 +6,6 @@
 import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
-import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue, { watch } from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
@@ -14,6 +13,7 @@ import App from './App.vue'
 import router from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
+import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 
 import './init.js'
@@ -36,11 +36,8 @@ if (!IS_DESKTOP) {
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
-Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 Vue.use(VueRouter)
-
-const pinia = createPinia()
 
 const instance = new Vue({
 	el: '#content',

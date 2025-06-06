@@ -6,13 +6,13 @@
 
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import Recording from './Recording.vue'
 import router from './router/router.ts'
 import store from './store/index.js'
+import pinia from './stores/pinia.ts'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
@@ -37,11 +37,8 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
-Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 Vue.use(VueRouter)
-
-const pinia = createPinia()
 
 window.store = store
 
