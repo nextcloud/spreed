@@ -19,10 +19,14 @@ import { EventBus } from '../services/EventBus.ts'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'
+import { useActorStore } from '../stores/actor.js'
+import pinia from '../stores/pinia.ts'
 import CancelableRequest from './cancelableRequest.js'
 import Encryption from './e2ee/encryption.js'
 import { convertToUnix } from './formattedTime.ts'
 import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
+
+const actorStore = useActorStore(pinia)
 
 const Signaling = {
 	Base: {},
@@ -898,7 +902,7 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 
 				this.nextcloudSessionId = response.data.ocs.data.sessionId
 
-				store.dispatch('setCurrentParticipant', response.data.ocs.data)
+				actorStore.setCurrentParticipant(response.data.ocs.data)
 				store.commit('setInCall', {
 					token: this.currentRoomToken,
 					sessionId: this.nextcloudSessionId,

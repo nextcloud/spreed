@@ -67,6 +67,7 @@ import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePr
 import { useMessageInfo } from '../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useActorStore } from '../stores/actor.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {
@@ -125,6 +126,7 @@ export default {
 			isFileShareWithoutCaption,
 			actorDisplayName,
 			actorInfo,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -136,8 +138,8 @@ export default {
 		},
 
 		isOwnMessageQuoted() {
-			return this.message.actorId === this.$store.getters.getActorId()
-				&& this.message.actorType === this.$store.getters.getActorType()
+			return this.message.actorId === this.actorStore.actorId
+				&& this.message.actorType === this.actorStore.actorType
 		},
 
 		richParameters() {

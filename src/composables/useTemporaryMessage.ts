@@ -5,6 +5,7 @@
 
 import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
 
+import { useActorStore } from '../stores/actor.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
 import { useStore } from './useStore.js'
@@ -16,6 +17,7 @@ import { useStore } from './useStore.js'
 export function useTemporaryMessage(context: unknown) {
 	const store = context ?? useStore()
 	const chatExtrasStore = useChatExtrasStore()
+	const actorStore = useActorStore()
 
 	/**
 	 * @param payload payload for generating a temporary message
@@ -25,9 +27,9 @@ export function useTemporaryMessage(context: unknown) {
 
 		return prepareTemporaryMessage({
 			...payload,
-			actorId: store.getters.getActorId(),
-			actorType: store.getters.getActorType(),
-			actorDisplayName: store.getters.getDisplayName(),
+			actorId: actorStore.actorId ?? '',
+			actorType: actorStore.actorType ?? '',
+			actorDisplayName: actorStore.displayName,
 			parent: parentId && store.getters.message(payload.token, parentId),
 		})
 	}

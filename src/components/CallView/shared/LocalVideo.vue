@@ -41,7 +41,7 @@
 			<AvatarWrapper :id="userId"
 				:token="token"
 				:name="displayName"
-				:source="actorType"
+				:source="actorStore.actorType"
 				:size="avatarSize"
 				:loading="isNotConnected"
 				disable-menu
@@ -69,6 +69,7 @@ import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
 import { AVATAR } from '../../../constants.ts'
+import { useActorStore } from '../../../stores/actor.js'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -158,6 +159,7 @@ export default {
 			devMode,
 			screenshotMode,
 			callViewStore: useCallViewStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -208,15 +210,11 @@ export default {
 		},
 
 		userId() {
-			return this.$store.getters.getUserId()
-		},
-
-		actorType() {
-			return this.$store.getters.getActorType()
+			return this.actorStore.userId
 		},
 
 		displayName() {
-			return this.$store.getters.getDisplayName()
+			return this.actorStore.displayName
 		},
 
 		avatarSize() {

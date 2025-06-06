@@ -11,6 +11,8 @@ import {
 import { t } from '@nextcloud/l10n'
 import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
+import { useActorStore } from '../../stores/actor.js'
+import pinia from '../../stores/pinia.ts'
 import { Sounds } from '../sounds.js'
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
@@ -31,6 +33,7 @@ let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
+const actorStore = useActorStore(pinia)
 
 /**
  * @param {Array} a Source object
@@ -198,7 +201,7 @@ function sendCurrentMediaState() {
  *
  */
 function sendCurrentNick() {
-	webrtc.webrtc.emit('nickChanged', store.getters.getDisplayName())
+	webrtc.webrtc.emit('nickChanged', actorStore.displayName)
 }
 
 /**
@@ -471,10 +474,9 @@ function usersInCallChanged(signaling, users) {
 		&& selfInCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		&& localUserInCall) {
 		console.info('Force leaving the call for current participant')
-
 		store.dispatch('leaveCall', {
 			token: store.getters.getToken(),
-			participantIdentifier: store.getters.getParticipantIdentifier(),
+			participantIdentifier: actorStore.getParticipantIdentifier,
 		})
 
 		// Do not return to disconnect already from the other participants
@@ -669,7 +671,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			message.broadcaster = message.from
 		}
 	})
-
 	webrtc = new SimpleWebRTC({
 		autoRequestMedia: true,
 		debug: false,
@@ -678,7 +679,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		connection: signaling,
 		enableDataChannels: true,
 		enableSimulcast: signaling.hasFeature('simulcast'),
-		nick: store.getters.getDisplayName(),
+		nick: actorStore.displayName,
 	})
 
 	if (!window.OCA.Talk) {

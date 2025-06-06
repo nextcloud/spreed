@@ -184,6 +184,7 @@ import {
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
@@ -259,6 +260,7 @@ export default {
 			isFullscreen: useDocumentFullscreen(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -472,7 +474,7 @@ export default {
 			this.$store.dispatch(
 				'setParticipantHandRaised',
 				{
-					sessionId: this.$store.getters.getSessionId(),
+					sessionId: this.actorStore.sessionId,
 					raisedHand: this.model.attributes.raisedHand,
 				},
 			)
@@ -480,7 +482,7 @@ export default {
 			// also send request for assistance to the moderators.
 			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
 				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
-					.filter((sessionId) => sessionId !== this.$store.getters.getSessionId())
+					.filter((sessionId) => sessionId !== this.actorStore.sessionId)
 					.length !== 0
 				if (hasRaisedHands) {
 					return // Assistance is already requested by someone in the room

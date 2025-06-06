@@ -85,6 +85,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'
+import { useActorStore } from '../../stores/actor.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
@@ -131,6 +132,7 @@ export default {
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
 			predefinedBackgroundsV2: getTalkConfig('local', 'call', 'predefined-backgrounds-v2'),
 			settingsStore: useSettingsStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -174,12 +176,12 @@ export default {
 	async mounted() {
 		this.loadBackground()
 
-		if (this.$store.getters.getUserId() === null) {
+		if (this.actorStore.userId === null) {
 			console.debug('Skip Talk backgrounds folder check and setup for participants that are not logged in')
 			return
 		}
 
-		const userRoot = '/files/' + this.$store.getters.getUserId()
+		const userRoot = '/files/' + this.actorStore.userId
 		const absoluteBackgroundsFolderPath = userRoot + this.relativeBackgroundsFolderPath
 
 		try {
@@ -216,7 +218,7 @@ export default {
 			event.target.value = ''
 
 			// userRoot path
-			const userRoot = '/files/' + this.$store.getters.getUserId()
+			const userRoot = '/files/' + this.actorStore.userId
 
 			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + file.name
 

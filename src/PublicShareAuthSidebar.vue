@@ -43,6 +43,7 @@ import {
 	leaveConversationSync,
 	setGuestUserName,
 } from './services/participantsService.js'
+import { useActorStore } from './stores/actor.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -65,6 +66,7 @@ export default {
 
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -127,9 +129,9 @@ export default {
 			const guestNickname = getGuestNickname()
 
 			if (currentUser) {
-				this.$store.dispatch('setCurrentUser', currentUser)
+				this.actorStore.setCurrentUser(currentUser)
 			} else if (guestNickname) {
-				this.$store.dispatch('setDisplayName', guestNickname)
+				this.actorStore.setDisplayName(guestNickname)
 			} else {
 				subscribe('talk:guest-name:added', this.showGuestMediaSettings)
 			}
@@ -183,12 +185,12 @@ export default {
 				// Although the current participant is automatically added to
 				// the participants store it must be explicitly set in the
 				// actors store.
-				if (!this.$store.getters.getUserId()) {
+				if (!this.actorStore.userId) {
 					// Set the current actor/participant for guests
 					const conversation = this.$store.getters.conversation(this.token)
 
 					// Setting a guest only uses "sessionId" and "participantType".
-					this.$store.dispatch('setCurrentParticipant', conversation)
+					this.actorStore.setCurrentParticipant(conversation)
 				}
 			} catch (exception) {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)

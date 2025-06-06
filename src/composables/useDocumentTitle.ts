@@ -10,6 +10,7 @@ import { t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router/composables'
 import { EventBus } from '../services/EventBus.ts'
+import { useActorStore } from '../stores/actor.js'
 import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useStore } from './useStore.js'
@@ -35,8 +36,9 @@ export function useDocumentTitle() {
 	const savedLastMessageMap = ref<LastMessageMap>({})
 
 	const conversationList = computed(() => store.getters.conversationsList)
-	const actorId = computed(() => store.getters.getActorId())
-	const actorType = computed(() => store.getters.getActorType())
+	const actorStore = useActorStore()
+	const actorId = computed(() => actorStore.actorId)
+	const actorType = computed(() => actorStore.actorType)
 
 	watch(conversationList, (newValue) => {
 		if (isDocumentVisible.value || document.title.startsWith('* ')

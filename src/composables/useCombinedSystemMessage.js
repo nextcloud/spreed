@@ -5,6 +5,7 @@
 
 import { n, t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
+import { useActorStore } from '../stores/actor.js'
 import { useStore } from './useStore.js'
 
 /**
@@ -20,8 +21,9 @@ export function useCombinedSystemMessage() {
 	 * @return {boolean}
 	 */
 	function checkIfSelfIsActor(message) {
-		return message.actorId === store.getters.getActorId()
-			&& message.actorType === store.getters.getActorType()
+		const actorStore = useActorStore()
+		return message.actorId === actorStore.actorId
+			&& message.actorType === actorStore.actorType
 	}
 
 	/**
@@ -30,8 +32,9 @@ export function useCombinedSystemMessage() {
 	 * @return {boolean}
 	 */
 	function checkIfSelfIsOneOfActors(message) {
-		return message.messageParameters.actor.id === store.getters.getActorId()
-			&& message.messageParameters.actor.type + 's' === store.getters.getActorType()
+		const actorStore = useActorStore()
+		return message.messageParameters.actor.id === actorStore.actorId
+			&& message.messageParameters.actor.type + 's' === actorStore.actorType
 	}
 
 	/**
@@ -40,8 +43,9 @@ export function useCombinedSystemMessage() {
 	 * @return {boolean}
 	 */
 	function checkIfSelfIsOneOfUsers(message) {
-		return message.messageParameters.user.id === store.getters.getActorId()
-			&& message.messageParameters.user.type + 's' === store.getters.getActorType()
+		const actorStore = useActorStore()
+		return message.messageParameters.user.id === actorStore.actorId
+			&& message.messageParameters.user.type + 's' === actorStore.actorType
 	}
 
 	/**

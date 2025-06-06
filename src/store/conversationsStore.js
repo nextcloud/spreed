@@ -64,6 +64,7 @@ import {
 	stopCallRecording,
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useActorStore } from '../stores/actor.js'
 import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'
@@ -299,10 +300,11 @@ const actions = {
 			return
 		}
 
+		const actorStore = useActorStore()
 		// Add current user to a new conversation participants
 		let currentUser = {
-			uid: context.getters.getUserId(),
-			displayName: context.getters.getDisplayName(),
+			uid: actorStore.userId,
+			displayName: actorStore.displayName,
 		}
 
 		// Fallback to getCurrentUser() only if it has not been set yet (as
@@ -1059,8 +1061,9 @@ const actions = {
 	 */
 	async extendOneToOneConversation(context, { token, newParticipants }) {
 		const conversation = context.getters.conversation(token)
+		const actorStore = useActorStore()
 		const participants = [
-			{ id: conversation.actorId, source: conversation.actorType, label: context.rootGetters.getDisplayName() },
+			{ id: conversation.actorId, source: conversation.actorType, label: actorStore.displayName },
 			...newParticipants,
 		]
 		const roomName = getDisplayNamesList(participants.map((participant) => participant.label), CONVERSATION.MAX_NAME_LENGTH)

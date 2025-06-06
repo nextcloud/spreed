@@ -232,6 +232,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { setUserConfig } from '../../services/settingsService.ts'
+import { useActorStore } from '../../stores/actor.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { isMac } from '../../utils/browserCheck.ts'
@@ -276,6 +277,7 @@ export default {
 			customSettingsSections,
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -305,7 +307,7 @@ export default {
 		},
 
 		isGuest() {
-			return !this.$store.getters.getUserId()
+			return !this.actorStore.userId
 		},
 
 		readStatusPrivacyIsPublic() {
