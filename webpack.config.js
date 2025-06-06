@@ -12,6 +12,8 @@ const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
 
 const commonWebpackConfig = require('./webpack.common.config.js')
 
+const IS_PROD = process.env.NODE_ENV === 'production'
+
 module.exports = mergeWithRules({
 	module: {
 		// Rules from @nextcloud/webpack-vue-config/rules already added by commonWebpackConfig
@@ -62,4 +64,11 @@ module.exports = mergeWithRules({
 	],
 
 	cache: true,
+
+	devtool: IS_PROD
+		// .js.map files with original file names and lines but without the source code
+		// Tradeoff choice between dist size and features
+		? 'nosources-source-map'
+		// High-quality SourceMaps with faster rebuild for development
+		: 'eval-source-map',
 })
