@@ -7,9 +7,9 @@
 	<NcAppSettingsDialog id="conversation-settings-container"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
-		:open.sync="showSettings"
+		:open="showSettings"
 		show-navigation
-		@update:open="handleUpdateOpen">
+		@update:open="handleHideSettings">
 		<NcAppSettingsSection id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo :conversation="conversation"
@@ -110,6 +110,7 @@
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
+import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -133,6 +134,7 @@ import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
+const matterbridgeEnabled = loadState('spreed', 'enable_matterbridge')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
@@ -162,18 +164,16 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
+		const token = ref('')
+
 		const meetingHeader = t('spreed', 'Meeting') // TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
+
 		return {
+			matterbridgeEnabled,
 			supportsArchive,
 			settingsStore,
+			token,
 			meetingHeader,
-		}
-	},
-
-	data() {
-		return {
-			showSettings: false,
-			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
 		}
 	},
 
@@ -198,9 +198,8 @@ export default {
 			return this.$store.getters.isActorGuest()
 		},
 
-		token() {
-			return this.$store.getters.getConversationSettingsToken()
-				|| this.$store.getters.getToken()
+		showSettings() {
+			return this.token !== ''
 		},
 
 		showMediaSettingsToggle() {
@@ -282,20 +281,18 @@ export default {
 
 	methods: {
 		t,
-		handleShowSettings({ token }) {
-			this.$store.dispatch('updateConversationSettingsToken', token)
-			this.showSettings = true
+
+		/**
+		 * Opens ConversationSettingsDialog
+		 * @param payload event payload
+		 * @param payload.token conversation token
+		 */
+		handleShowSettings(payload) {
+			this.token = payload.token
 		},
 
 		handleHideSettings() {
-			this.showSettings = false
-			this.$store.dispatch('updateConversationSettingsToken', '')
-		},
-
-		handleUpdateOpen(value) {
-			if (!value) {
-				this.$store.dispatch('updateConversationSettingsToken', '')
-			}
+			this.token = ''
 		},
 
 		setShowMediaSettings(newValue) {
