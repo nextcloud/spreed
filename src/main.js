@@ -59,7 +59,7 @@ const Sidebar = function() {
 	this.state = {
 		file: '',
 	}
-	const sidebarStore = useSidebarStore()
+	const sidebarStore = useSidebarStore(pinia)
 	watch(() => sidebarStore.show, (sidebarShown) => {
 		if (!sidebarShown) {
 			this.state.file = ''

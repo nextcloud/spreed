@@ -13,12 +13,15 @@ import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
+import pinia from './stores/pinia.ts'
 
 import '@nextcloud/dialogs/style.css'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
+
+const integrationsStore = useIntegrationsStore(pinia)
 
 /**
  * Frontend message API for adding actions to talk messages.
@@ -36,7 +39,6 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 		callback,
 		icon,
 	}
-	const integrationsStore = useIntegrationsStore()
 	integrationsStore.addMessageAction(messageAction)
 }
 
@@ -47,7 +49,6 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 		show,
 		icon,
 	}
-	const integrationsStore = useIntegrationsStore()
 	integrationsStore.addParticipantSearchAction(participantSearchAction)
 }
 
