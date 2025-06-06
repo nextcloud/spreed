@@ -149,7 +149,7 @@ OC.L10N.register(
     "An administrator removed the password" : "Администратор удалил пароль",
     "{actor} added {user}" : "{actor} добавил(а) пользователя {user}",
     "You joined the conversation" : "Вы присоединились к обсуждению",
-    "{actor} joined the conversation" : "{actor} присоеденился(лась) к обсуждению",
+    "{actor} joined the conversation" : "{actor} присоединился(лась) к обсуждению",
     "You added {user}" : "Вы добавили {user}",
     "{actor} added you" : "{actor} добавил(а) Вас",
     "An administrator added you" : "Администратор добавил вас",
