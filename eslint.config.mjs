@@ -58,7 +58,6 @@ export default [
 			'object-shorthand': 'off', // changes Vue watchers
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign
-			'vue/define-macros-order': 'off', // TODO
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
 			'vue/multi-word-component-names': 'off', // non-fixable
 			'vue/no-boolean-default': 'off', // non-fixable
