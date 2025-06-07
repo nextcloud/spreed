@@ -354,7 +354,7 @@ import {
 	callSIPUnmutePhone,
 } from '../../../services/callsService.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
-import { useActorStore } from '../../../stores/actor.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
@@ -906,7 +906,7 @@ export default {
 					console.info('Joining call')
 					await this.$store.dispatch('joinCall', {
 						token: this.token,
-						participantIdentifier: this.actorStore.getParticipantIdentifier,
+						participantIdentifier: this.actorStore.participantIdentifier,
 						flags,
 						silent: false,
 						recordingConsent: true,

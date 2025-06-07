@@ -40,10 +40,10 @@ import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
+import { useActorStore } from './stores/actor.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
-import { useActorStore } from './stores/actor.js'
 
 export default {
 
@@ -144,7 +144,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.actorStore.setCurrentUse(getCurrentUser())
+		this.actorStore.setCurrentUser(getCurrentUser())
 
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')

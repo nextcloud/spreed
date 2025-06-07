@@ -13,7 +13,7 @@ import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
 

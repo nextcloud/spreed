@@ -10,17 +10,15 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import { loadState } from '@nextcloud/initial-state'
-import { defineStore } from 'pinia'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
-import { getTeams } from '../services/teamsService.ts'
-import { ref, computed } from 'vue'
+import type { NextcloudUser } from '@nextcloud/auth'
 import type { Participant } from '../types/index.ts'
 
-interface NextcloudUser {
-  uid: string
-  displayName: string | null
-}
+import { getCurrentUser } from '@nextcloud/auth'
+import { loadState } from '@nextcloud/initial-state'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { getTeams } from '../services/teamsService.ts'
 
 export const useActorStore = defineStore('actor', () => {
 	const userId = ref<string | null>(null)
@@ -32,14 +30,31 @@ export const useActorStore = defineStore('actor', () => {
 	const actorGroups = ref<string[]>(loadState('spreed', 'user_group_ids', []))
 	const actorTeams = ref<string[]>([])
 
+	const isLoggedIn = computed(() => userId.value !== null)
 	const isActorUser = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.USERS)
 	const isActorGuest = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.GUESTS)
-	const getParticipantIdentifier = computed(() => ({
+	const participantIdentifier = computed(() => ({
 		attendeeId: attendeeId.value,
 		actorType: actorType.value,
 		actorId: actorId.value,
 		sessionId: sessionId.value,
 	}))
+
+	// Initialize the store
+	initialize()
+
+	/**
+	 * Initialize the actor store.
+	 */
+	function initialize() {
+		if (getCurrentUser()) {
+			console.debug('Setting current user')
+			setCurrentUser(getCurrentUser())
+			getCurrentUserTeams()
+		} else {
+			console.debug('Can not set current user because it\'s a guest')
+		}
+	}
 
 	/**
 	 * Check if the actor is a member of a group
@@ -60,6 +75,16 @@ export const useActorStore = defineStore('actor', () => {
 	}
 
 	/**
+	 * Check if the message is from the current actor
+	 *
+	 * @param payload object to check for
+	 */
+	function checkIfSelfIsActor(payload: { actorId?: string, actorType?: string }) {
+		return payload.actorId === actorId.value
+			&& payload.actorType === actorType.value
+	}
+
+	/**
 	 * Set the display name of the actor
 	 *
 	 * @param displayName The name
@@ -75,7 +100,10 @@ export const useActorStore = defineStore('actor', () => {
 	 * @param user.uid The user id of the user
 	 * @param user.displayName The display name of the user
 	 */
-	function setCurrentUser(user: NextcloudUser) {
+	function setCurrentUser(user: NextcloudUser | null) {
+		if (!user) {
+			return
+		}
 		userId.value = user.uid
 		displayName.value = user.displayName || user.uid
 		actorType.value = ATTENDEE.ACTOR_TYPE.USERS
@@ -94,7 +122,7 @@ export const useActorStore = defineStore('actor', () => {
 	function setCurrentParticipant(participant: Participant & { sessionId: string }) {
 		sessionId.value = participant.sessionId
 		attendeeId.value = participant.attendeeId
-
+		// FIXME other actor types like EMAILS
 		if (participant.participantType === PARTICIPANT.TYPE.GUEST
 			|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
 			// FIXME displayName.value = ''
@@ -130,13 +158,16 @@ export const useActorStore = defineStore('actor', () => {
 		displayName,
 		actorGroups,
 		actorTeams,
+		isLoggedIn,
 		isActorUser,
 		isActorGuest,
-		getParticipantIdentifier,
-		
+		participantIdentifier,
+
 		isActorMemberOfGroup,
 		isActorMemberOfTeam,
+		checkIfSelfIsActor,
 
+		initialize,
 		setDisplayName,
 		setCurrentUser,
 		setCurrentParticipant,

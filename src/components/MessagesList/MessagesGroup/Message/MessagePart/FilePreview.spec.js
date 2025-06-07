@@ -12,7 +12,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
 import storeConfig from '../../../../../store/storeConfig.js'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 
 describe('FilePreview.vue', () => {
 	let store

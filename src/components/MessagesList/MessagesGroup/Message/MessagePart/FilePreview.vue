@@ -79,7 +79,7 @@ import AudioPlayer from './AudioPlayer.vue'
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.js'
 
 const PREVIEW_TYPE = {

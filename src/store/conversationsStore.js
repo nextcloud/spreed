@@ -64,7 +64,7 @@ import {
 	stopCallRecording,
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'

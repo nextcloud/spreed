@@ -34,7 +34,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Message from './Message/Message.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
-import { useActorStore } from '../../../stores/actor.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {

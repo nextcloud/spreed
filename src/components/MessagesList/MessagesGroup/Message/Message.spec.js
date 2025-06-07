@@ -23,7 +23,7 @@ import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
-import { useActorStore } from '../../../../stores/actor.js'
+import { useActorStore } from '../../../../stores/actor.ts'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {

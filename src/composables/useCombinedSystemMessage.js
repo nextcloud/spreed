@@ -5,7 +5,7 @@
 
 import { n, t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useStore } from './useStore.js'
 
 /**
@@ -14,17 +14,7 @@ import { useStore } from './useStore.js'
  */
 export function useCombinedSystemMessage() {
 	const store = useStore()
-
-	/**
-	 *
-	 * @param {object} message message to check for
-	 * @return {boolean}
-	 */
-	function checkIfSelfIsActor(message) {
-		const actorStore = useActorStore()
-		return message.actorId === actorStore.actorId
-			&& message.actorType === actorStore.actorType
-	}
+	const actorStore = useActorStore()
 
 	/**
 	 *
@@ -32,7 +22,6 @@ export function useCombinedSystemMessage() {
 	 * @return {boolean}
 	 */
 	function checkIfSelfIsOneOfActors(message) {
-		const actorStore = useActorStore()
 		return message.messageParameters.actor.id === actorStore.actorId
 			&& message.messageParameters.actor.type + 's' === actorStore.actorType
 	}
@@ -43,7 +32,6 @@ export function useCombinedSystemMessage() {
 	 * @return {boolean}
 	 */
 	function checkIfSelfIsOneOfUsers(message) {
-		const actorStore = useActorStore()
 		return message.messageParameters.user.id === actorStore.actorId
 			&& message.messageParameters.user.type + 's' === actorStore.actorType
 	}
@@ -94,7 +82,7 @@ export function useCombinedSystemMessage() {
 				usersCounter++
 			})
 
-			if (checkIfSelfIsActor(combinedMessage)) {
+			if (actorStore.checkIfSelfIsActor(combinedMessage)) {
 				if (usersCounter === 2) {
 					combinedMessage.message = t('spreed', 'You added {user0} and {user1}')
 				} else {
@@ -160,7 +148,7 @@ export function useCombinedSystemMessage() {
 				usersCounter++
 			})
 
-			if (checkIfSelfIsActor(combinedMessage)) {
+			if (actorStore.checkIfSelfIsActor(combinedMessage)) {
 				if (usersCounter === 2) {
 					combinedMessage.message = t('spreed', 'You removed {user0} and {user1}')
 				} else {
@@ -303,7 +291,7 @@ export function useCombinedSystemMessage() {
 				usersCounter++
 			})
 
-			if (checkIfSelfIsActor(combinedMessage)) {
+			if (actorStore.checkIfSelfIsActor(combinedMessage)) {
 				if (usersCounter === 2) {
 					combinedMessage.message = t('spreed', 'You promoted {user0} and {user1} to moderators')
 				} else {
@@ -369,7 +357,7 @@ export function useCombinedSystemMessage() {
 				usersCounter++
 			})
 
-			if (checkIfSelfIsActor(combinedMessage)) {
+			if (actorStore.checkIfSelfIsActor(combinedMessage)) {
 				if (usersCounter === 2) {
 					combinedMessage.message = t('spreed', 'You demoted {user0} and {user1} from moderators')
 				} else {

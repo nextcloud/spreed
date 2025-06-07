@@ -47,7 +47,7 @@ import Router from './router/router.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
-import { useActorStore } from './stores/actor.js'
+import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
 import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
@@ -325,7 +325,7 @@ export default {
 
 					const payload = {
 						token: params.token,
-						participantIdentifier: this.actorStore.getParticipantIdentifier,
+						participantIdentifier: this.actorStore.participantIdentifier,
 						flags,
 						silent: true,
 						recordingConsent: this.recordingConsentGiven,
@@ -442,14 +442,6 @@ export default {
 				})
 			}
 		})
-
-		if (getCurrentUser()) {
-			console.debug('Setting current user')
-			this.actorStore.setCurrentUser(getCurrentUser())
-			this.actorStore.getCurrentUserTeams()
-		} else {
-			console.debug('Can not set current user because it\'s a guest')
-		}
 	},
 
 	async mounted() {

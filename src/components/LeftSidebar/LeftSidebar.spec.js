@@ -16,7 +16,7 @@ import { searchListedConversations } from '../../services/conversationsService.t
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import { findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 

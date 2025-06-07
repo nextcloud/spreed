@@ -30,7 +30,7 @@ import { n, t } from '@nextcloud/l10n'
 import escapeHtml from 'escape-html'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../constants.ts'
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 
 export default {

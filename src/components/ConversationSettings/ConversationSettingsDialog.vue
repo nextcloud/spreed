@@ -131,7 +131,7 @@ import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')

@@ -58,7 +58,7 @@ import { getPublicShareConversationData } from './services/filesIntegrationServi
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
-import { useActorStore } from './stores/actor.js'
+import { useActorStore } from './stores/actor.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 

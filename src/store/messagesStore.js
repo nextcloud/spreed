@@ -25,7 +25,7 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../services/messagesService.ts'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
@@ -1189,7 +1189,7 @@ const actions = {
 
 					context.dispatch('leaveCall', {
 						token,
-						participantIdentifier: actorStore.getParticipantIdentifier,
+						participantIdentifier: actorStore.participantIdentifier,
 					})
 				}
 			}

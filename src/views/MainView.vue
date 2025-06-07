@@ -14,7 +14,7 @@ import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
 import { useStore } from '../composables/useStore.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 
 const props = defineProps<{
 	token: string
@@ -34,7 +34,7 @@ watch(isInLobby, (isInLobby) => {
 	if (isInLobby && isInCall.value) {
 		store.dispatch('leaveCall', {
 			token: props.token,
-			participantIdentifier: actorStore.getParticipantIdentifier,
+			participantIdentifier: actorStore.participantIdentifier,
 		})
 	}
 })

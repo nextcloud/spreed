@@ -26,7 +26,7 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../services/messagesService.ts'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'

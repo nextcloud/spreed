@@ -90,7 +90,7 @@ import SharedItemsBrowser from './SharedItemsBrowser.vue'
 import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import { useActorStore } from '../../../stores/actor.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import {
