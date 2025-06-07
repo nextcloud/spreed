@@ -132,6 +132,7 @@ import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
 const matterbridgeEnabled = loadState('spreed', 'enable_matterbridge')
@@ -174,6 +175,7 @@ export default {
 			settingsStore,
 			token,
 			meetingHeader,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -195,7 +197,7 @@ export default {
 		},
 
 		isGuest() {
-			return this.$store.getters.isActorGuest()
+			return this.actorStore.isActorGuest
 		},
 
 		showSettings() {

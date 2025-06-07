@@ -9,6 +9,7 @@ import Vuex from 'vuex'
 import MessagesGroup from './MessagesGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 describe('MessagesGroup.vue', () => {
@@ -23,11 +24,12 @@ describe('MessagesGroup.vue', () => {
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
+		const actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => () => ({})
-		testStoreConfig.modules.actorStore.getters.getActorId = () => () => 'actor-1'
-		testStoreConfig.modules.actorStore.getters.getActorType = () => () => ATTENDEE.ACTOR_TYPE.USERS
+		actorStore.actorId = 'actor-1'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		store = new Vuex.Store(testStoreConfig)
 	})
 

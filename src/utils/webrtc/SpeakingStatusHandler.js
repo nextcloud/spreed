@@ -10,9 +10,13 @@
  * It is expected that the speaking status of participant will be
  * modified only when the current conversation is joined and call is started.
  */
+
+import { useActorStore } from '../../stores/actor.ts'
+import pinia from '../../stores/pinia.ts'
 export default class SpeakingStatusHandler {
 	// Constants, properties
 	#store
+	#actorStore
 	#localMediaModel
 	#localCallParticipantModel
 	#callParticipantCollection
@@ -26,6 +30,7 @@ export default class SpeakingStatusHandler {
 
 	constructor(store, localMediaModel, localCallParticipantModel, callParticipantCollection) {
 		this.#store = store
+		this.#actorStore = useActorStore(pinia)
 		this.#localMediaModel = localMediaModel
 		this.#localCallParticipantModel = localCallParticipantModel
 		this.#callParticipantCollection = callParticipantCollection
@@ -95,7 +100,7 @@ export default class SpeakingStatusHandler {
 	 */
 	#handleLocalSpeaking(localMediaModel, speaking) {
 		this.#store.dispatch('setSpeaking', {
-			attendeeId: this.#store.getters.getAttendeeId(),
+			attendeeId: this.#actorStore.attendeeId,
 			speaking,
 		})
 	}
@@ -106,7 +111,7 @@ export default class SpeakingStatusHandler {
 	 */
 	#handleLocalPeerId() {
 		this.#store.dispatch('setSpeaking', {
-			attendeeId: this.#store.getters.getAttendeeId(),
+			attendeeId: this.#actorStore.attendeeId,
 			speaking: this.#localMediaModel.attributes.speaking,
 		})
 	}

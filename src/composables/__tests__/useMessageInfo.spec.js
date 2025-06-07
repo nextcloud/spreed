@@ -5,6 +5,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
+import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.js'
@@ -26,12 +27,17 @@ describe('message actions', () => {
 	let message
 	let conversationProps
 	let mockConversationInfo
+	let actorStore
 	const TOKEN = 'XXTOKENXX'
 
 	jest.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
+		actorStore = useActorStore()
+
+		actorStore.actorId = 'user-id-1'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 
 		message = ref({
 			message: 'test message',
@@ -55,8 +61,6 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => conversationProps,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
 				isModerator: false,
 			},
 		})
@@ -123,11 +127,10 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => conversationProps,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.MODERATOR,
 				isModerator: true,
 			},
 		})
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.MODERATOR
 		// Act
 		const result = useMessageInfo(message)
 		// Assert
@@ -142,8 +145,6 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => conversationProps,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.USER,
 				isModerator: false,
 			},
 		})
@@ -186,11 +187,10 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => conversationProps,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.MODERATOR,
 				isModerator: true,
 			},
 		})
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.MODERATOR
 		// Act
 		const result = useMessageInfo(message)
 		// Assert
@@ -205,8 +205,6 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => conversationProps,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
 				isModerator: false,
 			},
 		})
@@ -273,8 +271,6 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => null,
-				getActorId: () => 'user-id-1',
-				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
 			},
 		})
 		// Act

@@ -23,6 +23,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Participant from './Participant.vue'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {
@@ -36,6 +37,7 @@ describe('Participant.vue', () => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		const actorStore = useActorStore()
 
 		participant = {
 			displayName: 'Alice',
@@ -61,13 +63,12 @@ describe('Participant.vue', () => {
 			lobbyState: WEBINAR.LOBBY.NONE,
 		}
 
+		actorStore.actorId = 'user-actor-id'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+
 		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
-		const actorIdMock = jest.fn().mockReturnValue('user-actor-id')
-		const actorTypeMock = jest.fn().mockReturnValue(ATTENDEE.ACTOR_TYPE.USERS)
 
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.actorStore.getters.getActorId = () => () => actorIdMock()
-		testStoreConfig.modules.actorStore.getters.getActorType = () => () => actorTypeMock()
 		testStoreConfig.modules.tokenStore.getters.getToken = () => () => 'current-token'
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		store = new Vuex.Store(testStoreConfig)

@@ -90,6 +90,7 @@ import SharedItemsBrowser from './SharedItemsBrowser.vue'
 import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import {
@@ -126,6 +127,7 @@ export default {
 
 	setup() {
 		return {
+			actorStore: useActorStore(),
 			sharedItemsStore: useSharedItemsStore(),
 			sidebarStore: useSidebarStore(),
 			sharedItemButtonTitle,
@@ -146,7 +148,7 @@ export default {
 
 	computed: {
 		getUserId() {
-			return this.$store.getters.getUserId()
+			return this.actorStore.userId
 		},
 
 		token() {

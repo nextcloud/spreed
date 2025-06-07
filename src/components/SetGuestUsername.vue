@@ -46,6 +46,7 @@ import escapeHtml from 'escape-html'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {
@@ -59,7 +60,10 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		return {
+			guestNameStore,
+			actorStore: useActorStore(),
+		}
 	},
 
 	data() {
@@ -72,7 +76,7 @@ export default {
 
 	computed: {
 		actorDisplayName() {
-			return this.$store.getters.getDisplayName() || t('spreed', 'Guest')
+			return this.actorStore.displayName || t('spreed', 'Guest')
 		},
 
 		displayNameLabel() {
@@ -82,7 +86,7 @@ export default {
 		},
 
 		actorId() {
-			return this.$store.getters.getActorId()
+			return this.actorStore.actorId
 		},
 
 		token() {

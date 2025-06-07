@@ -36,6 +36,7 @@ import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 const reactions = {
@@ -86,7 +87,10 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		return {
+			guestNameStore,
+			actorStore: useActorStore(),
+		}
 	},
 
 	data() {
@@ -159,7 +163,7 @@ export default {
 				reaction,
 				reactionURL: this.getReactionURL(reaction),
 				name: isLocalModel
-					? this.$store.getters.getDisplayName() || t('spreed', 'Guest')
+					? this.actorStore.displayName || t('spreed', 'Guest')
 					: this.getParticipantName(model),
 				seed: Math.random(),
 			})

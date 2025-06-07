@@ -302,6 +302,7 @@ import {
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
+import { useActorStore } from '../../stores/actor.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -393,6 +394,7 @@ export default {
 			showArchived,
 			settingsStore,
 			FILTER_LABELS,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -680,7 +682,7 @@ export default {
 						acc.push(result.name)
 					}
 					return acc
-				}, [this.$store.getters.getUserId()])
+				}, [this.actorStore.userId])
 
 				this.searchResults = response?.data?.ocs?.data.filter((match) => {
 					return !(match.source === ATTENDEE.ACTOR_TYPE.USERS && oneToOneMap.includes(match.id))

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { useActorStore } from '../stores/actor.ts'
+import pinia from '../stores/pinia.ts'
 import SignalingParticipantList from './SignalingParticipantList.js'
 
 /**
@@ -17,6 +19,7 @@ import SignalingParticipantList from './SignalingParticipantList.js'
  */
 export default function SignalingTypingHandler(store) {
 	this._store = store
+	this._actorStore = useActorStore(pinia)
 
 	this._signaling = null
 	this._signalingParticipantList = new SignalingParticipantList()
@@ -74,7 +77,7 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		const currentNextcloudSessionId = this._store.getters.getSessionId()
+		const currentNextcloudSessionId = this._actorStore.sessionId
 
 		for (const participant of this._signalingParticipantList.getParticipants()) {
 			if (participant.nextcloudSessionId === currentNextcloudSessionId) {
@@ -89,7 +92,7 @@ SignalingTypingHandler.prototype = {
 
 		this._store.dispatch('setTyping', {
 			token: this._store.getters.getToken(),
-			sessionId: this._store.getters.getSessionId(),
+			sessionId: this._actorStore.sessionId,
 			typing,
 		})
 	},
