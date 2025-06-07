@@ -36,17 +36,20 @@ export default [
 	{
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
+			'@nextcloud/vue/no-deprecated-props': 'off', // TODO
 			'@stylistic/array-bracket-newline': 'off', // changes array formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
+			'antfu/top-level-function': 'off', // non-fixable
 			'jsdoc/check-param-names': 'off', // need to respect JS
 			'jsdoc/check-tag-names': 'off', // need to respect JS
 			'jsdoc/check-types': 'off', // need to respect JS
 			'jsdoc/no-defaults': 'off', // need to respect JS
 			'jsdoc/no-types': 'off', // need to respect JS
 			'jsdoc/require-param': 'off', // need to respect JS
+			'jsdoc/require-param-type': 'off', // need to respect JS
 			'jsdoc/require-param-description': 'off', // need to respect JS
 			'jsdoc/tag-lines': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable

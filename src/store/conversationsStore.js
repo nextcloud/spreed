@@ -1034,13 +1034,13 @@ const actions = {
 		try {
 			const response = supportConversationCreationAll
 				? await createConversation({
-					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-					participants: { users: [actorId] },
-				})
+						roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+						participants: { users: [actorId] },
+					})
 				: await createLegacyConversation({
-					roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-					invite: actorId,
-				})
+						roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+						invite: actorId,
+					})
 			await context.dispatch('addConversation', response.data.ocs.data)
 			return response.data.ocs.data
 		} catch (error) {

@@ -99,9 +99,6 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import { SIGNALING } from '../../constants.ts'
 
-const isCacheConfigured = loadState('spreed', 'has_cache_configured')
-const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
-
 const props = defineProps<{
 	hideWarning: InitialState['spreed']['signaling_servers']['hideWarning']
 	secret: InitialState['spreed']['signaling_servers']['secret']
@@ -114,6 +111,9 @@ const emit = defineEmits<{
 	(e: 'update:secret', value: InitialState['spreed']['signaling_servers']['secret']): void
 	(e: 'update:hideWarning', value: InitialState['spreed']['signaling_servers']['hideWarning']): void
 }>()
+
+const isCacheConfigured = loadState('spreed', 'has_cache_configured')
+const isClusteredMode = loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION
 
 const loading = ref(false)
 

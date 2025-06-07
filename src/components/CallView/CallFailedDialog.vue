@@ -12,14 +12,14 @@ import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
 import { useStore } from '../../composables/useStore.js'
 import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 
-const store = useStore()
-
 const props = defineProps({
 	token: {
 		type: String,
 		required: true,
 	},
 })
+
+const store = useStore()
 
 const STATUS_ERRORS = {
 	400: t('spreed', 'Recording consent is required'),

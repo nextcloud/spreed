@@ -16,16 +16,17 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import { importEmails } from '../services/participantsService.js'
 
-const loading = ref(false)
-const listImport = ref<HTMLInputElement | null>(null)
-
 const props = defineProps<{
 	token: string
 	container?: string
 }>()
+
 const emit = defineEmits<{
 	(event: 'close'): void
 }>()
+
+const loading = ref(false)
+const listImport = ref<HTMLInputElement | null>(null)
 
 const importedFile = ref<File | null>(null)
 const uploadResult = ref<{ error?: boolean, invalid?: number, message?: string, duplicates?: number, invites?: number } | null>(null)

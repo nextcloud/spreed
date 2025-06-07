@@ -16,6 +16,10 @@ import { useStore } from '../../composables/useStore.js'
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
+const props = defineProps<{
+	conversation: Conversation
+}>()
+
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
@@ -24,10 +28,6 @@ const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.MENTION, icon: IconAccount, label: t('spreed', '@-mentions only') },
 	{ value: PARTICIPANT.NOTIFY.NEVER, icon: IconVolumeOff, label: t('spreed', 'Off') },
 ]
-
-const props = defineProps<{
-	conversation: Conversation
-}>()
 
 const store = useStore()
 
