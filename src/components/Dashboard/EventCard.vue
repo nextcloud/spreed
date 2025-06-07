@@ -172,7 +172,7 @@ function handleJoin({ call = false } = {}) {
 		<p class="event-card__date secondary_text">
 			<span>{{ eventDateLabel }}</span>
 			<template v-if="hasCall">
-				<IconVideo :size="20" :fill-color="'#E9322D'" />
+				<IconVideo :size="20" fill-color="#E9322D" />
 				<span>{{ elapsedTime }}</span>
 			</template>
 		</p>
