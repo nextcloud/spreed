@@ -85,7 +85,7 @@ import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 

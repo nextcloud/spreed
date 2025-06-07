@@ -33,7 +33,7 @@ import {
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
@@ -1037,7 +1037,7 @@ const actions = {
 			context.dispatch('addConversation', response.data.ocs.data)
 			context.dispatch('updateSessionId', {
 				token,
-				participantIdentifier: actorStore.getParticipantIdentifier,
+				participantIdentifier: actorStore.participantIdentifier,
 				sessionId: response.data.ocs.data.sessionId,
 			})
 
@@ -1089,7 +1089,7 @@ const actions = {
 		if (context.getters.isInCall(token)) {
 			await context.dispatch('leaveCall', {
 				token,
-				participantIdentifier: actorStore.getParticipantIdentifier,
+				participantIdentifier: actorStore.participantIdentifier,
 			})
 		}
 

@@ -4,7 +4,7 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { PARTICIPANT } from '../../constants.ts'
-import { useActorStore } from '../actor.js'
+import { useActorStore } from '../actor.ts'
 
 describe('actorStore', () => {
 	let actorStore

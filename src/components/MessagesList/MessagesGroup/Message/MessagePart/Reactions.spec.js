@@ -19,7 +19,7 @@ import {
 } from '../../../../../services/reactionsService.ts'
 import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generateOCSResponse } from '../../../../../test-helpers.js'
 

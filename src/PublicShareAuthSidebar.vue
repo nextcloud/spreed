@@ -43,7 +43,7 @@ import {
 	leaveConversationSync,
 	setGuestUserName,
 } from './services/participantsService.js'
-import { useActorStore } from './stores/actor.js'
+import { useActorStore } from './stores/actor.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {

@@ -46,7 +46,7 @@ import escapeHtml from 'escape-html'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {

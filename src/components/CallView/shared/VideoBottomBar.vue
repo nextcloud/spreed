@@ -101,7 +101,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import { PARTICIPANT } from '../../../constants.ts'
-import { useActorStore } from '../../../stores/actor.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 

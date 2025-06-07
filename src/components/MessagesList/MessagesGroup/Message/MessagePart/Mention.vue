@@ -20,7 +20,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import { MENTION } from '../../../../../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 
 export default {
 	name: 'Mention',

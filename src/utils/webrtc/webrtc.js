@@ -11,7 +11,7 @@ import {
 import { t } from '@nextcloud/l10n'
 import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
 import { Sounds } from '../sounds.js'
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
@@ -476,7 +476,7 @@ function usersInCallChanged(signaling, users) {
 		console.info('Force leaving the call for current participant')
 		store.dispatch('leaveCall', {
 			token: store.getters.getToken(),
-			participantIdentifier: actorStore.getParticipantIdentifier,
+			participantIdentifier: actorStore.participantIdentifier,
 		})
 
 		// Do not return to disconnect already from the other participants

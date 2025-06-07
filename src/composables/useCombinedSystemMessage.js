@@ -5,7 +5,7 @@
 
 import { n, t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useStore } from './useStore.js'
 
 /**

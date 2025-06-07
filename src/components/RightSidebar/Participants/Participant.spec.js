@@ -23,7 +23,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Participant from './Participant.vue'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
-import { useActorStore } from '../../../stores/actor.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {

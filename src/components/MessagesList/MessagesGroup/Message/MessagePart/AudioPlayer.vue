@@ -18,7 +18,7 @@ import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 import { EventBus } from '../../../../../services/EventBus.ts'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 
 export default {
 	name: 'AudioPlayer',

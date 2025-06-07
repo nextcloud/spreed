@@ -86,7 +86,7 @@ import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.v
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import ReactionsList from './ReactionsList.vue'
 import { ATTENDEE } from '../../../../../constants.ts'
-import { useActorStore } from '../../../../../stores/actor.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'

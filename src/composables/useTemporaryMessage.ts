@@ -5,7 +5,7 @@
 
 import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
 
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
 import { useStore } from './useStore.js'

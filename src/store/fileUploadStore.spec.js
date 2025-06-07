@@ -12,7 +12,7 @@ import Vuex from 'vuex'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
 

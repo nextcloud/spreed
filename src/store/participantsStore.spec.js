@@ -29,7 +29,7 @@ import {
 	removeCurrentUserFromConversation,
 	resendInvitations,
 } from '../services/participantsService.js'
-import { useActorStore } from '../stores/actor.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'

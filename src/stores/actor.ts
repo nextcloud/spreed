@@ -10,16 +10,17 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import { loadState } from '@nextcloud/initial-state'
-import { defineStore } from 'pinia'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
-import { getTeams } from '../services/teamsService.ts'
-import { ref, computed } from 'vue'
 import type { Participant } from '../types/index.ts'
 
+import { loadState } from '@nextcloud/initial-state'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { getTeams } from '../services/teamsService.ts'
+
 interface NextcloudUser {
-  uid: string
-  displayName: string | null
+	uid: string
+	displayName: string | null
 }
 
 export const useActorStore = defineStore('actor', () => {
@@ -34,7 +35,7 @@ export const useActorStore = defineStore('actor', () => {
 
 	const isActorUser = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.USERS)
 	const isActorGuest = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.GUESTS)
-	const getParticipantIdentifier = computed(() => ({
+	const participantIdentifier = computed(() => ({
 		attendeeId: attendeeId.value,
 		actorType: actorType.value,
 		actorId: actorId.value,
@@ -132,8 +133,8 @@ export const useActorStore = defineStore('actor', () => {
 		actorTeams,
 		isActorUser,
 		isActorGuest,
-		getParticipantIdentifier,
-		
+		participantIdentifier,
+
 		isActorMemberOfGroup,
 		isActorMemberOfTeam,
 

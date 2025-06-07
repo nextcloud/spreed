@@ -11,7 +11,7 @@
  * modified only when the current conversation is joined and call is started.
  */
 
-import { useActorStore } from '../../stores/actor.js'
+import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
 export default class SpeakingStatusHandler {
 	// Constants, properties
