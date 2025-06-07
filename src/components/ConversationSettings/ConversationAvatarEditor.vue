@@ -8,7 +8,8 @@
 		<div class="avatar__container">
 			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
-					:class="['avatar__preview-emoji', themeClass]"
+					class="avatar__preview-emoji"
+					:class="themeClass"
 					:style="{ 'background-color': backgroundColor }">
 					{{ emojiAvatar }}
 				</div>
