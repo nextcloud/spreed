@@ -42,11 +42,11 @@
 			:verbose-status="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
-			<IconVideo :size="20" :fill-color="'#E9322D'" />
+			<IconVideo :size="20" fill-color="#E9322D" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite" class="overlap-icon">
-			<IconStar :size="20" :fill-color="'#FFCC00'" />
+			<IconStar :size="20" fill-color="#FFCC00" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
