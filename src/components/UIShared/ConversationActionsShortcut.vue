@@ -18,16 +18,16 @@ import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
-const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
-const retentionEventPeriod = getTalkConfig('local', 'conversations', 'retention-event')
-const retentionPhonePeriod = getTalkConfig('local', 'conversations', 'retention-phone')
-const retentionInstantMeetingPeriod = getTalkConfig('local', 'conversations', 'retention-instant-meetings')
-
 const props = defineProps<{
 	token: string
 	objectType: string
 	isHighlighted: boolean
 }>()
+
+const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const retentionEventPeriod = getTalkConfig('local', 'conversations', 'retention-event')
+const retentionPhonePeriod = getTalkConfig('local', 'conversations', 'retention-phone')
+const retentionInstantMeetingPeriod = getTalkConfig('local', 'conversations', 'retention-instant-meetings')
 
 const store = useStore()
 const router = useRouter()
