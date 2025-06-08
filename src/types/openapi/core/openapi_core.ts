@@ -1346,6 +1346,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                USER_AGENT?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -2613,6 +2614,7 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description Timestamp of the last usage
+                     * @default null
                      */
                     timestamp?: number | null;
                 };
@@ -2695,9 +2697,15 @@ export interface operations {
                      * @default
                      */
                     customId?: string;
-                    /** @description URI to be requested when the task finishes */
+                    /**
+                     * @description URI to be requested when the task finishes
+                     * @default null
+                     */
                     webhookUri?: string | null;
-                    /** @description Method used for the webhook request (HTTP:GET, HTTP:POST, HTTP:PUT, HTTP:DELETE or AppAPI:APP_ID:GET, AppAPI:APP_ID:POST...) */
+                    /**
+                     * @description Method used for the webhook request (HTTP:GET, HTTP:POST, HTTP:PUT, HTTP:DELETE or AppAPI:APP_ID:GET, AppAPI:APP_ID:POST...)
+                     * @default null
+                     */
                     webhookMethod?: string | null;
                 };
             };
@@ -4320,7 +4328,9 @@ export interface operations {
     "client_flow_login_v2-init": {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                USER_AGENT?: string;
+            };
             path?: never;
             cookie?: never;
         };

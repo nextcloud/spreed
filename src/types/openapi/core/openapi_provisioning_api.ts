@@ -853,7 +853,10 @@ export interface operations {
                      * @default
                      */
                     language?: string;
-                    /** @description Manager of the user */
+                    /**
+                     * @description Manager of the user
+                     * @default null
+                     */
                     manager?: string | null;
                 };
             };
