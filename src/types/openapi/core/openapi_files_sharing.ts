@@ -716,7 +716,9 @@ export interface operations {
                 /** @description Whether to fallback to the mime icon if no preview is available */
                 mimeFallback?: 0 | 1;
             };
-            header?: never;
+            header?: {
+                "X-NC-Preview"?: string;
+            };
             path: {
                 /** @description Token of the share */
                 token: string;
@@ -783,9 +785,15 @@ export interface operations {
                 "application/json": {
                     /** @description Token of the share */
                     t: string;
-                    /** @description Password of the share */
+                    /**
+                     * @description Password of the share
+                     * @default null
+                     */
                     password?: string | null;
-                    /** @description Subdirectory to get info about */
+                    /**
+                     * @description Subdirectory to get info about
+                     * @default null
+                     */
                     dir?: string | null;
                     /**
                      * Format: int64
@@ -892,11 +900,15 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    /** @description Path of the share */
+                    /**
+                     * @description Path of the share
+                     * @default null
+                     */
                     path?: string | null;
                     /**
                      * Format: int64
                      * @description Permissions for the share
+                     * @default null
                      */
                     permissions?: number | null;
                     /**
@@ -905,10 +917,14 @@ export interface operations {
                      * @default -1
                      */
                     shareType?: number;
-                    /** @description The entity this should be shared with */
+                    /**
+                     * @description The entity this should be shared with
+                     * @default null
+                     */
                     shareWith?: string | null;
                     /**
                      * @description If public uploading is allowed (deprecated)
+                     * @default null
                      * @enum {string|null}
                      */
                     publicUpload?: "true" | "false" | null;
@@ -917,9 +933,15 @@ export interface operations {
                      * @default
                      */
                     password?: string;
-                    /** @description Send the password for the share over Talk */
+                    /**
+                     * @description Send the password for the share over Talk
+                     * @default null
+                     */
                     sendPasswordByTalk?: string | null;
-                    /** @description The expiry date of the share in the user's timezone at 00:00. If $expireDate is not supplied or set to `null`, the system default will be used. */
+                    /**
+                     * @description The expiry date of the share in the user's timezone at 00:00. If $expireDate is not supplied or set to `null`, the system default will be used.
+                     * @default null
+                     */
                     expireDate?: string | null;
                     /**
                      * @description Note for the share
@@ -931,10 +953,14 @@ export interface operations {
                      * @default
                      */
                     label?: string;
-                    /** @description Additional attributes for the share */
+                    /**
+                     * @description Additional attributes for the share
+                     * @default null
+                     */
                     attributes?: string | null;
                     /**
                      * @description Send a mail to the recipient
+                     * @default null
                      * @enum {string|null}
                      */
                     sendMail?: "false" | "true" | null;
@@ -1148,27 +1174,58 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description New permissions
+                     * @default null
                      */
                     permissions?: number | null;
-                    /** @description New password */
+                    /**
+                     * @description New password
+                     * @default null
+                     */
                     password?: string | null;
-                    /** @description New condition if the password should be send over Talk */
+                    /**
+                     * @description New condition if the password should be send over Talk
+                     * @default null
+                     */
                     sendPasswordByTalk?: string | null;
-                    /** @description New condition if public uploading is allowed */
+                    /**
+                     * @description New condition if public uploading is allowed
+                     * @default null
+                     */
                     publicUpload?: string | null;
-                    /** @description New expiry date */
+                    /**
+                     * @description New expiry date
+                     * @default null
+                     */
                     expireDate?: string | null;
-                    /** @description New note */
+                    /**
+                     * @description New note
+                     * @default null
+                     */
                     note?: string | null;
-                    /** @description New label */
+                    /**
+                     * @description New label
+                     * @default null
+                     */
                     label?: string | null;
-                    /** @description New condition if the download should be hidden */
+                    /**
+                     * @description New condition if the download should be hidden
+                     * @default null
+                     */
                     hideDownload?: string | null;
-                    /** @description New additional attributes */
+                    /**
+                     * @description New additional attributes
+                     * @default null
+                     */
                     attributes?: string | null;
-                    /** @description if the share should be send by mail. Considering the share already exists, no mail will be send after the share is updated. You will have to use the sendMail action to send the mail. */
+                    /**
+                     * @description if the share should be send by mail. Considering the share already exists, no mail will be send after the share is updated. You will have to use the sendMail action to send the mail.
+                     * @default null
+                     */
                     sendMail?: string | null;
-                    /** @description New token */
+                    /**
+                     * @description New token
+                     * @default null
+                     */
                     token?: string | null;
                 };
             };

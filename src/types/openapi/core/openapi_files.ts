@@ -544,11 +544,15 @@ export interface operations {
                 "application/json": {
                     /** @description Path of the file */
                     path: string;
-                    /** @description ID of the editor */
+                    /**
+                     * @description ID of the editor
+                     * @default null
+                     */
                     editorId?: string | null;
                     /**
                      * Format: int64
                      * @description ID of the file
+                     * @default null
                      */
                     fileId?: number | null;
                 };
@@ -623,7 +627,10 @@ export interface operations {
                     editorId: string;
                     /** @description ID of the creator */
                     creatorId: string;
-                    /** @description ID of the template */
+                    /**
+                     * @description ID of the template
+                     * @default null
+                     */
                     templateId?: string | null;
                 };
             };
@@ -1239,7 +1246,10 @@ export interface operations {
                     fileId: number;
                     /** @description The MIME type to which you want to convert the file */
                     targetMimeType: string;
-                    /** @description The target path of the converted file. Written to a temporary file if left empty */
+                    /**
+                     * @description The target path of the converted file. Written to a temporary file if left empty
+                     * @default null
+                     */
                     destination?: string | null;
                 };
             };
