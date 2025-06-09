@@ -1207,7 +1207,7 @@ OC.L10N.register(
     "Unarchive conversation" : "Võta vestlus arhiivist välja",
     "Ignore \"Do not disturb\"" : "Eira „Ära sega“ olekut",
     "You need to promote a new moderator before you can leave the conversation." : "Pead määrama uue moderaatori enne siit vestlusest lahkumist.",
-    "Conversation actions" : "Tegevused vestluses",
+    "Conversation actions" : "Toimingud vestlusega",
     "Notify about calls" : "Teavita kõnedest",
     "Hide message text" : "Peida sõnumi tekst",
     "Pending invitations" : "Ootel kutsed",
