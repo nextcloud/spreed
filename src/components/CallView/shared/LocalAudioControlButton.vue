@@ -13,7 +13,7 @@
 		:shown="popupShown">
 		<template #trigger>
 			<NcButton :title="audioButtonTitle"
-				:type="type"
+				:variant="variant"
 				:aria-label="audioButtonAriaLabel"
 				:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
 				:disabled="!isAudioAllowed"
@@ -75,7 +75,7 @@ export default {
 			default: false,
 		},
 
-		type: {
+		variant: {
 			type: String,
 			default: 'tertiary-no-background',
 		},

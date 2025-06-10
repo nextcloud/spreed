@@ -166,7 +166,7 @@ export default {
 			return [{
 				label: t('spreed', 'Confirm'),
 				callback: (nodes) => this.handleFileChoose(nodes),
-				type: 'primary',
+				variant: 'primary',
 			}]
 		},
 	},

@@ -10,7 +10,7 @@
 			:title="startCallTitle"
 			:aria-label="startCallLabel"
 			:disabled="startCallButtonDisabled || loading || isJoiningCall"
-			:type="startCallButtonType"
+			:variant="hasCall ? 'success' : 'primary'"
 			@click="handleClick">
 			<template #icon>
 				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
@@ -307,17 +307,6 @@ export default {
 				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
 			}
 
-			return ''
-		},
-
-		startCallButtonType() {
-			if (!this.isInLobby) {
-				if (!this.hasCall) {
-					return 'primary'
-				} else {
-					return 'success'
-				}
-			}
 			return ''
 		},
 

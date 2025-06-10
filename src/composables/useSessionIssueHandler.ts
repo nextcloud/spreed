@@ -75,7 +75,7 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 				},
 				{
 					label: t('spreed', 'Join here'),
-					type: 'primary',
+					variant: 'primary',
 					callback: () => true,
 				},
 			],

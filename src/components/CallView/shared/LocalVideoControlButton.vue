@@ -5,7 +5,7 @@
 
 <template>
 	<NcButton :title="videoButtonTitle"
-		:type="type"
+		:variant="variant"
 		:aria-label="videoButtonAriaLabel"
 		:class="{ 'no-video-available': !model.attributes.videoAvailable }"
 		:disabled="!isVideoAllowed"
@@ -52,7 +52,7 @@ export default {
 			default: OCP.Accessibility.disableKeyboardShortcuts(),
 		},
 
-		type: {
+		variant: {
 			type: String,
 			default: 'tertiary-no-background',
 		},

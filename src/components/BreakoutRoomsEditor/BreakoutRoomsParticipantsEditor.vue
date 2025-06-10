@@ -67,7 +67,7 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton :disabled="!hasAssigned"
-				:type="confirmButtonType"
+				:variant="hasUnassigned ? 'secondary' : 'primary'"
 				@click="handleSubmit">
 				{{ confirmButtonLabel }}
 			</NcButton>
@@ -202,10 +202,6 @@ export default {
 
 		confirmButtonLabel() {
 			return this.isReorganizingAttendees ? t('spreed', 'Confirm') : t('spreed', 'Create breakout rooms')
-		},
-
-		confirmButtonType() {
-			return this.hasUnassigned ? 'secondary' : 'primary'
 		},
 
 		resetButtonLabel() {

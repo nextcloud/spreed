@@ -449,7 +449,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.handleFileShare(nodes),
-				type: 'primary',
+				variant: 'primary',
 			}]
 		},
 

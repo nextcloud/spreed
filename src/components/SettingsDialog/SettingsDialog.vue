@@ -340,7 +340,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.selectAttachmentFolder(nodes),
-				type: 'primary',
+				variant: 'primary',
 			}]
 		},
 	},

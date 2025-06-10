@@ -46,12 +46,12 @@
 		<LocalAudioControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
-			type="tertiary" />
+			variant="tertiary" />
 
 		<LocalVideoControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
-			type="tertiary" />
+			variant="tertiary" />
 
 		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
 			:title="toggleVirtualBackgroundButtonLabel"

@@ -89,11 +89,11 @@ async function showConfirmationDialog() {
 		buttons: [
 			{
 				label: t('spreed', 'No'),
-				type: 'tertiary',
+				variant: 'tertiary',
 			},
 			{
 				label: t('spreed', 'Yes'),
-				type: 'error',
+				variant: 'error',
 				callback: () => {
 					deleteEventConversation()
 				},
