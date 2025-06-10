@@ -9,7 +9,7 @@
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
-			:focus-trap="false"
+			no-focus-trap
 			:triggers="['hover']"
 			:popper-triggers="['hover']"
 			@after-show="fetchReactions">

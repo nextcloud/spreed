@@ -9,7 +9,7 @@
 		:show-triggers="[]"
 		:hide-triggers="['click']"
 		:auto-hide="false"
-		:focus-trap="false"
+		no-focus-trap
 		:shown="popupShown">
 		<template #trigger>
 			<NcButton :title="audioButtonTitle"

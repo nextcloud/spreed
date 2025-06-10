@@ -36,7 +36,7 @@
 						{{ statusMessage }}
 					</p>
 					<NcPopover v-if="conversation.description"
-						:focus-trap="false"
+						no-focus-trap
 						:delay="500"
 						:boundary="boundaryElement"
 						:popper-triggers="['hover']"

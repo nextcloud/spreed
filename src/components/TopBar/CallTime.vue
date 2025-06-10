@@ -6,7 +6,7 @@
 <template>
 	<NcPopover class="call-time"
 		:shown.sync="showPopover"
-		:focus-trap="isShowRecordingControls"
+		:no-focus-trap="!isShowRecordingControls"
 		:triggers="[]">
 		<template #trigger>
 			<NcButton :disabled="isButtonDisabled"
