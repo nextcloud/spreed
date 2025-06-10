@@ -67,7 +67,7 @@
 					:tag-width="60"
 					:loading="loadingGroups"
 					:show-no-options="false"
-					:close-on-select="false"
+					keep-open
 					track-by="id"
 					label="displayname"
 					no-wrap
