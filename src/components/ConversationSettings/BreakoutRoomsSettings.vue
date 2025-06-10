@@ -9,7 +9,7 @@
 			<p class="breakout-rooms-settings__hint">
 				{{ hintText }}
 			</p>
-			<NcButton type="secondary"
+			<NcButton variant="secondary"
 				@click="openBreakoutRoomsEditor">
 				<template #icon>
 					<DotsCircle :size="20" />

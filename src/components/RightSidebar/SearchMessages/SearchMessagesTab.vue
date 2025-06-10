@@ -256,7 +256,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					<NcButton :pressed.sync="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
-						type="tertiary-no-background">
+						variant="tertiary-no-background">
 						<template #icon>
 							<IconFilter :size="15" />
 						</template>
@@ -348,7 +348,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 				</template>
 			</NcEmptyContent>
 			<template v-if="canLoadMore">
-				<NcButton wide type="tertiary" @click="fetchSearchResults(false)">
+				<NcButton wide variant="tertiary" @click="fetchSearchResults(false)">
 					{{ t('spreed', 'Load more results') }}
 				</NcButton>
 			</template>

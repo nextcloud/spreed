@@ -44,9 +44,9 @@
 						{{ t('spreed', 'Share the screen') }}
 					</NcCheckboxRadioSwitch>
 					<NcButton ref="submit"
-						native-type="submit"
+						type="submit"
 						class="button-update-permission"
-						type="primary"
+						variant="primary"
 						:disabled="submitButtonDisabled">
 						{{ t('spreed', 'Update permissions') }}
 					</NcButton>

@@ -8,7 +8,7 @@
 		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
 			<NcButton :title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
-				type="tertiary"
+				variant="tertiary"
 				@click.stop="toggleHandRaised">
 				<template #icon>
 					<!-- The following icon is much bigger than all the others

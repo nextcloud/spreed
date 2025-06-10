@@ -12,13 +12,13 @@
 			{{ t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.') }}
 
 			<NcButton v-if="props.hasValidSubscription"
-				type="primary"
+				variant="primary"
 				class="additional-top-margin"
 				href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">
 				{{ t('spreed', 'Nextcloud portal') }} ↗
 			</NcButton>
 			<NcButton v-else
-				type="primary"
+				variant="primary"
 				class="additional-top-margin"
 				href="https://nextcloud-talk.readthedocs.io/en/latest/quick-install/">
 				{{ t('spreed', 'Quick installation guide') }} ↗

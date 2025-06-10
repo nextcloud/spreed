@@ -42,7 +42,7 @@
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="enabled"
-						type="tertiary"
+						variant="tertiary"
 						:title="t('spreed', 'Show Matterbridge log')"
 						:aria-label="t('spreed', 'Show Matterbridge log')"
 						@click="showLogContent">

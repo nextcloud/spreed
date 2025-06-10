@@ -208,7 +208,7 @@ function handleJoin({ call = false } = {}) {
 				{{ invitesLabel }}
 			</span>
 			<NcButton v-if="(hasCall && !isInCall)"
-				type="primary"
+				variant="primary"
 				@click="handleJoin({ call: true })">
 				<template #icon>
 					<IconVideo :size="20" />
@@ -217,14 +217,14 @@ function handleJoin({ call = false } = {}) {
 			</NcButton>
 		</span>
 		<span class="event-card__invitation-info hovered">
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				@click="handleJoin">
 				<template #icon>
 					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				:href="props.eventRoom.eventLink"
 				target="_blank"
 				:title="t('spreed', 'View event on Calendar')"

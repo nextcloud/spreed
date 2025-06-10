@@ -11,14 +11,14 @@
 			<div class="icon icon-talk" />
 			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
 			<p>{{ t('spreed', 'Share this file with others to discuss it') }}</p>
-			<NcButton type="primary" @click="openSharingTab">
+			<NcButton variant="primary" @click="openSharingTab">
 				{{ t('spreed', 'Share this file') }}
 			</NcButton>
 		</div>
 		<div v-else-if="isTalkSidebarSupportedForFile && !token" class="emptycontent room-not-joined">
 			<div class="icon icon-talk" />
 			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-			<NcButton type="primary" @click="joinConversation">
+			<NcButton variant="primary" @click="joinConversation">
 				{{ t('spreed', 'Join conversation') }}
 			</NcButton>
 		</div>

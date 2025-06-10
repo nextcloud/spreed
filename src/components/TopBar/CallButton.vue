@@ -26,7 +26,7 @@
 		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 			id="call_button"
 			:aria-label="endCallLabel"
-			type="error"
+			variant="error"
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
@@ -40,7 +40,7 @@
 		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
 			:aria-label="leaveCallLabel"
-			:type="isScreensharing ? 'tertiary' : 'error'"
+			:variant="isScreensharing ? 'tertiary' : 'error'"
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>

@@ -108,7 +108,7 @@
 				{{ requestError }}
 			</p>
 
-			<NcButton type="error"
+			<NcButton variant="error"
 				class="additional-top-margin"
 				:disabled="loading"
 				@click="deleteAccount">

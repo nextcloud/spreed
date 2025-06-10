@@ -49,7 +49,7 @@
 			<!-- Phone participant dial action -->
 			<template v-if="isInCall && canBeModerated && isPhoneActor">
 				<NcButton v-if="!participant.inCall"
-					type="success"
+					variant="success"
 					:aria-label="t('spreed', 'Dial out phone')"
 					:title="t('spreed', 'Dial out phone')"
 					:disabled="disabled"
@@ -59,7 +59,7 @@
 					</template>
 				</NcButton>
 				<template v-else>
-					<NcButton type="error"
+					<NcButton variant="error"
 						:aria-label="t('spreed', 'Hang up phone')"
 						:title="t('spreed', 'Hang up phone')"
 						:disabled="disabled"
@@ -85,7 +85,7 @@
 			<!-- Grant or revoke lobby permissions (inline button) -->
 			<template v-if="showToggleLobbyAction">
 				<NcButton v-if="canSkipLobby"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('spreed', 'Move back to lobby')"
 					:aria-label="t('spreed', 'Move back to lobby')"
 					@click="setLobbyPermission(false)">
@@ -94,7 +94,7 @@
 					</template>
 				</NcButton>
 				<NcButton v-else
-					type="tertiary"
+					variant="tertiary"
 					:title="t('spreed', 'Move to conversation')"
 					:aria-label="t('spreed', 'Move to conversation')"
 					@click="setLobbyPermission(true)">
@@ -295,10 +295,10 @@
 					</template>
 				</template>
 				<template #actions>
-					<NcButton type="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
+					<NcButton variant="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
 						{{ t('spreed', 'Dismiss') }}
 					</NcButton>
-					<NcButton type="error" :disabled="isLoading || !!maxLengthWarning" @click="removeParticipant">
+					<NcButton variant="error" :disabled="isLoading || !!maxLengthWarning" @click="removeParticipant">
 						{{ t('spreed', 'Remove') }}
 					</NcButton>
 				</template>

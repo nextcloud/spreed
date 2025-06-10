@@ -35,7 +35,7 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-			<NcButton type="primary"
+			<NcButton variant="primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
@@ -59,7 +59,7 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-			<NcButton type="primary"
+			<NcButton variant="primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}

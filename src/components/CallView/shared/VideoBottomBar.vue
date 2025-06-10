@@ -36,7 +36,7 @@
 					:title="audioButtonTitle"
 					:aria-label="audioButtonTitle"
 					class="audioIndicator"
-					type="tertiary-no-background"
+					variant="tertiary-no-background"
 					:disabled="isAudioButtonDisabled"
 					@click.stop="forceMute">
 					<template #icon>
@@ -50,7 +50,7 @@
 					:title="videoButtonTitle"
 					:aria-label="videoButtonTitle"
 					class="videoIndicator"
-					type="tertiary-no-background"
+					variant="tertiary-no-background"
 					@click.stop="toggleVideo">
 					<template #icon>
 						<VideoIcon v-if="isRemoteVideoEnabled" :size="20" fill-color="#ffffff" />
@@ -64,7 +64,7 @@
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
 					:class="{ 'screen-visible': sharedData.screenVisible }"
-					type="tertiary-no-background"
+					variant="tertiary-no-background"
 					@click.stop="switchToScreen">
 					<template #icon>
 						<Monitor :size="20" fill-color="#ffffff" />
@@ -80,7 +80,7 @@
 
 			<NcButton v-if="showStopFollowingButton"
 				class="following-button"
-				type="tertiary"
+				variant="tertiary"
 				@click="handleStopFollowing">
 				{{ t('spreed', 'Stop following') }}
 			</NcButton>

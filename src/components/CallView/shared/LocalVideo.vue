@@ -50,7 +50,7 @@
 
 		<div class="bottom-bar">
 			<NcButton v-if="isBig"
-				type="tertiary"
+				variant="tertiary"
 				class="bottom-bar__button"
 				@click="handleStopFollowing">
 				{{ stopFollowingLabel }}

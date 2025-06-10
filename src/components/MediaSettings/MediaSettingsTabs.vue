@@ -93,7 +93,7 @@ function handleTabsAfterClosed() {
 				:key="tab.id"
 				wide
 				role="tab"
-				:type="isSelected(tab.id) ? 'secondary' : 'tertiary'"
+				:variant="isSelected(tab.id) ? 'secondary' : 'tertiary'"
 				:aria-selected="isSelected(tab.id) ? 'true' : 'false'"
 				:aria-controls="getRefId('panel', tab.id)"
 				@click.stop="handleTabClick(tab.id)">

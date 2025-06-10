@@ -39,7 +39,7 @@
 					</template>
 					<NcButton key="add-more"
 						:aria-label="addMoreAriaLabel"
-						type="tertiary"
+						variant="tertiary"
 						class="add-more-button"
 						size="large"
 						@click="clickImportInput">
@@ -54,10 +54,10 @@
 					:local-url="voiceMessageLocalURL" />
 			</template>
 			<div v-if="!supportMediaCaption" class="upload-editor__actions">
-				<NcButton type="tertiary" @click="handleDismiss">
+				<NcButton variant="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton ref="submitButton" type="primary" @click="handleLegacyUpload">
+				<NcButton ref="submitButton" variant="primary" @click="handleLegacyUpload">
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>

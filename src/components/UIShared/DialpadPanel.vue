@@ -55,7 +55,7 @@
 
 			<NcButton v-if="!dialing"
 				class="dial-panel__button"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Delete')"
 				@click="handleBackspace">
 				<template #icon>

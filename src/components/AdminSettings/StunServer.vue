@@ -26,7 +26,7 @@
 			fill-color="#E9322D" />
 
 		<NcButton v-show="!loading"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>

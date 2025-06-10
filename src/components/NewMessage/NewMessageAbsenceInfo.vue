@@ -29,7 +29,7 @@
 		</div>
 		<NcButton v-if="userAbsenceMessage && isTextMoreThanOneLine"
 			class="absence-reminder__button"
-			type="tertiary"
+			variant="tertiary"
 			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">

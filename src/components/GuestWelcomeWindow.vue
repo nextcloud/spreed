@@ -29,7 +29,7 @@
 				@keydown.enter="handleChooseUserName" />
 
 			<NcButton class="submit-button"
-				type="primary"
+				variant="primary"
 				:disabled="invalidGuestUsername"
 				@click="handleChooseUserName">
 				{{ t('spreed', 'Submit name and join') }}
@@ -42,7 +42,7 @@
 
 			<div class="login-info">
 				<span> {{ t('spreed', 'Do you already have an account?') }}</span>
-				<NcButton type="secondary"
+				<NcButton variant="secondary"
 					:href="getLoginUrl()">
 					{{ t('spreed', 'Log in') }}
 				</NcButton>

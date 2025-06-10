@@ -26,7 +26,7 @@
 							:arguments="getRichParameters(item)"
 							:reference-limit="0" />
 					</div>
-					<NcButton type="tertiary"
+					<NcButton variant="tertiary"
 						class="inbox__item-button"
 						:aria-label="t('spreed', 'Decline invitation')"
 						:title="t('spreed', 'Decline invitation')"
@@ -37,7 +37,7 @@
 							<CancelIcon v-else :size="20" />
 						</template>
 					</NcButton>
-					<NcButton type="primary"
+					<NcButton variant="primary"
 						class="inbox__item-button"
 						:aria-label="t('spreed', 'Accept invitation')"
 						:title="t('spreed', 'Accept invitation')"

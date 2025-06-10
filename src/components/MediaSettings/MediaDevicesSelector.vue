@@ -116,7 +116,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
 
-		<NcButton type="tertiary"
+		<NcButton variant="tertiary"
 			:title="t('spreed', 'Refresh devices list')"
 			:aria-lebel="t('spreed', 'Refresh devices list')"
 			@click="$emit('refresh')">

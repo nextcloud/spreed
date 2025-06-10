@@ -31,7 +31,7 @@
 		<div class="scroll-to-bottom">
 			<TransitionWrapper name="fade">
 				<NcButton v-show="!isChatScrolledToBottom && !isLoadingChat"
-					type="secondary"
+					variant="secondary"
 					:aria-label="t('spreed', 'Scroll to bottom')"
 					:title="t('spreed', 'Scroll to bottom')"
 					class="scroll-to-bottom__button"

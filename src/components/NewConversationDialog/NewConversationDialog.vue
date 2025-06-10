@@ -40,12 +40,12 @@
 				<!-- First page -->
 				<NcButton v-if="page === 0 && conversationName"
 					:disabled="disabled"
-					type="tertiary"
+					variant="tertiary"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
 				<NcButton v-if="page === 0"
-					type="primary"
+					variant="primary"
 					:disabled="disabled"
 					class="new-group-conversation__button"
 					@click="switchToPage(1)">
@@ -53,12 +53,12 @@
 				</NcButton>
 				<!-- Second page -->
 				<NcButton v-if="page === 1"
-					type="tertiary"
+					variant="tertiary"
 					@click="switchToPage(0)">
 					{{ t('spreed', 'Back') }}
 				</NcButton>
 				<NcButton v-if="page === 1"
-					type="primary"
+					variant="primary"
 					class="new-group-conversation__button"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
@@ -87,13 +87,13 @@
 					<NcButton v-if="!error && success && isPublic"
 						id="copy-link"
 						ref="copyLink"
-						type="secondary"
+						variant="secondary"
 						@click="onClickCopyLink">
 						{{ t('spreed', 'Copy link') }}
 					</NcButton>
 					<NcButton v-if="!error && success && isPublic && newConversation.hasPassword"
 						id="copy-password"
-						type="secondary"
+						variant="secondary"
 						@click="onClickCopyPassword">
 						{{ t('spreed', 'Copy password') }}
 					</NcButton>

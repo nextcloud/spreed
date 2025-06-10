@@ -72,7 +72,7 @@ async function extendOneToOneConversation() {
 	<NcPopover :container="container"
 		popup-role="dialog">
 		<template #trigger>
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				:title="t('spreed', 'Start a group conversation')"
 				:aria-label="t('spreed', 'Start a group conversation')">
 				<template #icon>
@@ -90,7 +90,7 @@ async function extendOneToOneConversation() {
 					:selected-participants.sync="selectedParticipants"
 					only-users />
 				<NcButton class="start-group__action"
-					type="primary"
+					variant="primary"
 					:disabled="!selectedParticipants.length"
 					@click="extendOneToOneConversation">
 					{{ t('spreed', 'Create conversation') }}

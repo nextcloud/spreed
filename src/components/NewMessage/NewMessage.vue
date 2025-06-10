@@ -45,7 +45,7 @@
 						:set-return-focus="getContenteditable"
 						@select="addEmoji">
 						<NcButton :disabled="disabled"
-							type="tertiary"
+							variant="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<template #icon>
@@ -55,7 +55,7 @@
 					</NcEmojiPicker>
 					<!-- Disabled emoji picker placeholder button -->
 					<NcButton v-else
-						type="tertiary"
+						variant="tertiary"
 						:aria-label="t('spreed', 'Add emoji')"
 						:disabled="true">
 						<template #icon>
@@ -118,8 +118,8 @@
 
 			<!-- Edit -->
 			<template v-else-if="messageToEdit">
-				<NcButton type="tertiary"
-					native-type="submit"
+				<NcButton variant="tertiary"
+					type="submit"
 					:title="t('spreed', 'Cancel editing')"
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleAbortEdit">
@@ -128,8 +128,8 @@
 					</template>
 				</NcButton>
 				<NcButton :disabled="disabledEdit"
-					type="tertiary"
-					native-type="submit"
+					variant="tertiary"
+					type="submit"
 					:title="t('spreed', 'Edit message')"
 					:aria-label="t('spreed', 'Edit message')"
 					@click="handleEdit">
@@ -142,8 +142,8 @@
 			<!-- Send buttons -->
 			<template v-else>
 				<NcButton :disabled="disabled"
-					type="tertiary"
-					native-type="submit"
+					variant="tertiary"
+					type="submit"
 					:title="sendMessageLabel"
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">

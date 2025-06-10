@@ -110,7 +110,7 @@ async function showConfirmationDialog() {
 		<p>{{ descriptionLabel }}</p>
 		<div v-if="isModerator"
 			class="conversation-actions__buttons">
-			<NcButton type="error"
+			<NcButton variant="error"
 				@click="showConfirmationDialog">
 				<template #icon>
 					<IconDelete />
@@ -118,7 +118,7 @@ async function showConfirmationDialog() {
 				{{ t('spreed', 'Delete now') }}
 			</NcButton>
 			<NcButton v-if="supportsArchive"
-				type="secondary"
+				variant="secondary"
 				@click="resetObjectConversation">
 				<template #icon>
 					<IconCheckUnderline />

@@ -90,7 +90,7 @@
 				<SipSettings v-if="showSIPSettings" :conversation="conversation" />
 				<div v-if="!getUserId" id="app-settings">
 					<div id="app-settings-header">
-						<NcButton type="tertiary" @click="showSettings">
+						<NcButton variant="tertiary" @click="showSettings">
 							<template #icon>
 								<IconCog :size="20" />
 							</template>

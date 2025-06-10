@@ -172,7 +172,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			<NcPopover v-if="canStartConversations"
 				popup-role="dialog">
 				<template #trigger>
-					<NcButton type="primary">
+					<NcButton variant="primary">
 						<template #icon>
 							<IconVideo />
 						</template>
@@ -187,7 +187,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<NcInputField id="room-name"
 						v-model="conversationName"
 						:placeholder="t('spreed', 'Meeting')" />
-					<NcButton type="primary"
+					<NcButton variant="primary"
 						@click="startMeeting">
 						{{ t('spreed', 'Create and copy link') }}
 					</NcButton>
@@ -215,7 +215,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</template>
 				{{ t('spreed', 'Call a phone number') }}
 			</NcButton>
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				@click="emit('talk:media-settings:show', 'device-check')">
 				<template #icon>
 					<IconMicrophone :size="20" />
@@ -240,7 +240,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			<div class="talk-dashboard__event-cards__scroll-indicator">
 				<NcButton v-show="backwardScrollable"
 					class="button-slide backward"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('spreed', 'Scroll backward')"
 					:aria-label="t('spreed', 'Scroll backward')"
 					@click="scrollEventCards({ direction: 'backward' })">
@@ -250,7 +250,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</NcButton>
 				<NcButton v-show="forwardScrollable"
 					class="button-slide forward"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('spreed', 'Scroll forward')"
 					:aria-label="t('spreed', 'Scroll forward')"
 					@click="scrollEventCards({ direction: 'forward' })">
@@ -268,7 +268,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				{{ t('spreed', 'Schedule a meeting with a colleague from your calendar') }}
 			</span>
 			<NcButton class="talk-dashboard__calendar-button"
-				type="secondary"
+				variant="secondary"
 				:href="generateUrl('apps/calendar')"
 				target="_blank">
 				<template #icon>

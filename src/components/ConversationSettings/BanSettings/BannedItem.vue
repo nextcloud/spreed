@@ -8,7 +8,7 @@
 		<div class="ban-item__header">
 			<span class="ban-item__caption">{{ ban.bannedDisplayName }}</span>
 			<div class="ban-item__buttons">
-				<NcButton type="tertiary" @click="showDetails = !showDetails">
+				<NcButton variant="tertiary" @click="showDetails = !showDetails">
 					{{ showDetails ? t('spreed', 'Hide details') : t('spreed', 'Show details') }}
 				</NcButton>
 				<NcButton @click="$emit('unban-participant')">

@@ -14,7 +14,7 @@
 				:shown="showQualityWarningTooltip">
 				<template #trigger>
 					<NcButton id="quality_warning_button"
-						type="tertiary-no-background"
+						variant="tertiary-no-background"
 						class="trigger"
 						:aria-label="qualityWarningAriaLabel"
 						@click="mouseover = !mouseover">
@@ -27,13 +27,13 @@
 					<span>{{ qualityWarningTooltip.content }}</span>
 					<div class="hint__actions">
 						<NcButton v-if="qualityWarningTooltip.action"
-							type="primary"
+							variant="primary"
 							class="hint__button"
 							@click="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
 						</NcButton>
 						<NcButton v-if="!isQualityWarningTooltipDismissed"
-							type="tertiary"
+							variant="tertiary"
 							class="hint__button"
 							@click="dismissQualityWarningTooltip">
 							{{ t('spreed', 'Dismiss') }}
@@ -55,7 +55,7 @@
 
 		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
 			:title="toggleVirtualBackgroundButtonLabel"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
 			:class="blurButtonClass"
 			@click.stop="toggleVirtualBackground">
@@ -94,7 +94,7 @@
 		</NcActions>
 		<NcButton v-else-if="!isSidebar"
 			:title="screenSharingButtonTitle"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"
 			:disabled="!isScreensharingAllowed"
 			@click.stop="toggleScreenSharingMenu">

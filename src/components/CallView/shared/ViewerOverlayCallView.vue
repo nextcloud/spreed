@@ -11,7 +11,7 @@
 				:style="computedStyle">
 				<div class="viewer-overlay__collapse"
 					:class="{ collapsed: isCollapsed }">
-					<NcButton type="secondary"
+					<NcButton variant="secondary"
 						class="viewer-overlay__button"
 						:aria-label="
 							isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')
@@ -30,7 +30,7 @@
 						tabindex="0"
 						@click="maximize">
 						<div class="video-overlay__top-bar">
-							<NcButton type="secondary"
+							<NcButton variant="secondary"
 								class="viewer-overlay__button"
 								:aria-label="t('spreed', 'Expand')"
 								@click.stop="maximize">

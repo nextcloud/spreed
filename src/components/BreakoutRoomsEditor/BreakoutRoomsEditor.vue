@@ -50,13 +50,13 @@
 				</div>
 				<div class="breakout-rooms-editor__buttons">
 					<NcButton v-if="mode === '2'"
-						type="primary"
+						variant="primary"
 						:disabled="isInvalidAmount"
 						@click="isEditingParticipants = true">
 						{{ t('spreed', 'Assign participants to rooms') }}
 					</NcButton>
 					<NcButton v-else
-						type="primary"
+						variant="primary"
 						:disabled="isInvalidAmount"
 						@click="handleCreateRooms">
 						{{ t('spreed', 'Create rooms') }}

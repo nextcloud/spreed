@@ -12,7 +12,7 @@
 		</template>
 		<NcButton v-if="isTextMoreThanOneLine"
 			class="chat-summary__button"
-			type="tertiary"
+			variant="tertiary"
 			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
@@ -37,7 +37,7 @@
 		<div class="chat-summary__actions">
 			<NcButton v-if="loading"
 				class="chat-summary__action"
-				type="primary"
+				variant="primary"
 				:disabled="cancelling"
 				@click="cancelSummary">
 				<template v-if="cancelling" #icon>
@@ -47,7 +47,7 @@
 			</NcButton>
 			<NcButton v-else-if="chatSummaryMessage"
 				class="chat-summary__action"
-				type="primary"
+				variant="primary"
 				@click="dismissSummary">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>

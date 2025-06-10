@@ -40,7 +40,7 @@
 		:aria-label="t('spreed', 'Show presenter')"
 		:title="t('spreed', 'Show presenter')"
 		class="presenter-overlay--collapsed"
-		type="tertiary-no-background"
+		variant="tertiary-no-background"
 		@click="$emit('click')">
 		<template #icon>
 			<AccountBox fill-color="#ffffff" :size="20" />

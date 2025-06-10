@@ -57,7 +57,7 @@
 				@delete="handleDelete" />
 			<div v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					:aria-label="t('spreed', 'Show or collapse system messages')"
 					:title="t('spreed', 'Show or collapse system messages')"
 					@click="toggleCombinedSystemMessage">

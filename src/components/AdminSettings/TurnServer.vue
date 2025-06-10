@@ -49,7 +49,7 @@
 			no-wrap />
 
 		<NcButton v-show="!loading"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="testResult"
 			:disabled="!testAvailable"
 			@click="testServer">
@@ -61,7 +61,7 @@
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>

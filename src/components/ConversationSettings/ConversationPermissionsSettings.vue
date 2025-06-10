@@ -58,7 +58,7 @@
 			<!-- Edit advanced permissions -->
 			<NcButton v-show="showEditButton"
 				class="edit-button"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Edit permissions')"
 				@click="showPermissionsEditor = true">
 				<template #icon>

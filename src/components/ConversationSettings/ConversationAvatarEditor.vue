@@ -87,7 +87,7 @@
 						{{ t('spreed', 'Cancel') }}
 					</NcButton>
 					<NcButton v-if="!controlled"
-						type="primary"
+						variant="primary"
 						@click="saveAvatar">
 						{{ t('spreed', 'Set picture') }}
 					</NcButton>

@@ -8,7 +8,7 @@
 	<div v-click-outside="handleClickOutside">
 		<template v-if="!isReactionsMenuOpen">
 			<NcButton v-if="canReact"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				:title="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
@@ -17,7 +17,7 @@
 				</template>
 			</NcButton>
 			<NcButton v-if="canReply"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
@@ -226,7 +226,7 @@
 		</template>
 
 		<template v-else>
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
@@ -235,7 +235,7 @@
 			</NcButton>
 			<NcButton v-for="emoji in frequentlyUsedEmojis"
 				:key="emoji"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji })"
 				@click="handleReactionClick(emoji)">
 				<template #icon>
@@ -248,7 +248,7 @@
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<Plus :size="20" />

@@ -51,7 +51,7 @@
 						container="#bots_settings"
 						:focus-trap="false">
 						<template #trigger>
-							<NcButton type="error" :aria-label="bot.last_error_message">
+							<NcButton variant="error" :aria-label="bot.last_error_message">
 								{{ bot.last_error_date }}
 							</NcButton>
 						</template>
@@ -68,7 +68,7 @@
 			</li>
 		</ul>
 
-		<NcButton type="primary"
+		<NcButton variant="primary"
 			href="https://nextcloud-talk.readthedocs.io/en/latest/bot-list/"
 			target="_blank"
 			rel="noreferrer nofollow">

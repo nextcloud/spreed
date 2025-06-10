@@ -68,7 +68,7 @@
 			<NcButton v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
-				type="tertiary"
+				variant="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
 					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />

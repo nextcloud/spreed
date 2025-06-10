@@ -14,7 +14,7 @@
 			:popper-triggers="['hover']"
 			@after-show="fetchReactions">
 			<template #trigger>
-				<NcButton :type="userHasReacted(reaction) ? 'primary' : 'secondary'"
+				<NcButton :variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
 					size="small"
 					@click="handleReactionClick(reaction)">
 					<span class="reaction-emoji">{{ reaction }}</span> {{ reactionsCount(reaction) }}

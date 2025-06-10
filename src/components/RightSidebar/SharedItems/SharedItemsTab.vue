@@ -26,7 +26,7 @@
 						:limit="limit(type)"
 						:items="sharedItems[type]" />
 					<NcButton v-if="hasMore(type, sharedItems[type])"
-						type="tertiary-no-background"
+						variant="tertiary-no-background"
 						class="more"
 						wide
 						@click="showMore(type)">
