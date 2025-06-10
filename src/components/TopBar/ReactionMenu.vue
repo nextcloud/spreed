@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcActions type="tertiary"
+	<NcActions variant="tertiary"
 		:title="t('spreed', 'Send a reaction')"
 		:aria-label="t('spreed', 'Send a reaction')"
 		class="reaction">

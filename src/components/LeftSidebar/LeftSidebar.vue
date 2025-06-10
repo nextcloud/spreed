@@ -33,7 +33,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:type="isFiltered ? 'secondary' : 'tertiary'"
+						:variant="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>

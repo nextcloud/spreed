@@ -177,7 +177,7 @@ function handleJoin({ call = false } = {}) {
 			</template>
 		</p>
 		<span class="event-card__room secondary_text">
-			<NcChip type="tertiary"
+			<NcChip variant="tertiary"
 				:text="roomLabel"
 				no-close>
 				<template #icon>

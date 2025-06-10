@@ -21,7 +21,7 @@
 		<NcActions v-if="!isSidebar"
 			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
-			type="tertiary">
+			variant="tertiary">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<IconDotsHorizontal :size="20" />

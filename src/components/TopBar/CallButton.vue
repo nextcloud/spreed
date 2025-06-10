@@ -56,7 +56,7 @@
 			:aria-label="leaveCallCombinedLabel"
 			:menu-name="showButtonText ? leaveCallCombinedLabel : undefined"
 			force-name
-			:type="isScreensharing ? 'tertiary' : 'error'">
+			:variant="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />

@@ -53,7 +53,7 @@
 				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
-				type="primary"
+				variant="primary"
 				container=".participants-editor__buttons"
 				:menu-name="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"

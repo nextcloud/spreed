@@ -68,7 +68,7 @@
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
 			:title="screenSharingButtonTitle"
-			type="error"
+			variant="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
