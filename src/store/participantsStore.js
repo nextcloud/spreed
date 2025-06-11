@@ -13,7 +13,7 @@ import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
 	leaveCall,
-} from '../services/callsService.js'
+} from '../services/callsService.ts'
 import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {

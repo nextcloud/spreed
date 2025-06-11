@@ -14,7 +14,7 @@ import { PARTICIPANT } from '../constants.ts'
 import {
 	joinCall,
 	leaveCall,
-} from '../services/callsService.js'
+} from '../services/callsService.ts'
 import { fetchConversation } from '../services/conversationsService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
