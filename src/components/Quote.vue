@@ -138,8 +138,7 @@ export default {
 		},
 
 		isOwnMessageQuoted() {
-			return this.message.actorId === this.actorStore.actorId
-				&& this.message.actorType === this.actorStore.actorType
+			return this.actorStore.checkIfSelfIsActor(this.message)
 		},
 
 		richParameters() {

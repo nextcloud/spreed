@@ -49,7 +49,6 @@ describe('actorStore', () => {
 	})
 
 	describe('initialize', () => {
-
 		test('initialize the store', () => {
 			const user = { uid: 'userId', displayName: 'display-name' }
 			getCurrentUser.mockReturnValue(user)

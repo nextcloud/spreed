@@ -4,7 +4,7 @@
  */
 
 /**
- * This store helps to identify a the current actor in all cases.
+ * This store helps to identify a current actor in all cases.
  * In Talk not every user is a local nextcloud user, so identifying
  * solely by userId is not enough.
  * If an as no userId, they are a guest and identified by actorType + sessionId.
@@ -31,6 +31,7 @@ export const useActorStore = defineStore('actor', () => {
 	const actorTeams = ref<string[]>([])
 
 	const isLoggedIn = computed(() => userId.value !== null)
+	// TODO check usage for computed below, migrate to isLoggedIn where appropriate
 	const isActorUser = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.USERS)
 	const isActorGuest = computed(() => actorType.value === ATTENDEE.ACTOR_TYPE.GUESTS)
 	const participantIdentifier = computed(() => ({
@@ -87,7 +88,7 @@ export const useActorStore = defineStore('actor', () => {
 	/**
 	 * Set the display name of the actor
 	 *
-	 * @param displayName The name
+	 * @param newDisplayName The name to set
 	 */
 	function setDisplayName(newDisplayName: string) {
 		displayName.value = newDisplayName

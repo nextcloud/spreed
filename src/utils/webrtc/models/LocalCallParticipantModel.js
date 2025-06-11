@@ -4,7 +4,6 @@
  */
 
 import { reactive, watch } from 'vue'
-import store from '../../../store/index.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import pinia from '../../../stores/pinia.ts'
 import EmitterMixin from '../../EmitterMixin.js'

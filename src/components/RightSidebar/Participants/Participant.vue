@@ -627,7 +627,7 @@ export default {
 		},
 
 		isSelf() {
-			return this.participant.actorType === this.actorStore.actorType && this.participant.actorId === this.actorStore.actorId
+			return this.actorStore.checkIfSelfIsActor(this.participant)
 		},
 
 		selfIsModerator() {

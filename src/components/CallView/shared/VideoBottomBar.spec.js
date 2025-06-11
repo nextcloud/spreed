@@ -86,7 +86,7 @@ describe('VideoBottomBar.vue', () => {
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue((token) => conversationProps)
-		actorStore.userId = jest.fn().mockReturnValue(() => USER_ID)
+		actorStore.userId = USER_ID
 		store = new Store(testStoreConfig)
 	})
 

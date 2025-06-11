@@ -281,8 +281,7 @@ export default {
 			return !this.isSystemMessage
 				&& !this.isTemporary
 				&& !this.isDeleting
-				&& this.message.actorType === this.actorStore.actorType
-				&& this.message.actorId === this.actorStore.actorId
+				&& this.actorStore.checkIfSelfIsActor(this.message)
 				&& !this.isDeletedMessage
 		},
 

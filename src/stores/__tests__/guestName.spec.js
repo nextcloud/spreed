@@ -6,7 +6,6 @@ import { t } from '@nextcloud/l10n'
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { setGuestUserName } from '../../services/participantsService.js'
-import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'
 import { useGuestNameStore } from '../guestName.js'

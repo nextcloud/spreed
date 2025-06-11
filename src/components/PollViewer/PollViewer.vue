@@ -245,8 +245,7 @@ export default {
 
 		selfIsOwnerOrModerator() {
 			return this.isModerator
-				|| (this.poll?.actorType === this.actorStore.actorType
-					&& this.poll?.actorId === this.actorStore.actorId)
+				|| (this.poll && this.actorStore.checkIfSelfIsActor(this.poll))
 		},
 
 		pollSummaryText() {

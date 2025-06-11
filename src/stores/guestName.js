@@ -8,7 +8,6 @@ import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 import { setGuestUserName } from '../services/participantsService.js'
-import store from '../store/index.js'
 import { useActorStore } from './actor.ts'
 
 export const useGuestNameStore = defineStore('guestName', {

@@ -249,8 +249,7 @@ export default {
 			const summary = []
 
 			for (const item in list) {
-				if (list[item].actorType === this.actorStore.actorType
-					&& list[item].actorId === this.actorStore.actorId) {
+				if (this.actorStore.checkIfSelfIsActor(list[item])) {
 					summary.unshift(t('spreed', 'You'))
 				} else {
 					summary.push(this.getDisplayNameForReaction(list[item]))

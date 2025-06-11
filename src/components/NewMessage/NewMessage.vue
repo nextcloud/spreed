@@ -891,8 +891,7 @@ export default {
 
 			// last message within 24 hours
 			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast((message) => {
-				return message.actorId === this.actorStore.actorId
-					&& message.actorType === this.actorStore.actorType
+				return this.actorStore.checkIfSelfIsActor(message)
 					&& !message.isTemporary && !message.systemMessage
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})
