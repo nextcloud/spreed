@@ -21,7 +21,7 @@
 		</NcCheckboxRadioSwitch>
 
 		<NcButton v-show="!loading"
-			type="tertiary"
+			variant="tertiary"
 			:title="t('spreed', 'Delete this server')"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
@@ -38,7 +38,7 @@
 		</span>
 
 		<NcButton v-if="server && checked"
-			type="tertiary"
+			variant="tertiary"
 			:title="t('spreed', 'Test this server')"
 			:aria-label="t('spreed', 'Test this server')"
 			@click="checkServerVersion">

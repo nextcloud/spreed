@@ -23,7 +23,7 @@
 				</div>
 				<div v-if="isLoading[bot.id]" class="bots-settings__item-loader icon icon-loading-small" />
 				<NcButton class="bots-settings__item-button"
-					:type="bot.state ? 'primary' : 'secondary'"
+					:variant="bot.state ? 'primary' : 'secondary'"
 					:disabled="isBotLocked(bot) || isLoading[bot.id]"
 					@click="toggleBotState(bot)">
 					{{ toggleButtonTitle(bot) }}

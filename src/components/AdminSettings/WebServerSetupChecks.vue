@@ -14,7 +14,7 @@
 		<ul class="web-server-setup-checks">
 			<li class="virtual-background">
 				{{ t('spreed', 'Files required for virtual background can be loaded') }}
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					class="vue-button-inline"
 					:class="{ 'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false }"
 					:title="virtualBackgroundAvailableTitle"

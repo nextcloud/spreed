@@ -41,7 +41,7 @@
 				<p class="app-settings-section__input" @click="showFilePicker = true">
 					{{ attachmentFolder }}
 				</p>
-				<NcButton type="primary"
+				<NcButton variant="primary"
 					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
@@ -340,7 +340,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.selectAttachmentFolder(nodes),
-				type: 'primary',
+				variant: 'primary',
 			}]
 		},
 	},

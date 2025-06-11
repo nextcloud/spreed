@@ -36,7 +36,7 @@
 		</form>
 
 		<template #actions>
-			<NcButton type="primary"
+			<NcButton variant="primary"
 				:disabled="loading"
 				@click="handleCreateNewFile">
 				<template v-if="loading" #icon>

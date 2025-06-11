@@ -6,13 +6,13 @@
 <template>
 	<NcPopover class="call-time"
 		:shown.sync="showPopover"
-		:focus-trap="isShowRecordingControls"
+		:no-focus-trap="!isShowRecordingControls"
 		:triggers="[]">
 		<template #trigger>
 			<NcButton :disabled="isButtonDisabled"
 				:wide="true"
 				:title="recordingButtonTitle"
-				type="tertiary"
+				variant="tertiary"
 				@click="showPopover = !showPopover">
 				<template v-if="isRecording || isStartingRecording" #icon>
 					<IconRecordCircle v-if="isRecording"
@@ -38,7 +38,7 @@
 		<template v-if="isShowRecordingControls">
 			<hr v-if="isCallDurationHintShown" class="solid">
 			<NcButton v-if="isStartingRecording"
-				type="tertiary-no-background"
+				variant="tertiary-no-background"
 				:wide="true"
 				@click="stopRecording">
 				<template #icon>
@@ -47,7 +47,7 @@
 				{{ t('spreed', 'Cancel recording start') }}
 			</NcButton>
 			<NcButton v-else
-				type="tertiary-no-background"
+				variant="tertiary-no-background"
 				:wide="true"
 				@click="stopRecording">
 				<template #icon>

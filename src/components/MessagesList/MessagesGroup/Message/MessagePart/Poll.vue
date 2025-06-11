@@ -10,7 +10,7 @@
 			<IconPoll class="poll-card__header-icon" :size="20" />
 			<span class="poll-card__header-name">{{ name }}</span>
 			<NcButton v-if="canEditPollDraft"
-				type="tertiary"
+				variant="tertiary"
 				:title="t('spreed', 'Edit poll draft')"
 				:aria-label="t('spreed', 'Edit poll draft')"
 				@click.stop="editDraft">
@@ -18,7 +18,7 @@
 					<IconPencil :size="20" />
 				</template>
 			</NcButton>
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				:title="t('spreed', 'Delete poll draft')"
 				:aria-label="t('spreed', 'Delete poll draft')"
 				@click.stop="deleteDraft">
@@ -49,7 +49,7 @@
 	<!-- Poll results button in system message -->
 	<NcButton v-else
 		class="poll-closed"
-		type="secondary"
+		variant="secondary"
 		@click="openPoll">
 		{{ t('spreed', 'See results') }}
 	</NcButton>

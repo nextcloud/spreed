@@ -8,7 +8,7 @@
 		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
 			<NcButton :title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
-				type="tertiary"
+				variant="tertiary"
 				@click.stop="toggleHandRaised">
 				<template #icon>
 					<!-- The following icon is much bigger than all the others
@@ -21,7 +21,7 @@
 		<NcActions v-if="!isSidebar"
 			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
-			type="tertiary">
+			variant="tertiary">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<IconDotsHorizontal :size="20" />

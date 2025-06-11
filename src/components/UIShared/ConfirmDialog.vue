@@ -11,9 +11,6 @@ type NcDialogButtonProps = {
 	callback?: () => unknown | false | Promise<unknown | false>
 	disabled?: boolean
 	icon?: string
-	// FIXME deprecated, use type since 8.24.0
-	nativeType?: string
-	// FIXME deprecated, use variant since 8.24.0
 	type?: string
 	variant?: string
 }

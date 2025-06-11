@@ -30,7 +30,7 @@
 					:options="optionsTo"
 					no-wrap />
 
-				<NcButton type="primary"
+				<NcButton variant="primary"
 					:disabled="isLoading"
 					class="translate-dialog__button"
 					@click="handleTranslate">

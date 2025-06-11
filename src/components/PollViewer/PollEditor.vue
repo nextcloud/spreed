@@ -11,7 +11,7 @@
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
 			class="poll-editor__back-button"
-			type="tertiary"
+			variant="tertiary"
 			:title="t('spreed', 'Back')"
 			:aria-label="t('spreed', 'Back')"
 			@click="goBack">
@@ -58,7 +58,7 @@
 				v-model="pollForm.options[index]"
 				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
 			<NcButton v-if="pollForm.options.length > 2"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Delete poll option')"
 				@click="deleteOption(index)">
 				<template #icon>
@@ -68,7 +68,7 @@
 		</div>
 
 		<!-- Add options -->
-		<NcButton class="poll-editor__add-more" type="tertiary" @click="addOption">
+		<NcButton class="poll-editor__add-more" variant="tertiary" @click="addOption">
 			<template #icon>
 				<Plus />
 			</template>
@@ -102,7 +102,7 @@
 					{{ t('spreed', 'Export draft to file') }}
 				</NcActionLink>
 			</NcActions>
-			<NcButton type="primary" :disabled="!isFilled" @click="handleSubmit">
+			<NcButton variant="primary" :disabled="!isFilled" @click="handleSubmit">
 				{{ createPollLabel }}
 			</NcButton>
 		</template>

@@ -9,7 +9,7 @@
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
 			<NcButton id="request-password-button"
-				type="primary"
+				variant="primary"
 				:wide="true"
 				:disabled="isRequestInProgress"
 				@click="requestPassword">

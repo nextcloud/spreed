@@ -28,10 +28,10 @@
 				</template>
 			</NcEmptyContent>
 			<template #actions>
-				<NcButton type="tertiary" @click="handleClose">
+				<NcButton variant="tertiary" @click="handleClose">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton type="primary" @click="openConversation">
+				<NcButton variant="primary" @click="openConversation">
 					{{ t('spreed', 'Go to conversation') }}
 				</NcButton>
 			</template>

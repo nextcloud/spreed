@@ -431,7 +431,7 @@ export default {
 						},
 						{
 							label: t('spreed', 'Leave call'),
-							type: 'primary',
+							variant: 'primary',
 							callback: () => {
 								beforeRouteChangeListener(to, from, next)
 							},

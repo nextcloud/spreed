@@ -256,7 +256,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					<NcButton :pressed.sync="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
-						type="tertiary-no-background">
+						variant="tertiary-no-background">
 						<template #icon>
 							<IconFilter :size="15" />
 						</template>
@@ -297,7 +297,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					<div v-show="hasFilter && !searchDetailsOpened"
 						class="search-form__search-bubbles">
 						<NcChip v-if="fromUser"
-							type="tertiary"
+							variant="tertiary"
 							:text="fromUser.displayName"
 							@close="fromUser = null">
 							<template #icon>
@@ -308,7 +308,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 							</template>
 						</NcChip>
 						<NcChip v-if="sinceDate"
-							type="tertiary"
+							variant="tertiary"
 							:text="t('spreed', 'Since') + ' ' + sinceDate?.toLocaleDateString()"
 							@close="sinceDate = null">
 							<template #icon>
@@ -316,7 +316,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 							</template>
 						</NcChip>
 						<NcChip v-if="untilDate"
-							type="tertiary"
+							variant="tertiary"
 							:text="t('spreed', 'Until') + ' ' + untilDate?.toLocaleDateString()"
 							@close="untilDate = null">
 							<template #icon>
@@ -348,7 +348,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 				</template>
 			</NcEmptyContent>
 			<template v-if="canLoadMore">
-				<NcButton wide type="tertiary" @click="fetchSearchResults(false)">
+				<NcButton wide variant="tertiary" @click="fetchSearchResults(false)">
 					{{ t('spreed', 'Load more results') }}
 				</NcButton>
 			</template>

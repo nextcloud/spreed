@@ -40,7 +40,7 @@
 				<ul>
 					<NcButton v-for="(integration, index) in integrations"
 						:key="'integration' + index"
-						type="tertiary-no-background"
+						variant="tertiary-no-background"
 						@click="runIntegration(integration)">
 						<!-- FIXME: dynamically change the material design icon -->
 						<template #icon>
@@ -71,7 +71,7 @@
 			</NcEmptyContent>
 			<NcButton v-else-if="displaySearchHint"
 				class="participants-search-results__hint"
-				type="tertiary"
+				variant="tertiary"
 				@click="handleClickHint">
 				<template #icon>
 					<AccountSearch :size="20" />

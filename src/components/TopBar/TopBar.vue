@@ -36,7 +36,7 @@
 						{{ statusMessage }}
 					</p>
 					<NcPopover v-if="conversation.description"
-						:focus-trap="false"
+						no-focus-trap
 						:delay="500"
 						:boundary="boundaryElement"
 						:popper-triggers="['hover']"
@@ -68,7 +68,7 @@
 			<NcButton v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
-				type="tertiary"
+				variant="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
 					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />

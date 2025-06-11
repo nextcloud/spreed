@@ -39,7 +39,7 @@ async function disableLobby() {
 
 <template>
 	<div class="lobby-status">
-		<NcButton type="success" @click="disableLobby">
+		<NcButton variant="success" @click="disableLobby">
 			<template #icon>
 				<IconLockOpen :size="20" />
 			</template>

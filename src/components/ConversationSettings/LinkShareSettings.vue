@@ -37,7 +37,7 @@
 					<NcNoteCard v-else-if="!isSaving"
 						type="warning">
 						{{ t('spreed', 'Password protection is needed for public conversations') }}
-						<NcButton class="warning__button" type="primary" @click="enforcePassword">
+						<NcButton class="warning__button" variant="primary" @click="enforcePassword">
 							{{ t('spreed', 'Set a password') }}
 						</NcButton>
 					</NcNoteCard>
@@ -55,8 +55,8 @@
 						@valid="isValid = true"
 						@invalid="isValid = false" />
 					<NcButton :disabled="isSaving || !isValid"
-						type="primary"
-						native-type="submit"
+						variant="primary"
+						type="submit"
 						class="password-form__button">
 						<template #icon>
 							<IconContentSaveOutline />
@@ -64,7 +64,7 @@
 						{{ t('spreed', 'Save password') }}
 					</NcButton>
 					<NcButton v-if="password"
-						type="tertiary"
+						variant="tertiary"
 						:aria-label="t('spreed', 'Copy password')"
 						:title="t('spreed', 'Copy password')"
 						class="password-form__button"

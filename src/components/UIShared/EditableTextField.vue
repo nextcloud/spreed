@@ -24,14 +24,14 @@
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">
 			<template v-if="editing">
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleCancelEditing">
 					<template #icon>
 						<IconClose :size="20" />
 					</template>
 				</NcButton>
-				<NcButton type="primary"
+				<NcButton variant="primary"
 					:aria-label="t('spreed', 'Submit')"
 					:disabled="!canSubmit"
 					@click="handleSubmitText">
@@ -48,7 +48,7 @@
 				</div>
 			</template>
 			<NcButton v-if="!editing && editable"
-				type="tertiary"
+				variant="tertiary"
 				class="editable-text-field__edit"
 				:aria-label="editButtonAriaLabel"
 				@click="handleEditText">

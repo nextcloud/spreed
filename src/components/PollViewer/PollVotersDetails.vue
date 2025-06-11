@@ -6,7 +6,7 @@
 <template>
 	<NcPopover class="poll-voters-details" trigger="hover">
 		<template #trigger>
-			<NcButton type="tertiary-no-background"
+			<NcButton variant="tertiary-no-background"
 				:aria-label="t('spreed', 'Voted participants')"
 				class="poll-voters-details__button">
 				<template #icon>

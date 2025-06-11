@@ -14,7 +14,7 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<NcButton type="warning" @click="toggleShowLeaveConversationDialog">
+				<NcButton variant="warning" @click="toggleShowLeaveConversationDialog">
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
@@ -28,13 +28,13 @@
 						</p>
 					</template>
 					<template #actions>
-						<NcButton type="tertiary" @click="toggleShowLeaveConversationDialog">
+						<NcButton variant="tertiary" @click="toggleShowLeaveConversationDialog">
 							{{ t('spreed', 'No') }}
 						</NcButton>
-						<NcButton v-if="supportsArchive && !conversation.isArchived" type="secondary" @click="toggleArchiveConversation">
+						<NcButton v-if="supportsArchive && !conversation.isArchived" variant="secondary" @click="toggleArchiveConversation">
 							{{ t('spreed', 'Archive conversation') }}
 						</NcButton>
-						<NcButton type="warning" @click="leaveConversation">
+						<NcButton variant="warning" @click="leaveConversation">
 							{{ t('spreed', 'Yes') }}
 						</NcButton>
 					</template>
@@ -47,7 +47,7 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
-				<NcButton type="error"
+				<NcButton variant="error"
 					@click="toggleShowDeleteConversationDialog">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
@@ -57,10 +57,10 @@
 					:message="deleteConversationDialogMessage"
 					container=".danger-zone">
 					<template #actions>
-						<NcButton type="tertiary" @click="toggleShowDeleteConversationDialog">
+						<NcButton variant="tertiary" @click="toggleShowDeleteConversationDialog">
 							{{ t('spreed', 'No') }}
 						</NcButton>
-						<NcButton type="error" @click="deleteConversation">
+						<NcButton variant="error" @click="deleteConversation">
 							{{ t('spreed', 'Yes') }}
 						</NcButton>
 					</template>
@@ -73,7 +73,7 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
-				<NcButton type="error"
+				<NcButton variant="error"
 					@click="toggleShowDeleteChatDialog">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
@@ -83,10 +83,10 @@
 					:message="deleteChatDialogMessage"
 					container=".danger-zone">
 					<template #actions>
-						<NcButton type="tertiary" @click="toggleShowDeleteChatDialog">
+						<NcButton variant="tertiary" @click="toggleShowDeleteChatDialog">
 							{{ t('spreed', 'No') }}
 						</NcButton>
-						<NcButton type="error" @click="clearChatHistory">
+						<NcButton variant="error" @click="clearChatHistory">
 							{{ t('spreed', 'Yes') }}
 						</NcButton>
 					</template>

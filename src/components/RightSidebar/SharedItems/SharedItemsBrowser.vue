@@ -16,7 +16,7 @@
 					<NcButton v-if="sharedItems[type]"
 						:key="type"
 						:class="{ active: activeTab === type }"
-						type="tertiary"
+						variant="tertiary"
 						@click="handleTabClick(type)">
 						{{ sharedItemTitle[type] || sharedItemTitle.default }}
 					</NcButton>

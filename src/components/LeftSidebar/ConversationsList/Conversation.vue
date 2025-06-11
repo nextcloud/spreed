@@ -219,13 +219,13 @@
 					</p>
 				</template>
 				<template #actions>
-					<NcButton type="tertiary" @click="isLeaveDialogOpen = false">
+					<NcButton variant="tertiary" @click="isLeaveDialogOpen = false">
 						{{ t('spreed', 'No') }}
 					</NcButton>
-					<NcButton v-if="supportsArchive && !item.isArchived" type="secondary" @click="toggleArchiveConversation">
+					<NcButton v-if="supportsArchive && !item.isArchived" variant="secondary" @click="toggleArchiveConversation">
 						{{ t('spreed', 'Archive conversation') }}
 					</NcButton>
-					<NcButton type="warning" @click="leaveConversation">
+					<NcButton variant="warning" @click="leaveConversation">
 						{{ t('spreed', 'Yes') }}
 					</NcButton>
 				</template>
@@ -235,10 +235,10 @@
 				:name="t('spreed', 'Delete conversation')"
 				:message="dialogDeleteMessage">
 				<template #actions>
-					<NcButton type="tertiary" @click="isDeleteDialogOpen = false">
+					<NcButton variant="tertiary" @click="isDeleteDialogOpen = false">
 						{{ t('spreed', 'No') }}
 					</NcButton>
-					<NcButton type="error" @click="deleteConversation">
+					<NcButton variant="error" @click="deleteConversation">
 						{{ t('spreed', 'Yes') }}
 					</NcButton>
 				</template>

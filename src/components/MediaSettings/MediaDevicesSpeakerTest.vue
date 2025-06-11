@@ -6,7 +6,7 @@
 <template>
 	<div class="media-devices-checker">
 		<IconVolumeHigh class="media-devices-checker__icon" :size="16" />
-		<NcButton type="secondary" @click="playTestSound">
+		<NcButton variant="secondary" @click="playTestSound">
 			{{ buttonLabel }}
 		</NcButton>
 		<div v-if="isPlayingTestSound" class="equalizer">

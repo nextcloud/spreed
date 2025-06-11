@@ -38,7 +38,7 @@
 		<template #actions>
 			<NcButton v-if="!loading && availableRooms.length > 0"
 				class="selector__action"
-				type="primary"
+				variant="primary"
 				:disabled="!selectedRoom"
 				@click="onSubmit">
 				{{ t('spreed', 'Select conversation') }}

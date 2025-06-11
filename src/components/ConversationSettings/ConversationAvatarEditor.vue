@@ -87,7 +87,7 @@
 						{{ t('spreed', 'Cancel') }}
 					</NcButton>
 					<NcButton v-if="!controlled"
-						type="primary"
+						variant="primary"
 						@click="saveAvatar">
 						{{ t('spreed', 'Set picture') }}
 					</NcButton>
@@ -223,7 +223,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.handleFileChoose(nodes),
-				type: 'primary',
+				variant: 'primary',
 			}]
 		},
 	},

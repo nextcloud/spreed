@@ -20,7 +20,7 @@
 					disablePictureInPicture
 					tabindex="-1" />
 				<NcButton v-if="showVideo"
-					type="secondary"
+					variant="secondary"
 					class="media-settings__preview-mirror"
 					:title="mirrorToggleLabel"
 					:aria-label="mirrorToggleLabel"
@@ -45,7 +45,7 @@
 				<!-- Audio and video toggles -->
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
-					<NcButton type="tertiary"
+					<NcButton variant="tertiary"
 						:title="audioButtonTitle"
 						:aria-label="audioButtonTitle"
 						:disabled="!audioPreviewAvailable"
@@ -60,7 +60,7 @@
 					</NcButton>
 
 					<!-- Video toggle -->
-					<NcButton type="tertiary"
+					<NcButton variant="tertiary"
 						:title="videoButtonTitle"
 						:aria-label="videoButtonTitle"
 						:disabled="!videoPreviewAvailable"

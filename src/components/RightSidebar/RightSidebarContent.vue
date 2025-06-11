@@ -198,7 +198,7 @@ function handleHeaderClick() {
 						{{ action.title }}
 					</NcActionLink>
 				</NcActions>
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					:title="t('spreed', 'Search messages')"
 					:aria-label="t('spreed', 'Search messages')"
 					@click="emit('update:search', true)">
@@ -263,7 +263,7 @@ function handleHeaderClick() {
 		<!-- Search messages in this conversation -->
 		<template v-else-if="isUser && state === 'search'">
 			<div class="content__header content__header--row">
-				<NcButton type="tertiary"
+				<NcButton variant="tertiary"
 					:title="t('spreed', 'Back')"
 					:aria-label="t('spreed', 'Back')"
 					@click="emit('update:search', false)">

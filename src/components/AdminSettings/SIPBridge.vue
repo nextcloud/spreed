@@ -33,7 +33,7 @@
 				:tag-width="60"
 				:loading="loadingGroups"
 				:show-no-options="false"
-				:close-on-select="false"
+				keep-open
 				track-by="id"
 				label="displayname"
 				no-wrap
@@ -68,7 +68,7 @@
 				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
 			</p>
 
-			<NcButton type="primary"
+			<NcButton variant="primary"
 				class="additional-top-margin"
 				:disabled="loading || !isEdited"
 				@click="saveSIPSettings">

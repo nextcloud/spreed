@@ -311,7 +311,7 @@ async function submitNewMeeting() {
 	<div>
 		<NcPopover :container="container"
 			:popper-hide-triggers="hideTriggers"
-			:focus-trap="canScheduleMeeting || upcomingEvents.length !== 0"
+			:no-focus-trap="!canScheduleMeeting && upcomingEvents.length === 0"
 			popup-role="dialog">
 			<template #trigger>
 				<NcButton class="upcoming-meeting"
@@ -420,7 +420,7 @@ async function submitNewMeeting() {
 					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
 						{{ inviteLabel }}
 					</NcCheckboxRadioSwitch>
-					<NcButton v-if="!isOneToOneConversation && !selectAll" type="tertiary" @click="isSelectorOpen = true">
+					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">
 						<template #icon>
 							<IconAccountPlus :size="20" />
 						</template>
@@ -433,7 +433,7 @@ async function submitNewMeeting() {
 					<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
 						{{ invalidHint }}
 					</p>
-					<NcButton type="primary"
+					<NcButton variant="primary"
 						:disabled="!selectedCalendar || submitting || !!invalid"
 						@click="submitNewMeeting">
 						<template #icon>
@@ -483,7 +483,7 @@ async function submitNewMeeting() {
 					</template>
 				</NcEmptyContent>
 				<template #actions>
-					<NcButton type="primary" @click="isSelectorOpen = false">
+					<NcButton variant="primary" @click="isSelectorOpen = false">
 						<template #icon>
 							<IconCheck :size="20" />
 						</template>

@@ -50,7 +50,7 @@
 		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
-			type="primary"
+			variant="primary"
 			:aria-label="removeAriaLabel"
 			@click="$emit('remove-file', file.id)">
 			<template #icon>

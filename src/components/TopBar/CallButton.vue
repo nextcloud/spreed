@@ -10,7 +10,7 @@
 			:title="startCallTitle"
 			:aria-label="startCallLabel"
 			:disabled="startCallButtonDisabled || loading || isJoiningCall"
-			:type="startCallButtonType"
+			:variant="hasCall ? 'success' : 'primary'"
 			@click="handleClick">
 			<template #icon>
 				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
@@ -26,7 +26,7 @@
 		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 			id="call_button"
 			:aria-label="endCallLabel"
-			type="error"
+			variant="error"
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
@@ -40,7 +40,7 @@
 		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
 			:aria-label="leaveCallLabel"
-			:type="isScreensharing ? 'tertiary' : 'error'"
+			:variant="isScreensharing ? 'tertiary' : 'error'"
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
@@ -56,7 +56,7 @@
 			:aria-label="leaveCallCombinedLabel"
 			:menu-name="showButtonText ? leaveCallCombinedLabel : undefined"
 			force-name
-			:type="isScreensharing ? 'tertiary' : 'error'">
+			:variant="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />
@@ -307,17 +307,6 @@ export default {
 				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
 			}
 
-			return ''
-		},
-
-		startCallButtonType() {
-			if (!this.isInLobby) {
-				if (!this.hasCall) {
-					return 'primary'
-				} else {
-					return 'success'
-				}
-			}
 			return ''
 		},
 

@@ -31,7 +31,7 @@
 				class="delete"
 				:title="deleteButtonLabel"
 				:aria-label="deleteButtonLabel"
-				type="error"
+				variant="error"
 				@click="toggleShowDialog">
 				<template #icon>
 					<Delete :size="20" />
@@ -39,21 +39,21 @@
 				{{ deleteButtonLabel }}
 			</NcButton>
 			<NcButton v-if="!isReorganizingAttendees"
-				type="tertiary"
+				variant="tertiary"
 				@click="goBack">
 				<template #icon>
 					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 				{{ t('spreed', 'Back') }}
 			</NcButton>
-			<NcButton v-if="hasAssigned" type="tertiary" @click="resetAssignments">
+			<NcButton v-if="hasAssigned" variant="tertiary" @click="resetAssignments">
 				<template #icon>
 					<Reload :size="20" />
 				</template>
 				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
-				type="primary"
+				variant="primary"
 				container=".participants-editor__buttons"
 				:menu-name="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
@@ -67,7 +67,7 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton :disabled="!hasAssigned"
-				:type="confirmButtonType"
+				:variant="hasUnassigned ? 'secondary' : 'primary'"
 				@click="handleSubmit">
 				{{ confirmButtonLabel }}
 			</NcButton>
@@ -78,10 +78,10 @@
 			:message="dialogMessage"
 			container=".participants-editor">
 			<template #actions>
-				<NcButton type="tertiary" @click="toggleShowDialog">
+				<NcButton variant="tertiary" @click="toggleShowDialog">
 					{{ t('spreed', 'Cancel') }}
 				</NcButton>
-				<NcButton type="error" @click="deleteBreakoutRooms">
+				<NcButton variant="error" @click="deleteBreakoutRooms">
 					{{ t('spreed', 'Delete breakout rooms') }}
 				</NcButton>
 			</template>
@@ -202,10 +202,6 @@ export default {
 
 		confirmButtonLabel() {
 			return this.isReorganizingAttendees ? t('spreed', 'Confirm') : t('spreed', 'Create breakout rooms')
-		},
-
-		confirmButtonType() {
-			return this.hasUnassigned ? 'secondary' : 'primary'
 		},
 
 		resetButtonLabel() {

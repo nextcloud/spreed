@@ -43,7 +43,7 @@ components.
 
 		<NcButton v-if="canCancel"
 			class="quote__close"
-			type="tertiary"
+			variant="tertiary"
 			:title="cancelQuoteLabel"
 			:aria-label="cancelQuoteLabel"
 			@click="handleAbort">

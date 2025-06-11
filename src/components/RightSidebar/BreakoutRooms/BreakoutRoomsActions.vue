@@ -11,7 +11,7 @@
 			<NcButton v-if="breakoutRoomsNotStarted && canModerate"
 				:title="startLabelTitle"
 				:aria-label="startLabel"
-				type="primary"
+				variant="primary"
 				:wide="true"
 				:disabled="!isInCall"
 				@click="startBreakoutRooms">
@@ -23,7 +23,7 @@
 			<NcButton v-else-if="canModerate"
 				:title="stopLabel"
 				:aria-label="stopLabel"
-				type="error"
+				variant="error"
 				:wide="true"
 				@click="stopBreakoutRooms">
 				<template #icon>
@@ -36,7 +36,7 @@
 			<NcButton v-if="canModerate && !isInBreakoutRoom"
 				:title="sendMessageLabel"
 				:aria-label="sendMessageLabel"
-				type="secondary"
+				variant="secondary"
 				:wide="true"
 				@click="isSendMessageDialogOpened = true">
 				<template #icon>
@@ -48,7 +48,7 @@
 				:title="backToMainRoomLabel"
 				:aria-label="backToMainRoomLabel"
 				:wide="true"
-				type="secondary"
+				variant="secondary"
 				@click="switchToParentRoom">
 				<template #icon>
 					<IconArrowLeft class="bidirectional-icon" :size="20" />
@@ -59,7 +59,7 @@
 				:title="backToBreakoutRoomLabel"
 				:aria-label="backToBreakoutRoomLabel"
 				:wide="true"
-				type="secondary"
+				variant="secondary"
 				@click="switchToBreakoutRoom">
 				<template #icon>
 					<ArrowRight class="bidirectional-icon" :size="20" />

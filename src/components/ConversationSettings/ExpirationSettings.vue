@@ -18,7 +18,6 @@
 				:input-label="t('spreed', 'Set message expiration')"
 				:options="expirationOptions"
 				label="label"
-				close-on-select
 				:clearable="false" />
 		</template>
 

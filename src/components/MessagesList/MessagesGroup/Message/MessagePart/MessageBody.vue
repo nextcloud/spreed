@@ -61,7 +61,7 @@
 			<NcButton v-if="containsCodeBlocks"
 				v-show="currentCodeBlock !== null"
 				class="message-copy-code"
-				type="tertiary"
+				variant="tertiary"
 				:aria-label="t('spreed', 'Copy code block')"
 				:title="t('spreed', 'Copy code block')"
 				:style="{ top: copyButtonOffset }"

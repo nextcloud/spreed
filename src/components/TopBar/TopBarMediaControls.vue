@@ -10,11 +10,11 @@
 				:aria-label="qualityWarningAriaLabel"
 				trigger="hover"
 				:auto-hide="false"
-				:focus-trap="false"
+				no-focus-trap
 				:shown="showQualityWarningTooltip">
 				<template #trigger>
 					<NcButton id="quality_warning_button"
-						type="tertiary-no-background"
+						variant="tertiary-no-background"
 						class="trigger"
 						:aria-label="qualityWarningAriaLabel"
 						@click="mouseover = !mouseover">
@@ -27,13 +27,13 @@
 					<span>{{ qualityWarningTooltip.content }}</span>
 					<div class="hint__actions">
 						<NcButton v-if="qualityWarningTooltip.action"
-							type="primary"
+							variant="primary"
 							class="hint__button"
 							@click="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
 						</NcButton>
 						<NcButton v-if="!isQualityWarningTooltipDismissed"
-							type="tertiary"
+							variant="tertiary"
 							class="hint__button"
 							@click="dismissQualityWarningTooltip">
 							{{ t('spreed', 'Dismiss') }}
@@ -46,16 +46,16 @@
 		<LocalAudioControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
-			type="tertiary" />
+			variant="tertiary" />
 
 		<LocalVideoControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
-			type="tertiary" />
+			variant="tertiary" />
 
 		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
 			:title="toggleVirtualBackgroundButtonLabel"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
 			:class="blurButtonClass"
 			@click.stop="toggleVirtualBackground">
@@ -68,7 +68,7 @@
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
 			:title="screenSharingButtonTitle"
-			type="error"
+			variant="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
@@ -94,7 +94,7 @@
 		</NcActions>
 		<NcButton v-else-if="!isSidebar"
 			:title="screenSharingButtonTitle"
-			type="tertiary"
+			variant="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"
 			:disabled="!isScreensharingAllowed"
 			@click.stop="toggleScreenSharingMenu">

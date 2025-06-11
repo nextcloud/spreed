@@ -9,7 +9,7 @@
 		@mouseenter="elementHoveredOrFocused = true"
 		@mouseleave="elementHoveredOrFocused = false">
 		<div class="breakout-room-item__wrapper">
-			<NcButton type="tertiary"
+			<NcButton variant="tertiary"
 				:aria-label="toggleParticipantsListLabel"
 				@focus="elementHoveredOrFocused = true"
 				@blur="elementHoveredOrFocused = false"

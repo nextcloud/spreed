@@ -9,7 +9,7 @@
 			<div class="new-conversation">
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
-						type="tertiary"
+						variant="tertiary"
 						:class="{ 'hidden-visually': isSearching }"
 						class="talk-home-button"
 						:title="t('spreed', 'Talk home')"
@@ -33,7 +33,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:type="isFiltered ? 'secondary' : 'tertiary'"
+						:variant="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
@@ -192,7 +192,7 @@
 					@scroll.native="debounceHandleScroll" />
 				<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 					class="unread-mention-button"
-					type="primary"
+					variant="primary"
 					@click="scrollBottomUnread">
 					{{ t('spreed', 'Unread mentions') }}
 				</NcButton>
@@ -216,7 +216,7 @@
 			<div class="left-sidebar__settings-button-container">
 				<template v-if="!isSearching && supportsArchive">
 					<NcButton v-if="showArchived"
-						type="tertiary"
+						variant="tertiary"
 						wide
 						@click="showArchived = false">
 						<template #icon>
@@ -225,7 +225,7 @@
 						{{ t('spreed', 'Back to conversations') }}
 					</NcButton>
 					<NcButton v-else-if="archivedConversationsList.length"
-						type="tertiary"
+						variant="tertiary"
 						wide
 						@click="showArchived = true">
 						<template #icon>
@@ -238,7 +238,7 @@
 					</NcButton>
 				</template>
 
-				<NcButton type="tertiary" wide @click="showSettings">
+				<NcButton variant="tertiary" wide @click="showSettings">
 					<template #icon>
 						<Cog :size="20" />
 					</template>

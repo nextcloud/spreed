@@ -17,7 +17,7 @@
 				{{ message }}
 			</p>
 			<NcButton v-if="showLink"
-				type="primary"
+				variant="primary"
 				@click.stop="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcButton>

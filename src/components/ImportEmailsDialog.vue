@@ -162,7 +162,7 @@ async function submitList(file: File | null) {
 		</div>
 
 		<template #actions>
-			<NcButton type="primary"
+			<NcButton variant="primary"
 				:disabled="!uploadResult"
 				@click="submitList(importedFile)">
 				{{ t('spreed', 'Send invitations') }}

@@ -62,14 +62,14 @@
 			<div v-if="isPollOpen" class="poll-modal__actions">
 				<!-- Submit vote button-->
 				<NcButton v-if="modalPage === 'voting'"
-					type="primary"
+					variant="primary"
 					:disabled="disabled"
 					@click="submitVote">
 					{{ t('spreed', 'Submit vote') }}
 				</NcButton>
 				<!-- Vote again-->
 				<NcButton v-else
-					type="secondary"
+					variant="secondary"
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
