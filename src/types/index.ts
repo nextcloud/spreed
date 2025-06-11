@@ -204,6 +204,10 @@ export type JoinRoomFullResponse = {
 	data: operations['room-join-room']['responses']['200']['content']['application/json']
 }
 
+// Call
+export type fetchPeersResponse = ApiResponse<operations['call-get-peers-for-call']['responses'][200]['content']['application/json']>
+export type callSIPDialOutResponse = ApiResponse<operations['call-sip-dial-out']['responses'][201]['content']['application/json']>
+
 // Participants
 export type ParticipantStatus = {
 	status?: string | null

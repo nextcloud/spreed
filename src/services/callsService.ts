@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type {
+	callSIPDialOutResponse,
+	fetchPeersResponse,
+} from '../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { PARTICIPANT } from '../constants.ts'
@@ -11,6 +16,14 @@ import {
 	signalingLeaveCall,
 	signalingSendCallMessage,
 } from '../utils/webrtc/index.js'
+
+// TODO unify this type
+// hint: check TYPE_ENCRYPTION* in "encryption.js"
+type CallSIPSendCallMessagePayload = {
+	type: 'control' | 'dtmf' | 'hangup' | 'mute'
+	digit?: string
+	audio?: number
+}
 
 /**
  * Join a call as participant
@@ -23,25 +36,25 @@ import {
  * media is allowed to be sent, but it is not guaranteed to be sent. For
  * example, if WITH_VIDEO is provided but the device does not have a camera.
  *
- * @param {string} token The token of the call to be joined.
- * @param {number} flags The available PARTICIPANT.CALL_FLAG for this participants
- * @param {boolean} silent Whether the call should trigger a notifications and
+ * @param token The token of the call to be joined.
+ * @param flags The available PARTICIPANT.CALL_FLAG for this participants
+ * @param silent Whether the call should trigger a notifications and
  * sound for other participants or not
- * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
- * @param {Array<string>} silentFor List of participants that should not receive a notification about the call
- * @return {Promise<number>} The actual flags based on the available media
+ * @param recordingConsent Whether the participant gave their consent to be recorded
+ * @param silentFor List of participants that should not receive a notification about the call
+ * @return The actual flags based on the available media
  */
-const joinCall = async function(token, flags, silent, recordingConsent, silentFor) {
+const joinCall = async function(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: Array<string>): Promise<void> {
 	return signalingJoinCall(token, flags, silent, recordingConsent, silentFor)
 }
 
 /**
  * Leave a call as participant
  *
- * @param {string} token The token of the call to be left
- * @param {boolean} all Whether to end the meeting for all
+ * @param token The token of the call to be left
+ * @param all Whether to end the meeting for all
  */
-const leaveCall = async function(token, all = false) {
+const leaveCall = async function(token: string, all: boolean = false) {
 	try {
 		await signalingLeaveCall(token, all)
 	} catch (error) {
@@ -49,7 +62,7 @@ const leaveCall = async function(token, all = false) {
 	}
 }
 
-const fetchPeers = async function(token, options) {
+const fetchPeers = async function(token: string, options: object): fetchPeersResponse {
 	return await axios.get(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), options)
 }
 
@@ -59,43 +72,43 @@ const fetchPeers = async function(token, options) {
  * @param {string} token The token of the conversation
  * @param {number} attendeeId The attendee id to call to via SIP
  */
-const callSIPDialOut = async function(token, attendeeId) {
+const callSIPDialOut = async function(token: string, attendeeId: number): callSIPDialOutResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/dialout/{attendeeId}', { token, attendeeId }))
 }
 
 /**
  * Hang up for phone participant
  *
- * @param {string} sessionId Session id of receiver
+ * @param sessionId Session id of receiver
  */
-const callSIPHangupPhone = async function(sessionId) {
+const callSIPHangupPhone = async function(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'hangup' })
 }
 
 /**
  * Mute phone participant (prevent from speaking)
  *
- * @param {string} sessionId Session id of receiver
+ * @param sessionId Session id of receiver
  */
-const callSIPMutePhone = async function(sessionId) {
+const callSIPMutePhone = async function(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE })
 }
 
 /**
  * Unmute phone participant (allow to speaking and listening)
  *
- * @param {string} sessionId Session id of receiver
+ * @param sessionId Session id of receiver
  */
-const callSIPUnmutePhone = async function(sessionId) {
+const callSIPUnmutePhone = async function(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.NONE })
 }
 
 /**
  * Hold a participant (prevent from listening)
  *
- * @param {string} sessionId Session id of receiver
+ * @param sessionId Session id of receiver
  */
-const callSIPHoldPhone = async function(sessionId) {
+const callSIPHoldPhone = async function(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER })
 }
 
@@ -105,7 +118,7 @@ const callSIPHoldPhone = async function(sessionId) {
  * @param {string} sessionId Session id of receiver
  * @param {string} digit DTMF digit to send
  */
-const callSIPSendDTMF = async function(sessionId, digit) {
+const callSIPSendDTMF = async function(sessionId: string, digit: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'dtmf', digit })
 }
 
@@ -115,7 +128,7 @@ const callSIPSendDTMF = async function(sessionId, digit) {
  * @param {string} sessionId Session id of receiver
  * @param {object} data Payload for message to be sent
  */
-const callSIPSendCallMessage = async function(sessionId, data) {
+const callSIPSendCallMessage = async function(sessionId: string, data: CallSIPSendCallMessagePayload) {
 	if (!sessionId) {
 		console.debug('Session ID has not been provided')
 		return
