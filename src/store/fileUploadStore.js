@@ -18,6 +18,7 @@ import {
 	shareFile,
 } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
 	findUniquePath,
@@ -335,7 +336,8 @@ const actions = {
 	 */
 	async prepareUploadPaths(context, { token, uploadId }) {
 		const client = getDavClient()
-		const userRoot = '/files/' + context.getters.getUserId()
+		const actorStore = useActorStore()
+		const userRoot = '/files/' + actorStore.userId
 
 		// Store propfind attempts within one action to reduce amount of requests for duplicates
 		const knownPaths = {}
@@ -584,7 +586,8 @@ const actions = {
 			return
 		}
 
-		if (getters.getUserId() === null) {
+		const actorStore = useActorStore()
+		if (actorStore.userId === null) {
 			console.debug('Skip file templates setup for participants that are not logged in')
 			commit('markFileTemplatesInitialised')
 			return

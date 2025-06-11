@@ -16,6 +16,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -36,6 +37,7 @@ describe('VideoBottomBar.vue', () => {
 	let testStoreConfig
 	let componentProps
 	let conversationProps
+	let actorStore
 
 	const audioIndicatorAriaLabels = [t('spreed', 'Mute'), t('spreed', 'Muted')]
 	const videoIndicatorAriaLabels = [t('spreed', 'Disable video'), t('spreed', 'Enable video')]
@@ -47,6 +49,7 @@ describe('VideoBottomBar.vue', () => {
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		callViewStore = useCallViewStore()
+		actorStore = useActorStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -83,7 +86,7 @@ describe('VideoBottomBar.vue', () => {
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue((token) => conversationProps)
-		testStoreConfig.modules.actorStore.getters.getUserId = jest.fn().mockReturnValue(() => USER_ID)
+		actorStore.userId = USER_ID
 		store = new Store(testStoreConfig)
 	})
 

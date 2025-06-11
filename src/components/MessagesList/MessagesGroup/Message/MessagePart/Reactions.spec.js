@@ -19,6 +19,7 @@ import {
 } from '../../../../../services/reactionsService.ts'
 import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generateOCSResponse } from '../../../../../test-helpers.js'
 
@@ -41,8 +42,6 @@ describe('Reactions.vue', () => {
 	let store
 	let localVue
 	let messageMock
-	let getActorTypeMock
-	let getActorIdMock
 	let reactionsStored
 	let message
 
@@ -51,6 +50,7 @@ describe('Reactions.vue', () => {
 		reactionsStore = useReactionsStore()
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		const actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 		token = 'token1'
@@ -69,11 +69,8 @@ describe('Reactions.vue', () => {
 		messageMock = jest.fn().mockReturnValue(message)
 		testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 
-		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
-		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
-
-		getActorIdMock = jest.fn().mockReturnValue('admin')
-		testStoreConfig.modules.actorStore.getters.getActorId = () => getActorIdMock
+		actorStore.actorId = 'admin'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 
 		store = new Vuex.Store(testStoreConfig)
 

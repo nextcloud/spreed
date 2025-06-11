@@ -200,6 +200,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { shareFile } from '../../services/filesSharingServices.ts'
+import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -295,6 +296,7 @@ export default {
 		const { autoComplete, userData } = useChatMentions(token)
 		const { createTemporaryMessage } = useTemporaryMessage()
 		return {
+			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			groupwareStore: useGroupwareStore(),
 			settingsStore: useSettingsStore(),
@@ -377,12 +379,8 @@ export default {
 			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
 		},
 
-		currentUserIsGuest() {
-			return this.$store.getters.getUserId() === null
-		},
-
 		canShareFiles() {
-			return !this.currentUserIsGuest
+			return !this.actorStore.isActorGuest
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},
 
@@ -893,8 +891,7 @@ export default {
 
 			// last message within 24 hours
 			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast((message) => {
-				return message.actorId === this.$store.getters.getUserId()
-					&& message.actorType === this.$store.getters.getActorType()
+				return this.actorStore.checkIfSelfIsActor(message)
 					&& !message.isTemporary && !message.systemMessage
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})

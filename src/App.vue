@@ -47,6 +47,7 @@ import Router from './router/router.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
+import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
 import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
@@ -80,6 +81,7 @@ export default {
 			federationStore: useFederationStore(),
 			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -122,7 +124,7 @@ export default {
 		},
 
 		getUserId() {
-			return this.$store.getters.getUserId()
+			return this.actorStore.userId
 		},
 
 		isSendingMessages() {
@@ -323,7 +325,7 @@ export default {
 
 					const payload = {
 						token: params.token,
-						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+						participantIdentifier: this.actorStore.participantIdentifier,
 						flags,
 						silent: true,
 						recordingConsent: this.recordingConsentGiven,
@@ -372,7 +374,7 @@ export default {
 			if (!getCurrentUser()) {
 				// Set the current actor/participant for guests
 				const conversation = this.$store.getters.conversation(this.token)
-				this.$store.dispatch('setCurrentParticipant', conversation)
+				this.actorStore.setCurrentParticipant(conversation)
 			}
 		})
 
@@ -440,14 +442,6 @@ export default {
 				})
 			}
 		})
-
-		if (getCurrentUser()) {
-			console.debug('Setting current user')
-			this.$store.dispatch('setCurrentUser', getCurrentUser())
-			this.$store.dispatch('getCurrentUserTeams')
-		} else {
-			console.debug('Can not set current user because it\'s a guest')
-		}
 	},
 
 	async mounted() {

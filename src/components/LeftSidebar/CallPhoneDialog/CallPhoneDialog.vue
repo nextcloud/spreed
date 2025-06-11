@@ -56,6 +56,7 @@ import { callSIPDialOut } from '../../../services/callsService.js'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { createLegacyConversation } from '../../../services/conversationsService.ts'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useActorStore } from '../../../stores/actor.ts'
 
 export default {
 	name: 'CallPhoneDialog',
@@ -70,6 +71,12 @@ export default {
 	},
 
 	expose: ['showModal'],
+
+	setup() {
+		return {
+			actorStore: useActorStore(),
+		}
+	},
 
 	data() {
 		return {
@@ -156,7 +163,7 @@ export default {
 				console.info('Joining call')
 				await this.$store.dispatch('joinCall', {
 					token,
-					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+					participantIdentifier: this.actorStore.participantIdentifier,
 					flags,
 					silent: false,
 					recordingConsent: true,

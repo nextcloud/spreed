@@ -26,6 +26,7 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../services/messagesService.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -76,37 +77,32 @@ describe('messagesStore', () => {
 	let localVue = null
 	let testStoreConfig
 	let store = null
-	let getActorIdMock
-	let getUserIdMock
-	let getActorTypeMock
-	let getDisplayNameMock
 	let conversationMock
 	let updateConversationLastMessageMock
 	let updateConversationLastReadMessageMock
 	let updateConversationLastActiveAction
 	let reactionsStore
+	let actorStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
+		actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 
-		getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
-		getUserIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
-		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
-		getDisplayNameMock = jest.fn().mockReturnValue(() => 'actor-display-name-1')
+		actorStore.actorId = 'actor-id-1'
+		actorStore.userId = 'actor-id-1'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		actorStore.displayName = 'actor-display-name-1'
+
 		conversationMock = jest.fn().mockReturnValue(conversation)
 		updateConversationLastMessageMock = jest.fn()
 		updateConversationLastReadMessageMock = jest.fn()
 		updateConversationLastActiveAction = jest.fn()
 
-		testStoreConfig.modules.actorStore.getters.getActorId = getActorIdMock
-		testStoreConfig.modules.actorStore.getters.getUserId = getUserIdMock
-		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
-		testStoreConfig.modules.actorStore.getters.getDisplayName = getDisplayNameMock
 		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastMessage = updateConversationLastMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
@@ -689,6 +685,8 @@ describe('messagesStore', () => {
 	describe('last read message markers', () => {
 		beforeEach(() => {
 			const response = generateOCSResponse({ payload: conversation })
+			actorStore.userId = 'user-1'
+			actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			updateLastReadMessage.mockResolvedValue(response)
 		})
 
@@ -701,7 +699,7 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message', async () => {
-			getUserIdMock.mockReturnValue(() => 'user-1')
+			actorStore.userId = 'user-1'
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
@@ -710,7 +708,6 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 123,
@@ -721,7 +718,6 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message for federated conversation', async () => {
-			getUserIdMock.mockReturnValue(() => 'federated-user-1')
 			conversationMock.mockReturnValue({
 				lastMessage: {},
 				remoteServer: 'nextcloud.com',
@@ -735,7 +731,6 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).not.toHaveBeenCalled()
 
 			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, null)
@@ -743,8 +738,6 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message and update visually', async () => {
-			getUserIdMock.mockReturnValue(() => 'user-1')
-
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
 				token: TOKEN,
@@ -752,7 +745,6 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 123,
@@ -763,7 +755,8 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message for guests', async () => {
-			getUserIdMock.mockReturnValue(() => null)
+			actorStore.userId = null
+			actorStore.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
@@ -772,7 +765,7 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
+			expect(actorStore.isActorGuest).toBe(true)
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 123,
@@ -783,7 +776,6 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message', async () => {
-			getUserIdMock.mockReturnValue(() => 'user-1')
 			const response = generateOCSResponse({
 				payload: {
 					unreadMessages: 0,
@@ -800,7 +792,6 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 200,
@@ -811,7 +802,6 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message and update visually', async () => {
-			getUserIdMock.mockReturnValue(() => 'user-1')
 			const response = generateOCSResponse({
 				payload: {
 					unreadMessages: 0,
@@ -828,7 +818,6 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 200,
@@ -839,7 +828,8 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message for guests', async () => {
-			getUserIdMock.mockReturnValue(() => null)
+			actorStore.userId = null
+			actorStore.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('updateLastReadMessage', {
@@ -849,7 +839,7 @@ describe('messagesStore', () => {
 			})
 
 			expect(conversationMock).toHaveBeenCalled()
-			expect(getUserIdMock).toHaveBeenCalled()
+			expect(actorStore.isActorGuest).toBe(true)
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
 				lastReadMessage: 200,
@@ -1155,28 +1145,13 @@ describe('messagesStore', () => {
 		let addGuestNameAction
 		let cancelFunctionMocks
 		let conversationMock
-		let getActorIdMock
-		let getActorTypeMock
-		let isActorUserMock
-		let isActorGuestMock
-		let getUserIdMock
 
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(messagesStore)
 			const guestNameStore = useGuestNameStore()
 
 			conversationMock = jest.fn()
-			getActorIdMock = jest.fn()
-			getActorTypeMock = jest.fn()
-			isActorUserMock = jest.fn()
-			isActorGuestMock = jest.fn()
-			getUserIdMock = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
-			testStoreConfig.getters.getActorId = jest.fn().mockReturnValue(getActorIdMock)
-			testStoreConfig.getters.getActorType = jest.fn().mockReturnValue(getActorTypeMock)
-			testStoreConfig.getters.isActorUser = jest.fn().mockReturnValue(isActorUserMock)
-			testStoreConfig.getters.isActorGuest = jest.fn().mockReturnValue(isActorGuestMock)
-			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
 
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
@@ -1527,10 +1502,8 @@ describe('messagesStore', () => {
 				})
 
 				test('updates unread mention flag for guest mention', async () => {
-					getActorIdMock.mockReturnValue('me_as_guest')
-					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.GUESTS)
-					isActorUserMock.mockReturnValue(false)
-					isActorGuestMock.mockReturnValue(true)
+					actorStore.actorId = 'me_as_guest'
+					actorStore.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 					await testMentionFlag({
 						'mention-0': {
 							type: 'user',
@@ -1544,8 +1517,8 @@ describe('messagesStore', () => {
 				})
 
 				test('does not update unread mention flag for a different guest mention', async () => {
-					getActorIdMock.mockReturnValue('me_as_guest')
-					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.GUESTS)
+					actorStore.actorId = 'me_as_guest'
+					actorStore.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 					await testMentionFlag({
 						'mention-1': {
 							type: 'guest',
@@ -1555,11 +1528,9 @@ describe('messagesStore', () => {
 				})
 
 				test('updates unread mention flag for user mention', async () => {
-					getUserIdMock.mockReturnValue('me_as_user')
-					getActorIdMock.mockReturnValue('me_as_user')
-					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.USERS)
-					isActorUserMock.mockReturnValue(true)
-					isActorGuestMock.mockReturnValue(false)
+					actorStore.actorId = 'me_as_user'
+					actorStore.userId = 'me_as_user'
+					actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 					await testMentionFlag({
 						'mention-0': {
 							type: 'user',
@@ -1573,8 +1544,9 @@ describe('messagesStore', () => {
 				})
 
 				test('does not update unread mention flag for another user mention', async () => {
-					getActorIdMock.mockReturnValue('me_as_user')
-					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.USERS)
+					actorStore.actorId = 'me_as_user'
+					actorStore.userId = 'me_as_user'
+					actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 					await testMentionFlag({
 						'mention-1': {
 							type: 'user',
@@ -1636,9 +1608,6 @@ describe('messagesStore', () => {
 	describe('posting new message', () => {
 		let message1
 		let conversationMock
-		let getUserIdMock
-		let getActorIdMock
-		let getActorTypeMock
 		let updateLastCommonReadMessageAction
 		let updateConversationLastMessageAction
 		let cancelFunctionMocks
@@ -1651,15 +1620,11 @@ describe('messagesStore', () => {
 			console.error = jest.fn()
 
 			conversationMock = jest.fn()
-			getUserIdMock = jest.fn()
-			getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
-			getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
+			actorStore.actorId = 'actor-id-1'
+			actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
-			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
-			testStoreConfig.getters.getActorId = getActorIdMock
-			testStoreConfig.getters.getActorType = getActorTypeMock
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			// mock this complex local action as we already tested it elsewhere
@@ -1697,7 +1662,7 @@ describe('messagesStore', () => {
 				lastMessage: { id: 100 },
 				lastReadMessage: 50,
 			})
-			getUserIdMock.mockReturnValue(() => 'current-user')
+			actorStore.userId = 'current-user'
 
 			const baseMessage = {
 				actorId: 'actor-id-1',

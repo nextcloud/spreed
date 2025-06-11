@@ -12,26 +12,28 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
 import storeConfig from '../../../../../store/storeConfig.js'
+import { useActorStore } from '../../../../../stores/actor.ts'
 
 describe('FilePreview.vue', () => {
 	let store
 	let localVue
 	let testStoreConfig
 	let propsData
-	let getUserIdMock
 	let oldPixelRatio
+	let actorStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		actorStore = useActorStore()
 
 		oldPixelRatio = window.devicePixelRatio
 
 		testStoreConfig = cloneDeep(storeConfig)
-		getUserIdMock = jest.fn().mockReturnValue('current-user-id')
-		testStoreConfig.modules.actorStore.getters.getUserId = () => getUserIdMock
 		store = new Vuex.Store(testStoreConfig)
+
+		actorStore.userId = 'current-user-id'
 
 		propsData = {
 			token: 'TOKEN',
@@ -83,7 +85,7 @@ describe('FilePreview.vue', () => {
 
 		test('renders file preview for guests', async () => {
 			propsData.file.link = 'https://localhost/nc-webroot/s/xtokenx'
-			getUserIdMock.mockClear().mockReturnValue(null)
+			actorStore.userId = null
 
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
@@ -270,7 +272,7 @@ describe('FilePreview.vue', () => {
 			test('directly renders small GIF files for guests', async () => {
 				propsData.file.size = '128'
 				propsData.file.link = 'https://localhost/nc-webroot/s/xtokenx'
-				getUserIdMock.mockClear().mockReturnValue(null)
+				actorStore.userId = null
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,

@@ -6,6 +6,7 @@
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 import storeConfig from '../store/storeConfig.js'
+import { useActorStore } from '../stores/actor.ts'
 import SignalingTypingHandler from './SignalingTypingHandler.js'
 
 describe('SignalingTypingHandler', () => {
@@ -74,6 +75,7 @@ describe('SignalingTypingHandler', () => {
 	beforeEach(() => {
 		const testStoreConfig = cloneDeep(storeConfig)
 		store = new Vuex.Store(testStoreConfig)
+		const actorStore = useActorStore()
 
 		signaling = new function() {
 			this._handlers = {}
@@ -115,7 +117,7 @@ describe('SignalingTypingHandler', () => {
 		signalingTypingHandler = new SignalingTypingHandler(store)
 		signalingTypingHandler._signalingParticipantList.getParticipants = jest.fn()
 
-		store.dispatch('setCurrentParticipant', {
+		actorStore.setCurrentParticipant({
 			sessionId: 'localNextcloudSessionId',
 			attendeeId: 'localAttendeeId',
 		})

@@ -12,9 +12,9 @@ import Vuex from 'vuex'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
-import storeConfig from './storeConfig.js'
 
 jest.mock('../services/DavClient', () => ({
 	getDavClient: jest.fn(),
@@ -38,11 +38,13 @@ describe('fileUploadStore', () => {
 	let storeConfig = null
 	let store = null
 	let mockedActions = null
+	let actorStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		actorStore = useActorStore()
 
 		mockedActions = {
 			addTemporaryMessage: jest.fn(),
@@ -53,10 +55,10 @@ describe('fileUploadStore', () => {
 
 		storeConfig = cloneDeep(fileUploadStore)
 		storeConfig.actions = Object.assign(storeConfig.actions, mockedActions)
-		storeConfig.getters.getUserId = jest.fn().mockReturnValue(() => 'current-user')
-		storeConfig.getters.getActorId = jest.fn().mockReturnValue(() => 'current-user')
-		storeConfig.getters.getActorType = jest.fn().mockReturnValue(() => 'users')
-		storeConfig.getters.getDisplayName = jest.fn().mockReturnValue(() => 'Current User')
+		actorStore.userId = 'current-user'
+		actorStore.actorId = 'current-user'
+		actorStore.actorType = 'users'
+		actorStore.displayName = 'Current User'
 	})
 
 	afterEach(() => {

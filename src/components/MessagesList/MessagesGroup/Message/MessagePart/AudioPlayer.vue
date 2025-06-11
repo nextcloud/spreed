@@ -18,6 +18,7 @@ import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 import { EventBus } from '../../../../../services/EventBus.ts'
+import { useActorStore } from '../../../../../stores/actor.ts'
 
 export default {
 	name: 'AudioPlayer',
@@ -67,6 +68,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			actorStore: useActorStore(),
+		}
+	},
+
 	computed: {
 		internalAbsolutePath() {
 			if (this.path.startsWith('/')) {
@@ -79,7 +86,7 @@ export default {
 			if (this.localUrl) {
 				return this.localUrl
 			}
-			const userId = this.$store.getters.getUserId()
+			const userId = this.actorStore.userId
 			if (userId === null) {
 				// guest mode, use public link download URL
 				return this.link + '/download/' + encodePath(this.name)

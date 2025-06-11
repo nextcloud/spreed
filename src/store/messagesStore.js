@@ -25,6 +25,7 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from '../services/messagesService.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
@@ -44,6 +45,7 @@ import { convertToUnix } from '../utils/formattedTime.ts'
  * false otherwise
  */
 function hasMentionToSelf(context, message) {
+	const actorStore = useActorStore()
 	if (!message.messageParameters) {
 		return false
 	}
@@ -55,14 +57,14 @@ function hasMentionToSelf(context, message) {
 			return true
 		}
 		if (param.type === 'guest'
-			&& context.getters.isActorGuest()
-			&& param.id === ('guest/' + context.getters.getActorId())
+			&& actorStore.isActorGuest
+			&& param.id === ('guest/' + actorStore.actorId)
 		) {
 			return true
 		}
 		if (param.type === 'user'
-			&& context.getters.isActorUser()
-			&& param.id === context.getters.getUserId()
+			&& actorStore.isActorUser
+			&& param.id === actorStore.userId
 		) {
 			return true
 		}
@@ -542,6 +544,7 @@ const actions = {
 	 */
 	processMessage(context, { token, message }) {
 		const sharedItemsStore = useSharedItemsStore()
+		const actorStore = useActorStore()
 
 		if (message.systemMessage === 'message_deleted'
 			|| message.systemMessage === 'reaction'
@@ -588,8 +591,7 @@ const actions = {
 			if (tempMessages.length > 0) {
 				// Replacing temporary placeholder message with server response (text message / file share)
 				const conversation = context.getters.conversation(token)
-				const isOwnMessage = message.actorId === context.getters.getActorId()
-					&& message.actorType === context.getters.getActorType()
+				const isOwnMessage = actorStore.checkIfSelfIsActor(message)
 
 				// update lastMessage and lastReadMessage (no await to make it async)
 				// do it conditionally because there could have been more messages appearing concurrently
@@ -856,7 +858,8 @@ const actions = {
 			context.commit('setVisualLastReadMessageId', { token, id: visualIdToUpdate })
 		}
 
-		if (context.getters.getUserId()) {
+		const actorStore = useActorStore()
+		if (actorStore.userId) {
 			// only update on server side if there's an actual user, not guest
 			const response = await updateLastReadMessage(token, id)
 			context.dispatch('addConversation', response.data.ocs.data)
@@ -1107,6 +1110,7 @@ const actions = {
 	 * @param {number} data.lastKnownMessageId The id of the last message in the store.
 	 */
 	async pollNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
+		const actorStore = useActorStore()
 		context.dispatch('cancelPollNewMessages', { requestId })
 
 		if (!lastKnownMessageId) {
@@ -1137,8 +1141,8 @@ const actions = {
 		}
 
 		const conversation = context.getters.conversation(token)
-		const actorId = context.getters.getActorId()
-		const actorType = context.getters.getActorType()
+		const actorId = actorStore.actorId
+		const actorType = actorStore.actorType
 		let countNewMessages = 0
 		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
@@ -1179,14 +1183,13 @@ const actions = {
 				}
 				if (message.systemMessage === 'call_ended_everyone'
 					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-					&& !(message.actorId === context.getters.getActorId()
-						&& message.actorType === context.getters.getActorType())) {
+					&& !actorStore.checkIfSelfIsActor(message)) {
 					const callViewStore = useCallViewStore()
 					callViewStore.setCallHasJustEnded(message.timestamp)
 
 					context.dispatch('leaveCall', {
 						token,
-						participantIdentifier: context.getters.getParticipantIdentifier(),
+						participantIdentifier: actorStore.participantIdentifier,
 					})
 				}
 			}

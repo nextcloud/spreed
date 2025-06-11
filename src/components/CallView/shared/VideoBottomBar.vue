@@ -101,6 +101,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import { PARTICIPANT } from '../../../constants.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
@@ -186,6 +187,7 @@ export default {
 	setup() {
 		return {
 			callViewStore: useCallViewStore(),
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -265,7 +267,7 @@ export default {
 		// Moderator rights
 		participantType() {
 			return this.$store.getters.conversation(this.token)?.participantType
-				|| (this.$store.getters.getUserId() !== null
+				|| (this.actorStore.isLoggedIn
 					? PARTICIPANT.TYPE.USER
 					: PARTICIPANT.TYPE.GUEST)
 		},

@@ -34,6 +34,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Message from './Message/Message.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {
@@ -92,6 +93,7 @@ export default {
 		return {
 			AVATAR,
 			guestNameStore: useGuestNameStore(),
+			actorStore: useActorStore(),
 			actorDisplayName,
 			actorInfo,
 		}
@@ -109,7 +111,7 @@ export default {
 		disableMenu() {
 			// disable the menu if accessing the conversation as guest
 			// or the message sender is a bridged user
-			return this.$store.getters.isActorGuest() || this.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED
+			return this.actorStore.isActorGuest || this.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
 	},
 

@@ -29,6 +29,7 @@ import {
 	removeCurrentUserFromConversation,
 	resendInvitations,
 } from '../services/participantsService.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -73,12 +74,14 @@ describe('participantsStore', () => {
 	let localVue = null
 	let store = null
 	let guestNameStore = null
+	let actorStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
+		actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = new Vuex.Store(testStoreConfig)
@@ -795,7 +798,6 @@ describe('participantsStore', () => {
 
 	describe('joining conversation', () => {
 		let getTokenMock
-		let getParticipantIdentifierMock
 		let participantData
 		let joinedConversationEventMock
 
@@ -804,9 +806,6 @@ describe('participantsStore', () => {
 			EventBus.once('joined-conversation', joinedConversationEventMock)
 
 			getTokenMock = jest.fn().mockReturnValue(TOKEN)
-			getParticipantIdentifierMock = jest.fn().mockReturnValue({
-				attendeeId: 1,
-			})
 			participantData = {
 				actorId: 'actor-id',
 				sessionId: 'session-id-1',
@@ -815,9 +814,11 @@ describe('participantsStore', () => {
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
 
+			actorStore.setCurrentParticipant(Object.assign({}, participantData, {
+				attendeeId: 1,
+			}))
+
 			testStoreConfig.getters.getToken = () => getTokenMock
-			testStoreConfig.getters.getParticipantIdentifier = () => getParticipantIdentifierMock
-			testStoreConfig.actions.setCurrentParticipant = jest.fn()
 			testStoreConfig.actions.addConversation = jest.fn().mockImplementation((context) => {
 				// needed for the updateSessionId call which requires this
 				context.dispatch('addParticipantOnce', {
@@ -836,10 +837,9 @@ describe('participantsStore', () => {
 			expect(joinConversation).toHaveBeenCalledWith({ token: TOKEN, forceJoin: false })
 			expect(returnedResponse).toBe(response)
 
-			expect(testStoreConfig.actions.setCurrentParticipant).toHaveBeenCalledWith(expect.anything(), participantData)
 			expect(testStoreConfig.actions.addConversation).toHaveBeenCalledWith(expect.anything(), participantData)
 
-			expect(getParticipantIdentifierMock).toHaveBeenCalled()
+			expect(actorStore.participantIdentifier.sessionId).toBe('session-id-1')
 
 			expect(store.getters.participantsList(TOKEN)[0])
 				.toStrictEqual(participantData)
@@ -863,10 +863,9 @@ describe('participantsStore', () => {
 
 			expect(joinConversation).toHaveBeenCalledWith({ token: TOKEN, forceJoin: true })
 
-			expect(testStoreConfig.actions.setCurrentParticipant).toHaveBeenCalledWith(expect.anything(), updatedParticipantData)
 			expect(testStoreConfig.actions.addConversation).toHaveBeenCalledWith(expect.anything(), updatedParticipantData)
 
-			expect(getParticipantIdentifierMock).toHaveBeenCalled()
+			expect(actorStore.participantIdentifier.sessionId).toBe('another-session-id')
 
 			expect(store.getters.participantsList(TOKEN)[0])
 				.toStrictEqual(updatedParticipantData)
@@ -881,9 +880,6 @@ describe('participantsStore', () => {
 			})
 			afterEach(() => {
 				jest.useRealTimers()
-
-				expect(testStoreConfig.actions.setCurrentParticipant).not.toHaveBeenCalled()
-				expect(testStoreConfig.actions.addConversation).not.toHaveBeenCalled()
 				expect(sessionStorage.setItem).not.toHaveBeenCalled()
 				expect(joinedConversationEventMock).not.toHaveBeenCalled()
 
@@ -970,7 +966,7 @@ describe('participantsStore', () => {
 		})
 
 		test('leaves conversation while in call', async () => {
-			testStoreConfig.getters.getParticipantIdentifier = () => jest.fn().mockReturnValue({
+			actorStore.setCurrentParticipant({
 				attendeeId: 1,
 				sessionId: 'session-id-1',
 			})
