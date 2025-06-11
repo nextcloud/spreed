@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import type { getCSPNonce } from '@nextcloud/auth'
 
 type ExitFullscreen = typeof document.exitFullscreen
 type RequestFullscreen = typeof document.documentElement.requestFullscreen
@@ -41,7 +42,7 @@ declare global {
 	 */
 	const IS_DESKTOP: false
 
-	let __webpack_nonce__: ReturnType<typeof btoa>
+	let __webpack_nonce__: ReturnType<typeof getCSPNonce>
 	let __webpack_public_path__: string
 }
 

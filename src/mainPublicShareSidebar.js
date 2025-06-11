@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getRequestToken } from '@nextcloud/auth'
+import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { getSharingToken } from '@nextcloud/sharing/public'
 import { createPinia, PiniaVuePlugin } from 'pinia'
@@ -20,7 +20,7 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
-__webpack_nonce__ = btoa(getRequestToken())
+__webpack_nonce__ = getCSPNonce()
 
 // Correct the root of the app for chunk loading
 // OC.linkTo matches the apps folders
