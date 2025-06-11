@@ -86,6 +86,7 @@ import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
@@ -157,6 +158,7 @@ export default {
 			cancelableGetParticipants,
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -207,10 +209,6 @@ export default {
 
 		opened() {
 			return !!this.token && this.show
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {

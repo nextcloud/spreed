@@ -101,6 +101,7 @@ import IconPhoneDial from 'vue-material-design-icons/PhoneDial.vue'
 import IconPhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
 import IconPhoneOff from 'vue-material-design-icons/PhoneOff.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.js'
@@ -191,6 +192,7 @@ export default {
 	setup() {
 		return {
 			actorStore: useActorStore(),
+			token: useGetToken(),
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
@@ -209,10 +211,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		isNextcloudTalkHashDirty() {
 			return this.talkHashStore.isNextcloudTalkHashDirty
 				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]

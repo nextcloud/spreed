@@ -33,6 +33,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { WEBINAR } from '../../constants.ts'
 
 export default {
@@ -42,6 +43,12 @@ export default {
 		NcCheckboxRadioSwitch,
 	},
 
+	setup() {
+		return {
+			token: useGetToken(),
+		}
+	},
+
 	data() {
 		return {
 			isSipLoading: false,
@@ -49,10 +56,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},

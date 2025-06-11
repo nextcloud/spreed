@@ -9,6 +9,7 @@ import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 import { useCallViewStore } from '../stores/callView.ts'
+import { useGetToken } from './useGetToken.ts'
 import { useStore } from './useStore.js'
 
 /**
@@ -19,6 +20,7 @@ import { useStore } from './useStore.js'
 function useIsInCallComposable() {
 	const store = useStore()
 	const callViewStore = useCallViewStore()
+	const token = useGetToken()
 
 	const sessionStorageJoinedConversation = ref(null)
 
@@ -39,7 +41,7 @@ function useIsInCallComposable() {
 		if (callViewStore.forceCallView) {
 			return true
 		}
-		return sessionStorageJoinedConversation.value === store.getters.getToken() && store.getters.isInCall(store.getters.getToken())
+		return sessionStorageJoinedConversation.value === token.value && store.getters.isInCall(token.value)
 	})
 }
 

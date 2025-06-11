@@ -68,6 +68,7 @@ import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -108,6 +109,7 @@ export default {
 	setup(props) {
 		provide('chatView:isSidebar', props.isSidebar)
 		return {
+			token: useGetToken(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 		}
@@ -156,10 +158,6 @@ export default {
 			} else {
 				return undefined
 			}
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {

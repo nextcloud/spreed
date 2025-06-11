@@ -22,6 +22,7 @@ import { inject } from 'vue'
 import SelectableParticipant from '../../BreakoutRoomsEditor/SelectableParticipant.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import Participant from './Participant.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 
 export default {
 	name: 'ParticipantsList',
@@ -61,16 +62,13 @@ export default {
 
 		return {
 			selectedParticipants,
+			token: useGetToken(),
 		}
 	},
 
 	computed: {
 		component() {
 			return this.isSearchResult ? 'SelectableParticipant' : 'Participant'
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		showUserStatus() {

@@ -32,6 +32,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
@@ -64,11 +65,13 @@ export default {
 		},
 	},
 
-	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
+	setup() {
+		return {
+			token: useGetToken(),
+		}
+	},
 
+	computed: {
 		isConnecting() {
 			return this.$store.getters.isConnecting(this.token)
 		},

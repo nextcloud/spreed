@@ -91,6 +91,7 @@ import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import Message from 'vue-material-design-icons/Message.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import BridgePart from './BridgePart.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import {
 	editBridge,
 	getBridge,
@@ -115,6 +116,7 @@ export default {
 	setup() {
 		return {
 			matterbridgeTypes,
+			token: useGetToken(),
 		}
 	},
 
@@ -132,10 +134,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		options() {
 			return Object.entries(this.matterbridgeTypes).map(([type, value]) => ({
 				type,

@@ -140,6 +140,7 @@ import RightSidebarContent from './RightSidebarContent.vue'
 import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -236,6 +237,7 @@ export default {
 			sidebarContent,
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -259,10 +261,6 @@ export default {
 
 		opened() {
 			return this.isSidebarAvailable && this.show
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {

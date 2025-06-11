@@ -87,6 +87,7 @@ import IconPoll from 'vue-material-design-icons/Poll.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
@@ -134,6 +135,7 @@ export default {
 			sharedItemTitle,
 			sharedItemsOrder,
 			sharedItemsWithPreviewLimit,
+			token: useGetToken(),
 		}
 	},
 
@@ -149,10 +151,6 @@ export default {
 	computed: {
 		getUserId() {
 			return this.actorStore.userId
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {

@@ -130,6 +130,7 @@ import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -190,6 +191,7 @@ export default {
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
 			CONVERSATION,
+			token: useGetToken(),
 		}
 	},
 
@@ -213,10 +215,6 @@ export default {
 
 		isModeratorOrUser() {
 			return this.$store.getters.isModeratorOrUser
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {
