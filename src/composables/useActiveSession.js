@@ -8,6 +8,7 @@ import { CONFIG, SESSION } from '../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
+import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 
@@ -25,7 +26,7 @@ const experimentalRecoverSession = (getTalkConfig('local', 'experiments', 'enabl
  */
 export function useActiveSession() {
 	const store = useStore()
-	const token = computed(() => store.getters.getToken())
+	const token = useGetToken()
 	// FIXME has no API support on federated conversations
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
 

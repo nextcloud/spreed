@@ -10,6 +10,7 @@
 
 <script>
 import CallView from './components/CallView/CallView.vue'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useSoundsStore } from './stores/sounds.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -23,18 +24,8 @@ export default {
 	setup() {
 		return {
 			soundsStore: useSoundsStore(),
+			token: useGetToken(),
 		}
-	},
-
-	computed: {
-		/**
-		 * The current conversation token
-		 *
-		 * @return {string} The token.
-		 */
-		token() {
-			return this.$store.getters.getToken()
-		},
 	},
 
 	async beforeMount() {

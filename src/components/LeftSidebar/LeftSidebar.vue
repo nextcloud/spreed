@@ -291,6 +291,7 @@ import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -379,6 +380,7 @@ export default {
 		const isMobile = useIsMobile()
 
 		return {
+			token: useGetToken(),
 			initializeNavigation,
 			resetNavigation,
 			leftSidebar,
@@ -429,10 +431,6 @@ export default {
 	computed: {
 		conversationsList() {
 			return this.$store.getters.conversationsList
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		emptyContentLabel() {

@@ -67,6 +67,7 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { CALL } from '../../constants.ts'
 import { formattedTime } from '../../utils/formattedTime.ts'
 
@@ -96,6 +97,7 @@ export default {
 	setup() {
 		return {
 			isDocumentVisible: useDocumentVisibility(),
+			token: useGetToken(),
 		}
 	},
 
@@ -116,10 +118,6 @@ export default {
 		 */
 		callStart() {
 			return new Date(this.start * 1000)
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		conversation() {

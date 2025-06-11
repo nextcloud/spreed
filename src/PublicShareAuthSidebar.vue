@@ -36,6 +36,7 @@ import PollViewer from './components/PollViewer/PollViewer.vue'
 import InternalSignalingHint from './components/RightSidebar/InternalSignalingHint.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
@@ -67,6 +68,7 @@ export default {
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -79,10 +81,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},

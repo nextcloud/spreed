@@ -105,6 +105,7 @@ import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -144,16 +145,13 @@ export default {
 			isLeaveConversationDialogOpen,
 			isDeleteConversationDialogOpen,
 			isDeleteChatDialogOpen,
+			token: useGetToken(),
 		}
 	},
 
 	computed: {
 		container() {
 			return '#conversation-settings-container'
-		},
-
-		token() {
-			return this.conversation.token
 		},
 
 		leaveConversationDialogMessage() {
@@ -202,7 +200,7 @@ export default {
 			this.isLeaveConversationDialogOpen = false
 
 			try {
-				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.token })
+				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.conversation.token })
 				this.hideConversationSettings()
 			} catch (error) {
 				if (error?.response?.status === 400) {
@@ -219,13 +217,13 @@ export default {
 		async deleteConversation() {
 			this.isDeleteConversationDialogOpen = false
 
-			if (this.token === this.$store.getters.getToken()) {
+			if (this.token === this.conversation.token) {
 				this.$router.push({ name: 'root' })
 				this.$store.dispatch('updateToken', '')
 			}
 
 			try {
-				await this.$store.dispatch('deleteConversationFromServer', { token: this.token })
+				await this.$store.dispatch('deleteConversationFromServer', { token: this.conversation.token })
 				// Close the settings
 				this.hideConversationSettings()
 			} catch (error) {
@@ -239,7 +237,7 @@ export default {
 		 */
 		async clearChatHistory() {
 			try {
-				await this.$store.dispatch('clearConversationHistory', { token: this.token })
+				await this.$store.dispatch('clearConversationHistory', { token: this.conversation.token })
 				this.isDeleteChatDialogOpen = false
 				// Close the settings
 				this.hideConversationSettings()

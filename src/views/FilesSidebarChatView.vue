@@ -24,6 +24,7 @@ import PollManager from '../components/PollViewer/PollManager.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import InternalSignalingHint from '../components/RightSidebar/InternalSignalingHint.vue'
 import CallButton from '../components/TopBar/CallButton.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { useIsInCall } from '../composables/useIsInCall.js'
 
 export default {
@@ -43,6 +44,7 @@ export default {
 	setup() {
 		return {
 			isInCall: useIsInCall(),
+			token: useGetToken(),
 		}
 	},
 
@@ -53,10 +55,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		connectionFailed() {
 			return this.$store.getters.connectionFailed(this.token)
 		},

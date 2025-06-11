@@ -39,6 +39,7 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
@@ -73,6 +74,7 @@ export default {
 		provide('Talk:isMainApp', true)
 
 		return {
+			token: useGetToken(),
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
@@ -133,15 +135,6 @@ export default {
 
 		warnLeaving() {
 			return !this.isLeavingAfterSessionIssue && this.isInCall
-		},
-
-		/**
-		 * The current conversation token
-		 *
-		 * @return {string} The token.
-		 */
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		/**

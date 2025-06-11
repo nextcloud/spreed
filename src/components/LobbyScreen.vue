@@ -42,6 +42,7 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
@@ -59,15 +60,11 @@ export default {
 	setup() {
 		return {
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
 	computed: {
-
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},

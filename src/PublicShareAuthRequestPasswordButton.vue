@@ -26,6 +26,7 @@
 import { t } from '@nextcloud/l10n'
 import { Fragment } from 'vue-frag'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import { useGetToken } from './composables/useGetToken.ts'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 import { checkBrowser } from './utils/browserCheck.ts'
 
@@ -45,6 +46,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			token: useGetToken(),
+		}
+	},
+
 	data() {
 		return {
 			isRequestLoading: false,
@@ -58,10 +65,6 @@ export default {
 				'icon-confirm-white': !this.isRequestInProgress,
 				'icon-loading-small-dark': this.isRequestInProgress,
 			}
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		isRequestInProgress() {

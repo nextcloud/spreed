@@ -71,6 +71,7 @@ import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
@@ -122,6 +123,7 @@ export default {
 	setup() {
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -151,7 +153,7 @@ export default {
 		},
 
 		showJoinButton() {
-			return this.roomToken !== this.$store.getters.getToken()
+			return this.roomToken !== this.token
 		},
 
 		canFullModerate() {
