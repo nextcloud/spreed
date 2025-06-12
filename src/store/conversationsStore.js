@@ -69,11 +69,15 @@ import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useFederationStore } from '../stores/federation.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
+import pinia from '../stores/pinia.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
+import { useTokenStore } from '../stores/token.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNamesList } from '../utils/getDisplayName.ts'
+
+const tokenStore = useTokenStore(pinia)
 
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const supportConversationCreationPassword = hasTalkFeature('local', 'conversation-creation-password')
@@ -161,21 +165,21 @@ const getters = {
 	 */
 	conversation: (state) => (token) => state.conversations[token],
 	dummyConversation: (state) => Object.assign({}, DUMMY_CONVERSATION),
-	isModerator: (state, getters, rootState, rootGetters) => {
-		const conversation = getters.conversation(rootGetters.getToken())
+	isModerator: (state, getters) => {
+		const conversation = getters.conversation(tokenStore.token)
 		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
 			|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR
 			|| conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 	},
-	isModeratorOrUser: (state, getters, rootState, rootGetters) => {
-		const conversation = getters.conversation(rootGetters.getToken())
+	isModeratorOrUser: (state, getters) => {
+		const conversation = getters.conversation(tokenStore.token)
 		return !conversation?.isDummyConversation
 			&& (getters.isModerator
 				|| conversation?.participantType === PARTICIPANT.TYPE.USER
 				|| conversation?.participantType === PARTICIPANT.TYPE.USER_SELF_JOINED)
 	},
-	isInLobby: (state, getters, rootState, rootGetters) => {
-		const conversation = getters.conversation(rootGetters.getToken())
+	isInLobby: (state, getters) => {
+		const conversation = getters.conversation(tokenStore.token)
 		return conversation
 			&& conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 			&& !getters.isModerator

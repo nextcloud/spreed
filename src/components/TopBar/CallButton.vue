@@ -113,6 +113,7 @@ import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
+import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
@@ -192,6 +193,7 @@ export default {
 	setup() {
 		return {
 			actorStore: useActorStore(),
+			tokenStore: useTokenStore(),
 			token: useGetToken(),
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
@@ -258,7 +260,7 @@ export default {
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
-				|| !this.currentConversationIsJoined
+				|| !this.tokenStore.currentConversationIsJoined
 				|| blockCalls
 		},
 
@@ -321,10 +323,6 @@ export default {
 		showLeaveCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& this.isInCall
-		},
-
-		currentConversationIsJoined() {
-			return this.$store.getters.currentConversationIsJoined
 		},
 
 		isBreakoutRoom() {

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import pinia from './stores/pinia.ts'
+import { useTokenStore } from './stores/token.ts'
 import FilesSidebarCallView from './views/FilesSidebarCallView.js'
 
 import './init.js'
@@ -12,13 +14,13 @@ const isEnabled = function(fileInfo) {
 		return true
 	}
 
-	const token = OCA.Talk.store.getters.getToken()
+	const tokenStore = useTokenStore(pinia)
 
 	// If the Talk tab can not be displayed then the current conversation is
 	// left; this must be done here because "setFileInfo" will not get
 	// called with the new file if the tab can not be displayed.
-	if (token) {
-		OCA.Talk.store.dispatch('leaveConversation', { token })
+	if (tokenStore.token) {
+		OCA.Talk.store.dispatch('leaveConversation', { token: tokenStore.token })
 	}
 
 	OCA.Talk.store.dispatch('updateTokenAndFileIdForToken', {

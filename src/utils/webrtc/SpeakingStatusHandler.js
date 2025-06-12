@@ -13,10 +13,12 @@
 
 import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
+import { useTokenStore } from '../../stores/token.ts'
 export default class SpeakingStatusHandler {
 	// Constants, properties
 	#store
 	#actorStore
+	#tokenStore
 	#localMediaModel
 	#localCallParticipantModel
 	#callParticipantCollection
@@ -31,6 +33,7 @@ export default class SpeakingStatusHandler {
 	constructor(store, localMediaModel, localCallParticipantModel, callParticipantCollection) {
 		this.#store = store
 		this.#actorStore = useActorStore(pinia)
+		this.#tokenStore = useTokenStore(pinia)
 		this.#localMediaModel = localMediaModel
 		this.#localCallParticipantModel = localCallParticipantModel
 		this.#callParticipantCollection = callParticipantCollection
@@ -124,7 +127,7 @@ export default class SpeakingStatusHandler {
 	 */
 	#handleSpeaking(callParticipantModel, speaking) {
 		const attendeeId = this.#store.getters.findParticipant(
-			this.#store.getters.getToken(),
+			this.#tokenStore.token,
 			{ sessionId: callParticipantModel.attributes.nextcloudSessionId },
 		)?.attendeeId
 

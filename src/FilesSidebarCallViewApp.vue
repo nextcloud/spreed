@@ -20,6 +20,7 @@ import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
+import { useTokenStore } from './stores/token.ts'
 
 export default {
 
@@ -43,6 +44,7 @@ export default {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -67,7 +69,7 @@ export default {
 		},
 
 		fileIdForToken() {
-			return this.$store.getters.getFileIdForToken()
+			return this.tokenStore.fileIdForToken
 		},
 
 		/**

@@ -199,11 +199,11 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { shareFile } from '../../services/filesSharingServices.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
+import { useTokenStore } from '../../stores/token.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCurrentSelectionRange, insertTextInElement, selectRange } from '../../utils/selectionRange.ts'
@@ -300,6 +300,7 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			groupwareStore: useGroupwareStore(),
 			settingsStore: useSettingsStore(),
+			tokenStore: useTokenStore(),
 			supportTypingStatus,
 			autoComplete,
 			userData,
@@ -396,7 +397,7 @@ export default {
 		},
 
 		currentConversationIsJoined() {
-			return this.$store.getters.currentConversationIsJoined
+			return this.tokenStore.currentConversationIsJoined
 		},
 
 		currentUploadId() {
