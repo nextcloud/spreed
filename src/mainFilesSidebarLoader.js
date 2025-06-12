@@ -23,8 +23,7 @@ const isEnabled = function(fileInfo) {
 		OCA.Talk.store.dispatch('leaveConversation', { token: tokenStore.token })
 	}
 
-	tokenStore.updateToken('')
-	tokenStore.updateFileIdForToken(null)
+	tokenStore.updateTokenAndFileIdForToken('', null)
 
 	return false
 }
