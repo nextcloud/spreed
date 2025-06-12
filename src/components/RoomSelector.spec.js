@@ -11,6 +11,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
 import { CONVERSATION } from '../constants.ts'
+import { useTokenStore } from '../stores/token.ts'
 import { generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('@nextcloud/axios', () => ({
@@ -35,8 +36,12 @@ const ConversationsSearchListVirtualStub = {
 
 describe('RoomSelector', () => {
 	let conversations
+	let tokenStore
 
 	beforeEach(() => {
+		tokenStore = useTokenStore()
+		tokenStore.token = 'current-token'
+
 		conversations = [{
 			token: 'token-3',
 			displayName: 'zzz',
@@ -82,13 +87,7 @@ describe('RoomSelector', () => {
 		}]
 
 		global.OCA.Talk = {
-			instance: {
-				$store: {
-					getters: {
-						getToken: jest.fn().mockReturnValue('current-token'),
-					},
-				},
-			},
+			instance: {},
 		}
 	})
 
