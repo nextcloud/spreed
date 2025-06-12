@@ -7,8 +7,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 export const useTokenStore = defineStore('token', () => {
-	const token = ref<string>('')
-	// FIXME doesn't really belong to token store
+	const token = ref<'' | (string & {})>('')
 	const fileIdForToken = ref<string | null>(null)
 	/**
 	 * The joining of a room with the signaling server always lags
@@ -17,9 +16,9 @@ export const useTokenStore = defineStore('token', () => {
 	 * conversation B in talk's UI while still leaving conversation
 	 * A in the signaling server.
 	 */
-	const lastJoinedConversationToken = ref<string | null>(null)
+	const lastJoinedConversationToken = ref<'' | (string & {})>('')
 
-	const currentConversationIsJoined = computed(() => lastJoinedConversationToken.value === token.value)
+	const currentConversationIsJoined = computed(() => token.value !== '' && lastJoinedConversationToken.value === token.value)
 
 	/**
 	 * @param newToken token of active conversation
@@ -29,9 +28,13 @@ export const useTokenStore = defineStore('token', () => {
 	}
 
 	/**
+	 * Coupled function to update both token and file ID
+	 *
+	 * @param newToken token of active conversation
 	 * @param newFileId file ID of active conversation
 	 */
-	function updateFileIdForToken(newFileId: string | null) {
+	function updateTokenAndFileIdForToken(newToken: string, newFileId: string | null) {
+		token.value = newToken
 		fileIdForToken.value = newFileId
 	}
 
@@ -49,7 +52,7 @@ export const useTokenStore = defineStore('token', () => {
 		currentConversationIsJoined,
 
 		updateToken,
-		updateFileIdForToken,
+		updateTokenAndFileIdForToken,
 		updateLastJoinedConversationToken,
 	}
 })
