@@ -107,6 +107,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useTokenStore } from '../../stores/token.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
@@ -146,6 +147,7 @@ export default {
 			isDeleteConversationDialogOpen,
 			isDeleteChatDialogOpen,
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -219,7 +221,7 @@ export default {
 
 			if (this.token === this.conversation.token) {
 				this.$router.push({ name: 'root' })
-				this.$store.dispatch('updateToken', '')
+				this.tokenStore.updateToken('')
 			}
 
 			try {

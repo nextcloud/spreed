@@ -60,6 +60,7 @@ import {
 	leaveConversationSync,
 } from './services/participantsService.js'
 import { useActorStore } from './stores/actor.ts'
+import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -101,6 +102,7 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -206,7 +208,7 @@ export default {
 		async getPublicShareConversationData() {
 			const data = await getPublicShareConversationData(this.shareToken)
 
-			this.$store.dispatch('updateToken', data.token)
+			this.tokenStore.updateToken(data.token)
 
 			if (data.userId) {
 				// Instead of using "getCurrentUser()" the current user is set
@@ -252,7 +254,7 @@ export default {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
 				this.$store.dispatch('deleteConversation', this.token)
-				this.$store.dispatch('updateToken', '')
+				this.tokenStore.updateToken('')
 			}
 
 			this.joiningConversation = false

@@ -216,10 +216,7 @@ export default {
 
 			this.$store.dispatch('leaveConversation', { token: this.token })
 
-			this.$store.dispatch('updateTokenAndFileIdForToken', {
-				newToken: null,
-				newFileId: null,
-			})
+			this.tokenStore.updateTokenAndFileIdForToken('', null)
 		},
 
 		async getFileConversation() {
@@ -232,10 +229,7 @@ export default {
 			// Make the request
 			try {
 				const response = await request({ fileId: this.fileId })
-				this.$store.dispatch('updateTokenAndFileIdForToken', {
-					newToken: response.data.ocs.data.token,
-					newFileId: this.fileId,
-				})
+				this.tokenStore.updateTokenAndFileIdForToken(response.data.ocs.data.token, this.fileId)
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)

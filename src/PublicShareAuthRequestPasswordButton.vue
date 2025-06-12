@@ -28,6 +28,7 @@ import { Fragment } from 'vue-frag'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { useGetToken } from './composables/useGetToken.ts'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
+import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 
 export default {
@@ -49,6 +50,7 @@ export default {
 	setup() {
 		return {
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -83,7 +85,7 @@ export default {
 			try {
 				const token = await getPublicShareAuthConversationToken(this.shareToken)
 
-				this.$store.dispatch('updateToken', token)
+				this.tokenStore.updateToken(token)
 			} catch (exception) {
 				this.hasRequestFailed = true
 			}

@@ -12,6 +12,7 @@
 import CallView from './components/CallView/CallView.vue'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useSoundsStore } from './stores/sounds.js'
+import { useTokenStore } from './stores/token.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -25,12 +26,13 @@ export default {
 		return {
 			soundsStore: useSoundsStore(),
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
 	async beforeMount() {
 		if (this.$route.name === 'recording') {
-			await this.$store.dispatch('updateToken', this.$route.params.token)
+			this.tokenStore.updateToken(this.$route.params.token)
 
 			await this.soundsStore.setShouldPlaySounds(false)
 		}

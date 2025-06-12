@@ -307,6 +307,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
+import { useTokenStore } from '../../stores/token.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { filterConversation, hasCall, hasUnreadMentions, shouldIncludeArchived } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
@@ -397,6 +398,7 @@ export default {
 			settingsStore,
 			FILTER_LABELS,
 			actorStore: useActorStore(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -924,7 +926,7 @@ export default {
 			if (from.name === 'conversation') {
 				this.$store.dispatch('leaveConversation', { token: from.params.token })
 				if (to.name !== 'conversation') {
-					this.$store.dispatch('updateToken', '')
+					this.tokenStore.updateToken('')
 				}
 			}
 			if (to.name === 'conversation') {
