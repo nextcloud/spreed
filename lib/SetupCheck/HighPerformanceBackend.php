@@ -71,6 +71,20 @@ class HighPerformanceBackend implements ISetupCheck {
 			);
 		}
 
+		// Verify stored signaling key pair
+		try {
+			$alg = $this->talkConfig->getSignalingTokenAlgorithm();
+			$privateKey = $this->talkConfig->getSignalingTokenPrivateKey();
+			$publicKey = $this->talkConfig->getSignalingTokenPublicKey();
+			$publicKeyDerived = $this->talkConfig->deriveSignalingTokenPublicKey($privateKey, $alg);
+
+			if ($publicKey != $publicKeyDerived) {
+				return SetupResult::error($this->l->t('The stored public key does not match the stored private key. Run `occ talk:signaling:verify-keys --update` to fix the issue.'));
+			}
+		} catch (\Exception) {
+			return SetupResult::error($this->l->t('High-performance backend not configured correctly. Run `occ talk:signaling:verify-keys` for details.'));
+		}
+
 		try {
 			$testResult = $this->signalManager->checkServerCompatibility(0);
 		} catch (\OutOfBoundsException) {
