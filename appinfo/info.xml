@@ -119,6 +119,7 @@
 		<command>OCA\Talk\Command\Signaling\Add</command>
 		<command>OCA\Talk\Command\Signaling\Delete</command>
 		<command>OCA\Talk\Command\Signaling\ListCommand</command>
+		<command>OCA\Talk\Command\Signaling\VerifyKeys</command>
 
 		<command>OCA\Talk\Command\Stun\Add</command>
 		<command>OCA\Talk\Command\Stun\Delete</command>
