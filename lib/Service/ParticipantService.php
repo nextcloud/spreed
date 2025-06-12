@@ -722,7 +722,6 @@ class ParticipantService {
 	public function getHighestPermissionAttendee(Room $room): ?Attendee {
 		try {
 			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
-
 			if (!empty($roomOwners)) {
 				foreach ($roomOwners as $owner) {
 					if ($owner->getActorType() === Attendee::ACTOR_USERS) {
@@ -730,8 +729,9 @@ class ParticipantService {
 					}
 				}
 			}
+
 			$roomModerators = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
-			if (!empty($roomOwners)) {
+			if (!empty($roomModerators)) {
 				foreach ($roomModerators as $moderator) {
 					if ($moderator->getActorType() === Attendee::ACTOR_USERS) {
 						return $moderator;
@@ -739,6 +739,7 @@ class ParticipantService {
 				}
 			}
 		} catch (Exception $e) {
+			$this->logger->error('Error while trying to get owner or moderator in room ' . $room->getToken(), ['exception' => $e]);
 		}
 		return null;
 	}
