@@ -54,9 +54,8 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 	integrationsStore.addParticipantSearchAction(participantSearchAction)
 }
 
-EventBus.on('signaling-join-room', (payload) => {
-	const token = payload[0]
-	store.dispatch('updateLastJoinedConversationToken', token)
+EventBus.on('signaling-join-room', ([token]) => {
+	tokenStore.updateLastJoinedConversationToken(token)
 })
 
 EventBus.on('signaling-recording-status-changed', ([token, status]) => {

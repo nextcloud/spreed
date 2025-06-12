@@ -45,6 +45,7 @@ import {
 	setGuestUserName,
 } from './services/participantsService.js'
 import { useActorStore } from './stores/actor.ts'
+import { useTokenStore } from './stores/token.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -69,6 +70,7 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -194,7 +196,7 @@ export default {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
 				this.$store.dispatch('deleteConversation', this.token)
-				this.$store.dispatch('updateToken', '')
+				this.tokenStore.updateToken('')
 			}
 		},
 
