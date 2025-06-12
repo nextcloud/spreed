@@ -42,6 +42,7 @@ import {
 	leaveConversationSync,
 } from './services/participantsService.js'
 import { useActorStore } from './stores/actor.ts'
+import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
@@ -66,6 +67,7 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -92,7 +94,7 @@ export default {
 		},
 
 		fileIdForToken() {
-			return this.$store.getters.getFileIdForToken()
+			return this.tokenStore.fileIdForToken
 		},
 
 		isChatTheActiveTab() {

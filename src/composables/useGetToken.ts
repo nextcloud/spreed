@@ -5,7 +5,7 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import { computed } from 'vue'
-import { useStore } from './useStore.js'
+import { useTokenStore } from '../stores/token.ts'
 
 /**
  * FIXME: if router is available (main app), rely on it.
@@ -21,8 +21,7 @@ import { useStore } from './useStore.js'
  * Shared composable to get token of current conversation
  */
 export const useGetToken = createSharedComposable(function() {
-	// FIXME: Fallback to tokenStore for now, to be removed
-	const store = useStore()
+	const tokenStore = useTokenStore()
 
-	return computed<string>(() => store.getters.getToken())
+	return computed<string>(() => tokenStore.token)
 })

@@ -5,6 +5,7 @@
 
 import { useActorStore } from '../stores/actor.ts'
 import pinia from '../stores/pinia.ts'
+import { useTokenStore } from '../stores/token.ts'
 import SignalingParticipantList from './SignalingParticipantList.js'
 
 /**
@@ -20,6 +21,7 @@ import SignalingParticipantList from './SignalingParticipantList.js'
 export default function SignalingTypingHandler(store) {
 	this._store = store
 	this._actorStore = useActorStore(pinia)
+	this._tokenStore = useTokenStore(pinia)
 
 	this._signaling = null
 	this._signalingParticipantList = new SignalingParticipantList()
@@ -73,7 +75,7 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		if (!this._store.getters.currentConversationIsJoined) {
+		if (!this._tokenStore.currentConversationIsJoined) {
 			return
 		}
 
@@ -91,7 +93,7 @@ SignalingTypingHandler.prototype = {
 		}
 
 		this._store.dispatch('setTyping', {
-			token: this._store.getters.getToken(),
+			token: this._tokenStore.token,
 			sessionId: this._actorStore.sessionId,
 			typing,
 		})
@@ -108,7 +110,7 @@ SignalingTypingHandler.prototype = {
 		}
 
 		this._store.dispatch('setTyping', {
-			token: this._store.getters.getToken(),
+			token: this._tokenStore.token,
 			sessionId: participant.nextcloudSessionId,
 			typing: data.type === 'startedTyping',
 		})
@@ -130,7 +132,7 @@ SignalingTypingHandler.prototype = {
 	_handleParticipantsLeft(SignalingParticipantList, participants) {
 		for (const participant of participants) {
 			this._store.dispatch('setTyping', {
-				token: this._store.getters.getToken(),
+				token: this._tokenStore.token,
 				sessionId: participant.nextcloudSessionId,
 				typing: false,
 			})

@@ -13,6 +13,7 @@ import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
 import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
+import { useTokenStore } from '../../stores/token.ts'
 import { Sounds } from '../sounds.js'
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
@@ -34,6 +35,7 @@ let localCallParticipantModel = null
 let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
 const actorStore = useActorStore(pinia)
+const tokenStore = useTokenStore(pinia)
 
 /**
  * @param {Array} a Source object
@@ -475,7 +477,7 @@ function usersInCallChanged(signaling, users) {
 		&& localUserInCall) {
 		console.info('Force leaving the call for current participant')
 		store.dispatch('leaveCall', {
-			token: store.getters.getToken(),
+			token: tokenStore.token,
 			participantIdentifier: actorStore.participantIdentifier,
 		})
 
