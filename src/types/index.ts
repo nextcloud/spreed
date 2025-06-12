@@ -415,6 +415,14 @@ export type UserFilterObject = {
 	showUserStatus: boolean
 }
 
+// SIP call message payload
+// TODO unify this type
+// hint: check TYPE_ENCRYPTION* in "encryption.js"
+export type CallSIPSendCallMessagePayload =
+	| { type: 'control' | 'hangup' }
+	| { type: 'dtmf', digit: string }
+	| { type: 'mute', audio: number }
+
 // Autocomplete API
 export type {
 	AutocompleteParams,

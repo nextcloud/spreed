@@ -6,6 +6,7 @@
 import type {
 	callSIPDialOutResponse,
 	fetchPeersResponse,
+	CallSIPSendCallMessagePayload,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -16,14 +17,6 @@ import {
 	signalingLeaveCall,
 	signalingSendCallMessage,
 } from '../utils/webrtc/index.js'
-
-// TODO unify this type
-// hint: check TYPE_ENCRYPTION* in "encryption.js"
-type CallSIPSendCallMessagePayload = {
-	type: 'control' | 'dtmf' | 'hangup' | 'mute'
-	digit?: string
-	audio?: number
-}
 
 /**
  * Join a call as participant
@@ -44,7 +37,7 @@ type CallSIPSendCallMessagePayload = {
  * @param silentFor List of participants that should not receive a notification about the call
  * @return The actual flags based on the available media
  */
-const joinCall = async function(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: Array<string>): Promise<void> {
+const joinCall = async function(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: string[]): Promise<void> {
 	return signalingJoinCall(token, flags, silent, recordingConsent, silentFor)
 }
 
@@ -69,8 +62,8 @@ const fetchPeers = async function(token: string, options: object): fetchPeersRes
 /**
  * Call participant via SIP DialOut
  *
- * @param {string} token The token of the conversation
- * @param {number} attendeeId The attendee id to call to via SIP
+ * @param token The token of the conversation
+ * @param attendeeId The attendee id to call to via SIP
  */
 const callSIPDialOut = async function(token: string, attendeeId: number): callSIPDialOutResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/dialout/{attendeeId}', { token, attendeeId }))
