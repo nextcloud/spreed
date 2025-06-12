@@ -142,12 +142,9 @@ const getters = {
 	 * Gets the array of external session ids.
 	 *
 	 * @param {object} state - the state object.
-	 * @param {object} getters - the getters object.
-	 * @param {object} rootState - the rootState object.
-	 * @param {object} rootGetters - the rootGetters object.
 	 * @return {boolean} the typing status of actor.
 	 */
-	actorIsTyping: (state, getters, rootState, rootGetters) => {
+	actorIsTyping: (state) => {
 		if (!state.typing[tokenStore.token]) {
 			return false
 		}

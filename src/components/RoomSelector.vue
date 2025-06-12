@@ -121,14 +121,10 @@ export default {
 
 	emits: ['close', 'select'],
 
-	setup() {
-		const currentRoom = ref(null)
+	setup(props) {
+		const currentRoom = ref(props.isPlugin ? null : useGetToken().value)
 		const selectedRoom = ref(null)
 		provide('selectedRoom', selectedRoom)
-
-		if (OCA.Talk?.instance) {
-			currentRoom.value = useGetToken().value
-		}
 
 		return {
 			currentRoom,
