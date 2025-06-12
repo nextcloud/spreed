@@ -12,7 +12,7 @@
 		}">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
-			:offline="isPeerInactive"
+			:offline="isOffline"
 			:item="conversation"
 			:size="AVATAR.SIZE.DEFAULT"
 			:disable-menu="false"
@@ -26,7 +26,7 @@
 				class="conversation-header"
 				@click="openConversationSettings">
 				<div class="conversation-header__text"
-					:class="{ 'conversation-header__text--offline': isPeerInactive }">
+					:class="{ 'conversation-header__text--offline': isOffline }">
 					<p class="title">
 						{{ conversation.displayName }}
 					</p>
@@ -237,28 +237,19 @@ export default {
 		},
 
 		/**
-		 * Online status of the peer in one to one conversation.
+		 * Online status of the peer (second attendee) in one to one conversation.
 		 */
-		isPeerInactive() {
-			// Only compute this in one-to-one conversations
+		isOffline() {
 			if (!this.isOneToOneConversation) {
-				return undefined
-			}
-
-			// Get the 1 to 1 peer
-			let peer
-			const participants = this.$store.getters.participantsList(this.token)
-			for (const participant of participants) {
-				if (participant.actorId !== this.actorId) {
-					peer = participant
-				}
-			}
-
-			if (peer) {
-				return !peer.sessionIds.length
-			} else {
 				return false
 			}
+
+			const peer = this.$store.getters.participantsList(this.token)
+				.find((participant) => participant.actorId !== this.actorId)
+
+			// If second attendee is not currently in the room,
+			// or not invited yet to the room, show as offline
+			return !peer || peer.sessionIds.length === 0
 		},
 
 		participantsInCall() {
