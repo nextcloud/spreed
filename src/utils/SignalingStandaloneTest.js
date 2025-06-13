@@ -41,7 +41,7 @@ class StandaloneTest {
 	}
 
 	connect() {
-		console.debug('Connecting to ' + this.url + ' with ' + this.settings)
+		console.debug('Connecting to %s with params:', this.url, this.settings)
 
 		return new Promise((resolve, reject) => {
 			this.socket = new WebSocket(this.url)
@@ -76,9 +76,6 @@ class StandaloneTest {
 				if (typeof (data) === 'string') {
 					data = JSON.parse(data)
 				}
-				if (OC.debug) {
-					console.debug('Received', data)
-				}
 
 				switch (data.type) {
 					case 'welcome':
@@ -89,6 +86,12 @@ class StandaloneTest {
 						break
 					case 'error':
 						console.error('Received error', data)
+						reject({
+							socketMessage: data,
+						})
+						break
+					case 'bye':
+						console.debug('Received bye', data)
 						break
 					default:
 						console.debug('Ignore unexpected event', data)
