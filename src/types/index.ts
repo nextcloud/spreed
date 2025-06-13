@@ -204,6 +204,10 @@ export type JoinRoomFullResponse = {
 	data: operations['room-join-room']['responses']['200']['content']['application/json']
 }
 
+// Call
+export type fetchPeersResponse = ApiResponse<operations['call-get-peers-for-call']['responses'][200]['content']['application/json']>
+export type callSIPDialOutResponse = ApiResponse<operations['call-sip-dial-out']['responses'][201]['content']['application/json']>
+
 // Participants
 export type ParticipantStatus = {
 	status?: string | null
@@ -410,6 +414,14 @@ export type UserFilterObject = {
 	disableMenu: boolean
 	showUserStatus: boolean
 }
+
+// SIP call message payload
+// TODO unify this type
+// hint: check TYPE_ENCRYPTION* in "encryption.js"
+export type CallSIPSendCallMessagePayload =
+	| { type: 'control' | 'hangup' }
+	| { type: 'dtmf', digit: string }
+	| { type: 'mute', audio: number }
 
 // Autocomplete API
 export type {
