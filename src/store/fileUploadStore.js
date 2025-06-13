@@ -11,7 +11,7 @@ import { getUploader } from '@nextcloud/upload'
 import Vue from 'vue'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
-import { getDavClient } from '../services/DavClient.js'
+import { getDavClient } from '../services/DavClient.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
 	getFileTemplates,
