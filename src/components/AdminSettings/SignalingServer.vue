@@ -247,6 +247,10 @@ export default {
 					this.errorMessage = t('spreed', 'Error: Websocket connection failed')
 					this.signalingTestInfo.push({ caption: t('spreed', 'Error code'), description: exception.socketMessage.error.code })
 					this.signalingTestInfo.push({ caption: t('spreed', 'Error message'), description: exception.socketMessage.error.message })
+				} else if (exception.CSPViolation) {
+					this.warningMessage = t('spreed', 'Error: Websocket connection failed')
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error code'), description: exception.CSPViolation.type })
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error message'), description: exception.CSPViolation.message })
 				} else {
 					console.error(exception)
 					this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
