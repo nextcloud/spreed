@@ -145,14 +145,7 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 		}
 
 		fetchingParticipants = true
-
-		// Cancel the parallel request queue to not fetch twice
-		clearTimeout(throttleFastUpdateTimeout)
-		throttleFastUpdateTimeout = null
-		clearTimeout(throttleSlowUpdateTimeout)
-		throttleSlowUpdateTimeout = null
-		clearTimeout(throttleLongUpdateTimeout)
-		throttleLongUpdateTimeout = null
+		cancelPendingUpdates()
 
 		await store.dispatch('fetchParticipants', { token: token.value })
 		fetchingParticipants = false
@@ -177,7 +170,24 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 		throttleLongUpdateTimeout = setTimeout(cancelableGetParticipants, 60_000)
 	}
 
+	/**
+	 * Cancel scheduled participant list updates
+	 * Applies to all parallel queues to not fetch twice
+	 */
+	function cancelPendingUpdates() {
+		clearTimeout(throttleFastUpdateTimeout)
+		throttleFastUpdateTimeout = undefined
+		clearTimeout(throttleSlowUpdateTimeout)
+		throttleSlowUpdateTimeout = undefined
+		clearTimeout(throttleLongUpdateTimeout)
+		throttleLongUpdateTimeout = undefined
+	}
+
 	initialiseGetParticipants()
+
+	watch(token, () => {
+		cancelPendingUpdates()
+	})
 
 	watch(isActive, (newValue) => {
 		if (newValue && pendingChanges) {
@@ -193,6 +203,7 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 	})
 
 	onBeforeUnmount(() => {
+		cancelPendingUpdates()
 		stopGetParticipants()
 	})
 
