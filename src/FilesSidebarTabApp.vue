@@ -37,7 +37,7 @@ import LoadingComponent from './components/LoadingComponent.vue'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
-import { getFileConversation } from './services/filesIntegrationServices.js'
+import { getFileConversation } from './services/filesIntegrationServices.ts'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
