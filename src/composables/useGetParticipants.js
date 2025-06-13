@@ -8,6 +8,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { CONFIG, CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -22,6 +23,7 @@ const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'e
  * @param activeTab current active tab
  */
 function useGetParticipantsComposable(activeTab = ref('participants')) {
+	const actorStore = useActorStore()
 	const sessionStore = useSessionStore()
 	const store = useStore()
 	const isInCall = useIsInCall()
@@ -59,6 +61,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 			// periodically gets a hash of all online sessions?
 			EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
 		}
+		EventBus.on('signaling-users-changed', checkCurrentUserPermissions)
 	}
 
 	const handleUsersUpdated = async ([users]) => {
@@ -66,6 +69,25 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 			throttleUpdateParticipants()
 		} else {
 			throttleLongUpdate()
+		}
+	}
+
+	const checkCurrentUserPermissions = async ([users]) => {
+		// TODO: move logic to sessionStore once experimental flag is dropped
+		const currentUser = users.find((user) => {
+			return user.userId ? user.userId === actorStore.userId : user.actorId === actorStore.actorId
+		})
+		if (!currentUser) {
+			return
+		}
+		// refresh conversation, if current user permissions have been changed
+		if (currentUser.participantPermissions !== conversation.value?.permissions) {
+			await store.dispatch('fetchConversation', { token: token.value })
+		}
+
+		const currentParticipant = store.getters.getParticipant(token.value, actorStore.attendeeId)
+		if (currentParticipant && isModeratorOrUser.value && currentUser.participantPermissions !== currentParticipant.permissions) {
+			await cancelableGetParticipants()
 		}
 	}
 
@@ -90,6 +112,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 		EventBus.off('signaling-participant-list-updated', throttleUpdateParticipants)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
+		EventBus.off('signaling-users-changed', checkCurrentUserPermissions)
 	}
 
 	const onJoinedConversation = () => {
