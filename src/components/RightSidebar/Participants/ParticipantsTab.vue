@@ -94,7 +94,6 @@ import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesMan
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
-import { useActorStore } from '../../../stores/actor.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
@@ -150,7 +149,6 @@ export default {
 			isInCall,
 			cancelableGetParticipants,
 			sidebarStore: useSidebarStore(),
-			actorStore: useActorStore(),
 		}
 	},
 
@@ -215,10 +213,6 @@ export default {
 			return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(this.conversation.type)
 		},
 
-		userId() {
-			return this.actorStore.userId
-		},
-
 		canAddPhones() {
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
@@ -246,7 +240,6 @@ export default {
 		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
 
 		EventBus.on('route-change', this.abortSearch)
-		EventBus.on('signaling-users-changed', this.updateUsers)
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
@@ -254,7 +247,6 @@ export default {
 		this.debounceFetchSearchResults.clear?.()
 
 		EventBus.off('route-change', this.abortSearch)
-		EventBus.off('signaling-users-changed', this.updateUsers)
 		unsubscribe('user_status:status.updated', this.updateUserStatus)
 
 		this.cancelSearchPossibleConversations()
@@ -263,20 +255,6 @@ export default {
 
 	methods: {
 		t,
-		async updateUsers(usersList) {
-			const currentUser = usersList.flat().find((user) => user.userId === this.userId)
-			const currentParticipant = this.participants.find((user) => user.userId === this.userId)
-			if (!currentUser) {
-				return
-			}
-			// refresh conversation, if current user permissions have been changed
-			if (currentUser.participantPermissions !== this.conversation.permissions) {
-				await this.$store.dispatch('fetchConversation', { token: this.token })
-			}
-			if (currentUser.participantPermissions !== currentParticipant?.permissions) {
-				await this.cancelableGetParticipants()
-			}
-		},
 
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
