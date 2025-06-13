@@ -142,6 +142,11 @@ export type StandaloneSignalingUpdateSession = {
 	virtual?: boolean
 }
 
+export type SignalingSessionPayload =
+	| InternalSignalingSession
+	| StandaloneSignalingJoinSession
+	| StandaloneSignalingUpdateSession
+
 // Conversations
 export type Conversation = components['schemas']['Room'] & {
 	// internal parameter up to mock a conversation object

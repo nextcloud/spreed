@@ -6,6 +6,7 @@
 import type {
 	InternalSignalingSession,
 	Participant,
+	SignalingSessionPayload,
 	StandaloneSignalingJoinSession,
 	StandaloneSignalingLeaveSession,
 	StandaloneSignalingUpdateSession,
@@ -26,11 +27,6 @@ type Session = {
 	sessionId: string
 	inCall: number | undefined
 }
-
-type SignalingSessionPayload =
-	| InternalSignalingSession
-	| StandaloneSignalingJoinSession
-	| StandaloneSignalingUpdateSession
 
 type ParticipantUpdatePayload = {
 	displayName?: string
