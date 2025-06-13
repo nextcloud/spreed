@@ -55,7 +55,7 @@ import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
-import { getPublicShareConversationData } from './services/filesIntegrationServices.js'
+import { getPublicShareConversationData } from './services/filesIntegrationServices.ts'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
