@@ -347,6 +347,8 @@ export type getMentionsResponse = ApiResponse<operations['chat-mentions']['respo
 // File integrations and public shares
 export type getRoomDataByFileIdResponse = ApiResponse<operations['files_integration-get-room-by-file-id']['responses'][200]['content']['application/json']>
 export type getRoomDataByShareTokenResponse = ApiResponse<operations['files_integration-get-room-by-share-token']['responses'][200]['content']['application/json']>
+export type createVideoVerificationRoomParams = Required<operations['public_share_auth-create-room']>['requestBody']['content']['application/json']
+export type createVideoVerificationRoomResponse = ApiResponse<operations['public_share_auth-create-room']['responses'][201]['content']['application/json']>
 
 // AI Summary
 export type {
