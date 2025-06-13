@@ -4,6 +4,8 @@
  */
 
 import type {
+	createVideoVerificationRoomParams,
+	createVideoVerificationRoomResponse,
 	getRoomDataByFileIdResponse,
 	getRoomDataByShareTokenResponse,
 } from '../types/index.ts'
@@ -31,7 +33,17 @@ const getPublicShareConversationData = async function(shareToken: string, option
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/publicshare/{shareToken}', { shareToken }), options)
 }
 
+/**
+ * Gets the public share auth conversation token for a given share token.
+ *
+ * @param shareToken the token of the share
+ */
+const getPublicShareAuthConversationToken = async function(shareToken: createVideoVerificationRoomParams['shareToken']): createVideoVerificationRoomResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/publicshareauth'), { shareToken } as createVideoVerificationRoomParams)
+}
+
 export {
 	getFileConversation,
+	getPublicShareAuthConversationToken,
 	getPublicShareConversationData,
 }
