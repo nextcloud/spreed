@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { createSharedComposable } from '@vueuse/core'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { CONFIG, CONVERSATION } from '../constants.ts'
@@ -30,6 +29,8 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 	const isActive = computed(() => activeTab.value === 'participants')
 	const token = computed(() => store.getters.getToken())
 	const conversation = computed(() => store.getters.conversation(token.value))
+	const isInLobby = computed(() => store.getters.isInLobby)
+	const isModeratorOrUser = computed(() => store.getters.isModeratorOrUser)
 	const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
 		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)
 	let fetchingParticipants = false
@@ -57,7 +58,6 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 			// periodically gets a hash of all online sessions?
 			EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
 		}
-		subscribe('guest-promoted', onJoinedConversation)
 	}
 
 	const handleUsersUpdated = async ([users]) => {
@@ -89,7 +89,6 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 		EventBus.off('signaling-participant-list-updated', throttleUpdateParticipants)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
-		unsubscribe('guest-promoted', onJoinedConversation)
 	}
 
 	const onJoinedConversation = () => {
@@ -116,9 +115,7 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 	}
 
 	const cancelableGetParticipants = async () => {
-		const isInLobby = store.getters.isInLobby
-		const isModeratorOrUser = store.getters.isModeratorOrUser
-		if (fetchingParticipants || token.value === '' || isInLobby || !isModeratorOrUser) {
+		if (fetchingParticipants || token.value === '' || isInLobby.value || !isModeratorOrUser.value) {
 			return
 		}
 
@@ -160,6 +157,13 @@ function useGetParticipantsComposable(activeTab = ref('')) {
 	watch(isActive, (newValue) => {
 		if (newValue && pendingChanges) {
 			throttleUpdateParticipants()
+		}
+	})
+
+	watch(isModeratorOrUser, (newValue, oldValue) => {
+		if (newValue && !oldValue) {
+			// Fetch participants list if guest was promoted to moderators
+			nextTick(() => throttleUpdateParticipants())
 		}
 	})
 
