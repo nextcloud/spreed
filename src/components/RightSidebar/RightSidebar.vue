@@ -61,7 +61,7 @@
 				<template #icon>
 					<IconAccountMultiple :size="20" />
 				</template>
-				<ParticipantsTab :is-active="activeTab === 'participants'"
+				<ParticipantsTab
 					:can-search="canSearchParticipants"
 					:can-add="canAddParticipants" />
 			</NcAppSidebarTab>
@@ -140,6 +140,7 @@ import RightSidebarContent from './RightSidebarContent.vue'
 import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
+import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -184,6 +185,9 @@ export default {
 	},
 
 	setup() {
+		const activeTab = ref('participants')
+		useGetParticipants(activeTab)
+
 		const sidebar = ref(null)
 		const sidebarContent = ref(null)
 		const contentModeIndex = ref(0)
@@ -230,6 +234,7 @@ export default {
 		}
 
 		return {
+			activeTab,
 			CONTENT_MODES,
 			contentModeIndex,
 			sidebar,
@@ -241,7 +246,6 @@ export default {
 
 	data() {
 		return {
-			activeTab: 'participants',
 			contactsLoading: false,
 			unreadNotificationHandle: null,
 			showSearchMessagesTab: false,
