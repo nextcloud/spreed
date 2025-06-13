@@ -128,6 +128,7 @@ import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -152,6 +153,7 @@ const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
 
 const store = useStore()
 const pollsStore = usePollsStore()
+const currentConversationToken = useGetToken()
 
 const isOpenedFromDraft = ref(false)
 const editingDraftId = ref<number | null>(null)
@@ -174,7 +176,7 @@ const createPollLabel = computed(() => {
 		return t('spreed', 'Save')
 	}
 
-	return store.getters.getToken() !== props.token
+	return currentConversationToken.value !== props.token
 		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName }, undefined, { escape: false, sanitize: false })
 		: t('spreed', 'Create poll')
 })

@@ -477,14 +477,10 @@ describe('Conversation.vue', () => {
 
 		describe('deleting conversation', () => {
 			let actionHandler
-			let updateTokenAction
 
 			beforeEach(() => {
 				actionHandler = jest.fn().mockResolvedValueOnce()
-				updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
-				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => 'another-token')
-				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
 				store = new Vuex.Store(testStoreConfig)
 			})
 
@@ -498,7 +494,6 @@ describe('Conversation.vue', () => {
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect($router.push).not.toHaveBeenCalled()
-				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
 			test('does not delete conversation when not confirmed', async () => {
@@ -511,7 +506,6 @@ describe('Conversation.vue', () => {
 				// Assert
 				expect(actionHandler).not.toHaveBeenCalled()
 				expect($router.push).not.toHaveBeenCalled()
-				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
 			test('hides "delete conversation" action when not allowed', async () => {

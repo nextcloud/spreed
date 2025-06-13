@@ -226,6 +226,7 @@ import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import { useDevices } from '../../composables/useDevices.js'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
@@ -339,6 +340,7 @@ export default {
 			supportStartWithoutMedia,
 			supportDefaultBlurVirtualBackground,
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -368,17 +370,13 @@ export default {
 
 		guestName() {
 			return this.guestNameStore.getGuestName(
-				this.$store.getters.getToken(),
+				this.token,
 				this.actorStore.actorId,
 			)
 		},
 
 		userId() {
 			return this.actorStore.userId
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		showMediaSettings() {

@@ -128,6 +128,7 @@ import Play from 'vue-material-design-icons/Play.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
@@ -185,6 +186,7 @@ export default {
 		return {
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
+			token: useGetToken(),
 			showParticipantsEditor,
 			isSendMessageDialogOpened,
 			dialogHeaderId,
@@ -210,7 +212,7 @@ export default {
 		},
 
 		isInBreakoutRoom() {
-			return this.mainToken !== this.$store.getters.getToken()
+			return this.mainToken !== this.token
 		},
 
 		manageBreakoutRoomsTitle() {

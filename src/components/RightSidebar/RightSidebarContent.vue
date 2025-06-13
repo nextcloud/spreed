@@ -27,6 +27,7 @@ import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
@@ -61,7 +62,7 @@ const isDarkTheme = useIsDarkTheme()
 const profileLoading = ref(false)
 const profileImageFailed = ref(false)
 
-const token = computed(() => store.getters.getToken())
+const token = useGetToken()
 
 const conversation = computed<Conversation>(() => {
 	return store.getters.conversation(token.value) ?? store.getters.dummyConversation

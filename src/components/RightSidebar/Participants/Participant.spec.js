@@ -24,20 +24,26 @@ import Participant from './Participant.vue'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
+import { useTokenStore } from '../../../stores/token.ts'
 import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {
+	const TOKEN = 'XXTOKENXX'
 	let conversation
 	let participant
 	let store
 	let localVue
 	let testStoreConfig
 
+	let actorStore
+	let tokenStore
+
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
-		const actorStore = useActorStore()
+		actorStore = useActorStore()
+		tokenStore = useTokenStore()
 
 		participant = {
 			displayName: 'Alice',
@@ -58,18 +64,18 @@ describe('Participant.vue', () => {
 		}
 
 		conversation = {
-			token: 'current-token',
+			token: TOKEN,
 			participantType: PARTICIPANT.TYPE.USER,
 			lobbyState: WEBINAR.LOBBY.NONE,
 		}
 
 		actorStore.actorId = 'user-actor-id'
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		tokenStore.token = TOKEN
 
 		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
 
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.tokenStore.getters.getToken = () => () => 'current-token'
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		store = new Vuex.Store(testStoreConfig)
 	})
@@ -356,7 +362,7 @@ describe('Participant.vue', () => {
 				await actionButton.find('button').trigger('click')
 
 				expect(demoteFromModeratorAction).toHaveBeenCalledWith(expect.anything(), {
-					token: 'current-token',
+					token: TOKEN,
 					attendeeId: 'alice-attendee-id',
 				})
 			}
@@ -448,7 +454,7 @@ describe('Participant.vue', () => {
 				await actionButton.find('button').trigger('click')
 
 				expect(promoteToModeratorAction).toHaveBeenCalledWith(expect.anything(), {
-					token: 'current-token',
+					token: TOKEN,
 					attendeeId: 'alice-attendee-id',
 				})
 			}
@@ -541,7 +547,7 @@ describe('Participant.vue', () => {
 				await actionButton.find('button').trigger('click')
 
 				expect(resendInvitationsAction).toHaveBeenCalledWith(expect.anything(), {
-					token: 'current-token',
+					token: TOKEN,
 					attendeeId: 'alice-attendee-id',
 					actorId: 'alice@mail.com',
 				})
@@ -588,7 +594,7 @@ describe('Participant.vue', () => {
 				await button.find('button').trigger('click')
 
 				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
-					token: 'current-token',
+					token: TOKEN,
 					attendeeId: 'alice-attendee-id',
 					banParticipant: false,
 					internalNote: '',
@@ -630,7 +636,7 @@ describe('Participant.vue', () => {
 				await button.find('button').trigger('click')
 
 				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
-					token: 'current-token',
+					token: TOKEN,
 					attendeeId: 'alice-attendee-id',
 					banParticipant: true,
 					internalNote,

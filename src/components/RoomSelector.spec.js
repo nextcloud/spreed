@@ -11,6 +11,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
 import { CONVERSATION } from '../constants.ts'
+import { useTokenStore } from '../stores/token.ts'
 import { generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('@nextcloud/axios', () => ({
@@ -35,8 +36,12 @@ const ConversationsSearchListVirtualStub = {
 
 describe('RoomSelector', () => {
 	let conversations
+	let tokenStore
 
 	beforeEach(() => {
+		tokenStore = useTokenStore()
+		tokenStore.token = 'current-token'
+
 		conversations = [{
 			token: 'token-3',
 			displayName: 'zzz',
@@ -80,16 +85,6 @@ describe('RoomSelector', () => {
 			type: CONVERSATION.TYPE.GROUP,
 			objectType: 'file',
 		}]
-
-		global.OCA.Talk = {
-			instance: {
-				$store: {
-					getters: {
-						getToken: jest.fn().mockReturnValue('current-token'),
-					},
-				},
-			},
-		}
 	})
 
 	afterEach(() => {
@@ -120,7 +115,24 @@ describe('RoomSelector', () => {
 	describe('rendering', () => {
 		it('renders sorted conversations list fetched from server', async () => {
 			// Arrange
-			const wrapper = await mountRoomSelector()
+			const wrapper = await mountRoomSelector({ isPlugin: true })
+			expect(axios.get).toHaveBeenCalledWith(
+				generateOcsUrl('/apps/spreed/api/v4/room'),
+				{ params: { includeStatus: 1 } },
+			)
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(4)
+			expect(list.at(0).props('name')).toBe(conversations[1].displayName)
+			expect(list.at(1).props('name')).toBe(conversations[0].displayName)
+			expect(list.at(2).props('name')).toBe(conversations[2].displayName)
+			expect(list.at(3).props('name')).toBe(conversations[4].displayName)
+		})
+
+		it('excludes current conversation if mounted inside of Talk', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ isPlugin: false })
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/room'),
 				{ params: { includeStatus: 1 } },

@@ -31,6 +31,7 @@ import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import SearchMessageItem from './SearchMessageItem.vue'
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
 import { ATTENDEE } from '../../../constants.ts'
@@ -74,7 +75,7 @@ const isSearchExhausted = ref(false)
 const store = useStore()
 const isInCall = useIsInCall()
 
-const token = computed(() => store.getters.getToken())
+const token = useGetToken()
 const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
 const participants = computed<UserFilterObject>(() => {
 	return store.getters.participantsList(token.value)

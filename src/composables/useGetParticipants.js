@@ -9,6 +9,7 @@ import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
+import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 
@@ -22,7 +23,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	// Encapsulation
 	const sessionStore = useSessionStore()
 	const store = useStore()
-	const token = computed(() => store.getters.getToken())
+	const token = useGetToken()
 	const conversation = computed(() => store.getters.conversation(token.value))
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()

@@ -101,6 +101,7 @@ import IconPhoneDial from 'vue-material-design-icons/PhoneDial.vue'
 import IconPhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
 import IconPhoneOff from 'vue-material-design-icons/PhoneOff.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.js'
@@ -112,6 +113,7 @@ import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
+import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
@@ -191,6 +193,8 @@ export default {
 	setup() {
 		return {
 			actorStore: useActorStore(),
+			tokenStore: useTokenStore(),
+			token: useGetToken(),
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
@@ -209,10 +213,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		isNextcloudTalkHashDirty() {
 			return this.talkHashStore.isNextcloudTalkHashDirty
 				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
@@ -260,7 +260,7 @@ export default {
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
-				|| !this.currentConversationIsJoined
+				|| !this.tokenStore.currentConversationIsJoined
 				|| blockCalls
 		},
 
@@ -323,10 +323,6 @@ export default {
 		showLeaveCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& this.isInCall
-		},
-
-		currentConversationIsJoined() {
-			return this.$store.getters.currentConversationIsJoined
 		},
 
 		isBreakoutRoom() {

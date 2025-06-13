@@ -14,6 +14,7 @@ import { EventBus } from './services/EventBus.ts'
 import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
+import { useTokenStore } from './stores/token.ts'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -22,6 +23,7 @@ if (!window.OCA.Talk) {
 }
 
 const integrationsStore = useIntegrationsStore(pinia)
+const tokenStore = useTokenStore(pinia)
 
 /**
  * Frontend message API for adding actions to talk messages.
@@ -52,9 +54,8 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 	integrationsStore.addParticipantSearchAction(participantSearchAction)
 }
 
-EventBus.on('signaling-join-room', (payload) => {
-	const token = payload[0]
-	store.dispatch('updateLastJoinedConversationToken', token)
+EventBus.on('signaling-join-room', ([token]) => {
+	tokenStore.updateLastJoinedConversationToken(token)
 })
 
 EventBus.on('signaling-recording-status-changed', ([token, status]) => {
@@ -64,11 +65,11 @@ EventBus.on('signaling-recording-status-changed', ([token, status]) => {
 		return
 	}
 
-	if (!store.getters.isInCall(store.getters.getToken())) {
+	if (!store.getters.isInCall(tokenStore.token)) {
 		return
 	}
 
-	const conversation = store.getters.conversation(store.getters.getToken())
+	const conversation = store.getters.conversation(tokenStore.token)
 	if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
 		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
 		showError(t('spreed', 'The recording failed. Please contact your administrator.'))

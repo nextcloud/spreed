@@ -16,9 +16,11 @@
 
 <script>
 import LoadingComponent from './components/LoadingComponent.vue'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
+import { useTokenStore } from './stores/token.ts'
 
 export default {
 
@@ -41,6 +43,8 @@ export default {
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -64,12 +68,8 @@ export default {
 			return this.fileInfo.id
 		},
 
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		fileIdForToken() {
-			return this.$store.getters.getFileIdForToken()
+			return this.tokenStore.fileIdForToken
 		},
 
 		/**
