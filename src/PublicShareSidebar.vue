@@ -206,11 +206,11 @@ export default {
 		},
 
 		async getPublicShareConversationData() {
-			const data = await getPublicShareConversationData(this.shareToken)
+			const response = await getPublicShareConversationData(this.shareToken)
 
-			this.tokenStore.updateToken(data.token)
+			this.tokenStore.updateToken(response.data.ocs.data.token)
 
-			if (data.userId) {
+			if (response.data.ocs.data.userId) {
 				// Instead of using "getCurrentUser()" the current user is set
 				// from the data returned by the controller (as the public share
 				// page uses the incognito mode, and thus it always returns an
@@ -226,8 +226,8 @@ export default {
 				// so at some point the anonymous user will have been overriden
 				// with the current user and the connection will succeed.
 				this.actorStore.setCurrentUser({
-					uid: data.userId,
-					displayName: data.displayName,
+					uid: response.data.ocs.data.userId,
+					displayName: response.data.ocs.data.userDisplayName,
 				})
 			}
 		},
