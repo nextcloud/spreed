@@ -44,7 +44,7 @@
     "emoji-regex": "^10.3.0",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.1.15",
-    "extendable-media-recorder-wav-encoder": "^7.0.128",
+    "extendable-media-recorder-wav-encoder": "^7.0.129",
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
