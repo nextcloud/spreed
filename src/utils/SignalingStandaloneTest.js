@@ -41,7 +41,30 @@ class StandaloneTest {
 	}
 
 	connect() {
-		console.debug('Connecting to ' + this.url + ' with ' + this.settings)
+		console.debug('Connecting to %s with params:', this.url, this.settings)
+
+		// If server url was changed, it is likely a CSP 'connect-src' mismatch
+		let CSPObserver = null
+		let CSPViolation = null
+
+		if (ReportingObserver) {
+			CSPObserver = new ReportingObserver(
+				([report]) => {
+					CSPViolation = {
+						...report.toJSON(),
+						message: 'CSP violation while connecting to WebSocket. Page reload is required',
+					}
+				},
+				{
+					types: ['csp-violation'],
+					buffered: false,
+				},
+			)
+			CSPObserver.observe()
+		} else {
+			// Should be explicitly enabled in Firefox
+			console.warn('ReportingObserver is not available, CSP violations will not be reported')
+		}
 
 		return new Promise((resolve, reject) => {
 			this.socket = new WebSocket(this.url)
@@ -58,9 +81,11 @@ class StandaloneTest {
 			this.socket.onerror = (event) => {
 				console.error('Error on websocket', event)
 				this.disconnect()
+				reject({ ...event, CSPViolation })
 			}
 
 			this.socket.onclose = (event) => {
+				CSPObserver?.disconnect()
 				if (event.wasClean) {
 					console.info('Connection closed cleanly:', event)
 					resolve(true)
@@ -76,9 +101,6 @@ class StandaloneTest {
 				if (typeof (data) === 'string') {
 					data = JSON.parse(data)
 				}
-				if (OC.debug) {
-					console.debug('Received', data)
-				}
 
 				switch (data.type) {
 					case 'welcome':
@@ -89,6 +111,12 @@ class StandaloneTest {
 						break
 					case 'error':
 						console.error('Received error', data)
+						reject({
+							socketMessage: data,
+						})
+						break
+					case 'bye':
+						console.debug('Received bye', data)
 						break
 					default:
 						console.debug('Ignore unexpected event', data)
