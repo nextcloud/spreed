@@ -51,7 +51,7 @@
     "crypto-js": "^4.2.0",
     "debounce": "^2.2.0",
     "emoji-regex": "^10.4.0",
-    "entities": "^6.0.0",
+    "entities": "^6.0.1",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.26",
     "extendable-media-recorder-wav-encoder": "^7.0.128",
