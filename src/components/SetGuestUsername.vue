@@ -46,6 +46,7 @@ import escapeHtml from 'escape-html'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
@@ -63,6 +64,7 @@ export default {
 		return {
 			guestNameStore,
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -87,10 +89,6 @@ export default {
 
 		actorId() {
 			return this.actorStore.actorId
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 	},
 

@@ -36,10 +36,14 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
+import pinia from '../stores/pinia.ts'
 import { useSessionStore } from '../stores/session.ts'
+import { useTokenStore } from '../stores/token.ts'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
+
+const tokenStore = useTokenStore(pinia)
 
 /**
  * Emit global event for user status update with the status from a participant
@@ -138,17 +142,14 @@ const getters = {
 	 * Gets the array of external session ids.
 	 *
 	 * @param {object} state - the state object.
-	 * @param {object} getters - the getters object.
-	 * @param {object} rootState - the rootState object.
-	 * @param {object} rootGetters - the rootGetters object.
 	 * @return {boolean} the typing status of actor.
 	 */
-	actorIsTyping: (state, getters, rootState, rootGetters) => {
-		if (!state.typing[rootGetters.getToken()]) {
+	actorIsTyping: (state) => {
+		if (!state.typing[tokenStore.token]) {
 			return false
 		}
 		const actorStore = useActorStore()
-		return Object.keys(state.typing[rootGetters.getToken()]).some((sessionId) => actorStore.sessionId === sessionId)
+		return Object.keys(state.typing[tokenStore.token]).some((sessionId) => actorStore.sessionId === sessionId)
 	},
 
 	/**
@@ -1170,7 +1171,7 @@ const actions = {
 	},
 
 	async sendTypingSignal(context, { typing }) {
-		if (!context.getters.currentConversationIsJoined) {
+		if (!tokenStore.currentConversationIsJoined) {
 			return
 		}
 

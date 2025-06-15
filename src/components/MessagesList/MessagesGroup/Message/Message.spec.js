@@ -24,6 +24,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../consta
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
+import { useTokenStore } from '../../../../stores/token.ts'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -48,11 +49,15 @@ describe('Message.vue', () => {
 	let injected
 	const getVisualLastReadMessageIdMock = jest.fn()
 
+	let actorStore
+	let tokenStore
+
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
-		const actorStore = useActorStore()
+		actorStore = useActorStore()
+		tokenStore = useTokenStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -68,9 +73,8 @@ describe('Message.vue', () => {
 
 		actorStore.actorId = 'user-id-1'
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		tokenStore.token = TOKEN
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.tokenStore.getters.getToken
-			= jest.fn().mockReturnValue(() => TOKEN)
 		testStoreConfig.modules.conversationsStore.getters.conversation
 			= jest.fn().mockReturnValue((token) => conversationProps)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId

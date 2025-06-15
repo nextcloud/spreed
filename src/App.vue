@@ -39,6 +39,7 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
@@ -51,6 +52,7 @@ import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
 import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
+import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -73,6 +75,8 @@ export default {
 		provide('Talk:isMainApp', true)
 
 		return {
+			token: useGetToken(),
+			tokenStore: useTokenStore(),
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
@@ -133,15 +137,6 @@ export default {
 
 		warnLeaving() {
 			return !this.isLeavingAfterSessionIssue && this.isInCall
-		},
-
-		/**
-		 * The current conversation token
-		 *
-		 * @return {string} The token.
-		 */
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		/**
@@ -238,7 +233,7 @@ export default {
 
 		if (this.$route.name === 'conversation') {
 			// Update current token in the token store
-			this.$store.dispatch('updateToken', this.$route.params.token)
+			this.tokenStore.updateToken(this.$route.params.token)
 			// Automatically join the conversation as well
 			this.$store.dispatch('joinConversation', { token: this.$route.params.token })
 		}
@@ -356,7 +351,7 @@ export default {
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
 					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-					this.$store.dispatch('updateToken', '')
+					this.tokenStore.updateToken('')
 				}
 			}
 		})
@@ -399,7 +394,7 @@ export default {
 					}
 				}
 				// Update current token in the token store
-				this.$store.dispatch('updateToken', to.params.token)
+				this.tokenStore.updateToken(to.params.token)
 			}
 
 			/**
@@ -616,7 +611,7 @@ export default {
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-				this.$store.dispatch('updateToken', '')
+				this.tokenStore.updateToken('')
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}

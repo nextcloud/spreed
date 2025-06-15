@@ -7,37 +7,42 @@ import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 import storeConfig from '../store/storeConfig.js'
 import { useActorStore } from '../stores/actor.ts'
+import { useTokenStore } from '../stores/token.ts'
 import SignalingTypingHandler from './SignalingTypingHandler.js'
 
 describe('SignalingTypingHandler', () => {
 	let store
+	let actorStore
+	let tokenStore
 
 	let signaling
 	let signalingTypingHandler
 
+	const TOKEN = 'XXTOKENXX'
+
 	const addLocalParticipantInTheTokenData = {
-		token: 'theToken',
+		token: TOKEN,
 		participant: {
 			sessionIds: ['localNextcloudSessionId'],
 			attendeeId: 'localAttendeeId',
 		},
 	}
 	const addUser1ParticipantInTheTokenData = {
-		token: 'theToken',
+		token: TOKEN,
 		participant: {
 			sessionIds: ['user1NextcloudSessionId'],
 			attendeeId: 'user1AttendeeId',
 		},
 	}
 	const addGuest1ParticipantInTheTokenData = {
-		token: 'theToken',
+		token: TOKEN,
 		participant: {
 			sessionIds: ['guest1NextcloudSessionId'],
 			attendeeId: 'guest1AttendeeId',
 		},
 	}
 	const addGuest2ParticipantInTheTokenData = {
-		token: 'theToken',
+		token: TOKEN,
 		participant: {
 			sessionIds: ['guest2NextcloudSessionId'],
 			attendeeId: 'guest2AttendeeId',
@@ -75,7 +80,8 @@ describe('SignalingTypingHandler', () => {
 	beforeEach(() => {
 		const testStoreConfig = cloneDeep(storeConfig)
 		store = new Vuex.Store(testStoreConfig)
-		const actorStore = useActorStore()
+		actorStore = useActorStore()
+		tokenStore = useTokenStore()
 
 		signaling = new function() {
 			this._handlers = {}
@@ -123,12 +129,18 @@ describe('SignalingTypingHandler', () => {
 		})
 	})
 
+	afterEach(() => {
+		jest.clearAllMocks()
+		tokenStore.token = ''
+		tokenStore.lastJoinedConversationToken = null
+	})
+
 	describe('start typing', () => {
 		test('when there are no other participants in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.token = TOKEN
+			tokenStore.lastJoinedConversationToken = TOKEN
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
@@ -138,15 +150,15 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
 		test('when there is another participant in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
@@ -158,7 +170,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(1)
 			expect(signaling.emit).toHaveBeenCalledWith('message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 		})
@@ -166,8 +178,8 @@ describe('SignalingTypingHandler', () => {
 		test('when there are other participants in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -181,15 +193,15 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(2)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		})
 
 		test('when signaling is not set yet', () => {
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
@@ -198,23 +210,23 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
 			// Typing is not set once finally joined the room.
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
 		test('when room is not joined yet', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
 			signalingTypingHandler.setTyping(true)
 
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			// Typing is not set once finally joined the room.
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 	})
@@ -223,8 +235,8 @@ describe('SignalingTypingHandler', () => {
 		test('when there are no other participants in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
@@ -235,15 +247,15 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
 		test('when there is another participant in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
@@ -256,7 +268,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(2)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'stoppedTyping', to: 'user1SignalingSessionId' })
@@ -265,8 +277,8 @@ describe('SignalingTypingHandler', () => {
 		test('when there are other participants in the room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -281,7 +293,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(4)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
@@ -290,8 +302,8 @@ describe('SignalingTypingHandler', () => {
 		})
 
 		test('when signaling is not set yet', () => {
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
@@ -301,24 +313,24 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
 			// Typing is not set once finally joined the room.
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
 		test('when room is not joined yet', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			// Typing is not set once finally joined the room.
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 	})
@@ -327,8 +339,8 @@ describe('SignalingTypingHandler', () => {
 		test('in the current room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -345,7 +357,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([
 				expectedUser1Participant,
 			])
 		})
@@ -357,8 +369,8 @@ describe('SignalingTypingHandler', () => {
 			// not misbehave.
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 			store.dispatch('addParticipant', addGuest1ParticipantInTheTokenData)
@@ -373,7 +385,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		})
 	})
 
@@ -381,8 +393,8 @@ describe('SignalingTypingHandler', () => {
 		test('in the current room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -403,7 +415,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		})
 
 		test('in another room', () => {
@@ -413,8 +425,8 @@ describe('SignalingTypingHandler', () => {
 			// not misbehave.
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 			store.dispatch('addParticipant', addGuest1ParticipantInTheTokenData)
@@ -433,15 +445,15 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		})
 	})
 
 	test('current participant leaves when typing', () => {
 		signalingTypingHandler.setSignaling(signaling)
 
-		store.dispatch('updateToken', 'theToken')
-		store.dispatch('updateLastJoinedConversationToken', 'theToken')
+		tokenStore.updateToken(TOKEN)
+		tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 		store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 		store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
@@ -457,7 +469,7 @@ describe('SignalingTypingHandler', () => {
 			localParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([])
+		expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(1)
 		expect(signaling.emit).toHaveBeenCalledWith('message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 	})
@@ -465,8 +477,8 @@ describe('SignalingTypingHandler', () => {
 	test('other participants join when current participant is typing', () => {
 		signalingTypingHandler.setSignaling(signaling)
 
-		store.dispatch('updateToken', 'theToken')
-		store.dispatch('updateLastJoinedConversationToken', 'theToken')
+		tokenStore.updateToken(TOKEN)
+		tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 		store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 		store.dispatch('addParticipant', addGuest1ParticipantInTheTokenData)
@@ -484,7 +496,7 @@ describe('SignalingTypingHandler', () => {
 			user1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([])
+		expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(2)
 		expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
@@ -493,8 +505,8 @@ describe('SignalingTypingHandler', () => {
 	test('other participants join when current participant is no longer typing', () => {
 		signalingTypingHandler.setSignaling(signaling)
 
-		store.dispatch('updateToken', 'theToken')
-		store.dispatch('updateLastJoinedConversationToken', 'theToken')
+		tokenStore.updateToken(TOKEN)
+		tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 		store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 		store.dispatch('addParticipant', addGuest1ParticipantInTheTokenData)
@@ -513,7 +525,7 @@ describe('SignalingTypingHandler', () => {
 			user1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([])
+		expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(2)
 		expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'stoppedTyping', to: 'guest1SignalingSessionId' })
@@ -522,8 +534,8 @@ describe('SignalingTypingHandler', () => {
 	test('other participants leave when they were typing', () => {
 		signalingTypingHandler.setSignaling(signaling)
 
-		store.dispatch('updateToken', 'theToken')
-		store.dispatch('updateLastJoinedConversationToken', 'theToken')
+		tokenStore.updateToken(TOKEN)
+		tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 		store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 		store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -551,7 +563,7 @@ describe('SignalingTypingHandler', () => {
 			guest1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([
+		expect(store.getters.participantsListTyping(TOKEN)).toEqual([
 			expectedGuest2Participant,
 		])
 	})
@@ -559,8 +571,8 @@ describe('SignalingTypingHandler', () => {
 	test('other participants leave when they were not typing', () => {
 		signalingTypingHandler.setSignaling(signaling)
 
-		store.dispatch('updateToken', 'theToken')
-		store.dispatch('updateLastJoinedConversationToken', 'theToken')
+		tokenStore.updateToken(TOKEN)
+		tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 		store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 		store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -592,7 +604,7 @@ describe('SignalingTypingHandler', () => {
 			guest1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([
+		expect(store.getters.participantsListTyping(TOKEN)).toEqual([
 			expectedGuest2Participant,
 		])
 	})
@@ -601,8 +613,8 @@ describe('SignalingTypingHandler', () => {
 		test('prevents start typing in the current room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
@@ -616,15 +628,15 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
 		test('prevents other participants start typing in the current room', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
-			store.dispatch('updateToken', 'theToken')
-			store.dispatch('updateLastJoinedConversationToken', 'theToken')
+			tokenStore.updateToken(TOKEN)
+			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			store.dispatch('addParticipant', addUser1ParticipantInTheTokenData)
 			store.dispatch('addParticipant', addLocalParticipantInTheTokenData)
@@ -643,7 +655,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([])
+			expect(store.getters.participantsListTyping(TOKEN)).toEqual([])
 		})
 	})
 })

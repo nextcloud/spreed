@@ -51,6 +51,7 @@ import Check from 'vue-material-design-icons/Check.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
@@ -76,6 +77,7 @@ export default {
 		const encoderReady = useAudioEncoder()
 		return {
 			encoderReady,
+			token: useGetToken(),
 		}
 	},
 
@@ -273,8 +275,7 @@ export default {
 		},
 
 		generateFileName() {
-			const token = this.$store.getters.getToken()
-			const conversation = this.$store.getters.conversation(token).name
+			const conversation = this.$store.getters.conversation(this.token).name
 				.replace(/\/\\:%/gi, ' ') // Replace chars that are not allowed on the filesystem
 				.replace(/ +/gi, ' ') // Replace multiple replacement spaces with 1
 			const today = new Date()

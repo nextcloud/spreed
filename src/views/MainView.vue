@@ -45,7 +45,7 @@ onMounted(() => {
 			emit('talk:media-settings:show', '')
 			router.replace({ hash: '' })
 		} else if (route.hash === '#settings') {
-			emit('show-conversation-settings', { token: store.getters.getToken() })
+			emit('show-conversation-settings', { token: props.token })
 			router.replace({ hash: '' })
 		}
 	})

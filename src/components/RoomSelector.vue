@@ -57,6 +57,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { CONVERSATION } from '../constants.ts'
 import { fetchConversations, searchListedConversations } from '../services/conversationsService.ts'
 
@@ -120,11 +121,13 @@ export default {
 
 	emits: ['close', 'select'],
 
-	setup() {
+	setup(props) {
+		const currentRoom = ref(props.isPlugin ? null : useGetToken().value)
 		const selectedRoom = ref(null)
 		provide('selectedRoom', selectedRoom)
 
 		return {
+			currentRoom,
 			selectedRoom,
 		}
 	},
@@ -132,7 +135,6 @@ export default {
 	data() {
 		return {
 			rooms: [],
-			currentRoom: null,
 			searchText: '',
 			loading: true,
 		}
@@ -163,10 +165,6 @@ export default {
 
 	beforeMount() {
 		this.fetchRooms()
-		const $store = OCA.Talk?.instance?.$store
-		if ($store) {
-			this.currentRoom = $store.getters.getToken()
-		}
 	},
 
 	methods: {

@@ -32,6 +32,7 @@ import {
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
+import { useTokenStore } from '../stores/token.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
 import storeConfig from './storeConfig.js'
@@ -75,6 +76,7 @@ describe('participantsStore', () => {
 	let store = null
 	let guestNameStore = null
 	let actorStore
+	let tokenStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
@@ -82,6 +84,7 @@ describe('participantsStore', () => {
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 		actorStore = useActorStore()
+		tokenStore = useTokenStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = new Vuex.Store(testStoreConfig)
@@ -797,15 +800,15 @@ describe('participantsStore', () => {
 	})
 
 	describe('joining conversation', () => {
-		let getTokenMock
 		let participantData
 		let joinedConversationEventMock
 
 		beforeEach(() => {
+			tokenStore.token = TOKEN
+
 			joinedConversationEventMock = jest.fn()
 			EventBus.once('joined-conversation', joinedConversationEventMock)
 
-			getTokenMock = jest.fn().mockReturnValue(TOKEN)
 			participantData = {
 				actorId: 'actor-id',
 				sessionId: 'session-id-1',
@@ -818,7 +821,6 @@ describe('participantsStore', () => {
 				attendeeId: 1,
 			}))
 
-			testStoreConfig.getters.getToken = () => getTokenMock
 			testStoreConfig.actions.addConversation = jest.fn().mockImplementation((context) => {
 				// needed for the updateSessionId call which requires this
 				context.dispatch('addParticipantOnce', {

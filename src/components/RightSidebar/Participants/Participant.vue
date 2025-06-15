@@ -343,6 +343,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import {
@@ -419,6 +420,7 @@ export default {
 		return {
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
+			token: useGetToken(),
 		}
 	},
 
@@ -601,10 +603,6 @@ export default {
 
 		attendeePin() {
 			return this.canBeModerated && this.participant.attendeePin ? readableNumber(this.participant.attendeePin) : ''
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		currentParticipant() {
