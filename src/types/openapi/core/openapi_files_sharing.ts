@@ -717,7 +717,7 @@ export interface operations {
                 mimeFallback?: 0 | 1;
             };
             header?: {
-                "X-NC-Preview"?: string;
+                "x-nc-preview"?: string;
             };
             path: {
                 /** @description Token of the share */
