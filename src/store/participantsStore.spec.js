@@ -6,7 +6,6 @@ import { emit } from '@nextcloud/event-bus'
 import { createLocalVue } from '@vue/test-utils'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -29,6 +28,7 @@ import {
 	removeCurrentUserFromConversation,
 	resendInvitations,
 } from '../services/participantsService.js'
+import SessionStorage from '../services/SessionStorage.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSessionStore } from '../stores/session.ts'
@@ -54,6 +54,11 @@ jest.mock('../services/callsService', () => ({
 }))
 jest.mock('../services/conversationsService', () => ({
 	fetchConversation: jest.fn(),
+}))
+jest.mock('../services/SessionStorage.js', () => ({
+	getItem: jest.fn().mockReturnValue(null),
+	setItem: jest.fn(),
+	removeItem: jest.fn(),
 }))
 jest.mock('../stores/callView', () => ({
 	useCallViewStore: jest.fn(() => ({
@@ -853,13 +858,13 @@ describe('participantsStore', () => {
 			const response = generateOCSResponse({ payload: updatedParticipantData })
 			joinConversation.mockResolvedValue(response)
 
-			sessionStorage.getItem.mockReturnValueOnce(TOKEN)
+			SessionStorage.getItem.mockReturnValueOnce(TOKEN)
 
 			await store.dispatch('forceJoinConversation', { token: TOKEN })
 
-			expect(sessionStorage.setItem).toHaveBeenCalled()
-			expect(sessionStorage.setItem.mock.calls[0][0]).toMatch(/joined_conversation$/)
-			expect(sessionStorage.setItem.mock.calls[0][1]).toBe(TOKEN)
+			expect(SessionStorage.setItem).toHaveBeenCalled()
+			expect(SessionStorage.setItem.mock.calls[0][0]).toMatch(/joined_conversation$/)
+			expect(SessionStorage.setItem.mock.calls[0][1]).toBe(TOKEN)
 
 			expect(joinConversation).toHaveBeenCalledWith({ token: TOKEN, forceJoin: true })
 
@@ -874,16 +879,10 @@ describe('participantsStore', () => {
 		})
 
 		describe('force join on error', () => {
-			let restoreConsole
-			beforeEach(() => {
-				restoreConsole = mockConsole(['error', 'debug'])
-			})
 			afterEach(() => {
 				jest.useRealTimers()
-				expect(sessionStorage.setItem).not.toHaveBeenCalled()
+				expect(SessionStorage.setItem).not.toHaveBeenCalled()
 				expect(joinedConversationEventMock).not.toHaveBeenCalled()
-
-				restoreConsole()
 			})
 
 			/**
