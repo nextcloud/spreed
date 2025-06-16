@@ -578,6 +578,38 @@ class Config {
 		return $this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg));
 	}
 
+	public function deriveSignalingTokenPublicKey(string $privateKey, string $alg): string {
+		if (str_starts_with($alg, 'ES') || str_starts_with($alg, 'RS')) {
+			$opensslPrivateKey = openssl_pkey_get_private($privateKey);
+			$this->throwOnOpensslError();
+
+			$pubKey = openssl_pkey_get_details($opensslPrivateKey);
+			$this->throwOnOpensslError();
+
+			$public = $pubKey['key'];
+			if (!openssl_pkey_export($privateKey, $secret)) {
+				throw new \Exception('Could not export private key');
+			}
+		} elseif ($alg === 'EdDSA') {
+			$public = base64_encode(sodium_crypto_sign_publickey_from_secretkey($privateKey));
+		} else {
+			throw new \Exception('Unsupported algorithm ' . $alg);
+		}
+
+		return $public;
+	}
+
+	private function throwOnOpensslError() {
+		$errors = [];
+		while ($error = openssl_error_string()) {
+			$errors[] = $error;
+		}
+
+		if (!empty($errors)) {
+			throw new \Exception("OpenSSL error:\n" . implode("\n", $errors));
+		}
+	}
+
 	/**
 	 * @param IUser $user
 	 * @return array
