@@ -1346,7 +1346,7 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                USER_AGENT?: string;
+                "user-agent"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -4329,7 +4329,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                USER_AGENT?: string;
+                "user-agent"?: string;
             };
             path?: never;
             cookie?: never;
