@@ -61,7 +61,7 @@ Feature: chat/mentions
       | roomName | room |
     Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    | details           |
-      | all          | room                     | calls  | all          | All 1 participant |
+      | all          | room                     | calls  | all          | 1 participant |
 
   Scenario: get mentions in a group room
     When user "participant1" creates room "group room" (v4)
