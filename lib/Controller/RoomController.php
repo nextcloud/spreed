@@ -2104,6 +2104,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		try {
 			$entity = $this->phoneService->getAccountToCallForPhoneNumber($phoneNumber);
 		} catch (DoesNotExistException) {
+			$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
