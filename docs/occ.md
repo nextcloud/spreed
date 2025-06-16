@@ -386,6 +386,19 @@ List external signaling servers.
 |---|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 
+## talk:signaling:verify-keys
+
+Verify if the stored public key matches the stored private key for the signaling server
+
+### Usage
+
+* `talk:signaling:verify-keys [--output [OUTPUT]] [--update]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
+| `--update` | Updates the stored public key to match the private key if there is a mis-match | no | no | no | `false` |
+
 ## talk:stun:add
 
 Add a new STUN server.
