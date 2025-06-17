@@ -613,6 +613,11 @@ export default {
 	direction: inherit;
 }
 
+// Always render code blocks LTR
+:deep(.rich-text--wrapper) pre {
+	direction: ltr;
+}
+
 // Hardcode to restrict size of message images for the chat
 :deep(.widget-default--image) {
 	max-width: 240px;
