@@ -229,21 +229,32 @@ export default {
 		},
 
 		async testWebSocketConnection(url) {
+			const response = await fetchSignalingSettings({ token: '' }, {})
+			const settings = response.data.ocs.data
+			const signalingTest = createConnection(settings, url)
+
+			this.signalingTestInfo = [
+				{ caption: t('spreed', 'Nextcloud base URL'), description: getBaseUrl() },
+				{ caption: t('spreed', 'Talk Backend URL'), description: signalingTest.getBackendUrl() },
+				{ caption: t('spreed', 'WebSocket URL'), description: signalingTest.url },
+			]
 			try {
-				const response = await fetchSignalingSettings({ token: '' }, {})
-				const settings = response.data.ocs.data
-				const signalingTest = createConnection(settings, url)
 				await signalingTest.connect()
-				this.signalingTestInfo = [
-					{ caption: t('spreed', 'Nextcloud base URL'), description: getBaseUrl() },
-					{ caption: t('spreed', 'Talk Backend URL'), description: signalingTest.getBackendUrl() },
-					{ caption: t('spreed', 'WebSocket URL'), description: signalingTest.url },
-					{ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') },
-				]
+				this.signalingTestInfo.push({ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') })
 				EventBus.emit('signaling-server-connected', signalingTest)
 			} catch (exception) {
-				console.error(exception)
-				this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
+				if (exception.socketMessage) {
+					this.errorMessage = t('spreed', 'Error: Websocket connection failed')
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error code'), description: exception.socketMessage.error.code })
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error message'), description: exception.socketMessage.error.message })
+				} else if (exception.CSPViolation) {
+					this.warningMessage = t('spreed', 'Error: Websocket connection failed')
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error code'), description: exception.CSPViolation.type })
+					this.signalingTestInfo.push({ caption: t('spreed', 'Error message'), description: exception.CSPViolation.message })
+				} else {
+					console.error(exception)
+					this.errorMessage = t('spreed', 'Error: Websocket connection failed. Check browser console')
+				}
 			}
 		},
 	},
