@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	addConversationToFavoritesResponse,
 	archiveConversationResponse,
@@ -61,9 +62,9 @@ import { hasTalkFeature } from './CapabilitiesManager.ts'
 /**
  * Fetches all conversations from the server.
  * @param params parameters
- * @param options options
+ * @param [options] Axios request options
  */
-async function fetchConversations(params: getAllConversationsParams, options?: object): getAllConversationsResponse {
+async function fetchConversations(params: getAllConversationsParams, options?: AxiosRequestConfig): getAllConversationsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/room'), {
 		...options,
 		params,
@@ -81,9 +82,9 @@ async function fetchConversation(token: string): getSingleConversationResponse {
 /**
  * Fetch listed conversations
  * @param searchTerm The string that will be used in the search query.
- * @param options options
+ * @param [options] Axios request options
  */
-async function searchListedConversations(searchTerm: string, options?: object): getListedConversationsResponse {
+async function searchListedConversations(searchTerm: string, options?: AxiosRequestConfig): getListedConversationsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/listed-room'), {
 		...options,
 		params: {

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	banActorParams,
 	banActorResponse,
@@ -17,10 +18,10 @@ import { generateOcsUrl } from '@nextcloud/router'
  * Get information about configured bans for this conversation
  *
  * @param token - the conversation token
- * @param [options] - request options
+ * @param [options] - Axios request options
  */
-const getConversationBans = async function(token: string, options?: object): getBansResponse {
-	return axios.get(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }, options), options)
+const getConversationBans = async function(token: string, options?: AxiosRequestConfig): getBansResponse {
+	return axios.get(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }), options)
 }
 
 /**
@@ -28,10 +29,10 @@ const getConversationBans = async function(token: string, options?: object): get
  *
  * @param token - the conversation token
  * @param payload - banned actor information
- * @param [options] - request options
+ * @param [options] - Axios request options
  */
-const banActor = async function(token: string, payload: banActorParams, options?: object): banActorResponse {
-	return axios.post(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }, options), payload, options)
+const banActor = async function(token: string, payload: banActorParams, options?: AxiosRequestConfig): banActorResponse {
+	return axios.post(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }), payload, options)
 }
 
 /**
@@ -39,10 +40,10 @@ const banActor = async function(token: string, payload: banActorParams, options?
  *
  * @param token - the conversation token
  * @param banId - ban id
- * @param [options] - request options
+ * @param [options] - Axios request options
  */
-const unbanActor = async function(token: string, banId: number, options?: object): unbanActorResponse {
-	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/ban/{token}/{banId}', { token, banId }, options), options)
+const unbanActor = async function(token: string, banId: number, options?: AxiosRequestConfig): unbanActorResponse {
+	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/ban/{token}/{banId}', { token, banId }), options)
 }
 
 export {
