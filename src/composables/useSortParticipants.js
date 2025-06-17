@@ -7,6 +7,7 @@
 import { computed } from 'vue'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import { isDoNotDisturb } from '../utils/userStatus.ts'
+import { useGetToken } from './useGetToken.ts'
 import { useStore } from './useStore.js'
 
 const MODERATOR_TYPES = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
@@ -16,9 +17,10 @@ const MODERATOR_TYPES = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PAR
  */
 export function useSortParticipants() {
 	const store = useStore()
+	const token = useGetToken()
 
 	const selfIsModerator = computed(() => {
-		const participantType = store.getters.conversation(store.getters.getToken())?.participantType
+		const participantType = store.getters.conversation(token.value)?.participantType
 		return MODERATOR_TYPES.includes(participantType)
 	})
 

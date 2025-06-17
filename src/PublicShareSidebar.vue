@@ -50,6 +50,7 @@ import InternalSignalingHint from './components/RightSidebar/InternalSignalingHi
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
+import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
@@ -59,6 +60,7 @@ import {
 	leaveConversationSync,
 } from './services/participantsService.js'
 import { useActorStore } from './stores/actor.ts'
+import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -99,6 +101,8 @@ export default {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
+			token: useGetToken(),
+			tokenStore: useTokenStore(),
 		}
 	},
 
@@ -111,10 +115,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
@@ -208,7 +208,7 @@ export default {
 		async getPublicShareConversationData() {
 			const data = await getPublicShareConversationData(this.shareToken)
 
-			this.$store.dispatch('updateToken', data.token)
+			this.tokenStore.updateToken(data.token)
 
 			if (data.userId) {
 				// Instead of using "getCurrentUser()" the current user is set
@@ -254,7 +254,7 @@ export default {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
 				this.$store.dispatch('deleteConversation', this.token)
-				this.$store.dispatch('updateToken', '')
+				this.tokenStore.updateToken('')
 			}
 
 			this.joiningConversation = false

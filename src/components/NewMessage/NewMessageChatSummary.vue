@@ -66,6 +66,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconMessageBulleted from 'vue-material-design-icons/MessageBulleted.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useStore } from '../../composables/useStore.js'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
@@ -95,7 +96,8 @@ const cancelling = ref(false)
 const store = useStore()
 const chatExtrasStore = useChatExtrasStore()
 
-const token = computed(() => store.getters.getToken())
+const token = useGetToken()
+
 const chatSummaryMessage = ref('')
 
 watch(chatSummaryMessage, () => {

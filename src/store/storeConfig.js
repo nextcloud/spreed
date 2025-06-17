@@ -7,7 +7,6 @@ import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
 import participantsStore from './participantsStore.js'
-import tokenStore from './tokenStore.js'
 
 export default {
 	modules: {
@@ -15,7 +14,6 @@ export default {
 		fileUploadStore,
 		messagesStore,
 		participantsStore,
-		tokenStore,
 	},
 
 	mutations: {},

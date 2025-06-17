@@ -86,6 +86,7 @@ import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/Audio
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import NewMessage from './NewMessage.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
 import { MESSAGE } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -112,14 +113,11 @@ export default {
 			modalContainerId,
 			isDraggingOver,
 			dialogHeaderId,
+			token: useGetToken(),
 		}
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		supportMediaCaption() {
 			return hasTalkFeature(this.token, 'media-caption')
 		},

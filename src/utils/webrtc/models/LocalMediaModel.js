@@ -6,7 +6,8 @@
 import { reactive } from 'vue'
 import { VIRTUAL_BACKGROUND } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
-import store from '../../../store/index.js'
+import pinia from '../../../stores/pinia.ts'
+import { useTokenStore } from '../../../stores/token.ts'
 import EmitterMixin from '../../EmitterMixin.js'
 
 /**
@@ -14,6 +15,8 @@ import EmitterMixin from '../../EmitterMixin.js'
  */
 export default function LocalMediaModel() {
 	this._superEmitterMixin()
+
+	this._tokenStore = useTokenStore(pinia)
 
 	this.attributes = reactive({
 		localStreamRequestVideoError: null,
@@ -179,7 +182,7 @@ LocalMediaModel.prototype = {
 	},
 
 	_setInitialState(localStream) {
-		this.set('token', store.getters.getToken())
+		this.set('token', this._tokenStore.token)
 
 		this._updateMediaAvailability(localStream)
 

@@ -15,6 +15,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../con
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
+import { useTokenStore } from '../../../../../stores/token.ts'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
 
 describe('MessageButtonsBar.vue', () => {
@@ -26,12 +27,14 @@ describe('MessageButtonsBar.vue', () => {
 	let injected
 	let conversationProps
 	let actorStore
+	let tokenStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
+		tokenStore = useTokenStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -42,12 +45,11 @@ describe('MessageButtonsBar.vue', () => {
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.tokenStore.getters.getToken
-			= jest.fn().mockReturnValue(() => TOKEN)
 		testStoreConfig.modules.conversationsStore.getters.conversation
 			= jest.fn().mockReturnValue((token) => conversationProps)
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		actorStore.actorId = 'user-id-1'
+		tokenStore.token = TOKEN
 
 		messageProps = {
 			previousMessageId: 100,

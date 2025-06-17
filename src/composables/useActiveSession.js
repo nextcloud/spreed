@@ -7,7 +7,9 @@ import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { CONFIG, SESSION } from '../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
+import { useTokenStore } from '../stores/token.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
+import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 
@@ -25,7 +27,8 @@ const experimentalRecoverSession = (getTalkConfig('local', 'experiments', 'enabl
  */
 export function useActiveSession() {
 	const store = useStore()
-	const token = computed(() => store.getters.getToken())
+	const token = useGetToken()
+	const tokenStore = useTokenStore()
 	// FIXME has no API support on federated conversations
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
 
@@ -79,7 +82,7 @@ export function useActiveSession() {
 			console.error(error)
 			if (experimentalRecoverSession && error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
-				store.dispatch('updateLastJoinedConversationToken', '')
+				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again
 				store.dispatch('joinConversation', { token: token.value })
 			}
@@ -105,7 +108,7 @@ export function useActiveSession() {
 			console.error(error)
 			if (experimentalRecoverSession && error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
-				store.dispatch('updateLastJoinedConversationToken', '')
+				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again
 				store.dispatch('joinConversation', { token: token.value })
 			}

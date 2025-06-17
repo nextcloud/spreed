@@ -51,6 +51,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR } from '../../constants.ts'
 
 export default {
@@ -81,6 +82,7 @@ export default {
 		return {
 			AVATAR,
 			isDarkTheme,
+			token: useGetToken(),
 		}
 	},
 
@@ -93,10 +95,6 @@ export default {
 	},
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		userAbsenceCaption() {
 			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName }, undefined, {
 				escape: false,
