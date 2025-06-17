@@ -7,6 +7,7 @@
 import type {
 	Conversation,
 	DashboardEvent,
+	UpcomingEvent,
 	UserProfileData,
 } from '../../types/index.ts'
 
@@ -14,6 +15,7 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
+import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
@@ -26,6 +28,7 @@ import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -35,11 +38,11 @@ import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
-type MutualEvent = {
-	uri: DashboardEvent['eventLink']
-	name: DashboardEvent['eventName']
+type EventCardPayload = {
+	uri: DashboardEvent['eventLink'] | UpcomingEvent['uri']
+	name: DashboardEvent['eventName'] | UpcomingEvent['summary']
 	start: string
-	href: DashboardEvent['eventLink']
+	href: DashboardEvent['eventLink'] | undefined
 	color: string
 }
 
@@ -131,24 +134,53 @@ const profileInformation = computed(() => {
 	return fields
 })
 
-const mutualEventsInformation = computed<MutualEvent[]>(() => {
+const upcomingEventsInformation = computed<EventCardPayload[]>(() => {
+	if (!groupwareStore.upcomingEvents[token.value]) {
+		return []
+	}
+
+	const now = convertToUnix(Date.now())
+	return groupwareStore.getAllEvents(token.value).map((event: UpcomingEvent) => {
+		const start = event.start
+			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+			: ''
+		const color = groupwareStore.calendars[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
+
+		return {
+			uri: event.uri,
+			name: event.summary,
+			start,
+			href: event.calendarAppUrl ?? undefined,
+			color,
+		}
+	})
+})
+
+const mutualEventsInformation = computed<EventCardPayload[]>(() => {
 	if (!groupwareStore.mutualEvents[token.value]) {
 		return []
 	}
 
 	const now = convertToUnix(Date.now())
-	return groupwareStore.mutualEvents[token.value].map((event) => {
-		const start = event.start
-			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
-			: ''
-		return {
-			uri: event.eventLink,
-			name: event.eventName,
-			start,
-			href: event.eventLink,
-			color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
-		}
-	})
+	return groupwareStore.mutualEvents[token.value]
+		// Filter out entries from upcoming events
+		.filter((event: DashboardEvent) => !groupwareStore.upcomingEvents[token.value] || event.roomToken !== token.value)
+		.map((event: DashboardEvent) => {
+			const start = event.start
+				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+				: ''
+			return {
+				uri: event.eventLink,
+				name: event.eventName,
+				start,
+				href: event.eventLink,
+				color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
+			}
+		})
+})
+
+const mutualEventsLabel = computed(() => {
+	return t('spreed', 'With you and {displayName}', { displayName: conversation.value.displayName }, { escape: false, sanitize: false })
 })
 
 watch(token, async () => {
@@ -254,17 +286,40 @@ function handleHeaderClick() {
 					</div>
 				</div>
 			</div>
-			<div v-if="mode !== 'compact' && mutualEventsInformation.length"
+			<div v-if="mode !== 'compact' && (upcomingEventsInformation.length || mutualEventsInformation.length)"
 				class="content__events">
 				<NcAppNavigationCaption :name="t('spreed', 'Upcoming meetings')" />
-				<ul class="content__events-list">
-					<CalendarEventSmall v-for="event in mutualEventsInformation"
-						:key="event.uri"
-						:name="event.name"
-						:start="event.start"
-						:href="event.href"
-						:color="event.color" />
-				</ul>
+				<template v-if="upcomingEventsInformation.length">
+					<NcAppNavigationCaption v-if="isOneToOneConversation"
+						class="content__events-caption"
+						:name="t('spreed', 'In this conversation')" />
+					<ul class="content__events-list">
+						<CalendarEventSmall v-for="event in upcomingEventsInformation"
+							:key="event.uri"
+							:name="event.name"
+							:start="event.start"
+							:href="event.href"
+							:color="event.color" />
+					</ul>
+					<NcButton class="content__events-add"
+						variant="tertiary">
+						<template #icon>
+							<IconPlus :size="20" />
+						</template>
+						{{ t('spreed', 'Schedule a meeting') }}
+					</NcButton>
+				</template>
+				<template v-if="mutualEventsInformation.length">
+					<NcAppNavigationCaption class="content__events-caption" :name="mutualEventsLabel" />
+					<ul class="content__events-list">
+						<CalendarEventSmall v-for="event in mutualEventsInformation"
+							:key="event.uri"
+							:name="event.name"
+							:start="event.start"
+							:href="event.href"
+							:color="event.color" />
+					</ul>
+				</template>
 			</div>
 		</template>
 
@@ -487,8 +542,25 @@ function handleHeaderClick() {
 	}
 
 	&__events {
+		margin-block-start: calc(3 * var(--default-grid-baseline));
 		// To align with NcAppSidebarTab content width
 		margin-inline: 10px;
+
+		&-caption {
+			margin-block-start: calc(2 * var(--default-grid-baseline)) !important;
+
+			:deep(.app-navigation-caption__name) {
+				margin-bottom: 0;
+				font-size: var(--font-size-small);
+				line-height: var(--default-line-height);
+				font-weight: 600;
+				color: var(--color-text-maxcontrast);
+			}
+		}
+
+		&-add {
+			margin-inline-start: var(--default-grid-baseline);
+		}
 
 		&-list {
 			--item-height: calc(2lh + var(--default-grid-baseline) * 3);
