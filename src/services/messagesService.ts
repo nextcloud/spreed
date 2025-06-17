@@ -34,7 +34,6 @@ import { CHAT } from '../constants.ts'
 type ReceiveMessagesPayload = Partial<receiveMessagesParams> & { token: string }
 type GetMessageContextPayload = getMessageContextParams & { token: string, messageId: number }
 type PostNewMessagePayload = Omit<postNewMessageParams, 'replyTo'> & { token: string, parent: ChatMessage }
-type PostNewMessageOptions = Pick<postNewMessageParams, 'silent'> & AxiosRequestConfig
 type DeleteMessagePayload = { token: string, id: number }
 type EditMessagePayload = { token: string, messageId: number, updatedMessage: editMessageParams['message'] }
 
@@ -120,17 +119,17 @@ const getMessageContext = async function({ token, messageId, limit = 50 }: GetMe
 /**
  * Posts a new message to the server.
  *
- * @param param0 The message object that is destructured
- * @param param0.token The conversation token
- * @param param0.message The message text
- * @param param0.actorDisplayName The display name of the actor
- * @param param0.referenceId A reference id to identify the message later again
- * @param param0.parent The message to be replied to
- * @param param1 options object destructured
- * @param param1.silent whether the message should trigger a notifications
+ * @param payload The message object that is destructured
+ * @param payload.token The conversation token
+ * @param payload.message The message text
+ * @param payload.actorDisplayName The display name of the actor
+ * @param payload.referenceId A reference id to identify the message later again
+ * @param payload.parent The message to be replied to
+ * @param payload.silent whether the message should trigger a notifications
+ * @param [options] Axios request options
  */
-const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }: PostNewMessagePayload, { silent, ...options }: PostNewMessageOptions): postNewMessageResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent, silent }: PostNewMessagePayload, options?: AxiosRequestConfig): postNewMessageResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,

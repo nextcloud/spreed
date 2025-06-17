@@ -495,7 +495,7 @@ export default {
 				this.text = this.chatInput
 			}
 			// update the silent chat state
-			this.silentChat = BrowserStorage.getItem('silentChat_' + this.token)
+			this.silentChat = !!BrowserStorage.getItem('silentChat_' + this.token)
 		},
 
 		text(newValue) {
@@ -661,8 +661,6 @@ export default {
 				}
 			}
 
-			const options = { silent: this.silentChat }
-
 			if (this.hasText) {
 				this.text = parseSpecialSymbols(this.text)
 			}
@@ -675,6 +673,7 @@ export default {
 				const temporaryMessage = this.createTemporaryMessage({
 					message: this.text.trim(),
 					token: this.token,
+					silent: this.silentChat,
 				})
 				this.text = ''
 				// Scrolls the message list to the last added message
@@ -683,24 +682,24 @@ export default {
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage, options)
-					: await this.postMessage(this.token, temporaryMessage, options)
+					? await this.submitMessage(this.token, temporaryMessage)
+					: await this.postMessage(this.token, temporaryMessage)
 				this.resetTypingIndicator()
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(token, temporaryMessage, options) {
+		async postMessage(token, temporaryMessage) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async submitMessage(token, temporaryMessage, options) {
-			this.$emit('submit', { token, temporaryMessage, options })
+		async submitMessage(token, temporaryMessage) {
+			this.$emit('submit', { token, temporaryMessage })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {

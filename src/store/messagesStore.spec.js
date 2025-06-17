@@ -1925,7 +1925,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 		test('forwards a message to Note to self when no token is given ', () => {
 			// Arrange
@@ -1940,7 +1940,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 
 		test('generates Note to self when it does not exist ', async () => {
@@ -1964,7 +1964,7 @@ describe('messagesStore', () => {
 
 			// Assert
 			expect(store.getters.conversationsList).toContain(conversations[1])
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 		test('removes parent message ', () => {
 			// Arrange : prepare the expected message to be forwarded
@@ -1984,7 +1984,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 		test('forwards an object message', () => {
 			// Arrange
@@ -2049,7 +2049,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 	})
 })
