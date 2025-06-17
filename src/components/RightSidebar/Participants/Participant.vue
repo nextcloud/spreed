@@ -353,7 +353,7 @@ import {
 	callSIPMutePhone,
 	callSIPSendDTMF,
 	callSIPUnmutePhone,
-} from '../../../services/callsService.js'
+} from '../../../services/callsService.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
