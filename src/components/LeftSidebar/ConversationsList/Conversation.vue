@@ -13,11 +13,11 @@
 		:class="{
 			'conversation--active': isActive,
 			'conversation--compact': compact,
-			'conversation--compact__read': compact && !item.unreadMessages,
+			'conversation--compact__read': compact && !item.unreadMessages && !item.unreadMentionDirect,
 		}"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
-		:bold="!!item.unreadMessages"
+		:bold="!!item.unreadMessages || item.unreadMentionDirect"
 		:counter-number="item.unreadMessages"
 		:counter-type="counterType"
 		force-menu
@@ -30,6 +30,9 @@
 				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:show-user-online-status="compact"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+		</template>
+		<template v-if="item.unreadMessages === 0 && item.unreadMentionDirect" #indicator>
+			<IconCheckboxBlankCircle :size="16" fill-color="var(--color-primary-element)"/>
 		</template>
 		<template #name>
 			<template v-if="compact && iconType">
@@ -265,6 +268,7 @@ import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconBell from 'vue-material-design-icons/Bell.vue'
+import IconCheckboxBlankCircle from 'vue-material-design-icons/CheckboxBlankCircle.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
@@ -305,6 +309,7 @@ export default {
 		IconArrowLeft,
 		IconArrowRight,
 		IconBell,
+		IconCheckboxBlankCircle,
 		IconCog,
 		IconContentCopy,
 		IconDelete,

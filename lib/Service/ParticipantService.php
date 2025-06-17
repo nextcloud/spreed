@@ -244,6 +244,14 @@ class ParticipantService {
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setLastReadMessage($lastReadMessage);
+		$attendee->setMarkedUnread(false);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	public function markUnread(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setMarkedUnread(true);
 		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
