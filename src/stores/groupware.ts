@@ -103,7 +103,7 @@ export const useGroupwareStore = defineStore('groupware', {
 				const uniqueEvents = response.data.ocs.data.events.filter((event, index, array) => {
 					// Keep only first meeting with the same location and start time
 					return index === array.findIndex((item) => item.start === event.start)
-				})
+				}).sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
 
 				Vue.set(this.upcomingEvents, token, uniqueEvents)
 			} catch (error) {

@@ -65,16 +65,14 @@ const submitting = ref(false)
 const calendars = computed(() => groupwareStore.calendars)
 const upcomingEvents = computed(() => {
 	const now = convertToUnix(Date.now())
-	return groupwareStore.getAllEvents(props.token)
-		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
-		.map((event) => {
-			const start = event.start
-				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
-				: ''
-			const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
+	return groupwareStore.getAllEvents(props.token).map((event) => {
+		const start = event.start
+			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+			: ''
+		const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
 
-			return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
-		})
+		return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
+	})
 })
 
 type CalendarOption = { value: string, label: string, color: string }
