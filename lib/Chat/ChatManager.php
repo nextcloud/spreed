@@ -1033,7 +1033,7 @@ class ChatManager {
 			$results[] = [
 				'id' => 'all',
 				'label' => $roomDisplayName,
-				'details' => $this->l->n('%n participant', 'All %n participants', $participantCount),
+				'details' => $this->l->n('All %n participant', 'All %n participants', $participantCount),
 				'source' => 'calls',
 				'mentionId' => 'all',
 			];
