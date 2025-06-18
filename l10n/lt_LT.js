@@ -478,6 +478,7 @@ OC.L10N.register(
     "SIP configuration saved!" : "SIP konfigūracija įrašyta!",
     "Phone number (Country)" : "Telefono numeris (Šalis)",
     "Available features" : "Prieinamos ypatybės",
+    "Error code" : "Klaidos kodas",
     "STUN server URL" : "STUN serverio URL",
     "The server address is invalid" : "Serverio adresas yra neteisingas",
     "STUN settings saved" : "STUN nustatymai įrašyti",

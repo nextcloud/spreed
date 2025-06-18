@@ -721,6 +721,7 @@ OC.L10N.register(
     "Only users of the following groups can enable SIP in conversations they moderate" : "Only users of the following groups can enable SIP in conversations they moderate",
     "Phone number (Country)" : "Phone number (Country)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "This information is sent in invitation emails as well as displayed in the sidebar to all participants.",
+    "Error code" : "Error code",
     "High-performance backend URL" : "High-performance backend URL",
     "High-performance backend settings saved" : "High-performance backend settings saved",
     "STUN server URL" : "STUN server URL",
