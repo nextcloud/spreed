@@ -5,7 +5,7 @@
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { flushPromises, mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
