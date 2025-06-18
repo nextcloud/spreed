@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { flushPromises, mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createStore, useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
