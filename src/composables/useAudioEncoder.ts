@@ -3,22 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { DeepReadonly, Ref } from 'vue'
-
-import { register } from 'extendable-media-recorder'
-import { connect } from 'extendable-media-recorder-wav-encoder'
-import { readonly, ref } from 'vue'
-
-let requiresInit = true
-const encoderReady = ref(false)
+import { useAsyncInit } from './useAsyncInit.ts'
 
 /**
  * Initialize the audio encoder
  */
 async function initAudioEncoder() {
-	requiresInit = false
+	const { register, MediaRecorder } = await import('extendable-media-recorder')
+	const { connect } = await import('extendable-media-recorder-wav-encoder')
 	await register(await connect())
-	encoderReady.value = true
+	return MediaRecorder
 }
 
 /**
@@ -26,10 +20,18 @@ async function initAudioEncoder() {
  *
  * @return - whether the encoder is ready
  */
-export function useAudioEncoder(): DeepReadonly<Ref<boolean>> {
-	if (requiresInit) {
-		initAudioEncoder()
-	}
+export function useAudioEncoder() {
+	const {
+		isReady: isMediaRecorderReady,
+		isLoading: isMediaRecorderLoading,
+		result: MediaRecorder,
+		init: initMediaRecorder,
+	} = useAsyncInit(initAudioEncoder)
 
-	return readonly(encoderReady)
+	return {
+		isMediaRecorderReady,
+		isMediaRecorderLoading,
+		MediaRecorder,
+		initMediaRecorder,
+	}
 }
