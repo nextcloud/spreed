@@ -737,6 +737,7 @@ OC.L10N.register(
     "Restrict SIP configuration" : "Обмеження конфігурації SIP",
     "Enable SIP configuration" : "Увімкнути налаштування SIP",
     "Phone number (Country)" : "Номер телефону (Країна)",
+    "Error code" : "Код помилки",
     "High-performance backend URL" : "URL-адреса високопродуктивного бекенда",
     "STUN server URL" : "URL-адреса сервера STUN",
     "The server address is invalid" : "Адреса сервера є недійсною",

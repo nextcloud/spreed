@@ -810,6 +810,7 @@
     "Only users of the following groups can enable SIP in conversations they moderate" : "پەقەت تۆۋەندىكى گۇرۇپپىلارنى ئىشلەتكۈچىلەرلا ئوتتۇراھال بولغان سۆھبەتتە SIP نى قوزغىتالايدۇ",
     "Phone number (Country)" : "تېلېفون نومۇرى (دۆلەت)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "بۇ ئۇچۇرلار تەكلىپلىك ئېلېكترونلۇق خەتتە ئەۋەتىلگەن شۇنداقلا يانبالداقتا بارلىق قاتناشقۇچىلارغا كۆرسىتىلىدۇ.",
+    "Error code" : "خاتالىق كودى",
     "High-performance backend URL" : "يۇقىرى ئىقتىدارلىق ئارقا كۆرۈنۈش URL",
     "High-performance backend settings saved" : "يۇقىرى ئىقتىدارلىق ئارقا سەپلىمىسى ساقلاندى",
     "STUN server URL" : "STUN مۇلازىمېتىر ئادرېسى",
