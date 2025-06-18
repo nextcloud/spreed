@@ -25,7 +25,6 @@ class UnifiedSearchCSSLoader implements IEventListener {
 		}
 
 		if ($event->isLoggedIn()) {
-			Util::addStyle(Application::APP_ID, 'unified-search');
 			Util::addStyle(Application::APP_ID, 'talk-search');
 		}
 	}
