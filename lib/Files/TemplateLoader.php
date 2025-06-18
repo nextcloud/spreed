@@ -77,7 +77,7 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		Util::addStyle(Application::APP_ID, 'icons');
+		Util::addStyle(Application::APP_ID, 'talk-icons');
 		if (!str_starts_with($this->request->getPathInfo(), '/apps/maps')) {
 			Util::addScript(Application::APP_ID, 'talk-files-sidebar');
 			Util::addStyle(Application::APP_ID, 'talk-files-sidebar');

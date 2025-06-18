@@ -8,4 +8,4 @@ declare(strict_types=1);
 
 \OCP\Util::addScript('spreed', 'talk-main');
 \OCP\Util::addStyle('spreed', 'talk-main');
-style('spreed', 'icons');
+style('spreed', 'talk-icons');
