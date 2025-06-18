@@ -555,6 +555,7 @@
     "Only users of the following groups can enable SIP in conversations they moderate" : "Μόνο οι χρήστες των ακόλουθων ομάδων μπορούν να ενεργοποιήσουν το SIP σε συνομιλίες που εποπτεύουν.",
     "Phone number (Country)" : "Αριθμός τηλεφώνου (Χώρα)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Αυτές οι πληροφορίες αποστέλλονται σε email πρόσκλησης καθώς και παρουσιάζονται στην πλευρική γραμμή σε όλους τους συμμετέχοντες.",
+    "Error code" : "Σφάλμα κωδικού",
     "High-performance backend URL" : "Διεύθυνση URL backend υψηλής απόδοσης",
     "STUN server URL" : "URL διακομιστή STUN",
     "STUN servers" : "Διακομιστές STUN",

@@ -736,6 +736,7 @@ OC.L10N.register(
     "Only users of the following groups can enable SIP in conversations they moderate" : "Csak az alábbi csoportok felhasználói engedélyezhetik a SIP-et az általuk moderált beszélgetésekben",
     "Phone number (Country)" : "Telefonszám (ország)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Ez az információt meghívó e-mailben lesz elküldve, és az oldalsávon jelenik meg az összes résztvevő számára.",
+    "Error code" : "Hibakód",
     "High-performance backend URL" : "Nagy teljesítményű háttérrendszer URL-je",
     "High-performance backend settings saved" : "A nagy teljesítményű háttérrendszer beállításai mentve",
     "STUN server URL" : "STUN kiszolgáló URL",

@@ -345,6 +345,7 @@ OC.L10N.register(
     "Created at" : "Creado en",
     "Validate SSL certificate" : "Validar certificado SSL",
     "Shared secret" : "Secreto compartido",
+    "Error code" : "Código de error",
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
     "TURN server protocols" : "Protocolos del servidor TURN",

@@ -691,6 +691,7 @@ OC.L10N.register(
     "Only users of the following groups can enable SIP in conversations they moderate" : "Solo los usuarios de los siguientes grupos pueden habilitar SIP en las conversaciones que moderan",
     "Phone number (Country)" : "Número de teléfono (País)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Esta información se envía en los correos electrónicos de invitación y se muestra en la barra lateral a todos los participantes.",
+    "Error code" : "Código de error",
     "High-performance backend URL" : "URL del backend de alto rendimiento",
     "High-performance backend settings saved" : "Configuración del backend de alto rendimiento guardada",
     "STUN server URL" : "URL del servidor STUN",
