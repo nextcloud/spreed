@@ -136,8 +136,8 @@ describe('messagesService', () => {
 			actorDisplayName: 'actor-display-name',
 			referenceId: 'reference-id',
 			parent: { id: 111 },
-		}, {
 			silent: false,
+		}, {
 			dummyOption: true,
 		})
 

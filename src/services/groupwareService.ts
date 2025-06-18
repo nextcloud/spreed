@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	getMutualEventsResponse,
 	OutOfOfficeResponse,
@@ -54,10 +55,10 @@ const getMutualEvents = async function(token: string): getMutualEventsResponse {
  * @param payload.title Title or summary of the event, falling back to the conversation name if none is given
  * @param payload.description Description of the event, falling back to the conversation description if none is given
  * @param payload.attendeeIds List of attendee ids to invite (null - everyone, [] - only actor)
- * @param options options object destructured
+ * @param [options] Axios request options
  */
-const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description, attendeeIds }: scheduleMeetingParams, options?: object): scheduleMeetingResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/meeting', { token }, options), {
+const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description, attendeeIds }: scheduleMeetingParams, options?: AxiosRequestConfig): scheduleMeetingResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/meeting', { token }), {
 		calendarUri,
 		start,
 		end,

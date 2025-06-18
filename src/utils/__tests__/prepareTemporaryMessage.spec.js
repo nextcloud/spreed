@@ -40,6 +40,7 @@ describe('prepareTemporaryMessage', () => {
 		systemMessage: '',
 		timestamp: 0,
 		token: TOKEN,
+		silent: false,
 	}
 
 	const parent = {

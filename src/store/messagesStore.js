@@ -1373,6 +1373,8 @@ const actions = {
 		}
 		// Overwrite with the target conversation token
 		message.token = targetToken
+		// Do not forward the message silently
+		message.silent = false
 		if (message.parent) {
 			delete message.parent
 		}
@@ -1401,7 +1403,7 @@ const actions = {
 			}
 		}
 
-		return await postNewMessage(message, { silent: false })
+		return await postNewMessage(message)
 	},
 
 	async removeExpiredMessages(context, { token }) {

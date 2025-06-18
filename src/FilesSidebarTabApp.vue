@@ -37,7 +37,7 @@ import LoadingComponent from './components/LoadingComponent.vue'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
-import { getFileConversation } from './services/filesIntegrationServices.js'
+import { getFileConversation } from './services/filesIntegrationServices.ts'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
@@ -228,7 +228,7 @@ export default {
 			this.cancelGetFileConversation = cancel
 			// Make the request
 			try {
-				const response = await request({ fileId: this.fileId })
+				const response = await request(this.fileId)
 				this.tokenStore.updateTokenAndFileIdForToken(response.data.ocs.data.token, this.fileId)
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
@@ -296,7 +296,7 @@ export default {
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
 				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+					this.isTalkSidebarSupportedForFile = (await getFileConversation(fileInfo.id)) || false
 				} catch (error) {
 					this.isTalkSidebarSupportedForFile = false
 				}
@@ -324,7 +324,7 @@ export default {
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
 				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation({ fileId: fileInfo.id })) || false
+					this.isTalkSidebarSupportedForFile = (await getFileConversation(fileInfo.id)) || false
 				} catch (error) {
 					this.isTalkSidebarSupportedForFile = false
 				}

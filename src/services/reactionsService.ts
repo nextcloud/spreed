@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	addReactionParams,
 	addReactionResponse,
@@ -14,20 +15,14 @@ import type {
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-const addReactionToMessage = async function(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options: object): addReactionResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', {
-		token,
-		messageId,
-	}, options), {
+const addReactionToMessage = async function(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options?: AxiosRequestConfig): addReactionResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
 		reaction: selectedEmoji,
 	} as addReactionParams, options)
 }
 
-const removeReactionFromMessage = async function(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options: object): deleteReactionResponse {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', {
-		token,
-		messageId,
-	}, options), {
+const removeReactionFromMessage = async function(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig): deleteReactionResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
 		...options,
 		params: {
 			reaction: selectedEmoji,
@@ -35,11 +30,8 @@ const removeReactionFromMessage = async function(token: string, messageId: numbe
 	})
 }
 
-const getReactionsDetails = async function(token: string, messageId: number, options: object): getReactionsResponse {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', {
-		token,
-		messageId,
-	}, options), options)
+const getReactionsDetails = async function(token: string, messageId: number, options?: AxiosRequestConfig): getReactionsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), options)
 }
 
 export { addReactionToMessage, getReactionsDetails, removeReactionFromMessage }

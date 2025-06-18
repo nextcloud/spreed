@@ -16,6 +16,7 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'actorId'
 	| 'actorType'
 	| 'actorDisplayName'
+	| 'silent'
 > & {
 	uploadId: string
 	index: number
@@ -54,6 +55,7 @@ export function prepareTemporaryMessage({
 	actorType,
 	actorDisplayName,
 	parent,
+	silent = false,
 }: PrepareTemporaryMessagePayload): ChatMessage {
 	const date = new Date()
 	let tempId = 'temp-' + date.getTime()
@@ -92,5 +94,6 @@ export function prepareTemporaryMessage({
 		actorId,
 		actorType,
 		actorDisplayName,
+		silent,
 	}
 }

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	AutocompleteParams,
 	AutocompleteResponse,
@@ -43,14 +44,14 @@ type SearchPayload = {
  * @param [payload.token] The token of the conversation (if any) | 'new' for new conversations
  * @param [payload.onlyUsers] Whether to return only registered users
  * @param [payload.forceTypes] Whether to force some types to be included in query
- * @param options options
+ * @param [options] Axios request options
  */
 const autocompleteQuery = async function({
 	searchText,
 	token = 'new',
 	onlyUsers = false,
 	forceTypes = [],
-}: SearchPayload, options: object): AutocompleteResponse {
+}: SearchPayload, options?: AxiosRequestConfig): AutocompleteResponse {
 	const shareTypes: ShareType[] = onlyUsers
 		? [SHARE.TYPE.USER]
 		: [
@@ -72,19 +73,19 @@ const autocompleteQuery = async function({
 	})
 }
 
-const getUserProfile = async function(userId: string, options?: object): UserProfileResponse {
+const getUserProfile = async function(userId: string, options?: AxiosRequestConfig): UserProfileResponse {
 	return axios.get(generateOcsUrl('profile/{userId}', { userId }), options)
 }
 
-const getTaskById = async function(id: number, options?: object): TaskProcessingResponse {
+const getTaskById = async function(id: number, options?: AxiosRequestConfig): TaskProcessingResponse {
 	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-const deleteTaskById = async function(id: number, options?: object): Promise<null> {
+const deleteTaskById = async function(id: number, options?: AxiosRequestConfig): Promise<null> {
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-const searchMessages = async function(params: SearchMessagePayload, options: object): UnifiedSearchResponse {
+const searchMessages = async function(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
 	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {
 		...options,
 		params,
