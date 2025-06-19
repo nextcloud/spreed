@@ -3,7 +3,11 @@
   "version": "20.1.7",
   "private": true,
   "description": "",
+  "license": "agpl",
   "author": "Joas Schilling <coding@schilljs.com>",
+  "browser": {
+    "fs": false
+  },
   "scripts": {
     "build": "webpack --node-env production --progress",
     "dev": "webpack --node-env development --progress",
@@ -24,6 +28,9 @@
     "analyze:serve": "webpack-bundle-analyzer js/stats.json js/",
     "analyze:report": "webpack-bundle-analyzer js/stats.json js/ --mode static --report js/stats/report.html"
   },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
   "dependencies": {
     "@linusborg/vue-simple-portal": "^0.1.5",
     "@nextcloud/auth": "^2.4.0",
@@ -104,15 +111,8 @@
     "webpack-bundle-analyzer": "^4.10.2",
     "worker-loader": "^3.0.8"
   },
-  "browser": {
-    "fs": false
-  },
-  "browserslist": [
-    "extends @nextcloud/browserslist-config"
-  ],
   "engines": {
     "node": "^20.0.0",
     "npm": "^10.0.0"
-  },
-  "license": "agpl"
+  }
 }
