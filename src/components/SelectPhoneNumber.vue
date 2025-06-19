@@ -22,11 +22,11 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import Hint from './UIShared/Hint.vue'
+import { useLibphonenumber } from '../composables/useLibphonenumber.ts'
 import { ATTENDEE, AVATAR } from '../constants.ts'
 
 export default {
@@ -59,8 +59,12 @@ export default {
 	emits: ['select', 'update:participantPhoneItem'],
 
 	setup() {
+		const { isLibphonenumberReady, libphonenumber } = useLibphonenumber()
+
 		return {
 			AVATAR,
+			isLibphonenumberReady,
+			libphonenumber,
 		}
 	},
 
@@ -70,13 +74,17 @@ export default {
 		 * @return {import('libphonenumber-js').PhoneNumber|undefined}
 		 */
 		libPhoneNumber() {
-			return this.value
-				? parsePhoneNumberFromString(this.value)
+			return this.isLibphonenumberReady && this.value
+				? this.libphonenumber.parsePhoneNumberFromString(this.value)
 				: undefined
 		},
 
 		errorHint() {
-			switch (validatePhoneNumberLength(this.value)) {
+			if (!this.isLibphonenumberReady) {
+				return t('spreed', 'Loading …')
+			}
+
+			switch (this.libphonenumber.validatePhoneNumberLength(this.value)) {
 				case 'INVALID_LENGTH': return t('spreed', 'Number length is not valid')
 				case 'INVALID_COUNTRY': return t('spreed', 'Region code is not valid')
 				case 'TOO_SHORT': return t('spreed', 'Number length is too short')
