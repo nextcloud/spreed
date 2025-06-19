@@ -510,6 +510,7 @@ OC.L10N.register(
     "Delete this server" : "Desaniciar esti sirvidor",
     "Test this server" : "Probar esti sirvidor",
     "SIP configuration saved!" : "¡Guardóse la configuración de SIP!",
+    "Error code" : "Códigu d'error",
     "High-performance backend URL" : "URL del backend de rindimientu altu",
     "High-performance backend settings saved" : "Guardóse la configuración del backend de rindimientu altu",
     "STUN server URL" : "URL del sirvidor STUN",

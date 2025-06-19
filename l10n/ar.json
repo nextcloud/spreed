@@ -886,6 +886,7 @@
     "Talk Backend URL" : "عنوان URL لخلفية \"المحادثة\" Talk",
     "WebSocket URL" : "عنوان URL لـ\"مَقبَس الوِب\" WebSocket",
     "Available features" : "الخصائص المُتَاحة",
+    "Error code" : "رقم الخطأ",
     "Error: Websocket connection failed. Check browser console" : "خطأ: فشل الاتصال عن طريق \"مقبس الوب\" WebSocket. أنظُر طَرَفِيّة المُتصَفِّح browser console",
     "High-performance backend URL" : "رابط خلفية أعلى اداء",
     "Missing High-performance backend warning hidden" : "التحذير من عدم وجود خلفية للأداء العالي لن يتم إظهاره",
