@@ -5,7 +5,6 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import cloneDeep from 'lodash/cloneDeep.js'
 import {
 	ATTENDEE,
 	CHAT,
@@ -38,6 +37,7 @@ import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { isHiddenSystemMessage } from '../utils/message.ts'
+import { cloneDeepJson } from '../utils/utils.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -1389,7 +1389,7 @@ const actions = {
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
-		const message = cloneDeep(messageToBeForwarded)
+		const message = cloneDeepJson(messageToBeForwarded)
 
 		// when there is no token provided, the message will be forwarded to the Note to self conversation
 		if (!targetToken) {
