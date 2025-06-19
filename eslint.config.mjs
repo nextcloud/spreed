@@ -8,12 +8,17 @@ import globals from 'globals'
 
 export default [
 	...recommendedVue2,
-	// Skip OpenAPI generated files
+
 	{
-		ignores: ['src/types/openapi/*'],
+		name: 'talk/ignores',
+		ignores: [
+			// Generated files
+			'src/types/openapi/*',
+		],
 	},
-	// Global overrides
+
 	{
+		name: 'talk/config',
 		languageOptions: {
 			globals: {
 				...globals.browser,
@@ -23,8 +28,9 @@ export default [
 			},
 		},
 	},
-	// Global overrides for Jest tests and utils
+
 	{
+		name: 'talk/jest',
 		files: ['src/__mocks__/*.js', '**/*.spec.js', 'src/test-setup.js'],
 		languageOptions: {
 			globals: {
@@ -32,8 +38,9 @@ export default [
 			},
 		},
 	},
-	// Disabled rules from recommendedVue2 pack
+
 	{
+		name: 'talk/disabled-during-migration',
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
 			'@nextcloud/vue/no-deprecated-props': 'off', // TODO
