@@ -261,6 +261,7 @@ OC.L10N.register(
     "Country" : "Land",
     "Status" : "Status",
     "Created at" : "Geskep om",
+    "Error code" : "Foutkode",
     "OK" : "Goed",
     "Checking …" : "Gaan tans na …",
     "Confirm" : "Bevestig",
