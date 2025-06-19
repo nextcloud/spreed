@@ -679,6 +679,7 @@
     "Only users of the following groups can enable SIP in conversations they moderate" : "Само потребители от следните групи могат да активират SIP в разговорите, които модерират",
     "Phone number (Country)" : "Телефонен номер (държава)",
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Тази информация се изпраща в имейли с покани, също така се показва в страничната лента на всички участници.",
+    "Error code" : "Код за грешка",
     "High-performance backend URL" : "URL адрес на високопроизводителен сървър",
     "High-performance backend settings saved" : "Настройките на бекенд сървъра с висока производителност са запазени",
     "STUN server URL" : "URL на STUN сървъра",
