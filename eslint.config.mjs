@@ -14,6 +14,10 @@ export default [
 		ignores: [
 			// Generated files
 			'src/types/openapi/*',
+			// Temporary ignore code in documentation examples
+			'docs',
+			// TODO: upstream
+			'openapi-*.json',
 		],
 	},
 
