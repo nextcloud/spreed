@@ -6,7 +6,6 @@ import { emit } from '@nextcloud/event-bus'
 import { createLocalVue } from '@vue/test-utils'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -877,16 +876,10 @@ describe('participantsStore', () => {
 		})
 
 		describe('force join on error', () => {
-			let restoreConsole
-			beforeEach(() => {
-				restoreConsole = mockConsole(['error', 'debug'])
-			})
 			afterEach(() => {
 				jest.useRealTimers()
 				expect(SessionStorage.getItem('joined_conversation')).toBe(null)
 				expect(joinedConversationEventMock).not.toHaveBeenCalled()
-
-				restoreConsole()
 			})
 
 			/**

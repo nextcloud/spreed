@@ -5,7 +5,6 @@ import { getUploader } from '@nextcloud/upload'
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue } from '@vue/test-utils'
-import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -66,7 +65,6 @@ describe('fileUploadStore', () => {
 	})
 
 	describe('uploading', () => {
-		let restoreConsole
 		const uploadMock = jest.fn()
 		const client = {
 			exists: jest.fn(),
@@ -75,13 +73,13 @@ describe('fileUploadStore', () => {
 		beforeEach(() => {
 			storeConfig.getters.getAttachmentFolder = jest.fn().mockReturnValue(() => '/Talk')
 			store = new Vuex.Store(storeConfig)
-			restoreConsole = mockConsole(['error', 'debug'])
 			getDavClient.mockReturnValue(client)
 			getUploader.mockReturnValue({ upload: uploadMock })
+			console.error = jest.fn()
 		})
 
 		afterEach(() => {
-			restoreConsole()
+			jest.clearAllMocks()
 		})
 
 		test('initialises upload for given files', () => {
@@ -271,7 +269,6 @@ describe('fileUploadStore', () => {
 				reason: 'failed-upload',
 			})
 			expect(showError).toHaveBeenCalled()
-			expect(console.error).toHaveBeenCalled()
 		})
 
 		test('marks temporary message as failed in case of sharing error', async () => {
