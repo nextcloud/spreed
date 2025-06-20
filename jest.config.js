@@ -44,7 +44,7 @@ module.exports = {
 		`<rootDir>/node_modules/(?!(?:.*\\/node_modules\\/)?(?:${ignorePatterns.join('|')}))`,
 	],
 	resetMocks: false,
-	setupFiles: ['jest-localstorage-mock'],
+	setupFiles: [],
 	setupFilesAfterEnv: [
 		'<rootDir>/src/test-setup.js',
 		'jest-mock-console/dist/setupTestFramework.js',
