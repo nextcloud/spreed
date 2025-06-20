@@ -104,6 +104,7 @@ describe('conversationsStore', () => {
 			attendeeId: 'attendee-id-1',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			actorId: 'actor-id',
+			permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 			defaultPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 			callPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 			lastMessage: { ...previousLastMessage },
@@ -159,6 +160,7 @@ describe('conversationsStore', () => {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 					lastPing: 600,
 					participantType: PARTICIPANT.TYPE.USER,
+					permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 					sessionIds: [
 						'session-id-1',
 					],
@@ -191,6 +193,7 @@ describe('conversationsStore', () => {
 					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 					lastPing: 600,
 					participantType: PARTICIPANT.TYPE.USER,
+					permissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 					sessionIds: [
 						'session-id-1',
 					],
