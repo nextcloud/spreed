@@ -1,12 +1,22 @@
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+import type {
+	Conversation,
+	Participant,
+	SignalingSessionPayload,
+	StandaloneSignalingLeaveSession,
+	StandaloneSignalingUpdateSession,
+} from '../types/index.ts'
+
+import { createSharedComposable } from '@vueuse/core'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { CONFIG, CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -15,25 +25,31 @@ import { useStore } from './useStore.js'
 
 const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.UPDATE_PARTICIPANTS
 
+let fetchingParticipants = false
+let pendingChanges = true
+let throttleFastUpdateTimeout: NodeJS.Timeout | undefined
+let throttleSlowUpdateTimeout: NodeJS.Timeout | undefined
+let throttleLongUpdateTimeout: NodeJS.Timeout | undefined
+
 /**
- * @param {import('vue').Ref} isActive whether the participants tab is active
- * @param {boolean} isTopBar whether the component is the top bar
+ * Composable to control logic for fetching participants list
+ *
+ * @param activeTab current active tab
  */
-export function useGetParticipants(isActive = ref(true), isTopBar = true) {
-	// Encapsulation
+function useGetParticipantsComposable(activeTab = ref('participants')) {
+	const actorStore = useActorStore()
 	const sessionStore = useSessionStore()
 	const store = useStore()
-	const token = useGetToken()
-	const conversation = computed(() => store.getters.conversation(token.value))
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()
+
+	const isActive = computed(() => activeTab.value === 'participants')
+	const token = useGetToken()
+	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(token.value))
+	const isInLobby = computed<boolean>(() => store.getters.isInLobby)
+	const isModeratorOrUser = computed<boolean>(() => store.getters.isModeratorOrUser)
 	const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
 		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)
-	let fetchingParticipants = false
-	let pendingChanges = true
-	let throttleFastUpdateTimeout = null
-	let throttleSlowUpdateTimeout = null
-	let throttleLongUpdateTimeout = null
 
 	/**
 	 * Initialise the get participants listeners
@@ -54,10 +70,13 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 			// periodically gets a hash of all online sessions?
 			EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
 		}
-		subscribe('guest-promoted', onJoinedConversation)
+		EventBus.on('signaling-users-changed', checkCurrentUserPermissions)
 	}
 
-	const handleUsersUpdated = async ([users]) => {
+	/**
+	 * Patch participants list from signaling messages (joined/changed)
+	 */
+	function handleUsersUpdated([users]: [SignalingSessionPayload[]]) {
 		if (sessionStore.updateSessions(token.value, users)) {
 			throttleUpdateParticipants()
 		} else {
@@ -65,14 +84,44 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		}
 	}
 
-	const handleUsersLeft = ([sessionIds]) => {
+	/**
+	 * Check if current user permission has been changed from signaling messages
+	 */
+	async function checkCurrentUserPermissions([users]: [StandaloneSignalingUpdateSession[]]) {
+		// TODO: move logic to sessionStore once experimental flag is dropped
+		const currentUser = users.find((user) => {
+			return user.userId ? user.userId === actorStore.userId : user.actorId === actorStore.actorId
+		})
+		if (!currentUser) {
+			return
+		}
+		// refresh conversation, if current user permissions have been changed
+		if (currentUser.participantPermissions !== conversation.value?.permissions) {
+			await store.dispatch('fetchConversation', { token: token.value })
+		}
+
+		const currentParticipant = store.getters.getParticipant(token.value, actorStore.attendeeId)
+		if (currentParticipant && isModeratorOrUser.value && currentUser.participantPermissions !== currentParticipant.permissions) {
+			await cancelableGetParticipants()
+		}
+	}
+
+	/**
+	 * Patch participants list from signaling messages (left)
+	 */
+	function handleUsersLeft([sessionIds]: [StandaloneSignalingLeaveSession[]]) {
 		sessionStore.updateSessionsLeft(token.value, sessionIds)
 		throttleLongUpdate()
 	}
-	const handleUsersDisconnected = () => {
+
+	/**
+	 * Patch participants list from signaling messages (end call for everyone)
+	 */
+	function handleUsersDisconnected() {
 		sessionStore.updateParticipantsDisconnectedFromStandaloneSignaling(token.value)
 		throttleLongUpdate()
 	}
+
 	/**
 	 * Stop the get participants listeners
 	 *
@@ -86,10 +135,13 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		EventBus.off('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
 		EventBus.off('signaling-participant-list-updated', throttleUpdateParticipants)
 		EventBus.off('signaling-participant-list-changed', throttleUpdateParticipants)
-		unsubscribe('guest-promoted', onJoinedConversation)
+		EventBus.off('signaling-users-changed', checkCurrentUserPermissions)
 	}
 
-	const onJoinedConversation = () => {
+	/**
+	 * Trigger participants list update upon joining
+	 */
+	async function onJoinedConversation() {
 		if (isOneToOneConversation.value || experimentalUpdateParticipants) {
 			cancelableGetParticipants()
 		} else {
@@ -97,7 +149,12 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		}
 	}
 
-	const throttleUpdateParticipants = () => {
+	/**
+	 * Schedule a participants list update depending on conditions:
+	 * - participant list is visible - fast update
+	 * - chat is open, tab is in background, user is not in the current call - slow update
+	 */
+	function throttleUpdateParticipants() {
 		if (!isActive.value && !isInCall.value) {
 			// Update is ignored but there is a flag to force the participants update
 			pendingChanges = true
@@ -112,10 +169,11 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		pendingChanges = false
 	}
 
-	const cancelableGetParticipants = async () => {
-		const isInLobby = store.getters.isInLobby
-		const isModeratorOrUser = store.getters.isModeratorOrUser
-		if (fetchingParticipants || token.value === '' || isInLobby || !isModeratorOrUser) {
+	/**
+	 * Update participants list
+	 */
+	async function cancelableGetParticipants() {
+		if (fetchingParticipants || token.value === '' || isInLobby.value || !isModeratorOrUser.value) {
 			return
 		}
 
@@ -126,27 +184,34 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		fetchingParticipants = false
 	}
 
-	const throttleFastUpdate = () => {
+	/**
+	 * Schedule a participants list update (in 3 seconds)
+	 */
+	function throttleFastUpdate() {
 		if (!fetchingParticipants && !throttleFastUpdateTimeout) {
 			throttleFastUpdateTimeout = setTimeout(cancelableGetParticipants, 3_000)
 		}
 	}
-	const throttleSlowUpdate = () => {
+
+	/**
+	 * Schedule a participants list update (in 15 seconds)
+	 */
+	function throttleSlowUpdate() {
 		if (!fetchingParticipants && !throttleSlowUpdateTimeout) {
 			throttleSlowUpdateTimeout = setTimeout(cancelableGetParticipants, 15_000)
 		}
 	}
-	const throttleLongUpdate = () => {
+
+	/**
+	 * Schedule a participants list update (in 60 seconds)
+	 */
+	function throttleLongUpdate() {
 		if (!fetchingParticipants && !throttleLongUpdateTimeout) {
 			throttleLongUpdateTimeout = setTimeout(cancelableGetParticipants, 60_000)
 		}
 	}
 
-	onMounted(() => {
-		if (isTopBar) {
-			initialiseGetParticipants()
-		}
-	})
+	initialiseGetParticipants()
 
 	watch(token, () => {
 		cancelPendingUpdates()
@@ -158,11 +223,16 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		}
 	})
 
+	watch(isModeratorOrUser, (newValue, oldValue) => {
+		if (newValue && !oldValue) {
+			// Fetch participants list if guest was promoted to moderators
+			nextTick(() => throttleUpdateParticipants())
+		}
+	})
+
 	onBeforeUnmount(() => {
 		cancelPendingUpdates()
-		if (isTopBar) {
-			stopGetParticipants()
-		}
+		stopGetParticipants()
 	})
 
 	/**
@@ -171,14 +241,19 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 */
 	function cancelPendingUpdates() {
 		clearTimeout(throttleFastUpdateTimeout)
-		throttleFastUpdateTimeout = null
+		throttleFastUpdateTimeout = undefined
 		clearTimeout(throttleSlowUpdateTimeout)
-		throttleSlowUpdateTimeout = null
+		throttleSlowUpdateTimeout = undefined
 		clearTimeout(throttleLongUpdateTimeout)
-		throttleLongUpdateTimeout = null
+		throttleLongUpdateTimeout = undefined
 	}
 
 	return {
 		cancelableGetParticipants,
 	}
 }
+
+/**
+ * Shared composable to control logic for fetching participants list
+ */
+export const useGetParticipants = createSharedComposable(useGetParticipantsComposable)

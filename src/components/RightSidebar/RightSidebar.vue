@@ -61,7 +61,7 @@
 				<template #icon>
 					<IconAccountMultiple :size="20" />
 				</template>
-				<ParticipantsTab :is-active="activeTab === 'participants'"
+				<ParticipantsTab
 					:can-search="canSearchParticipants"
 					:can-add="canAddParticipants" />
 			</NcAppSidebarTab>
@@ -140,6 +140,7 @@ import RightSidebarContent from './RightSidebarContent.vue'
 import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
+import { useGetParticipants } from '../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -185,6 +186,9 @@ export default {
 	},
 
 	setup() {
+		const activeTab = ref('participants')
+		useGetParticipants(activeTab)
+
 		const sidebar = ref(null)
 		const sidebarContent = ref(null)
 		const contentModeIndex = ref(0)
@@ -231,6 +235,7 @@ export default {
 		}
 
 		return {
+			activeTab,
 			CONTENT_MODES,
 			contentModeIndex,
 			sidebar,
@@ -243,7 +248,6 @@ export default {
 
 	data() {
 		return {
-			activeTab: 'participants',
 			contactsLoading: false,
 			unreadNotificationHandle: null,
 			showSearchMessagesTab: false,
@@ -458,11 +462,9 @@ export default {
 		},
 
 		isModeratorOrUser(newValue) {
-			if (newValue) {
-				// Fetch participants list if guest was promoted to moderators
-				this.$nextTick(() => {
-					emit('guest-promoted', { token: this.token })
-				})
+			if (newValue && !this.isInCall) {
+				// Switch active tab to participants list if guest was promoted to moderators
+				this.activeTab = 'participants'
 			} else {
 				// Switch active tab to chat if guest was demoted from moderators
 				this.activeTab = 'chat'

@@ -85,7 +85,7 @@ import ParticipantsList from './ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
-import { useGetParticipants } from '../../../composables/useGetParticipants.js'
+import { useGetParticipants } from '../../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
@@ -95,7 +95,6 @@ import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesMan
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
-import { useActorStore } from '../../../stores/actor.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
@@ -117,11 +116,6 @@ export default {
 	},
 
 	props: {
-		isActive: {
-			type: Boolean,
-			required: true,
-		},
-
 		canSearch: {
 			type: Boolean,
 			required: true,
@@ -133,13 +127,12 @@ export default {
 		},
 	},
 
-	setup(props) {
+	setup() {
 		const wrapper = ref(null)
 		const searchBox = ref(null)
-		const { isActive } = toRefs(props)
 		const { sortParticipants } = useSortParticipants()
 		const isInCall = useIsInCall()
-		const { cancelableGetParticipants } = useGetParticipants(isActive, false)
+		const { cancelableGetParticipants } = useGetParticipants()
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, searchBox)
 
@@ -157,7 +150,6 @@ export default {
 			isInCall,
 			cancelableGetParticipants,
 			sidebarStore: useSidebarStore(),
-			actorStore: useActorStore(),
 			token: useGetToken(),
 		}
 	},
@@ -246,7 +238,6 @@ export default {
 		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
 
 		EventBus.on('route-change', this.abortSearch)
-		EventBus.on('signaling-users-changed', this.updateUsers)
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
@@ -254,7 +245,6 @@ export default {
 		this.debounceFetchSearchResults.clear?.()
 
 		EventBus.off('route-change', this.abortSearch)
-		EventBus.off('signaling-users-changed', this.updateUsers)
 		unsubscribe('user_status:status.updated', this.updateUserStatus)
 
 		this.cancelSearchPossibleConversations()
@@ -263,24 +253,6 @@ export default {
 
 	methods: {
 		t,
-		async updateUsers([users]) {
-			const currentUser = users.find((user) => {
-				return user.userId ? user.userId === this.actorStore.userId : user.actorId === this.actorStore.actorId
-			})
-			if (!currentUser) {
-				return
-			}
-			// refresh conversation, if current user permissions have been changed
-			if (currentUser.participantPermissions !== this.conversation.permissions) {
-				await this.$store.dispatch('fetchConversation', { token: this.token })
-			}
-
-			const currentParticipant = this.$store.getters.getParticipant(this.token, this.actorStore.attendeeId)
-			if (currentParticipant && this.$store.getters.isModeratorOrUser
-				&& currentUser.participantPermissions !== currentParticipant?.permissions) {
-				await this.cancelableGetParticipants()
-			}
-		},
 
 		handleClose() {
 			this.$store.dispatch('hideSidebar')

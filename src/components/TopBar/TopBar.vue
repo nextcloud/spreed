@@ -129,7 +129,6 @@ import ReactionMenu from './ReactionMenu.vue'
 import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
-import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -181,8 +180,6 @@ export default {
 	},
 
 	setup() {
-		useGetParticipants()
-
 		return {
 			AVATAR,
 			localCallParticipantModel,
