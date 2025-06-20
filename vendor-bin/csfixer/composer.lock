@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f9023dcc9805b2f5ce2c4e9cda194c7",
+    "content-hash": "6386aad3c56d5f22c996cdbfe3da24d2",
     "packages": [],
     "packages-dev": [
         {
@@ -55,21 +55,21 @@
         },
         {
             "name": "nextcloud/coding-standard",
-            "version": "v1.3.2",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud/coding-standard.git",
-                "reference": "9c719c4747fa26efc12f2e8b21c14a9a75c6ba6d"
+                "reference": "8e06808c1423e9208d63d1bd205b9a38bd400011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud/coding-standard/zipball/9c719c4747fa26efc12f2e8b21c14a9a75c6ba6d",
-                "reference": "9c719c4747fa26efc12f2e8b21c14a9a75c6ba6d",
+                "url": "https://api.github.com/repos/nextcloud/coding-standard/zipball/8e06808c1423e9208d63d1bd205b9a38bd400011",
+                "reference": "8e06808c1423e9208d63d1bd205b9a38bd400011",
                 "shasum": ""
             },
             "require": {
                 "kubawerlos/php-cs-fixer-custom-fixers": "^3.22",
-                "php": "^7.3|^8.0",
+                "php": "^8.0",
                 "php-cs-fixer/shim": "^3.17"
             },
             "type": "library",
@@ -89,11 +89,14 @@
                 }
             ],
             "description": "Nextcloud coding standards for the php cs fixer",
+            "keywords": [
+                "dev"
+            ],
             "support": {
                 "issues": "https://github.com/nextcloud/coding-standard/issues",
-                "source": "https://github.com/nextcloud/coding-standard/tree/v1.3.2"
+                "source": "https://github.com/nextcloud/coding-standard/tree/v1.4.0"
             },
-            "time": "2024-10-14T16:49:05+00:00"
+            "time": "2025-06-19T12:27:27+00:00"
         },
         {
             "name": "php-cs-fixer/shim",
@@ -150,11 +153,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
