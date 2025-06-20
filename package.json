@@ -103,6 +103,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-transform-stub": "^2.0.0",
+    "mini-css-extract-plugin": "^2.9.0",
     "openapi-typescript": "^7.8.0",
     "regenerator-runtime": "^0.14.1",
     "stylelint-use-logical": "^2.1.2",

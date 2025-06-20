@@ -7,6 +7,7 @@ import Vue from 'vue'
 import AdminSettings from './views/AdminSettings.vue'
 
 import '@nextcloud/dialogs/style.css'
+import './assets/admin-settings.css'
 
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA

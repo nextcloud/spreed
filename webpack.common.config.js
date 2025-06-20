@@ -4,6 +4,7 @@
  */
 
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { mergeWithRules } = require('webpack-merge')
 
 const nextcloudWebpackRules = require('@nextcloud/webpack-vue-config/rules')
@@ -27,6 +28,14 @@ module.exports = mergeWithRules({
 {
 	module: {
 		rules: [
+			{
+				test: /\.css$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader'],
+			},
+			{
+				test: /\.scss$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+			},
 			{
 				test: /\.js$/,
 				loader: 'esbuild-loader',
