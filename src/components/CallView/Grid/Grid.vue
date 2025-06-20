@@ -515,10 +515,6 @@ export default {
 				return this.videos
 			}
 
-			if (!this.participantsInitialised) {
-				return []
-			}
-
 			const objectMap = {
 				modelsWithScreenshare: [],
 				modelsTempPromoted: [],
@@ -538,7 +534,7 @@ export default {
 					objectMap.modelsTempPromoted.push(model)
 				} else if (this.isModelWithVideo(model)) {
 					videoTilesMap.set(model.attributes.nextcloudSessionId, model)
-				} else if (this.isModelWithAudio(model)) {
+				} else if (this.participantsInitialised && this.isModelWithAudio(model)) {
 					audioTilesMap.set(model.attributes.nextcloudSessionId, model)
 				} else {
 					objectMap.modelsWithNoPermissions.push(model)

@@ -324,6 +324,7 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionIds: [conversation.sessionId],
 				participantType: conversation.participantType,
+				permissions: conversation.permissions,
 				attendeeId: conversation.attendeeId,
 				actorType: conversation.actorType,
 				actorId: conversation.actorId, // FIXME check public share page handling
