@@ -511,7 +511,7 @@ OC.L10N.register(
     "User" : "Lietotājs",
     "Password" : "Parole",
     "API token" : "API pilnvara",
-    "Login" : "Pieteikumvārds",
+    "Login" : "Pieteikties",
     "Nickname" : "Iesauka",
     "Client ID" : "Klienta ID",
     "Media" : "Informācijas nesēji",
