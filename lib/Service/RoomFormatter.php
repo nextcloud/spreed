@@ -325,8 +325,8 @@ class RoomFormatter {
 					$roomData['canLeaveConversation'] = false;
 				}
 
-				$roomData['canEnableSIP'] =
-					$this->talkConfig->isSIPConfigured()
+				$roomData['canEnableSIP']
+					= $this->talkConfig->isSIPConfigured()
 					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
 					&& ($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC)
 					&& $currentParticipant->hasModeratorPermissions(false)
@@ -352,9 +352,9 @@ class RoomFormatter {
 			$roomData['remoteToken'] = $room->getRemoteToken();
 		}
 
-		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
-			!$currentParticipant->hasModeratorPermissions() &&
-			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS
+			&& !$currentParticipant->hasModeratorPermissions()
+			&& !($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 			// No participants and chat messages for users in the lobby.
 			$roomData['hasCall'] = false;
 			$roomData['unreadMessages'] = 0;

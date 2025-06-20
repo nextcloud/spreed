@@ -54,9 +54,9 @@ class TempAvatarController extends OCSController {
 		}
 
 		if (
-			$files['error'][0] === 0 &&
-			is_uploaded_file($files['tmp_name'][0]) &&
-			!Filesystem::isFileBlacklisted($files['tmp_name'][0])
+			$files['error'][0] === 0
+			&& is_uploaded_file($files['tmp_name'][0])
+			&& !Filesystem::isFileBlacklisted($files['tmp_name'][0])
 		) {
 			if ($files['size'][0] > 20 * 1024 * 1024) {
 				return new DataResponse(

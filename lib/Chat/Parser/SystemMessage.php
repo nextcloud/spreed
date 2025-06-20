@@ -144,36 +144,36 @@ class SystemMessage implements IEventListener {
 
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
-			$currentUserIsActor = isset($parsedParameters['actor']['server']) &&
-				$parsedParameters['actor']['type'] === 'user' &&
-				$this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id'] &&
-				$this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
+			$currentUserIsActor = isset($parsedParameters['actor']['server'])
+				&& $parsedParameters['actor']['type'] === 'user'
+				&& $this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id']
+				&& $this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
 		} elseif (!$participant->isGuest()) {
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
-			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
-				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
-				$currentActorId === $parsedParameters['actor']['id'] &&
-				empty($parsedParameters['actor']['server']);
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user'
+				&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+				&& $currentActorId === $parsedParameters['actor']['id']
+				&& empty($parsedParameters['actor']['server']);
 		} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
-			$currentUserIsActor = $parsedParameters['actor']['type'] === 'email' &&
-				$participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS &&
-				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'email'
+				&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS
+				&& $participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		} else {
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
-			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-				$participant->getAttendee()->getActorType() === 'guest' &&
-				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest'
+				&& $participant->getAttendee()->getActorType() === 'guest'
+				&& $participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		}
-		$cliIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-			'guest/' . Attendee::ACTOR_ID_CLI === $parsedParameters['actor']['id'];
+		$cliIsActor = $parsedParameters['actor']['type'] === 'guest'
+			&& 'guest/' . Attendee::ACTOR_ID_CLI === $parsedParameters['actor']['id'];
 
 		if ($message === 'conversation_created') {
-			$systemIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-				'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
+			$systemIsActor = $parsedParameters['actor']['type'] === 'guest'
+				&& 'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
 
 			$parsedMessage = $this->l->t('{actor} created the conversation');
 			if ($currentUserIsActor) {
@@ -727,19 +727,19 @@ class SystemMessage implements IEventListener {
 				];
 			}
 
-			$currentUserIsActor = isset($parsedParameters['actor']['server']) &&
-				$parsedParameters['actor']['type'] === 'user' &&
-				$this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id'] &&
-				$this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
+			$currentUserIsActor = isset($parsedParameters['actor']['server'])
+				&& $parsedParameters['actor']['type'] === 'user'
+				&& $this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id']
+				&& $this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
 		} elseif (!$participant->isGuest()) {
-			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
-				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
-				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'] &&
-				empty($parsedParameters['actor']['server']);
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user'
+				&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+				&& $participant->getAttendee()->getActorId() === $parsedParameters['actor']['id']
+				&& empty($parsedParameters['actor']['server']);
 		} else {
-			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-				$participant->getAttendee()->getActorType() === 'guest' &&
-				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest'
+				&& $participant->getAttendee()->getActorType() === 'guest'
+				&& $participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		}
 
 		if ($chatMessage->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {

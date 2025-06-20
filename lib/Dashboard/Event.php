@@ -223,8 +223,8 @@ class Event implements \JsonSerializable {
 
 		foreach ($attachments as $filename => $attachment) {
 			if (isset($this->eventAttachments[$filename])) {
-				$this->eventAttachments[$filename]['calendars'] =
-					array_merge($this->eventAttachments[$filename]['calendars'], $attachment['calendars']);
+				$this->eventAttachments[$filename]['calendars']
+					= array_merge($this->eventAttachments[$filename]['calendars'], $attachment['calendars']);
 			} else {
 				$this->eventAttachments[$filename] = $attachment;
 			}

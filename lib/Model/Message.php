@@ -165,12 +165,12 @@ class Message {
 	 * Specifies whether a message can be replied to
 	 */
 	public function isReplyable(): bool {
-		return $this->getMessageType() !== ChatManager::VERB_SYSTEM &&
-			$this->getMessageType() !== ChatManager::VERB_COMMAND &&
-			$this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED &&
-			$this->getMessageType() !== ChatManager::VERB_REACTION &&
-			$this->getMessageType() !== ChatManager::VERB_REACTION_DELETED &&
-			\in_array($this->getActorType(), [
+		return $this->getMessageType() !== ChatManager::VERB_SYSTEM
+			&& $this->getMessageType() !== ChatManager::VERB_COMMAND
+			&& $this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED
+			&& $this->getMessageType() !== ChatManager::VERB_REACTION
+			&& $this->getMessageType() !== ChatManager::VERB_REACTION_DELETED
+			&& \in_array($this->getActorType(), [
 				Attendee::ACTOR_USERS,
 				Attendee::ACTOR_FEDERATED_USERS,
 				Attendee::ACTOR_GUESTS,

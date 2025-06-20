@@ -118,8 +118,8 @@ class CanUseTalkMiddleware extends Middleware {
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
-		if ($exception instanceof CanNotUseTalkException ||
-			$exception instanceof ForbiddenException) {
+		if ($exception instanceof CanNotUseTalkException
+			|| $exception instanceof ForbiddenException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException($exception->getMessage(), Http::STATUS_FORBIDDEN);
 			}

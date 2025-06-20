@@ -378,7 +378,7 @@ class AddTest extends TestCase {
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
-	
+
 	public function testAddDuplicateServer(): void {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
@@ -413,7 +413,7 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server already exists with the same configuration.</error>'));
-	
+
 		$this->assertSame(1, self::invokePrivate($this->command, 'execute', [$this->input, $this->output]));
 	}
 

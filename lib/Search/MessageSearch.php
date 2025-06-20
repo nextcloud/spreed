@@ -141,13 +141,13 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	public function performSearch(IUser $user, ISearchQuery $query, string $title, array $rooms, bool $isCurrentMessageSearch = false): SearchResult {
 		$roomMap = [];
 		foreach ($rooms as $room) {
-			if (!$isCurrentMessageSearch &&
-				$room->getType() === Room::TYPE_CHANGELOG) {
+			if (!$isCurrentMessageSearch
+				&& $room->getType() === Room::TYPE_CHANGELOG) {
 				continue;
 			}
 
-			if (!$isCurrentMessageSearch &&
-				$this->getCurrentConversationToken($query) === $room->getToken()) {
+			if (!$isCurrentMessageSearch
+				&& $this->getCurrentConversationToken($query) === $room->getToken()) {
 				// No search result from current conversation
 				continue;
 			}

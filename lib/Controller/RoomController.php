@@ -1481,10 +1481,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		if ($room->getType() !== Room::TYPE_CHANGELOG &&
-			$room->getObjectType() !== Room::OBJECT_TYPE_FILE &&
-			$this->participantService->getNumberOfUsers($room) === 1 &&
-			\in_array($participant->getAttendee()->getParticipantType(), [
+		if ($room->getType() !== Room::TYPE_CHANGELOG
+			&& $room->getObjectType() !== Room::OBJECT_TYPE_FILE
+			&& $this->participantService->getNumberOfUsers($room) === 1
+			&& \in_array($participant->getAttendee()->getParticipantType(), [
 				Participant::USER,
 				Participant::MODERATOR,
 				Participant::OWNER,

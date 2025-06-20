@@ -105,8 +105,8 @@ class CheckHostedSignalingServer extends TimedJob {
 
 			// only credentials have changed
 		} elseif ($newStatus === 'active' && (
-			$oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url'] ||
-			$oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret'])
+			$oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url']
+			|| $oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret'])
 		) {
 			$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
 				'servers' => [

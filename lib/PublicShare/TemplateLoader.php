@@ -64,8 +64,8 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
-			$this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1'
+			|| $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
 			return;
 		}
 

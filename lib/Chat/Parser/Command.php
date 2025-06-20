@@ -50,9 +50,9 @@ class Command implements IEventListener {
 		}
 
 		$participant = $message->getParticipant();
-		if ($data['visibility'] !== self::RESPONSE_ALL &&
-			$participant !== null &&
-			($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
+		if ($data['visibility'] !== self::RESPONSE_ALL
+			&& $participant !== null
+			&& ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
 				|| $data['user'] !== $participant->getAttendee()->getActorId())) {
 			$message->setVisibility(false);
 			return;

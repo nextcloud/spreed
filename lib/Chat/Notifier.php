@@ -647,8 +647,8 @@ class Notifier {
 				$participant = new Participant($room, $attendee, null);
 			}
 
-			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
-				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				return self::PRIORITY_NONE;
 			}
 
