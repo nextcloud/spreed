@@ -117,11 +117,6 @@ export default {
 	},
 
 	props: {
-		isActive: {
-			type: Boolean,
-			required: true,
-		},
-
 		canSearch: {
 			type: Boolean,
 			required: true,
@@ -133,13 +128,12 @@ export default {
 		},
 	},
 
-	setup(props) {
+	setup() {
 		const wrapper = ref(null)
 		const searchBox = ref(null)
-		const { isActive } = toRefs(props)
 		const { sortParticipants } = useSortParticipants()
 		const isInCall = useIsInCall()
-		const { cancelableGetParticipants } = useGetParticipants(isActive, false)
+		const { cancelableGetParticipants } = useGetParticipants()
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, searchBox)
 
