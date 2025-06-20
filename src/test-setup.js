@@ -127,6 +127,10 @@ window.URL.revokeObjectURL = jest.fn()
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
+// Disable Vue's production tip and devtools console messages
+Vue.config.productionTip = false
+Vue.config.devtools = false
+
 // Make Jest fail on errors or warnings (like a11y warning from nextcloud/vue library)
 const originalWarn = global.console.warn
 console.warn = function(message) {
@@ -139,6 +143,10 @@ console.error = function(message) {
 	originalError.apply(console, arguments)
 	throw (message instanceof Error ? message : new Error(message))
 }
+
+// Disable console.debug messages for the sake of cleaner test output
+// Comment this line if required to see debug messages locally
+console.debug = jest.fn()
 
 // Set up Pinia for state management in tests
 setActivePinia(createPinia())
