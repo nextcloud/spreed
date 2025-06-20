@@ -1,15 +1,12 @@
+const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
+const { EsbuildPlugin } = require('esbuild-loader')
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 const path = require('node:path')
-
-const { EsbuildPlugin } = require('esbuild-loader')
 const webpack = require('webpack')
 const { mergeWithRules } = require('webpack-merge')
-
-const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
-
 const commonWebpackConfig = require('./webpack.common.config.js')
 
 module.exports = mergeWithRules({
