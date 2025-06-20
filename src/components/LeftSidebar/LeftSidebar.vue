@@ -9,12 +9,13 @@
 			<div class="new-conversation">
 				<TransitionWrapper name="radial-reveal">
 					<NcButton v-show="searchText === ''"
-						variant="tertiary"
+						:variant="isInDashboard ? 'primary' : 'tertiary'"
 						:class="{ 'hidden-visually': isSearching }"
 						class="talk-home-button"
-						:title="t('spreed', 'Talk home')"
-						:aria-label="t('spreed', 'Talk home')"
-						@click="showTalkDashboard">
+						:title="dashboardButtonLabel"
+						:aria-label="dashboardButtonLabel"
+						:to="{ name: 'root' }"
+						@click="refreshTalkDashboard">
 						<template #icon>
 							<IconHome :size="20" />
 						</template>
@@ -508,6 +509,16 @@ export default {
 		conversationsInitialised() {
 			return this.$store.getters.conversationsInitialised
 		},
+
+		isInDashboard() {
+			return this.$route.name === 'root'
+		},
+
+		dashboardButtonLabel() {
+			return this.isInDashboard
+				? t('spreed', 'Reload Talk home')
+				: t('spreed', 'Talk home')
+		},
 	},
 
 	watch: {
@@ -942,9 +953,10 @@ export default {
 			}
 		},
 
-		showTalkDashboard() {
-			this.$router.push({ name: 'root' })
-				.catch((err) => console.debug(`Error while pushing the dashboard route: ${err}`))
+		refreshTalkDashboard() {
+			if (this.isInDashboard) {
+				EventBus.emit('refresh-talk-dashboard')
+			}
 		},
 	},
 }

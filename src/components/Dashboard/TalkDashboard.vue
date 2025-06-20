@@ -56,33 +56,44 @@ const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
 const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
 const remindersInitialised = computed(() => dashboardStore.upcomingRemindersInitialised)
 const conversationName = ref('')
-let actualiseDataInterval: ReturnType<typeof setInterval> | null = null
+let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
 
 // Data fetching handlers
 
 /**
  * Fetches all necessary data for the dashboard.
  */
-async function actualiseData() {
+async function actualizeData() {
 	await Promise.all([
 		dashboardStore.fetchDashboardEventRooms(),
 		dashboardStore.fetchUpcomingReminders(),
 	])
 }
 
-onMounted(() => {
-	actualiseData()
-	actualiseDataInterval = setInterval(actualiseData, 300_000)
-})
+/**
+ * Initializes the data fetching interval and fetches initial data.
+ */
+function initActualizeData() {
+	if (actualizeDataInterval) {
+		clearInterval(actualizeDataInterval)
+	}
+	actualizeData()
+	actualizeDataInterval = setInterval(actualizeData, 300_000)
+}
+
+initActualizeData()
+EventBus.on('refresh-talk-dashboard', initActualizeData)
 
 onBeforeUnmount(() => {
-	if (actualiseDataInterval) {
-		clearInterval(actualiseDataInterval)
+	if (actualizeDataInterval) {
+		clearInterval(actualizeDataInterval)
 	}
 
 	if (eventCardsWrapper?.value) {
 		resizeObserver.disconnect()
 	}
+
+	EventBus.off('refresh-talk-dashboard', initActualizeData)
 })
 
 watch(eventCardsWrapper, (newValue) => {
