@@ -219,10 +219,6 @@ export default {
 			return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(this.conversation.type)
 		},
 
-		userId() {
-			return this.$store.getters.getUserId()
-		},
-
 		canAddPhones() {
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
@@ -267,9 +263,10 @@ export default {
 
 	methods: {
 		t,
-		async updateUsers(usersList) {
-			const currentUser = usersList.flat().find((user) => user.userId === this.userId)
-			const currentParticipant = this.participants.find((user) => user.userId === this.userId)
+		async updateUsers([users]) {
+			const currentUser = users.find((user) => {
+				return user.userId ? user.userId === this.$store.getters.getUserId() : user.actorId === this.$store.getters.getActorId()
+			})
 			if (!currentUser) {
 				return
 			}
@@ -277,7 +274,10 @@ export default {
 			if (currentUser.participantPermissions !== this.conversation.permissions) {
 				await this.$store.dispatch('fetchConversation', { token: this.token })
 			}
-			if (currentUser.participantPermissions !== currentParticipant?.permissions) {
+
+			const currentParticipant = this.$store.getters.getParticipant(this.token, this.$store.getters.getAttendeeId())
+			if (currentParticipant && this.$store.getters.isModeratorOrUser
+				&& currentUser.participantPermissions !== currentParticipant?.permissions) {
 				await this.cancelableGetParticipants()
 			}
 		},
