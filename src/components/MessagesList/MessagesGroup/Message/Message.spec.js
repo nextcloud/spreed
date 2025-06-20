@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { cloneDeep } from 'es-toolkit'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
-import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex, { Store } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'

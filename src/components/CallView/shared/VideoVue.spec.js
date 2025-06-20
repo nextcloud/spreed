@@ -4,7 +4,7 @@
  */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 import VideoVue from './VideoVue.vue'

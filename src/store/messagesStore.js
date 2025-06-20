@@ -1,10 +1,10 @@
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-/**
+/*
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import cloneDeep from 'lodash/cloneDeep.js'
+
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import Vue from 'vue'
 import {
 	ATTENDEE,
@@ -34,6 +34,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
+import { cloneDeepJson } from '../utils/utils.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -1358,7 +1359,7 @@ const actions = {
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
-		const message = cloneDeep(messageToBeForwarded)
+		const message = cloneDeepJson(messageToBeForwarded)
 
 		// when there is no token provided, the message will be forwarded to the Note to self conversation
 		if (!targetToken) {

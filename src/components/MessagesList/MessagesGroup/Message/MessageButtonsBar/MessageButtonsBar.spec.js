@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
 import Vuex, { Store } from 'vuex'

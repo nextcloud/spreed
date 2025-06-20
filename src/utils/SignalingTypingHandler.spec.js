@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import Vuex from 'vuex'
 import storeConfig from '../store/storeConfig.js'
 import { useActorStore } from '../stores/actor.ts'

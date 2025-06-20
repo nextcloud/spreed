@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'

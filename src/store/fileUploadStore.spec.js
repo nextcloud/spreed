@@ -5,8 +5,8 @@ import { getUploader } from '@nextcloud/upload'
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue } from '@vue/test-utils'
+import { cloneDeep } from 'es-toolkit'
 import mockConsole from 'jest-mock-console'
-import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 import { getDavClient } from '../services/DavClient.ts'

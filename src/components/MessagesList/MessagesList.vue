@@ -63,7 +63,6 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import debounce from 'debounce'
-import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -73,6 +72,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
+import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -123,10 +123,12 @@ export default {
 	setup(props) {
 		const isDocumentVisible = useDocumentVisibility()
 		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
+		const viewId = 'messagesList_' + useId()
 		return {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			isChatVisible,
+			viewId,
 		}
 	},
 
@@ -136,8 +138,6 @@ export default {
 			 * A list of messages grouped by same day and then by author and time.
 			 */
 			messagesGroupedByDateByAuthor: {},
-
-			viewId: uniqueId('messagesList'),
 
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous

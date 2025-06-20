@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue, mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'

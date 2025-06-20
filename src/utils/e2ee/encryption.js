@@ -6,10 +6,10 @@
 import Olm from '@matrix-org/olm'
 import base64js from 'base64-js'
 import debounce from 'debounce'
-import { isEqual } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import Signaling from '../signaling.js'
+import { isEqualJson } from '../utils.ts'
 import Peer from '../webrtc/simplewebrtc/peer.js'
 import SimpleWebRTC from '../webrtc/simplewebrtc/simplewebrtc.js'
 import { importKey, ratchet } from './crypto-utils.js'
@@ -500,7 +500,7 @@ class Encryption {
 			const key = base64js.toByteArray(decoded.key)
 			const index = decoded.index
 
-			if (!isEqual(sessionData.lastKey, key)) {
+			if (!isEqualJson(sessionData.lastKey, key)) {
 				sessionData.lastKey = key
 				console.debug('Key updated', sessionId, index, decoded.key)
 				this.context.setKey(sessionId, key, index)
@@ -543,7 +543,7 @@ class Encryption {
 			const key = base64js.toByteArray(decoded.key)
 			const index = decoded.index
 
-			if (!isEqual(sessionData.lastKey, key)) {
+			if (!isEqualJson(sessionData.lastKey, key)) {
 				sessionData.lastKey = key
 				console.debug('Key updated', sessionId, index, decoded.key)
 				this.context.setKey(sessionId, key, index)
