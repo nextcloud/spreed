@@ -89,7 +89,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	}
 
 	const onJoinedConversation = () => {
-		if (isOneToOneConversation.value) {
+		if (isOneToOneConversation.value || experimentalUpdateParticipants) {
 			cancelableGetParticipants()
 		} else {
 			nextTick(() => throttleUpdateParticipants())
@@ -119,42 +119,36 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		}
 
 		fetchingParticipants = true
-
-		// Cancel the parallel request queue to not fetch twice
-		clearTimeout(throttleFastUpdateTimeout)
-		throttleFastUpdateTimeout = null
-		clearTimeout(throttleSlowUpdateTimeout)
-		throttleSlowUpdateTimeout = null
-		clearTimeout(throttleLongUpdateTimeout)
-		throttleLongUpdateTimeout = null
+		cancelPendingUpdates()
 
 		await store.dispatch('fetchParticipants', { token: token.value })
 		fetchingParticipants = false
 	}
 
 	const throttleFastUpdate = () => {
-		if (throttleFastUpdateTimeout) {
-			return
+		if (!fetchingParticipants && !throttleFastUpdateTimeout) {
+			throttleFastUpdateTimeout = setTimeout(cancelableGetParticipants, 3_000)
 		}
-		throttleFastUpdateTimeout = setTimeout(cancelableGetParticipants, 3_000)
 	}
 	const throttleSlowUpdate = () => {
-		if (throttleSlowUpdateTimeout) {
-			return
+		if (!fetchingParticipants && !throttleSlowUpdateTimeout) {
+			throttleSlowUpdateTimeout = setTimeout(cancelableGetParticipants, 15_000)
 		}
-		throttleSlowUpdateTimeout = setTimeout(cancelableGetParticipants, 15_000)
 	}
 	const throttleLongUpdate = () => {
-		if (throttleLongUpdateTimeout) {
-			return
+		if (!fetchingParticipants && !throttleLongUpdateTimeout) {
+			throttleLongUpdateTimeout = setTimeout(cancelableGetParticipants, 60_000)
 		}
-		throttleLongUpdateTimeout = setTimeout(cancelableGetParticipants, 60_000)
 	}
 
 	onMounted(() => {
 		if (isTopBar) {
 			initialiseGetParticipants()
 		}
+	})
+
+	watch(token, () => {
+		cancelPendingUpdates()
 	})
 
 	watch(isActive, (newValue) => {
@@ -164,10 +158,24 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	})
 
 	onBeforeUnmount(() => {
+		cancelPendingUpdates()
 		if (isTopBar) {
 			stopGetParticipants()
 		}
 	})
+
+	/**
+	 * Cancel scheduled participant list updates
+	 * Applies to all parallel queues to not fetch twice
+	 */
+	function cancelPendingUpdates() {
+		clearTimeout(throttleFastUpdateTimeout)
+		throttleFastUpdateTimeout = null
+		clearTimeout(throttleSlowUpdateTimeout)
+		throttleSlowUpdateTimeout = null
+		clearTimeout(throttleLongUpdateTimeout)
+		throttleLongUpdateTimeout = null
+	}
 
 	return {
 		cancelableGetParticipants,
