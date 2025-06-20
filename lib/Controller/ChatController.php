@@ -463,8 +463,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		 */
 
 		$attendee = $this->participant->getAttendee();
-		if ($lookIntoFuture && $setReadMarker === 1 &&
-			$lastKnownMessageId > $attendee->getLastReadMessage()) {
+		if ($lookIntoFuture && $setReadMarker === 1
+			&& $lastKnownMessageId > $attendee->getLastReadMessage()) {
 			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
 		}
 

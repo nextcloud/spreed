@@ -49,9 +49,9 @@ class AvatarService {
 		}
 
 		if (
-			$file['error'] !== 0 ||
-			!is_uploaded_file($file['tmp_name']) ||
-			Filesystem::isFileBlacklisted($file['tmp_name'])
+			$file['error'] !== 0
+			|| !is_uploaded_file($file['tmp_name'])
+			|| Filesystem::isFileBlacklisted($file['tmp_name'])
 		) {
 			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
 		}

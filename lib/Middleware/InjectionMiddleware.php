@@ -362,8 +362,8 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		$participant = $controller->getParticipant();
-		if ($participant instanceof Participant &&
-			$participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE) {
+		if ($participant instanceof Participant
+			&& $participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE) {
 			return;
 		}
 
@@ -378,8 +378,8 @@ class InjectionMiddleware extends Middleware {
 	 */
 	#[\Override]
 	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
-		if ($exception instanceof RoomNotFoundException ||
-			$exception instanceof ParticipantNotFoundException) {
+		if ($exception instanceof RoomNotFoundException
+			|| $exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
 				$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 				$attributes = $reflectionMethod->getAttributes(BruteForceProtection::class);
@@ -434,10 +434,10 @@ class InjectionMiddleware extends Middleware {
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
-		if ($exception instanceof NotAModeratorException ||
-			$exception instanceof ReadOnlyException ||
-			$exception instanceof ForbiddenException ||
-			$exception instanceof PermissionsException) {
+		if ($exception instanceof NotAModeratorException
+			|| $exception instanceof ReadOnlyException
+			|| $exception instanceof ForbiddenException
+			|| $exception instanceof PermissionsException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}

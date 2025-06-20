@@ -204,8 +204,8 @@ class RoomService {
 			throw new CreationException(CreationException::REASON_OBJECT_TYPE);
 		}
 
-		if (($objectType !== '' && $objectId === '') ||
-			($objectType === '' && $objectId !== '')) {
+		if (($objectType !== '' && $objectId === '')
+			|| ($objectType === '' && $objectId !== '')) {
 			throw new CreationException(CreationException::REASON_OBJECT);
 		}
 

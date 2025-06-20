@@ -73,8 +73,8 @@ class Add extends Base {
 			$output->writeln('<error>Server cannot be empty.</error>');
 			return 1;
 		}
-		if (($generate === false && $secret === null) ||
-			($generate && $secret !== null)) {
+		if (($generate === false && $secret === null)
+			|| ($generate && $secret !== null)) {
 			$output->writeln('<error>You must provide --secret or --generate-secret.</error>');
 			return 1;
 		}
@@ -102,9 +102,9 @@ class Add extends Base {
 		//Checking if the server is already added
 		foreach ($servers as $existingServer) {
 			if (
-				$existingServer['schemes'] === $schemes &&
-				$existingServer['server'] === $server &&
-				$existingServer['protocols'] === $protocols
+				$existingServer['schemes'] === $schemes
+				&& $existingServer['server'] === $server
+				&& $existingServer['protocols'] === $protocols
 			) {
 				$output->writeln('<error>Server already exists with the same configuration.</error>');
 				return 1;

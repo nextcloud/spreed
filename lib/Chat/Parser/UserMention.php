@@ -123,12 +123,12 @@ class UserMention implements IEventListener {
 
 			$search = $mention['id'];
 			if (
-				$mention['type'] === 'email' ||
-				$mention['type'] === 'group' ||
-				// $mention['type'] === 'federated_group' ||
-				 $mention['type'] === 'team' ||
-				// $mention['type'] === 'federated_team' ||
-				$mention['type'] === 'federated_user') {
+				$mention['type'] === 'email'
+				|| $mention['type'] === 'group'
+				// || $mention['type'] === 'federated_group'
+				 || $mention['type'] === 'team'
+				// || $mention['type'] === 'federated_team'
+				|| $mention['type'] === 'federated_user') {
 				$search = $mention['type'] . '/' . $mention['id'];
 			}
 

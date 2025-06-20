@@ -140,8 +140,8 @@ class ChatControllerTest extends TestCase {
 		// Verifies that the difference of the given DateTime and now is at most
 		// five seconds, and that it uses the UTC time zone.
 		$this->newMessageDateTimeConstraint = $this->callback(function (\DateTime $dateTime) {
-			return abs((new \DateTime())->getTimestamp() - $dateTime->getTimestamp()) <= 5 &&
-				(new \DateTimeZone('UTC'))->getName() === $dateTime->getTimezone()->getName();
+			return abs((new \DateTime())->getTimestamp() - $dateTime->getTimestamp()) <= 5
+				&& (new \DateTimeZone('UTC'))->getName() === $dateTime->getTimezone()->getName();
 		});
 	}
 

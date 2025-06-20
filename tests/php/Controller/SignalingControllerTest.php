@@ -373,121 +373,121 @@ class SignalingControllerTest extends TestCase {
 		return [
 			// Audio publisher/receiver
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n",
 				true, false,
 			],
 			// Audio publisher/receiver with data channel
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				true, false,
 			],
 			// Video publisher
 			[
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=sendonly\n",
+				"m=video 42108 RTP/AVP 0\n"
+				. "a=sendonly\n",
 				false, true,
 			],
 			// Video publisher with data channel
 			[
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=sendonly\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"m=video 42108 RTP/AVP 0\n"
+				. "a=sendonly\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				false, true,
 			],
 			// Audio and video publisher/receiver
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n",
 				true, true,
 			],
 			// Audio and video publisher/receiver with data channel
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				true, true,
 			],
 			// Audio and video receiver with data channel
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				false, false,
 			],
 			// Audio receiver and video inactive
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=inactive\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=inactive\n",
 				false, false,
 			],
 			// Audio receiver with session publisher/receiver direction
 			[
-				"a=sendrecv\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=recvonly\n",
+				"a=sendrecv\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "a=recvonly\n",
 				false, false,
 			],
 			// Video inactive with session publisher direction and data channel
 			[
-				"a=sendonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=inactive\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"a=sendonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=inactive\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				false, false,
 			],
 			// Audio and video with session publisher/receiver direction
 			[
-				"a=sendrecv\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"m=video 42108 RTP/AVP 0\n",
+				"a=sendrecv\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "m=video 42108 RTP/AVP 0\n",
 				true, true,
 			],
 			// Audio and video with session publisher direction and data channel
 			[
-				"a=sendonly\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"a=sendonly\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				true, true,
 			],
 			// Audio and video with session receiver direction and data channel
 			[
-				"a=recvonly\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n" .
-				"a=sendrecv\n",
+				"a=recvonly\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n"
+				. "a=sendrecv\n",
 				false, false,
 			],
 			// Audio and video with implicit publisher/receiver direction
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"m=video 42108 RTP/AVP 0\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "m=video 42108 RTP/AVP 0\n",
 				true, true,
 			],
 			// Audio and video with implicit publisher/receiver direction and
 			// data channel
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "m=application 8 UDP/DTLS/SCTP webrtc-datachannel\n",
 				true, true,
 			],
 			// No audio and video description with session publisher direction
@@ -497,31 +497,31 @@ class SignalingControllerTest extends TestCase {
 			],
 			// Several audio and video with mixed directions
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=inactive\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=recvonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=inactive\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=inactive\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=audio 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=recvonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=inactive\n",
 				true, false,
 			],
 			// Several mixed directions in a single media description (not a
 			// valid SDP, but just in case)
 			[
-				"m=audio 42108 RTP/AVP 0\n" .
-				"a=inactive\n" .
-				"a=sendrecv\n" .
-				"a=recvonly\n" .
-				"m=video 42108 RTP/AVP 0\n" .
-				"a=sendrecv\n" .
-				"a=recvonly\n" .
-				"a=inactive\n",
+				"m=audio 42108 RTP/AVP 0\n"
+				. "a=inactive\n"
+				. "a=sendrecv\n"
+				. "a=recvonly\n"
+				. "m=video 42108 RTP/AVP 0\n"
+				. "a=sendrecv\n"
+				. "a=recvonly\n"
+				. "a=inactive\n",
 				true, true,
 			],
 		];

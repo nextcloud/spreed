@@ -165,8 +165,8 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationRenamed(RoomModifiedEvent $event): void {
-		if ($event->getOldValue() === '' ||
-			$event->getNewValue() === '') {
+		if ($event->getOldValue() === ''
+			|| $event->getNewValue() === '') {
 			return;
 		}
 
@@ -586,12 +586,12 @@ class Listener implements IEventListener {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
-				isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class
+				&& isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
 				return true;
 			}
-			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
-				isset($step['function']) && $step['function'] === 'ensureNoteToSelfExistsForUser') {
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class
+				&& isset($step['function']) && $step['function'] === 'ensureNoteToSelfExistsForUser') {
 				return true;
 			}
 		}
@@ -608,8 +608,8 @@ class Listener implements IEventListener {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === SampleConversationsService::class &&
-				isset($step['function']) && $step['function'] === 'initialCreateSamples') {
+			if (isset($step['class']) && $step['class'] === SampleConversationsService::class
+				&& isset($step['function']) && $step['function'] === 'initialCreateSamples') {
 				return true;
 			}
 		}
@@ -626,8 +626,8 @@ class Listener implements IEventListener {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
-				isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class
+				&& isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
 				return true;
 			}
 		}

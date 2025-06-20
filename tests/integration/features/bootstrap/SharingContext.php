@@ -311,11 +311,11 @@ class SharingContext implements Context {
 
 		$headers = null;
 
-		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">' .
-				'	<d:prop>' .
-				'		<oc:share-types/>' .
-				'	</d:prop>' .
-				'</d:propfind>';
+		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
+				. '	<d:prop>'
+				. '		<oc:share-types/>'
+				. '	</d:prop>'
+				. '</d:propfind>';
 
 		$this->sendingToDav('PROPFIND', $url, $headers, $body);
 
@@ -444,18 +444,18 @@ class SharingContext implements Context {
 
 		$expectedFields = array_merge($defaultExpectedFields, $fields);
 
-		if (!array_key_exists('uid_file_owner', $expectedFields) &&
-				array_key_exists('uid_owner', $expectedFields)) {
+		if (!array_key_exists('uid_file_owner', $expectedFields)
+				&& array_key_exists('uid_owner', $expectedFields)) {
 			$expectedFields['uid_file_owner'] = $expectedFields['uid_owner'];
 		}
-		if (!array_key_exists('displayname_file_owner', $expectedFields) &&
-				array_key_exists('displayname_owner', $expectedFields)) {
+		if (!array_key_exists('displayname_file_owner', $expectedFields)
+				&& array_key_exists('displayname_owner', $expectedFields)) {
 			$expectedFields['displayname_file_owner'] = $expectedFields['displayname_owner'];
 		}
 
-		if (array_key_exists('share_type', $expectedFields) &&
-				$expectedFields['share_type'] == 10 /* IShare::TYPE_ROOM */ &&
-				array_key_exists('share_with', $expectedFields)) {
+		if (array_key_exists('share_type', $expectedFields)
+				&& $expectedFields['share_type'] == 10 /* IShare::TYPE_ROOM */
+				&& array_key_exists('share_with', $expectedFields)) {
 			if ($expectedFields['share_with'] === 'private_conversation') {
 				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
 				$expectedFields['share_with_link'] = '';
@@ -464,8 +464,8 @@ class SharingContext implements Context {
 			}
 		}
 
-		if (array_key_exists('share_with_link', $expectedFields) &&
-			$expectedFields['share_with_link'] === 'URL') {
+		if (array_key_exists('share_with_link', $expectedFields)
+			&& $expectedFields['share_with_link'] === 'URL') {
 			if (array_key_exists('share_with', $expectedFields)) {
 				$expectedFields['share_with_link'] = $this->baseUrl . 'index.php/call/' . $expectedFields['share_with'];
 			} else {

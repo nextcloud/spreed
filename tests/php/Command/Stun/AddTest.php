@@ -98,7 +98,7 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server already exists.</error>'));
-	
+
 		$this->assertSame(1, self::invokePrivate($this->command, 'execute', [$this->input, $this->output]));
 	}
 }

@@ -481,8 +481,8 @@ class ChatManager {
 
 		$attendee = $participant->getAttendee();
 
-		if (!$participant->hasModeratorPermissions(false) &&
-			!($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $share->getShareOwner())) {
+		if (!$participant->hasModeratorPermissions(false)
+			&& !($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $share->getShareOwner())) {
 			// Only moderators or the share owner can delete the share
 			return;
 		}

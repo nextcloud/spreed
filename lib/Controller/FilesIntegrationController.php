@@ -159,8 +159,8 @@ class FilesIntegrationController extends OCSController {
 	#[UseSession]
 	#[BruteForceProtection(action: 'shareinfo')]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
-		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
-			$this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1'
+			|| $this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 

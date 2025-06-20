@@ -368,16 +368,16 @@ class NotifierTest extends TestCase {
 
 	public static function dataNotifyReacted(): array {
 		return [
-			'author react to own message' =>
-				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
-			'notify never' =>
-				[0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
-			'notify default, not one to one' =>
-				[0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
-			'notify default, one to one' =>
-				[1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
-			'notify always' =>
-				[1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
+			'author react to own message'
+				=> [0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
+			'notify never'
+				=> [0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, not one to one'
+				=> [0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, one to one'
+				=> [1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
+			'notify always'
+				=> [1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
 		];
 	}
 

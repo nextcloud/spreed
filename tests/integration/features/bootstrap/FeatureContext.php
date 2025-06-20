@@ -1136,11 +1136,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$headers = [];
 		$headers['Depth'] = 0;
 
-		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">' .
-				'	<d:prop>' .
-				'		<oc:fileid/>' .
-				'	</d:prop>' .
-				'</d:propfind>';
+		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
+				. '	<d:prop>'
+				. '		<oc:fileid/>'
+				. '	</d:prop>'
+				. '</d:propfind>';
 
 		$this->sendingToDav('PROPFIND', $url, $headers, $body);
 
