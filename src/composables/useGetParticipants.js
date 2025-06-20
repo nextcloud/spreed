@@ -89,7 +89,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	}
 
 	const onJoinedConversation = () => {
-		if (isOneToOneConversation.value) {
+		if (isOneToOneConversation.value || experimentalUpdateParticipants) {
 			cancelableGetParticipants()
 		} else {
 			nextTick(() => throttleUpdateParticipants())
