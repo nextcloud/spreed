@@ -35,6 +35,7 @@ export type Events = {
 	'poll-drafts-open': { selector?: string }
 	'poll-editor-open': { id: number | null, fromDrafts: boolean, action?: string, selector?: string }
 	'refresh-peer-list': void
+	'refresh-talk-dashboard': void
 	'retry-message': number
 	'route-change': { from: Route, to: Route }
 	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean }
