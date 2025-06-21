@@ -96,9 +96,9 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 
 		// caching the user id data for each possible mention
 		if (!userDataTokenMap.value[token]) {
-			Vue.set(userDataTokenMap.value, token, {})
+			userDataTokenMap.value[token] = {}
 		}
-		Vue.set(userDataTokenMap.value[token], chatMention.id, chatMention)
+		userDataTokenMap.value[token][chatMention.id] = chatMention
 
 		return chatMention
 	}

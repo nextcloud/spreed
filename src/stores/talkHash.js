@@ -6,7 +6,6 @@
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { messagePleaseReload } from '../utils/talkDesktopUtils.ts'
 
@@ -56,7 +55,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		 */
 		setTalkProxyHashDirty(token) {
 			console.debug('X-Nextcloud-Talk-Proxy-Hash marked dirty: ', token)
-			Vue.set(this.isNextcloudTalkProxyHashDirty, token, true)
+			this.isNextcloudTalkProxyHashDirty[token] = true
 		},
 
 		/**
@@ -65,7 +64,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		 * @param {string} token federated conversation token
 		 */
 		resetTalkProxyHashDirty(token) {
-			Vue.delete(this.isNextcloudTalkProxyHashDirty, token)
+			delete this.isNextcloudTalkProxyHashDirty[token]
 
 			if (this.proxyHashDirtyToast) {
 				this.proxyHashDirtyToast.hideToast()

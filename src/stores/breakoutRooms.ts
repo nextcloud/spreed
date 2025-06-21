@@ -16,7 +16,6 @@ import type {
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import {
 	broadcastMessageToBreakoutRooms,
 	configureBreakoutRooms,
@@ -80,7 +79,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 			for (const roomToken in this.rooms[token]) {
 				store.dispatch('deleteConversation', roomToken)
 			}
-			Vue.delete(this.rooms, token)
+			delete this.rooms[token]
 		},
 
 		/**
@@ -91,9 +90,9 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 		 */
 		addBreakoutRoom(token: string, breakoutRoom: BreakoutRoom) {
 			if (!this.rooms[token]) {
-				Vue.set(this.rooms, token, {})
+				this.rooms[token] = {}
 			}
-			Vue.set(this.rooms[token], breakoutRoom.token, breakoutRoom)
+			this.rooms[token][breakoutRoom.token] = breakoutRoom
 		},
 
 		/**

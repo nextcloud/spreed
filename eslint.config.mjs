@@ -84,7 +84,6 @@ export default [
 			'vue/v-on-event-hyphenation': 'off',
 			'vue/no-deprecated-destroyed-lifecycle': 'off',
 			'vue/no-v-for-template-key-on-child': 'off',
-			'vue/no-deprecated-delete-set': 'off',
 			'vue/no-deprecated-dollar-listeners-api': 'off',
 			'vue/no-deprecated-v-bind-sync': 'off',
 		},

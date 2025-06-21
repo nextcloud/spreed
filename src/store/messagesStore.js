@@ -1,11 +1,11 @@
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
-import Vue from 'vue'
 import {
 	ATTENDEE,
 	CHAT,
@@ -266,17 +266,17 @@ const mutations = {
 
 	setCancelPollNewMessages(state, { requestId, cancelFunction }) {
 		if (cancelFunction) {
-			Vue.set(state.cancelPollNewMessages, requestId, cancelFunction)
+			state.cancelPollNewMessages[requestId] = cancelFunction
 		} else {
-			Vue.delete(state.cancelPollNewMessages, requestId)
+			delete state.cancelPollNewMessages[requestId]
 		}
 	},
 
 	setCancelPostNewMessage(state, { messageId, cancelFunction }) {
 		if (cancelFunction) {
-			Vue.set(state.cancelPostNewMessage, messageId, cancelFunction)
+			state.cancelPostNewMessage[messageId] = cancelFunction
 		} else {
-			Vue.delete(state.cancelPostNewMessage, messageId)
+			delete state.cancelPostNewMessage[messageId]
 		}
 	},
 
@@ -290,7 +290,7 @@ const mutations = {
 	 */
 	addMessage(state, { token, message }) {
 		if (!state.messages[token]) {
-			Vue.set(state.messages, token, {})
+			state.messages[token] = {}
 		}
 		// TODO split adding and updating message in the store to different actions
 		// message.parent doesn't contain grand-parent, so we should keep it
@@ -299,7 +299,7 @@ const mutations = {
 		const preparedMessage = !message.parent && storedMessage?.parent
 			? { ...message, parent: storedMessage.parent }
 			: message
-		Vue.set(state.messages[token], message.id, preparedMessage)
+		state.messages[token][message.id] = preparedMessage
 	},
 	/**
 	 * Deletes a message from the store.
@@ -311,7 +311,7 @@ const mutations = {
 	 */
 	deleteMessage(state, { token, id }) {
 		if (state.messages[token][id]) {
-			Vue.delete(state.messages[token], id)
+			delete state.messages[token][id]
 		}
 	},
 
@@ -328,8 +328,8 @@ const mutations = {
 		if (!state.messages[token][id]) {
 			return
 		}
-		Vue.set(state.messages[token][id], 'messageType', MESSAGE.TYPE.COMMENT_DELETED)
-		Vue.set(state.messages[token][id], 'message', placeholder)
+		state.messages[token][id].messageType = MESSAGE.TYPE.COMMENT_DELETED
+		state.messages[token][id].message = placeholder
 	},
 	/**
 	 * Adds a temporary message to the store.
@@ -341,9 +341,9 @@ const mutations = {
 	 */
 	addTemporaryMessage(state, { token, message }) {
 		if (!state.messages[token]) {
-			Vue.set(state.messages, token, {})
+			state.messages[token] = {}
 		}
-		Vue.set(state.messages[token], message.id, message)
+		state.messages[token][message.id] = message
 	},
 
 	/**
@@ -358,9 +358,9 @@ const mutations = {
 	 */
 	markTemporaryMessageAsFailed(state, { token, id, uploadId = undefined, reason }) {
 		if (state.messages[token][id]) {
-			Vue.set(state.messages[token][id], 'sendingFailure', reason)
+			state.messages[token][id].sendingFailure = reason
 			if (uploadId) {
-				Vue.set(state.messages[token][id], 'uploadId', uploadId)
+				state.messages[token][id].uploadId = uploadId
 			}
 		}
 	},
@@ -372,7 +372,7 @@ const mutations = {
 	 * @param {string} data.id Id of the first known chat message
 	 */
 	setFirstKnownMessageId(state, { token, id }) {
-		Vue.set(state.firstKnown, token, id)
+		state.firstKnown[token] = id
 	},
 
 	/**
@@ -382,7 +382,7 @@ const mutations = {
 	 * @param {string} data.id Id of the last known chat message
 	 */
 	setLastKnownMessageId(state, { token, id }) {
-		Vue.set(state.lastKnown, token, id)
+		state.lastKnown[token] = id
 	},
 
 	/**
@@ -392,7 +392,7 @@ const mutations = {
 	 * @param {string} data.id Id of the last read chat message
 	 */
 	setVisualLastReadMessageId(state, { token, id }) {
-		Vue.set(state.visualLastReadMessageId, token, id)
+		state.visualLastReadMessageId[token] = id
 	},
 
 	/**
@@ -403,16 +403,16 @@ const mutations = {
 	 */
 	purgeMessagesStore(state, token) {
 		if (state.firstKnown[token]) {
-			Vue.delete(state.firstKnown, token)
+			delete state.firstKnown[token]
 		}
 		if (state.lastKnown[token]) {
-			Vue.delete(state.lastKnown, token)
+			delete state.lastKnown[token]
 		}
 		if (state.visualLastReadMessageId[token]) {
-			Vue.delete(state.visualLastReadMessageId, token)
+			delete state.visualLastReadMessageId[token]
 		}
 		if (state.messages[token]) {
-			Vue.delete(state.messages, token)
+			delete state.messages[token]
 		}
 	},
 
@@ -426,16 +426,16 @@ const mutations = {
 	 * @param {number} payload.id the id of the message to be the first one after clear;
 	 */
 	clearMessagesHistory(state, { token, id }) {
-		Vue.set(state.firstKnown, token, id)
+		state.firstKnown[token] = id
 
 		if (state.visualLastReadMessageId[token] && state.visualLastReadMessageId[token] < id) {
-			Vue.set(state.visualLastReadMessageId, token, id)
+			state.visualLastReadMessageId[token] = id
 		}
 
 		if (state.messages[token]) {
 			for (const messageId of Object.keys(state.messages[token])) {
 				if (+messageId < id) {
-					Vue.delete(state.messages[token], messageId)
+					delete state.messages[token][messageId]
 				}
 			}
 		}
@@ -445,20 +445,20 @@ const mutations = {
 	addReactionToMessage(state, { token, messageId, reaction }) {
 		const message = state.messages[token][messageId]
 		if (!message.reactions[reaction]) {
-			Vue.set(message.reactions, reaction, 0)
+			message.reactions[reaction] = 0
 		}
 		const reactionCount = message.reactions[reaction] + 1
-		Vue.set(message.reactions, reaction, reactionCount)
+		message.reactions[reaction] = reactionCount
 
 		if (!message.reactionsSelf) {
-			Vue.set(message, 'reactionsSelf', [reaction])
+			message.reactionsSelf = [reaction]
 		} else {
-			Vue.set(message, 'reactionsSelf', message.reactionsSelf.concat(reaction))
+			message.reactionsSelf = message.reactionsSelf.concat(reaction)
 		}
 	},
 
 	loadedMessagesOfConversation(state, { token }) {
-		Vue.set(state.loadedMessages, token, true)
+		state.loadedMessages[token] = true
 	},
 
 	// Decreases reaction count for a particular reaction on a message
@@ -466,13 +466,13 @@ const mutations = {
 		const message = state.messages[token][messageId]
 		const reactionCount = message.reactions[reaction] - 1
 		if (reactionCount <= 0) {
-			Vue.delete(message.reactions, reaction)
+			delete message.reactions[reaction]
 		} else {
-			Vue.set(message.reactions, reaction, reactionCount)
+			message.reactions[reaction] = reactionCount
 		}
 
 		if (message.reactionsSelf?.includes(reaction)) {
-			Vue.set(message, 'reactionsSelf', message.reactionsSelf.filter((item) => item !== reaction))
+			message.reactionsSelf = message.reactionsSelf.filter((item) => item !== reaction)
 		}
 	},
 
@@ -486,7 +486,7 @@ const mutations = {
 		messageIds.forEach((messageId) => {
 			if (state.messages[token][messageId].expirationTimestamp
 				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
-				Vue.delete(state.messages[token], messageId)
+				delete state.messages[token][messageId]
 			}
 		})
 	},
@@ -515,17 +515,17 @@ const mutations = {
 		const newLastKnown = newMessagesToRemove.pop()
 
 		messagesToRemove.forEach((messageId) => {
-			Vue.delete(state.messages[token], messageId)
+			delete state.messages[token][messageId]
 		})
 		newMessagesToRemove.forEach((messageId) => {
-			Vue.delete(state.messages[token], messageId)
+			delete state.messages[token][messageId]
 		})
 
 		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token].toString())) {
-			Vue.set(state.firstKnown, token, +newFirstKnown)
+			state.firstKnown[token] = +newFirstKnown
 		}
 		if (state.lastKnown[token] && newMessagesToRemove.includes(state.lastKnown[token].toString())) {
-			Vue.set(state.lastKnown, token, +newLastKnown)
+			state.lastKnown[token] = +newLastKnown
 		}
 	},
 }

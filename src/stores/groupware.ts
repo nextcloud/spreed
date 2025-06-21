@@ -17,7 +17,6 @@ import type {
 
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { CONVERSATION } from '../constants.ts'
 import {
 	convertUrlToUri,
@@ -35,7 +34,7 @@ import {
 } from '../services/groupwareService.ts'
 
 type State = {
-	absence: Record<string, OutOfOfficeResult>
+	absence: Record<string, OutOfOfficeResult | null> // TODO check
 	calendars: Record<string, DavCalendar & { uri: string }>
 	defaultCalendarUri: string | null
 	upcomingEvents: Record<string, UpcomingEvent[]>
@@ -81,11 +80,11 @@ export const useGroupwareStore = defineStore('groupware', {
 		async getUserAbsence({ token, userId }: { token: string, userId: string }) {
 			try {
 				const response = await getUserAbsence(userId)
-				Vue.set(this.absence, token, response.data.ocs.data)
+				this.absence[token] = response.data.ocs.data
 				return this.absence[token]
 			} catch (error) {
 				if ((error as AxiosError)?.response?.status === 404) {
-					Vue.set(this.absence, token, null)
+					this.absence[token] = null
 					return null
 				}
 				console.error(error)
@@ -105,7 +104,7 @@ export const useGroupwareStore = defineStore('groupware', {
 					return index === array.findIndex((item) => item.start === event.start)
 				})
 
-				Vue.set(this.upcomingEvents, token, uniqueEvents)
+				this.upcomingEvents[token] = uniqueEvents
 			} catch (error) {
 				console.error(error)
 			}
@@ -114,7 +113,7 @@ export const useGroupwareStore = defineStore('groupware', {
 		async getDefaultCalendarUri() {
 			try {
 				await initializeCalDavClient()
-				Vue.set(this, 'defaultCalendarUri', getDefaultCalendarUri())
+				this.defaultCalendarUri = getDefaultCalendarUri()
 			} catch (error) {
 				console.error(error)
 			}
@@ -126,7 +125,7 @@ export const useGroupwareStore = defineStore('groupware', {
 				const calendars = await getPersonalCalendars()
 				calendars.forEach((calendar) => {
 					const calendarWithUri = Object.assign(calendar, { uri: convertUrlToUri(calendar.url) })
-					Vue.set(this.calendars, calendarWithUri.uri, calendarWithUri)
+					this.calendars[calendarWithUri.uri] = calendarWithUri
 				})
 			} catch (error) {
 				console.error(error)
@@ -145,7 +144,7 @@ export const useGroupwareStore = defineStore('groupware', {
 		 */
 		removeUserAbsence(token: string) {
 			if (this.absence[token]) {
-				Vue.delete(this.absence, token)
+				delete this.absence[token]
 			}
 		},
 
@@ -155,7 +154,7 @@ export const useGroupwareStore = defineStore('groupware', {
 		 */
 		removeUpcomingEvents(token: string) {
 			if (this.upcomingEvents[token]) {
-				Vue.delete(this.upcomingEvents, token)
+				delete this.upcomingEvents[token]
 			}
 		},
 
@@ -166,14 +165,14 @@ export const useGroupwareStore = defineStore('groupware', {
 		async getUserProfileInformation(conversation: Conversation) {
 			if (!this.supportProfileInfo || !conversation.name
 				|| conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
-				Vue.delete(this.profileInfo, conversation.token)
+				delete this.profileInfo[conversation.token]
 				return
 			}
 
 			// FIXME cache results for 6/24 hours and do not fetch again
 			try {
 				const response = await getUserProfile(conversation.name)
-				Vue.set(this.profileInfo, conversation.token, response.data.ocs.data)
+				this.profileInfo[conversation.token] = response.data.ocs.data
 			} catch (error) {
 				if ((error as ApiErrorResponse)?.response?.status === 405) {
 					// Method does not exist on current server version
@@ -198,7 +197,7 @@ export const useGroupwareStore = defineStore('groupware', {
 			// FIXME cache results for 6/24 hours and do not fetch again
 			try {
 				const response = await getMutualEvents(conversation.token)
-				Vue.set(this.mutualEvents, conversation.token, response.data.ocs.data)
+				this.mutualEvents[conversation.token] = response.data.ocs.data
 			} catch (error) {
 				console.error(error)
 			}

@@ -4,7 +4,6 @@
  */
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.js'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
@@ -45,7 +44,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 	getters: {
 		sharedItems: (state) => (token) => {
 			if (!state.sharedItemsPool[token]) {
-				Vue.set(state.sharedItemsPool, token, {})
+				state.sharedItemsPool[token] = {}
 			}
 
 			return state.sharedItemsPool[token]
@@ -55,10 +54,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 	actions: {
 		checkForExistence(token, type) {
 			if (token && !this.sharedItemsPool[token]) {
-				Vue.set(this.sharedItemsPool, token, {})
+				this.sharedItemsPool[token] = {}
 			}
 			if (type && !this.sharedItemsPool[token][type]) {
-				Vue.set(this.sharedItemsPool[token], type, {})
+				this.sharedItemsPool[token][type] = {}
 			}
 		},
 
@@ -72,13 +71,13 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 					this.checkForExistence(token, type)
 					for (const message of data[type]) {
 						if (!this.sharedItemsPool[token][type][message.id]) {
-							Vue.set(this.sharedItemsPool[token][type], message.id, message)
+							this.sharedItemsPool[token][type][message.id] = message
 						}
 					}
 				}
 			}
 
-			Vue.set(this.overviewLoaded, token, true)
+			this.overviewLoaded[token] = true
 		},
 
 		/**
@@ -90,7 +89,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 			this.checkForExistence(token, type)
 
 			if (!this.sharedItemsPool[token][type][message.id]) {
-				Vue.set(this.sharedItemsPool[token][type], message.id, message)
+				this.sharedItemsPool[token][type][message.id] = message
 			}
 		},
 
@@ -105,9 +104,9 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 
 			for (const type of Object.keys(this.sharedItemsPool[token])) {
 				if (this.sharedItemsPool[token][type][messageId]) {
-					Vue.delete(this.sharedItemsPool[token][type], messageId)
+					delete this.sharedItemsPool[token][type][messageId]
 					if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
-						Vue.delete(this.sharedItemsPool[token], type)
+						delete this.sharedItemsPool[token][type]
 					}
 				}
 			}
@@ -123,7 +122,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 
 			messages.forEach((message) => {
 				if (!this.sharedItemsPool[token][type][message.id]) {
-					Vue.set(this.sharedItemsPool[token][type], message.id, message)
+					this.sharedItemsPool[token][type][message.id] = message
 				}
 			})
 		},
@@ -142,18 +141,18 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 				for (const type of Object.keys(this.sharedItemsPool[token])) {
 					for (const id of Object.keys(this.sharedItemsPool[token][type])) {
 						if (+id < +messageId) {
-							Vue.delete(this.sharedItemsPool[token][type], id)
+							delete this.sharedItemsPool[token][type][id]
 						}
 					}
 					if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
-						Vue.delete(this.sharedItemsPool[token], type)
+						delete this.sharedItemsPool[token][type]
 					}
 				}
 				if (Object.keys(this.sharedItemsPool[token]).length === 0) {
-					Vue.delete(this.sharedItemsPool, token)
+					delete this.sharedItemsPool[token]
 				}
 			} else {
-				Vue.delete(this.sharedItemsPool, token)
+				delete this.sharedItemsPool[token]
 			}
 		},
 
