@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 import { emit } from '@nextcloud/event-bus'
 import { computed, onMounted, watch, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router/composables'
+import { useRoute, useRouter } from 'vue-router'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'

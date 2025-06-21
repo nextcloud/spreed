@@ -7,7 +7,7 @@
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { provide, ref, watch } from 'vue'
-import { useRouter } from 'vue-router/composables'
+import { useRouter } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
