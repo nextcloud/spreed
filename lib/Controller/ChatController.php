@@ -1357,45 +1357,21 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return $proxy->markUnread($this->room, $this->participant, $this->getResponseFormat());
 		}
 
-		$message = $this->room->getLastMessage();
-		if ($message instanceof IComment) {
-			try {
-				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
-					$this->room,
-					(int)$message->getId(),
-					[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
-					$message->getVerb() === ChatManager::VERB_MESSAGE || $message->getVerb() === ChatManager::VERB_OBJECT_SHARED
-				);
-				return $this->setReadMarker((int)$previousMessage->getId());
-			} catch (NotFoundException) {
-				// No chat message found, try system messages …
-			}
+		$this->participantService->markUnread($this->participant);
+		$attendee = $this->participant->getAttendee();
 
-			try {
-				$messages = $this->chatManager->getHistory(
-					$this->room,
-					(int)$message->getId(),
-					1,
-					false,
-				);
-
-				if (empty($messages)) {
-					throw new NotFoundException('No comments found');
-				}
-
-				$previousMessage = array_pop($messages);
-				return $this->setReadMarker((int)$previousMessage->getId());
-			} catch (NotFoundException) {
-				/**
-				 * Neither system messages found, fall back to `-1`.
-				 * This can happen when you:
-				 * - Set up message expiration
-				 * - Clear the chat history afterwards
-				 */
-			}
+		$headers = $lastCommonRead = [];
+		if ($attendee->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$lastCommonRead[$this->room->getId()] = $this->chatManager->getLastCommonReadMessage($this->room);
+			$headers = ['X-Chat-Last-Common-Read' => (string)$lastCommonRead[$this->room->getId()]];
 		}
 
-		return $this->setReadMarker(ChatManager::UNREAD_FIRST_MESSAGE);
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			$lastCommonRead,
+			$this->room,
+			$this->participant,
+		), Http::STATUS_OK, $headers);
 	}
 
 	/**

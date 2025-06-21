@@ -425,6 +425,10 @@ class RoomFormatter {
 			$roomData['unreadMessages'] = 1;
 		}
 
+		if ($attendee->isMarkedUnread()) {
+			$roomData['unreadMentionDirect'] = true;
+		}
+
 		if ($room->isFederatedConversation()) {
 			$roomData['attendeeId'] = (int)$attendee->getRemoteId();
 			$roomData['canLeaveConversation'] = true;

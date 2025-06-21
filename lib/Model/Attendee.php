@@ -62,6 +62,8 @@ use OCP\DB\Types;
  * @method int getState()
  * @method void setUnreadMessages(int $unreadMessages)
  * @method int getUnreadMessages()
+ * @method void setMarkedUnread(bool $markedUnread)
+ * @method bool isMarkedUnread()
  * @method void setLastAttendeeActivity(int $lastAttendeeActivity)
  * @method int getLastAttendeeActivity()
  */
@@ -119,6 +121,7 @@ class Attendee extends Entity {
 	protected bool $archived = false;
 	protected bool $important = false;
 	protected bool $sensitive = false;
+	protected bool $markedUnread = false;
 	protected int $lastJoinedCall = 0;
 	protected int $lastReadMessage = 0;
 	protected int $lastMentionMessage = 0;
@@ -161,6 +164,7 @@ class Attendee extends Entity {
 		$this->addType('state', Types::SMALLINT);
 		$this->addType('unreadMessages', Types::BIGINT);
 		$this->addType('lastAttendeeActivity', Types::BIGINT);
+		$this->addType('markedUnread', Types::BOOLEAN);
 	}
 
 	public function getDisplayName(): string {

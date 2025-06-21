@@ -79,6 +79,7 @@ class SelectHelper {
 			->addSelect($alias . 'archived')
 			->addSelect($alias . 'important')
 			->addSelect($alias . 'sensitive')
+			->addSelect($alias . 'marked_unread')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

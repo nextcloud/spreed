@@ -311,6 +311,7 @@ class AttendeeMapper extends QBMapper {
 			'archived' => (bool)$row['archived'],
 			'important' => (bool)$row['important'],
 			'sensitive' => (bool)$row['sensitive'],
+			'marked_unread' => (bool)$row['marked_unread'],
 		]);
 	}
 }
