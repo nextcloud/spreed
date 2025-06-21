@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { recommendedVue2 } from '@nextcloud/eslint-config'
+import { recommended } from '@nextcloud/eslint-config'
 import globals from 'globals'
 
 export default [
-	...recommendedVue2,
+	...recommended,
 
 	{
 		name: 'talk/ignores',
@@ -74,6 +74,19 @@ export default [
 			'vue/no-required-prop-with-default': 'off', // non-fixable
 			'vue/no-unused-properties': 'off', // non-fixable
 			'vue/no-unused-refs': 'off', // non-fixable
+		},
+	},
+
+	{
+		name: 'talk/disabled-during-vue3-migration',
+		rules: {
+			'vue/no-deprecated-v-on-native-modifier': 'off',
+			'vue/v-on-event-hyphenation': 'off',
+			'vue/no-deprecated-destroyed-lifecycle': 'off',
+			'vue/no-v-for-template-key-on-child': 'off',
+			'vue/no-deprecated-delete-set': 'off',
+			'vue/no-deprecated-dollar-listeners-api': 'off',
+			'vue/no-deprecated-v-bind-sync': 'off',
 		},
 	},
 ]
