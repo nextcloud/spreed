@@ -9,7 +9,7 @@
 			:devices="devices"
 			:device-id="audioInputId"
 			@refresh="updateDevices"
-			@update:deviceId="handleAudioInputIdChange" />
+			@update:device-id="handleAudioInputIdChange" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
 				class="preview-not-available">
@@ -38,7 +38,7 @@
 			:devices="devices"
 			:device-id="videoInputId"
 			@refresh="updateDevices"
-			@update:deviceId="handleVideoInputIdChange" />
+			@update:device-id="handleVideoInputIdChange" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">
@@ -74,7 +74,7 @@
 			:devices="devices"
 			:device-id="audioOutputId"
 			@refresh="updateDevices"
-			@update:deviceId="handleAudioOutputIdChange" />
+			@update:device-id="handleAudioOutputIdChange" />
 		<MediaDevicesSpeakerTest />
 	</div>
 </template>

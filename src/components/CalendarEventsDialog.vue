@@ -417,7 +417,7 @@ async function submitNewMeeting() {
 					{{ t('spreed', 'No other participants to send invitations to.') }}
 				</p>
 				<template v-else>
-					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
+					<NcCheckboxRadioSwitch v-model="selectAll" @update:model-value="toggleAll">
 						{{ inviteLabel }}
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">

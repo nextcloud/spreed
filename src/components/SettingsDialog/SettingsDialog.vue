@@ -65,7 +65,7 @@
 				:disabled="appearanceLoading"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="toggleConversationsListStyle">
+				@update:model-value="toggleConversationsListStyle">
 				{{ t('spreed', 'Show conversations list in compact mode') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
