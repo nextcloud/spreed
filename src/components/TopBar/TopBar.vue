@@ -20,7 +20,7 @@
 			:hide-favorite="false"
 			:hide-call="false" />
 
-		<div class="top-bar__wrapper" :data-theme-dark="isInCall">
+		<div class="top-bar__wrapper" :data-theme-dark="isInCall ? true : undefined">
 			<!-- conversation header -->
 			<a role="button"
 				class="conversation-header"
