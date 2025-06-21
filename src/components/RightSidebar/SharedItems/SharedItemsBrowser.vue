@@ -6,7 +6,7 @@
 <template>
 	<NcModal size="large"
 		:label-id="dialogHeaderId"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="shared-items-browser">
 			<h2 :id="dialogHeaderId" class="hidden-visually">
 				{{ sharedItemTitle[activeTab] || sharedItemTitle.default }}
@@ -67,7 +67,7 @@ export default {
 		},
 	},
 
-	emits: ['update:active-tab'],
+	emits: ['close', 'update:active-tab'],
 
 	setup() {
 		const dialogHeaderId = `shared-items-browser-${useId()}`

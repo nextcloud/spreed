@@ -8,7 +8,6 @@
 		:name="dialogTitle"
 		close-on-click-outside
 		size="normal"
-		v-on="$listeners"
 		@update:open="$emit('close')">
 		<NewMessage ref="newMessage"
 			role="region"
