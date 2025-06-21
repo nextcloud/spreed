@@ -593,7 +593,7 @@ export default {
 		EventBus.on('call-phone-dialog:show', this.showModalCallPhoneDialog)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()

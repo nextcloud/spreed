@@ -217,7 +217,7 @@ export default {
 		this.observer.observe(this.$refs.ghost)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.observer.disconnect()
 	},
 

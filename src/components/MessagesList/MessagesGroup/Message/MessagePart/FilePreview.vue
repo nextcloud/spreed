@@ -466,7 +466,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.uploadManager = null
 	},
 

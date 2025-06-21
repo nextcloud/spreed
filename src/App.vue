@@ -207,7 +207,7 @@ export default {
 		useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)

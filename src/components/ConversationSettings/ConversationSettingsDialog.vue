@@ -276,7 +276,7 @@ export default {
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('show-conversation-settings', this.handleShowSettings)
 		unsubscribe('hide-conversation-settings', this.handleHideSettings)
 	},

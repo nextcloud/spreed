@@ -62,7 +62,7 @@ export default {
 		},
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.soundsStore.pauseAudio('wait')
 	},
 

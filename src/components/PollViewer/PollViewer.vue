@@ -313,7 +313,7 @@ export default {
 		EventBus.on('talk:poll-added', this.showPollToast)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('talk:poll-added', this.showPollToast)
 	},
 

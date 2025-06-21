@@ -241,7 +241,7 @@ export default {
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 
 		EventBus.off('route-change', this.abortSearch)

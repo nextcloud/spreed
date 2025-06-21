@@ -289,7 +289,7 @@ export default {
 		document.body.classList.add('has-topbar')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		document.body.classList.remove('has-topbar')
 	},
 

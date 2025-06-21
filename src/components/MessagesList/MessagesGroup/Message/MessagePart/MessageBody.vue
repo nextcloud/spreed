@@ -377,7 +377,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('editing-message-processing', this.setIsEditing)
 	},
 

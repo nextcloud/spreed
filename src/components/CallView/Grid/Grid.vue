@@ -626,7 +626,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceMakeGrid.clear?.()
 		this.debounceHandleWheelEvent.clear?.()
 

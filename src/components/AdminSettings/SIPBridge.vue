@@ -154,7 +154,7 @@ export default {
 		this.isDialoutSupported()
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceSearchGroup.clear?.()
 	},
 

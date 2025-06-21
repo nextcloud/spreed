@@ -101,7 +101,7 @@ export default {
 		EventBus.on('audio-player-ended', this.autoPlay)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('audio-player-ended', this.autoPlay)
 	},
 

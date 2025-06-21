@@ -106,7 +106,7 @@ export default {
 		this.firstFetchItems(this.activeTab)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceHandleScroll.clear?.()
 	},
 

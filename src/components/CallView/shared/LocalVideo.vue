@@ -300,13 +300,13 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}
 	},
 
-	destroyed() {
+	unmounted() {
 		if (this.notificationHandle) {
 			this.notificationHandle.hideToast()
 		}
