@@ -24,7 +24,7 @@
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="options"
-						@input="clickAddPart">
+						@update:model-value="clickAddPart">
 						<template #option="option">
 							<img class="icon-multiselect-service"
 								:src="option.iconUrl"

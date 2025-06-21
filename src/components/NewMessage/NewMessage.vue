@@ -85,7 +85,7 @@
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
-					@input="handleTyping"
+					@update:model-value="handleTyping"
 					@paste="handlePastedFiles"
 					@focus="restoreSelectionRange"
 					@blur="preserveSelectionRange"
