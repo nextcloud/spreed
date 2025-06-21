@@ -80,18 +80,18 @@
 						:devices="devices"
 						:device-id="audioInputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleAudioInputIdChange" />
+						@update:device-id="handleAudioInputIdChange" />
 					<MediaDevicesSelector kind="videoinput"
 						:devices="devices"
 						:device-id="videoInputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleVideoInputIdChange" />
+						@update:device-id="handleVideoInputIdChange" />
 					<MediaDevicesSelector v-if="audioOutputSupported"
 						kind="audiooutput"
 						:devices="devices"
 						:device-id="audioOutputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleAudioOutputIdChange" />
+						@update:device-id="handleAudioOutputIdChange" />
 					<MediaDevicesSpeakerTest />
 				</template>
 
