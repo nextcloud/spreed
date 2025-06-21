@@ -21,7 +21,7 @@
 			track-by="value"
 			no-wrap
 			:disabled="loading || loadingDefaultGroupNotification"
-			@input="saveDefaultGroupNotification" />
+			@update:model-value="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
