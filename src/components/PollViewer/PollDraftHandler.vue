@@ -9,7 +9,6 @@
 		:container="container"
 		size="normal"
 		close-on-click-outside
-		v-on="$listeners"
 		@update:open="emit('close')">
 		<EmptyView v-if="!pollDrafts.length"
 			class="drafts__empty"

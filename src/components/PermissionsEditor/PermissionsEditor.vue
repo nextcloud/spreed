@@ -7,7 +7,7 @@
 	<NcModal size="small"
 		:container="nestedContainer"
 		:label-id="dialogHeaderId"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
@@ -119,7 +119,7 @@ export default {
 		},
 	},
 
-	emits: ['submit'],
+	emits: ['close', 'submit'],
 
 	setup() {
 		const dialogHeaderId = `permissions-editor-${useId()}`

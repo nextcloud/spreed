@@ -7,7 +7,7 @@
 	<div class="wrapper">
 		<PermissionEditor :display-name="displayName"
 			:permissions="permissions"
-			v-on="$listeners"
+			@close="$emit('close')"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>

@@ -7,7 +7,6 @@
 	<NcDialog :name="dialogName"
 		:close-on-click-outside="!isFilled"
 		:container="container"
-		v-on="$listeners"
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
 			class="poll-editor__back-button"
@@ -24,7 +23,7 @@
 			{{ t('spreed', 'Question') }}
 		</p>
 		<div class="poll-editor__wrapper">
-			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
 			<!--native file picker, hidden -->
 			<input id="poll-upload"
 				ref="pollImport"
