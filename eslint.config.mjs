@@ -80,7 +80,6 @@ export default [
 	{
 		name: 'talk/disabled-during-vue3-migration',
 		rules: {
-			'vue/no-deprecated-v-on-native-modifier': 'off',
 			'vue/v-on-event-hyphenation': 'off',
 			'vue/no-deprecated-destroyed-lifecycle': 'off',
 			'vue/no-deprecated-dollar-listeners-api': 'off',
