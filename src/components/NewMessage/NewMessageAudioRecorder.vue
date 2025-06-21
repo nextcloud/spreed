@@ -8,11 +8,13 @@
 		<NcButton v-if="!isRecording"
 			:title="startRecordingTitle"
 			:aria-label="startRecordingTitle"
+			:aria-description="isMediaRecorderLoading && t('spreed', 'Loading …')"
 			variant="tertiary"
-			:disabled="!canStartRecording"
+			:disabled="isMediaRecorderLoading"
 			@click="start">
 			<template #icon>
-				<Microphone :size="16" />
+				<Microphone v-if="!isMediaRecorderLoading" :size="16" />
+				<IconLoading v-else :size="16" />
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
@@ -45,8 +47,8 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { MediaRecorder } from 'extendable-media-recorder'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import IconLoading from 'vue-material-design-icons/Loading.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
@@ -61,6 +63,7 @@ export default {
 		Microphone,
 		Close,
 		Check,
+		IconLoading,
 		NcButton,
 	},
 
@@ -74,10 +77,19 @@ export default {
 	emits: ['recording', 'audio-file'],
 
 	setup() {
-		const encoderReady = useAudioEncoder()
+		const {
+			isMediaRecorderReady,
+			isMediaRecorderLoading,
+			initMediaRecorder,
+			MediaRecorder,
+		} = useAudioEncoder()
+
 		return {
-			encoderReady,
 			token: useGetToken(),
+			isMediaRecorderReady,
+			isMediaRecorderLoading,
+			initMediaRecorder,
+			MediaRecorder,
 		}
 	},
 
@@ -156,9 +168,8 @@ export default {
 		 * Initialize the media stream and start capturing the audio
 		 */
 		async start() {
-			if (!this.canStartRecording) {
-				return
-			}
+			await this.initMediaRecorder()
+
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
@@ -178,7 +189,7 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				this.mediaRecorder = new MediaRecorder(this.audioStream, {
+				this.mediaRecorder = new this.MediaRecorder(this.audioStream, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
