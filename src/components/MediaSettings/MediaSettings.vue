@@ -74,7 +74,7 @@
 			</div>
 
 			<!-- Tab panels -->
-			<MediaSettingsTabs :active.sync="tabContent" :tabs="tabs">
+			<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
 				<template #tab-panel:devices>
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"

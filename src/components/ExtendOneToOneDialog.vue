@@ -85,9 +85,10 @@ async function extendOneToOneConversation() {
 				<h5 class="start-group__header">
 					{{ t('spreed', 'Start a group conversation') }}
 				</h5>
-				<NewConversationContactsPage class="start-group__contacts"
+				<NewConversationContactsPage
+					v-model:selected-participants="selectedParticipants"
+					class="start-group__contacts"
 					:token="token"
-					:selected-participants.sync="selectedParticipants"
 					only-users />
 				<NcButton class="start-group__action"
 					variant="primary"

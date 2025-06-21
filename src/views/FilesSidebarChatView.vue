@@ -11,7 +11,7 @@
 		<ChatView class="talk-tab__chat-view" is-sidebar />
 		<PollManager />
 		<PollViewer />
-		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 	</div>
 </template>
 

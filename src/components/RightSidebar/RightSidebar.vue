@@ -6,10 +6,10 @@
 <template>
 	<NcAppSidebar v-if="isSidebarAvailable"
 		ref="sidebar"
+		v-model:active="activeTab"
 		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
-		:active.sync="activeTab"
 		:class="'active-tab-' + activeTab"
 		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
 		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"

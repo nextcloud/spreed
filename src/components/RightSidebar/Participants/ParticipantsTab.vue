@@ -8,9 +8,9 @@
 		<div class="search-form">
 			<SearchBox v-if="canSearch"
 				ref="searchBox"
+				v-model:value="searchText"
+				v-model:is-focused="isFocused"
 				class="search-form__input"
-				:value.sync="searchText"
-				:is-focused.sync="isFocused"
 				:placeholder-text="searchBoxPlaceholder"
 				:aria-describedby="showSearchBoxDescription ? searchBoxDescriptionId : undefined"
 				@input="handleInput"
@@ -24,14 +24,14 @@
 				<span class="hidden-visually">{{ searchBoxDescription }}</span>
 			</div>
 			<DialpadPanel v-if="canAddPhones"
-				:value.sync="searchText"
+				v-model:value="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
 		</div>
 
 		<SelectPhoneNumber v-if="canAddPhones"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"

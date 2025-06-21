@@ -4,8 +4,9 @@
 -->
 
 <template>
-	<NcPopover class="call-time"
-		:shown.sync="showPopover"
+	<NcPopover
+		v-model:shown="showPopover"
+		class="call-time"
 		:no-focus-trap="!isShowRecordingControls"
 		:triggers="[]">
 		<template #trigger>

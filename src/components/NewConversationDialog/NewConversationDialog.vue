@@ -19,9 +19,9 @@
 				<!-- First page -->
 				<NewConversationSetupPage v-show="page === 0"
 					ref="setupPage"
-					:new-conversation.sync="newConversation"
-					:password.sync="password"
-					:listable.sync="listable"
+					v-model:new-conversation="newConversation"
+					v-model:password="password"
+					v-model:listable="listable"
 					class="new-group-conversation__content"
 					@handle-enter="handleEnter"
 					@avatar-edited="setIsAvatarEdited"
@@ -29,8 +29,8 @@
 
 				<!-- Second page -->
 				<NewConversationContactsPage v-if="page === 1"
+					v-model:selected-participants="selectedParticipants"
 					class="new-group-conversation__content"
-					:selected-participants.sync="selectedParticipants"
 					:can-moderate-sip-dial-out="canModerateSipDialOut" />
 			</div>
 

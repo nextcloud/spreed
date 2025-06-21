@@ -210,7 +210,7 @@
 		<!-- confirmation required to leave / delete conversation -->
 		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
 			<NcDialog v-if="isLeaveDialogOpen"
-				:open.sync="isLeaveDialogOpen"
+				v-model:open="isLeaveDialogOpen"
 				:name="t('spreed', 'Leave conversation')">
 				<template #default>
 					<p>{{ dialogLeaveMessage }}</p>
@@ -231,7 +231,7 @@
 				</template>
 			</NcDialog>
 			<NcDialog v-if="isDeleteDialogOpen"
-				:open.sync="isDeleteDialogOpen"
+				v-model:open="isDeleteDialogOpen"
 				:name="t('spreed', 'Delete conversation')"
 				:message="dialogDeleteMessage">
 				<template #actions>

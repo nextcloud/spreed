@@ -40,8 +40,8 @@
 		<ul v-if="serversProxy.length">
 			<SignalingServer v-for="(server, index) in serversProxy"
 				:key="index"
-				:server.sync="server.server"
-				:verify.sync="server.verify"
+				v-model:server="server.server"
+				v-model:verify="server.verify"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
