@@ -25,8 +25,8 @@
 				</template>
 			</NcTextField>
 			<DialpadPanel v-if="canModerateSipDialOut"
+				v-model:value="searchText"
 				container=".set-contacts__form"
-				:value.sync="searchText"
 				@submit="addParticipantPhone" />
 		</div>
 
@@ -44,9 +44,9 @@
 
 		<!-- Search results -->
 		<SelectPhoneNumber v-if="canModerateSipDialOut"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
 		<ParticipantsSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"

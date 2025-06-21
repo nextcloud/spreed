@@ -24,8 +24,8 @@
 				<div class="conversations-search"
 					:class="{ 'conversations-search--expanded': isSearching }">
 					<SearchBox ref="searchBox"
-						:value.sync="searchText"
-						:is-focused.sync="isFocused"
+						v-model:value="searchText"
+						v-model:is-focused="isFocused"
 						:list-ref="[scroller, searchResults]"
 						@input="debounceFetchSearchResults"
 						@abort-search="abortSearch" />

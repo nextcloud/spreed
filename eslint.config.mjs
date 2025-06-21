@@ -76,11 +76,4 @@ export default [
 			'vue/no-unused-refs': 'off', // non-fixable
 		},
 	},
-
-	{
-		name: 'talk/disabled-during-vue3-migration',
-		rules: {
-			'vue/no-deprecated-v-bind-sync': 'off',
-		},
-	},
 ]

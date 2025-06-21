@@ -50,7 +50,8 @@
 							<Message :size="20" />
 						</template>
 					</NcButton>
-					<NcDialog :open.sync="logModal"
+					<NcDialog
+						v-model:open="logModal"
 						:name="t('spreed', 'Log content')"
 						size="normal"
 						container=".matterbridge-settings"

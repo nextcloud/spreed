@@ -363,7 +363,7 @@ async function submitNewMeeting() {
 
 		<template v-if="canScheduleMeeting">
 			<NcDialog id="calendar-meeting"
-				:open.sync="isFormOpen"
+				v-model:open="isFormOpen"
 				class="calendar-meeting"
 				:name="t('spreed', 'Schedule a meeting')"
 				size="normal"
@@ -446,13 +446,14 @@ async function submitNewMeeting() {
 			</NcDialog>
 
 			<NcDialog v-if="isSelectorOpen"
-				:open.sync="isSelectorOpen"
+				v-model:open="isSelectorOpen"
 				:name="t('spreed', 'Add attendees')"
 				class="calendar-meeting"
 				close-on-click-outside
 				container="#calendar-meeting">
-				<SearchBox class="calendar-meeting__searchbox"
-					:value.sync="searchText"
+				<SearchBox
+					v-model:value="searchText"
+					class="calendar-meeting__searchbox"
 					is-focused
 					:placeholder-text="t('spreed', 'Search participants')"
 					@abort-search="searchText = ''" />
@@ -470,7 +471,7 @@ async function submitNewMeeting() {
 				<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
 					<SelectableParticipant v-for="participant in filteredParticipants"
 						:key="participant.attendeeId"
-						:checked.sync="selectedAttendeeIds"
+						v-model:checked="selectedAttendeeIds"
 						:participant="participant"
 						@update:checked="checkSelection" />
 				</ul>

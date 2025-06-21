@@ -251,10 +251,11 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 			<div class="search-form__main">
 				<div class="search-form__search-box-wrapper">
 					<SearchBox ref="searchBox"
-						:value.sync="searchText"
-						:placeholder-text="t('spreed', 'Search messages …')"
-						:is-focused.sync="isFocused" />
-					<NcButton :pressed.sync="searchDetailsOpened"
+						v-model:value="searchText"
+						v-model:is-focused="isFocused"
+						:placeholder-text="t('spreed', 'Search messages …')" />
+					<NcButton
+						v-model:pressed="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
 						:title="t('spreed', 'Search options')"
 						variant="tertiary-no-background">

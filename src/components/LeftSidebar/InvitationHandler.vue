@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcDialog :open.sync="modal"
+	<NcDialog
+		v-model:open="modal"
 		:name="t('spreed', 'Pending invitations')"
 		size="normal"
 		close-on-click-outside>
