@@ -43,20 +43,20 @@
 						@keydown="handleMovement">
 						<template v-if="!devMode && (!isLessThanTwoVideos || !isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
-							<template v-for="callParticipantModel in displayedVideos">
-								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{ video: !isStripe }"
-									:show-video-overlay="showVideoOverlay"
-									:token="token"
-									:model="callParticipantModel"
-									:is-grid="true"
-									:show-talking-highlight="!isStripe"
-									:is-stripe="isStripe"
-									:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
-									:is-selected="isSelected(callParticipantModel)"
-									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
-							</template>
+							<VideoVue
+								v-for="callParticipantModel in displayedVideos"
+								:key="callParticipantModel.attributes.peerId"
+								:class="{ video: !isStripe }"
+								:show-video-overlay="showVideoOverlay"
+								:token="token"
+								:model="callParticipantModel"
+								:is-grid="true"
+								:show-talking-highlight="!isStripe"
+								:is-stripe="isStripe"
+								:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+								:is-selected="isSelected(callParticipantModel)"
+								:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+								@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">

@@ -30,13 +30,13 @@
 					name="fade"
 					tag="div"
 					group>
-					<template v-for="file in files">
-						<FilePreview :key="file[1].temporaryMessage.id"
-							:token="token"
-							is-upload-editor
-							:file="file[1].temporaryMessage.messageParameters.file"
-							@remove-file="handleRemoveFileFromSelection" />
-					</template>
+					<FilePreview
+						v-for="file in files"
+						:key="file[1].temporaryMessage.id"
+						:token="token"
+						is-upload-editor
+						:file="file[1].temporaryMessage.messageParameters.file"
+						@remove-file="handleRemoveFileFromSelection" />
 					<NcButton key="add-more"
 						:aria-label="addMoreAriaLabel"
 						variant="tertiary"
