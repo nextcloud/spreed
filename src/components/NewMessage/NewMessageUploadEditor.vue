@@ -37,7 +37,7 @@
 						is-upload-editor
 						:file="file[1].temporaryMessage.messageParameters.file"
 						@remove-file="handleRemoveFileFromSelection" />
-					<NcButton key="add-more"
+					<NcButton
 						:aria-label="addMoreAriaLabel"
 						variant="tertiary"
 						class="add-more-button"

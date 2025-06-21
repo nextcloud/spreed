@@ -66,7 +66,9 @@
 					</NcActionText>
 					<NcActionSeparator />
 
-					<NcActionButton v-if="supportReminders"
+					<NcActionButton
+						v-if="supportReminders"
+						key="set-reminder-menu"
 						is-menu
 						@click.stop="submenu = 'reminder'">
 						<template #icon>
@@ -74,7 +76,9 @@
 						</template>
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
-					<NcActionButton v-if="isPrivateReplyable"
+					<NcActionButton
+						v-if="isPrivateReplyable"
+						key="reply-privately"
 						close-after-click
 						@click.stop="handlePrivateReply">
 						<template #icon>
@@ -82,7 +86,9 @@
 						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
-					<NcActionButton v-if="isEditable"
+					<NcActionButton
+						v-if="isEditable"
+						key="edit-message"
 						:aria-label="t('spreed', 'Edit message')"
 						close-after-click
 						@click.stop="editMessage">
@@ -91,7 +97,9 @@
 						</template>
 						{{ t('spreed', 'Edit message') }}
 					</NcActionButton>
-					<NcActionButton v-if="!isFileShareWithoutCaption"
+					<NcActionButton
+						v-if="!isFileShareWithoutCaption"
+						key="copy-message"
 						close-after-click
 						@click.stop="handleCopyMessageText">
 						<template #icon>
@@ -99,14 +107,18 @@
 						</template>
 						{{ t('spreed', 'Copy message') }}
 					</NcActionButton>
-					<NcActionButton close-after-click
+					<NcActionButton
+						key="copy-message-link"
+						close-after-click
 						@click.stop="handleCopyMessageLink">
 						<template #icon>
 							<OpenInNewIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Copy message link') }}
 					</NcActionButton>
-					<NcActionButton close-after-click
+					<NcActionButton
+						key="mark-as-unread"
+						close-after-click
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
 							<EyeOffOutline :size="16" />
@@ -128,7 +140,9 @@
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
-					<NcActionButton v-if="canForwardMessage && !isInNoteToSelf"
+					<NcActionButton
+						v-if="canForwardMessage && !isInNoteToSelf"
+						key="forward-to-note"
 						close-after-click
 						@click="forwardToNote">
 						<template #icon>
@@ -136,7 +150,9 @@
 						</template>
 						{{ t('spreed', 'Note to self') }}
 					</NcActionButton>
-					<NcActionButton v-if="canForwardMessage"
+					<NcActionButton
+						v-if="canForwardMessage"
+						key="forward-message"
 						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
@@ -145,14 +161,17 @@
 						{{ t('spreed', 'Forward message') }}
 					</NcActionButton>
 					<NcActionSeparator v-if="messageActions.length > 0" />
-					<NcActionButton v-for="action in messageActions"
+					<NcActionButton
+						v-for="action in messageActions"
 						:key="action.label"
 						:icon="action.icon"
 						close-after-click
 						@click="handleMessageAction(action)">
 						{{ action.label }}
 					</NcActionButton>
-					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
+					<NcActionButton
+						v-if="isTranslationAvailable && !isFileShareWithoutCaption"
+						key="translate-message"
 						close-after-click
 						@click.stop="$emit('showTranslateDialog', true)"
 						@close="$emit('showTranslateDialog', false)">
@@ -163,7 +182,9 @@
 					</NcActionButton>
 					<template v-if="isDeleteable">
 						<NcActionSeparator />
-						<NcActionButton close-after-click
+						<NcActionButton
+							key="delete-message"
+							close-after-click
 							@click.stop="handleDelete">
 							<template #icon>
 								<DeleteIcon :size="16" />
@@ -174,7 +195,9 @@
 				</template>
 
 				<template v-else-if="supportReminders && submenu === 'reminder'">
-					<NcActionButton :aria-label="t('spreed', 'Back')"
+					<NcActionButton
+						key="action-back"
+						:aria-label="t('spreed', 'Back')"
 						@click.stop="submenu = null">
 						<template #icon>
 							<IconArrowLeft class="bidirectional-icon" />
@@ -182,7 +205,9 @@
 						{{ t('spreed', 'Back') }}
 					</NcActionButton>
 
-					<NcActionButton v-if="currentReminder"
+					<NcActionButton
+						v-if="currentReminder"
+						key="remove-reminder"
 						close-after-click
 						@click.stop="removeReminder">
 						<template #icon>
@@ -193,7 +218,8 @@
 
 					<NcActionSeparator />
 
-					<NcActionButton v-for="option in reminderOptions"
+					<NcActionButton
+						v-for="option in reminderOptions"
 						:key="option.key"
 						:aria-label="option.ariaLabel"
 						close-after-click
@@ -213,7 +239,9 @@
 						</template>
 					</NcActionInput>
 
-					<NcActionButton :aria-label="t('spreed', 'Set custom reminder')"
+					<NcActionButton
+						key="set-reminder"
+						:aria-label="t('spreed', 'Set custom reminder')"
 						close-after-click
 						@click.stop="setReminder(customReminderTimestamp)">
 						<template #icon>
