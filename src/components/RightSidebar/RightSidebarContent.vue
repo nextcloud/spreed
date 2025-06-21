@@ -228,7 +228,7 @@ function handleHeaderClick() {
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
 						:title="sidebarTitle"
-						@click.native="handleHeaderClick" />
+						@click="handleHeaderClick" />
 					<div v-if="mode !== 'compact' && profileInfo"
 						class="content__info">
 						<span v-for="row in profileInformation"

@@ -190,7 +190,7 @@
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
 					class="scroller"
-					@scroll.native="debounceHandleScroll" />
+					@scroll="debounceHandleScroll" />
 				<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 					class="unread-mention-button"
 					variant="primary"
