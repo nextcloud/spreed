@@ -133,7 +133,7 @@ export default {
 		EventBus.on('sip-settings-updated', this.updateSipDetails)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('signaling-server-connected', this.updateSignalingDetails)
 		EventBus.off('sip-settings-updated', this.updateSipDetails)
 	},

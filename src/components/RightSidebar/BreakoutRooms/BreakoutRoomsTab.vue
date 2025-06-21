@@ -137,7 +137,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		// Clear the interval
 		clearInterval(this.breakoutRoomsParticipantsInterval)
 	},

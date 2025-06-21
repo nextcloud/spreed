@@ -501,7 +501,7 @@ export default {
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchPeers.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)

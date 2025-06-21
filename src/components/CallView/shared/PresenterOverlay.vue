@@ -126,7 +126,7 @@ export default {
 		this.resizeObserver.observe(this.$refs.presenterOverlay.$el.parentElement)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}

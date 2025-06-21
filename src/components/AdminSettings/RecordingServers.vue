@@ -182,7 +182,7 @@ export default {
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

@@ -146,7 +146,7 @@ export default {
 		},
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.killStreams()
 	},
 
