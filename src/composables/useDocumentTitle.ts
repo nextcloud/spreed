@@ -8,7 +8,7 @@ import type { Conversation } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router/composables'
+import { useRoute, useRouter } from 'vue-router'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
