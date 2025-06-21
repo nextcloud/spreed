@@ -113,7 +113,7 @@
     "openapi-typescript": "^7.8.0",
     "regenerator-runtime": "^0.14.1",
     "stylelint-use-logical": "^2.1.2",
-    "ts-jest": "^29.3.4",
+    "ts-jest": "^29.4.0",
     "vue-template-compiler": "^2.7.16",
     "wasm-check": "^2.1.2",
     "webpack-bundle-analyzer": "^4.10.2",
