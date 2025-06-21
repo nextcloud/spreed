@@ -1,10 +1,10 @@
-import { emit } from '@nextcloud/event-bus'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+
+import { emit } from '@nextcloud/event-bus'
+import { createLocalVue, flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'

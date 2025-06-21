@@ -1,10 +1,10 @@
-import { showError, showSuccess } from '@nextcloud/dialogs'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
-import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
+
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { createLocalVue, flushPromises, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
