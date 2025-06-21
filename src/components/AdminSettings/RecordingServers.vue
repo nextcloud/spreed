@@ -56,8 +56,8 @@
 			<template v-if="servers.length && recordingConsentCapability">
 				<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
-				<template v-for="level in recordingConsentOptions">
-					<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+				<template v-for="level in recordingConsentOptions" :key="level.value">
+					<NcCheckboxRadioSwitch
 						v-model="recordingConsentSelected"
 						:value="level.value.toString()"
 						name="recording-consent"
@@ -67,7 +67,7 @@
 						{{ level.label }}
 					</NcCheckboxRadioSwitch>
 
-					<p :key="level.value + '_description'" class="consent-description">
+					<p class="consent-description">
 						{{ getRecordingConsentDescription(level.value) }}
 					</p>
 				</template>
