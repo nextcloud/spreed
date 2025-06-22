@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "You have no archived conversations.",
     "You have no unread mentions." : "You have no unread mentions.",
     "You have no unread messages." : "You have no unread messages.",
+    "Reload Talk home" : "Reload Talk home",
     "Talk home" : "Talk home",
     "An error occurred while performing the search" : "An error occurred while performing the search",
     "Conversation list" : "Conversation list",

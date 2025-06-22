@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "您没有已存档的对话。",
     "You have no unread mentions." : "无未读的提及",
     "You have no unread messages." : "无未读消息",
+    "Reload Talk home" : "重新加载 Talk 首页",
     "Talk home" : "Talk 首页",
     "An error occurred while performing the search" : "执行搜索时出错",
     "Conversation list" : "对话列表",
