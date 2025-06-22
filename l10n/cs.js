@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "Nemáte žádné archivované konverzace.",
     "You have no unread mentions." : "Nemáte žádná nepřečtená zmínění.",
     "You have no unread messages." : "Nemáte žádné nepřečtené zprávy.",
+    "Reload Talk home" : "Znovunačíst domovské Talk",
     "Talk home" : "Talk domovské",
     "An error occurred while performing the search" : "Došlo k chybě při provádění hledání",
     "Conversation list" : "Seznam konverzace",

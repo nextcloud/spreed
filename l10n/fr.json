@@ -911,6 +911,7 @@
     "WebSocket URL" : "URL de la WebSocket",
     "Available features" : "Fonctionnalités disponibles",
     "Error code" : "Code d'erreur",
+    "Error message" : "Message d'erreur",
     "Error: Websocket connection failed. Check browser console" : "Erreur : La connexion à la WebSocket a échoué. Vérifier la console web.",
     "High-performance backend URL" : "URL vers l'infrastructure de haute performance",
     "Missing High-performance backend warning hidden" : "Avertissement sur l'absence de serveur haute performance caché",

@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "Sie haben keine archivierten Unterhaltungen",
     "You have no unread mentions." : "Sie haben keine ungelesenen Erwähnungen.",
     "You have no unread messages." : "Sie haben keine ungelesenen Nachrichten.",
+    "Reload Talk home" : "Talk-Startseite neu laden",
     "Talk home" : "Talk home",
     "An error occurred while performing the search" : "Es ist ein Fehler während der Suche aufgetreten",
     "Conversation list" : "Unterhaltungsliste",
