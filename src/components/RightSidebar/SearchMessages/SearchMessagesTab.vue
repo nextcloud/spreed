@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { Route } from 'vue-router'
+import type { RouteLocation } from 'vue-router'
 import type {
 	Participant,
 	SearchMessagePayload,
@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
 	abortSearch()
 })
 
-const onRouteChange = ({ from, to }: { from: Route, to: Route }): void => {
+const onRouteChange = ({ from, to }: { from: RouteLocation, to: RouteLocation }): void => {
 	if (to.name !== 'conversation' || from.params.token !== to.params.token || (to.hash && isInCall.value)) {
 		abortSearch()
 		emit('close')
