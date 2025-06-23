@@ -44,7 +44,7 @@ use OCP\DB\Types;
  * @method bool isArchived()
  * @method void setImportant(bool $important)
  * @method bool isImportant()
- * @method void setSensitive(bool $important)
+ * @method void setSensitive(bool $sensitive)
  * @method bool isSensitive()
  * @internal
  * @method int getPermissions()
@@ -64,6 +64,12 @@ use OCP\DB\Types;
  * @method int getUnreadMessages()
  * @method void setLastAttendeeActivity(int $lastAttendeeActivity)
  * @method int getLastAttendeeActivity()
+ * @method void setHasUnreadThreads(bool $hasUnreadThreads)
+ * @method bool getHasUnreadThreads()
+ * @method void setHasUnreadThreadMentions(bool $hasUnreadThreadMentions)
+ * @method bool getHasUnreadThreadMentions()
+ * @method void setHasUnreadThreadDirects(bool $hasUnreadThreadDirects)
+ * @method bool getHasUnreadThreadDirects()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -133,6 +139,9 @@ class Attendee extends Entity {
 	protected int $state = 0;
 	protected int $unreadMessages = 0;
 	protected int $lastAttendeeActivity = 0;
+	protected bool $hasUnreadThreads = false;
+	protected bool $hasUnreadThreadMentions = false;
+	protected bool $hasUnreadThreadDirects = false;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -161,6 +170,9 @@ class Attendee extends Entity {
 		$this->addType('state', Types::SMALLINT);
 		$this->addType('unreadMessages', Types::BIGINT);
 		$this->addType('lastAttendeeActivity', Types::BIGINT);
+		$this->addType('hasUnreadThreads', Types::BOOLEAN);
+		$this->addType('hasUnreadThreadMentions', Types::BOOLEAN);
+		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
 	}
 
 	public function getDisplayName(): string {
