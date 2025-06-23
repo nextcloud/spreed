@@ -5,7 +5,7 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 import store from './store/index.js'
@@ -38,7 +38,7 @@ const newTab = () => createApp(FilesSidebarTabApp)
 	.use(NextcloudGlobalsVuePlugin)
 
 if (!window.OCA.Talk) {
-	window.OCA.Talk = {}
+	window.OCA.Talk = reactive({})
 }
 Object.assign(window.OCA.Talk, {
 	fileInfo: null,

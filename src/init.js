@@ -8,6 +8,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { reactive } from 'vue'
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
@@ -19,7 +20,7 @@ import { useTokenStore } from './stores/token.ts'
 import '@nextcloud/dialogs/style.css'
 
 if (!window.OCA.Talk) {
-	window.OCA.Talk = {}
+	window.OCA.Talk = reactive({})
 }
 
 const integrationsStore = useIntegrationsStore(pinia)

@@ -6,7 +6,7 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 import Recording from './Recording.vue'
 import router from './router/router.ts'
 import store from './store/index.js'
@@ -36,7 +36,7 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 window.store = store
 
 if (!window.OCA.Talk) {
-	window.OCA.Talk = {}
+	window.OCA.Talk = reactive({})
 }
 
 const instance = createApp(Recording)

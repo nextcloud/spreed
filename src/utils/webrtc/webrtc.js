@@ -9,6 +9,7 @@ import {
 	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { reactive } from 'vue'
 import { PARTICIPANT } from '../../constants.ts'
 import store from '../../store/index.js'
 import { useActorStore } from '../../stores/actor.ts'
@@ -685,7 +686,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	if (!window.OCA.Talk) {
-		window.OCA.Talk = {}
+		window.OCA.Talk = reactive({})
 	}
 	window.OCA.Talk.SimpleWebRTC = webrtc
 

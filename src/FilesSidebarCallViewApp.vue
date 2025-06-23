@@ -48,7 +48,6 @@ export default {
 
 	data() {
 		return {
-			// Needed for reactivity.
 			Talk: OCA.Talk,
 		}
 	},
