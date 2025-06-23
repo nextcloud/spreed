@@ -131,7 +131,7 @@ jobs:
         if: steps.check_composer.outputs.files_exists == 'true'
         working-directory: apps/${{ env.APP_NAME }}
         run: |
-          composer remove nextcloud/ocp --dev
+          composer remove nextcloud/ocp --dev --no-scripts
           composer i
 
       - name: Set up Nextcloud
