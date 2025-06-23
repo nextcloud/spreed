@@ -61,7 +61,7 @@
 			aria-hidden="true"
 			@change="handleFileInput">
 
-		<FilePickerVue v-if="showFilePicker"
+		<FilePicker v-if="showFilePicker"
 			:name="t('spreed', 'Select a file')"
 			:path="relativeBackgroundsFolderPath"
 			container=".media-settings"
@@ -73,7 +73,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { FilePicker } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
@@ -104,7 +104,7 @@ export default {
 	name: 'VideoBackgroundEditor',
 
 	components: {
-		FilePickerVue,
+		FilePicker,
 		IconBlur,
 		IconCancel,
 		IconCheckBold,
