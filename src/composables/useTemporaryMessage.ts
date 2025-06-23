@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { Store } from 'vuex'
 import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
 
 import { useStore } from 'vuex'
@@ -14,7 +15,7 @@ import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
  * Composable to generate temporary messages using defined in store information
  * @param context Vuex Store (to be used inside Vuex modules)
  */
-export function useTemporaryMessage(context: unknown) {
+export function useTemporaryMessage(context: Store<unknown>) {
 	const store = context ?? useStore()
 	const chatExtrasStore = useChatExtrasStore()
 	const actorStore = useActorStore()
