@@ -144,7 +144,7 @@ const roomLabel = computed(() => {
  * @param data object
  * @param data.call - if true, opens the media settings
  */
-function handleJoin({ call = false } = {}) {
+function handleJoin({ call }: { call: boolean }) {
 	router.push({
 		name: 'conversation',
 		params: { token: props.eventRoom.roomToken },
@@ -218,7 +218,7 @@ function handleJoin({ call = false } = {}) {
 		</span>
 		<span class="event-card__invitation-info hovered">
 			<NcButton variant="tertiary"
-				@click="handleJoin">
+				@click="handleJoin({ call: false })">
 				<template #icon>
 					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
