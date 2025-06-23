@@ -4,6 +4,8 @@
 -->
 
 <script setup lang="ts">
+import type { Conversation } from '../types/index.ts'
+
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { provide, ref, watch } from 'vue'
@@ -42,8 +44,8 @@ watch(() => props.token, (newValue) => {
  * @param token - conversation token
  */
 function getArrayWithSecondAttendee(token: string) {
-	const conversation = store.getters.conversation(token)
-	if (conversation?.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
+	const conversation = store.getters.conversation(token) as Conversation | undefined
+	if (!conversation || conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE) {
 		return []
 	}
 	return [{ id: conversation.name, source: ATTENDEE.ACTOR_TYPE.USERS, label: conversation.displayName }]
