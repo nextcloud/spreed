@@ -281,6 +281,7 @@ footer {
 <style lang="scss" scoped>
 /* Properties based on the app-sidebar */
 #talk-sidebar {
+	height: 100%;
 	position: relative;
 	flex-shrink: 0;
 	width: clamp(300px, 27vw, 500px);
