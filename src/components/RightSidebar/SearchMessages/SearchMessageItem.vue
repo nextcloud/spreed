@@ -4,6 +4,8 @@
 -->
 
 <script setup lang="ts">
+import type { Conversation } from '../../../types/index.ts'
+
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { computed } from 'vue'
@@ -63,13 +65,13 @@ const props = defineProps({
 const store = useStore()
 const dashboardStore = useDashboardStore()
 
-const conversation = computed(() => store.getters.conversation(props.token))
-const isOneToOneConversation = computed(() => conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE)
+const conversation = computed<Conversation | undefined>(() => store.getters.conversation(props.token))
+const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE)
 const name = computed(() => {
 	if (!props.isReminder || isOneToOneConversation.value) {
 		return props.title
 	}
-	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value.displayName }, { escape: false, sanitize: false })
+	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value?.displayName ?? '' }, { escape: false, sanitize: false })
 })
 const richSubline = computed(() => {
 	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {
