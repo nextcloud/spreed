@@ -6,7 +6,7 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
-import { createApp, watch } from 'vue'
+import { createApp, reactive, watch } from 'vue'
 import App from './App.vue'
 import router from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
@@ -122,7 +122,7 @@ Object.assign(window.OCA.Files, {
 
 // make the instance available to global components that might run on the same page
 if (!window.OCA.Talk) {
-	window.OCA.Talk = {}
+	window.OCA.Talk = reactive({})
 }
 OCA.Talk.instance = instance
 OCA.Talk.Settings = SettingsAPI
