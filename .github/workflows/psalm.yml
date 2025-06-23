@@ -49,7 +49,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer remove nextcloud/ocp --dev
+          composer remove nextcloud/ocp --dev --no-scripts
           composer i
 
       - name: Check for vulnerable PHP dependencies

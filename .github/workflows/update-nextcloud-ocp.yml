@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   update-nextcloud-ocp:
@@ -23,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ['main', 'master', 'stable31', 'stable30', 'stable29']
+        branches: ['main', 'master', 'stable31', 'stable30']
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
