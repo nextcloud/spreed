@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "Níl aon chomhráite sa chartlann agat.",
     "You have no unread mentions." : "Níl aon tagairtí neamhléite agat.",
     "You have no unread messages." : "Níl aon teachtaireachtaí neamhléite agat.",
+    "Reload Talk home" : "Athlódáil Comhrá baile",
     "Talk home" : "Labhair abhaile",
     "An error occurred while performing the search" : "Tharla earráid agus an cuardach á dhéanamh",
     "Conversation list" : "Liosta comhráite",
