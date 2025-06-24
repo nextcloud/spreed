@@ -429,10 +429,11 @@ export default {
 			this.adjustSimulcastQuality()
 		},
 
-		speakers(value) {
-			if (value) {
+		speakers: {
+			deep: true,
+			handler() {
 				this._setPromotedParticipant()
-			}
+			},
 		},
 
 		shownRemoteScreenPeerId(value) {
@@ -441,8 +442,11 @@ export default {
 			}
 		},
 
-		screens() {
-			this._setScreenVisible()
+		screens: {
+			deep: true,
+			handler() {
+				this._setScreenVisible()
+			},
 		},
 
 		callParticipantModelsWithScreen(newValue, previousValue) {
