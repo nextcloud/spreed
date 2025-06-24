@@ -4,11 +4,10 @@ import { loadState } from '@nextcloud/initial-state'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import VueRouter from 'vue-router'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import LeftSidebar from './LeftSidebar.vue'
 import router from '../../__mocks__/router.js'
 import { searchListedConversations } from '../../services/conversationsService.ts'
@@ -44,7 +43,6 @@ jest.mock('debounce', () => jest.fn().mockImplementation((fn) => fn))
 
 describe('LeftSidebar.vue', () => {
 	let store
-	let localVue
 	let testStoreConfig
 	let loadStateSettings
 	let conversationsListMock
@@ -66,19 +64,19 @@ describe('LeftSidebar.vue', () => {
 
 	const mountComponent = () => {
 		return mount(LeftSidebar, {
-			localVue,
-			router,
-			store,
+			global: {
+				plugins: [router, store],
+				stubs: {
+					// to prevent user status fetching
+					NcAvatar: true,
+					// to prevent complex dialog logic
+					NcActions: true,
+					NcModal: true,
+					RecycleScroller: RecycleScrollerStub,
+				},
+			},
 			provide: {
 				'NcContent:setHasAppNavigation': () => {},
-			},
-			stubs: {
-				// to prevent user status fetching
-				NcAvatar: true,
-				// to prevent complex dialog logic
-				NcActions: true,
-				NcModal: true,
-				RecycleScroller: RecycleScrollerStub,
 			},
 		})
 	}
@@ -86,9 +84,6 @@ describe('LeftSidebar.vue', () => {
 	beforeEach(() => {
 		jest.useFakeTimers()
 
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-		localVue.use(VueRouter)
 		setActivePinia(createPinia())
 		const actorStore = useActorStore()
 
@@ -110,13 +105,13 @@ describe('LeftSidebar.vue', () => {
 		fetchConversationsAction = jest.fn().mockReturnValue({ headers: {} })
 		addConversationAction = jest.fn()
 		createOneToOneConversationAction = jest.fn()
-		actorStore.userId = 'current-user'
+		actorStore.setCurrentUser({ uid: 'current-user' })
 		testStoreConfig.modules.conversationsStore.getters.conversationsList = conversationsListMock
 		testStoreConfig.modules.conversationsStore.actions.fetchConversations = fetchConversationsAction
 		testStoreConfig.modules.conversationsStore.actions.addConversation = addConversationAction
 		testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversationAction
 
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {

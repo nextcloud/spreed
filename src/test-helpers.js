@@ -20,7 +20,7 @@ function findNcActionButton(wrapper, text) {
 	if (!items.exists()) {
 		return items
 	}
-	return items.at(0)
+	return items[0]
 }
 
 /**
@@ -37,7 +37,7 @@ function findNcButton(wrapper, text) {
 	if (!items.exists()) {
 		return items
 	}
-	return items.at(0)
+	return items[0]
 }
 
 /**

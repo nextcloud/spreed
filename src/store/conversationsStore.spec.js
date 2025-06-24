@@ -3,10 +3,10 @@ import { emit } from '@nextcloud/event-bus'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, flushPromises } from '@vue/test-utils'
+import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import {
 	ATTENDEE,
 	CONVERSATION,
@@ -84,15 +84,12 @@ describe('conversationsStore', () => {
 	}
 	let testStoreConfig = null
 	let testConversation
-	let localVue = null
 	let store = null
 	let addParticipantOnceAction = null
 	let actorStore
 	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 
@@ -138,7 +135,7 @@ describe('conversationsStore', () => {
 			checkMaintenanceModeAction = jest.spyOn(talkHashStore, 'checkMaintenanceMode')
 			clearMaintenanceModeAction = jest.spyOn(talkHashStore, 'clearMaintenanceMode')
 			updateTalkVersionHashAction = jest.spyOn(talkHashStore, 'updateTalkVersionHash')
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('adds conversation to the store, with current user as participant', () => {
@@ -637,7 +634,7 @@ describe('conversationsStore', () => {
 
 	describe('conversation settings', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('make public', async () => {
@@ -914,7 +911,7 @@ describe('conversationsStore', () => {
 
 	describe('read marker', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			actorStore.userId = 'current-user'
 		})
 
@@ -996,7 +993,7 @@ describe('conversationsStore', () => {
 
 	describe('update last message', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('successful update from user', () => {

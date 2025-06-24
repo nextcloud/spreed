@@ -2,11 +2,11 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
-import Vuex, { Store } from 'vuex'
+import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
@@ -20,7 +20,6 @@ import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js
 
 describe('MessageButtonsBar.vue', () => {
 	const TOKEN = 'XXTOKENXX'
-	let localVue
 	let testStoreConfig
 	let store
 	let messageProps
@@ -30,8 +29,6 @@ describe('MessageButtonsBar.vue', () => {
 	let tokenStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
@@ -89,7 +86,7 @@ describe('MessageButtonsBar.vue', () => {
 		let useMessageInfoSpy
 
 		beforeEach(() => {
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			injected = {
 				getMessagesListScroller: jest.fn(),
@@ -104,14 +101,15 @@ describe('MessageButtonsBar.vue', () => {
 
 		describe('reply action', () => {
 			test('replies to message', async () => {
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
-						NcButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+							NcButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -127,14 +125,15 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides reply button when not replyable', async () => {
 				messageProps.message.isReplyable = false
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
-						NcButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+							NcButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -146,14 +145,15 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides reply button when no chat permission', async () => {
 				conversationProps.permissions = 0
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
-						NcButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+							NcButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -169,20 +169,21 @@ describe('MessageButtonsBar.vue', () => {
 				const routerPushMock = jest.fn().mockResolvedValue()
 				const createOneToOneConversation = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				messageProps.message.actorId = 'another-user'
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					mocks: {
-						$router: {
-							push: routerPushMock,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
 						},
-					},
-					stubs: {
-						NcActionButton,
+						mocks: {
+							$router: {
+								push: routerPushMock,
+							},
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -211,13 +212,14 @@ describe('MessageButtonsBar.vue', () => {
 			 * @param {boolean} visible Whether or not the reply-private action is visible
 			 */
 			function testPrivateReplyActionVisible(visible) {
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -264,10 +266,11 @@ describe('MessageButtonsBar.vue', () => {
 					isDeleteable: computed(() => true),
 				})
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -288,10 +291,11 @@ describe('MessageButtonsBar.vue', () => {
 			 */
 			function testDeleteMessageVisible(visible) {
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -321,7 +325,7 @@ describe('MessageButtonsBar.vue', () => {
 			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.messagesStore.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.modules.conversationsStore.actions.fetchConversation = fetchConversationAction
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			messageProps.previousMessageId = 100
 
@@ -330,12 +334,12 @@ describe('MessageButtonsBar.vue', () => {
 			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-
 				props: messageProps,
 				provide: injected,
 			})
@@ -363,12 +367,12 @@ describe('MessageButtonsBar.vue', () => {
 			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-
 				props: messageProps,
 				provide: injected,
 			})
@@ -397,12 +401,13 @@ describe('MessageButtonsBar.vue', () => {
 			const integrationsStore = useIntegrationsStore()
 			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
 				props: messageProps,
 				provide: injected,

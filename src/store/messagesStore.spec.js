@@ -3,10 +3,10 @@ import { showError } from '@nextcloud/dialogs'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, flushPromises } from '@vue/test-utils'
+import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import {
 	ATTENDEE,
 	CHAT,
@@ -70,7 +70,6 @@ describe('messagesStore', () => {
 		},
 	}
 
-	let localVue = null
 	let testStoreConfig
 	let store = null
 	let conversationMock
@@ -81,8 +80,6 @@ describe('messagesStore', () => {
 	let actorStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		actorStore = useActorStore()
@@ -104,7 +101,7 @@ describe('messagesStore', () => {
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
 
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -892,7 +889,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			for (const index in originalMessagesList) {
 				store.commit('addMessage', { token: TOKEN, message: originalMessagesList[index] })
@@ -1012,7 +1009,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('get context around specified message id', async () => {
@@ -1168,7 +1165,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		afterEach(() => {
@@ -1638,7 +1635,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			message1 = {
 				id: 1,
 				token: TOKEN,

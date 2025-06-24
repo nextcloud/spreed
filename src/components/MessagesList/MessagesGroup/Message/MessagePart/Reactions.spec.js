@@ -3,10 +3,10 @@ import { showError } from '@nextcloud/dialogs'
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -36,7 +36,6 @@ describe('Reactions.vue', () => {
 	let reactionsProps
 	let testStoreConfig
 	let store
-	let localVue
 	let messageMock
 	let reactionsStored
 	let message
@@ -44,8 +43,6 @@ describe('Reactions.vue', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		const actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -65,10 +62,9 @@ describe('Reactions.vue', () => {
 		messageMock = jest.fn().mockReturnValue(message)
 		testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 
-		actorStore.actorId = 'admin'
-		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		actorStore.setCurrentUser({ uid: 'admin' })
 
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 
 		token = 'token1'
 		messageId = 'parent-id'
@@ -109,12 +105,14 @@ describe('Reactions.vue', () => {
 		test('shows reaction buttons with count and emoji picker', async () => {
 			// Arrange
 			const wrapper = shallowMount(Reactions, {
-				localVue,
-				store,
-				props: reactionsProps,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
+
 			})
 
 			// Assert
@@ -132,12 +130,14 @@ describe('Reactions.vue', () => {
 			// Arrange
 			reactionsProps.canReact = false
 			const wrapper = shallowMount(Reactions, {
-				localVue,
-				store,
-				props: reactionsProps,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
+
 			})
 			const reactionButtons = wrapper.findAllComponents(NcButton)
 			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
@@ -168,15 +168,17 @@ describe('Reactions.vue', () => {
 				token,
 			})
 			testStoreConfig.modules.messagesStore.getters.message = () => messageMock
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			const wrapper = shallowMount(Reactions, {
 				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+						NcPopover,
+					},
 				},
+
 			})
 
 			// Assert
@@ -197,11 +199,13 @@ describe('Reactions.vue', () => {
 					...reactionsProps,
 					showControls: true,
 				},
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+					},
 				},
+
 			})
 
 			const response = generateOCSResponse({ payload: Object.assign({}, reactionsStored, { '❤️': [{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' }] }) })
@@ -228,12 +232,14 @@ describe('Reactions.vue', () => {
 
 			const wrapper = shallowMount(Reactions, {
 				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+						NcPopover,
+					},
 				},
+
 			})
 			const addedReaction = {
 				...reactionsStored,
@@ -276,11 +282,13 @@ describe('Reactions.vue', () => {
 
 			const wrapper = shallowMount(Reactions, {
 				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+
 			})
 			const response = generateOCSResponse({ payload: reactionsStored })
 			getReactionsDetails.mockResolvedValue(response)
