@@ -92,7 +92,7 @@ describe('Participant.vue', () => {
 		return shallowMount(Participant, {
 			localVue,
 			store,
-			propsData: {
+			props: {
 				participant,
 				showUserStatus,
 			},

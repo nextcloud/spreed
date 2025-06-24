@@ -113,7 +113,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 						NcButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -136,7 +136,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 						NcButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -155,7 +155,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 						NcButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -184,7 +184,7 @@ describe('MessageButtonsBar.vue', () => {
 					stubs: {
 						NcActionButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -219,7 +219,7 @@ describe('MessageButtonsBar.vue', () => {
 					stubs: {
 						NcActionButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -269,7 +269,7 @@ describe('MessageButtonsBar.vue', () => {
 					stubs: {
 						NcActionButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -293,7 +293,7 @@ describe('MessageButtonsBar.vue', () => {
 					stubs: {
 						NcActionButton,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -336,7 +336,7 @@ describe('MessageButtonsBar.vue', () => {
 					NcActionButton,
 				},
 
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -369,7 +369,7 @@ describe('MessageButtonsBar.vue', () => {
 					NcActionButton,
 				},
 
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -404,7 +404,7 @@ describe('MessageButtonsBar.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 

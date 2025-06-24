@@ -141,7 +141,7 @@ describe('MessagesList.vue', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
@@ -167,7 +167,7 @@ describe('MessagesList.vue', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
@@ -401,7 +401,7 @@ describe('MessagesList.vue', () => {
 			return shallowMount(MessagesList, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
@@ -412,7 +412,7 @@ describe('MessagesList.vue', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
@@ -430,7 +430,7 @@ describe('MessagesList.vue', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},

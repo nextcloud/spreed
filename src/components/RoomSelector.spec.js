@@ -103,7 +103,7 @@ describe('RoomSelector', () => {
 				ConversationSearchResult,
 				NcDialog,
 			},
-			propsData: props,
+			props: props,
 		})
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()
