@@ -6,11 +6,11 @@
 <script setup lang="ts">
 import type { RouteLocation } from 'vue-router'
 import type {
+	IUserData,
 	Participant,
 	SearchMessagePayload,
 	UnifiedSearchResponse,
 	UnifiedSearchResultEntry,
-	UserFilterObject,
 } from '../../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
@@ -24,7 +24,7 @@ import NcChip from '@nextcloud/vue/components/NcChip'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
 import IconFilter from 'vue-material-design-icons/Filter.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -63,7 +63,7 @@ const searchResults = ref<(UnifiedSearchResultEntry &
 		}
 	})[]>([])
 const searchText = ref('')
-const fromUser = ref<UserFilterObject | null>(null)
+const fromUser = ref<IUserData | undefined>(undefined)
 const sinceDate = ref<Date | null>(null)
 const untilDate = ref<Date | null>(null)
 const searchLimit = ref(10)
@@ -77,7 +77,7 @@ const isInCall = useIsInCall()
 
 const token = useGetToken()
 const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
-const participants = computed<UserFilterObject>(() => {
+const participants = computed<IUserData[]>(() => {
 	return store.getters.participantsList(token.value)
 		.filter(({ actorType }: Participant) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
 		.map(({ actorId, displayName, actorType }: { actorId: string, displayName: string, actorType: string }) => ({
@@ -129,7 +129,7 @@ watch(searchText, (value) => {
 function abortSearch() {
 	cancelSearchFn()
 	searchText.value = ''
-	fromUser.value = null
+	fromUser.value = undefined
 	sinceDate.value = null
 	untilDate.value = null
 	searchDetailsOpened.value = false
@@ -266,11 +266,10 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 				</div>
 				<TransitionWrapper name="radial-reveal">
 					<div v-show="searchDetailsOpened" class="search-form__search-detail">
-						<NcSelect v-model="fromUser"
+						<NcSelectUsers v-model="fromUser"
 							class="search-form__search-detail__from-user"
 							:aria-label-combobox="t('spreed', 'From User')"
 							:placeholder="t('spreed', 'From User')"
-							user-select
 							:loading="!participantsInitialised"
 							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
@@ -301,7 +300,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 						<NcChip v-if="fromUser"
 							variant="tertiary"
 							:text="fromUser.displayName"
-							@close="fromUser = null">
+							@close="fromUser = undefined">
 							<template #icon>
 								<NcAvatar :size="24"
 									:user="fromUser.id"
