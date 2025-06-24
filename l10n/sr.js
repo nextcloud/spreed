@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "You have no archived conversations." : "Немате ниједан архивирани разговор.",
     "You have no unread mentions." : "Немате помињања која нисте прочитали.",
     "You have no unread messages." : "Немате порука која нисте прочитали.",
+    "Reload Talk home" : "Поново учитај Talk почетак",
     "Talk home" : "Talk почетак",
     "An error occurred while performing the search" : "Грешка приликом претраге",
     "Conversation list" : "Листа разговора",
