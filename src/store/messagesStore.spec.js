@@ -116,7 +116,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('processMessage', { token: TOKEN, message: message1 })
-			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
@@ -572,7 +572,7 @@ describe('messagesStore', () => {
 		}
 
 		store.dispatch('processMessage', { token: TOKEN, message: message1 })
-		expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 
 		store.dispatch('purgeMessagesStore', TOKEN)
 		expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
@@ -1956,7 +1956,7 @@ describe('messagesStore', () => {
 			await flushPromises()
 
 			// Assert
-			expect(store.getters.conversationsList).toContain(conversations[1])
+			expect(store.getters.conversationsList).toContainEqual(conversations[1])
 			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 		test('removes parent message ', () => {
