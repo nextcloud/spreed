@@ -24,7 +24,7 @@ import NcChip from '@nextcloud/vue/components/NcChip'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
 import IconFilter from 'vue-material-design-icons/Filter.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -266,11 +266,10 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 				</div>
 				<TransitionWrapper name="radial-reveal">
 					<div v-show="searchDetailsOpened" class="search-form__search-detail">
-						<NcSelect v-model="fromUser"
+						<NcSelectUsers v-model="fromUser"
 							class="search-form__search-detail__from-user"
 							:aria-label-combobox="t('spreed', 'From User')"
 							:placeholder="t('spreed', 'From User')"
-							user-select
 							:loading="!participantsInitialised"
 							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
