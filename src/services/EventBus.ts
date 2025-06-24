@@ -4,7 +4,7 @@
  */
 
 import type { Emitter, EventType, Handler, WildcardHandler } from 'mitt'
-import type { Route } from 'vue-router'
+import type { RouteLocation } from 'vue-router'
 import type {
 	ChatMessage,
 	Conversation,
@@ -37,7 +37,7 @@ export type Events = {
 	'refresh-peer-list': void
 	'refresh-talk-dashboard': void
 	'retry-message': number
-	'route-change': { from: Route, to: Route }
+	'route-change': { from: RouteLocation, to: RouteLocation }
 	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean }
 	'should-refresh-chat-messages': void
 	'should-refresh-conversations': { token: string, properties: Partial<Conversation> } | { all: true } | void

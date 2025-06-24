@@ -113,7 +113,7 @@ import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, useTemplateRef } from 'vue'
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
@@ -156,7 +156,7 @@ const currentConversationToken = useGetToken()
 
 const isOpenedFromDraft = ref(false)
 const editingDraftId = ref<number | null>(null)
-const pollOption = ref<InstanceType<typeof NcTextField>[] | null>(null)
+const pollOption = useTemplateRef<InstanceType<typeof NcTextField>[]>('pollOption')
 const pollImport = ref<HTMLInputElement | null>(null)
 
 const pollForm = reactive<createPollParams>({
@@ -176,7 +176,7 @@ const createPollLabel = computed(() => {
 	}
 
 	return currentConversationToken.value !== props.token
-		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName }, undefined, { escape: false, sanitize: false })
+		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token)?.displayName ?? '' }, undefined, { escape: false, sanitize: false })
 		: t('spreed', 'Create poll')
 })
 
@@ -215,7 +215,7 @@ function deleteOption(index: number) {
 function addOption() {
 	pollForm.options.push('')
 	nextTick(() => {
-		pollOption.value!.at(-1).focus()
+		pollOption.value!.at(-1)!.focus()
 	})
 }
 

@@ -61,11 +61,10 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 	 * Pending conflict should not send 'leave' requests to signaling server / webserver
 	 * @param token - conversation token
 	 */
-	function handleSessionConflict(token: string) {
+	async function handleSessionConflict(token: string) {
 		isLeavingAfterSessionIssue.value = true
 
-		// FIXME Vue3: spawnDialog supports Promise API
-		spawnDialog(ConfirmDialog, {
+		const result = await spawnDialog(ConfirmDialog, {
 			name: t('spreed', 'Duplicate session'),
 			message: t('spreed', 'You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?'),
 			buttons: [
@@ -79,14 +78,14 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 					callback: () => true,
 				},
 			],
-		}, (result?: boolean) => {
-			if (result) {
-				isLeavingAfterSessionIssue.value = false
-				store.dispatch('forceJoinConversation', { token })
-			} else {
-				duplicateSessionTriggered()
-			}
 		})
+
+		if (result) {
+			isLeavingAfterSessionIssue.value = false
+			store.dispatch('forceJoinConversation', { token })
+		} else {
+			duplicateSessionTriggered()
+		}
 	}
 
 	/**

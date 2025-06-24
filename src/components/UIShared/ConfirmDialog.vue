@@ -6,20 +6,33 @@
 <script setup lang="ts">
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 
+// FIXME use real types from @nextcloud/vue
+type ClassType = string | Record<string, boolean | undefined>
+type VueClassType = ClassType | ClassType[] | VueClassType[]
 type NcDialogButtonProps = {
 	label: string
 	callback?: () => unknown | false | Promise<unknown | false>
 	disabled?: boolean
 	icon?: string
-	type?: string
-	variant?: string
+	type?: 'submit' | 'reset' | 'button'
+	variant?: 'primary' | 'secondary' | 'tertiary' | 'tertiary-no-background' | 'tertiary-on-primary' | 'error' | 'warning' | 'success'
 }
 type NcDialogProps = {
 	name: string
-	buttons: NcDialogButtonProps[]
+	buttons?: NcDialogButtonProps[]
 	container?: string
 	message?: string
-	size?: string
+	size?: 'small' | 'normal' | 'large' | 'full'
+	additionalTrapElements?: Array<string | HTMLElement>
+	closeOnClickOutside?: boolean
+	contentClasses?: VueClassType
+	dialogClasses?: VueClassType
+	isForm?: boolean
+	navigationAriaLabel?: string
+	navigationAriaLabelledby?: string
+	navigationClasses?: VueClassType
+	noClose?: boolean
+	outTransition?: boolean
 }
 
 const props = defineProps<NcDialogProps>()
