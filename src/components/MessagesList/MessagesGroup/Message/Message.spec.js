@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, flushPromises, shallowMount } from '@vue/test-utils'
+import { flushPromises, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex, { Store } from 'vuex'
+import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
@@ -41,7 +41,6 @@ const RichTextStub = {
 
 describe('Message.vue', () => {
 	const TOKEN = 'XXTOKENXX'
-	let localVue
 	let testStoreConfig
 	let store
 	let messageProps
@@ -53,8 +52,6 @@ describe('Message.vue', () => {
 	let tokenStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
@@ -104,15 +101,16 @@ describe('Message.vue', () => {
 
 	describe('message rendering', () => {
 		beforeEach(() => {
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('renders rich text message', async () => {
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -126,10 +124,11 @@ describe('Message.vue', () => {
 			messageProps.isSingleEmoji = true
 			messageProps.message.message = '🌧️'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -153,7 +152,7 @@ describe('Message.vue', () => {
 						message: 'message two',
 					}]
 				})
-				store = new Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			test('shows join call button on last message when a call is in progress', () => {
@@ -163,10 +162,11 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -186,10 +186,11 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -206,10 +207,11 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = false
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -228,10 +230,11 @@ describe('Message.vue', () => {
 				jest.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -248,10 +251,11 @@ describe('Message.vue', () => {
 			conversationProps.hasCall = true
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -263,10 +267,11 @@ describe('Message.vue', () => {
 
 		test('renders date', () => {
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -292,13 +297,14 @@ describe('Message.vue', () => {
 
 			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -320,11 +326,12 @@ describe('Message.vue', () => {
 				messageProps.message.messageParameters = messageParameters
 				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
-						RichText: RichTextStub,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+							RichText: RichTextStub,
+						},
 					},
 					props: messageProps,
 					provide: injected,
@@ -514,10 +521,11 @@ describe('Message.vue', () => {
 			const IntersectionObserver = jest.fn()
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				directives: {
 					IntersectionObserver,
@@ -551,10 +559,11 @@ describe('Message.vue', () => {
 			const IntersectionObserver = jest.fn()
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				directives: {
 					IntersectionObserver,
@@ -570,17 +579,18 @@ describe('Message.vue', () => {
 
 	describe('actions', () => {
 		beforeEach(() => {
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('does not render actions for system messages are available', async () => {
 			messageProps.message.systemMessage = 'this is a system message'
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -594,10 +604,11 @@ describe('Message.vue', () => {
 			messageProps.message.timestamp = 0
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -611,10 +622,11 @@ describe('Message.vue', () => {
 			messageProps.message.messageType = MESSAGE.TYPE.COMMENT_DELETED
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -627,11 +639,12 @@ describe('Message.vue', () => {
 		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
-					MessageButtonsBar,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+						MessageButtonsBar,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -658,17 +671,18 @@ describe('Message.vue', () => {
 			let resolveDeleteMessage
 			const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
 			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			// need to mock the date to be within 6h
 			jest.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
-					MessageButtonsBar,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+						MessageButtonsBar,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -702,16 +716,17 @@ describe('Message.vue', () => {
 
 	describe('status', () => {
 		beforeEach(() => {
-			store = new Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('lets user retry sending a timed out message', async () => {
 			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -739,10 +754,11 @@ describe('Message.vue', () => {
 		test('displays the message already with a spinner while sending it', () => {
 			messageProps.message.timestamp = 0
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -756,10 +772,11 @@ describe('Message.vue', () => {
 		test('displays icon when message was read by everyone', () => {
 			conversationProps.lastCommonReadMessage = 123
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -772,10 +789,11 @@ describe('Message.vue', () => {
 		test('displays sent icon when own message was sent', () => {
 			conversationProps.lastCommonReadMessage = 0
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,
@@ -790,10 +808,11 @@ describe('Message.vue', () => {
 			messageProps.message.actorId = 'user-id-2'
 			messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				props: messageProps,
 				provide: injected,

@@ -4,10 +4,10 @@ import { generateRemoteUrl, imagePath } from '@nextcloud/router'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
@@ -16,22 +16,19 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 
 describe('FilePreview.vue', () => {
 	let store
-	let localVue
 	let testStoreConfig
 	let props
 	let oldPixelRatio
 	let actorStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 
 		oldPixelRatio = window.devicePixelRatio
 
 		testStoreConfig = cloneDeep(storeConfig)
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 
 		actorStore.userId = 'current-user-id'
 
@@ -65,8 +62,7 @@ describe('FilePreview.vue', () => {
 	describe('file preview rendering', () => {
 		test('renders file preview', async () => {
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -88,8 +84,7 @@ describe('FilePreview.vue', () => {
 			actorStore.userId = null
 
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -110,8 +105,7 @@ describe('FilePreview.vue', () => {
 			window.devicePixelRatio = 1.5
 
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -126,8 +120,7 @@ describe('FilePreview.vue', () => {
 			props.smallPreview = true
 
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -148,7 +141,7 @@ describe('FilePreview.vue', () => {
 					status: 'uploading',
 				}))
 				testStoreConfig.modules.fileUploadStore.getters.getUploadFile = () => getUploadFileMock
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			test.skip('renders progress bar while uploading', async () => {
@@ -166,8 +159,7 @@ describe('FilePreview.vue', () => {
 				props.file.localUrl = 'blob:XYZ'
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -186,8 +178,7 @@ describe('FilePreview.vue', () => {
 
 		test('renders spinner while loading', () => {
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -199,8 +190,7 @@ describe('FilePreview.vue', () => {
 		test('renders default mime icon on load error', async () => {
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -216,8 +206,7 @@ describe('FilePreview.vue', () => {
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 
@@ -240,8 +229,7 @@ describe('FilePreview.vue', () => {
 				props.file.size = '128'
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -257,8 +245,7 @@ describe('FilePreview.vue', () => {
 				props.file.path = '/path/to/test %20.gif'
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -275,8 +262,7 @@ describe('FilePreview.vue', () => {
 				actorStore.userId = null
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -292,8 +278,7 @@ describe('FilePreview.vue', () => {
 				props.file.size = '4194304'
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -323,7 +308,7 @@ describe('FilePreview.vue', () => {
 					},
 				}
 
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 			afterEach(() => {
 				if (oldViewer) {
@@ -349,8 +334,7 @@ describe('FilePreview.vue', () => {
 				}
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -383,8 +367,7 @@ describe('FilePreview.vue', () => {
 				}
 
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -398,8 +381,7 @@ describe('FilePreview.vue', () => {
 			test('does not open viewer when clicking if viewer is not available', async () => {
 				delete OCA.Viewer
 				const wrapper = shallowMount(FilePreview, {
-					localVue,
-					store,
+					global: { plugins: [store] },
 					props,
 				})
 
@@ -430,8 +412,7 @@ describe('FilePreview.vue', () => {
 				 */
 				async function testPlayButtonVisible(visible) {
 					const wrapper = shallowMount(FilePreview, {
-						localVue,
-						store,
+						global: { plugins: [store] },
 						props,
 					})
 
@@ -471,8 +452,7 @@ describe('FilePreview.vue', () => {
 
 				test('does not render play icon for failed videos', async () => {
 					const wrapper = shallowMount(FilePreview, {
-						localVue,
-						store,
+						global: { plugins: [store] },
 						props,
 					})
 
@@ -504,8 +484,7 @@ describe('FilePreview.vue', () => {
 		})
 		test('emits event when clicking remove button when inside upload editor', async () => {
 			const wrapper = shallowMount(FilePreview, {
-				localVue,
-				store,
+				global: { plugins: [store] },
 				props,
 			})
 

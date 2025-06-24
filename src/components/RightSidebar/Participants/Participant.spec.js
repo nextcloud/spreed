@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, flushPromises, shallowMount } from '@vue/test-utils'
+import { flushPromises, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -32,15 +32,12 @@ describe('Participant.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 
 	let actorStore
 	let tokenStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
@@ -77,7 +74,7 @@ describe('Participant.vue', () => {
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -90,20 +87,21 @@ describe('Participant.vue', () => {
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
 		return shallowMount(Participant, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+				stubs: {
+					NcActionButton,
+					NcButton,
+					NcCheckboxRadioSwitch,
+					NcDialog,
+					NcInputField,
+					NcListItem,
+					NcTextArea,
+				},
+			},
 			props: {
 				participant,
 				showUserStatus,
-			},
-			stubs: {
-				NcActionButton,
-				NcButton,
-				NcCheckboxRadioSwitch,
-				NcDialog,
-				NcInputField,
-				NcListItem,
-				NcTextArea,
 			},
 			mixins: [{
 				// force tooltip display for testing
@@ -305,7 +303,7 @@ describe('Participant.vue', () => {
 
 			testStoreConfig = cloneDeep(storeConfig)
 			testStoreConfig.modules.participantsStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('does not renders call icon and hand raised icon when disconnected', () => {
@@ -348,7 +346,7 @@ describe('Participant.vue', () => {
 				demoteFromModeratorAction = jest.fn()
 
 				testStoreConfig.modules.participantsStore.actions.demoteFromModerator = demoteFromModeratorAction
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			/**
@@ -440,7 +438,7 @@ describe('Participant.vue', () => {
 				promoteToModeratorAction = jest.fn()
 
 				testStoreConfig.modules.participantsStore.actions.promoteToModerator = promoteToModeratorAction
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			/**
@@ -533,7 +531,7 @@ describe('Participant.vue', () => {
 				resendInvitationsAction = jest.fn()
 
 				testStoreConfig.modules.participantsStore.actions.resendInvitations = resendInvitationsAction
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			test('allows moderators to resend invitations for email participants', async () => {
@@ -574,7 +572,7 @@ describe('Participant.vue', () => {
 				removeAction = jest.fn()
 
 				testStoreConfig.modules.participantsStore.actions.removeParticipant = removeAction
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			/**
