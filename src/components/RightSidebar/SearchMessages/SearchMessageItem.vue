@@ -7,6 +7,7 @@
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
@@ -60,6 +61,8 @@ const props = defineProps({
 	},
 })
 
+const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const dashboardStore = useDashboardStore()
 
@@ -91,12 +94,17 @@ const clearReminderLabel = computed(() => {
 	}
 	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(+props.timestamp * 1000).format('ddd LT') })
 })
+
+const active = computed(() => {
+	return route.fullPath === router.resolve(props.to).fullPath
+})
 </script>
 
 <template>
 	<NcListItem :data-nav-id="`message_${messageId}`"
 		:name="name"
 		:to="to"
+		:active="active"
 		:title="richSubline"
 		force-menu>
 		<template #icon>
