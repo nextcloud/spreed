@@ -114,7 +114,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -131,7 +131,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -168,7 +168,7 @@ describe('Message.vue', () => {
 					stubs: {
 						MessageBody,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -191,7 +191,7 @@ describe('Message.vue', () => {
 					stubs: {
 						MessageBody,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -211,7 +211,7 @@ describe('Message.vue', () => {
 					stubs: {
 						MessageBody,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -233,7 +233,7 @@ describe('Message.vue', () => {
 					stubs: {
 						MessageBody,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -253,7 +253,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -268,7 +268,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -300,7 +300,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -326,7 +326,7 @@ describe('Message.vue', () => {
 						MessageBody,
 						RichText: RichTextStub,
 					},
-					propsData: messageProps,
+					props: messageProps,
 					provide: injected,
 				})
 
@@ -522,7 +522,7 @@ describe('Message.vue', () => {
 				directives: {
 					IntersectionObserver,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -559,7 +559,7 @@ describe('Message.vue', () => {
 				directives: {
 					IntersectionObserver,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -582,7 +582,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -599,7 +599,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -616,7 +616,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -633,7 +633,7 @@ describe('Message.vue', () => {
 					MessageBody,
 					MessageButtonsBar,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -670,7 +670,7 @@ describe('Message.vue', () => {
 					MessageBody,
 					MessageButtonsBar,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -713,7 +713,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -744,7 +744,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 			const message = wrapper.findComponent({ name: 'NcRichText' })
@@ -761,7 +761,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -777,7 +777,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 
@@ -795,7 +795,7 @@ describe('Message.vue', () => {
 				stubs: {
 					MessageBody,
 				},
-				propsData: messageProps,
+				props: messageProps,
 				provide: injected,
 			})
 

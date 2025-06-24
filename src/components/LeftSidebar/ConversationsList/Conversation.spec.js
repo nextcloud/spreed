@@ -88,7 +88,7 @@ describe('Conversation.vue', () => {
 			stubs: {
 				RouterLink: RouterLinkStub,
 			},
-			propsData: {
+			props: {
 				isSearchResult: false,
 				item,
 			},
@@ -114,7 +114,7 @@ describe('Conversation.vue', () => {
 			const wrapper = shallowMount(Conversation, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					isSearchResult,
 					item,
 				},
@@ -203,7 +203,7 @@ describe('Conversation.vue', () => {
 			const wrapper = shallowMount(Conversation, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -228,7 +228,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					RouterLink: RouterLinkStub,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -279,7 +279,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					RouterLink: RouterLinkStub,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -305,7 +305,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcListItem,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -356,7 +356,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -383,7 +383,7 @@ describe('Conversation.vue', () => {
 					NcActionButton,
 					NcButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -524,7 +524,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -559,7 +559,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -590,7 +590,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -638,7 +638,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: true,
 					item,
 				},

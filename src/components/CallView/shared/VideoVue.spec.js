@@ -102,7 +102,7 @@ describe('VideoVue.vue', () => {
 			wrapper = shallowMount(VideoVue, {
 				localVue,
 				store,
-				propsData: {
+				props: {
 					model: callParticipantModel,
 					token: 'theToken',
 					sharedData: {
