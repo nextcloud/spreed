@@ -23,6 +23,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
@@ -41,6 +42,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		protected Preloader $sharePreloader,
 		protected MessageParser $messageParser,
 		protected ThreadService $threadService,
+		protected ITimeFactory $timeFactory,
 		protected IL10N $l,
 		protected IEventDispatcher $eventDispatcher,
 		protected LoggerInterface $logger,
@@ -152,6 +154,19 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		$thread = $this->threadService->createThread($this->room, $threadId);
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'thread_created', 'parameters' => ['thread' => $threadId]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true,
+			true
+		);
+
 		$this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
 		return new DataResponse($thread->jsonSerialize(), Http::STATUS_OK);
 	}
