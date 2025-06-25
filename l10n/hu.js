@@ -29,7 +29,7 @@ OC.L10N.register(
     "- Searching for conversations and participants will now also filter your existing conversations, making it much easier to find previous conversations" : "- A beszélgetések és a résztvevők keresése mostantól a meglévő beszélgetéseket is kiszűri, így sokkal könnyebb megtalálni a korábbi beszélgetéseket",
     "- You can now add custom user groups to conversations when the circles app is installed" : "- Mostantól, hozzáadhat egyéni felhasználói csoportokat a beszélgetésekhez, amennyiben a CIrcles alkalmazás telepítve van",
     "- Check out the new grid and call view" : "- Nézze meg az új rács és hívás nézeteket",
-    "- You can now upload and drag'n'drop files directly from your device into the chat" : "- Mostantól közvetlenül az eszközéről feltöltheti és áthúzhatja a fájlokat a csevegésbe",
+    "- You can now upload and drag'n'drop files directly from your device into the chat" : "- Mostantól közvetlenül feltöltheti az eszközéről a fájlokat, és áthúzhatja őket a csevegésbe",
     "- Shared files are now opened directly inside the chat view with the viewer apps" : "- A megosztott fájlok most a megtekintő alkalmazásokkal közvetlenül a chat nézetben nyílnak meg",
     "- You can now search for chats and messages in the unified search in the top bar" : "- Mostantól a felső sáv egységes keresőben kereshet csevegéseket és üzeneteket",
     "- Spice up your messages with emojis from the emoji picker" : "- Fűszerezze üzeneteit hangulatjelekkel az emoji kiválasztóból",
