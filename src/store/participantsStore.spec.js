@@ -3,12 +3,11 @@ import { emit } from '@nextcloud/event-bus'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { PARTICIPANT } from '../constants.ts'
 import {
 	joinCall,
@@ -72,22 +71,19 @@ jest.spyOn(EventBus, 'emit')
 describe('participantsStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig = null
-	let localVue = null
 	let store = null
 	let guestNameStore = null
 	let actorStore
 	let tokenStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -173,7 +169,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 1 },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 42 },
@@ -190,7 +186,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'users', actorId: 'admin' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'groups', actorId: 'admin' }, // Actor type mismatch
@@ -211,7 +207,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: '1234567890' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: 'abcdefghi' },
@@ -520,7 +516,7 @@ describe('participantsStore', () => {
 		test('updates conversation if fail to fetch participants', async () => {
 			// Arrange
 			testStoreConfig = cloneDeep(storeConfig)
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			fetchParticipants.mockRejectedValue(generateOCSErrorResponse({
 				status: 403,
 				payload: [],
@@ -565,7 +561,7 @@ describe('participantsStore', () => {
 				token: TOKEN,
 				type: 3,
 			})
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			store.dispatch('addParticipant', {
 				token: TOKEN,
 				participant: {
@@ -832,7 +828,7 @@ describe('participantsStore', () => {
 		})
 
 		test('joins conversation', async () => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			const response = generateOCSResponse({ payload: participantData })
 			joinConversation.mockResolvedValue(response)
 
@@ -853,7 +849,7 @@ describe('participantsStore', () => {
 		})
 
 		test('force join conversation', async () => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			const updatedParticipantData = Object.assign({}, participantData, { sessionId: 'another-session-id' })
 			const response = generateOCSResponse({ payload: updatedParticipantData })
 			joinConversation.mockResolvedValue(response)
@@ -903,7 +899,7 @@ describe('participantsStore', () => {
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
 
-					store = new Vuex.Store(testStoreConfig)
+					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(EventBus.emit).not.toHaveBeenCalled()
@@ -915,7 +911,7 @@ describe('participantsStore', () => {
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
 
-					store = new Vuex.Store(testStoreConfig)
+					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(testStoreConfig.actions.forceJoinConversation).not.toHaveBeenCalled()
@@ -929,7 +925,7 @@ describe('participantsStore', () => {
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
 
-					store = new Vuex.Store(testStoreConfig)
+					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(EventBus.emit).not.toHaveBeenCalled()
@@ -941,7 +937,7 @@ describe('participantsStore', () => {
 
 					testStoreConfig.actions.forceJoinConversation = jest.fn()
 
-					store = new Vuex.Store(testStoreConfig)
+					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
 
 					expect(testStoreConfig.actions.forceJoinConversation).not.toHaveBeenCalled()
@@ -970,7 +966,7 @@ describe('participantsStore', () => {
 				token: TOKEN,
 				type: 3,
 			})
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			store.dispatch('addParticipant', {
 				token: TOKEN,
@@ -1009,7 +1005,7 @@ describe('participantsStore', () => {
 
 			testStoreConfig = cloneDeep(participantsStore)
 			testStoreConfig.actions.deleteConversation = jest.fn()
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			await store.dispatch('removeCurrentUserFromConversation', { token: TOKEN })
 

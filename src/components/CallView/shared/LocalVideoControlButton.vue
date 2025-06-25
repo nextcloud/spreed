@@ -123,7 +123,7 @@ export default {
 		subscribe('local-video-control-button:toggle-video', this.updateDeviceState)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('local-video-control-button:toggle-video', this.updateDeviceState)
 	},
 

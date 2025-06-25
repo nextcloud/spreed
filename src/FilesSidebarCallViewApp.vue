@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent, defineComponent, h } from 'vue'
 import LoadingComponent from './components/LoadingComponent.vue'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
@@ -23,18 +24,15 @@ import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { useTokenStore } from './stores/token.ts'
 
 export default {
-
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView: () => ({
-			component: import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
-			loading: {
-				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
-			},
+		CallView: defineAsyncComponent({
+			loader: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
+			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'call-loading' })),
 		}),
 
-		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
+		TopBar: defineAsyncComponent(() => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue')),
 	},
 
 	setup() {
@@ -50,7 +48,6 @@ export default {
 
 	data() {
 		return {
-			// Needed for reactivity.
 			Talk: OCA.Talk,
 		}
 	},
@@ -147,7 +144,7 @@ export default {
 		window.addEventListener('beforeunload', this.preventUnload)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.preventUnload)
 	},
 

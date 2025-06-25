@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Route } from 'vue-router'
+import type { RouteLocation } from 'vue-router'
 import type { Conversation } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router/composables'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
-import { useStore } from './useStore.js'
 
 type LastMessageMap = {
 	[token: string]: {
@@ -134,7 +134,7 @@ export function useDocumentTitle() {
 	 *
 	 * @param route current web route
 	 */
-	function setPageTitleFromRoute(route: Route) {
+	function setPageTitleFromRoute(route: RouteLocation) {
 		switch (route.name) {
 			case 'conversation':
 				setPageTitle(store.getters.conversation(route.params.token)?.displayName ?? '')

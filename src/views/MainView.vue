@@ -5,7 +5,8 @@
 <script lang="ts" setup>
 import { emit } from '@nextcloud/event-bus'
 import { computed, onMounted, watch, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router/composables'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
@@ -13,7 +14,6 @@ import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
-import { useStore } from '../composables/useStore.js'
 import { useActorStore } from '../stores/actor.ts'
 
 const props = defineProps<{

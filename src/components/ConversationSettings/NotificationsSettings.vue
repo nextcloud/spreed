@@ -8,11 +8,11 @@ import type { Conversation } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { computed, reactive } from 'vue'
+import { useStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
-import { useStore } from '../../composables/useStore.js'
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 

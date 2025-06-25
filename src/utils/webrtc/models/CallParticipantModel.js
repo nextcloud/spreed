@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
+import { markRaw, reactive } from 'vue'
 import EmitterMixin from '../../EmitterMixin.js'
 
 export const ConnectionState = {
@@ -25,7 +25,7 @@ export const ConnectionState = {
 export default function CallParticipantModel(options) {
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		peerId: null,
 		nextcloudSessionId: null,
 		peer: null,
@@ -54,7 +54,7 @@ export default function CallParticipantModel(options) {
 			state: false,
 			timestamp: null,
 		},
-	}
+	})
 
 	this.set('peerId', options.peerId)
 
@@ -220,7 +220,7 @@ CallParticipantModel.prototype = {
 			this.get('peer').off('remoteVideoBlocked', this._handleRemoteVideoBlockedBound)
 		}
 
-		this.set('peer', peer)
+		this.set('peer', markRaw(peer))
 
 		// Special case when the participant has no streams.
 		if (!this.get('peer')) {
@@ -339,7 +339,7 @@ CallParticipantModel.prototype = {
 			console.warn('Mismatch between stored peer ID and ID of given screen peer: ', this.get('peerId'), screenPeer.id)
 		}
 
-		this.set('screenPeer', screenPeer)
+		this.set('screenPeer', markRaw(screenPeer))
 
 		// Reset state that depends on the screen Peer object.
 		this._handlePeerStreamAdded(this.get('screenPeer'))

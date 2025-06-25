@@ -8,8 +8,8 @@
 		<component :is="component"
 			v-for="item in items"
 			:key="generateKey(item)"
+			v-model:checked="selectedParticipants"
 			:participant="item"
-			:checked.sync="selectedParticipants"
 			:show-user-status="showUserStatus"
 			@click-participant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />

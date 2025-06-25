@@ -22,7 +22,7 @@
 			:placeholder="t('spreed', 'Guest')"
 			class="username-form__input"
 			:show-trailing-button="!!guestUserName"
-			trailing-button-icon="arrowRight"
+			trailing-button-icon="arrowEnd"
 			:trailing-button-label="t('spreed', 'Save name')"
 			@trailing-button-click="handleChooseUserName"
 			@keydown.enter="handleChooseUserName"

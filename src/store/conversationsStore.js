@@ -6,7 +6,6 @@ import { t } from '@nextcloud/l10n'
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import Vue from 'vue'
 import {
 	ATTENDEE,
 	CALL,
@@ -121,11 +120,11 @@ function emitUserStatusUpdated(conversation) {
 	})
 }
 
-const state = {
+const state = () => ({
 	conversations: {
 	},
 	conversationsInitialised: false,
-}
+})
 
 const getters = {
 	conversations: (state) => state.conversations,
@@ -201,7 +200,7 @@ const mutations = {
 	 * @param {object} conversation the conversation;
 	 */
 	addConversation(state, conversation) {
-		Vue.set(state.conversations, conversation.token, conversation)
+		state.conversations[conversation.token] = conversation
 	},
 
 	/**
@@ -221,63 +220,63 @@ const mutations = {
 	 * @param {string} token the token of the conversation to delete;
 	 */
 	deleteConversation(state, token) {
-		Vue.delete(state.conversations, token)
+		delete state.conversations[token]
 	},
 
 	setConversationDescription(state, { token, description }) {
-		Vue.set(state.conversations[token], 'description', description)
+		state.conversations[token].description = description
 	},
 
 	updateConversationLastReadMessage(state, { token, lastReadMessage }) {
-		Vue.set(state.conversations[token], 'lastReadMessage', lastReadMessage)
+		state.conversations[token].lastReadMessage = lastReadMessage
 	},
 
 	updateConversationLastMessage(state, { token, lastMessage }) {
-		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
+		state.conversations[token].lastMessage = lastMessage
 	},
 
 	updateUnreadMessages(state, { token, unreadMessages, unreadMention, unreadMentionDirect }) {
 		if (unreadMessages !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMessages', unreadMessages)
+			state.conversations[token].unreadMessages = unreadMessages
 		}
 		if (unreadMention !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMention', unreadMention)
+			state.conversations[token].unreadMention = unreadMention
 		}
 		if (unreadMentionDirect !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMentionDirect', unreadMentionDirect)
+			state.conversations[token].unreadMentionDirect = unreadMentionDirect
 		}
 	},
 
 	setNotificationLevel(state, { token, notificationLevel }) {
-		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
+		state.conversations[token].notificationLevel = notificationLevel
 	},
 
 	setNotificationCalls(state, { token, notificationCalls }) {
-		Vue.set(state.conversations[token], 'notificationCalls', notificationCalls)
+		state.conversations[token].notificationCalls = notificationCalls
 	},
 
 	setConversationPermissions(state, { token, permissions }) {
-		Vue.set(state.conversations[token], 'defaultPermissions', permissions)
+		state.conversations[token].defaultPermissions = permissions
 	},
 
 	setCallPermissions(state, { token, permissions }) {
-		Vue.set(state.conversations[token], 'callPermissions', permissions)
+		state.conversations[token].callPermissions = permissions
 	},
 
 	setMentionPermissions(state, { token, mentionPermissions }) {
-		Vue.set(state.conversations[token], 'mentionPermissions', mentionPermissions)
+		state.conversations[token].mentionPermissions = mentionPermissions
 	},
 
 	setCallRecording(state, { token, callRecording }) {
-		Vue.set(state.conversations[token], 'callRecording', callRecording)
+		state.conversations[token].callRecording = callRecording
 	},
 
 	setMessageExpiration(state, { token, seconds }) {
-		Vue.set(state.conversations[token], 'messageExpiration', seconds)
+		state.conversations[token].messageExpiration = seconds
 	},
 
 	setConversationHasPassword(state, { token, hasPassword }) {
-		Vue.set(state.conversations[token], 'hasPassword', hasPassword)
+		state.conversations[token].hasPassword = hasPassword
 	},
 
 	setConversationsInitialised(state, value) {

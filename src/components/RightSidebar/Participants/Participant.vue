@@ -277,7 +277,7 @@
 
 			<!-- Confirmation required to remove participant -->
 			<NcDialog v-if="canBeModerated && isRemoveDialogOpen"
-				:open.sync="isRemoveDialogOpen"
+				v-model:open="isRemoveDialogOpen"
 				:name="removeParticipantLabel">
 				<p> {{ removeDialogMessage }} </p>
 				<template v-if="showBanOption">

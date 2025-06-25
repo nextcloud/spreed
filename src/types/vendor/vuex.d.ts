@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia } from 'pinia'
-
-export default createPinia()
+declare module 'vuex' {
+	export {
+		Store,
+		createStore,
+		useStore,
+	} from 'vuex/types/index.d.ts'
+}

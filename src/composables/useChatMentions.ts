@@ -9,7 +9,7 @@ import type { ChatMention } from '../types/index.ts'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import Vue, { computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ATTENDEE } from '../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../services/avatarService.ts'
 import { searchPossibleMentions } from '../services/mentionsService.ts'
@@ -96,9 +96,9 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 
 		// caching the user id data for each possible mention
 		if (!userDataTokenMap.value[token]) {
-			Vue.set(userDataTokenMap.value, token, {})
+			userDataTokenMap.value[token] = {}
 		}
-		Vue.set(userDataTokenMap.value[token], chatMention.id, chatMention)
+		userDataTokenMap.value[token][chatMention.id] = chatMention
 
 		return chatMention
 	}

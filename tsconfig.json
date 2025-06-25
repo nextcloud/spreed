@@ -12,6 +12,6 @@
 		"types": [],
 	},
 	"vueCompilerOptions": {
-		"target": 2.7,
+		"htmlAttributes": [],
 	}
 }

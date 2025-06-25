@@ -6,11 +6,11 @@
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconNetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 

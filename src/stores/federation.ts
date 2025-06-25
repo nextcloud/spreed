@@ -9,7 +9,6 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getBaseUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { FEDERATION } from '../constants.ts'
 import { setRemoteCapabilitiesIfEmpty } from '../services/CapabilitiesManager.ts'
 import { acceptShare, getShares, rejectShare } from '../services/federationService.ts'
@@ -42,8 +41,8 @@ export const useFederationStore = defineStore('federation', {
 						pendingShares[item.id] = item
 					}
 				})
-				Vue.set(this, 'acceptedShares', acceptedShares)
-				Vue.set(this, 'pendingShares', pendingShares)
+				this.acceptedShares = acceptedShares
+				this.pendingShares = pendingShares
 				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
@@ -74,7 +73,7 @@ export const useFederationStore = defineStore('federation', {
 				inviterCloudId: id + '@' + remoteServerUrl,
 				inviterDisplayName: name,
 			}
-			Vue.set(this.pendingShares, invitation.id, invitation)
+			this.pendingShares[invitation.id] = invitation
 			this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 		},
 
@@ -88,13 +87,13 @@ export const useFederationStore = defineStore('federation', {
 			if (!this.pendingShares[id]) {
 				return
 			}
-			Vue.delete(this.pendingShares[id], 'loading')
-			Vue.set(this.acceptedShares, id, {
+			delete this.pendingShares[id].loading
+			this.acceptedShares[id] = {
 				...this.pendingShares[id],
 				localToken: conversation.token,
 				state: FEDERATION.STATE.ACCEPTED,
-			})
-			Vue.delete(this.pendingShares, id)
+			}
+			delete this.pendingShares[id]
 		},
 
 		/**
@@ -107,7 +106,7 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
-				Vue.set(this.pendingShares[id], 'loading', 'accept')
+				this.pendingShares[id].loading = 'accept'
 				const response = await acceptShare(id)
 				await setRemoteCapabilitiesIfEmpty(response)
 				this.markInvitationAccepted(id, response.data.ocs.data)
@@ -119,7 +118,7 @@ export const useFederationStore = defineStore('federation', {
 				// Dismiss the loading state, refresh the list
 				await this.getShares()
 				if (this.pendingShares[id]) {
-					Vue.delete(this.pendingShares[id], 'loading')
+					delete this.pendingShares[id].loading
 				}
 			}
 		},
@@ -134,9 +133,9 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
-				Vue.set(this.pendingShares[id], 'loading', 'reject')
+				this.pendingShares[id].loading = 'reject'
 				await rejectShare(id)
-				Vue.delete(this.pendingShares, id)
+				delete this.pendingShares[id]
 				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
@@ -144,7 +143,7 @@ export const useFederationStore = defineStore('federation', {
 				// Dismiss the loading state, refresh the list
 				await this.getShares()
 				if (this.pendingShares[id]) {
-					Vue.delete(this.pendingShares[id], 'loading')
+					delete this.pendingShares[id].loading
 				}
 			}
 		},
@@ -155,7 +154,7 @@ export const useFederationStore = defineStore('federation', {
 		 * @param value amount of pending shares
 		 */
 		updatePendingSharesCount(value?: string | number) {
-			Vue.set(this, 'pendingSharesCount', value ? +value : 0)
+			this.pendingSharesCount = value ? +value : 0
 		},
 	},
 })

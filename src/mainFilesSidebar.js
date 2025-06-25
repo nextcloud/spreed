@@ -5,12 +5,12 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createApp, reactive } from 'vue'
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import './init.js'
 // Leaflet icon patch
@@ -27,26 +27,18 @@ __webpack_nonce__ = getCSPNonce()
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
+const newCallView = () => createApp(FilesSidebarCallViewApp)
+	.use(store)
+	.use(pinia)
+	.use(NextcloudGlobalsVuePlugin)
 
-Vue.use(Vuex)
-
-const newCallView = () => new Vue({
-	store,
-	pinia,
-	render: (h) => h(FilesSidebarCallViewApp),
-})
-
-const newTab = () => new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	render: (h) => h(FilesSidebarTabApp),
-})
+const newTab = () => createApp(FilesSidebarTabApp)
+	.use(store)
+	.use(pinia)
+	.use(NextcloudGlobalsVuePlugin)
 
 if (!window.OCA.Talk) {
-	window.OCA.Talk = {}
+	window.OCA.Talk = reactive({})
 }
 Object.assign(window.OCA.Talk, {
 	fileInfo: null,

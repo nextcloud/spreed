@@ -28,7 +28,7 @@
 				<ChatView is-sidebar />
 				<PollManager />
 				<PollViewer />
-				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
@@ -149,7 +149,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.preventUnload)
 	},
 
@@ -281,6 +281,7 @@ footer {
 <style lang="scss" scoped>
 /* Properties based on the app-sidebar */
 #talk-sidebar {
+	height: 100%;
 	position: relative;
 	flex-shrink: 0;
 	width: clamp(300px, 27vw, 500px);

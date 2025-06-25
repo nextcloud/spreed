@@ -46,25 +46,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			async mount(el, fileInfo, context) {
 				if (tabInstance) {
-					tabInstance.$destroy()
+					tabInstance.unmount()
 				}
 
 				// Dirty hack to force the style on parent component
-				const tabChat = document.querySelector('#tab-chat')
-				tabChat.style.height = '100%'
-				// Remove paddding to maximize space for the chat view
-				tabChat.style.padding = '0'
+				el.style.height = '100%'
+				// Remove padding to maximize space for the chat view
+				el.style.padding = '0'
 
 				OCA.Talk.fileInfo = this.fileInfo
 				tabInstance = OCA.Talk.newTab()
-				tabInstance.$mount(el)
+				tabInstance.mount(el)
 			},
 			update(fileInfo) {
 				OCA.Talk.fileInfo = fileInfo
 			},
 			destroy() {
 				OCA.Talk.fileInfo = null
-				tabInstance.$destroy()
+				tabInstance.unmount()
 				tabInstance = null
 			},
 		}))

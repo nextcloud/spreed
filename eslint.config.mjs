@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { recommendedVue2 } from '@nextcloud/eslint-config'
+import { recommended } from '@nextcloud/eslint-config'
 import globals from 'globals'
 
 export default [
-	...recommendedVue2,
+	...recommended,
 
 	{
 		name: 'talk/ignores',

@@ -18,10 +18,10 @@
 			group>
 			<TurnServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:schemes.sync="servers[index].schemes"
-				:server.sync="servers[index].server"
-				:secret.sync="servers[index].secret"
-				:protocols.sync="servers[index].protocols"
+				v-model:schemes="servers[index].schemes"
+				v-model:server="servers[index].server"
+				v-model:secret="servers[index].secret"
+				v-model:protocols="servers[index].protocols"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -85,7 +85,7 @@ export default {
 		this.servers = loadState('spreed', 'turn_servers')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

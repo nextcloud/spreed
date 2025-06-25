@@ -123,7 +123,7 @@ export default {
 		this.resizeObserver.observe(this.$refs.absenceMessage)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}

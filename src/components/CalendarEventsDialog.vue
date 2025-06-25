@@ -12,6 +12,7 @@ import moment from '@nextcloud/moment'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { computed, onBeforeMount, provide, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
@@ -33,7 +34,6 @@ import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
-import { useStore } from '../composables/useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
@@ -85,7 +85,7 @@ const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeabl
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
-		&& conversation.value.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		&& conversation.value?.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
@@ -152,8 +152,11 @@ const attendeeHint = computed(() => {
 const searchText = ref('')
 const isMatch = (string: string = '') => string.toLowerCase().includes(searchText.value.toLowerCase())
 
-const conversation = computed<Conversation>(() => store.getters.conversation(props.token))
+const conversation = computed<Conversation | undefined>(() => store.getters.conversation(props.token))
 const participants = computed(() => {
+	if (!conversation.value) {
+		return []
+	}
 	if (isOneToOneConversation.value && store.getters.participantsList(props.token).length === 1) {
 		// Second participant is not yet added to conversation, need to fake data from conversation object
 		// We do not have an attendeeId, so 'attendeeIds' in payload should be 'null' (selectAll === true)
@@ -161,7 +164,7 @@ const participants = computed(() => {
 	}
 	return store.getters.participantsList(props.token).filter((participant: Participant) => {
 		return [ATTENDEE.ACTOR_TYPE.USERS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType)
-			&& participant.attendeeId !== conversation.value.attendeeId
+			&& participant.attendeeId !== conversation.value!.attendeeId
 	})
 })
 const participantsInitialised = computed(() => store.getters.participantsInitialised(props.token))
@@ -185,13 +188,13 @@ const selectedParticipants = computed(() => participants.value
 	}))
 
 const isOneToOneConversation = computed(() => {
-	return conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
-		|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+	return conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
+		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const inviteLabel = computed(() => {
 	return isOneToOneConversation.value
-		? t('spreed', 'Invite {user}', { user: conversation.value.displayName })
+		? t('spreed', 'Invite {user}', { user: conversation.value?.displayName ?? '' })
 		: t('spreed', 'Invite all users and emails in this conversation')
 })
 
@@ -308,7 +311,7 @@ async function submitNewMeeting() {
 </script>
 
 <template>
-	<div>
+	<div v-if="conversation">
 		<NcPopover :container="container"
 			:popper-hide-triggers="hideTriggers"
 			:no-focus-trap="!canScheduleMeeting && upcomingEvents.length === 0"
@@ -363,7 +366,7 @@ async function submitNewMeeting() {
 
 		<template v-if="canScheduleMeeting">
 			<NcDialog id="calendar-meeting"
-				:open.sync="isFormOpen"
+				v-model:open="isFormOpen"
 				class="calendar-meeting"
 				:name="t('spreed', 'Schedule a meeting')"
 				size="normal"
@@ -417,7 +420,7 @@ async function submitNewMeeting() {
 					{{ t('spreed', 'No other participants to send invitations to.') }}
 				</p>
 				<template v-else>
-					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
+					<NcCheckboxRadioSwitch v-model="selectAll" @update:model-value="toggleAll">
 						{{ inviteLabel }}
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">
@@ -446,13 +449,14 @@ async function submitNewMeeting() {
 			</NcDialog>
 
 			<NcDialog v-if="isSelectorOpen"
-				:open.sync="isSelectorOpen"
+				v-model:open="isSelectorOpen"
 				:name="t('spreed', 'Add attendees')"
 				class="calendar-meeting"
 				close-on-click-outside
 				container="#calendar-meeting">
-				<SearchBox class="calendar-meeting__searchbox"
-					:value.sync="searchText"
+				<SearchBox
+					v-model:value="searchText"
+					class="calendar-meeting__searchbox"
 					is-focused
 					:placeholder-text="t('spreed', 'Search participants')"
 					@abort-search="searchText = ''" />
@@ -470,7 +474,7 @@ async function submitNewMeeting() {
 				<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
 					<SelectableParticipant v-for="participant in filteredParticipants"
 						:key="participant.attendeeId"
-						:checked.sync="selectedAttendeeIds"
+						v-model:checked="selectedAttendeeIds"
 						:participant="participant"
 						@update:checked="checkSelection" />
 				</ul>

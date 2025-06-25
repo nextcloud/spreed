@@ -15,6 +15,7 @@ import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
@@ -28,7 +29,6 @@ import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
@@ -228,7 +228,7 @@ function handleHeaderClick() {
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
 						:title="sidebarTitle"
-						@click.native="handleHeaderClick" />
+						@click="handleHeaderClick" />
 					<div v-if="mode !== 'compact' && profileInfo"
 						class="content__info">
 						<span v-for="row in profileInformation"

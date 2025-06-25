@@ -85,7 +85,7 @@
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
-					@input="handleTyping"
+					@update:model-value="handleTyping"
 					@paste="handlePastedFiles"
 					@focus="restoreSelectionRange"
 					@blur="preserveSelectionRange"
@@ -160,7 +160,7 @@
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 
-		<FilePickerVue v-if="showFilePicker"
+		<FilePicker v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:buttons="filePickerButtons"
 			allow-pick-directory
@@ -170,7 +170,7 @@
 
 <script>
 import { showError, showWarning } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { FilePicker } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
@@ -213,7 +213,7 @@ export default {
 	name: 'NewMessage',
 
 	components: {
-		FilePickerVue,
+		FilePicker,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -566,7 +566,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('focus-chat-input', this.focusInput)
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)

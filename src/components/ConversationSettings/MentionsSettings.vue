@@ -86,7 +86,7 @@ export default {
 		},
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.lastNotification) {
 			this.lastNotification.hideToast()
 			this.lastNotification = null

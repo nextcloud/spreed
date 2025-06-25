@@ -72,7 +72,7 @@ export default {
 		},
 	},
 
-	emits: ['update:checked', 'click-participant'],
+	emits: ['update:checked', 'clickParticipant'],
 
 	setup(props) {
 		// Toggles the bulk selection state of this component
@@ -103,7 +103,7 @@ export default {
 				}
 				this.isBulkSelection
 					? this.$emit('update:checked', value)
-					: this.$emit('click-participant', this.participant)
+					: this.$emit('clickParticipant', this.participant)
 			},
 		},
 
@@ -155,7 +155,7 @@ export default {
 			if (this.isBulkSelection) {
 				event.target.click()
 			} else {
-				this.$emit('click-participant', this.participant)
+				this.$emit('clickParticipant', this.participant)
 			}
 		},
 	},

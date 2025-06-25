@@ -150,7 +150,7 @@ export default {
 		},
 	},
 
-	emits: ['dial:type', 'update:value', 'submit'],
+	emits: ['dialType', 'update:value', 'submit'],
 
 	setup(props) {
 		const options = Object.values(regionCodes).map((region) => ({ ...region, dial_and_name: region.dial_code + ' ' + region.name }))
@@ -175,7 +175,7 @@ export default {
 		t,
 		handlePad(value) {
 			if (this.dialing) {
-				this.$emit('dial:type', value)
+				this.$emit('dialType', value)
 			} else {
 				this.$emit('update:value', this.value + value)
 			}

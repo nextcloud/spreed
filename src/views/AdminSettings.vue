@@ -36,9 +36,10 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 
 <template>
 	<div>
-		<SignalingServers :servers.sync="signalingServers.servers"
-			:secret.sync="signalingServers.secret"
-			:hide-warning.sync="signalingServers.hideWarning"
+		<SignalingServers
+			v-model:servers="signalingServers.servers"
+			v-model:secret="signalingServers.secret"
+			v-model:hide-warning="signalingServers.hideWarning"
 			:has-valid-subscription="hasValidSubscription" />
 		<HostedSignalingServer :has-signaling-servers="hasSignalingServers" />
 		<GeneralSettings :has-signaling-servers="hasSignalingServers" />

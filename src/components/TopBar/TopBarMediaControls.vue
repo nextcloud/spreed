@@ -67,14 +67,14 @@
 
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
+			v-model:open="screenSharingMenuOpen"
 			:title="screenSharingButtonTitle"
 			variant="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
-			:disabled="!isScreensharingAllowed"
-			:open.sync="screenSharingMenuOpen">
+			:disabled="!isScreensharingAllowed">
 			<template #icon>
 				<IconMonitorOff :size="20" />
 			</template>

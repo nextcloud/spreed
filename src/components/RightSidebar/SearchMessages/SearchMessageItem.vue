@@ -4,16 +4,19 @@
 -->
 
 <script setup lang="ts">
+import type { Conversation } from '../../../types/index.ts'
+
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
-import { useStore } from '../../../composables/useStore.js'
 import { CONVERSATION } from '../../../constants.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
 
@@ -60,16 +63,18 @@ const props = defineProps({
 	},
 })
 
+const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const dashboardStore = useDashboardStore()
 
-const conversation = computed(() => store.getters.conversation(props.token))
-const isOneToOneConversation = computed(() => conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE)
+const conversation = computed<Conversation | undefined>(() => store.getters.conversation(props.token))
+const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE)
 const name = computed(() => {
 	if (!props.isReminder || isOneToOneConversation.value) {
 		return props.title
 	}
-	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value.displayName }, { escape: false, sanitize: false })
+	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value?.displayName ?? '' }, { escape: false, sanitize: false })
 })
 const richSubline = computed(() => {
 	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {
@@ -91,12 +96,17 @@ const clearReminderLabel = computed(() => {
 	}
 	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(+props.timestamp * 1000).format('ddd LT') })
 })
+
+const active = computed(() => {
+	return route.fullPath === router.resolve(props.to).fullPath
+})
 </script>
 
 <template>
 	<NcListItem :data-nav-id="`message_${messageId}`"
 		:name="name"
 		:to="to"
+		:active="active"
 		:title="richSubline"
 		force-menu>
 		<template #icon>

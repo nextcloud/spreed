@@ -7,9 +7,9 @@
 import type { Events } from '../../services/EventBus.ts'
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
 import PollDraftHandler from './PollDraftHandler.vue'
 import PollEditor from './PollEditor.vue'
-import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'

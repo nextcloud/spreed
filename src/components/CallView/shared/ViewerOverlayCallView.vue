@@ -5,7 +5,7 @@
 
 <template>
 	<div ref="ghost" class="viewer-overlay-ghost">
-		<Portal>
+		<Teleport to="body">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
 				:style="computedStyle">
@@ -91,12 +91,11 @@
 					</div>
 				</TransitionWrapper>
 			</div>
-		</Portal>
+		</Teleport>
 	</div>
 </template>
 
 <script>
-import { Portal } from '@linusborg/vue-simple-portal'
 import { isRTL, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
@@ -119,7 +118,6 @@ export default {
 		EmptyCallView,
 		LocalAudioControlButton,
 		LocalVideoControlButton,
-		Portal,
 		Screen,
 		LocalVideo,
 		ChevronUp,
@@ -219,7 +217,7 @@ export default {
 		this.observer.observe(this.$refs.ghost)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.observer.disconnect()
 	},
 

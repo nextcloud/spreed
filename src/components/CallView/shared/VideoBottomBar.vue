@@ -32,7 +32,6 @@
 				name="fade"
 				group>
 				<NcButton v-if="showAudioIndicator"
-					key="audioIndicator"
 					:title="audioButtonTitle"
 					:aria-label="audioButtonTitle"
 					class="audioIndicator"
@@ -46,7 +45,6 @@
 				</NcButton>
 
 				<NcButton v-if="showVideoIndicator"
-					key="videoIndicator"
 					:title="videoButtonTitle"
 					:aria-label="videoButtonTitle"
 					class="videoIndicator"
@@ -59,7 +57,6 @@
 				</NcButton>
 
 				<NcButton v-if="showScreenSharingIndicator"
-					key="screenSharingIndicator"
 					:title="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
@@ -72,7 +69,6 @@
 				</NcButton>
 
 				<div v-if="connectionStateFailedNoRestart"
-					key="iceFailedIndicator"
 					class="status-indicator iceFailedIndicator">
 					<AlertCircle :size="20" fill-color="#ffffff" />
 				</div>
@@ -182,7 +178,7 @@ export default {
 		},
 	},
 
-	emits: ['bottom-bar-hover'],
+	emits: ['bottomBarHover'],
 
 	setup() {
 		return {
@@ -282,7 +278,7 @@ export default {
 			if (!this.isBig) {
 				return
 			}
-			this.$emit('bottom-bar-hover', value)
+			this.$emit('bottomBarHover', value)
 		},
 	},
 

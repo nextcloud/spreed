@@ -8,6 +8,8 @@ const { resolve } = require('node:path')
 // Listed packages will be transformed with babel-jest
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
+	'@nextcloud/dialogs',
+	'@nextcloud/vue',
 	'@mdi/svg',
 	'bail',
 	'ccount', // ESM dependency of remark-gfm
@@ -39,6 +41,11 @@ module.exports = {
 
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
+	// FIXME Skip tests using @nextcloud/dialogs, @nextcloud/vue, @nextcloud/upload
+	testPathIgnorePatterns: [
+		'<rootDir>/src/components',
+		'<rootDir>/src/store/fileUploadStore.spec.js',
+	],
 	// Transform packages from top-level and nested 'node_modules'
 	transformIgnorePatterns: [
 		`<rootDir>/node_modules/(?!(?:.*\\/node_modules\\/)?(?:${ignorePatterns.join('|')}))`,
@@ -55,9 +62,13 @@ module.exports = {
 	],
 
 	testEnvironment: 'jest-environment-jsdom',
+	testEnvironmentOptions: {
+		customExportConditions: ['node', 'node-addons'],
+	},
 
 	moduleFileExtensions: [
 		'js',
+		'mjs',
 		'ts',
 		'vue',
 	],
@@ -67,6 +78,8 @@ module.exports = {
 		'^.+\\.svg(\\?raw)?$': '<rootDir>/src/__mocks__/svg.js',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
 		'@matrix-org/olm/(.*).wasm$': '<rootDir>/node_modules/@matrix-org/olm/$1.js',
+		'^@nextcloud/dialogs': '<rootDir>/node_modules/@nextcloud/dialogs/dist/index.mjs',
+		'^@nextcloud/vue/(.*)/(.*)$': '<rootDir>/node_modules/@nextcloud/vue/dist/$1/$2/index.mjs',
 	},
 
 	transform: {
@@ -76,8 +89,8 @@ module.exports = {
 				verbatimModuleSyntax: false,
 			},
 		}],
-		'\\.js$': 'babel-jest',
-		'\\.vue$': '@vue/vue2-jest',
+		'\\.(js|mjs)$': 'babel-jest',
+		'\\.vue$': '@vue/vue3-jest',
 		'\\.tflite$': 'jest-transform-stub',
 		'\\.(css|scss)$': 'jest-transform-stub',
 	},

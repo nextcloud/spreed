@@ -27,11 +27,11 @@
 </template>
 
 <script>
-
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
+import { defineAsyncComponent, defineComponent, h } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import LoadingComponent from './components/LoadingComponent.vue'
 import { useGetToken } from './composables/useGetToken.ts'
@@ -52,11 +52,9 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		FilesSidebarChatView: () => ({
-			component: import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
-			loading: {
-				render: (h) => h(LoadingComponent, { class: 'tab-loading' }),
-			},
+		FilesSidebarChatView: defineAsyncComponent({
+			loader: () => import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
+			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
 		}),
 
 		NcButton,

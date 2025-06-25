@@ -4,6 +4,7 @@
  */
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import { CONFIG, SESSION } from '../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
@@ -11,7 +12,6 @@ import { useTokenStore } from '../stores/token.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 
 const INACTIVE_TIME_MS = 3 * 60 * 1000
 

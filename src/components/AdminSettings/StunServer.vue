@@ -72,7 +72,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server'],
+	emits: ['removeServer', 'update:server'],
 
 	computed: {
 		stunServer: {
@@ -106,7 +106,7 @@ export default {
 	methods: {
 		t,
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 	},
 }

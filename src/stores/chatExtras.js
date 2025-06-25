@@ -5,7 +5,6 @@
 
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
@@ -89,7 +88,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {number} payload.id The id of message
 		 */
 		setParentIdToReply({ token, id }) {
-			Vue.set(this.parentToReply, token, id)
+			this.parentToReply[token] = id
 		},
 
 		/**
@@ -99,7 +98,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeParentIdToReply(token) {
-			Vue.delete(this.parentToReply, token)
+			delete this.parentToReply[token]
 		},
 
 		/**
@@ -110,7 +109,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		restoreChatInput(token) {
 			const chatInput = BrowserStorage.getItem('chatInput_' + token)
 			if (chatInput) {
-				Vue.set(this.chatInput, token, chatInput)
+				this.chatInput[token] = chatInput
 			}
 		},
 
@@ -124,7 +123,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		setChatInput({ token, text }) {
 			const parsedText = parseSpecialSymbols(text)
 			BrowserStorage.setItem('chatInput_' + token, parsedText)
-			Vue.set(this.chatInput, token, parsedText)
+			this.chatInput[token] = parsedText
 		},
 
 		/**
@@ -142,7 +141,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			parsedText = parseMentions(parsedText, parameters)
 			parsedText = parseSpecialSymbols(parsedText)
 
-			Vue.set(this.chatEditInput, token, parsedText)
+			this.chatEditInput[token] = parsedText
 		},
 
 		/**
@@ -152,7 +151,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {number} id The id of message
 		 */
 		setMessageIdToEdit(token, id) {
-			Vue.set(this.messageIdToEdit, token, id)
+			this.messageIdToEdit[token] = id
 		},
 
 		/**
@@ -161,8 +160,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeMessageIdToEdit(token) {
-			Vue.delete(this.chatEditInput, token)
-			Vue.delete(this.messageIdToEdit, token)
+			delete this.chatEditInput[token]
+			delete this.messageIdToEdit[token]
 		},
 
 		/**
@@ -172,7 +171,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		removeChatInput(token) {
 			BrowserStorage.removeItem('chatInput_' + token)
-			Vue.delete(this.chatInput, token)
+			delete this.chatInput[token]
 		},
 
 		initiateEditingMessage({ token, id, message, messageParameters }) {
@@ -217,12 +216,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				const task = response.data.ocs.data
 
 				if (!this.chatSummary[token]) {
-					Vue.set(this.chatSummary, token, {})
+					this.chatSummary[token] = {}
 				}
-				Vue.set(this.chatSummary[token], fromMessageId, {
+				this.chatSummary[token][fromMessageId] = {
 					...task,
 					fromMessageId,
-				})
+				}
 				if (task.nextOffset && task.nextOffset !== fromMessageId) {
 					await this.requestChatSummary(token, task.nextOffset)
 				}
@@ -233,13 +232,13 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		storeChatSummary(token, fromMessageId, summary) {
 			if (this.chatSummary[token][fromMessageId]) {
-				Vue.set(this.chatSummary[token][fromMessageId], 'summary', summary)
+				this.chatSummary[token][fromMessageId].summary = summary
 			}
 		},
 
 		dismissChatSummary(token) {
 			if (this.hasChatSummaryTaskRequested(token)) {
-				Vue.delete(this.chatSummary, token)
+				delete this.chatSummary[token]
 			}
 		},
 	},

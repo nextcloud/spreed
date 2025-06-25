@@ -416,14 +416,17 @@ export type setSipSettingsResponse = ApiResponse<operationsAdmin['settings-setsi
 export type setUserSettingsParams = Required<operations['settings-set-user-setting']>['requestBody']['content']['application/json']
 export type setUserSettingsResponse = ApiResponse<operations['settings-set-user-setting']['responses'][200]['content']['application/json']>
 
+// FIXME import from library
 // Payload for NcSelect with `user-select`
-export type UserFilterObject = {
+export type IUserData = {
 	id: string
 	displayName: string
-	isNoUser: boolean
-	user: string
-	disableMenu: boolean
-	showUserStatus: boolean
+	user?: string
+	subname?: string
+	iconSvg?: string
+	iconName?: string
+	isGuest?: boolean
+	isNoUser?: boolean
 }
 
 // SIP call message payload

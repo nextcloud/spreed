@@ -11,7 +11,7 @@
 			<router-view />
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
-		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 		<PollManager />
@@ -207,7 +207,7 @@ export default {
 		useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)

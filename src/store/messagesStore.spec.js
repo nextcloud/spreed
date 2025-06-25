@@ -3,11 +3,10 @@ import { showError } from '@nextcloud/dialogs'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import {
 	ATTENDEE,
 	CHAT,
@@ -50,9 +49,6 @@ jest.mock('../services/conversationsService', () => ({
 }))
 
 jest.mock('../utils/cancelableRequest')
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-}))
 
 // Test actions with 'chat-read-last' feature
 jest.mock('@nextcloud/capabilities', () => ({
@@ -74,7 +70,6 @@ describe('messagesStore', () => {
 		},
 	}
 
-	let localVue = null
 	let testStoreConfig
 	let store = null
 	let conversationMock
@@ -85,8 +80,6 @@ describe('messagesStore', () => {
 	let actorStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		actorStore = useActorStore()
@@ -108,7 +101,7 @@ describe('messagesStore', () => {
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
 
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -123,7 +116,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('processMessage', { token: TOKEN, message: message1 })
-			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
@@ -579,7 +572,7 @@ describe('messagesStore', () => {
 		}
 
 		store.dispatch('processMessage', { token: TOKEN, message: message1 })
-		expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 
 		store.dispatch('purgeMessagesStore', TOKEN)
 		expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
@@ -896,7 +889,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 
 			for (const index in originalMessagesList) {
 				store.commit('addMessage', { token: TOKEN, message: originalMessagesList[index] })
@@ -1016,7 +1009,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('get context around specified message id', async () => {
@@ -1172,7 +1165,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		afterEach(() => {
@@ -1642,7 +1635,7 @@ describe('messagesStore', () => {
 				}
 			})
 
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			message1 = {
 				id: 1,
 				token: TOKEN,
@@ -1963,7 +1956,7 @@ describe('messagesStore', () => {
 			await flushPromises()
 
 			// Assert
-			expect(store.getters.conversationsList).toContain(conversations[1])
+			expect(store.getters.conversationsList).toContainEqual(conversations[1])
 			expect(postNewMessage).toHaveBeenCalledWith({ ...messageExpected, silent: false })
 		})
 		test('removes parent message ', () => {

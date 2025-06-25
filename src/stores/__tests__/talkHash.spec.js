@@ -6,10 +6,6 @@ import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
 import { useTalkHashStore } from '../talkHash.js'
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-}))
-
 describe('talkHashStore', () => {
 	let talkHashStore
 

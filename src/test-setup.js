@@ -4,7 +4,6 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import Vue from 'vue'
 import { mockedCapabilities } from './__mocks__/capabilities.ts'
 
 import 'regenerator-runtime/runtime'
@@ -18,15 +17,22 @@ jest.mock('extendable-media-recorder-wav-encoder', () => ({
 	connect: jest.fn(),
 }))
 
+jest.mock('@nextcloud/dialogs', () => ({
+	showInfo: jest.fn(),
+	showSuccess: jest.fn(),
+	showError: jest.fn(),
+	showWarning: jest.fn(),
+}))
+
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn().mockImplementation((app, key, fallback) => {
 		return fallback
 	}),
 }))
 
-jest.mock('@nextcloud/upload', () => ({
-	getUploader: jest.fn(),
-}))
+// jest.mock('@nextcloud/upload', () => ({
+// getUploader: jest.fn(),
+// }))
 
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => mockedCapabilities),
@@ -123,13 +129,6 @@ global.structuredClone = jest.fn((val) => JSON.parse(JSON.stringify(val)))
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721
 window.URL.createObjectURL = jest.fn()
 window.URL.revokeObjectURL = jest.fn()
-
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-// Disable Vue's production tip and devtools console messages
-Vue.config.productionTip = false
-Vue.config.devtools = false
 
 // Make Jest fail on errors or warnings (like a11y warning from nextcloud/vue library)
 const originalWarn = global.console.warn

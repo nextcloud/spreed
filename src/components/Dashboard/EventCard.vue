@@ -12,7 +12,8 @@ import { imagePath } from '@nextcloud/router'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { useNow } from '@vueuse/core'
 import { computed } from 'vue'
-import { useRouter } from 'vue-router/composables'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -21,7 +22,6 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
@@ -144,7 +144,7 @@ const roomLabel = computed(() => {
  * @param data object
  * @param data.call - if true, opens the media settings
  */
-function handleJoin({ call = false } = {}) {
+function handleJoin({ call }: { call: boolean }) {
 	router.push({
 		name: 'conversation',
 		params: { token: props.eventRoom.roomToken },
@@ -218,7 +218,7 @@ function handleJoin({ call = false } = {}) {
 		</span>
 		<span class="event-card__invitation-info hovered">
 			<NcButton variant="tertiary"
-				@click="handleJoin">
+				@click="handleJoin({ call: false })">
 				<template #icon>
 					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>

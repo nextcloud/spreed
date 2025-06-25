@@ -129,7 +129,9 @@
 				</NcActionButton>
 			</template>
 			<template v-else-if="submenu === 'notifications'">
-				<NcActionButton :aria-label="t('spreed', 'Back')"
+				<NcActionButton
+					key="action-back"
+					:aria-label="t('spreed', 'Back')"
 					@click.stop="submenu = null">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" :size="16" />
@@ -154,7 +156,9 @@
 				<template v-if="showCallNotificationSettings">
 					<NcActionSeparator />
 
-					<NcActionButton type="checkbox"
+					<NcActionButton
+						key="notification-calls"
+						type="checkbox"
 						:model-value="notificationCalls"
 						@click="setNotificationCalls(!notificationCalls)">
 						<template #icon>
@@ -167,7 +171,9 @@
 				<template v-if="supportImportantConversations || supportSensitiveConversations">
 					<NcActionSeparator />
 
-					<NcActionButton v-if="supportImportantConversations"
+					<NcActionButton
+						v-if="supportImportantConversations"
+						key="toggle-important"
 						type="checkbox"
 						:description="labelImportantHint"
 						:model-value="item.isImportant"
@@ -177,7 +183,9 @@
 						</template>
 						{{ t('spreed', 'Important conversation') }}
 					</NcActionButton>
-					<NcActionButton v-if="supportSensitiveConversations"
+					<NcActionButton
+						v-if="supportSensitiveConversations"
+						key="toggle-sensitive"
 						type="checkbox"
 						:description="t('spreed', 'Hide message text')"
 						:model-value="item.isSensitive"
@@ -210,7 +218,7 @@
 		<!-- confirmation required to leave / delete conversation -->
 		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
 			<NcDialog v-if="isLeaveDialogOpen"
-				:open.sync="isLeaveDialogOpen"
+				v-model:open="isLeaveDialogOpen"
 				:name="t('spreed', 'Leave conversation')">
 				<template #default>
 					<p>{{ dialogLeaveMessage }}</p>
@@ -231,7 +239,7 @@
 				</template>
 			</NcDialog>
 			<NcDialog v-if="isDeleteDialogOpen"
-				:open.sync="isDeleteDialogOpen"
+				v-model:open="isDeleteDialogOpen"
 				:name="t('spreed', 'Delete conversation')"
 				:message="dialogDeleteMessage">
 				<template #actions>

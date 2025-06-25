@@ -23,8 +23,8 @@
 				group>
 				<RecordingServer v-for="(server, index) in servers"
 					:key="`server${index}`"
-					:server.sync="servers[index].server"
-					:verify.sync="servers[index].verify"
+					v-model:server="servers[index].server"
+					v-model:verify="servers[index].verify"
 					:index="index"
 					:loading="loading"
 					@remove-server="removeServer"
@@ -56,8 +56,8 @@
 			<template v-if="servers.length && recordingConsentCapability">
 				<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
-				<template v-for="level in recordingConsentOptions">
-					<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+				<template v-for="level in recordingConsentOptions" :key="level.value">
+					<NcCheckboxRadioSwitch
 						v-model="recordingConsentSelected"
 						:value="level.value.toString()"
 						name="recording-consent"
@@ -67,7 +67,7 @@
 						{{ level.label }}
 					</NcCheckboxRadioSwitch>
 
-					<p :key="level.value + '_description'" class="consent-description">
+					<p class="consent-description">
 						{{ getRecordingConsentDescription(level.value) }}
 					</p>
 				</template>
@@ -182,7 +182,7 @@ export default {
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

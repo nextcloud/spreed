@@ -2,10 +2,11 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import MessagesSystemGroup from './MessagesSystemGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -13,16 +14,13 @@ import storeConfig from '../../../store/storeConfig.js'
 describe('MessagesSystemGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
-	let localVue
 	let testStoreConfig
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -71,9 +69,8 @@ describe('MessagesSystemGroup.vue', () => {
 
 		// act
 		const wrapper = shallowMount(MessagesSystemGroup, {
-			localVue,
-			store,
-			propsData: {
+			global: { plugins: [store] },
+			props: {
 				id: 123,
 				token: TOKEN,
 				previousMessageId: 90,
@@ -179,9 +176,8 @@ describe('MessagesSystemGroup.vue', () => {
 		test('renders grouped users joining', () => {
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,
@@ -225,9 +221,8 @@ describe('MessagesSystemGroup.vue', () => {
 			})
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,
@@ -381,9 +376,8 @@ describe('MessagesSystemGroup.vue', () => {
 		test('renders removed users system messages grouped by the same actor', () => {
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,
@@ -406,9 +400,8 @@ describe('MessagesSystemGroup.vue', () => {
 			})
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,
@@ -431,9 +424,8 @@ describe('MessagesSystemGroup.vue', () => {
 			})
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,
@@ -456,9 +448,8 @@ describe('MessagesSystemGroup.vue', () => {
 			})
 			// act
 			const wrapper = shallowMount(MessagesSystemGroup, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					id: 123,
 					token: TOKEN,
 					previousMessageId: 90,

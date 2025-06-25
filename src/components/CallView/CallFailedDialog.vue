@@ -6,10 +6,10 @@
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
-import { useStore } from '../../composables/useStore.js'
 import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 
 const props = defineProps({

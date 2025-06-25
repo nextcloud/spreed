@@ -7,7 +7,6 @@
 	<NcDialog :name="dialogName"
 		:close-on-click-outside="!isFilled"
 		:container="container"
-		v-on="$listeners"
 		@update:open="emit('close')">
 		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
 			class="poll-editor__back-button"
@@ -24,7 +23,7 @@
 			{{ t('spreed', 'Question') }}
 		</p>
 		<div class="poll-editor__wrapper">
-			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
 			<!--native file picker, hidden -->
 			<input id="poll-upload"
 				ref="pollImport"
@@ -114,7 +113,8 @@ import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, useTemplateRef } from 'vue'
+import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -129,7 +129,6 @@ import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -157,7 +156,7 @@ const currentConversationToken = useGetToken()
 
 const isOpenedFromDraft = ref(false)
 const editingDraftId = ref<number | null>(null)
-const pollOption = ref<InstanceType<typeof NcTextField>[] | null>(null)
+const pollOption = useTemplateRef<InstanceType<typeof NcTextField>[]>('pollOption')
 const pollImport = ref<HTMLInputElement | null>(null)
 
 const pollForm = reactive<createPollParams>({
@@ -177,7 +176,7 @@ const createPollLabel = computed(() => {
 	}
 
 	return currentConversationToken.value !== props.token
-		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token).displayName }, undefined, { escape: false, sanitize: false })
+		? t('spreed', 'Create poll in {name}', { name: store.getters.conversation(props.token)?.displayName ?? '' }, undefined, { escape: false, sanitize: false })
 		: t('spreed', 'Create poll')
 })
 
@@ -216,7 +215,7 @@ function deleteOption(index: number) {
 function addOption() {
 	pollForm.options.push('')
 	nextTick(() => {
-		pollOption.value!.at(-1).focus()
+		pollOption.value!.at(-1)!.focus()
 	})
 }
 

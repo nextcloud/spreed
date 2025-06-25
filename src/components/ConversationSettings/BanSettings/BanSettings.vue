@@ -15,8 +15,9 @@
 			{{ t('spreed', 'Manage bans') }}
 		</NcButton>
 
-		<NcDialog :name="t('spreed', 'Banned users')"
-			:open.sync="modal"
+		<NcDialog
+			v-model:open="modal"
+			:name="t('spreed', 'Banned users')"
 			size="normal"
 			close-on-click-outside
 			container=".conversation-ban__settings">

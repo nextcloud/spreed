@@ -1,13 +1,12 @@
 import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
+// import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { getDavClient } from '../services/DavClient.ts'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
@@ -28,20 +27,14 @@ jest.mock('../services/filesSharingServices', () => ({
 jest.mock('../services/settingsService', () => ({
 	setAttachmentFolder: jest.fn(),
 }))
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-}))
 
 describe('fileUploadStore', () => {
-	let localVue = null
 	let storeConfig = null
 	let store = null
 	let mockedActions = null
 	let actorStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 
@@ -72,9 +65,9 @@ describe('fileUploadStore', () => {
 
 		beforeEach(() => {
 			storeConfig.getters.getAttachmentFolder = jest.fn().mockReturnValue(() => '/Talk')
-			store = new Vuex.Store(storeConfig)
+			store = createStore(storeConfig)
 			getDavClient.mockReturnValue(client)
-			getUploader.mockReturnValue({ upload: uploadMock })
+			// getUploader.mockReturnValue({ upload: uploadMock })
 			console.error = jest.fn()
 		})
 
@@ -402,7 +395,7 @@ describe('fileUploadStore', () => {
 	})
 
 	test('set attachment folder', async () => {
-		store = new Vuex.Store(storeConfig)
+		store = createStore(storeConfig)
 
 		setAttachmentFolder.mockResolvedValue()
 		await store.dispatch('setAttachmentFolder', '/Talk-another')

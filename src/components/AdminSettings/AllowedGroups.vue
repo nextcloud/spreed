@@ -77,7 +77,7 @@
 				:clearable="false"
 				no-wrap
 				:disabled="loading || loadingStartCalls"
-				@input="saveStartCalls" />
+				@update:model-value="saveStartCalls" />
 		</div>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
@@ -152,7 +152,7 @@ export default {
 		this.debounceSearchGroup('')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceSearchGroup.clear?.()
 	},
 

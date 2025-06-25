@@ -3,9 +3,7 @@ import { showError } from '@nextcloud/dialogs'
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
 import { addReactionToMessage, getReactionsDetails, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
@@ -17,24 +15,15 @@ jest.mock('../../services/reactionsService', () => ({
 	removeReactionFromMessage: jest.fn(),
 }))
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showSuccess: jest.fn(),
-	showError: jest.fn(),
-}))
-
 describe('reactionsStore', () => {
 	let reactionsStore
 	let token
 	let messageId
 	let reactions
-	let localVue
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
-
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 
 		token = 'token1'
 		messageId = 'parent-id'

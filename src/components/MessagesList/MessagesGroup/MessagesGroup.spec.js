@@ -2,10 +2,11 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import MessagesGroup from './MessagesGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -16,21 +17,17 @@ describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let guestNameStore
-	let localVue
 	let testStoreConfig
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 		const actorStore = useActorStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => () => ({})
-		actorStore.actorId = 'actor-1'
-		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
-		store = new Vuex.Store(testStoreConfig)
+		actorStore.setCurrentUser({ uid: 'actor-1' })
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -90,9 +87,8 @@ describe('MessagesGroup.vue', () => {
 
 		// Act
 		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
-			propsData: {
+			global: { plugins: [store] },
+			props: {
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,

@@ -74,24 +74,24 @@
 			</div>
 
 			<!-- Tab panels -->
-			<MediaSettingsTabs :active.sync="tabContent" :tabs="tabs">
+			<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
 				<template #tab-panel:devices>
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
 						:device-id="audioInputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleAudioInputIdChange" />
+						@update:device-id="handleAudioInputIdChange" />
 					<MediaDevicesSelector kind="videoinput"
 						:devices="devices"
 						:device-id="videoInputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleVideoInputIdChange" />
+						@update:device-id="handleVideoInputIdChange" />
 					<MediaDevicesSelector v-if="audioOutputSupported"
 						kind="audiooutput"
 						:devices="devices"
 						:device-id="audioOutputId"
 						@refresh="updateDevices"
-						@update:deviceId="handleAudioOutputIdChange" />
+						@update:device-id="handleAudioOutputIdChange" />
 					<MediaDevicesSpeakerTest />
 				</template>
 
@@ -273,7 +273,7 @@ export default {
 		},
 	},
 
-	emits: ['update:recording-consent-given'],
+	emits: ['update:recordingConsentGiven'],
 
 	setup() {
 		const video = ref(null)
@@ -555,7 +555,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('talk:media-settings:show', this.showModal)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},
@@ -743,7 +743,7 @@ export default {
 		},
 
 		setRecordingConsentGiven(value) {
-			this.$emit('update:recording-consent-given', value)
+			this.$emit('update:recordingConsentGiven', value)
 		},
 
 		handleAudioInputIdChange(audioInputId) {

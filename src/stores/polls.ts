@@ -15,7 +15,6 @@ import { t } from '@nextcloud/l10n'
  */
 import debounce from 'debounce'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import {
 	createPoll,
 	createPollDraft,
@@ -32,7 +31,7 @@ type State = {
 	polls: Record<string, Record<string, Poll>>
 	drafts: Record<string, Record<string, PollDraft>>
 	debouncedFunctions: Record<string, Record<string, () => void>>
-	activePoll: null
+	activePoll: { token: string, id: string, name: string } | null
 	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>
 }
 export const usePollsStore = defineStore('polls', {
@@ -65,23 +64,23 @@ export const usePollsStore = defineStore('polls', {
 	actions: {
 		addPoll({ token, poll }: { token: string, poll: Poll }) {
 			if (!this.polls[token]) {
-				Vue.set(this.polls, token, {})
+				this.polls[token] = {}
 			}
-			Vue.set(this.polls[token], poll.id, poll)
+			this.polls[token][poll.id] = poll
 		},
 
 		addPollDraft({ token, draft }: { token: string, draft: PollDraft }) {
 			if (!this.drafts[token]) {
-				Vue.set(this.drafts, token, {})
+				this.drafts[token] = {}
 			}
-			Vue.set(this.drafts[token], draft.id, draft)
+			this.drafts[token][draft.id] = draft
 		},
 
 		async getPollDrafts(token: string) {
 			try {
 				const response = await getPollDrafts(token)
 				if (response.data.ocs.data.length === 0) {
-					Vue.set(this.drafts, token, {})
+					this.drafts[token] = {}
 					return
 				}
 				for (const draft of response.data.ocs.data) {
@@ -94,7 +93,7 @@ export const usePollsStore = defineStore('polls', {
 
 		deleteDraft({ token, pollId }: { token: string, pollId: string }) {
 			if (this.drafts[token]?.[pollId]) {
-				Vue.delete(this.drafts[token], pollId)
+				delete this.drafts[token][pollId]
 			}
 		},
 
@@ -118,14 +117,14 @@ export const usePollsStore = defineStore('polls', {
 		 */
 		debounceGetPollData({ token, pollId }: { token: string, pollId: string }) {
 			if (!this.debouncedFunctions[token]) {
-				Vue.set(this.debouncedFunctions, token, {})
+				this.debouncedFunctions[token] = {}
 			}
 			// Create the debounced function for getting poll data if not exist yet
 			if (!this.debouncedFunctions[token]?.[pollId]) {
 				const debouncedFunction = debounce(async () => {
 					await this.getPollData({ token, pollId })
 				}, 5000)
-				Vue.set(this.debouncedFunctions[token], pollId, debouncedFunction)
+				this.debouncedFunctions[token][pollId] = debouncedFunction
 			}
 			// Call the debounced function for getting the poll data
 			this.debouncedFunctions[token][pollId]()
@@ -199,12 +198,12 @@ export const usePollsStore = defineStore('polls', {
 		},
 
 		setActivePoll({ token, pollId, name }: { token: string, pollId: string, name: string }) {
-			Vue.set(this, 'activePoll', { token, id: pollId, name })
+			this.activePoll = { token, id: pollId, name }
 		},
 
 		removeActivePoll() {
 			if (this.activePoll) {
-				Vue.set(this, 'activePoll', null)
+				this.activePoll = null
 			}
 		},
 
@@ -224,13 +223,13 @@ export const usePollsStore = defineStore('polls', {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 
-			Vue.set(this.pollToastsQueue, pollId, toast)
+			this.pollToastsQueue[pollId] = toast
 		},
 
 		hidePollToast(pollId: string) {
 			if (this.pollToastsQueue[pollId]) {
 				this.pollToastsQueue[pollId].hideToast()
-				Vue.delete(this.pollToastsQueue, pollId)
+				delete this.pollToastsQueue[pollId]
 			}
 		},
 

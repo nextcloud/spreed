@@ -11,7 +11,7 @@
 			:label="t('spreed', 'Name')"
 			:error="!!nameErrorLabel"
 			label-visible
-			@keydown.enter="$emit('handle-enter')" />
+			@keydown.enter="$emit('handleEnter')" />
 		<span v-if="nameErrorLabel" class="new-group-conversation__error">
 			{{ nameErrorLabel }}
 		</span>
@@ -33,7 +33,7 @@
 				:conversation="newConversation"
 				controlled
 				editable
-				@avatar-edited="$emit('avatar-edited', $event)" />
+				@avatar-edited="$emit('avatarEdited', $event)" />
 		</template>
 
 		<label class="new-group-conversation__label">
@@ -55,8 +55,8 @@
 				check-password-strength
 				:placeholder="t('spreed', 'Enter password')"
 				:aria-label="t('spreed', 'Enter password')"
-				@valid="$emit('is-password-valid', true)"
-				@invalid="$emit('is-password-valid', false)" />
+				@valid="$emit('isPasswordValid', true)"
+				@invalid="$emit('isPasswordValid', false)" />
 		</div>
 		<ListableSettings v-model="listableValue" />
 	</div>
@@ -107,7 +107,7 @@ export default {
 		},
 	},
 
-	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter', 'is-password-valid'],
+	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatarEdited', 'handleEnter', 'isPasswordValid'],
 
 	setup() {
 		return {

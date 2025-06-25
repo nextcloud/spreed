@@ -9,13 +9,13 @@
 			:options="roomOptions"
 			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
-			@input="newValue => emitEvents(currentMode.id, newValue.token)" />
+			@update:model-value="newValue => emitEvents(currentMode.id, newValue.token)" />
 
 		<NcSelect :model-value="currentMode"
 			:options="modeOptions"
 			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"
-			@input="newValue => emitEvents(newValue.id, currentRoom.token)" />
+			@update:model-value="newValue => emitEvents(newValue.id, currentRoom.token)" />
 	</div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
 		},
 	},
 
-	emits: ['input', 'update:model-value'],
+	emits: ['input', 'update:modelValue'],
 
 	data() {
 		return {
@@ -115,7 +115,7 @@ export default {
 				return
 			}
 			this.$emit('input', JSON.stringify({ m: mode, t: token }))
-			this.$emit('update:model-value', JSON.stringify({ m: mode, t: token }))
+			this.$emit('update:modelValue', JSON.stringify({ m: mode, t: token }))
 		},
 	},
 }

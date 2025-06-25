@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcAppSettingsDialog :open.sync="showSettings"
+	<NcAppSettingsDialog
+		v-model:open="showSettings"
 		:name="t('spreed', 'Talk settings')"
 		show-navigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
@@ -45,7 +46,7 @@
 					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
-				<FilePickerVue v-if="showFilePicker"
+				<FilePicker v-if="showFilePicker"
 					:name="t('spreed', 'Select location for attachments')"
 					:path="attachmentFolder"
 					container=".app-settings-section__wrapper"
@@ -65,7 +66,7 @@
 				:disabled="appearanceLoading"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="toggleConversationsListStyle">
+				@update:model-value="toggleConversationsListStyle">
 				{{ t('spreed', 'Show conversations list in compact mode') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
@@ -216,7 +217,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { FilePicker } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -252,7 +253,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
-		FilePickerVue,
+		FilePicker,
 		MediaDevicesPreview,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,

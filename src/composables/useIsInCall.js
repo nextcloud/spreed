@@ -6,11 +6,11 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { useStore } from 'vuex'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGetToken } from './useGetToken.ts'
-import { useStore } from './useStore.js'
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not

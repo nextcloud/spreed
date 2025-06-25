@@ -132,7 +132,7 @@ export default {
 		subscribe('send-reaction', this.handleOwnReaction)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		clearInterval(this.intervalId)
 		unsubscribe('send-reaction', this.handleOwnReaction)
 		Object.keys(this.registeredModels).forEach((modelId) => {

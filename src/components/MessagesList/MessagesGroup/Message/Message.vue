@@ -41,12 +41,12 @@
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				v-model:is-action-menu-open="isActionMenuOpen"
+				v-model:is-emoji-picker-open="isEmojiPickerOpen"
+				v-model:is-reactions-menu-open="isReactionsMenuOpen"
+				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
 				:is-translation-available="isTranslationAvailable"
-				:is-action-menu-open.sync="isActionMenuOpen"
-				:is-emoji-picker-open.sync="isEmojiPickerOpen"
-				:is-reactions-menu-open.sync="isReactionsMenuOpen"
-				:is-forwarder-open.sync="isForwarderOpen"
 				:can-react="canReact"
 				:message="message"
 				:previous-message-id="previousMessageId"
@@ -195,7 +195,7 @@ export default {
 		},
 	},
 
-	emits: ['toggle-combined-system-message'],
+	emits: ['toggleCombinedSystemMessage'],
 
 	setup(props) {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
@@ -451,7 +451,7 @@ export default {
 		},
 
 		toggleCombinedSystemMessage() {
-			this.$emit('toggle-combined-system-message')
+			this.$emit('toggleCombinedSystemMessage')
 		},
 
 		toggleFollowUpEmojiPicker() {

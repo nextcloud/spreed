@@ -95,7 +95,7 @@
 			</div>
 		</div>
 
-		<FilePickerVue v-if="showFilePicker"
+		<FilePicker v-if="showFilePicker"
 			:name="t('spreed', 'Choose your conversation picture')"
 			container="#vue-avatar-section"
 			:buttons="filePickerButtons"
@@ -107,7 +107,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { FilePicker } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
@@ -132,7 +132,7 @@ export default {
 
 	components: {
 		ConversationIcon,
-		FilePickerVue,
+		FilePicker,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
@@ -168,7 +168,7 @@ export default {
 		},
 	},
 
-	emits: ['avatar-edited'],
+	emits: ['avatarEdited'],
 
 	expose: ['saveAvatar'],
 
@@ -231,13 +231,13 @@ export default {
 	watch: {
 		showCropper(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', value)
+				this.$emit('avatarEdited', value)
 			}
 		},
 
 		emojiAvatar(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', !!value)
+				this.$emit('avatarEdited', !!value)
 			}
 		},
 	},

@@ -21,7 +21,7 @@
 			track-by="value"
 			no-wrap
 			:disabled="loading || loadingDefaultGroupNotification"
-			@input="saveDefaultGroupNotification" />
+			@update:model-value="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
@@ -133,7 +133,7 @@ export default {
 		EventBus.on('sip-settings-updated', this.updateSipDetails)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('signaling-server-connected', this.updateSignalingDetails)
 		EventBus.off('sip-settings-updated', this.updateSipDetails)
 	},

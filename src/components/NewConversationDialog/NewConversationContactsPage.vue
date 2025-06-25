@@ -25,8 +25,8 @@
 				</template>
 			</NcTextField>
 			<DialpadPanel v-if="canModerateSipDialOut"
+				v-model:value="searchText"
 				container=".set-contacts__form"
-				:value.sync="searchText"
 				@submit="addParticipantPhone" />
 		</div>
 
@@ -44,9 +44,9 @@
 
 		<!-- Search results -->
 		<SelectPhoneNumber v-if="canModerateSipDialOut"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
 		<ParticipantsSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
@@ -120,7 +120,7 @@ export default {
 		},
 	},
 
-	emits: ['update:selected-participants'],
+	emits: ['update:selectedParticipants'],
 
 	setup() {
 		const wrapper = ref(null)
@@ -182,7 +182,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 
 		this.cancelSearchPossibleConversations()
@@ -263,7 +263,7 @@ export default {
 					})
 				: [...this.selectedParticipants, participant]
 
-			this.$emit('update:selected-participants', payload)
+			this.$emit('update:selectedParticipants', payload)
 		},
 
 		addParticipantPhone() {

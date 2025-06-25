@@ -250,7 +250,7 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.value.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+			return callParticipantCollection.callParticipantModels.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
 		},
 
 		callParticipantModelsWithScreen() {
@@ -429,10 +429,11 @@ export default {
 			this.adjustSimulcastQuality()
 		},
 
-		speakers(value) {
-			if (value) {
+		speakers: {
+			deep: true,
+			handler() {
 				this._setPromotedParticipant()
-			}
+			},
 		},
 
 		shownRemoteScreenPeerId(value) {
@@ -441,8 +442,11 @@ export default {
 			}
 		},
 
-		screens() {
-			this._setScreenVisible()
+		screens: {
+			deep: true,
+			handler() {
+				this._setScreenVisible()
+			},
 		},
 
 		callParticipantModelsWithScreen(newValue, previousValue) {
@@ -501,7 +505,7 @@ export default {
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchPeers.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
@@ -536,7 +540,7 @@ export default {
 			removedModelIds.forEach((removedModelId) => {
 				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
 
-				this.$delete(this.sharedDatas, removedModelId)
+				delete this.sharedDatas[removedModelId]
 
 				this.speakingUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
@@ -563,7 +567,7 @@ export default {
 					screenVisible: false,
 				}
 
-				this.$set(this.sharedDatas, addedModel.attributes.peerId, sharedData)
+				this.sharedDatas[addedModel.attributes.peerId] = sharedData
 
 				// Not reactive, but not a problem
 				this.speakingUnwatchers[addedModel.attributes.peerId] = this.$watch(function() {
