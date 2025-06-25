@@ -692,15 +692,15 @@ body .modal-wrapper * {
 }
 
 // Styles for the app content at fullscreen mode
+:root:has(body.talk-in-fullscreen) {
+	--body-container-margin: 0px !important;
+	--body-container-radius: 0px !important;
+	--header-height: 0px !important;
+}
+
 body.talk-in-fullscreen {
 	#header {
 		display: none !important;
-	}
-	#content-vue {
-		margin: 0;
-		height: 100%;
-		width: 100%;
-		border-radius: 0;
 	}
 }
 
