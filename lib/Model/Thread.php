@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -19,8 +20,10 @@ use OCP\DB\Types;
  * @method int getLastMessageId()
  * @method void setNumReplies(int $numReplies)
  * @method int getNumReplies()
+ *
+ * @psalm-import-type TalkThread from ResponseDefinitions
  */
-class Thread extends Entity {
+class Thread extends Entity implements \JsonSerializable {
 	protected int $roomId = 0;
 	protected int $lastMessageId = 0;
 	protected int $numReplies = 0;
@@ -29,5 +32,18 @@ class Thread extends Entity {
 		$this->addType('roomId', Types::BIGINT);
 		$this->addType('lastMessageId', Types::BIGINT);
 		$this->addType('numReplies', Types::BIGINT);
+	}
+
+	/**
+	 * @return TalkThread
+	 */
+	#[\Override]
+	public function jsonSerialize(): array {
+		return [
+			'id' => max(1, $this->getId()),
+			'roomId' => max(1, $this->getRoomId()),
+			'lastMessageId' => max(0, $this->getLastMessageId()),
+			'numReplies' => max(0, $this->getNumReplies()),
+		];
 	}
 }

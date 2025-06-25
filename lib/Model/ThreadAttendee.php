@@ -16,6 +16,8 @@ use OCP\DB\Types;
  * @method int getRoomId()
  * @method void setThreadId(int $threadId)
  * @method int getThreadId()
+ * @method void setAttendeeId(int $attendeeId)
+ * @method int getAttendeeId()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
  * @method void setActorId(string $actorId)
@@ -34,6 +36,7 @@ use OCP\DB\Types;
 class ThreadAttendee extends Entity {
 	protected int $roomId = 0;
 	protected int $threadId = 0;
+	protected int $attendeeId = 0;
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected int $notificationLevel = 0;

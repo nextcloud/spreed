@@ -444,6 +444,13 @@ namespace OCA\Talk;
  *     userId: ?string,
  * }
  *
+ * @psalm-type TalkThread = array{
+ *     id: positive-int,
+ *     roomId: positive-int,
+ *     lastMessageId: non-negative-int,
+ *     numReplies: non-negative-int,
+ * }
+ *
  * @psalm-type TalkCapabilities = array{
  *     features: non-empty-list<string>,
  *     features-local: non-empty-list<string>,

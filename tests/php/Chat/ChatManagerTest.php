@@ -20,6 +20,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Reference\IReferenceManager;
@@ -53,6 +54,7 @@ class ChatManagerTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
 	protected RoomService&MockObject $roomService;
 	protected PollService&MockObject $pollService;
+	protected ThreadService&MockObject $threadService;
 	protected Notifier&MockObject $notifier;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected AttachmentService&MockObject $attachmentService;
@@ -74,6 +76,7 @@ class ChatManagerTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->pollService = $this->createMock(PollService::class);
+		$this->threadService = $this->createMock(ThreadService::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
@@ -111,6 +114,7 @@ class ChatManagerTest extends TestCase {
 					$this->participantService,
 					$this->roomService,
 					$this->pollService,
+					$this->threadService,
 					$this->notifier,
 					$cacheFactory,
 					$this->timeFactory,
@@ -135,6 +139,7 @@ class ChatManagerTest extends TestCase {
 			$this->participantService,
 			$this->roomService,
 			$this->pollService,
+			$this->threadService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory,
