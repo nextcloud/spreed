@@ -210,6 +210,7 @@ class Message {
 			'reactions' => $reactions,
 			'expirationTimestamp' => $expireDate ? $expireDate->getTimestamp() : 0,
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
+			'threadId' => (int)$this->getComment()->getTopmostParentId(),
 		];
 
 		if ($this->lastEditActorType && $this->lastEditActorId && $this->lastEditTimestamp) {
@@ -223,7 +224,7 @@ class Message {
 			$data['deleted'] = true;
 		}
 
-		$metaData = $this->comment->getMetaData() ?? [];
+		$metaData = $this->getComment()->getMetaData() ?? [];
 		if (!empty($metaData[self::METADATA_SILENT])) {
 			$data[self::METADATA_SILENT] = true;
 		}
