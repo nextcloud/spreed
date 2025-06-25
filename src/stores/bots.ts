@@ -6,7 +6,6 @@
 import type { Bot } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { BOT } from '../constants.ts'
 import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.ts'
 
@@ -30,13 +29,13 @@ export const useBotsStore = defineStore('bots', {
 		 */
 		async loadConversationBots(token: string): Promise<Bot['id'][]> {
 			if (!this.bots[token]) {
-				Vue.set(this.bots, token, {})
+				this.bots[token] = {}
 			}
 
 			const response = await getConversationBots(token)
 
 			return response.data.ocs.data.map((bot: Bot) => {
-				Vue.set(this.bots[token], bot.id, bot)
+				this.bots[token][bot.id] = bot
 				return bot.id
 			})
 		},
@@ -52,7 +51,7 @@ export const useBotsStore = defineStore('bots', {
 				? await disableBotForConversation(token, bot.id)
 				: await enableBotForConversation(token, bot.id)
 
-			Vue.set(this.bots[token], bot.id, response.data.ocs.data)
+			this.bots[token][bot.id] = response.data.ocs.data
 		},
 	},
 })

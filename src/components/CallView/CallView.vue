@@ -536,7 +536,7 @@ export default {
 			removedModelIds.forEach((removedModelId) => {
 				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
 
-				this.$delete(this.sharedDatas, removedModelId)
+				delete this.sharedDatas[removedModelId]
 
 				this.speakingUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
@@ -563,7 +563,7 @@ export default {
 					screenVisible: false,
 				}
 
-				this.$set(this.sharedDatas, addedModel.attributes.peerId, sharedData)
+				this.sharedDatas[addedModel.attributes.peerId] = sharedData
 
 				// Not reactive, but not a problem
 				this.speakingUnwatchers[addedModel.attributes.peerId] = this.$watch(function() {

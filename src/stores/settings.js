@@ -5,7 +5,6 @@
 
 import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
@@ -58,17 +57,17 @@ export const useSettingsStore = defineStore('settings', {
 
 			switch (storedValue) {
 				case 'true': {
-					Vue.set(state.showMediaSettings, token, true)
+					state.showMediaSettings[token] = true
 					return true
 				}
 				case 'false': {
-					Vue.set(state.showMediaSettings, token, false)
+					state.showMediaSettings[token] = false
 					return false
 				}
 				case null:
 				default: {
 					BrowserStorage.setItem('showMediaSettings_' + token, 'true')
-					Vue.set(state.showMediaSettings, token, true)
+					state.showMediaSettings[token] = true
 					return true
 				}
 			}
@@ -102,7 +101,7 @@ export const useSettingsStore = defineStore('settings', {
 			} else {
 				BrowserStorage.setItem('showMediaSettings_' + token, 'false')
 			}
-			Vue.set(this.showMediaSettings, token, value)
+			this.showMediaSettings[token] = value
 		},
 
 		async setBlurVirtualBackgroundEnabled(value) {

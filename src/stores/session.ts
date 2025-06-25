@@ -15,7 +15,6 @@ import type {
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import store from '../store/index.js'
 import { useGuestNameStore } from './guestName.js'
@@ -103,22 +102,22 @@ export const useSessionStore = defineStore('session', {
 
 	actions: {
 		addSession(session: Session) {
-			Vue.set(this.sessions, session.signalingSessionId, session)
+			this.sessions[session.signalingSessionId] = session
 			return session
 		},
 
 		deleteSession(signalingSessionId: string) {
 			if (this.sessions[signalingSessionId]) {
-				Vue.delete(this.sessions, signalingSessionId)
+				delete this.sessions[signalingSessionId]
 			}
 		},
 
 		updateSession(signalingSessionId: string, updatedData: Partial<Session>) {
 			if (this.sessions[signalingSessionId]) {
-				Vue.set(this.sessions, signalingSessionId, {
+				this.sessions[signalingSessionId] = {
 					...this.sessions[signalingSessionId],
 					...updatedData,
-				})
+				}
 			}
 		},
 
