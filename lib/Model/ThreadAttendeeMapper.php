@@ -35,19 +35,26 @@ class ThreadAttendeeMapper extends QBMapper {
 		return $query->executeStatement();
 	}
 
-	public function createAttendeeFromRow(array $row): ThreadAttendee {
-		return $this->mapRowToEntity([
-			'id' => (int)$row['a_id'],
-			'room_id' => (int)$row['room_id'],
-			'thread_id' => (int)$row['thread_id'],
-			'attendee_id' => (int)$row['attendee_id'],
-			'actor_type' => $row['actor_type'],
-			'actor_id' => $row['actor_id'],
-			'notification_level' => (int)$row['notification_level'],
-			'last_read_message' => (int)$row['last_read_message'],
-			'last_mention_message' => (int)$row['last_mention_message'],
-			'last_mention_direct' => (int)$row['last_mention_direct'],
-			'read_privacy' => (int)$row['read_privacy'],
-		]);
+	/**
+	 * @param int $attendeeId
+	 * @param list<int> $threadIds
+	 * @return list<ThreadAttendee>
+	 */
+	public function findAttendeeByThreadIds(int $attendeeId, array $threadIds): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq(
+				'attendee_id',
+				$query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT),
+				IQueryBuilder::PARAM_INT,
+			))
+			->where($query->expr()->in(
+				'thread_id',
+				$query->createNamedParameter($threadIds, IQueryBuilder::PARAM_INT_ARRAY),
+				IQueryBuilder::PARAM_INT_ARRAY,
+			));
+
+		return $this->findEntities($query);
 	}
 }

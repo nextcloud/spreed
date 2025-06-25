@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -32,8 +33,10 @@ use OCP\DB\Types;
  * @method int getLastMentionDirect()
  * @method void setReadPrivacy(int $readPrivacy)
  * @method int getReadPrivacy()
+ *
+ * @psalm-import-type TalkThreadAttendee from ResponseDefinitions
  */
-class ThreadAttendee extends Entity {
+class ThreadAttendee extends Entity implements \JsonSerializable {
 	protected int $roomId = 0;
 	protected int $threadId = 0;
 	protected int $attendeeId = 0;
@@ -55,5 +58,19 @@ class ThreadAttendee extends Entity {
 		$this->addType('lastMentionMessage', Types::INTEGER);
 		$this->addType('lastMentionDirect', Types::BIGINT);
 		$this->addType('readPrivacy', Types::SMALLINT);
+	}
+
+	/**
+	 * @return TalkThreadAttendee
+	 */
+	#[\Override]
+	public function jsonSerialize(): array {
+		return [
+			'notificationLevel' => min(3, max(0, $this->getNotificationLevel())),
+			'lastReadMessage' => max(0, $this->getLastReadMessage()),
+			'lastMentionMessage' => max(0, $this->getLastMentionMessage()),
+			'lastMentionDirect' => max(0, $this->getLastMentionDirect()),
+			'readPrivacy' => min(1, max(0, $this->getReadPrivacy())),
+		];
 	}
 }

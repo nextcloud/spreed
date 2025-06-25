@@ -17,11 +17,11 @@ use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\ThreadService;
+use OCA\Talk\Share\Helper\Preloader;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
-use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -31,12 +31,14 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkThread from ResponseDefinitions
+ * @psalm-import-type TalkThreadInfo from ResponseDefinitions
  */
 class ThreadController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		protected ChatManager $chatManager,
+		protected Preloader $sharePreloader,
 		protected MessageParser $messageParser,
 		protected ThreadService $threadService,
 		protected IL10N $l,
@@ -52,29 +54,63 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 * @param int<1, 50> $limit Number of threads to return
 	 * @param int $offsetId The last thread ID that was known, default 0 starts from the newest
 	 * @psalm-param non-negative-int $offsetId
-	 * @return DataResponse<Http::STATUS_OK, list<TalkThread>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkThreadInfo>, array{}>
 	 *
 	 * 200: List of threads returned
 	 */
-	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
-	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/threads', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function listThreads(int $limit = 25, int $offsetId = 0): DataResponse {
 		$threads = $this->threadService->findByRoom($this->room, $limit, $offsetId);
-		$list = array_map(static fn (Thread $thread) => $thread->jsonSerialize(), $threads);
+		$threadIds = array_map(static fn (Thread $thread) => $thread->getId(), $threads);
+		$attendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $threadIds);
+
+		$messageIds = [];
+		foreach ($threads as $thread) {
+			$messageIds[] = $thread->getId();
+			$messageIds[] = $thread->getLastMessageId();
+		}
+
+		$comments = $this->chatManager->getMessagesById($messageIds);
+		$this->sharePreloader->preloadShares($comments);
+
+		$list = [];
+		foreach ($threads as $thread) {
+			$firstMessage = $lastMessage = null;
+			$attendee = $attendees[$thread->getId()] ?? null;
+
+			$first = $comments[$thread->getId()] ?? null;
+			if ($first !== null) {
+				$firstMessage = $this->messageParser->createMessage($this->room, $this->participant, $first, $this->l);
+				$this->messageParser->parseMessage($firstMessage);
+			}
+
+			$last = $comments[$thread->getLastMessageId()] ?? null;
+			if ($last !== null) {
+				$lastMessage = $this->messageParser->createMessage($this->room, $this->participant, $last, $this->l);
+				$this->messageParser->parseMessage($lastMessage);
+			}
+
+			$list[] = [
+				'thread' => $thread->jsonSerialize(),
+				'attendee' => $attendee?->jsonSerialize(),
+				'first' => $firstMessage?->toArray($this->getResponseFormat()),
+				'last' => $lastMessage?->toArray($this->getResponseFormat()),
+			];
+		}
+
 		return new DataResponse($list);
 	}
 
 	/**
 	 * Create a thread out of a message or reply chain
 	 *
-	 * @param int $messageId The message (or a child) to create a thread for
+	 * @param int $messageId The message to create a thread for (Doesn't have to be the root)
 	 * @psalm-param non-negative-int $messageId
 	 * @return DataResponse<Http::STATUS_OK, TalkThread, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'top-most'}, array{}>
 	 *
@@ -82,13 +118,11 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 * 400: Root message is a system message and therefor not supported
 	 * 404: Message or top most message not found
 	 */
-	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
-	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/threads/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',

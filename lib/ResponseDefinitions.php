@@ -451,6 +451,21 @@ namespace OCA\Talk;
  *     numReplies: non-negative-int,
  * }
  *
+ * @psalm-type TalkThreadAttendee = array{
+ *      notificationLevel: 0|1|2|3,
+ *      lastReadMessage: non-negative-int,
+ *      lastMentionMessage: non-negative-int,
+ *      lastMentionDirect: non-negative-int,
+ *      readPrivacy: 0|1,
+ * }
+ *
+ * @psalm-type TalkThreadInfo = array{
+ *      thread: TalkThread,
+ *      attendee: ?TalkThreadAttendee,
+ *      first: ?TalkChatMessage,
+ *      last: ?TalkChatMessage,
+ * }
+ *
  * @psalm-type TalkCapabilities = array{
  *     features: non-empty-list<string>,
  *     features-local: non-empty-list<string>,

@@ -68,6 +68,20 @@ class ThreadService {
 		return $this->threadMapper->findByRoomId($room->getId(), $limit, $offsetId);
 	}
 
+	/**
+	 * @param list<int> $threadIds
+	 * @return array<int, ThreadAttendee> Key is the thread id
+	 */
+	public function findAttendeeByThreadIds(Attendee $attendee, array $threadIds): array {
+		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getId(), $threadIds);
+		$threadAttendees = [];
+		foreach ($attendees as $threadAttendee) {
+			$threadAttendees[$threadAttendee->getThreadId()] = $threadAttendee;
+		}
+
+		return $threadAttendees;
+	}
+
 	public function addAttendeeToThread(Attendee $attendee, Thread $thread): void {
 		$threadAttendee = new ThreadAttendee();
 		$threadAttendee->setThreadId($thread->getId());
