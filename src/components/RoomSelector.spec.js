@@ -4,8 +4,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { shallowMount } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+import { flushPromises, shallowMount } from '@vue/test-utils'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
