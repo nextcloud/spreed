@@ -4,10 +4,9 @@
  */
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { createLocalVue, flushPromises, mount, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import VueRouter from 'vue-router'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -33,19 +32,15 @@ const RouterLinkStub = true
 describe('Conversation.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
-	let localVue
 	let testStoreConfig
 	let item
 	let messagesMock
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		testStoreConfig = cloneDeep(storeConfig)
 		messagesMock = jest.fn().mockReturnValue({})
 		testStoreConfig.modules.messagesStore.getters.messages = () => messagesMock
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 
 		// common defaults
 		item = {
@@ -83,12 +78,13 @@ describe('Conversation.vue', () => {
 
 	test('renders conversation entry', () => {
 		const wrapper = mount(Conversation, {
-			localVue,
-			store,
-			stubs: {
-				RouterLink: RouterLinkStub,
+			global: {
+				plugins: [store],
+				stubs: {
+					RouterLink: RouterLinkStub,
+				},
 			},
-			propsData: {
+			props: {
 				isSearchResult: false,
 				item,
 			},
@@ -112,9 +108,10 @@ describe('Conversation.vue', () => {
 		 */
 		function testConversationLabel(item, expectedText, isSearchResult = false) {
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					isSearchResult,
 					item,
 				},
@@ -201,9 +198,10 @@ describe('Conversation.vue', () => {
 			item.isSensitive = true
 
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -223,12 +221,13 @@ describe('Conversation.vue', () => {
 		 */
 		function testCounter(item, expectedCounterText, expectedOutlined, expectedHighlighted) {
 			const wrapper = mount(Conversation, {
-				localVue,
-				store,
-				stubs: {
-					RouterLink: RouterLinkStub,
+				global: {
+					plugins: [store],
+					stubs: {
+						RouterLink: RouterLinkStub,
+					},
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -274,12 +273,13 @@ describe('Conversation.vue', () => {
 
 		test('does not render counter when no unread messages', () => {
 			const wrapper = mount(Conversation, {
-				localVue,
-				store,
-				stubs: {
-					RouterLink: RouterLinkStub,
+				global: {
+					plugins: [store],
+					stubs: {
+						RouterLink: RouterLinkStub,
+					},
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -293,19 +293,15 @@ describe('Conversation.vue', () => {
 	})
 
 	describe('actions (real router)', () => {
-		beforeEach(() => {
-			localVue.use(VueRouter)
-		})
-
 		test('change route on click event', async () => {
 			const wrapper = mount(Conversation, {
-				localVue,
-				router,
-				store,
-				stubs: {
-					NcListItem,
+				global: {
+					plugins: [router, store],
+					stubs: {
+						NcListItem,
+					},
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -347,16 +343,18 @@ describe('Conversation.vue', () => {
 		 * @param {string} actionName The name of the action to shallow
 		 */
 		function shallowMountAndGetAction(actionName) {
+			store = createStore(testStoreConfig)
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store: new Vuex.Store(testStoreConfig),
-				mocks: {
-					$router,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
+					mocks: {
+						$router,
+					},
 				},
-				stubs: {
-					NcActionButton,
-				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -374,16 +372,17 @@ describe('Conversation.vue', () => {
 		 */
 		async function shallowMountAndOpenDialog(actionName, buttonsAmount) {
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store,
-				mocks: {
-					$router,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+						NcButton,
+					},
+					mocks: {
+						$router,
+					},
 				},
-				stubs: {
-					NcActionButton,
-					NcButton,
-				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -414,7 +413,7 @@ describe('Conversation.vue', () => {
 				actionHandler = jest.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
 				testStoreConfig.modules.conversationsStore.actions.toggleArchive = actionHandler
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			test('leaves conversation when confirmed', async () => {
@@ -439,7 +438,7 @@ describe('Conversation.vue', () => {
 				// Arrange
 				actionHandler = jest.fn().mockRejectedValueOnce({ response: { status: 400 } })
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 
 				const dialog = await shallowMountAndOpenDialog('Leave conversation', 3)
 
@@ -481,7 +480,7 @@ describe('Conversation.vue', () => {
 			beforeEach(() => {
 				actionHandler = jest.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
-				store = new Vuex.Store(testStoreConfig)
+				store = createStore(testStoreConfig)
 			})
 
 			test('deletes conversation when confirmed', async () => {
@@ -517,14 +516,17 @@ describe('Conversation.vue', () => {
 		})
 
 		test('copies link conversation', async () => {
+			store = createStore(testStoreConfig)
 			const copyTextMock = jest.fn().mockResolvedValueOnce()
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store: new Vuex.Store(testStoreConfig),
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-				propsData: {
+
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -552,14 +554,17 @@ describe('Conversation.vue', () => {
 		test('sets favorite', async () => {
 			const toggleFavoriteAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
+			store = createStore(testStoreConfig)
 
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store: new Vuex.Store(testStoreConfig),
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-				propsData: {
+
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -583,14 +588,17 @@ describe('Conversation.vue', () => {
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 
 			item.isFavorite = true
+			store = createStore(testStoreConfig)
 
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store: new Vuex.Store(testStoreConfig),
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-				propsData: {
+
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -632,13 +640,16 @@ describe('Conversation.vue', () => {
 			expect(clearLastReadMessageAction).toHaveBeenCalledWith(expect.anything(), { token: item.token })
 		})
 		test('does not show all actions for search result (open conversations)', () => {
+			store = createStore(testStoreConfig)
 			const wrapper = shallowMount(Conversation, {
-				localVue,
-				store: new Vuex.Store(testStoreConfig),
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
 				},
-				propsData: {
+
+				props: {
 					isSearchResult: true,
 					item,
 				},

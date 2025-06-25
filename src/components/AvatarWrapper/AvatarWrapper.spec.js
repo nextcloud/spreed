@@ -16,7 +16,7 @@ describe('AvatarWrapper.vue', () => {
 	describe('render user avatar', () => {
 		test('component renders NcAvatar with standard size by default', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: {
+				props: {
 					name: USER_NAME,
 				},
 			})
@@ -28,7 +28,7 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component does not render NcAvatar for non-users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: {
+				props: {
 					name: 'Email Guest',
 					source: ATTENDEE.ACTOR_TYPE.EMAILS,
 				},
@@ -40,7 +40,7 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component does not render NcAvatar for federated users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: {
+				props: {
 					token: 'XXXTOKENXXX',
 					name: 'Federated User',
 					source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
@@ -54,7 +54,7 @@ describe('AvatarWrapper.vue', () => {
 		test('component renders NcAvatar with specified size', () => {
 			const size = 22
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: {
+				props: {
 					name: USER_NAME,
 					size,
 				},
@@ -66,7 +66,7 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component pass props to NcAvatar correctly', async () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: {
+				props: {
 					id: USER_ID,
 					name: USER_NAME,
 					source: ATTENDEE.ACTOR_TYPE.USERS,
@@ -104,7 +104,7 @@ describe('AvatarWrapper.vue', () => {
 
 		it.each(testCases)('renders for token \'%s\', id \'%s\', name \'%s\' and source \'%s\' icon \'%s\'', (token, id, name, source, result) => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: { token, id, name, source },
+				props: { token, id, name, source },
 			})
 
 			const avatar = wrapper.find('.avatar')
@@ -122,7 +122,7 @@ describe('AvatarWrapper.vue', () => {
 
 		it.each(testCases)('renders for id \'%s\', name \'%s\' and source \'%s\' symbol \'%s\'', (id, name, source, result) => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				propsData: { name, source },
+				props: { name, source },
 			})
 
 			const avatar = wrapper.find('.avatar')

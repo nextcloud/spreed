@@ -2,10 +2,11 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount } from '@vue/test-utils'
+
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
@@ -16,14 +17,11 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 
 	let tokenStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		tokenStore = useTokenStore()
 
@@ -53,7 +51,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		// Add a mock function for the action and see if its called and with which arguments
 		testStoreConfig.modules.participantsStore.actions.setPermissions = jest.fn()
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
@@ -65,9 +63,8 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	 */
 	const mountParticipantPermissionsEditor = (participant) => {
 		return mount(ParticipantPermissionsEditor, {
-			localVue,
-			store,
-			propsData: {
+			global: { plugins: [store] },
+			props: {
 				participant,
 				token: 'fdslk033',
 			},

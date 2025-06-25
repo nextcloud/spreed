@@ -4,10 +4,10 @@
  */
 
 import { emit } from '@nextcloud/event-bus'
-import { createLocalVue, flushPromises } from '@vue/test-utils'
+import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import {
 	ATTENDEE,
 	CONVERSATION,
@@ -85,15 +85,12 @@ describe('conversationsStore', () => {
 	}
 	let testStoreConfig = null
 	let testConversation
-	let localVue = null
 	let store = null
 	let addParticipantOnceAction = null
 	let actorStore
 	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 
@@ -139,7 +136,7 @@ describe('conversationsStore', () => {
 			checkMaintenanceModeAction = jest.spyOn(talkHashStore, 'checkMaintenanceMode')
 			clearMaintenanceModeAction = jest.spyOn(talkHashStore, 'clearMaintenanceMode')
 			updateTalkVersionHashAction = jest.spyOn(talkHashStore, 'updateTalkVersionHash')
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('adds conversation to the store, with current user as participant', () => {
@@ -149,7 +146,7 @@ describe('conversationsStore', () => {
 			})
 			store.dispatch('addConversation', testConversation)
 
-			expect(store.getters.conversation(testToken)).toBe(testConversation)
+			expect(store.getters.conversation(testToken)).toStrictEqual(testConversation)
 			expect(store.getters.conversation('ANOTHER')).toBeUndefined()
 
 			expect(addParticipantOnceAction).toHaveBeenCalled()
@@ -182,7 +179,7 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			expect(store.getters.conversation(testToken)).toBe(testConversation)
+			expect(store.getters.conversation(testToken)).toStrictEqual(testConversation)
 
 			expect(addParticipantOnceAction).toHaveBeenCalled()
 			expect(addParticipantOnceAction.mock.calls[0][1]).toStrictEqual({
@@ -638,7 +635,7 @@ describe('conversationsStore', () => {
 
 	describe('conversation settings', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('make public', async () => {
@@ -915,7 +912,7 @@ describe('conversationsStore', () => {
 
 	describe('read marker', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 			actorStore.userId = 'current-user'
 		})
 
@@ -997,7 +994,7 @@ describe('conversationsStore', () => {
 
 	describe('update last message', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = createStore(testStoreConfig)
 		})
 
 		test('successful update from user', () => {
@@ -1019,7 +1016,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('ignore update from bot', () => {
@@ -1041,7 +1038,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from bot but not from changelog', () => {
@@ -1063,7 +1060,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('ignore update reactions', () => {
@@ -1085,7 +1082,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from the action of deleting reactions', () => {
@@ -1107,7 +1104,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update deleted reactions (only theory as the action of deleting would come after it anyway)', () => {
@@ -1129,7 +1126,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from deleting a message', () => {
@@ -1151,7 +1148,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('successfully update temporary messages', () => {
@@ -1173,7 +1170,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('successfully update also posted messages which start with a slash', () => {
@@ -1195,7 +1192,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 	})
 

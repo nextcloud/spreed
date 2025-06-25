@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import VideoVue from './VideoVue.vue'
 import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
 import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 describe('VideoVue.vue', () => {
-	let localVue
 	let store
 	let testStoreConfig
 
@@ -62,12 +61,10 @@ describe('VideoVue.vue', () => {
 	}
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
-		store = new Vuex.Store(testStoreConfig)
+		store = createStore(testStoreConfig)
 
 		const webRtcMock = {
 			on: jest.fn(),
@@ -100,9 +97,8 @@ describe('VideoVue.vue', () => {
 		 */
 		function setupWrapper() {
 			wrapper = shallowMount(VideoVue, {
-				localVue,
-				store,
-				propsData: {
+				global: { plugins: [store] },
+				props: {
 					model: callParticipantModel,
 					token: 'theToken',
 					sharedData: {
