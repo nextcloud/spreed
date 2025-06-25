@@ -29,10 +29,6 @@ jest.mock('../../../../../services/reactionsService', () => ({
 	removeReactionFromMessage: jest.fn(),
 }))
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-}))
-
 describe('Reactions.vue', () => {
 	let reactionsStore
 	let token

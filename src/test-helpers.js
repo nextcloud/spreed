@@ -4,9 +4,6 @@
  */
 
 import { cloneDeep } from 'lodash'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
 
 // helpers
 /**
@@ -16,7 +13,7 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
  * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcActionButton(wrapper, text) {
-	const actionButtons = wrapper.findAllComponents(NcActionButton)
+	const actionButtons = wrapper.findAllComponents({ name: 'NcActionButton' })
 	const items = (Array.isArray(text))
 		? actionButtons.filter((actionButton) => text.includes(actionButton.text()))
 		: actionButtons.filter((actionButton) => actionButton.text() === text)
@@ -33,7 +30,7 @@ function findNcActionButton(wrapper, text) {
  * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcButton(wrapper, text) {
-	const buttons = wrapper.findAllComponents(NcButton)
+	const buttons = wrapper.findAllComponents({ name: 'NcButton' })
 	const items = (Array.isArray(text))
 		? buttons.filter((button) => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
 		: buttons.filter((button) => button.text() === text || button.vm.ariaLabel === text)
@@ -50,7 +47,7 @@ function findNcButton(wrapper, text) {
  * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcListItems(wrapper, text) {
-	const listItems = wrapper.findAllComponents(NcListItem)
+	const listItems = wrapper.findAllComponents({ name: 'NcListItem' })
 	return (Array.isArray(text))
 		? listItems.filter((listItem) => text.includes(listItem.vm.name))
 		: listItems.filter((listItem) => listItem.vm.name === text)

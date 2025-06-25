@@ -17,6 +17,13 @@ jest.mock('extendable-media-recorder-wav-encoder', () => ({
 	connect: jest.fn(),
 }))
 
+jest.mock('@nextcloud/dialogs', () => ({
+	showInfo: jest.fn(),
+	showSuccess: jest.fn(),
+	showError: jest.fn(),
+	showWarning: jest.fn(),
+}))
+
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn().mockImplementation((app, key, fallback) => {
 		return fallback

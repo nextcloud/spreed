@@ -28,9 +28,6 @@ jest.mock('../services/filesSharingServices', () => ({
 jest.mock('../services/settingsService', () => ({
 	setAttachmentFolder: jest.fn(),
 }))
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-}))
 
 describe('fileUploadStore', () => {
 	let localVue = null

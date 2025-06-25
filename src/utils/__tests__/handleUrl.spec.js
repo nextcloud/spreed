@@ -9,11 +9,6 @@ import {
 	generateFullConversationLink,
 } from '../handleUrl.ts'
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showSuccess: jest.fn(),
-	showError: jest.fn(),
-}))
-
 describe('handleUrl', () => {
 	describe('generateAbsoluteUrl', () => {
 		it('should generate absolute url', () => {

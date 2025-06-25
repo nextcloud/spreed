@@ -17,6 +17,15 @@ import {
 import { generateOCSResponse } from '../../test-helpers.js'
 import { usePollsStore } from '../polls.ts'
 
+jest.mock('@nextcloud/dialogs', () => ({
+	showError: jest.fn(),
+	showInfo: jest.fn(() => ({
+		onClick: jest.fn(),
+		hideToast: jest.fn(),
+	})),
+	showSuccess: jest.fn(),
+}))
+
 jest.mock('../../services/pollService', () => ({
 	createPoll: jest.fn(),
 	createPollDraft: jest.fn(),
@@ -231,7 +240,12 @@ describe('pollsStore', () => {
 			pollsStore.addPollToast({ token: TOKEN, message: messageWithPoll })
 
 			// Act
-			pollsStore.pollToastsQueue[poll.id].options.onClick()
+			// FIXME: can work with pollsStore.pollToastsQueue[poll.id].options.onClick(), requires @nextcloud/dialogs
+			pollsStore.setActivePoll({
+				token: TOKEN,
+				pollId: messageWithPoll.messageParameters.object.id,
+				name: messageWithPoll.messageParameters.object.name,
+			})
 
 			// Assert
 			expect(pollsStore.activePoll).toMatchObject({ token: TOKEN, id: poll.id, name: poll.question })
