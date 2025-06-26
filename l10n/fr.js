@@ -1257,7 +1257,7 @@ OC.L10N.register(
     "Create and copy link" : "Créer et copier le lien",
     "Create a new conversation" : "Créer une nouvelle conversation",
     "Join open conversations" : "Rejoindre des conversations publiques",
-    "Call a phone number" : "Appeler un numéro de téléhpone",
+    "Call a phone number" : "Appeler un numéro de téléphone",
     "Check devices" : "Vérifier les périphériques",
     "Scroll backward" : "Défiler vers l'arrière",
     "Scroll forward" : "Défiler vers l'avant",
