@@ -30,7 +30,9 @@
 
 		<div class="login-info">
 			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
-			<NcButton variant="secondary"
+			<NcButton
+				class="login-info__button"
+				variant="secondary"
 				:href="loginUrl">
 				{{ t('spreed', 'Log in') }}
 			</NcButton>
@@ -123,13 +125,8 @@ function toggleEdit() {
 
 <style lang="scss" scoped>
 .username-form {
-	padding: 0 12px;
-	margin: 0 auto 12px;
-
-	& &__input {
-		width: 300px;
-		height: var(--default-clickable-area);
-	}
+	margin-block-end: 12px;
+	margin-inline: auto;
 }
 
 .login-info {
@@ -137,6 +134,10 @@ function toggleEdit() {
 	align-items: center;
 	gap: calc(var(--default-grid-baseline) * 2);
 	padding-top: calc(var(--default-grid-baseline) * 2);
+
+	&__button {
+		flex-shrink: 0;
+	}
 }
 
 </style>

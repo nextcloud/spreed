@@ -130,7 +130,6 @@ export default {
 <style lang="scss" scoped>
 .modal__content {
 	padding: calc(var(--default-grid-baseline) * 3);
-	background-color: var(--color-main-background);
 }
 
 .conversation-information {
