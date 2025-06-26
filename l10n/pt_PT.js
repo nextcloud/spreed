@@ -296,6 +296,8 @@ OC.L10N.register(
     "No" : "Não",
     "Yes" : "Sim",
     "Delete conversation" : "Eliminar conversação",
+    "_%n hour_::_%n hours_" : ["%n hora","%n horas","%n horas"],
+    "_%n day_::_%n days_" : ["%n dia","%n dias","%n dias"],
     "Password protection" : "Protegido por palavra-passe",
     "Set a password" : "Definir uma palavra-passe",
     "Edit" : "Editar",
