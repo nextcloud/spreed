@@ -119,6 +119,7 @@ namespace OCA\Talk;
  *     lastEditTimestamp?: int,
  *     silent?: bool,
  *     threadId?: int,
+ *     isThread?: bool,
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage

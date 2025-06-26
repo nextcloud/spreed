@@ -47,6 +47,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -110,6 +111,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected AttachmentService $attachmentService,
 		protected AvatarService $avatarService,
 		protected ReminderService $reminderService,
+		protected ThreadService $threadService,
 		private GuestManager $guestManager,
 		private MessageParser $messageParser,
 		protected Preloader $sharePreloader,
@@ -178,9 +180,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_CREATED, $headers);
 		}
 
-		$data = $chatMessage->toArray($this->getResponseFormat());
+		$isThread = $this->threadService->validateThread((int)$comment->getTopmostParentId());
+		$data = $chatMessage->toArray($this->getResponseFormat(), $isThread);
 		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray($this->getResponseFormat());
+			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $isThread);
 		}
 
 		$headers = [];
@@ -626,6 +629,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->sharePreloader->preloadShares($comments);
+		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
+		$threadMap = array_flip($this->threadService->validateThreadIds($potentialThreadIds));
 
 		$i = 0;
 		$now = $this->timeFactory->getDateTime();
@@ -650,7 +655,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$parentIds[$id] = $comment->getParentId();
 			}
 
-			$messages[] = $message->toArray($this->getResponseFormat());
+			$threadId = (int)$comment->getTopmostParentId() ?: $id;
+			$messages[] = $message->toArray($this->getResponseFormat(), isset($threadMap[$threadId]));
 			$commentIdToIndex[$id] = $i;
 			$i++;
 		}

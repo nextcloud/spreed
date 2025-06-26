@@ -126,4 +126,42 @@ class ThreadService {
 			'last_message_id' => $row['last_message_id'] ?? 0,
 		];
 	}
+
+	public function validateThreadIds(array $potentialThreadIds): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('id')
+			->from('talk_threads')
+			->where($query->expr()->in(
+				'id',
+				$query->createNamedParameter($potentialThreadIds, IQueryBuilder::PARAM_INT_ARRAY),
+				IQueryBuilder::PARAM_INT_ARRAY)
+			);
+
+		$ids = [];
+
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$ids[] = (int)$row['id'];
+		}
+		$result->closeCursor();
+
+		return $ids;
+	}
+
+	public function validateThread(int $potentialThreadId): bool {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('id')
+			->from('talk_threads')
+			->where($query->expr()->eq(
+				'id',
+				$query->createNamedParameter($potentialThreadId, IQueryBuilder::PARAM_INT),
+				IQueryBuilder::PARAM_INT)
+			);
+
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return $row !== false;
+	}
 }
