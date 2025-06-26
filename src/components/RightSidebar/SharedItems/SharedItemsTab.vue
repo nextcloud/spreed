@@ -17,8 +17,8 @@
 				{{ t('spreed', 'Browse poll drafts') }}
 			</NcButton>
 			<!-- Shared items grouped by type -->
-			<template v-for="type in sharedItemsOrder">
-				<div v-if="sharedItems[type]" :key="type">
+			<template v-for="type in sharedItemsOrder" :key="type">
+				<div v-if="sharedItems[type]">
 					<NcAppNavigationCaption :name="sharedItemTitle[type] || sharedItemTitle.default" />
 					<SharedItems :type="type"
 						:token="token"
