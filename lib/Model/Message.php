@@ -184,7 +184,7 @@ class Message {
 	 * @psalm-param 'json'|'xml' $format
 	 * @return TalkChatMessage
 	 */
-	public function toArray(string $format): array {
+	public function toArray(string $format, ?bool $isThread = null): array {
 		$expireDate = $this->getComment()->getExpireDate();
 
 		$reactions = $this->getComment()->getReactions();
@@ -194,8 +194,11 @@ class Message {
 			$reactions = new \stdClass();
 		}
 
+		$id = (int)$this->getComment()->getId();
+		$threadId = (int)$this->getComment()->getTopmostParentId() ?: $id;
+
 		$data = [
-			'id' => (int)$this->getComment()->getId(),
+			'id' => $id,
 			'token' => $this->getRoom()->getToken(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
@@ -210,7 +213,11 @@ class Message {
 			'reactions' => $reactions,
 			'expirationTimestamp' => $expireDate ? $expireDate->getTimestamp() : 0,
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
+			'threadId' => $threadId,
 		];
+		if ($isThread === true) {
+			$data['isThread'] = true;
+		}
 
 		if ($this->lastEditActorType && $this->lastEditActorId && $this->lastEditTimestamp) {
 			$data['lastEditActorType'] = $this->lastEditActorType;
@@ -223,7 +230,7 @@ class Message {
 			$data['deleted'] = true;
 		}
 
-		$metaData = $this->comment->getMetaData() ?? [];
+		$metaData = $this->getComment()->getMetaData() ?? [];
 		if (!empty($metaData[self::METADATA_SILENT])) {
 			$data[self::METADATA_SILENT] = true;
 		}

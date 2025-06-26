@@ -118,6 +118,8 @@ namespace OCA\Talk;
  *     lastEditActorType?: string,
  *     lastEditTimestamp?: int,
  *     silent?: bool,
+ *     threadId?: int,
+ *     isThread?: bool,
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage
@@ -442,6 +444,28 @@ namespace OCA\Talk;
  *     ticket: string,
  *     turnservers: list<array{urls: list<string>, username: string, credential: mixed}>,
  *     userId: ?string,
+ * }
+ *
+ * @psalm-type TalkThread = array{
+ *     id: positive-int,
+ *     roomId: positive-int,
+ *     lastMessageId: non-negative-int,
+ *     numReplies: non-negative-int,
+ * }
+ *
+ * @psalm-type TalkThreadAttendee = array{
+ *      notificationLevel: 0|1|2|3,
+ *      lastReadMessage: non-negative-int,
+ *      lastMentionMessage: non-negative-int,
+ *      lastMentionDirect: non-negative-int,
+ *      readPrivacy: 0|1,
+ * }
+ *
+ * @psalm-type TalkThreadInfo = array{
+ *      thread: TalkThread,
+ *      attendee: ?TalkThreadAttendee,
+ *      first: ?TalkChatMessage,
+ *      last: ?TalkChatMessage,
  * }
  *
  * @psalm-type TalkCapabilities = array{

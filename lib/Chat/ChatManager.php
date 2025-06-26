@@ -29,6 +29,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -112,6 +113,7 @@ class ChatManager {
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private PollService $pollService,
+		protected ThreadService $threadService,
 		private Notifier $notifier,
 		ICacheFactory $cacheFactory,
 		protected ITimeFactory $timeFactory,
@@ -702,6 +704,7 @@ class ChatManager {
 		$this->participantService->resetChatDetails($chat);
 
 		$this->pollService->deleteByRoomId($chat->getId());
+		$this->threadService->deleteByRoom($chat);
 
 		return $this->addSystemMessage(
 			$chat,
@@ -744,6 +747,30 @@ class ChatManager {
 
 		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string)$chat->getId()) {
 			throw new NotFoundException('Message not found in the right context');
+		}
+
+		return $comment;
+	}
+
+	/**
+	 * @param Room $chat
+	 * @param string $messageId
+	 * @return IComment
+	 * @throws NotFoundException
+	 */
+	public function getTopMostComment(Room $chat, string $messageId): IComment {
+		if ($chat->isFederatedConversation()) {
+			throw new InvalidRoomException('Can not call ChatManager::getTopMostComment() with a federated chat.');
+		}
+
+		$comment = $this->commentsManager->get($messageId);
+
+		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string)$chat->getId()) {
+			throw new NotFoundException('Message not found in the right context');
+		}
+
+		if ($comment->getTopmostParentId() !== '0') {
+			$comment = $this->getComment($chat, $comment->getTopmostParentId());
 		}
 
 		return $comment;
@@ -954,6 +981,7 @@ class ChatManager {
 		$this->attachmentService->deleteAttachmentsForRoom($chat);
 
 		$this->pollService->deleteByRoomId($chat->getId());
+		$this->threadService->deleteByRoom($chat);
 	}
 
 	/**

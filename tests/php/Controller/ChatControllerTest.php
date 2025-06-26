@@ -30,6 +30,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -68,6 +69,7 @@ class ChatControllerTest extends TestCase {
 	protected AttachmentService&MockObject $attachmentService;
 	protected AvatarService&MockObject $avatarService;
 	protected ReminderService&MockObject $reminderService;
+	protected ThreadService&MockObject $threadService;
 	protected GuestManager&MockObject $guestManager;
 	protected MessageParser&MockObject $messageParser;
 	protected Preloader&MockObject $sharePreloader;
@@ -111,6 +113,7 @@ class ChatControllerTest extends TestCase {
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->reminderService = $this->createMock(ReminderService::class);
+		$this->threadService = $this->createMock(ThreadService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->sharePreloader = $this->createMock(Preloader::class);
@@ -161,6 +164,7 @@ class ChatControllerTest extends TestCase {
 			$this->attachmentService,
 			$this->avatarService,
 			$this->reminderService,
+			$this->threadService,
 			$this->guestManager,
 			$this->messageParser,
 			$this->sharePreloader,

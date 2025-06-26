@@ -428,6 +428,13 @@
                             },
                             "silent": {
                                 "type": "boolean"
+                            },
+                            "threadId": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "isThread": {
+                                "type": "boolean"
                             }
                         }
                     }

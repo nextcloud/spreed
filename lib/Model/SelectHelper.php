@@ -79,6 +79,9 @@ class SelectHelper {
 			->addSelect($alias . 'archived')
 			->addSelect($alias . 'important')
 			->addSelect($alias . 'sensitive')
+			->addSelect($alias . 'has_unread_threads')
+			->addSelect($alias . 'has_unread_thread_mentions')
+			->addSelect($alias . 'has_unread_thread_directs')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

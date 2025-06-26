@@ -1593,6 +1593,40 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get list of threads in a conversation */
+        get: operations["thread-list-threads"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a thread out of a message or reply chain */
+        post: operations["thread-make-thread"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
 export type webhooks = Record<string, never>;
 export type components = {
@@ -1755,6 +1789,9 @@ export type components = {
             /** Format: int64 */
             lastEditTimestamp?: number;
             silent?: boolean;
+            /** Format: int64 */
+            threadId?: number;
+            isThread?: boolean;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
@@ -2231,6 +2268,40 @@ export type components = {
                 credential: Record<string, never>;
             }[];
             userId: string | null;
+        };
+        Thread: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            roomId: number;
+            /** Format: int64 */
+            lastMessageId: number;
+            /** Format: int64 */
+            numReplies: number;
+        };
+        ThreadAttendee: {
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            notificationLevel: 0 | 1 | 2 | 3;
+            /** Format: int64 */
+            lastReadMessage: number;
+            /** Format: int64 */
+            lastMentionMessage: number;
+            /** Format: int64 */
+            lastMentionDirect: number;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            readPrivacy: 0 | 1;
+        };
+        ThreadInfo: {
+            thread: components["schemas"]["Thread"];
+            attendee: components["schemas"]["ThreadAttendee"];
+            first: components["schemas"]["ChatMessage"];
+            last: components["schemas"]["ChatMessage"];
         };
     };
     responses: never;
@@ -9592,6 +9663,109 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "avatar";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "thread-list-threads": {
+        parameters: {
+            query?: {
+                /** @description Number of threads to return */
+                limit?: number;
+                /** @description The last thread ID that was known, default 0 starts from the newest */
+                offsetId?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of threads returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ThreadInfo"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "thread-make-thread": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The message to create a thread for (Doesn't have to be the root) */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thread successfully created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Thread"];
+                        };
+                    };
+                };
+            };
+            /** @description Root message is a system message and therefor not supported */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "top-most";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message or top most message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "top-most";
                             };
                         };
                     };
