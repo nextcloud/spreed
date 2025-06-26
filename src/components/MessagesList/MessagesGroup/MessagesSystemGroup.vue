@@ -227,7 +227,8 @@ export default {
 		},
 
 		toggleCollapsed(group) {
-			this.group.collapsed = !group.collapsed
+			// group is a local state from messagesGroupedBySystemMessage
+			group.collapsed = !group.collapsed
 			this.groupIsCollapsed[group.id] = group.collapsed
 		},
 
