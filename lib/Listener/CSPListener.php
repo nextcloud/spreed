@@ -38,6 +38,7 @@ class CSPListener implements IEventListener {
 		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		foreach ($this->config->getAllServerUrlsForCSP() as $server) {
