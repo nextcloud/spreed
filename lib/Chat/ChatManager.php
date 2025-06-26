@@ -704,6 +704,7 @@ class ChatManager {
 		$this->participantService->resetChatDetails($chat);
 
 		$this->pollService->deleteByRoomId($chat->getId());
+		$this->threadService->deleteByRoom($chat);
 
 		return $this->addSystemMessage(
 			$chat,
