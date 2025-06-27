@@ -28,6 +28,7 @@ import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { provide } from 'vue'
+import { START_LOCATION } from 'vue-router'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcContent from '@nextcloud/vue/components/NcContent'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
@@ -225,17 +226,19 @@ export default {
 
 	beforeMount() {
 		if (!getCurrentUser()) {
-			EventBus.once('joined-conversation', () => {
-				this.fixmeDelayedSetupOfGuestUsers()
+			/**
+			 * When guest opens a public conversation, we wait for it to be fetched,
+			 * then joining and setting the 30 seconds interval to update information
+			 */
+			EventBus.once('conversations-received', (params) => {
+				if (params.singleConversation) {
+					this.$store.dispatch('joinConversation', { token: params.singleConversation.token })
+				}
+				setInterval(() => {
+					this.refreshCurrentConversation()
+				}, 30_000)
 			})
 			EventBus.on('should-refresh-conversations', this.debounceRefreshCurrentConversation)
-		}
-
-		if (this.$route.name === 'conversation') {
-			// Update current token in the token store
-			this.tokenStore.updateToken(this.$route.params.token)
-			// Automatically join the conversation as well
-			this.$store.dispatch('joinConversation', { token: this.$route.params.token })
 		}
 
 		window.addEventListener('unload', () => {
@@ -343,6 +346,10 @@ export default {
 		})
 
 		EventBus.on('conversations-received', (params) => {
+			if (this.$route === START_LOCATION) {
+				// Initial navigation, should be handled in beforeRouteChangeListener
+				return
+			}
 			if (this.$route.name === 'conversation'
 				&& !this.$store.getters.conversation(this.token)) {
 				if (!params.singleConversation) {
@@ -358,19 +365,6 @@ export default {
 
 		EventBus.on('forbidden-route', (params) => {
 			this.$router.push({ name: 'forbidden' })
-		})
-
-		/**
-		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
-		 * component each time a new batch of conversations is received and processed in
-		 * the store.
-		 */
-		EventBus.once('conversations-received', () => {
-			if (!getCurrentUser()) {
-				// Set the current actor/participant for guests
-				const conversation = this.$store.getters.conversation(this.token)
-				this.actorStore.setCurrentParticipant(conversation)
-			}
 		})
 
 		const beforeRouteChangeListener = async (to, from, next) => {
@@ -408,6 +402,8 @@ export default {
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
+		 * When app is initializing and router is not ready yet,
+		 * first navigation will be made from initial state { name : undefined }
 		 */
 		Router.beforeEach((to, from, next) => {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
@@ -444,13 +440,6 @@ export default {
 
 		if (!IS_DESKTOP) {
 			checkBrowser()
-		}
-
-		if (this.$route.name === 'root' && this.isMobile) {
-			await this.$nextTick()
-			emit('toggle-navigation', {
-				open: true,
-			})
 		}
 
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
@@ -567,16 +556,6 @@ export default {
 			}
 		},
 
-		fixmeDelayedSetupOfGuestUsers() {
-			// FIXME Refresh the data now that the user joined the conversation
-			// The join request returns this data already, but it's lost in the signaling code
-			this.refreshCurrentConversation()
-
-			window.setInterval(() => {
-				this.refreshCurrentConversation()
-			}, 30000)
-		},
-
 		refreshCurrentConversation() {
 			this.fetchSingleConversation(this.token)
 		},
@@ -599,15 +578,13 @@ export default {
 				/**
 				 * Fetches a single conversation
 				 */
-				await this.$store.dispatch('fetchConversation', { token })
+				const response = await this.$store.dispatch('fetchConversation', { token })
 				isSuccessfullyFetched = true
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.emit('conversations-received', {
-					singleConversation: true,
-				})
+				EventBus.emit('conversations-received', { singleConversation: response.data.ocs.data })
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })

@@ -258,6 +258,7 @@ import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
 import { ref } from 'vue'
+import { START_LOCATION } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -870,7 +871,7 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.emit('conversations-received', { singleConversation: false })
+				EventBus.emit('conversations-received', {})
 				this.isFetchingConversations = false
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
@@ -880,8 +881,9 @@ export default {
 
 		async restoreConversations() {
 			try {
-				await this.$store.dispatch('restoreConversations')
-				EventBus.emit('conversations-received', { singleConversation: false })
+				if (await this.$store.dispatch('restoreConversations')) {
+					EventBus.emit('conversations-received', { fromBrowserStorage: true })
+				}
 			} catch (error) {
 				console.debug('Error while restoring conversations: ', error)
 			}
@@ -948,7 +950,7 @@ export default {
 			}
 			if (this.isMobile) {
 				emit('toggle-navigation', {
-					open: false,
+					open: to.name === 'root' && from === START_LOCATION,
 				})
 			}
 		},
