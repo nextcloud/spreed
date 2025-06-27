@@ -28,6 +28,7 @@ import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { provide } from 'vue'
+import { START_LOCATION } from 'vue-router'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcContent from '@nextcloud/vue/components/NcContent'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
@@ -225,17 +226,15 @@ export default {
 
 	beforeMount() {
 		if (!getCurrentUser()) {
+			EventBus.once('conversations-received', (params) => {
+				if (params.singleConversation) {
+					this.$store.dispatch('joinConversation', { token: params.singleConversation.token })
+				}
+			})
 			EventBus.once('joined-conversation', () => {
 				this.fixmeDelayedSetupOfGuestUsers()
 			})
 			EventBus.on('should-refresh-conversations', this.debounceRefreshCurrentConversation)
-		}
-
-		if (this.$route.name === 'conversation') {
-			// Update current token in the token store
-			this.tokenStore.updateToken(this.$route.params.token)
-			// Automatically join the conversation as well
-			this.$store.dispatch('joinConversation', { token: this.$route.params.token })
 		}
 
 		window.addEventListener('unload', () => {
@@ -343,6 +342,10 @@ export default {
 		})
 
 		EventBus.on('conversations-received', (params) => {
+			if (this.$route === START_LOCATION) {
+				// Initial navigation, should be handled in beforeRouteChangeListener
+				return
+			}
 			if (this.$route.name === 'conversation'
 				&& !this.$store.getters.conversation(this.token)) {
 				if (!params.singleConversation) {
@@ -358,19 +361,6 @@ export default {
 
 		EventBus.on('forbidden-route', (params) => {
 			this.$router.push({ name: 'forbidden' })
-		})
-
-		/**
-		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
-		 * component each time a new batch of conversations is received and processed in
-		 * the store.
-		 */
-		EventBus.once('conversations-received', () => {
-			if (!getCurrentUser()) {
-				// Set the current actor/participant for guests
-				const conversation = this.$store.getters.conversation(this.token)
-				this.actorStore.setCurrentParticipant(conversation)
-			}
 		})
 
 		const beforeRouteChangeListener = async (to, from, next) => {
