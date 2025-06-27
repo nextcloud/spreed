@@ -4,7 +4,6 @@
 -->
 
 <template>
-	<!-- Message Actions -->
 	<div v-click-outside="handleClickOutside">
 		<template v-if="!isReactionsMenuOpen">
 			<NcButton v-if="canReact"
