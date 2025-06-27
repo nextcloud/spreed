@@ -599,15 +599,13 @@ export default {
 				/**
 				 * Fetches a single conversation
 				 */
-				await this.$store.dispatch('fetchConversation', { token })
+				const response = await this.$store.dispatch('fetchConversation', { token })
 				isSuccessfullyFetched = true
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.emit('conversations-received', {
-					singleConversation: true,
-				})
+				EventBus.emit('conversations-received', { singleConversation: response.data.ocs.data })
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })

@@ -459,13 +459,13 @@ const actions = {
 	 *
 	 * @param {object} context default store context
 	 */
-	restoreConversations(context) {
+	async restoreConversations(context) {
 		const cachedConversations = BrowserStorage.getItem('cachedConversations')
-		if (!cachedConversations?.length) {
-			return
+		if (cachedConversations === null || !cachedConversations.length) {
+			return false
 		}
 
-		context.dispatch('patchConversations', {
+		await context.dispatch('patchConversations', {
 			conversations: JSON.parse(cachedConversations),
 			withRemoving: true,
 		})
@@ -473,6 +473,7 @@ const actions = {
 		context.commit('setConversationsInitialised', true)
 
 		console.debug('Conversations have been restored from BrowserStorage')
+		return true
 	},
 
 	/**
