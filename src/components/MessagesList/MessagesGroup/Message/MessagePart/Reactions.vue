@@ -4,7 +4,6 @@
 -->
 
 <template>
-	<!-- reactions buttons and popover with details -->
 	<div v-if="reactionsCount && reactionsSorted" class="reactions-wrapper">
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"

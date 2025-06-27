@@ -4,9 +4,9 @@
 -->
 
 <template>
-	<!-- "submit-wrapper" is used to mimic the login button and thus get
-		automatic colouring of the confirm icon by the Theming app. -->
 	<div id="submit-wrapper" class="request-password-wrapper">
+		<!-- "submit-wrapper" is used to mimic the login button and thus get
+		automatic colouring of the confirm icon by the Theming app. -->
 		<NcButton id="request-password-button"
 			variant="primary"
 			:wide="true"
