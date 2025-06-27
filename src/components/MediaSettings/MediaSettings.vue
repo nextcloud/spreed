@@ -5,60 +5,62 @@
 
 <template>
 	<NcModal v-if="modal"
+		size="large"
 		:label-id="dialogHeaderId"
 		@close="closeModal">
 		<div class="media-settings">
 			<h2 :id="dialogHeaderId" class="media-settings__title nc-dialog-alike-header">
 				{{ t('spreed', 'Media settings') }}
 			</h2>
-			<!-- Preview -->
-			<div class="media-settings__preview">
-				<video v-show="showVideo"
-					ref="video"
-					class="preview__video"
-					:class="{ 'preview__video--mirrored': isMirrored }"
-					disablePictureInPicture
-					tabindex="-1" />
-				<NcButton v-if="showVideo"
-					variant="secondary"
-					class="media-settings__preview-mirror"
-					:title="mirrorToggleLabel"
-					:aria-label="mirrorToggleLabel"
-					@click="isMirrored = !isMirrored">
-					<template #icon>
-						<IconReflectHorizontal :size="20" />
-					</template>
-				</NcButton>
-				<div v-show="!showVideo"
-					class="preview__novideo">
-					<VideoBackground :display-name="displayName"
-						:user="userId" />
-					<AvatarWrapper :id="userId"
-						:token="token"
-						:name="displayName"
-						:source="actorStore.actorType"
-						:size="AVATAR.SIZE.EXTRA_LARGE"
-						disable-menu
-						disable-tooltip />
-				</div>
-
-				<!-- Audio and video toggles -->
-				<div class="media-settings__toggles">
-					<!-- Audio toggle -->
-					<NcButton v-if="!audioStreamError"
-						variant="tertiary"
-						:title="audioButtonTitle"
-						:aria-label="audioButtonTitle"
-						:disabled="!audioPreviewAvailable"
-						@click="toggleAudio">
+			<div class="media-settings__content" :style="{ 'flex-direction': isMobile ? 'column' : 'row' }">
+				<!-- Preview -->
+				<div class="media-settings__preview">
+					<video v-show="showVideo"
+						ref="video"
+						class="preview__video"
+						:class="{ 'preview__video--mirrored': isMirrored }"
+						disablePictureInPicture
+						tabindex="-1" />
+					<NcButton v-if="showVideo"
+						variant="secondary"
+						class="media-settings__preview-mirror"
+						:title="mirrorToggleLabel"
+						:aria-label="mirrorToggleLabel"
+						@click="isMirrored = !isMirrored">
 						<template #icon>
-							<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
-								:audio-enabled="audioOn"
-								:current-volume="currentVolume"
-								:volume-threshold="currentThreshold"
-								overlay-muted-color="#888888" />
+							<IconReflectHorizontal :size="20" />
 						</template>
 					</NcButton>
+					<div v-show="!showVideo"
+						class="preview__novideo">
+						<VideoBackground :display-name="displayName"
+							:user="userId" />
+						<AvatarWrapper :id="userId"
+							:token="token"
+							:name="displayName"
+							:source="actorStore.actorType"
+							:size="AVATAR.SIZE.EXTRA_LARGE"
+							disable-menu
+							disable-tooltip />
+					</div>
+
+					<!-- Audio and video toggles -->
+					<div class="media-settings__toggles">
+						<!-- Audio toggle -->
+						<NcButton v-if="!audioStreamError"
+							variant="tertiary"
+							:title="audioButtonTitle"
+							:aria-label="audioButtonTitle"
+							:disabled="!audioPreviewAvailable"
+							@click="toggleAudio">
+							<template #icon>
+								<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+									:audio-enabled="audioOn"
+									:current-volume="currentVolume"
+									:volume-threshold="currentThreshold"
+									overlay-muted-color="#888888" />
+							</template>
+						</NcButton>
 					<NcPopover v-else
 						:title="t('spreed', 'Show more info')"
 						close-on-click-outside
@@ -78,18 +80,18 @@
 						</template>
 					</NcPopover>
 
-					<!-- Video toggle -->
-					<NcButton v-if="!videoStreamError"
+						<!-- Video toggle -->
+						<NcButton v-if="!videoStreamError"
 						variant="tertiary"
-						:title="videoButtonTitle"
-						:aria-label="videoButtonTitle"
-						:disabled="!videoPreviewAvailable"
-						@click="toggleVideo">
-						<template #icon>
-							<IconVideo v-if="videoOn" :size="20" />
-							<IconVideoOff v-else :size="20" />
-						</template>
-					</NcButton>
+							:title="videoButtonTitle"
+							:aria-label="videoButtonTitle"
+							:disabled="!videoPreviewAvailable"
+							@click="toggleVideo">
+							<template #icon>
+								<IconVideo v-if="videoOn" :size="20" />
+								<IconVideoOff v-else :size="20" />
+							</template>
+						</NcButton>
 					<NcPopover v-else
 						:title="t('spreed', 'Show more info')"
 						close-on-click-outside
@@ -108,74 +110,76 @@
 							</p>
 						</template>
 					</NcPopover>
+					</div>
+				</div>
+				<div class="media-settings__content-tabs">
+					<!-- Tab panels -->
+					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
+						<template #tab-panel:devices>
+							<MediaDevicesSelector kind="audioinput"
+								:devices="devices"
+								:device-id="audioInputId"
+								@refresh="updateDevices"
+								@update:device-id="handleAudioInputIdChange" />
+							<MediaDevicesSelector kind="videoinput"
+								:devices="devices"
+								:device-id="videoInputId"
+								@refresh="updateDevices"
+								@update:device-id="handleVideoInputIdChange" />
+							<MediaDevicesSelector v-if="audioOutputSupported"
+								kind="audiooutput"
+								:devices="devices"
+								:device-id="audioOutputId"
+								@refresh="updateDevices"
+								@update:device-id="handleAudioOutputIdChange">
+								<template #extra-action>
+											<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+								</template>
+							</MediaDevicesSelector>
+						</template>
+
+						<template #tab-panel:backgrounds>
+							<VideoBackgroundEditor class="media-settings__tab"
+								:token="token"
+								:skip-blur-virtual-background="skipBlurVirtualBackground"
+								@update-background="handleUpdateVirtualBackground" />
+						</template>
+					</MediaSettingsTabs>
+
+					<template v-if="!isDeviceCheck">
+						<!-- Moderator options before starting a call-->
+						<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
+							v-model="isRecordingFromStart"
+							class="checkbox">
+							{{ t('spreed', 'Start recording immediately with the call') }}
+						</NcCheckboxRadioSwitch>
+
+						<!-- Recording warning -->
+						<NcNoteCard v-if="showRecordingWarning" type="warning">
+							<p v-if="isCurrentlyRecording">
+								<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+							</p>
+							<p v-else>
+								<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+							</p>
+							<template v-if="isRecordingConsentRequired">
+								<p>
+									{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+								</p>
+								<NcCheckboxRadioSwitch class="checkbox--warning"
+									:model-value="recordingConsentGiven"
+									@update:model-value="setRecordingConsentGiven">
+									{{ t('spreed', 'Give consent to the recording of this call') }}
+								</NcCheckboxRadioSwitch>
+							</template>
+						</NcNoteCard>
+					</template>
 				</div>
 			</div>
-
-			<!-- Tab panels -->
-			<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
-				<template #tab-panel:devices>
-					<MediaDevicesSelector kind="audioinput"
-						:devices="devices"
-						:device-id="audioInputId"
-						@refresh="updateDevices"
-						@update:device-id="handleAudioInputIdChange" />
-					<MediaDevicesSelector kind="videoinput"
-						:devices="devices"
-						:device-id="videoInputId"
-						@refresh="updateDevices"
-						@update:device-id="handleVideoInputIdChange" />
-					<MediaDevicesSelector v-if="audioOutputSupported"
-						kind="audiooutput"
-						:devices="devices"
-						:device-id="audioOutputId"
-						@refresh="updateDevices"
-						@update:device-id="handleAudioOutputIdChange">
-						<template #extra-action>
-							<MediaDevicesSpeakerTest :disabled="audioStreamError" />
-						</template>
-					</MediaDevicesSelector>
-				</template>
-
-				<template #tab-panel:backgrounds>
-					<VideoBackgroundEditor class="media-settings__tab"
-						:token="token"
-						:skip-blur-virtual-background="skipBlurVirtualBackground"
-						@update-background="handleUpdateVirtualBackground" />
-				</template>
-			</MediaSettingsTabs>
-
-			<template v-if="!isDeviceCheck">
-				<!-- Moderator options before starting a call-->
-				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-					v-model="isRecordingFromStart"
-					class="checkbox">
-					{{ t('spreed', 'Start recording immediately with the call') }}
-				</NcCheckboxRadioSwitch>
-
-				<!-- Recording warning -->
-				<NcNoteCard v-if="showRecordingWarning" type="warning">
-					<p v-if="isCurrentlyRecording">
-						<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
-					</p>
-					<p v-else>
-						<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
-					</p>
-					<template v-if="isRecordingConsentRequired">
-						<p>
-							{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
-						</p>
-						<NcCheckboxRadioSwitch class="checkbox--warning"
-							:model-value="recordingConsentGiven"
-							@update:model-value="setRecordingConsentGiven">
-							{{ t('spreed', 'Give consent to the recording of this call') }}
-						</NcCheckboxRadioSwitch>
-					</template>
-				</NcNoteCard>
-			</template>
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<template v-if="!isDeviceCheck">
+				<template v-if="!isDeviceCheck && token && isDialog">
 					<NcActions v-if="showSilentCallOption" force-menu>
 						<NcActionButton v-if="!silentCall"
 							:name="t('spreed', 'Call without notification')"
@@ -218,6 +222,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, markRaw, ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -364,13 +369,14 @@ export default {
 			supportDefaultBlurVirtualBackground,
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			isMobile: useIsMobile(),
 		}
 	},
 
 	data() {
 		return {
 			modal: false,
-			tabContent: undefined,
+			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
 			silentCall: false,
@@ -860,7 +866,7 @@ export default {
 
 	&__preview {
 		position: relative;
-		margin: 0 auto calc(var(--default-grid-baseline) * 4);
+		margin: 0 auto auto;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -885,6 +891,12 @@ export default {
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
+		z-index: 2;
+	}
+
+	&__content {
+		display: flex;
+		gap: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__call-buttons {
