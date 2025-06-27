@@ -86,22 +86,24 @@
 				{{ t('spreed', 'You can see the current status of your hosted signaling server in the following table.') }}
 			</p>
 			<table>
-				<tr>
-					<td>{{ t('spreed', 'Status') }}</td>
-					<td>{{ translatedStatus }}</td>
-				</tr>
-				<tr>
-					<td>{{ t('spreed', 'Created at') }}</td>
-					<td>{{ createdDate }}</td>
-				</tr>
-				<tr>
-					<td>{{ t('spreed', 'Expires at') }}</td>
-					<td>{{ expiryDate }}</td>
-				</tr>
-				<tr v-if="trialAccount.limits">
-					<td>{{ t('spreed', 'Limits') }}</td>
-					<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
-				</tr>
+				<tbody>
+					<tr>
+						<td>{{ t('spreed', 'Status') }}</td>
+						<td>{{ translatedStatus }}</td>
+					</tr>
+					<tr>
+						<td>{{ t('spreed', 'Created at') }}</td>
+						<td>{{ createdDate }}</td>
+					</tr>
+					<tr>
+						<td>{{ t('spreed', 'Expires at') }}</td>
+						<td>{{ expiryDate }}</td>
+					</tr>
+					<tr v-if="trialAccount.limits?.users">
+						<td>{{ t('spreed', 'Limits') }}</td>
+						<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
+					</tr>
+				</tbody>
 			</table>
 			<p v-if="requestError !== ''"
 				class="warning">
