@@ -15,10 +15,8 @@ jest.mock('../../services/settingsService', () => ({
 	setTypingStatusPrivacy: jest.fn(),
 }))
 
-jest.mock('../../services/BrowserStorage.js', () => ({
-	getItem: jest.fn(),
-	setItem: jest.fn(),
-}))
+jest.spyOn(BrowserStorage, 'getItem')
+jest.spyOn(BrowserStorage, 'setItem')
 
 describe('settingsStore', () => {
 	let settingsStore
@@ -57,59 +55,27 @@ describe('settingsStore', () => {
 	})
 
 	describe('media settings dialog', () => {
-		// FIXME: BrowserStorage.getItem('cachedConversations') is always called whenever capabilitiesManager.ts is imported
-		const EXTRA_CALLS = 3
-		it('shows correct stored values for conversations', () => {
-			// Arrange
-			settingsStore.showMediaSettings['token-1'] = true
-			settingsStore.showMediaSettings['token-2'] = false
-
-			// Act
-			const results = [settingsStore.getShowMediaSettings('token-1'),
-				settingsStore.getShowMediaSettings('token-2')]
-
-			// Assert
-			expect(results).toEqual([true, false])
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS)
-		})
-
 		it('shows correct values received from BrowserStorage', () => {
 			// Arrange
-			BrowserStorage.getItem
-				.mockReturnValueOnce(null)
-				.mockReturnValueOnce('true')
-				.mockReturnValueOnce('false')
-
-			// Act
-			const results = [settingsStore.getShowMediaSettings('token-1'),
-				settingsStore.getShowMediaSettings('token-2'),
-				settingsStore.getShowMediaSettings('token-3')]
-
+			BrowserStorage.setItem('showMediaSettings', 'false')
+			settingsStore.$reset()
+			console.log(BrowserStorage.getItem('showMediaSettings'))
 			// Assert
-			expect(results).toEqual([true, true, false])
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS + 3)
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 1, 'showMediaSettings_token-1')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 2, 'showMediaSettings_token-2')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(EXTRA_CALLS + 3, 'showMediaSettings_token-3')
+			expect(settingsStore.showMediaSettings).toEqual(false)
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(1, 'showMediaSettings')
 		})
 
 		it('updates values correctly', async () => {
 			// Arrange
-			settingsStore.showMediaSettings['token-1'] = true
-			settingsStore.showMediaSettings['token-2'] = false
+			BrowserStorage.setItem('showMediaSettings', 'true')
+			settingsStore.$reset()
 
 			// Act
-			settingsStore.setShowMediaSettings('token-1', false)
-			settingsStore.setShowMediaSettings('token-2', true)
-			const results = [settingsStore.getShowMediaSettings('token-1'),
-				settingsStore.getShowMediaSettings('token-2')]
+			settingsStore.setShowMediaSettings(false)
 
 			// Assert
-			expect(results).toEqual([false, true])
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(EXTRA_CALLS)
-			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(2)
-			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(1, 'showMediaSettings_token-1', 'false')
-			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(2, 'showMediaSettings_token-2', 'true')
+			expect(settingsStore.showMediaSettings).toEqual(false)
+			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(2, 'showMediaSettings', 'false')
 		})
 	})
 })

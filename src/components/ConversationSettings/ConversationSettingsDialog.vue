@@ -21,16 +21,6 @@
 			<NcAppSettingsSection v-if="!isNoteToSelf && !isOneToOneFormer"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
-				<NcCheckboxRadioSwitch v-if="showMediaSettingsToggle"
-					type="switch"
-					:disabled="recordingConsentRequired"
-					:model-value="showMediaSettings"
-					@update:model-value="setShowMediaSettings">
-					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
-				</NcCheckboxRadioSwitch>
-				<p v-if="recordingConsentRequired">
-					{{ t('spreed', 'The consent to be recorded will be required for each participant before joining every call.') }}
-				</p>
 				<NotificationsSettings v-if="!isGuest" :conversation="conversation" />
 			</NcAppSettingsSection>
 
@@ -133,7 +123,6 @@ import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useSettingsStore } from '../../stores/settings.js'
 
 const matterbridgeEnabled = loadState('spreed', 'enable_matterbridge')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -164,7 +153,6 @@ export default {
 	},
 
 	setup() {
-		const settingsStore = useSettingsStore()
 		const token = ref('')
 
 		const meetingHeader = t('spreed', 'Meeting') // TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
@@ -172,7 +160,6 @@ export default {
 		return {
 			matterbridgeEnabled,
 			supportsArchive,
-			settingsStore,
 			token,
 			meetingHeader,
 			actorStore: useActorStore(),
@@ -204,16 +191,8 @@ export default {
 			return this.token !== ''
 		},
 
-		showMediaSettingsToggle() {
-			return !this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2')
-		},
-
 		supportBanV1() {
 			return hasTalkFeature(this.token, 'ban-v1')
-		},
-
-		showMediaSettings() {
-			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		conversation() {
@@ -295,10 +274,6 @@ export default {
 
 		handleHideSettings() {
 			this.token = ''
-		},
-
-		setShowMediaSettings(newValue) {
-			this.settingsStore.setShowMediaSettings(this.token, newValue)
 		},
 
 		async toggleArchiveConversation() {

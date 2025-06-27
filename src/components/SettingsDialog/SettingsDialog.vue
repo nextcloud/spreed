@@ -18,18 +18,37 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection id="devices"
-			:name="t('spreed', 'Choose devices')"
+			:name="t('spreed', 'Devices')"
 			class="app-settings-section">
-			<MediaDevicesPreview />
+			<NcButton variant="secondary"
+				@click="openMediaSettings">
+				<template #icon>
+					<IconMicrophone :size="20" />
+				</template>
+				{{ t('spreed', 'Check devices') }}
+			</NcButton>
 			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
-				id="call-media"
 				:model-value="startWithoutMediaEnabled"
 				:disabled="mediaLoading"
 				type="switch"
-				class="checkbox call-media"
 				@update:model-value="toggleStartWithoutMedia">
 				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
+				type="switch"
+				:model-value="settingsStore.blurVirtualBackgroundEnabled"
+				@update:model-value="setBlurVirtualBackgroundEnabled">
+				{{ t('spreed', 'Enable blur background by default for all conversations') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-if="!isGuest"
+				type="switch"
+				:model-value="hideMediaSettings"
+				@update:model-value="setHideMediaSettings">
+				{{ t('spreed', 'Do not show the device preview screen before joining a call') }}
+			</NcCheckboxRadioSwitch>
+			<p class="app-settings-section__hint">
+				{{ t('spreed', 'Preview screen will still be shown if recording consent is required') }}
+			</p>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="attachments"
@@ -227,7 +246,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import MediaDevicesPreview from './MediaDevicesPreview.vue'
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -248,13 +267,14 @@ const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
+const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
 	name: 'SettingsDialog',
 
 	components: {
 		FilePicker,
-		MediaDevicesPreview,
+		IconMicrophone,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
@@ -278,6 +298,7 @@ export default {
 			customSettingsSections,
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
+			supportDefaultBlurVirtualBackground,
 			actorStore: useActorStore(),
 		}
 	},
@@ -346,6 +367,10 @@ export default {
 				variant: 'primary',
 			}]
 		},
+
+		hideMediaSettings() {
+			return !this.settingsStore.showMediaSettings
+		},
 	},
 
 	async created() {
@@ -366,6 +391,10 @@ export default {
 	mounted() {
 		subscribe('show-settings', this.handleShowSettings)
 		this.attachmentFolderLoading = false
+	},
+
+	beforeUnmount() {
+		unsubscribe('show-settings', this.handleShowSettings)
 	},
 
 	methods: {
@@ -464,8 +493,20 @@ export default {
 			this.showSettings = true
 		},
 
-		beforeDestroy() {
-			unsubscribe('show-settings', this.handleShowSettings)
+		setHideMediaSettings(newValue) {
+			this.settingsStore.setShowMediaSettings(!newValue)
+		},
+
+		async setBlurVirtualBackgroundEnabled(value) {
+			try {
+				await this.settingsStore.setBlurVirtualBackgroundEnabled(value)
+			} catch (error) {
+				console.error('Failed to set blur background enabled:', error)
+			}
+		},
+
+		openMediaSettings() {
+			emit('talk:media-settings:show', 'device-check')
 		},
 	},
 }
@@ -516,10 +557,6 @@ export default {
 	.shortcut-description {
 		width: calc(100% - 160px);
 	}
-}
-
-.call-media {
-	margin: calc(3 * var(--default-grid-baseline)) 0;
 }
 
 </style>

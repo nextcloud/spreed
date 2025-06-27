@@ -30,6 +30,9 @@ function generateTokenMap() {
 		return {}
 	}
 	const cachedConversations = JSON.parse(storageValue) as Conversation[]
+	if (!cachedConversations?.length) {
+		return {}
+	}
 	cachedConversations.forEach((conversation) => {
 		tokenMap[conversation.token] = conversation.remoteServer || null
 	})

@@ -45,7 +45,8 @@
 				<!-- Audio and video toggles -->
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
-					<NcButton variant="tertiary"
+					<NcButton v-if="!audioStreamError"
+						variant="tertiary"
 						:title="audioButtonTitle"
 						:aria-label="audioButtonTitle"
 						:disabled="!audioPreviewAvailable"
@@ -58,9 +59,28 @@
 								overlay-muted-color="#888888" />
 						</template>
 					</NcButton>
+					<NcPopover v-else
+						:title="t('spreed', 'Show more info')"
+						close-on-click-outside
+						no-focus-trap>
+						<template #trigger>
+							<NcButton variant="error"
+								:aria-label="t('spreed', 'Audio is not available')">
+								<template #icon>
+									<IconMicrophoneOff :size="20" />
+								</template>
+							</NcButton>
+						</template>
+						<template #default>
+							<p class="media-settings__device-error">
+								{{ audioStreamErrorMessage }}
+							</p>
+						</template>
+					</NcPopover>
 
 					<!-- Video toggle -->
-					<NcButton variant="tertiary"
+					<NcButton v-if="!videoStreamError"
+						variant="tertiary"
 						:title="videoButtonTitle"
 						:aria-label="videoButtonTitle"
 						:disabled="!videoPreviewAvailable"
@@ -70,6 +90,24 @@
 							<IconVideoOff v-else :size="20" />
 						</template>
 					</NcButton>
+					<NcPopover v-else
+						:title="t('spreed', 'Show more info')"
+						close-on-click-outside
+						no-focus-trap>
+						<template #trigger>
+							<NcButton variant="error"
+								:aria-label="t('spreed', 'Video is not available')">
+								<template #icon>
+									<IconVideoOff :size="20" />
+								</template>
+							</NcButton>
+						</template>
+						<template #default>
+							<p class="media-settings__device-error">
+								{{ videoStreamErrorMessage }}
+							</p>
+						</template>
+					</NcPopover>
 				</div>
 			</div>
 
@@ -92,7 +130,7 @@
 						:device-id="audioOutputId"
 						@refresh="updateDevices"
 						@update:device-id="handleAudioOutputIdChange" />
-					<MediaDevicesSpeakerTest />
+					<MediaDevicesSpeakerTest :disabled="audioStreamError" />
 				</template>
 
 				<template #tab-panel:backgrounds>
@@ -103,33 +141,7 @@
 				</template>
 			</MediaSettingsTabs>
 
-			<!-- Dashboard Device checker-->
-			<template v-if="isInTalkDashboard">
-				<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
-					id="call-media"
-					:model-value="startWithoutMediaEnabled"
-					:disabled="mediaLoading"
-					type="switch"
-					@update:model-value="toggleStartWithoutMedia">
-					{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
-					type="switch"
-					:model-value="blurVirtualBackgroundEnabled"
-					@update:model-value="setBlurVirtualBackgroundEnabled">
-					{{ t('spreed', 'Enable blur background by default for all conversation') }}
-				</NcCheckboxRadioSwitch>
-			</template>
-			<template v-else>
-				<!-- "Always show" setting -->
-				<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
-					class="checkbox"
-					:model-value="showMediaSettings || showRecordingWarning"
-					:disabled="showRecordingWarning"
-					@update:model-value="setShowMediaSettings">
-					{{ t('spreed', 'Always show preview for this conversation') }}
-				</NcCheckboxRadioSwitch>
-
+			<template v-if="!isDeviceCheck">
 				<!-- Moderator options before starting a call-->
 				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
 					v-model="isRecordingFromStart"
@@ -160,7 +172,7 @@
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<template v-if="!isInTalkDashboard">
+				<template v-if="!isDeviceCheck">
 					<NcActions v-if="showSilentCallOption" force-menu>
 						<NcActionButton v-if="!silentCall"
 							:name="t('spreed', 'Call without notification')"
@@ -192,7 +204,7 @@
 						:silent-call="silentCall" />
 				</template>
 				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
-					{{ isInTalkDashboard ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
+					{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
 				</NcButton>
 			</div>
 		</div>
@@ -210,10 +222,12 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconBell from 'vue-material-design-icons/Bell.vue'
 import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
+import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
@@ -254,6 +268,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
+		NcPopover,
 		NcNoteCard,
 		VideoBackground,
 		VideoBackgroundEditor,
@@ -261,6 +276,7 @@ export default {
 		// Icons
 		IconBell,
 		IconBellOff,
+		IconMicrophoneOff,
 		IconReflectHorizontal,
 		IconVideo,
 		IconVideoOff,
@@ -296,6 +312,8 @@ export default {
 			audioOutputSupported,
 			initializeDevices,
 			stopDevices,
+			audioStreamError,
+			videoStreamError,
 			virtualBackground,
 		} = useDevices(video, false)
 
@@ -333,6 +351,8 @@ export default {
 			audioOutputSupported,
 			initializeDevices,
 			stopDevices,
+			audioStreamError,
+			videoStreamError,
 			virtualBackground,
 			model: localMediaModel,
 			tabs,
@@ -359,7 +379,7 @@ export default {
 			isMirrored: false,
 			skipBlurVirtualBackground: false,
 			mediaLoading: false,
-			isInTalkDashboard: false,
+			isDeviceCheck: false,
 		}
 	},
 
@@ -377,10 +397,6 @@ export default {
 
 		userId() {
 			return this.actorStore.userId
-		},
-
-		showMediaSettings() {
-			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		blurVirtualBackgroundEnabled() {
@@ -457,10 +473,11 @@ export default {
 		},
 
 		showUpdateChangesButton() {
-			return (this.isInTalkDashboard || this.isInCall)
-				&& (this.updatedBackground
-					|| this.audioDeviceStateChanged
-					|| this.videoDeviceStateChanged)
+			return (this.isDeviceCheck
+				|| this.isInCall)
+			&& (this.updatedBackground
+				|| this.audioDeviceStateChanged
+				|| this.videoDeviceStateChanged)
 		},
 
 		connectionFailed() {
@@ -470,6 +487,59 @@ export default {
 		startWithoutMediaEnabled() {
 			return this.settingsStore.startWithoutMedia
 		},
+
+		audioStreamErrorMessage() {
+			if (!this.audioStreamError) {
+				return null
+			}
+
+			if (this.audioStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
+				return t('spreed', 'Calls are not supported in your browser')
+			}
+
+			// In newer browser versions MediaDevicesManager is not supported in
+			// insecure contexts; in older browser versions it is, but getting
+			// the user media fails with "NotAllowedError".
+			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
+			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.includes('Only secure origins')
+			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
+				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
+				return t('spreed', 'Access to microphone is only possible with HTTPS')
+			}
+
+			if (this.audioStreamError.name === 'NotAllowedError') {
+				return t('spreed', 'Access to microphone was denied')
+			}
+
+			return t('spreed', 'Error while accessing microphone')
+		},
+
+		videoStreamErrorMessage() {
+			if (!this.videoStreamError) {
+				return null
+			}
+
+			if (this.videoStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
+				return t('spreed', 'Calls are not supported in your browser')
+			}
+
+			// In newer browser versions MediaDevicesManager is not supported in
+			// insecure contexts; in older browser versions it is, but getting
+			// the user media fails with "NotAllowedError".
+			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
+			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.includes('Only secure origins')
+			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
+				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
+				return t('spreed', 'Access to camera is only possible with HTTPS')
+			}
+
+			if (this.videoStreamError.name === 'NotAllowedError') {
+				return t('spreed', 'Access to camera was denied')
+			}
+
+			return t('spreed', 'Error while accessing camera')
+		},
+
 	},
 
 	watch: {
@@ -547,12 +617,6 @@ export default {
 	beforeMount() {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
-
-		// FIXME: this is a workaround to remove the old key from the browser storage
-		// To be removed in the future
-		if (BrowserStorage.getItem('devicesPreferred')) {
-			BrowserStorage.removeItem('devicesPreferred')
-		}
 	},
 
 	beforeUnmount() {
@@ -569,7 +633,8 @@ export default {
 			}
 
 			if (page === 'device-check') {
-				this.isInTalkDashboard = true
+				this.isDeviceCheck = true
+				this.tabContent = 'devices'
 			}
 
 			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
@@ -583,7 +648,7 @@ export default {
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
-			this.isInTalkDashboard = false
+			this.isDeviceCheck = false
 			this.isRecordingFromStart = false
 			this.isMirrored = false
 			// Update devices preferences
@@ -738,10 +803,6 @@ export default {
 			}
 		},
 
-		setShowMediaSettings(newValue) {
-			this.settingsStore.setShowMediaSettings(this.token, newValue)
-		},
-
 		setRecordingConsentGiven(value) {
 			this.$emit('update:recordingConsentGiven', value)
 		},
@@ -814,6 +875,8 @@ export default {
 
 	&__toggles {
 		display: flex;
+		gap: calc(0.5 * var(--default-grid-baseline));
+		padding: calc(0.5 * var(--default-grid-baseline));
 		position: absolute;
 		bottom: calc(var(--default-grid-baseline) * -2);
 		background: var(--color-main-background);
@@ -831,6 +894,10 @@ export default {
 		bottom: 0;
 		background-color: var(--color-main-background);
 		padding: 10px 0 20px;
+	}
+
+	&__device-error {
+		padding: calc(var(--default-grid-baseline) * 2);
 	}
 }
 
