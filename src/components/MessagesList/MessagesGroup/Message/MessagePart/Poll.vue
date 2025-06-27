@@ -4,7 +4,6 @@
 -->
 
 <template>
-	<!-- Poll card -->
 	<div v-if="draft" class="poll-card" @click="openDraft">
 		<span class="poll-card__header poll-card__header--draft">
 			<IconPoll class="poll-card__header-icon" :size="20" />

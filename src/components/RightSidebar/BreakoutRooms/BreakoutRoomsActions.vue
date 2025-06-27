@@ -4,8 +4,6 @@
 -->
 
 <template>
-	<!-- Series of buttons at the top of the tab, these affect all
-		 breakout rooms -->
 	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms-actions">
 		<div class="breakout-rooms-actions__row">
 			<NcButton v-if="breakoutRoomsNotStarted && canModerate"

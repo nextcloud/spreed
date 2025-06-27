@@ -4,8 +4,6 @@
 -->
 
 <template>
-	<!-- size and remain refer to the amount and initial height of the items that
-	are outside of the viewport -->
 	<div ref="scroller"
 		class="scroller messages-list__scroller"
 		:class="{
