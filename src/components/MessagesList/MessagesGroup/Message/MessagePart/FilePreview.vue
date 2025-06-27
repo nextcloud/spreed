@@ -80,7 +80,7 @@ import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
-import { useSharedItemsStore } from '../../../../../stores/sharedItems.js'
+import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,

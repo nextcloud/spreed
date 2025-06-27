@@ -3,9 +3,103 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script lang="ts" setup>
+import type {
+	Conversation,
+	SharedItems as ShareItemsType,
+} from '../../../types/index.ts'
+
+import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
+import LoadingComponent from '../../LoadingComponent.vue'
+import SharedItems from './SharedItems.vue'
+import SharedItemsBrowser from './SharedItemsBrowser.vue'
+import { useGetToken } from '../../../composables/useGetToken.ts'
+import { CONVERSATION } from '../../../constants.ts'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../../services/EventBus.ts'
+import { useActorStore } from '../../../stores/actor.ts'
+import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
+import { useSidebarStore } from '../../../stores/sidebar.ts'
+import {
+	sharedItemButtonTitle,
+	sharedItemsOrder,
+	sharedItemsWithPreviewLimit,
+	sharedItemTitle,
+} from './sharedItemsConstants.ts'
+
+const props = defineProps<{
+	active: boolean
+}>()
+const token = useGetToken()
+const showSharedItemsBrowser = ref(false)
+const browserActiveTab = ref('')
+const projectsEnabled = loadState('core', 'projects_enabled', false)
+const hasRelatedResources = ref(false)
+
+const store = useStore()
+const sharedItemsStore = useSharedItemsStore()
+const sidebarStore = useSidebarStore()
+const actorStore = useActorStore()
+
+const conversation = computed<Conversation>(() => store.getters.conversation(token.value))
+const canCreatePollDrafts = computed(() => {
+	return hasTalkFeature(token.value, 'talk-polls-drafts') && store.getters.isModerator
+		&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(conversation.value.type)
+})
+const sharedItems = computed(() => sharedItemsStore.sharedItems(token.value))
+const hasSharedItems = computed(() => Object.keys(sharedItems.value).length > 0)
+
+watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, isOpen]) => {
+	if (token && isActive && isOpen) {
+		sharedItemsStore.getSharedItemsOverview(token)
+	}
+}, { immediate: true })
+
+/**
+ * Check if there are more items of a specific type than the limit allows.
+ */
+function hasMore(type: string, items: ShareItemsType) {
+	return Object.values(items).length > limit(type)
+}
+
+/**
+ * Open the SharedItemsBrowser dialog for a specific type of shared items.
+ */
+function showMore(type: string) {
+	browserActiveTab.value = type
+	showSharedItemsBrowser.value = true
+}
+
+/**
+ * Get the limit for the number of items displayed based on the type.
+ */
+function limit(type: string) {
+	return sharedItemsWithPreviewLimit.includes(type) ? 2 : 6
+}
+
+/**
+ * Open the Poll Drafts browser dialog.
+ */
+function openPollDraftHandler() {
+	EventBus.emit('poll-drafts-open', { token: token.value })
+}
+
+</script>
+
 <template>
 	<div class="shared-items-tab">
-		<LoadingComponent v-if="loading" class="shared-items-tab__loading" />
+		<LoadingComponent v-if="!sharedItemsStore.overviewLoaded[token]" class="shared-items-tab__loading" />
 
 		<template v-else>
 			<NcButton v-if="canCreatePollDrafts"
@@ -42,12 +136,12 @@
 			<NcRelatedResourcesPanel class="related-resources"
 				provider-id="talk"
 				:item-id="conversation.token"
-				@has-resources="value => hasRelatedResources = value" />
+				@has-resources="(value: boolean) => hasRelatedResources = value" />
 
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">
 				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
-				<NcCollectionList v-if="getUserId && token"
+				<NcCollectionList v-if="actorStore.userId && token"
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
@@ -72,149 +166,6 @@
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>
-
-<script>
-import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
-import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
-import IconPoll from 'vue-material-design-icons/Poll.vue'
-import LoadingComponent from '../../LoadingComponent.vue'
-import SharedItems from './SharedItems.vue'
-import SharedItemsBrowser from './SharedItemsBrowser.vue'
-import { useGetToken } from '../../../composables/useGetToken.ts'
-import { CONVERSATION } from '../../../constants.ts'
-import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../../services/EventBus.ts'
-import { useActorStore } from '../../../stores/actor.ts'
-import { useSharedItemsStore } from '../../../stores/sharedItems.js'
-import { useSidebarStore } from '../../../stores/sidebar.ts'
-import {
-	sharedItemButtonTitle,
-	sharedItemsOrder,
-	sharedItemsWithPreviewLimit,
-	sharedItemTitle,
-} from './sharedItemsConstants.js'
-
-export default {
-
-	name: 'SharedItemsTab',
-
-	components: {
-		DotsHorizontal,
-		FolderMultipleImage,
-		IconPoll,
-		LoadingComponent,
-		NcAppNavigationCaption,
-		NcButton,
-		NcCollectionList,
-		NcEmptyContent,
-		NcRelatedResourcesPanel,
-		SharedItems,
-		SharedItemsBrowser,
-	},
-
-	props: {
-		active: {
-			type: Boolean,
-			required: true,
-		},
-	},
-
-	setup() {
-		return {
-			actorStore: useActorStore(),
-			sharedItemsStore: useSharedItemsStore(),
-			sidebarStore: useSidebarStore(),
-			sharedItemButtonTitle,
-			sharedItemTitle,
-			sharedItemsOrder,
-			sharedItemsWithPreviewLimit,
-			token: useGetToken(),
-		}
-	},
-
-	data() {
-		return {
-			showSharedItemsBrowser: false,
-			browserActiveTab: '',
-			projectsEnabled: loadState('core', 'projects_enabled', false),
-			hasRelatedResources: false,
-		}
-	},
-
-	computed: {
-		getUserId() {
-			return this.actorStore.userId
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token)
-		},
-
-		canCreatePollDrafts() {
-			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
-				&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(this.conversation.type)
-		},
-
-		loading() {
-			return !this.sharedItemsStore.overviewLoaded[this.token]
-		},
-
-		sharedItems() {
-			return this.sharedItemsStore.sharedItems(this.token)
-		},
-
-		hasSharedItems() {
-			return Object.keys(this.sharedItems).length > 0
-		},
-
-		isSidebarOpen() {
-			return this.sidebarStore.show
-		},
-
-		sharedItemsIdentifier() {
-			return this.token + ':' + this.active + ':' + this.isSidebarOpen
-		},
-	},
-
-	watch: {
-		sharedItemsIdentifier: {
-			immediate: true,
-			handler() {
-				if (this.token && this.active && this.isSidebarOpen) {
-					this.sharedItemsStore.getSharedItemsOverview(this.token)
-				}
-			},
-		},
-	},
-
-	methods: {
-		t,
-		hasMore(type, items) {
-			return Object.values(items).length > this.limit(type)
-		},
-
-		showMore(type) {
-			this.browserActiveTab = type
-			this.showSharedItemsBrowser = true
-		},
-
-		limit(type) {
-			return this.sharedItemsWithPreviewLimit.includes(type) ? 2 : 6
-		},
-
-		openPollDraftHandler() {
-			EventBus.emit('poll-drafts-open', { token: this.token })
-		},
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 .more {

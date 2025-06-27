@@ -301,10 +301,6 @@ export default {
 				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
-		isModeratorOrUser() {
-			return this.$store.getters.isModeratorOrUser
-		},
-
 		isGuestModerator() {
 			return this.conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
@@ -343,7 +339,7 @@ export default {
 		},
 
 		showParticipantsTab() {
-			return (this.getUserId || this.isModeratorOrUser) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
+			return (this.getUserId || this.isGuestModerator) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
 		},
 
 		showSharedItemsTab() {

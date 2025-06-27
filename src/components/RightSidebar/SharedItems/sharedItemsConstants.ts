@@ -13,9 +13,9 @@ export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.AUDIO,
 	SHARED_ITEM.TYPES.LOCATION,
 	SHARED_ITEM.TYPES.DECK_CARD,
-	SHARED_ITEM.TYPES.OTHER]
+	SHARED_ITEM.TYPES.OTHER] as const
 
-export const sharedItemsWithPreviewLimit = [SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.POLL]
+export const sharedItemsWithPreviewLimit = [SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.POLL] as const
 
 export const sharedItemTitle = {
 	[SHARED_ITEM.TYPES.MEDIA]: t('spreed', 'Media'),
@@ -28,7 +28,7 @@ export const sharedItemTitle = {
 	[SHARED_ITEM.TYPES.AUDIO]: t('spreed', 'Audio'),
 	[SHARED_ITEM.TYPES.OTHER]: t('spreed', 'Other'),
 	default: t('spreed', 'Other'),
-}
+} as const
 
 export const sharedItemButtonTitle = {
 	[SHARED_ITEM.TYPES.MEDIA]: t('spreed', 'Show all media'),
@@ -41,4 +41,4 @@ export const sharedItemButtonTitle = {
 	[SHARED_ITEM.TYPES.AUDIO]: t('spreed', 'Show all audio'),
 	[SHARED_ITEM.TYPES.OTHER]: t('spreed', 'Show all other'),
 	default: t('spreed', 'Show all other'),
-}
+} as const
