@@ -399,7 +399,7 @@ OC.L10N.register(
     "You can invite others in the participant tab of the sidebar" : "Sānjoslā, dalībnieku cilnē var uzaicināt citus dalībniekus",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Sānjoslas dalībnieku cilnē varat uzaicināt citus lietotājus vai kopīgot šo saiti, lai uzaicinātu citus.",
     "Share this link to invite others!" : "Kopīgojiet šo saiti, lai uzaicinātu citus!",
-    "Copy link" : "Kopēt saiti",
+    "Copy link" : "Ievietot saiti starpliktuvē",
     "Mute audio" : "Izslēgt audio skaņu",
     "Disable video" : "Atspējot video",
     "Enable video" : "Iespējot video",
