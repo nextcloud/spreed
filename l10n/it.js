@@ -1161,6 +1161,8 @@ OC.L10N.register(
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Stai tentando di partecipare a una conversazione mentre hai una sessione attiva in un'altra finestra o dispositivo. Questo non è attualmente supportato da Nextcloud Talk. Che cosa vuoi fare?",
     "Leave this page" : "Abbandona questa pagina",
     "Join here" : "Unisciti qui",
+    "Post to a conversation" : "Pubblica in una conversazione",
+    "Post to conversation" : "Pubblica in conversazione",
     "Error while clearing conversation history" : "Errore durante la cancellazione della cronologia della conversazione",
     "Error occurred while allowing guests" : "Si è verificato un errore durante l'autorizzazione degli ospiti",
     "Error occurred while disallowing guests" : "Si è verificato un errore durante la disabilitazione degli ospiti",

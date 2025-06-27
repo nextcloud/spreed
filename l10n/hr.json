@@ -1017,6 +1017,8 @@
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Pokušavate se pridružiti razgovoru dok imate otvorenu sesiju u drugom prozoru ili na drugom uređaju. Nextcloud Talk trenutačno ne podržava tu radnju. Što želite učiniti?",
     "Leave this page" : "Napusti ovu stranicu",
     "Join here" : "Pridruži se ovdje",
+    "Post to a conversation" : "Objavite u razgovoru",
+    "Post to conversation" : "Objavi u razgovoru",
     "Error while clearing conversation history" : "Pogreška pri brisanju povijesti razgovora",
     "Error occurred while allowing guests" : "Došlo je do pogreške pri omogućavanju pristupa gostima",
     "Error occurred while disallowing guests" : "Došlo je do pogreške pri onemogućavanju pristupa gostima",

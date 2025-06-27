@@ -668,6 +668,8 @@ OC.L10N.register(
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Bạn đang cố gắng tham gia một cuộc trò chuyện trong khi có một phiên hoạt động trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ. Bạn muốn làm gì?",
     "Leave this page" : "Rời khỏi trang này",
     "Join here" : "Tham gia tại đây",
+    "Post to a conversation" : "Đăng lên một cuộc trò chuyện",
+    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Error occurred while allowing guests" : "Đã xảy ra lỗi khi cho phép khách",
     "Error occurred while disallowing guests" : "Đã xảy ra lỗi khi không cho phép khách",
     "Error occurred when restricting the conversation to moderator" : "Đã xảy ra lỗi khi giới hạn cuộc trò chuyện với người kiểm duyệt",
