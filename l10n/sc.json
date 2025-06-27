@@ -997,6 +997,8 @@
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Ses proende a intrare in una resonada cun una sessione ativa in un'àtera ventana o dispositivu. In custu momentu cust'atzione no est suportada dae Nextcloud Talk. Ite boles fàghere?",
     "Leave this page" : "Lassa custa pàgina",
     "Join here" : "Intra inoghe",
+    "Post to a conversation" : "Pùblica in una resonada",
+    "Post to conversation" : "Pùblica in sa resonada",
     "Error while clearing conversation history" : "Errore limpiende s'istòria de sa resonada",
     "Error occurred while allowing guests" : "B'at àpidu un'errore autorizende is persones invitadas",
     "Error occurred while disallowing guests" : "B'at àpidu un'errore refudende is persones invitadas",
