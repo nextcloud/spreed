@@ -263,6 +263,15 @@ export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][2
 export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
 export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
 
+// Threads
+export type Thread = components['schemas']['Thread']
+export type ThreadAttendee = components['schemas']['ThreadAttendee']
+export type ThreadInfo = components['schemas']['ThreadInfo']
+export type getRecentThreadsParams = operations['thread-get-recent-active-threads']['parameters']['query']
+export type getRecentThreadsResponse = ApiResponse<operations['thread-get-recent-active-threads']['responses'][200]['content']['application/json']>
+export type getThreadResponse = ApiResponse<operations['thread-get-thread']['responses'][200]['content']['application/json']>
+export type createThreadResponse = ApiResponse<operations['thread-make-thread']['responses'][200]['content']['application/json']>
+
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
 export type setEmojiAvatarParams = operations['avatar-emoji-avatar']['requestBody']['content']['application/json']

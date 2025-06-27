@@ -6,16 +6,23 @@
 import type {
 	ChatMessage,
 	ChatTask,
+	ThreadInfo,
 } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
-import { summarizeChat } from '../services/messagesService.ts'
+import {
+	createThreadForConversation,
+	getRecentThreadsForConversation,
+	getSingleThreadForConversation,
+	summarizeChat,
+} from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
+	threads: Record<string, Record<number, ThreadInfo>>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
 	messageIdToEdit: Record<string, number>
@@ -30,6 +37,7 @@ type State = {
  */
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
+		threads: {},
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -40,6 +48,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	}),
 
 	getters: {
+		getThread: (state) => (token: string, threadId: number) => {
+			if (state.threads[token]?.[threadId]) {
+				return state.threads[token][threadId]
+			}
+		},
+
 		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]
@@ -69,6 +83,96 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	},
 
 	actions: {
+		/**
+		 * Fetch a thread from server in given conversation
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to fetch
+		 */
+		async fetchSingleThread(token: string, threadId: number) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				const response = await getSingleThreadForConversation(token, threadId)
+				this.threads[token][threadId] = response.data.ocs.data
+			} catch (error) {
+				console.error('Error fetching thread:', error)
+			}
+		},
+
+		/**
+		 * Fetch list of recent threads from server in given conversation
+		 *
+		 * @param token - conversation token
+		 */
+		async fetchRecentThreadsList(token: string) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				const response = await getRecentThreadsForConversation({ token })
+
+				response.data.ocs.data.forEach((threadInfo) => {
+					this.threads[token][threadInfo.thread.id] = threadInfo
+				})
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
+		/**
+		 * Make a thread from a reply chain in given conversation
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to fetch
+		 */
+		async createThread(token: string, threadId: number) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				if (this.threads[token][threadId]) {
+					// Thread already exists, no need to create it again
+					return
+				}
+
+				const response = await createThreadForConversation(token, threadId)
+				this.threads[token][threadId] = response.data.ocs.data
+			} catch (error) {
+				console.error('Error creating thread:', error)
+			}
+		},
+
+		/**
+		 * Update a thread from a known information
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to update
+		 * @param payload - updated information
+		 */
+		async updateThread(token: string, threadId: number, payload: Partial<ThreadInfo>) {
+			try {
+				if (!this.threads[token] || !this.threads[token][threadId]) {
+					// Thread is not known yet, try to fetch actual data from server
+					await this.fetchSingleThread(token, threadId)
+					return
+				}
+
+				this.threads[token][threadId] = {
+					thread: payload.thread ?? this.threads[token][threadId].thread,
+					attendee: payload.attendee ?? this.threads[token][threadId].attendee,
+					first: payload.first ?? this.threads[token][threadId].first,
+					last: payload.last ?? this.threads[token][threadId].last,
+				}
+			} catch (error) {
+				console.error('Error updating thread:', error)
+			}
+		},
+
 		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *

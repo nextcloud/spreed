@@ -7,11 +7,15 @@ import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	ChatMessage,
 	clearHistoryResponse,
+	createThreadResponse,
 	deleteMessageResponse,
 	editMessageParams,
 	editMessageResponse,
 	getMessageContextParams,
 	getMessageContextResponse,
+	getRecentThreadsParams,
+	getRecentThreadsResponse,
+	getThreadResponse,
 	markUnreadResponse,
 	postNewMessageParams,
 	postNewMessageResponse,
@@ -54,6 +58,7 @@ async function fetchMessages({
 	lastKnownMessageId,
 	includeLastKnown,
 	lookIntoFuture = CHAT.FETCH_OLD,
+	threadId,
 	limit = 100,
 }: ReceiveMessagesPayload, options?: AxiosRequestConfig): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
@@ -62,6 +67,7 @@ async function fetchMessages({
 			setReadMarker: 0,
 			lookIntoFuture,
 			lastKnownMessageId,
+			threadId,
 			limit,
 			includeLastKnown: includeLastKnown ? 1 : 0,
 		} as receiveMessagesParams,
@@ -107,10 +113,11 @@ async function pollNewMessages({
  * @param [data.limit=50] Number of messages to load
  * @param [options] Axios request options
  */
-async function getMessageContext({ token, messageId, limit = 50 }: GetMessageContextPayload, options?: AxiosRequestConfig): getMessageContextResponse {
+async function getMessageContext({ token, messageId, threadId, limit = 50 }: GetMessageContextPayload, options?: AxiosRequestConfig): getMessageContextResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }), {
 		...options,
 		params: {
+			threadId,
 			limit,
 		} as getMessageContextParams,
 	})
@@ -235,12 +242,54 @@ async function summarizeChat(token: string, fromMessageId: summarizeChatParams['
 	} as summarizeChatParams, options)
 }
 
+/**
+ * Fetch a list of recent threads for given conversation
+ *
+ * @param data the wrapping object
+ * @param data.token the conversation token
+ * @param [data.limit=50] Number of threads to return
+ * @param [options] Axios request options
+ */
+async function getRecentThreadsForConversation({ token, limit }: { token: string } & getRecentThreadsParams, options?: AxiosRequestConfig): getRecentThreadsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/recent', { token }), {
+		...options,
+		params: {
+			limit,
+		},
+	})
+}
+
+/**
+ * Fetch a thread for given conversation and thread id
+ *
+ * @param token the conversation token
+ * @param threadId The thread id to retrieve data
+ * @param [options] Axios request options
+ */
+async function getSingleThreadForConversation(token: string, threadId: number, options?: AxiosRequestConfig): getThreadResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{threadId}', { token, threadId }), options)
+}
+
+/**
+ * Create a new thread for a conversation
+ *
+ * @param token The conversation token
+ * @param messageId The message id of any message belonging to the future thread
+ * @param [options] Axios request options
+ */
+async function createThreadForConversation(token: string, messageId: number, options?: AxiosRequestConfig): createThreadResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{messageId}', { token, messageId }), undefined, options)
+}
+
 export {
 	clearConversationHistory,
+	createThreadForConversation,
 	deleteMessage,
 	editMessage,
 	fetchMessages,
 	getMessageContext,
+	getRecentThreadsForConversation,
+	getSingleThreadForConversation,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
