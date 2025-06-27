@@ -67,9 +67,7 @@ function isSelected(tabId: string) {
  * @param tabId - New selected tabId
  */
 function handleTabClick(tabId: string) {
-	if (isActive(tabId)) {
-		isOpen.value = !isOpen.value
-	} else {
+	if (!isActive(tabId)) {
 		emit('update:active', tabId)
 		isOpen.value = true
 	}
@@ -125,6 +123,10 @@ function handleTabsAfterClosed() {
 </template>
 
 <style lang="scss" scoped>
+.tabs {
+	margin-bottom: auto;
+}
+
 .tab-list {
 	display: flex;
 	justify-content: center;
