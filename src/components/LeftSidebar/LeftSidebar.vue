@@ -258,6 +258,7 @@ import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
 import { ref } from 'vue'
+import { START_LOCATION } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -949,7 +950,7 @@ export default {
 			}
 			if (this.isMobile) {
 				emit('toggle-navigation', {
-					open: false,
+					open: to.name === 'root' && from === START_LOCATION,
 				})
 			}
 		},

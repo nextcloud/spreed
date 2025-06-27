@@ -398,6 +398,8 @@ export default {
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
+		 * When app is initializing and router is not ready yet,
+		 * first navigation will be made from initial state { name : undefined }
 		 */
 		Router.beforeEach((to, from, next) => {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
@@ -434,13 +436,6 @@ export default {
 
 		if (!IS_DESKTOP) {
 			checkBrowser()
-		}
-
-		if (this.$route.name === 'root' && this.isMobile) {
-			await this.$nextTick()
-			emit('toggle-navigation', {
-				open: true,
-			})
 		}
 
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
