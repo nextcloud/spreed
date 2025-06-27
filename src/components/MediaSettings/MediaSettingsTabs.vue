@@ -67,9 +67,7 @@ function isSelected(tabId: string) {
  * @param tabId - New selected tabId
  */
 function handleTabClick(tabId: string) {
-	if (isActive(tabId)) {
-		isOpen.value = !isOpen.value
-	} else {
+	if (!isActive(tabId)) {
 		emit('update:active', tabId)
 		isOpen.value = true
 	}
