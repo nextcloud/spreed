@@ -5,23 +5,20 @@
 
 <template>
 	<div class="shared-items" :class="{ 'shared-items__list': hasListLayout }">
-		<template v-for="item in itemsToDisplay">
-			<div v-if="isLocation" :key="item.id" class="shared-items__location">
+		<template v-for="item in itemsToDisplay" :key="item.id">
+			<div v-if="isLocation" class="shared-items__location">
 				<Location wide v-bind="item.messageParameters.object" />
 			</div>
 
 			<DeckCard v-else-if="isDeckCard"
-				:key="item.id"
 				wide
 				v-bind="item.messageParameters.object" />
 
 			<Poll v-else-if="isPoll"
-				:key="item.id"
 				:token="token"
 				v-bind="item.messageParameters.object" />
 
 			<div v-else-if="isOther"
-				:key="item.id"
 				class="shared-items__other">
 				<a v-if="item.messageParameters.object?.link"
 					:href="item.messageParameters.object.link"
@@ -34,7 +31,6 @@
 			</div>
 
 			<FilePreview v-else
-				:key="item.id"
 				:token="token"
 				:small-preview="!isMedia"
 				:row-layout="!isMedia"

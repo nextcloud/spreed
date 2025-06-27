@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createPinia, setActivePinia } from 'pinia'
-import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.js'
+import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.ts'
 import { SHARED_ITEM } from '../../constants.ts'
-import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.js'
+import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
-import { useSharedItemsStore } from '../sharedItems.js'
+import { useSharedItemsStore } from '../sharedItems.ts'
 
 jest.mock('../../services/sharedItemsService', () => ({
 	getSharedItems: jest.fn(),
@@ -123,7 +123,7 @@ describe('sharedItemsStore', () => {
 			await sharedItemsStore.getSharedItemsOverview(token)
 
 			// Assert
-			expect(getSharedItemsOverview).toHaveBeenCalledWith(token, limitOverview)
+			expect(getSharedItemsOverview).toHaveBeenCalledWith({ token, limit: limitOverview })
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
 		})
 
@@ -147,7 +147,12 @@ describe('sharedItemsStore', () => {
 			await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert
-			expect(getSharedItems).toHaveBeenCalledWith(token, SHARED_ITEM.TYPES.MEDIA, 100, limitGeneral)
+			expect(getSharedItems).toHaveBeenCalledWith({
+				token,
+				objectType: SHARED_ITEM.TYPES.MEDIA,
+				lastKnownMessageId: 100,
+				limit: limitGeneral,
+			})
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
 		})
 
@@ -163,7 +168,12 @@ describe('sharedItemsStore', () => {
 			const output = await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert
-			expect(getSharedItems).toHaveBeenCalledWith(token, SHARED_ITEM.TYPES.MEDIA, 100, limitGeneral)
+			expect(getSharedItems).toHaveBeenCalledWith({
+				token,
+				objectType: SHARED_ITEM.TYPES.MEDIA,
+				lastKnownMessageId: 100,
+				limit: limitGeneral,
+			})
 			expect(output).toEqual({ hasMoreItems: false, messages: [] })
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
 		})

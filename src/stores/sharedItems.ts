@@ -3,31 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type {
+	ChatMessage,
+	SharedItems,
+	SharedItemsOverview,
+} from '../types/index.ts'
+
 import { defineStore } from 'pinia'
-import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.js'
+import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.ts'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
-/**
- * @typedef {'media'|'file'|'voice'|'audio'|'location'|'deckcard'|'other'} Type
- * @typedef {string} Token
- */
+type SharedItemType = keyof SharedItemsOverview
 
-/**
- * @typedef {object} Message
- * @property {string} token - conversation token
- * @property {number} id - message id
- */
+type SharedItemsPoolType = Record<string, Record<SharedItemType, Record<number, SharedItems[keyof SharedItems]>>>
 
-/**
- * @typedef {object} Messages
- * @property {{[key: number]: Message}} messages - messages with shared items for this conversation
- */
-
-/**
- * @typedef {object} State
- * @property {{[key: Token]: {[key: Type]: Messages}}} sharedItemsPool - The shared items pool.
- * @property {{[key: Token]: boolean}} overviewLoaded - The overview loaded state.
- */
+type State = {
+	sharedItemsPool: SharedItemsPoolType
+	overviewLoaded: Record<string, boolean>
+}
 
 /**
  * Store for shared items shown in RightSidebar
@@ -36,13 +29,13 @@ import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
  * @param {State} options.state store state structure
  */
 export const useSharedItemsStore = defineStore('sharedItems', {
-	state: () => ({
+	state: (): State => ({
 		sharedItemsPool: {},
 		overviewLoaded: {},
 	}),
 
 	getters: {
-		sharedItems: (state) => (token) => {
+		sharedItems: (state) => (token: string) => {
 			if (!state.sharedItemsPool[token]) {
 				state.sharedItemsPool[token] = {}
 			}
@@ -52,7 +45,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 	},
 
 	actions: {
-		checkForExistence(token, type) {
+		checkForExistence(token: string, type: SharedItemType) {
 			if (token && !this.sharedItemsPool[token]) {
 				this.sharedItemsPool[token] = {}
 			}
@@ -62,10 +55,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {{[key: Type]: Message[]}} data server response
+		 * @param token conversation token
+		 * @param data server response
 		 */
-		addSharedItemsFromOverview(token, data) {
+		addSharedItemsFromOverview(token: string, data: SharedItemsOverview) {
 			for (const type of Object.keys(data)) {
 				if (Object.keys(data[type]).length) {
 					this.checkForExistence(token, type)
@@ -81,10 +74,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {Message} message message with shared items
+		 * @param token conversation token
+		 * @param message message with shared items
 		 */
-		addSharedItemFromMessage(token, message) {
+		addSharedItemFromMessage(token: string, message: ChatMessage) {
 			const type = getItemTypeFromMessage(message)
 			this.checkForExistence(token, type)
 
@@ -94,10 +87,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {string} messageId id of message to be deleted
+		 * @param token conversation token
+		 * @param messageId id of message to be deleted
 		 */
-		deleteSharedItemFromMessage(token, messageId) {
+		deleteSharedItemFromMessage(token: string, messageId: number) {
 			if (!this.sharedItemsPool[token]) {
 				return
 			}
@@ -117,7 +110,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		 * @param {Type} type type of shared item
 		 * @param {Message[]} messages message with shared items
 		 */
-		addSharedItemsFromMessages(token, type, messages) {
+		addSharedItemsFromMessages(token: string, type: string, messages: SharedItems[keyof SharedItems][]) {
 			this.checkForExistence(token, type)
 
 			messages.forEach((message) => {
@@ -128,11 +121,11 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {string} messageId starting message id to purge shared items from older messages
+		 * @param token conversation token
+		 * @param messageId starting message id to purge shared items from older messages
 		 * If messageId is not provided, all shared items in this conversation will be deleted.
 		 */
-		purgeSharedItemsStore(token, messageId = null) {
+		purgeSharedItemsStore(token: string, messageId: number | null = null) {
 			if (!this.sharedItemsPool[token]) {
 				return
 			}
@@ -141,7 +134,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 				for (const type of Object.keys(this.sharedItemsPool[token])) {
 					for (const id of Object.keys(this.sharedItemsPool[token][type])) {
 						if (+id < +messageId) {
-							delete this.sharedItemsPool[token][type][id]
+							delete this.sharedItemsPool[token][type][+id]
 						}
 					}
 					if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
@@ -157,10 +150,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {Type} type type of shared item
+		 * @param token conversation token
+		 * @param type type of shared item
 		 */
-		async getSharedItems(token, type) {
+		async getSharedItems(token: string, type: string) {
 			// function is called from Message or SharedItemsBrowser, poll should not be empty at the moment
 			if (!this.sharedItemsPool[token] || !this.sharedItemsPool[token][type]) {
 				console.error(`Missing shared items poll of type '${type}' in conversation ${token}`)
@@ -168,9 +161,9 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 			}
 
 			const limit = 20
-			const lastKnownMessageId = Math.min.apply(Math, Object.keys(this.sharedItemsPool[token][type]))
+			const lastKnownMessageId = Math.min(...Object.keys(this.sharedItemsPool[token][type]).map(Number))
 			try {
-				const response = await getSharedItems(token, type, lastKnownMessageId, limit)
+				const response = await getSharedItems({ token, objectType: type, lastKnownMessageId, limit })
 				const messages = Object.values(response.data.ocs.data)
 				if (messages.length) {
 					this.addSharedItemsFromMessages(token, type, messages)
@@ -185,13 +178,13 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		/**
 		 * @param {Token} token conversation token
 		 */
-		async getSharedItemsOverview(token) {
+		async getSharedItemsOverview(token: string) {
 			if (this.overviewLoaded[token]) {
 				return
 			}
 
 			try {
-				const response = await getSharedItemsOverview(token, 7)
+				const response = await getSharedItemsOverview({ token, limit: 7 })
 				this.addSharedItemsFromOverview(token, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)

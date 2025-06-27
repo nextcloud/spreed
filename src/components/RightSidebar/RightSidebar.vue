@@ -301,8 +301,8 @@ export default {
 				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
-		isModeratorOrUser() {
-			return this.$store.getters.isModeratorOrUser
+		isGuestModerator() {
+			return this.conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 
 		isInLobby() {
@@ -339,7 +339,7 @@ export default {
 		},
 
 		showParticipantsTab() {
-			return (this.getUserId || this.isModeratorOrUser) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
+			return (this.getUserId || this.isGuestModerator) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
 		},
 
 		showSharedItemsTab() {
@@ -461,7 +461,7 @@ export default {
 			immediate: true,
 		},
 
-		isModeratorOrUser(newValue) {
+		isGuestModerator(newValue) {
 			if (newValue && !this.isInCall) {
 				// Switch active tab to participants list if guest was promoted to moderators
 				this.activeTab = 'participants'

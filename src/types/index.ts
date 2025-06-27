@@ -348,6 +348,14 @@ export type deletePollDraftResponse = ApiResponse<operations['poll-close-poll'][
 
 export type requiredPollParams = Omit<createPollParams, 'draft'>
 
+// Shared items
+export type getSharedItemsOverviewParams = operations['chat-get-objects-shared-in-room-overview']['parameters']['query']
+export type getSharedItemsOverviewResponse = ApiResponse<operations['chat-get-objects-shared-in-room-overview']['responses'][200]['content']['application/json']>
+export type SharedItemsOverview = operations['chat-get-objects-shared-in-room-overview']['responses'][200]['content']['application/json']['ocs']['data']
+export type getSharedItemsParams = operations['chat-get-objects-shared-in-room']['parameters']['query']
+export type getSharedItemsResponse = ApiResponse<operations['chat-get-objects-shared-in-room']['responses'][200]['content']['application/json']>
+export type SharedItems = operations['chat-get-objects-shared-in-room']['responses'][200]['content']['application/json']['ocs']['data']
+
 // Mentions
 export type ChatMention = components['schemas']['ChatMentionSuggestion']
 export type getMentionsParams = operations['chat-mentions']['parameters']['query']
