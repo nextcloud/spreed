@@ -1982,7 +1982,7 @@ OC.L10N.register(
     "Post to conversation" : "An Unterhaltung posten",
     "The recording failed. Please contact your administrator." : "Aufnahme fehlgeschlagen. Bitte wenden Sie sich an Ihre Administration.",
     "Location has been posted to {conversation}" : "Der Standort wurde nach {conversation} gepostet",
-    "An error occurred while posting location to conversation" : "Es ist ein Fehler beim Posten des Ortes an die Unterhaltung aufgetreten.",
+    "An error occurred while posting location to conversation" : "Es ist ein Fehler beim Posten des Standorts an die Unterhaltung aufgetreten.",
     "Share to a conversation" : "Mit einer Unterhaltung teilen",
     "Share to conversation" : "Mit der Unterhaltung teilen",
     "In conversation" : "In einer Unterhaltung",
