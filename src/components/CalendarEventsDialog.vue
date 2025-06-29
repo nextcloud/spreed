@@ -85,7 +85,7 @@ const calendarOptions = computed<CalendarOption[]>(() => groupwareStore.writeabl
 })))
 const canScheduleMeeting = computed(() => {
 	return hasTalkFeature(props.token, 'schedule-meeting') && store.getters.isModerator && calendarOptions.value.length !== 0
-		&& conversation.value.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		&& conversation.value?.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const selectedCalendar = ref<CalendarOption | null>(null)
@@ -152,8 +152,11 @@ const attendeeHint = computed(() => {
 const searchText = ref('')
 const isMatch = (string: string = '') => string.toLowerCase().includes(searchText.value.toLowerCase())
 
-const conversation = computed<Conversation>(() => store.getters.conversation(props.token))
+const conversation = computed<Conversation | undefined>(() => store.getters.conversation(props.token))
 const participants = computed(() => {
+	if (!conversation.value) {
+		return []
+	}
 	if (isOneToOneConversation.value && store.getters.participantsList(props.token).length === 1) {
 		// Second participant is not yet added to conversation, need to fake data from conversation object
 		// We do not have an attendeeId, so 'attendeeIds' in payload should be 'null' (selectAll === true)
@@ -161,7 +164,7 @@ const participants = computed(() => {
 	}
 	return store.getters.participantsList(props.token).filter((participant: Participant) => {
 		return [ATTENDEE.ACTOR_TYPE.USERS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(participant.actorType)
-			&& participant.attendeeId !== conversation.value.attendeeId
+			&& participant.attendeeId !== conversation.value!.attendeeId
 	})
 })
 const participantsInitialised = computed(() => store.getters.participantsInitialised(props.token))
@@ -185,13 +188,13 @@ const selectedParticipants = computed(() => participants.value
 	}))
 
 const isOneToOneConversation = computed(() => {
-	return conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE
-		|| conversation.value.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+	return conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
+		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 })
 
 const inviteLabel = computed(() => {
 	return isOneToOneConversation.value
-		? t('spreed', 'Invite {user}', { user: conversation.value.displayName })
+		? t('spreed', 'Invite {user}', { user: conversation.value?.displayName ?? '' })
 		: t('spreed', 'Invite all users and emails in this conversation')
 })
 
@@ -308,7 +311,7 @@ async function submitNewMeeting() {
 </script>
 
 <template>
-	<div>
+	<div v-if="conversation">
 		<NcPopover :container="container"
 			:popper-hide-triggers="hideTriggers"
 			:focus-trap="canScheduleMeeting || upcomingEvents.length !== 0"
