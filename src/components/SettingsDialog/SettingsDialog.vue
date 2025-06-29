@@ -21,6 +21,10 @@
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
+		</NcAppSettingsSection>
+		<NcAppSettingsSection id="calls"
+			:name="t('spreed', 'Calls')"
+			class="app-settings-section">
 			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
 				id="call-media"
 				:model-value="startWithoutMediaEnabled"
@@ -29,6 +33,12 @@
 				class="checkbox call-media"
 				@update:model-value="toggleStartWithoutMedia">
 				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-if="!isGuest"
+				type="switch"
+				:model-value="hideMediaSettings"
+				@update:model-value="setShowMediaSettings">
+				{{ t('spreed', 'Do not show the device preview screen before joining a call unless recording consent is required') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
@@ -346,6 +356,10 @@ export default {
 				variant: 'primary',
 			}]
 		},
+
+		hideMediaSettings() {
+			return !this.settingsStore.showMediaSettings
+		},
 	},
 
 	async created() {
@@ -366,6 +380,10 @@ export default {
 	mounted() {
 		subscribe('show-settings', this.handleShowSettings)
 		this.attachmentFolderLoading = false
+	},
+
+	beforeUnmount() {
+		unsubscribe('show-settings', this.handleShowSettings)
 	},
 
 	methods: {
@@ -464,8 +482,8 @@ export default {
 			this.showSettings = true
 		},
 
-		beforeDestroy() {
-			unsubscribe('show-settings', this.handleShowSettings)
+		setShowMediaSettings(newValue) {
+			this.settingsStore.setShowMediaSettings(!newValue)
 		},
 	},
 }

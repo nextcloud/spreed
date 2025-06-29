@@ -24,7 +24,7 @@ import {
  * @typedef {object} State
  * @property {PRIVACY.PUBLIC|PRIVACY.PRIVATE} readStatusPrivacy - The overview loaded state.
  * @property {PRIVACY.PUBLIC|PRIVACY.PRIVATE} typingStatusPrivacy - The overview loaded state.
- * @property {{[key: Token]: boolean}} showMediaSettings - The shared items pool.
+ * @property {boolean} showMediaSettings - The shared items pool.
  */
 
 /**
@@ -37,42 +37,11 @@ export const useSettingsStore = defineStore('settings', {
 	state: () => ({
 		readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
 		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
-		showMediaSettings: {},
+		showMediaSettings: BrowserStorage.getItem('showMediaSettings') !== 'false',
 		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
 		blurVirtualBackgroundEnabled: getTalkConfig('local', 'call', 'blur-virtual-background'),
 		conversationsListStyle: getTalkConfig('local', 'conversations', 'list-style'),
 	}),
-
-	getters: {
-		getShowMediaSettings: (state) => (token) => {
-			if (!token) {
-				return true
-			}
-
-			if (state.showMediaSettings[token] !== undefined) {
-				return state.showMediaSettings[token]
-			}
-
-			const storedValue = BrowserStorage.getItem('showMediaSettings_' + token)
-
-			switch (storedValue) {
-				case 'true': {
-					state.showMediaSettings[token] = true
-					return true
-				}
-				case 'false': {
-					state.showMediaSettings[token] = false
-					return false
-				}
-				case null:
-				default: {
-					BrowserStorage.setItem('showMediaSettings_' + token, 'true')
-					state.showMediaSettings[token] = true
-					return true
-				}
-			}
-		},
-	},
 
 	actions: {
 		/**
@@ -95,13 +64,13 @@ export const useSettingsStore = defineStore('settings', {
 			this.typingStatusPrivacy = privacy
 		},
 
-		setShowMediaSettings(token, value) {
+		setShowMediaSettings(value) {
 			if (value) {
-				BrowserStorage.setItem('showMediaSettings_' + token, 'true')
+				BrowserStorage.setItem('showMediaSettings', 'true')
 			} else {
-				BrowserStorage.setItem('showMediaSettings_' + token, 'false')
+				BrowserStorage.setItem('showMediaSettings', 'false')
 			}
-			this.showMediaSettings[token] = value
+			this.showMediaSettings = value
 		},
 
 		async setBlurVirtualBackgroundEnabled(value) {

@@ -121,15 +121,6 @@
 				</NcCheckboxRadioSwitch>
 			</template>
 			<template v-else>
-				<!-- "Always show" setting -->
-				<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
-					class="checkbox"
-					:model-value="showMediaSettings || showRecordingWarning"
-					:disabled="showRecordingWarning"
-					@update:model-value="setShowMediaSettings">
-					{{ t('spreed', 'Always show preview for this conversation') }}
-				</NcCheckboxRadioSwitch>
-
 				<!-- Moderator options before starting a call-->
 				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
 					v-model="isRecordingFromStart"
@@ -379,10 +370,6 @@ export default {
 			return this.actorStore.userId
 		},
 
-		showMediaSettings() {
-			return this.settingsStore.getShowMediaSettings(this.token)
-		},
-
 		blurVirtualBackgroundEnabled() {
 			return this.settingsStore.blurVirtualBackgroundEnabled
 		},
@@ -547,12 +534,6 @@ export default {
 	beforeMount() {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
-
-		// FIXME: this is a workaround to remove the old key from the browser storage
-		// To be removed in the future
-		if (BrowserStorage.getItem('devicesPreferred')) {
-			BrowserStorage.removeItem('devicesPreferred')
-		}
 	},
 
 	beforeUnmount() {
@@ -736,10 +717,6 @@ export default {
 				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
 				BrowserStorage.setItem('virtualBackgroundUrl_' + this.token, background)
 			}
-		},
-
-		setShowMediaSettings(newValue) {
-			this.settingsStore.setShowMediaSettings(this.token, newValue)
 		},
 
 		setRecordingConsentGiven(value) {

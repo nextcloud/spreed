@@ -121,4 +121,16 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 	BrowserStorage.setItem('localStorageMigrated', 'done')
 }
 
+/**
+ *
+ */
+function cleanOutdatedBrowserStorageKeys() {
+	// We migrated from conversation level to Talk level settings
+	Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter((key) => key.startsWith(BrowserStorage.scopeKey('showMediaSettings_')))
+		.forEach((key) => {
+			localStorage.removeItem(key)
+		})
+}
+
 migrateDirectLocalStorageToNextcloudBrowserStorage()
+cleanOutdatedBrowserStorageKeys()

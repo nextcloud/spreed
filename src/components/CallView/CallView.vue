@@ -197,7 +197,7 @@ export default {
 		},
 	},
 
-	setup(props) {
+	setup() {
 		// Prevent the screen from turning off
 		useWakeLock()
 
@@ -208,7 +208,7 @@ export default {
 		provide('CallView:screenshotModeEnabled', screenshotMode)
 		const settingsStore = useSettingsStore()
 		// If media settings was not used, we check the global config of default devices state here
-		if (!settingsStore.getShowMediaSettings(props.token) && settingsStore.startWithoutMedia) {
+		if (!settingsStore.showMediaSettings && settingsStore.startWithoutMedia) {
 			localMediaModel.disableAudio()
 			localMediaModel.disableVideo()
 		}

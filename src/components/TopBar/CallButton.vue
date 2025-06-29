@@ -235,7 +235,7 @@ export default {
 		},
 
 		showMediaSettings() {
-			return this.settingsStore.getShowMediaSettings(this.token)
+			return this.settingsStore.showMediaSettings
 		},
 
 		participantType() {
