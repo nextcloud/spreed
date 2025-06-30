@@ -91,7 +91,6 @@ export const useGuestNameStore = defineStore('guestName', {
 				await setGuestUserName(token, name)
 
 				setGuestNickname(name || t('spreed', 'Guest'))
-				emit('talk:guest-name:added')
 			} catch (error) {
 				actorStore.setDisplayName(previousName)
 				this.addGuestName({
