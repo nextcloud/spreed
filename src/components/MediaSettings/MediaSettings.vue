@@ -64,28 +64,28 @@
 									overlay-muted-color="#888888" />
 							</template>
 						</NcButton>
-					<NcPopover v-else
-						:title="t('spreed', 'Show more info')"
-						close-on-click-outside
-						no-focus-trap>
-						<template #trigger>
-							<NcButton variant="error"
-								:aria-label="t('spreed', 'Audio is not available')">
-								<template #icon>
-									<IconMicrophoneOff :size="20" />
-								</template>
-							</NcButton>
-						</template>
-						<template #default>
-							<p class="media-settings__device-error">
-								{{ audioStreamErrorMessage }}
-							</p>
-						</template>
-					</NcPopover>
+						<NcPopover v-else
+							:title="t('spreed', 'Show more info')"
+							close-on-click-outside
+							no-focus-trap>
+							<template #trigger>
+								<NcButton variant="error"
+									:aria-label="t('spreed', 'Audio is not available')">
+									<template #icon>
+										<IconMicrophoneOff :size="20" />
+									</template>
+								</NcButton>
+							</template>
+							<template #default>
+								<p class="media-settings__device-error">
+									{{ audioStreamErrorMessage }}
+								</p>
+							</template>
+						</NcPopover>
 
 						<!-- Video toggle -->
 						<NcButton v-if="!videoStreamError"
-						variant="tertiary"
+							variant="tertiary"
 							:title="videoButtonTitle"
 							:aria-label="videoButtonTitle"
 							:disabled="!videoPreviewAvailable"
@@ -95,24 +95,24 @@
 								<IconVideoOff v-else :size="20" />
 							</template>
 						</NcButton>
-					<NcPopover v-else
-						:title="t('spreed', 'Show more info')"
-						close-on-click-outside
-						no-focus-trap>
-						<template #trigger>
-							<NcButton variant="error"
-								:aria-label="t('spreed', 'Video is not available')">
-								<template #icon>
-									<IconVideoOff :size="20" />
-								</template>
-							</NcButton>
-						</template>
-						<template #default>
-							<p class="media-settings__device-error">
-								{{ videoStreamErrorMessage }}
-							</p>
-						</template>
-					</NcPopover>
+						<NcPopover v-else
+							:title="t('spreed', 'Show more info')"
+							close-on-click-outside
+							no-focus-trap>
+							<template #trigger>
+								<NcButton variant="error"
+									:aria-label="t('spreed', 'Video is not available')">
+									<template #icon>
+										<IconVideoOff :size="20" />
+									</template>
+								</NcButton>
+							</template>
+							<template #default>
+								<p class="media-settings__device-error">
+									{{ videoStreamErrorMessage }}
+								</p>
+							</template>
+						</NcPopover>
 					</div>
 				</div>
 				<div class="media-settings__content-tabs">
@@ -136,7 +136,7 @@
 								@refresh="updateDevices"
 								@update:device-id="handleAudioOutputIdChange">
 								<template #extra-action>
-											<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+									<MediaDevicesSpeakerTest :disabled="audioStreamError" />
 								</template>
 							</MediaDevicesSelector>
 						</template>
@@ -258,7 +258,7 @@ import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -417,6 +417,10 @@ export default {
 			)
 		},
 
+		isGuest() {
+			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+		},
+
 		userId() {
 			return this.actorStore.userId
 		},
@@ -562,10 +566,13 @@ export default {
 			return t('spreed', 'Error while accessing camera')
 		},
 
-
 		disabledCallButton() {
 			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
-				|| (!this.actorStore.userId && !this.actorStore.displayName.length)
+				|| (this.isGuest && !this.actorStore.displayName.length)
+		},
+
+		forceShowMediaSettings() {
+			return this.isGuest && this.hasCall && this.isDialog
 		},
 	},
 
@@ -632,6 +639,15 @@ export default {
 				// Reset the flag for the next call
 				this.skipBlurVirtualBackground = false
 			}
+		},
+
+		forceShowMediaSettings: {
+			intermediate: true,
+			handler(value) {
+				if (value) {
+					this.showModal()
+				}
+			},
 		},
 
 		connectionFailed(value) {
