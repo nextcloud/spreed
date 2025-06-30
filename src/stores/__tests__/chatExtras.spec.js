@@ -5,7 +5,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.ts'
-import { useChatExtrasStore } from '../chatExtras.js'
+import { useChatExtrasStore } from '../chatExtras.ts'
 
 describe('chatExtrasStore', () => {
 	const token = 'TOKEN'

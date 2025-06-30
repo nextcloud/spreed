@@ -21,7 +21,7 @@ import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 
 const { message, canCancel = false, editMessage = false } = defineProps<{
 	/** The quoted message object */

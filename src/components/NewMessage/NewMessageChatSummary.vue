@@ -70,7 +70,7 @@ import IconMessageBulleted from 'vue-material-design-icons/MessageBulleted.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
-import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
 type TaskProcessingCancelableRequest = {
