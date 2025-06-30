@@ -3,57 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<docs>
-This component is intended to be used both in `NewMessage` and `Message`
-components.
-</docs>
-
-<template>
-	<component :is="component.tag"
-		:to="component.link"
-		class="quote"
-		:class="{ 'quote-own-message': isOwnMessageQuoted }"
-		@click="handleQuoteClick">
-		<div class="quote__main">
-			<div v-if="message.id"
-				class="quote__main__author"
-				role="heading"
-				aria-level="4">
-				<AvatarWrapper :id="message.actorId"
-					:token="message.token"
-					:name="actorDisplayName"
-					:source="message.actorType"
-					:size="AVATAR.SIZE.EXTRA_SMALL"
-					disable-menu />
-				<span class="quote__main__author-info">{{ actorInfo }}</span>
-				<div v-if="editMessage" class="quote__main__edit-hint">
-					<PencilIcon :size="20" />
-					{{ t('spreed', '(editing)') }}
-				</div>
-			</div>
-			<!-- File preview -->
-			<NcRichText v-if="isFileShare"
-				text="{file}"
-				:arguments="richParameters" />
-			<!-- Message text -->
-			<blockquote v-if="!isFileShareWithoutCaption" dir="auto" class="quote__main__text">
-				{{ shortenedQuoteMessage }}
-			</blockquote>
-		</div>
-
-		<NcButton v-if="canCancel"
-			class="quote__close"
-			variant="tertiary"
-			:title="cancelQuoteLabel"
-			:aria-label="cancelQuoteLabel"
-			@click="handleAbort">
-			<template #icon>
-				<Close :size="20" />
-			</template>
-		</NcButton>
-	</component>
-</template>
-
 <script>
 import { t } from '@nextcloud/l10n'
 import { computed, toRefs } from 'vue'
@@ -236,6 +185,52 @@ export default {
 	},
 }
 </script>
+
+<template>
+	<component :is="component.tag"
+		:to="component.link"
+		class="quote"
+		:class="{ 'quote-own-message': isOwnMessageQuoted }"
+		@click="handleQuoteClick">
+		<div class="quote__main">
+			<div v-if="message.id"
+				class="quote__main__author"
+				role="heading"
+				aria-level="4">
+				<AvatarWrapper :id="message.actorId"
+					:token="message.token"
+					:name="actorDisplayName"
+					:source="message.actorType"
+					:size="AVATAR.SIZE.EXTRA_SMALL"
+					disable-menu />
+				<span class="quote__main__author-info">{{ actorInfo }}</span>
+				<div v-if="editMessage" class="quote__main__edit-hint">
+					<PencilIcon :size="20" />
+					{{ t('spreed', '(editing)') }}
+				</div>
+			</div>
+			<!-- File preview -->
+			<NcRichText v-if="isFileShare"
+				text="{file}"
+				:arguments="richParameters" />
+			<!-- Message text -->
+			<blockquote v-if="!isFileShareWithoutCaption" dir="auto" class="quote__main__text">
+				{{ shortenedQuoteMessage }}
+			</blockquote>
+		</div>
+
+		<NcButton v-if="canCancel"
+			class="quote__close"
+			variant="tertiary"
+			:title="cancelQuoteLabel"
+			:aria-label="cancelQuoteLabel"
+			@click="handleAbort">
+			<template #icon>
+				<Close :size="20" />
+			</template>
+		</NcButton>
+	</component>
+</template>
 
 <style lang="scss" scoped>
 @import '../assets/variables';
