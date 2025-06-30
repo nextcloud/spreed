@@ -7,7 +7,7 @@
 import { n, t } from '@nextcloud/l10n'
 import { computed } from 'vue'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 
 const chatExtrasStore = useChatExtrasStore()
 

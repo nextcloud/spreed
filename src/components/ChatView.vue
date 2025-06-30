@@ -74,7 +74,7 @@ import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 
 export default {
 

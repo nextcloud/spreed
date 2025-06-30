@@ -74,7 +74,7 @@ import { useDocumentVisibility } from '../../composables/useDocumentVisibility.t
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { debugTimer } from '../../utils/debugTimer.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
