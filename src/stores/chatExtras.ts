@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type {
+	ChatMessage,
+	ChatTask,
+} from '../types/index.ts'
+
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
@@ -10,24 +15,21 @@ import { EventBus } from '../services/EventBus.ts'
 import { summarizeChat } from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
-/**
- * @typedef {string} Token
- */
-
-/**
- * @typedef {object} State
- * @property {{[key: Token]: number}} parentToReply - The parent message id to reply per conversation.
- * @property {{[key: Token]: string}} chatInput -The input value per conversation.
- */
+type State = {
+	parentToReply: Record<string, number>
+	chatInput: Record<string, string>
+	messageIdToEdit: Record<string, number>
+	chatEditInput: Record<string, string>
+	tasksCount: number
+	tasksDoneCount: number
+	chatSummary: Record<string, Record<number, ChatTask>>
+}
 
 /**
  * Store for conversation extra chat features apart from messages
- *
- * @param {string} id store name
- * @param {State} options.state store state structure
  */
 export const useChatExtrasStore = defineStore('chatExtras', {
-	state: () => ({
+	state: (): State => ({
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -38,30 +40,30 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	}),
 
 	getters: {
-		getParentIdToReply: (state) => (token) => {
+		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]
 			}
 		},
 
-		getChatEditInput: (state) => (token) => {
+		getChatEditInput: (state) => (token: string) => {
 			return state.chatEditInput[token] ?? ''
 		},
 
-		getMessageIdToEdit: (state) => (token) => {
+		getMessageIdToEdit: (state) => (token: string) => {
 			return state.messageIdToEdit[token]
 		},
 
-		getChatSummaryTaskQueue: (state) => (token) => {
-			return Object.values(Object(state.chatSummary[token]))
+		getChatSummaryTaskQueue: (state) => (token: string) => {
+			return Object.values(Object(state.chatSummary[token]) as State['chatSummary'][string])
 		},
 
-		hasChatSummaryTaskRequested: (state) => (token) => {
+		hasChatSummaryTaskRequested: (state) => (token: string) => {
 			return state.chatSummary[token] !== undefined
 		},
 
-		getChatSummary: (state) => (token) => {
-			return Object.values(Object(state.chatSummary[token])).map((task) => task.summary).join('\n\n')
+		getChatSummary: (state) => (token: string) => {
+			return Object.values(Object(state.chatSummary[token]) as State['chatSummary'][string]).map((task) => task.summary).join('\n\n')
 				|| t('spreed', 'Error occurred during a summary generation')
 		},
 	},
@@ -70,10 +72,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
-		 * @param {string} token The conversation token
-		 * @return {string} The input text
+		 * @param token - conversation token
+		 * @return The input text
 		 */
-		getChatInput(token) {
+		getChatInput(token: string) {
 			if (!this.chatInput[token]) {
 				this.restoreChatInput(token)
 			}
@@ -83,11 +85,11 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Add a reply message id to the store
 		 *
-		 * @param {object} payload action payload
-		 * @param {string} payload.token The conversation token
-		 * @param {number} payload.id The id of message
+		 * @param payload action payload
+		 * @param payload.token - conversation token
+		 * @param payload.id The id of message
 		 */
-		setParentIdToReply({ token, id }) {
+		setParentIdToReply({ token, id }: { token: string, id: number }) {
 			this.parentToReply[token] = id
 		},
 
@@ -95,18 +97,18 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * Removes a reply message id from the store
 		 * (after posting message or dismissing the operation)
 		 *
-		 * @param {string} token The conversation token
+		 * @param token - conversation token
 		 */
-		removeParentIdToReply(token) {
+		removeParentIdToReply(token: string) {
 			delete this.parentToReply[token]
 		},
 
 		/**
 		 * Restore chat input from the browser storage and save to store
 		 *
-		 * @param {string} token The conversation token
+		 * @param token - conversation token
 		 */
-		restoreChatInput(token) {
+		restoreChatInput(token: string) {
 			const chatInput = BrowserStorage.getItem('chatInput_' + token)
 			if (chatInput) {
 				this.chatInput[token] = chatInput
@@ -116,11 +118,11 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Add a current input value to the store for a given conversation token
 		 *
-		 * @param {object} payload action payload
-		 * @param {string} payload.token The conversation token
-		 * @param {string} payload.text The string to store
+		 * @param payload action payload
+		 * @param payload.token - conversation token
+		 * @param payload.text The string to store
 		 */
-		setChatInput({ token, text }) {
+		setChatInput({ token, text }: { token: string, text: string }) {
 			const parsedText = parseSpecialSymbols(text)
 			BrowserStorage.setItem('chatInput_' + token, parsedText)
 			this.chatInput[token] = parsedText
@@ -129,12 +131,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Add a message text that is being edited to the store for a given conversation token
 		 *
-		 * @param {object} payload action payload
-		 * @param {string} payload.token The conversation token
-		 * @param {string} payload.text The string to store
-		 * @param {object} payload.parameters message parameters
+		 * @param payload action payload
+		 * @param payload.token - conversation token
+		 * @param payload.text The string to store
+		 * @param payload.parameters message parameters
 		 */
-		setChatEditInput({ token, text, parameters = {} }) {
+		setChatEditInput({ token, text, parameters = {} }: { token: string, text: string, parameters?: ChatMessage['messageParameters'] }) {
 			let parsedText = text
 
 			// Handle mentions and special symbols
@@ -147,19 +149,19 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Add a message id that is being edited to the store
 		 *
-		 * @param {string} token The conversation token
-		 * @param {number} id The id of message
+		 * @param token - conversation token
+		 * @param id The id of message
 		 */
-		setMessageIdToEdit(token, id) {
+		setMessageIdToEdit(token: string, id: number) {
 			this.messageIdToEdit[token] = id
 		},
 
 		/**
 		 * Remove a message id that is being edited to the store
 		 *
-		 * @param {string} token The conversation token
+		 * @param token - conversation token
 		 */
-		removeMessageIdToEdit(token) {
+		removeMessageIdToEdit(token: string) {
 			delete this.chatEditInput[token]
 			delete this.messageIdToEdit[token]
 		},
@@ -167,14 +169,23 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Remove a current input value from the store for a given conversation token
 		 *
-		 * @param {string} token The conversation token
+		 * @param token - conversation token
 		 */
-		removeChatInput(token) {
+		removeChatInput(token: string) {
 			BrowserStorage.removeItem('chatInput_' + token)
 			delete this.chatInput[token]
 		},
 
-		initiateEditingMessage({ token, id, message, messageParameters }) {
+		/**
+		 * Initiate editing UI for a given message
+		 *
+		 * @param payload - action payload
+		 * @param payload.token - conversation token
+		 * @param payload.id - message id
+		 * @param payload.message - message text
+		 * @param payload.messageParameters - message parameters
+		 */
+		initiateEditingMessage({ token, id, message, messageParameters }: { token: string, id: number, message: string, messageParameters: ChatMessage['messageParameters'] }) {
 			this.setMessageIdToEdit(token, id)
 			const isFileShareOnly = Object.keys(Object(messageParameters)).some((key) => key.startsWith('file'))
 				&& message === '{file}'
@@ -194,19 +205,19 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Clears store for a deleted conversation
 		 *
-		 * @param {string} token the token of the conversation to be deleted
+		 * @param token the token of the conversation to be deleted
 		 */
-		purgeChatExtras(token) {
+		purgeChatExtras(token: string) {
 			this.removeParentIdToReply(token)
 			this.removeChatInput(token)
 		},
 
-		setTasksCounters({ tasksCount, tasksDoneCount }) {
+		setTasksCounters({ tasksCount, tasksDoneCount }: { tasksCount: number, tasksDoneCount: number }) {
 			this.tasksCount = tasksCount
 			this.tasksDoneCount = tasksDoneCount
 		},
 
-		async requestChatSummary(token, fromMessageId) {
+		async requestChatSummary(token: string, fromMessageId: number) {
 			try {
 				const response = await summarizeChat(token, fromMessageId)
 				if (!response.data) {
@@ -230,13 +241,13 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
-		storeChatSummary(token, fromMessageId, summary) {
+		storeChatSummary(token: string, fromMessageId: number, summary: string) {
 			if (this.chatSummary[token][fromMessageId]) {
 				this.chatSummary[token][fromMessageId].summary = summary
 			}
 		},
 
-		dismissChatSummary(token) {
+		dismissChatSummary(token: string) {
 			if (this.hasChatSummaryTaskRequested(token)) {
 				delete this.chatSummary[token]
 			}

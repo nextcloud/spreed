@@ -237,6 +237,11 @@ export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-a
 	height: string
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
+export type ChatTask = SummarizeChatTask & {
+	fromMessageId: number
+	summary?: string
+}
+
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
 export type receiveMessagesResponse = ApiResponse<operations['chat-receive-messages']['responses'][200]['content']['application/json']>
 export type getMessageContextParams = operations['chat-get-message-context']['parameters']['query']
