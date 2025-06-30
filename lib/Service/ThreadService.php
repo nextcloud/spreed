@@ -93,6 +93,12 @@ class ThreadService {
 		$threadAttendee->setNotificationLevel($attendee->getNotificationLevel());
 		$threadAttendee->setReadPrivacy($attendee->getReadPrivacy());
 
+		// We only copy the read marker for now.
+		// If we copied the last mention and direct ids as well, all threads
+		// created would be marked as unread with a mention,
+		// when the conversation had an unread mention.
+		$threadAttendee->setLastReadMessage($attendee->getLastReadMessage());
+
 		try {
 			$this->threadAttendeeMapper->insert($threadAttendee);
 		} catch (Exception $e) {
