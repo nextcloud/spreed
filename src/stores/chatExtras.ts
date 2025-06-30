@@ -6,16 +6,25 @@
 import type {
 	ChatMessage,
 	ChatTask,
+	ThreadInfo,
 } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
-import { summarizeChat } from '../services/messagesService.ts'
+import {
+	getSingleThreadForConversation,
+	getThreadsForConversation,
+	makeThreadForConversation,
+	summarizeChat,
+} from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
+	threads: Record<string, Record<number, ThreadInfo>>
+	threadsOffset: Record<string, number | undefined>
+	threadToReply: Record<string, number>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
 	messageIdToEdit: Record<string, number>
@@ -30,6 +39,9 @@ type State = {
  */
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
+		threads: {},
+		threadsOffset: {},
+		threadToReply: {},
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -40,6 +52,18 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	}),
 
 	getters: {
+		getThread: (state) => (token: string, threadId: number) => {
+			if (state.threads[token]?.[threadId]) {
+				return state.threads[token][threadId]
+			}
+		},
+
+		getThreadIdToReply: (state) => (token: string) => {
+			if (state.threadToReply[token]) {
+				return state.threadToReply[token]
+			}
+		},
+
 		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]
@@ -70,6 +94,90 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 	actions: {
 		/**
+		 * Update known threads offset for given conversation
+		 *
+		 * @param token - conversation token
+		 * @param [offsetList] - known id or list of ids
+		 */
+		updateThreadsOffset(token: string, offsetList?: number | number[]) {
+			const normalizedList: number[] = Array.isArray(offsetList) ? offsetList : [offsetList].filter(Boolean)
+			if (normalizedList.length === 0) {
+				return
+			}
+
+			if (!this.threadsOffset[token]) {
+				this.threadsOffset[token] = Math.min(...normalizedList)
+			} else {
+				this.threadsOffset[token] = Math.min(...normalizedList, this.threadsOffset[token]!)
+			}
+		},
+
+		/**
+		 * Get a thread in given conversation
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to fetch
+		 */
+		async getSingleThread(token: string, threadId: number) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				const response = await getSingleThreadForConversation(token, threadId)
+				this.threads[token][threadId] = response.data.ocs.data
+				this.updateThreadsOffset(token, threadId)
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
+		/**
+		 * Get list of threads for given conversation
+		 *
+		 * @param token - conversation token
+		 * @param [offset] - optional offset for threads list
+		 */
+		async getThreadsList(token: string, offset?: number) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				const response = await getThreadsForConversation({ token, offsetId: offset ?? this.threadsOffset[token] })
+
+				const threadIds: number[] = []
+				response.data.ocs.data.forEach((threadInfo) => {
+					this.threads[token][threadInfo.thread.id] = threadInfo
+					threadIds.push(threadInfo.thread.id)
+				})
+				this.updateThreadsOffset(token, threadIds)
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
+		/**
+		 * Make reply chain a thread in given conversation
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to fetch
+		 */
+		async makeThread(token: string, threadId: number) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+				}
+
+				const response = await makeThreadForConversation(token, threadId)
+				this.threads[token][threadId] = response.data.ocs.data
+				this.updateThreadsOffset(token, threadId)
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
+		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
 		 * @param token - conversation token
@@ -88,9 +196,13 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param payload action payload
 		 * @param payload.token - conversation token
 		 * @param payload.id The id of message
+		 * @param payload.threadId The thread id of message
 		 */
-		setParentIdToReply({ token, id }: { token: string, id: number }) {
+		setParentIdToReply({ token, id, threadId }: { token: string, id: number, threadId?: number }) {
 			this.parentToReply[token] = id
+			if (threadId) {
+				this.threadToReply[token] = threadId
+			}
 		},
 
 		/**
@@ -101,6 +213,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		removeParentIdToReply(token: string) {
 			delete this.parentToReply[token]
+			delete this.threadToReply[token]
 		},
 
 		/**
