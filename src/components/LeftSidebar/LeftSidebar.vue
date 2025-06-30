@@ -328,6 +328,8 @@ const FILTER_LABELS = {
 	default: '',
 }
 
+let actualizeDataTimeout = null
+
 export default {
 	name: 'LeftSidebar',
 
@@ -956,6 +958,14 @@ export default {
 		},
 
 		refreshTalkDashboard() {
+			// Throttle click and keyboard events
+			if (actualizeDataTimeout) {
+				return
+			}
+			actualizeDataTimeout = setTimeout(() => {
+				actualizeDataTimeout = null
+			}, 5_000)
+
 			if (this.isInDashboard) {
 				EventBus.emit('refresh-talk-dashboard')
 			}
