@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SummarizeChatTask, TaskProcessingResponse } from '../../types/index.ts'
+import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -76,11 +76,6 @@ import CancelableRequest from '../../utils/cancelableRequest.js'
 type TaskProcessingCancelableRequest = {
 	request: (taskId: number) => TaskProcessingResponse
 	cancel: () => void
-}
-
-type ChatTask = SummarizeChatTask & {
-	fromMessageId: number
-	summary?: string
 }
 
 let getTaskInterval: NodeJS.Timeout | undefined
@@ -167,7 +162,7 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 		switch (status) {
 			case TASK_PROCESSING.STATUS.SUCCESSFUL: {
 			// Task is completed, proceed to the next task
-				const summary = response.data.ocs.data.task.output?.output || ''
+				const summary = response.data.ocs.data.task.output?.output as string || ''
 				chatExtrasStore.storeChatSummary(token, task.fromMessageId, summary)
 				clearInterval(getTaskInterval)
 				getTaskInterval = undefined
