@@ -5,7 +5,6 @@
 
 <template>
 	<div class="lobby">
-		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
 		<div class="lobby__header">
 			<RoomService :size="64" />
 			<h2>{{ currentConversationName }}</h2>
@@ -53,7 +52,6 @@ export default {
 	name: 'LobbyScreen',
 
 	components: {
-		GuestWelcomeWindow,
 		NcRichText,
 		RoomService,
 		SetGuestUsername,
@@ -102,10 +100,6 @@ export default {
 		// Determines whether the current user is a guest user
 		currentUserIsGuest() {
 			return !this.actorStore.userId
-		},
-
-		isGuestWithoutDisplayName() {
-			return !this.actorStore.displayName && this.currentUserIsGuest
 		},
 	},
 
