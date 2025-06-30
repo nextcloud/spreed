@@ -270,7 +270,7 @@ describe('message actions', () => {
 		// Arrange
 		useStore.mockReturnValue({
 			getters: {
-				conversation: () => null,
+				conversation: () => undefined,
 			},
 		})
 		// Act
