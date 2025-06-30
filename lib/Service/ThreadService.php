@@ -108,6 +108,20 @@ class ThreadService {
 		}
 	}
 
+	/**
+	 * Used e.g. when a user or group is removed from a conversation
+	 * @param list<int> $attendeeIds
+	 */
+	public function removeThreadAttendeesByAttendeeIds(array $attendeeIds): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->delete('talk_thread_attendees')
+			->where($query->expr()->in(
+				'attendee_id',
+				$query->createNamedParameter($attendeeIds, IQueryBuilder::PARAM_INT_ARRAY)
+			));
+		$query->executeStatement();
+	}
+
 	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_threads')
@@ -152,8 +166,7 @@ class ThreadService {
 			->where($query->expr()->in(
 				'id',
 				$query->createNamedParameter($potentialThreadIds, IQueryBuilder::PARAM_INT_ARRAY),
-				IQueryBuilder::PARAM_INT_ARRAY)
-			);
+			));
 
 		$ids = [];
 
