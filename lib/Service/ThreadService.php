@@ -108,6 +108,18 @@ class ThreadService {
 		}
 	}
 
+	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_threads')
+			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
+			->set('last_message_id', $query->createNamedParameter($lastMessageId))
+			->where($query->expr()->eq('id', $query->createNamedParameter($thread->getId())));
+		$query->executeStatement();
+
+		$thread->setNumReplies($thread->getNumReplies() + 1);
+		$thread->setLastMessageId($lastMessageId);
+	}
+
 	public function deleteByRoom(Room $room): void {
 		$this->threadMapper->deleteByRoomId($room->getId());
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());

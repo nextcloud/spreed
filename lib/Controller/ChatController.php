@@ -262,6 +262,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		} catch (IRateLimitExceededException) {
 			return new DataResponse(['error' => 'mentions'], Http::STATUS_TOO_MANY_REQUESTS);
 		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
