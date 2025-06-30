@@ -5,10 +5,10 @@
 
 <template>
 	<component :is="isDialog ? 'NcModal' : 'div'"
-		v-if="modal"
+		v-if="show"
 		:size="isDialog ? 'large' : undefined"
 		:label-id="isDialog ? dialogHeaderId : undefined"
-		@close="closeModal">
+		@close="close">
 		<div class="media-settings">
 			<h2 v-if="isDialog"
 				:id="dialogHeaderId"
@@ -385,7 +385,7 @@ export default {
 
 	data() {
 		return {
-			modal: false,
+			show: false,
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
@@ -574,7 +574,7 @@ export default {
 	},
 
 	watch: {
-		modal(newValue) {
+		show(newValue) {
 			if (newValue) {
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
@@ -642,7 +642,7 @@ export default {
 			intermediate: true,
 			handler(value) {
 				if (value) {
-					this.showModal()
+					this.showMediaSettings()
 				}
 			},
 		},
@@ -655,29 +655,29 @@ export default {
 	},
 
 	beforeMount() {
-		subscribe('talk:media-settings:show', this.showModal)
+		subscribe('talk:media-settings:show', this.showMediaSettings)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},
 
 	mounted() {
 		if (!this.isDialog) {
-			this.showModal()
+			this.showMediaSettings()
 		}
 	},
 
 	beforeUnmount() {
-		unsubscribe('talk:media-settings:show', this.showModal)
+		unsubscribe('talk:media-settings:show', this.showMediaSettings)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 
 		if (!this.isDialog) {
-			this.closeModal()
+			this.close()
 		}
 	},
 
 	methods: {
 		t,
-		showModal(page) {
-			this.modal = true
+		showMediaSettings(page) {
+			this.show = true
 			if (page === 'video-verification') {
 				this.isPublicShareAuthSidebar = true
 			}
@@ -692,8 +692,8 @@ export default {
 			}
 		},
 
-		closeModal() {
-			this.modal = false
+		close() {
+			this.show = false
 			this.updatedBackground = undefined
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
@@ -749,7 +749,7 @@ export default {
 				emit('local-video-control-button:toggle-video')
 			}
 
-			this.closeModal()
+			this.close()
 		},
 
 		handleUpdateBackground(background) {
