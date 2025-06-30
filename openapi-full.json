@@ -1385,6 +1385,13 @@
                             "no"
                         ]
                     },
+                    "hide-download": {
+                        "type": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ]
+                    },
                     "mtime": {
                         "type": "string"
                     },

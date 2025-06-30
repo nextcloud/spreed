@@ -276,6 +276,8 @@ export type components = {
             mimetype?: string;
             /** @enum {string} */
             "preview-available"?: "yes" | "no";
+            /** @enum {string} */
+            "hide-download"?: "yes" | "no";
             mtime?: string;
             latitude?: string;
             longitude?: string;
