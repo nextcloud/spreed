@@ -8,7 +8,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
-		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
+		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName && !conversation.hasCall" :token="token" />
 		<div class="messages-list-dragover-wrapper">
 			<TransitionWrapper name="slide-up" mode="out-in">
 				<NcEmptyContent v-show="isDraggingOver"
