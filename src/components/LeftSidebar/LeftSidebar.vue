@@ -14,7 +14,6 @@
 						class="talk-home-button"
 						:title="dashboardButtonLabel"
 						:aria-label="dashboardButtonLabel"
-						:to="{ name: 'root' }"
 						@click="refreshTalkDashboard">
 						<template #icon>
 							<IconHome :size="20" />
@@ -968,6 +967,8 @@ export default {
 
 			if (this.isInDashboard) {
 				EventBus.emit('refresh-talk-dashboard')
+			} else {
+				this.$router.push({ name: 'root' })
 			}
 		},
 	},
