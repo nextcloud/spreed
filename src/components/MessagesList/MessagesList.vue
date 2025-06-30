@@ -181,6 +181,10 @@ export default {
 			return this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
+		currentThreadId() {
+			return this.$route.query.threadId ? +this.$route.query.threadId : null
+		},
+
 		/**
 		 * Gets the messages array. We need this because the DynamicScroller needs an array to
 		 * loop through.
@@ -188,7 +192,14 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
+			if (!this.currentThreadId) {
+				return this.$store.getters.messagesList(this.token)
+			}
+
 			return this.$store.getters.messagesList(this.token)
+				.filter((message) => {
+					return message.threadId === this.currentThreadId
+				})
 		},
 
 		isMessagesListPopulated() {

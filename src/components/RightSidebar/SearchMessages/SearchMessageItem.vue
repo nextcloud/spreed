@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { Conversation } from '../../../types/index.ts'
+import type { ChatMessage, Conversation } from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
@@ -31,7 +31,7 @@ const props = defineProps({
 	},
 	to: {
 		type: Object,
-		default: () => ({}),
+		required: true,
 	},
 	subline: {
 		type: String,
@@ -50,8 +50,8 @@ const props = defineProps({
 		default: '',
 	},
 	timestamp: {
-		type: String,
-		default: '',
+		type: Number,
+		default: undefined,
 	},
 	messageParameters: {
 		type: [Array, Object],
@@ -84,7 +84,7 @@ const richSubline = computed(() => {
 	let text = props.subline.trim()
 
 	// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-	Object.entries(props.messageParameters).forEach(([key, value]) => {
+	Object.entries(props.messageParameters as ChatMessage['messageParameters']).forEach(([key, value]) => {
 		text = text.replaceAll('{' + key + '}', value.name)
 	})
 
@@ -94,10 +94,15 @@ const clearReminderLabel = computed(() => {
 	if (!props.isReminder) {
 		return ''
 	}
-	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(+props.timestamp * 1000).format('ddd LT') })
+	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(props.timestamp! * 1000).format('ddd LT') })
 })
 
 const active = computed(() => {
+	if (props.to.query?.threadId) {
+		return route.fullPath.startsWith(router.resolve(props.to).fullPath)
+	} else if (props.to.hash) {
+		return route.path === router.resolve(props.to).path && route.hash === router.resolve(props.to).hash
+	}
 	return route.fullPath === router.resolve(props.to).fullPath
 })
 </script>
@@ -133,7 +138,7 @@ const active = computed(() => {
 			</NcActionButton>
 		</template>
 		<template #details>
-			<NcDateTime :timestamp="+timestamp * 1000"
+			<NcDateTime :timestamp="timestamp * 1000"
 				class="search-results__date"
 				relative-time="narrow"
 				ignore-seconds />

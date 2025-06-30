@@ -121,6 +121,7 @@ export default {
 
 		openConversation() {
 			if (!this.isTalkMainApp) {
+				// TODO query
 				// Native redirect to Talk from Files sidebar
 				const url = generateUrl('/call/{token}#message_{messageId}', {
 					token: this.selectedConversationToken,

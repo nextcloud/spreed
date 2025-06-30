@@ -401,10 +401,11 @@ export default {
 			}
 		},
 
-		handleReply() {
+		handleReply(makeThread = false) {
 			this.chatExtrasStore.setParentIdToReply({
 				token: this.message.token,
 				id: this.message.id,
+				threadId: makeThread ? this.message.threadId : undefined,
 			})
 			EventBus.emit('focus-chat-input')
 		},

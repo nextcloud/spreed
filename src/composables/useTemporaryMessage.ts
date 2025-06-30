@@ -25,6 +25,7 @@ export function useTemporaryMessage(context: Store<unknown>) {
 	 */
 	function createTemporaryMessage(payload: PrepareTemporaryMessagePayload) {
 		const parentId = chatExtrasStore.getParentIdToReply(payload.token)
+		const threadId = chatExtrasStore.getThreadIdToReply(payload.token)
 
 		return prepareTemporaryMessage({
 			...payload,
@@ -32,6 +33,8 @@ export function useTemporaryMessage(context: Store<unknown>) {
 			actorType: actorStore.actorType ?? '',
 			actorDisplayName: actorStore.displayName,
 			parent: parentId && store.getters.message(payload.token, parentId),
+			threadId: threadId ?? store.getters.message(payload.token, parentId).threadId,
+			isThread: threadId ? true : store.getters.message(payload.token, parentId).isThread,
 		})
 	}
 

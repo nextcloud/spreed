@@ -678,6 +678,15 @@ export default {
 				this.text = ''
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
+
+				const threadId = this.chatExtrasStore.getThreadIdToReply(this.token)
+				// Check if reply requires to create a thread
+				if (threadId) {
+					if (!this.parentMessage.isThread) {
+						await this.chatExtrasStore.makeThread(this.token, threadId)
+					}
+					await this.$router.push({ query: { threadId } })
+				}
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
@@ -747,6 +756,8 @@ export default {
 						this.chatExtrasStore.setParentIdToReply({
 							token: this.token,
 							id: temporaryMessage.parent.id,
+							// TODO needed here?
+							// threadId: temporaryMessage.isThread ? temporaryMessage.threadId : undefined,
 						})
 					}
 

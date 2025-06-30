@@ -49,7 +49,15 @@ const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServ
 
 const hash = computed(() => '#message_' + message.id)
 
-const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
+const component = computed(() => canCancel
+	? { tag: 'div', link: undefined }
+	: {
+			tag: 'router-link',
+			link: {
+				query: { threadId: message.isThread ? message.threadId : undefined },
+				hash: hash.value,
+			},
+		})
 
 const isOwnMessageQuoted = computed(() => actorStore.checkIfSelfIsActor(message))
 

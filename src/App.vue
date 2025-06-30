@@ -474,6 +474,7 @@ export default {
 					const [token, hash] = load.split('#')
 					this.$router.push({
 						name: 'conversation',
+						// TODO query
 						hash: hash ? `#${hash}` : '',
 						params: {
 							token,

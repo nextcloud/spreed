@@ -43,7 +43,7 @@
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
-			<Quote v-if="message.parent" :message="message.parent" />
+			<Quote v-if="showQuote" :message="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
@@ -242,6 +242,10 @@ export default {
 	},
 
 	computed: {
+		showQuote() {
+			return !!this.message.parent && this.message.parent.id !== +this.$route.query.threadId
+		},
+
 		renderedMessage() {
 			if (this.isFileShare && this.message.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
