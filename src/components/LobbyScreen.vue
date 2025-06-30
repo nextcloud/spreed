@@ -6,7 +6,7 @@
 <template>
 	<div class="lobby">
 		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
-		<div class="lobby emptycontent">
+		<div class="lobby__header">
 			<RoomService :size="64" />
 			<h2>{{ currentConversationName }}</h2>
 
@@ -31,6 +31,7 @@
 					use-extended-markdown />
 			</div>
 		</div>
+		<MediaSettings :is-dialog="false" />
 		<SetGuestUsername v-if="currentUserIsGuest" class="guest-info" />
 	</div>
 </template>
@@ -40,6 +41,7 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
+import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
@@ -55,6 +57,7 @@ export default {
 		NcRichText,
 		RoomService,
 		SetGuestUsername,
+		MediaSettings,
 	},
 
 	setup() {
@@ -119,16 +122,17 @@ export default {
 .lobby {
 	display: flex;
 	flex-direction: column;
+	margin: auto;
 
-	&__timer {
-		max-width: $messages-list-max-width;
-		margin: 0 auto;
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
 	}
 
 	&__countdown,
 	&__description {
-		max-width: $messages-list-max-width;
-		margin: 0 auto;
 		margin-top: 25px;
 	}
 
