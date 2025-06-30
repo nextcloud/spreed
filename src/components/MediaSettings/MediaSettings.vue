@@ -146,36 +146,39 @@
 						</template>
 					</MediaSettingsTabs>
 
-					<template v-if="!isDeviceCheck">
-						<!-- Moderator options before starting a call-->
-						<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-							v-model="isRecordingFromStart"
-							class="checkbox">
-							{{ t('spreed', 'Start recording immediately with the call') }}
-						</NcCheckboxRadioSwitch>
-
-						<!-- Recording warning -->
-						<NcNoteCard v-if="showRecordingWarning" type="warning">
-							<p v-if="isCurrentlyRecording">
-								<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
-							</p>
-							<p v-else>
-								<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
-							</p>
-							<template v-if="isRecordingConsentRequired">
-								<p>
-									{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
-								</p>
-								<NcCheckboxRadioSwitch class="checkbox--warning"
-									:model-value="recordingConsentGiven"
-									@update:model-value="setRecordingConsentGiven">
-									{{ t('spreed', 'Give consent to the recording of this call') }}
-								</NcCheckboxRadioSwitch>
-							</template>
-						</NcNoteCard>
-					</template>
+					<!-- Guest display name setting-->
+					<SetGuestUsername v-if="isGuest && isDialog"
+						class="media-settings__guest"
+						compact />
 				</div>
 			</div>
+			<template v-if="!isDeviceCheck && !isInLobby">
+				<!-- Moderator options before starting a call-->
+				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
+					v-model="isRecordingFromStart"
+					class="checkbox">
+					{{ t('spreed', 'Start recording immediately with the call') }}
+				</NcCheckboxRadioSwitch>
+				<!-- Recording warning -->
+				<NcNoteCard v-if="showRecordingWarning" type="warning">
+					<p v-if="isCurrentlyRecording">
+						<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+					</p>
+					<p v-else>
+						<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+					</p>
+					<template v-if="isRecordingConsentRequired">
+						<p>
+							{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+						</p>
+						<NcCheckboxRadioSwitch class="checkbox--warning"
+							:model-value="recordingConsentGiven"
+							@update:model-value="setRecordingConsentGiven">
+							{{ t('spreed', 'Give consent to the recording of this call') }}
+						</NcCheckboxRadioSwitch>
+					</template>
+				</NcNoteCard>
+			</template>
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
@@ -206,7 +209,7 @@
 						class="call-button"
 						is-media-settings
 						:is-recording-from-start="isRecordingFromStart"
-						:disabled="isRecordingConsentRequired && !recordingConsentGiven"
+						:disabled="disabledCallButton"
 						:recording-consent-given="recordingConsentGiven"
 						:silent-call="silentCall" />
 				</template>
@@ -241,6 +244,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
+import SetGuestUsername from '../SetGuestUsername.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
@@ -281,6 +285,7 @@ export default {
 		VideoBackground,
 		VideoBackgroundEditor,
 		VolumeIndicator,
+		SetGuestUsername,
 		// Icons
 		IconBell,
 		IconBellOff,
@@ -479,7 +484,7 @@ export default {
 		},
 
 		showRecordingWarning() {
-			return !this.isDeviceCheck && !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
+			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
 		showSilentCallOption() {
@@ -488,7 +493,6 @@ export default {
 
 		showUpdateChangesButton() {
 			return (this.isDeviceCheck
-				|| (this.isDialog && !this.token)
 				|| this.isInCall)
 			&& (this.updatedBackground
 				|| this.audioDeviceStateChanged
@@ -555,6 +559,11 @@ export default {
 			return t('spreed', 'Error while accessing camera')
 		},
 
+
+		disabledCallButton() {
+			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
+				|| (!this.actorStore.userId && !this.actorStore.displayName.length)
+		},
 	},
 
 	watch: {
@@ -927,6 +936,10 @@ export default {
 		padding: 10px 0 20px;
 	}
 
+	&__guest {
+		margin-top: var(--default-grid-baseline);
+	}
+
 	&__device-error {
 		padding: calc(var(--default-grid-baseline) * 2);
 	}
@@ -963,8 +976,6 @@ export default {
 }
 
 .checkbox {
-	display: flex;
-	justify-content: center;
 	margin: calc(var(--default-grid-baseline) * 2);
 
 	&--warning {
