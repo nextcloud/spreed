@@ -8,7 +8,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
-		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
+		<GuestWelcomeWindow v-if="showGuestWelcomeWindow" :token="token" />
 		<div class="messages-list-dragover-wrapper">
 			<TransitionWrapper name="slide-up" mode="out-in">
 				<NcEmptyContent v-show="isDraggingOver"
@@ -167,6 +167,12 @@ export default {
 
 		isLoadingChat() {
 			return !this.$store.getters.isMessagesListPopulated(this.token)
+		},
+
+		showGuestWelcomeWindow() {
+			return this.isGuestWithoutDisplayName
+				&& !this.conversation.hasCall
+				&& !this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 		},
 	},
 
