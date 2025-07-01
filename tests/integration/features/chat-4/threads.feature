@@ -20,7 +20,6 @@ Feature: chat-4/threads
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" creates thread "Message 1" in room "room" with 200
-    Then user "participant1" sees the following threads in room "room" with 200
       | t.id      | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage | lastMessage |
       | Message 1 | 0            | 0             | Message 1         | 0                    | 0                   | Message 1    | NULL        |
 
@@ -32,7 +31,6 @@ Feature: chat-4/threads
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant2" sends reply "Message 1-1" on message "Message 1" to room "room" with 201
     And user "participant1" creates thread "Message 1" in room "room" with 200
-    Then user "participant1" sees the following threads in room "room" with 200
       | t.id      | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage | lastMessage |
       | Message 1 | 1            | Message 1-1   | Message 1         | 0                    | 0                   | Message 1    | Message 1-1 |
 
@@ -44,6 +42,5 @@ Feature: chat-4/threads
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant2" sends reply "Message 1-1" on message "Message 1" to room "room" with 201
     And user "participant1" creates thread "Message 1-1" in room "room" with 200
-    Then user "participant1" sees the following threads in room "room" with 200
       | t.id      | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage | lastMessage |
       | Message 1 | 1            | Message 1-1   | Message 1         | 0                    | 0                   | Message 1    | Message 1-1 |

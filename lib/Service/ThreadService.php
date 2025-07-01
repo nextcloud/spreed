@@ -82,7 +82,7 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function addAttendeeToThread(Attendee $attendee, Thread $thread): void {
+	public function addAttendeeToThread(Attendee $attendee, Thread $thread): ThreadAttendee {
 		$threadAttendee = new ThreadAttendee();
 		$threadAttendee->setThreadId($thread->getId());
 		$threadAttendee->setRoomId($thread->getRoomId());
@@ -106,6 +106,8 @@ class ThreadService {
 				throw $e;
 			}
 		}
+
+		return $threadAttendee;
 	}
 
 	/**

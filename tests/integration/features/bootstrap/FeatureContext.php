@@ -2740,7 +2740,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$this->compareThreadsResponse($formData);
+		$results = $this->getDataFromResponse($this->response);
+		$this->compareThreadsResponse($formData, $results);
 	}
 
 	#[Then('/^user "([^"]*)" creates thread "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -2748,10 +2749,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads/' . self::$textToMessageId[$message]);
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData !== null) {
+			$result = $this->getDataFromResponse($this->response);
+			$this->compareThreadsResponse($formData, [$result]);
+		}
 	}
 
-	protected function compareThreadsResponse(?TableNode $formData = null): void {
-		$results = $this->getDataFromResponse($this->response);
+	protected function compareThreadsResponse(?TableNode $formData, array $results): void {
 		if ($formData === null) {
 			Assert::assertEmpty($results);
 			return;
