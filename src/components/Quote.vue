@@ -13,7 +13,7 @@ import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconClose from 'vue-material-design-icons/Close.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
@@ -47,7 +47,7 @@ const {
 	actorDisplayNameWithFallback,
 } = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
 
-const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value].filter((value) => value).join(' '))
+const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
 const hash = computed(() => '#message_' + message.id)
 
@@ -165,16 +165,17 @@ function handleQuoteClick() {
 				class="quote__main__author"
 				role="heading"
 				aria-level="4">
-				<AvatarWrapper :id="message.actorId"
+				<IconPencilOutline v-if="editMessage" :size="16" />
+				<AvatarWrapper v-else
+					:id="message.actorId"
 					:token="message.token"
 					:name="actorDisplayName"
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				<span class="quote__main__author-info">{{ actorInfo }}</span>
-				<div v-if="editMessage" class="quote__main__edit-hint">
-					<IconPencil :size="16" />
-					{{ t('spreed', '(editing)') }}
+				<div v-if="editMessage || lastEditor" class="quote__main__edit-hint">
+					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
 				</div>
 			</div>
 			<!-- File preview -->
@@ -259,9 +260,7 @@ function handleQuoteClick() {
 		}
 
 		&__edit-hint {
-			display: flex;
-			align-items: center;
-			gap: 4px;
+			flex-shrink: 0;
 		}
 	}
 
