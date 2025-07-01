@@ -2734,6 +2734,67 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $results));
 	}
 
+	#[Then('/^user "([^"]*)" sees the following threads in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSeesTheFollowingThreadsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$this->compareThreadsResponse($formData);
+	}
+
+	#[Then('/^user "([^"]*)" creates thread "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userCreatesThreadInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads/' . self::$textToMessageId[$message]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	protected function compareThreadsResponse(?TableNode $formData = null): void {
+		$results = $this->getDataFromResponse($this->response);
+		if ($formData === null) {
+			Assert::assertEmpty($results);
+			return;
+		}
+
+
+		$count = count($formData->getHash());
+		Assert::assertCount($count, $results, 'Result count does not match');
+
+		$expected = array_map(static function (array $result) {
+			foreach (['t.id', 't.lastMessage', 'a.lastReadMessage', 'a.lastMentionMessage', 'a.lastMentionDirect', 'firstMessage', 'lastMessage'] as $field) {
+				if (isset($result[$field])) {
+					if ($result[$field] === '0') {
+						$result[$field] = 0;
+					} elseif ($result[$field] === 'NULL') {
+						$result[$field] = null;
+					} else {
+						$result[$field] = self::$textToMessageId[$result[$field]];
+					}
+				}
+			}
+
+			foreach (['t.numReplies'] as $field) {
+				$result[$field] = (int)$result[$field];
+			}
+			return $result;
+		}, $formData->getHash());
+
+		Assert::assertEquals($expected, array_map(static function ($actual) {
+			$compare = [
+				't.id' => $actual['thread']['id'],
+				't.numReplies' => $actual['thread']['numReplies'],
+				't.lastMessage' => $actual['thread']['lastMessageId'],
+				'a.lastReadMessage' => $actual['attendee']['lastReadMessage'] ?? null,
+				'a.lastMentionMessage' => $actual['attendee']['lastMentionMessage'] ?? null,
+				'a.lastMentionDirect' => $actual['attendee']['lastMentionDirect'] ?? null,
+				'firstMessage' => $actual['first']['id'] ?? null,
+				'lastMessage' => $actual['last']['id'] ?? null,
+			];
+			return $compare;
+		}, $results));
+	}
+
 	#[Then('/^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+)(?: expected cursor "([^"]*)")?$/')]
 	public function userSearchesRooms(string $user, string $search, string $offset, int $limit, string $expectedCursor, ?TableNode $formData = null): void {
 		$searchUrl = '/search/providers/talk-conversations/search?limit=' . $limit;
@@ -3165,7 +3226,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * Parses the JSON answer to get the array of users returned.
+	 * Parses the JSON answer to get the array of data returned.
 	 */
 	protected function getDataFromResponse(ResponseInterface $response): mixed {
 		return $this->getDataFromResponseBody($response->getBody()->getContents());
