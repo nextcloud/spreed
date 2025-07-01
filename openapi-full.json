@@ -20937,7 +20937,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{threadId}": {
             "get": {
-                "operationId": "thread-get-threads",
+                "operationId": "thread-get-thread",
                 "summary": "Get thread info of a single thread",
                 "tags": [
                     "thread"
@@ -21152,7 +21152,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/Thread"
+                                                    "$ref": "#/components/schemas/ThreadInfo"
                                                 }
                                             }
                                         }

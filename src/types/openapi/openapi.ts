@@ -1618,7 +1618,7 @@ export type paths = {
             cookie?: never;
         };
         /** Get thread info of a single thread */
-        get: operations["thread-get-threads"];
+        get: operations["thread-get-thread"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9723,7 +9723,7 @@ export interface operations {
             };
         };
     };
-    "thread-get-threads": {
+    "thread-get-thread": {
         parameters: {
             query?: never;
             header: {
@@ -9799,7 +9799,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Thread"];
+                            data: components["schemas"]["ThreadInfo"];
                         };
                     };
                 };
