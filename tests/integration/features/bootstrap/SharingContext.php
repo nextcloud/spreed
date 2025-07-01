@@ -479,6 +479,15 @@ class SharingContext implements Context {
 				// Fix XML parsing fails
 				$share[$field] = '';
 			}
+
+			if (in_array($field, ['path', 'storage_id'], true)
+				&& preg_match('/Transferred from [^ ]* on (\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2})/', $share[$field], $matches)) {
+				// We have to replace strings like
+				// "Transferred from participant1-displayname on 2025-06-30 12-31-32"
+				// with something neutral that works in tests
+				$share[$field] = str_replace($matches[1], '{{DATE AND TIME}}', $share[$field]);
+			}
+
 			$this->assertFieldIsInReturnedShare($field, $value, $share);
 		}
 	}
