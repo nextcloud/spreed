@@ -7,7 +7,7 @@ import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-// import { getUploader } from '@nextcloud/upload'
+import { getUploader } from '@nextcloud/upload'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 import { getDavClient } from '../services/DavClient.ts'
@@ -400,11 +400,10 @@ const actions = {
 			const fileName = (currentFile.newName || currentFile.name)
 
 			try {
-				throw new Error('@nextcloud/upload is missing Vue 3 migration')
-				// context.commit('markFileAsUploading', { uploadId, index })
-				// const uploader = getUploader()
-				// await uploader.upload(uploadedFile.sharePath, currentFile)
-				// context.commit('markFileAsSuccessUpload', { uploadId, index })
+				context.commit('markFileAsUploading', { uploadId, index })
+				const uploader = getUploader()
+				await uploader.upload(uploadedFile.sharePath, currentFile)
+				context.commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
