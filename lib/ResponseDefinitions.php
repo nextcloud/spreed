@@ -76,6 +76,7 @@ namespace OCA\Talk;
  *     path?: string,
  *     mimetype?: string,
  *     'preview-available'?: 'yes'|'no',
+ *     'hide-download'?: 'yes'|'no',
  *     mtime?: string,
  *     latitude?: string,
  *     longitude?: string,
