@@ -69,6 +69,50 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	])]
 	public function listThreads(int $limit = 25, int $offsetId = 0): DataResponse {
 		$threads = $this->threadService->findByRoom($this->room, $limit, $offsetId);
+		$list = $this->prepareListOfThreads($threads);
+		return new DataResponse($list);
+	}
+
+	/**
+	 * Get thread info of a single thread
+	 *
+	 * @param int $threadId The thread ID to get the info for
+	 * @psalm-param non-negative-int $threadId
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 *
+	 * 200: Thread info returned
+	 * 404: Thread not found
+	 */
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/threads/{threadId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'threadId' => '[0-9]+',
+	])]
+	public function getThreads(int $threadId): DataResponse {
+		try {
+			$thread = $this->threadService->findByThreadId($threadId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($thread->getRoomId() !== $this->room->getId()) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		$list = $this->prepareListOfThreads([$thread]);
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
+	}
+
+	/**
+	 * @param list<Thread> $threads
+	 * @return list<TalkThreadInfo>
+	 */
+	protected function prepareListOfThreads(array $threads): array {
 		$threadIds = array_map(static fn (Thread $thread) => $thread->getId(), $threads);
 		$attendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $threadIds);
 
@@ -106,7 +150,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			];
 		}
 
-		return new DataResponse($list);
+		return $list;
 	}
 
 	/**
