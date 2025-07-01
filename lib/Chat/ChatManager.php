@@ -400,9 +400,28 @@ class ChatManager {
 		$shouldFlush = $this->notificationManager->defer();
 		try {
 			$this->commentsManager->save($comment);
+			$messageId = (int)$comment->getId();
+			$threadId = (int)$comment->getTopmostParentId();
+			$thread = null;
+
+			if ($threadId) {
+				try {
+					$thread = $this->threadService->findByThreadId($threadId);
+				} catch (DoesNotExistException) {
+				}
+			}
 
 			if ($participant instanceof Participant) {
-				$this->participantService->updateLastReadMessage($participant, (int)$comment->getId());
+				$this->participantService->updateLastReadMessage($participant, $messageId);
+
+				if ($thread !== null) {
+					$this->threadService->addAttendeeToThread(
+						$participant->getAttendee(),
+						$thread,
+					);
+
+					$this->threadService->updateLastMessageInfoAfterReply($thread, $messageId);
+				}
 			}
 
 			// Update last_message

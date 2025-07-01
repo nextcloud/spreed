@@ -82,7 +82,7 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function addAttendeeToThread(Attendee $attendee, Thread $thread): void {
+	public function addAttendeeToThread(Attendee $attendee, Thread $thread): ThreadAttendee {
 		$threadAttendee = new ThreadAttendee();
 		$threadAttendee->setThreadId($thread->getId());
 		$threadAttendee->setRoomId($thread->getRoomId());
@@ -93,6 +93,12 @@ class ThreadService {
 		$threadAttendee->setNotificationLevel($attendee->getNotificationLevel());
 		$threadAttendee->setReadPrivacy($attendee->getReadPrivacy());
 
+		// We only copy the read marker for now.
+		// If we copied the last mention and direct ids as well, all threads
+		// created would be marked as unread with a mention,
+		// when the conversation had an unread mention.
+		$threadAttendee->setLastReadMessage($attendee->getLastReadMessage());
+
 		try {
 			$this->threadAttendeeMapper->insert($threadAttendee);
 		} catch (Exception $e) {
@@ -100,6 +106,34 @@ class ThreadService {
 				throw $e;
 			}
 		}
+
+		return $threadAttendee;
+	}
+
+	/**
+	 * Used e.g. when a user or group is removed from a conversation
+	 * @param list<int> $attendeeIds
+	 */
+	public function removeThreadAttendeesByAttendeeIds(array $attendeeIds): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->delete('talk_thread_attendees')
+			->where($query->expr()->in(
+				'attendee_id',
+				$query->createNamedParameter($attendeeIds, IQueryBuilder::PARAM_INT_ARRAY)
+			));
+		$query->executeStatement();
+	}
+
+	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_threads')
+			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
+			->set('last_message_id', $query->createNamedParameter($lastMessageId))
+			->where($query->expr()->eq('id', $query->createNamedParameter($thread->getId())));
+		$query->executeStatement();
+
+		$thread->setNumReplies($thread->getNumReplies() + 1);
+		$thread->setLastMessageId($lastMessageId);
 	}
 
 	public function deleteByRoom(Room $room): void {
@@ -134,8 +168,7 @@ class ThreadService {
 			->where($query->expr()->in(
 				'id',
 				$query->createNamedParameter($potentialThreadIds, IQueryBuilder::PARAM_INT_ARRAY),
-				IQueryBuilder::PARAM_INT_ARRAY)
-			);
+			));
 
 		$ids = [];
 

@@ -49,7 +49,7 @@ class ThreadAttendeeMapper extends QBMapper {
 				$query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT,
 			))
-			->where($query->expr()->in(
+			->andWhere($query->expr()->in(
 				'thread_id',
 				$query->createNamedParameter($threadIds, IQueryBuilder::PARAM_INT_ARRAY),
 				IQueryBuilder::PARAM_INT_ARRAY,

@@ -1610,6 +1610,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{threadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get thread info of a single thread */
+        get: operations["thread-get-thread"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}": {
         parameters: {
             query?: never;
@@ -10244,6 +10261,56 @@ export interface operations {
             };
         };
     };
+    "thread-get-thread": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The thread ID to get the info for */
+                threadId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thread info returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ThreadInfo"];
+                        };
+                    };
+                };
+            };
+            /** @description Thread not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "thread";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "thread-make-thread": {
         parameters: {
             query?: never;
@@ -10270,7 +10337,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Thread"];
+                            data: components["schemas"]["ThreadInfo"];
                         };
                     };
                 };

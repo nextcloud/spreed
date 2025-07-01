@@ -15,6 +15,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Thread;
+use OCA\Talk\Model\ThreadAttendee;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
@@ -31,7 +32,6 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type TalkThread from ResponseDefinitions
  * @psalm-import-type TalkThreadInfo from ResponseDefinitions
  */
 class ThreadController extends AEnvironmentAwareOCSController {
@@ -69,8 +69,55 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	])]
 	public function listThreads(int $limit = 25, int $offsetId = 0): DataResponse {
 		$threads = $this->threadService->findByRoom($this->room, $limit, $offsetId);
+		$list = $this->prepareListOfThreads($threads);
+		return new DataResponse($list);
+	}
+
+	/**
+	 * Get thread info of a single thread
+	 *
+	 * @param int $threadId The thread ID to get the info for
+	 * @psalm-param non-negative-int $threadId
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 *
+	 * 200: Thread info returned
+	 * 404: Thread not found
+	 */
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/threads/{threadId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'threadId' => '[0-9]+',
+	])]
+	public function getThread(int $threadId): DataResponse {
+		try {
+			$thread = $this->threadService->findByThreadId($threadId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($thread->getRoomId() !== $this->room->getId()) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		$list = $this->prepareListOfThreads([$thread]);
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
+	}
+
+	/**
+	 * @param list<Thread> $threads
+	 * @param ?list<ThreadAttendee> $attendees
+	 * @return list<TalkThreadInfo>
+	 */
+	protected function prepareListOfThreads(array $threads, ?array $attendees = null): array {
 		$threadIds = array_map(static fn (Thread $thread) => $thread->getId(), $threads);
-		$attendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $threadIds);
+		if ($attendees === null) {
+			$attendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $threadIds);
+		}
 
 		$messageIds = [];
 		foreach ($threads as $thread) {
@@ -106,7 +153,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			];
 		}
 
-		return new DataResponse($list);
+		return $list;
 	}
 
 	/**
@@ -114,7 +161,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId The message to create a thread for (Doesn't have to be the root)
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, TalkThread, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'top-most'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'top-most'}, array{}>
 	 *
 	 * 200: Thread successfully created
 	 * 400: Root message is a system message and therefor not supported
@@ -148,8 +195,13 @@ class ThreadController extends AEnvironmentAwareOCSController {
 
 		try {
 			$thread = $this->threadService->findByThreadId($threadId);
-			$this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
-			return new DataResponse($thread->jsonSerialize(), Http::STATUS_OK);
+			$threadAttendee = $this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
+			$attendees = [$thread->getId() => $threadAttendee];
+
+			$list = $this->prepareListOfThreads([$thread], $attendees);
+			/** @var TalkThreadInfo $threadInfo */
+			$threadInfo = array_shift($list);
+			return new DataResponse($threadInfo);
 		} catch (DoesNotExistException) {
 		}
 
@@ -167,7 +219,12 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			true
 		);
 
-		$this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
-		return new DataResponse($thread->jsonSerialize(), Http::STATUS_OK);
+		$threadAttendee = $this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
+		$attendees = [$thread->getId() => $threadAttendee];
+
+		$list = $this->prepareListOfThreads([$thread], $attendees);
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
 	}
 }

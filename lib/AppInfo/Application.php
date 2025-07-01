@@ -97,6 +97,7 @@ use OCA\Talk\Listener\GroupMembershipListener;
 use OCA\Talk\Listener\NoteToSelfListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\SampleConversationsListener;
+use OCA\Talk\Listener\ThreadListener;
 use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Maps\MapsPluginLoader;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
@@ -340,6 +341,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeAttendeeRemovedEvent::class, SignalingListener::class);
 		$context->registerEventListener(GuestJoinedRoomEvent::class, SignalingListener::class);
 		$context->registerEventListener(UserJoinedRoomEvent::class, SignalingListener::class);
+
+		// Threads listeners
+		$context->registerEventListener(AttendeesRemovedEvent::class, ThreadListener::class);
 
 		// Video verification
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);
