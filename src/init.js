@@ -121,4 +121,23 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 	BrowserStorage.setItem('localStorageMigrated', 'done')
 }
 
-migrateDirectLocalStorageToNextcloudBrowserStorage()
+/**
+ *
+ */
+function cleanOutdatedBrowserStorageKeys() {
+	const deprecatedKeys = [
+		'showMediaSettings_', // Migration from conversation level to Talk level settings
+		'devicesPreferred', // Migration to audioInputDevicePreferred|videoInputDevicePreferred
+	].map((key) => BrowserStorage.scopeKey(key)) // FIXME upstream: this is a private method
+
+	Object.keys(localStorage).forEach((key) => {
+		if (deprecatedKeys.some((deprecatedKey) => key.startsWith(deprecatedKey))) {
+			localStorage.removeItem(key)
+		}
+	})
+}
+
+window.requestIdleCallback(() => {
+	migrateDirectLocalStorageToNextcloudBrowserStorage()
+	cleanOutdatedBrowserStorageKeys()
+})

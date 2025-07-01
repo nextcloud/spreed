@@ -6,7 +6,9 @@
 <template>
 	<div class="media-devices-checker">
 		<IconVolumeHigh class="media-devices-checker__icon" :size="16" />
-		<NcButton variant="secondary" @click="playTestSound">
+		<NcButton :disabled="disabled"
+			variant="secondary"
+			@click="playTestSound">
 			{{ buttonLabel }}
 		</NcButton>
 		<div v-if="isPlayingTestSound" class="equalizer">
@@ -31,6 +33,13 @@ export default {
 	components: {
 		IconVolumeHigh,
 		NcButton,
+	},
+
+	props: {
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
