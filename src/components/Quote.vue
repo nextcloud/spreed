@@ -4,24 +4,23 @@
 -->
 
 <script setup lang="ts">
-import type { Component } from 'vue'
 import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed, toRef } from 'vue'
+import { generateUrl } from '@nextcloud/router'
+import { computed, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichText from '@nextcloud/vue/components/NcRichText'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
-import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
 
@@ -40,7 +39,7 @@ const chatExtrasStore = useChatExtrasStore()
 
 const {
 	isFileShare,
-	isFileShareWithoutCaption,
+	isObjectShare,
 	remoteServer,
 	lastEditor,
 	actorDisplayName,
@@ -55,29 +54,25 @@ const component = computed(() => canCancel ? { tag: 'div', link: undefined } : {
 
 const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 
-const richParameters = computed(() => {
-	const richParameters: Record<string, { component: Component, props: unknown }> = {}
-	Object.keys(message.messageParameters).forEach((p: string) => {
-		const type = message.messageParameters[p].type
-		if (type === 'file') {
-			richParameters[p] = {
-				component: FilePreview,
-				props: {
-					token: message.token,
-					smallPreview: true,
-					rowLayout: !message.messageParameters[p].mimetype!.startsWith('image/'),
-					file: message.messageParameters[p],
-				},
-			}
-		} else {
-			richParameters[p] = {
-				component: DefaultParameter,
-				props: message.messageParameters[p],
-			}
+const filePreviewLoading = ref(true)
+const filePreviewFailed = ref(false)
+const filePreview = computed(() => {
+	if (!isExistingMessage(message) || !isFileShare || filePreviewFailed.value) {
+		return undefined
+	}
+
+	const fileData = Object.values(message.messageParameters).find((param) => param.type === 'file' && param['preview-available'] === 'yes')
+	if (fileData) {
+		return {
+			alt: fileData.name,
+			src: generateUrl('/core/preview?fileId={fileId}&x=32&y=32&a=1', { fileId: fileData.id }),
 		}
-	})
-	return richParameters
+	} else {
+		return undefined
+	}
 })
+
+const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
 
 /**
  * This is a simplified version of the last chat message.
@@ -160,6 +155,24 @@ function handleQuoteClick() {
 		class="quote"
 		:class="{ 'quote-own-message': isOwnMessageQuoted }"
 		@click="handleQuoteClick">
+		<!-- File preview -->
+		<span v-if="isFileShare || isObjectShare" class="quote__preview">
+			<img
+				v-if="filePreview"
+				class="quote__preview-image"
+				:alt="filePreview.alt"
+				:src="filePreview.src"
+				@load="filePreviewLoading = false"
+				@error="filePreviewLoading = false; filePreviewFailed = true">
+			<component
+				:is="simpleQuotedMessageIcon"
+				v-else-if="simpleQuotedMessageIcon"
+				class="quote__preview-image"
+				fill-color="var(--color-text-maxcontrast)"
+				:size="34" />
+			<NcLoadingIcon v-if="filePreview && filePreviewLoading" class="quote__preview--loading" />
+		</span>
+
 		<div class="quote__main">
 			<div v-if="isExistingMessage(message)"
 				class="quote__main__author"
@@ -178,12 +191,8 @@ function handleQuoteClick() {
 					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
 				</div>
 			</div>
-			<!-- File preview -->
-			<NcRichText v-if="isFileShare"
-				text="{file}"
-				:arguments="richParameters" />
 			<!-- Message text -->
-			<blockquote v-if="!isFileShareWithoutCaption" dir="auto" class="quote__main__text">
+			<blockquote dir="auto" class="quote__main__text">
 				{{ shortenedQuoteMessage }}
 			</blockquote>
 		</div>
@@ -230,6 +239,29 @@ function handleQuoteClick() {
 
 	&.quote-own-message::before {
 		background-color: var(--color-primary-element);
+	}
+
+	&__preview {
+		position: relative;
+		flex-shrink: 0;
+		height: 2lh;
+		width: 2lh;
+		overflow: hidden;
+		border-radius: var(--border-radius);
+		background-color: var(--color-background-dark);
+
+		&-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		&--loading {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%
+		}
 	}
 
 	&__main {
