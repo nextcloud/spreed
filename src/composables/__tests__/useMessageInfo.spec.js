@@ -9,7 +9,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.ts'
-import { useMessageInfo } from '../useMessageInfo.js'
+import { useMessageInfo } from '../useMessageInfo.ts'
 
 // Test messages with 'edit-messages' and without 'delete-messages-unlimited' feature
 jest.mock('@nextcloud/capabilities', () => ({
@@ -270,7 +270,7 @@ describe('message actions', () => {
 		// Arrange
 		useStore.mockReturnValue({
 			getters: {
-				conversation: () => null,
+				conversation: () => undefined,
 			},
 		})
 		// Act

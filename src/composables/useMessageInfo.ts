@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { ComputedRef, MaybeRef, Ref } from 'vue'
+import type { ChatMessage, Conversation } from '../types/index.ts'
+
 import { t } from '@nextcloud/l10n'
-import { computed, ref } from 'vue'
+import { computed, toRef } from 'vue'
 import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -15,20 +18,44 @@ import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 import { useConversationInfo } from './useConversationInfo.ts'
 
 /**
+ * Check whether ref's value is not undefined
+ */
+function isDefinedRef<T>(item: Ref<T | undefined>): item is Ref<T> {
+	return item.value !== undefined
+}
+
+type UseMessageInfoReturnType = {
+	isEditable: ComputedRef<boolean>
+	isDeleteable: ComputedRef<boolean>
+	isCurrentUserOwnMessage: ComputedRef<boolean>
+	isBotInOneToOne: ComputedRef<boolean>
+	isObjectShare: ComputedRef<boolean>
+	isConversationModifiable: ComputedRef<boolean>
+	isConversationReadOnly: ComputedRef<boolean>
+	isFileShareWithoutCaption: ComputedRef<boolean>
+	isFileShare: ComputedRef<boolean>
+	hideDownloadOption: ComputedRef<boolean>
+	remoteServer: ComputedRef<string>
+	lastEditor: ComputedRef<string>
+	actorDisplayName: ComputedRef<string>
+	actorDisplayNameWithFallback: ComputedRef<string>
+}
+
+/**
  * Check whether the user can edit the message or not
  *
- * @param {import('vue').Ref} message message object
- * @return {Record<string, import('vue').ComputedRef<boolean>>}
+ * @param item message object or ref
  */
-export function useMessageInfo(message = ref({})) {
+export function useMessageInfo(item: MaybeRef<ChatMessage | undefined> = undefined): UseMessageInfoReturnType {
+	const message = toRef(item)
 	// Get the conversation
 	const store = useStore()
 	const actorStore = useActorStore()
-	const conversation = computed(() => store.getters.conversation(message.value.token))
+	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(message.value?.token))
 	const currentActorId = actorStore.actorId
 	const currentActorType = actorStore.actorType
 	// If the conversation or message is not available, return false
-	if (!conversation.value || !message.value.id) {
+	if (!isDefinedRef(conversation) || !isDefinedRef(message)) {
 		return {
 			isEditable: computed(() => false),
 			isDeleteable: computed(() => false),
@@ -77,7 +104,7 @@ export function useMessageInfo(message = ref({})) {
 
 	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some((key) => key.startsWith('file')))
 
-	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters)).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
+	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters) as ChatMessage['messageParameters']).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
 
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
@@ -106,7 +133,7 @@ export function useMessageInfo(message = ref({})) {
 			&& message.value.lastEditActorType === 'deleted_users') {
 			return t('spreed', '(edited by a deleted user)')
 		} else {
-			return t('spreed', '(edited by {moderator})', { moderator: message.value.lastEditActorDisplayName })
+			return t('spreed', '(edited by {moderator})', { moderator: message.value.lastEditActorDisplayName! })
 		}
 	})
 
@@ -127,6 +154,7 @@ export function useMessageInfo(message = ref({})) {
 		isEditable,
 		isDeleteable,
 		isCurrentUserOwnMessage,
+		isBotInOneToOne,
 		isObjectShare,
 		isConversationModifiable,
 		isConversationReadOnly,

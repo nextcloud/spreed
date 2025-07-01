@@ -3,10 +3,142 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<docs>
-This component is intended to be used both in `NewMessage` and `Message`
-components.
-</docs>
+<script setup lang="ts">
+import type { Component } from 'vue'
+import type { ChatMessage } from '../types/index.ts'
+
+import { t } from '@nextcloud/l10n'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
+import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
+import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import { useMessageInfo } from '../composables/useMessageInfo.ts'
+import { AVATAR } from '../constants.ts'
+import { EventBus } from '../services/EventBus.ts'
+import { useActorStore } from '../stores/actor.ts'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
+
+const { message, canCancel = false, editMessage = false } = defineProps<{
+	/** The quoted message object */
+	message: ChatMessage
+	/** Whether to show remove / cancel action */
+	canCancel?: boolean
+	/** Whether to show edit actions */
+	editMessage?: boolean
+}>()
+
+const route = useRoute()
+const actorStore = useActorStore()
+const chatExtrasStore = useChatExtrasStore()
+
+const {
+	isFileShare,
+	isFileShareWithoutCaption,
+	remoteServer,
+	lastEditor,
+	actorDisplayName,
+	actorDisplayNameWithFallback,
+} = useMessageInfo(message)
+
+const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value].filter((value) => value).join(' '))
+
+const hash = computed(() => '#message_' + message.id)
+
+const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
+
+const isOwnMessageQuoted = computed(() => actorStore.checkIfSelfIsActor(message))
+
+const richParameters = computed(() => {
+	const richParameters: Record<string, { component: Component, props: unknown }> = {}
+	Object.keys(message.messageParameters).forEach((p: string) => {
+		const type = message.messageParameters[p].type
+		if (type === 'file') {
+			richParameters[p] = {
+				component: FilePreview,
+				props: {
+					token: message.token,
+					smallPreview: true,
+					rowLayout: !message.messageParameters[p].mimetype!.startsWith('image/'),
+					file: message.messageParameters[p],
+				},
+			}
+		} else {
+			richParameters[p] = {
+				component: DefaultParameter,
+				props: message.messageParameters[p],
+			}
+		}
+	})
+	return richParameters
+})
+
+/**
+ * This is a simplified version of the last chat message.
+ * Parameters are parsed without markup (just replaced with the name),
+ * e.g. no avatars on mentions.
+ *
+ * @return A simple message to show below the conversation name
+ */
+const simpleQuotedMessage = computed(() => {
+	if (!message.id) {
+		return t('spreed', 'The message has expired or has been deleted')
+	}
+
+	if (!Object.keys(message.messageParameters).length) {
+		return message.message
+	}
+
+	const params = message.messageParameters
+	let subtitle = message.message
+
+	// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
+	Object.keys(params).forEach((parameterKey) => {
+		subtitle = subtitle.replaceAll('{' + parameterKey + '}', params[parameterKey].name)
+	})
+
+	return subtitle
+})
+
+/**
+ * Shorten the message to 250 characters and append three dots to the end of the
+ * string. This is needed because on very wide screens, if the 250 characters
+ * fit, the css rules won't ellipsize the text-overflow.
+ */
+const shortenedQuoteMessage = computed(() => {
+	return simpleQuotedMessage.value.length >= 250 ? simpleQuotedMessage.value.substring(0, 250) + '…' : simpleQuotedMessage.value
+})
+
+/**
+ * Abort replying / editing process
+ */
+function handleAbort() {
+	if (editMessage) {
+		chatExtrasStore.removeMessageIdToEdit(message.token)
+	} else {
+		chatExtrasStore.removeParentIdToReply(message.token)
+	}
+	EventBus.emit('focus-chat-input')
+}
+
+/**
+ * Focus quoted message
+ */
+function handleQuoteClick() {
+	if (canCancel) {
+		return
+	}
+
+	if (route.hash === hash.value) {
+		// Already on this message route, just trigger highlight
+		EventBus.emit('focus-message', message.id)
+	}
+}
+</script>
 
 <template>
 	<component :is="component.tag"
@@ -27,7 +159,7 @@ components.
 					disable-menu />
 				<span class="quote__main__author-info">{{ actorInfo }}</span>
 				<div v-if="editMessage" class="quote__main__edit-hint">
-					<PencilIcon :size="20" />
+					<IconPencil :size="16" />
 					{{ t('spreed', '(editing)') }}
 				</div>
 			</div>
@@ -44,198 +176,15 @@ components.
 		<NcButton v-if="canCancel"
 			class="quote__close"
 			variant="tertiary"
-			:title="cancelQuoteLabel"
-			:aria-label="cancelQuoteLabel"
+			:title="t('spreed', 'Cancel quote')"
+			:aria-label="t('spreed', 'Cancel quote')"
 			@click="handleAbort">
 			<template #icon>
-				<Close :size="20" />
+				<IconClose :size="20" />
 			</template>
 		</NcButton>
 	</component>
 </template>
-
-<script>
-import { t } from '@nextcloud/l10n'
-import { computed, toRefs } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichText from '@nextcloud/vue/components/NcRichText'
-import Close from 'vue-material-design-icons/Close.vue'
-import PencilIcon from 'vue-material-design-icons/Pencil.vue'
-import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
-import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import { useMessageInfo } from '../composables/useMessageInfo.js'
-import { ATTENDEE, AVATAR } from '../constants.ts'
-import { EventBus } from '../services/EventBus.ts'
-import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
-
-export default {
-	name: 'Quote',
-
-	components: {
-		AvatarWrapper,
-		NcButton,
-		NcRichText,
-		// Icons
-		Close,
-		PencilIcon,
-	},
-
-	props: {
-		// The quoted message object
-		message: {
-			type: Object,
-			required: true,
-		},
-
-		// Whether to show remove / cancel action
-		canCancel: {
-			type: Boolean,
-			default: false,
-		},
-
-		// Whether to show edit actions
-		editMessage: {
-			type: Boolean,
-			default: false,
-		},
-	},
-
-	setup(props) {
-		const { message } = toRefs(props)
-		const chatExtrasStore = useChatExtrasStore()
-		const {
-			isFileShare,
-			isFileShareWithoutCaption,
-			remoteServer,
-			lastEditor,
-			actorDisplayName,
-			actorDisplayNameWithFallback,
-		} = useMessageInfo(message)
-
-		const actorInfo = computed(() => {
-			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
-				.filter((value) => value).join(' ')
-		})
-
-		return {
-			AVATAR,
-			chatExtrasStore,
-			isFileShare,
-			isFileShareWithoutCaption,
-			actorDisplayName,
-			actorInfo,
-			actorStore: useActorStore(),
-		}
-	},
-
-	computed: {
-		component() {
-			return this.canCancel
-				? { tag: 'div', link: undefined }
-				: { tag: 'router-link', link: { hash: this.hash } }
-		},
-
-		isOwnMessageQuoted() {
-			return this.actorStore.checkIfSelfIsActor(this.message)
-		},
-
-		richParameters() {
-			const richParameters = {}
-			Object.keys(this.message.messageParameters).forEach(function(p) {
-				const type = this.message.messageParameters[p].type
-				if (type === 'file') {
-					richParameters[p] = {
-						component: FilePreview,
-						props: {
-							token: this.message.token,
-							smallPreview: true,
-							rowLayout: !this.message.messageParameters[p].mimetype.startsWith('image/'),
-							file: this.message.messageParameters[p],
-						},
-					}
-				} else {
-					richParameters[p] = {
-						component: DefaultParameter,
-						props: this.message.messageParameters[p],
-					}
-				}
-			}.bind(this))
-			return richParameters
-		},
-
-		/**
-		 * This is a simplified version of the last chat message.
-		 * Parameters are parsed without markup (just replaced with the name),
-		 * e.g. no avatars on mentions.
-		 *
-		 * @return {string} A simple message to show below the conversation name
-		 */
-		simpleQuotedMessage() {
-			if (!this.message.id) {
-				return t('spreed', 'The message has expired or has been deleted')
-			}
-
-			if (!Object.keys(this.message.messageParameters).length) {
-				return this.message.message
-			}
-
-			const params = this.message.messageParameters
-			let subtitle = this.message.message
-
-			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-			Object.keys(params).forEach((parameterKey) => {
-				subtitle = subtitle.replaceAll('{' + parameterKey + '}', params[parameterKey].name)
-			})
-
-			return subtitle
-		},
-
-		/**
-		 * Shorten the message to 250 characters and append three dots to the end of the
-		 * string. This is needed because on very wide screens, if the 250 characters
-		 * fit, the css rules won't ellipsize the text-overflow.
-		 */
-		shortenedQuoteMessage() {
-			return this.simpleQuotedMessage.length >= 250
-				? this.simpleQuotedMessage.substring(0, 250) + '…'
-				: this.simpleQuotedMessage
-		},
-
-		cancelQuoteLabel() {
-			return t('spreed', 'Cancel quote')
-		},
-
-		hash() {
-			return '#message_' + this.message.id
-		},
-	},
-
-	methods: {
-		t,
-		handleAbort() {
-			if (this.editMessage) {
-				this.chatExtrasStore.removeMessageIdToEdit(this.message.token)
-			} else {
-				this.chatExtrasStore.removeParentIdToReply(this.message.token)
-			}
-			EventBus.emit('focus-chat-input')
-		},
-
-		handleQuoteClick() {
-			if (this.canCancel) {
-				return
-			}
-
-			if (this.$route.hash === this.hash) {
-				// Already on this message route, just trigger highlight
-				EventBus.emit('focus-message', this.message.id)
-			}
-		},
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 @import '../assets/variables';
