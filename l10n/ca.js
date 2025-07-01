@@ -1900,6 +1900,7 @@ OC.L10N.register(
     "The recording failed. Please contact your administrator." : "La gravació ha fallat. Poseu-vos en contacte amb el vostre administrador.",
     "Location has been posted to {conversation}" : "La ubicació s'ha publicat a {conversation}",
     "An error occurred while posting location to conversation" : "S'ha produït un error en publicar la ubicació a la conversa",
+    "Share to a conversation" : "Comparteix en una conversa",
     "Share to conversation" : "Comparteix a la conversa",
     "In conversation" : "En conversa",
     "Search in conversation: {conversation}" : "Cerca a la conversa: {conversation}",
