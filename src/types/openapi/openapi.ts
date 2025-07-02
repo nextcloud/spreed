@@ -394,200 +394,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Receives chat messages from the given room
-         * @description - Receiving the history ($lookIntoFuture=0): The next $limit messages after $lastKnownMessageId will be returned. The new $lastKnownMessageId for the follow up query is available as `X-Chat-Last-Given` header.
-         *     - Looking into the future ($lookIntoFuture=1): If there are currently no messages the response will not be sent immediately. Instead, HTTP connection will be kept open waiting for new messages to arrive and, when they do, then the response will be sent. The connection will not be kept open indefinitely, though; the number of seconds to wait for new messages to arrive can be set using the timeout parameter; the default timeout is 30 seconds, maximum timeout is 60 seconds. If the timeout ends a successful but empty response will be sent. If messages have been returned (status=200) the new $lastKnownMessageId for the follow up query is available as `X-Chat-Last-Given` header.
-         *     The limit specifies the maximum number of messages that will be returned, although the actual number of returned messages could be lower if some messages are not visible to the participant. Note that if none of the messages are visible to the participant the returned number of messages will be 0, yet the status will still be 200. Also note that `X-Chat-Last-Given` may reference a message not visible and thus not returned, but it should be used nevertheless as the $lastKnownMessageId for the follow-up query.
-         */
-        get: operations["chat-receive-messages"];
-        put?: never;
-        /**
-         * Sends a new chat message to the given room
-         * @description The author and timestamp are automatically set to the current user/guest and time.
-         */
-        post: operations["chat-send-message"];
-        /** Clear the chat history */
-        delete: operations["chat-clear-history"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/summarize": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Summarize the next bunch of chat messages from a given offset
-         * @description Required capability: `chat-summary-api`
-         */
-        post: operations["chat-summarize-chat"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Edit a chat message */
-        put: operations["chat-edit-message"];
-        post?: never;
-        /** Delete a chat message */
-        delete: operations["chat-delete-message"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/context": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the context of a message */
-        get: operations["chat-get-message-context"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/reminder": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the reminder for a chat message */
-        get: operations["chat-get-reminder"];
-        put?: never;
-        /** Set a reminder for a chat message */
-        post: operations["chat-set-reminder"];
-        /** Delete a chat reminder */
-        delete: operations["chat-delete-reminder"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/upcoming-reminders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get all upcoming reminders
-         * @description Required capability: `upcoming-reminders`
-         */
-        get: operations["chat-get-upcoming-reminders"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the read marker to a specific message */
-        post: operations["chat-set-read-marker"];
-        /** Mark a chat as unread */
-        delete: operations["chat-mark-unread"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/mentions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Search for mentions */
-        get: operations["chat-mentions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/share": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get objects that are shared in the room */
-        get: operations["chat-get-objects-shared-in-room"];
-        put?: never;
-        /**
-         * Sends a rich-object to the given room
-         * @description The author and timestamp are automatically set to the current user/guest and time.
-         */
-        post: operations["chat-share-object-to-chat"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/share/overview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get objects that are shared in the room overview */
-        get: operations["chat-get-objects-shared-in-room-overview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
         parameters: {
             query?: never;
@@ -1588,6 +1394,200 @@ export type paths = {
         post: operations["temp_avatar-post-avatar"];
         /** Delete your avatar as a user */
         delete: operations["temp_avatar-delete-avatar"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Receives chat messages from the given room
+         * @description - Receiving the history ($lookIntoFuture=0): The next $limit messages after $lastKnownMessageId will be returned. The new $lastKnownMessageId for the follow up query is available as `X-Chat-Last-Given` header.
+         *     - Looking into the future ($lookIntoFuture=1): If there are currently no messages the response will not be sent immediately. Instead, HTTP connection will be kept open waiting for new messages to arrive and, when they do, then the response will be sent. The connection will not be kept open indefinitely, though; the number of seconds to wait for new messages to arrive can be set using the timeout parameter; the default timeout is 30 seconds, maximum timeout is 60 seconds. If the timeout ends a successful but empty response will be sent. If messages have been returned (status=200) the new $lastKnownMessageId for the follow up query is available as `X-Chat-Last-Given` header.
+         *     The limit specifies the maximum number of messages that will be returned, although the actual number of returned messages could be lower if some messages are not visible to the participant. Note that if none of the messages are visible to the participant the returned number of messages will be 0, yet the status will still be 200. Also note that `X-Chat-Last-Given` may reference a message not visible and thus not returned, but it should be used nevertheless as the $lastKnownMessageId for the follow-up query.
+         */
+        get: operations["chat-receive-messages"];
+        put?: never;
+        /**
+         * Sends a new chat message to the given room
+         * @description The author and timestamp are automatically set to the current user/guest and time.
+         */
+        post: operations["chat-send-message"];
+        /** Clear the chat history */
+        delete: operations["chat-clear-history"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get objects that are shared in the room */
+        get: operations["chat-get-objects-shared-in-room"];
+        put?: never;
+        /**
+         * Sends a rich-object to the given room
+         * @description The author and timestamp are automatically set to the current user/guest and time.
+         */
+        post: operations["chat-share-object-to-chat"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/summarize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Summarize the next bunch of chat messages from a given offset
+         * @description Required capability: `chat-summary-api`
+         */
+        post: operations["chat-summarize-chat"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the context of a message */
+        get: operations["chat-get-message-context"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Edit a chat message */
+        put: operations["chat-edit-message"];
+        post?: never;
+        /** Delete a chat message */
+        delete: operations["chat-delete-message"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/reminder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the reminder for a chat message */
+        get: operations["chat-get-reminder"];
+        put?: never;
+        /** Set a reminder for a chat message */
+        post: operations["chat-set-reminder"];
+        /** Delete a chat reminder */
+        delete: operations["chat-delete-reminder"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/upcoming-reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all upcoming reminders
+         * @description Required capability: `upcoming-reminders`
+         */
+        get: operations["chat-get-upcoming-reminders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set the read marker to a specific message */
+        post: operations["chat-set-read-marker"];
+        /** Mark a chat as unread */
+        delete: operations["chat-mark-unread"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/share/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get objects that are shared in the room overview */
+        get: operations["chat-get-objects-shared-in-room-overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/mentions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search for mentions */
+        get: operations["chat-mentions"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -4028,1127 +4028,6 @@ export interface operations {
                             data: {
                                 error: string;
                                 message?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-receive-messages": {
-        parameters: {
-            query: {
-                /** @description Polling for new messages (1) or getting the history of the chat (0) */
-                lookIntoFuture: 0 | 1;
-                /** @description Number of chat messages to receive (100 by default, 200 at most) */
-                limit?: number;
-                /** @description The last known message (serves as offset) */
-                lastKnownMessageId?: number;
-                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
-                lastCommonReadId?: number;
-                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
-                timeout?: number;
-                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
-                setReadMarker?: 0 | 1;
-                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
-                includeLastKnown?: 0 | 1;
-                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
-                noStatusUpdate?: 0 | 1;
-                /** @description Set to 0 when notifications should not be marked as read (default 1) */
-                markNotificationsAsRead?: 0 | 1;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Messages returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"][];
-                        };
-                    };
-                };
-            };
-            /** @description No messages */
-            304: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "chat-send-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description the message to send */
-                    message: string;
-                    /**
-                     * @description for guests
-                     * @default
-                     */
-                    actorDisplayName?: string;
-                    /**
-                     * @description for the message to be able to later identify it again
-                     * @default
-                     */
-                    referenceId?: string;
-                    /**
-                     * Format: int64
-                     * @description Parent id which this message is a reply to
-                     * @default 0
-                     */
-                    replyTo?: number;
-                    /**
-                     * @description If sent silent the chat message will not create any notifications
-                     * @default false
-                     */
-                    silent?: boolean;
-                };
-            };
-        };
-        responses: {
-            /** @description Message sent successfully */
-            201: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Sending message is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Actor not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Mention rate limit exceeded (guests only) */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-clear-history": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description History cleared successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessage"];
-                        };
-                    };
-                };
-            };
-            /** @description History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessage"];
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to clear history */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-summarize-chat": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Offset from where on the summary should be generated
-                     */
-                    fromMessageId: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id). If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** Format: int64 */
-                                taskId: number;
-                                /** Format: int64 */
-                                nextOffset?: number;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description No messages found to summarize */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No AI provider available or summarizing failed */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ai-no-provider" | "ai-error";
-                            };
-                        };
-                    };
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    "chat-edit-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description the message to send */
-                    message: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Message edited successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Editing message is not possible, e.g. when the new message is empty or the message is too old */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to edit message */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Editing this message type is not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-delete-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message deleted successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Deleting message is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to delete message */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Deleting this message type is not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-message-context": {
-        parameters: {
-            query?: {
-                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
-                limit?: number;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description The focused message which should be in the "middle" of the returned context */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message context returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"][];
-                        };
-                    };
-                };
-            };
-            /** @description No messages */
-            304: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "chat-get-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminder returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminder"];
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-set-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Timestamp of the reminder
-                     */
-                    timestamp: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Reminder created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminder"];
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-delete-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminder deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-upcoming-reminders": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminders returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminderUpcoming"][];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-set-read-marker": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description ID if the last read message (Optional only with `chat-read-last` capability)
-                     * @default null
-                     */
-                    lastReadMessage?: number | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Read marker set successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-mark-unread": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Read marker set successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-mentions": {
-        parameters: {
-            query: {
-                /** @description Text to search for */
-                search: string;
-                /** @description Maximum number of results */
-                limit?: number;
-                /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of mention suggestions returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMentionSuggestion"][];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-objects-shared-in-room": {
-        parameters: {
-            query: {
-                /** @description Type of the objects */
-                objectType: string;
-                /** @description ID of the last known message */
-                lastKnownMessageId?: number;
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of shared objects messages returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                [key: string]: components["schemas"]["ChatMessage"];
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-share-object-to-chat": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Type of the object */
-                    objectType: string;
-                    /** @description ID of the object */
-                    objectId: string;
-                    /**
-                     * @description Additional metadata
-                     * @default
-                     */
-                    metaData?: string;
-                    /**
-                     * @description Guest name
-                     * @default
-                     */
-                    actorDisplayName?: string;
-                    /**
-                     * @description Reference ID
-                     * @default
-                     */
-                    referenceId?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Object shared successfully */
-            201: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Sharing object is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Actor not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-objects-shared-in-room-overview": {
-        parameters: {
-            query?: {
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of shared objects messages of each type returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                [key: string]: components["schemas"]["ChatMessage"][];
                             };
                         };
                     };
@@ -9683,6 +8562,1127 @@ export interface operations {
                                 /** @enum {string} */
                                 error: "avatar";
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-receive-messages": {
+        parameters: {
+            query: {
+                /** @description Polling for new messages (1) or getting the history of the chat (0) */
+                lookIntoFuture: 0 | 1;
+                /** @description Number of chat messages to receive (100 by default, 200 at most) */
+                limit?: number;
+                /** @description The last known message (serves as offset) */
+                lastKnownMessageId?: number;
+                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
+                lastCommonReadId?: number;
+                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
+                timeout?: number;
+                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
+                setReadMarker?: 0 | 1;
+                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
+                includeLastKnown?: 0 | 1;
+                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
+                noStatusUpdate?: 0 | 1;
+                /** @description Set to 0 when notifications should not be marked as read (default 1) */
+                markNotificationsAsRead?: 0 | 1;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Messages returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"][];
+                        };
+                    };
+                };
+            };
+            /** @description No messages */
+            304: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "chat-send-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                    /**
+                     * @description for guests
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description for the message to be able to later identify it again
+                     * @default
+                     */
+                    referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Parent id which this message is a reply to
+                     * @default 0
+                     */
+                    replyTo?: number;
+                    /**
+                     * @description If sent silent the chat message will not create any notifications
+                     * @default false
+                     */
+                    silent?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Message sent successfully */
+            201: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Sending message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Mention rate limit exceeded (guests only) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-clear-history": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description History cleared successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to clear history */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-objects-shared-in-room": {
+        parameters: {
+            query: {
+                /** @description Type of the objects */
+                objectType: string;
+                /** @description ID of the last known message */
+                lastKnownMessageId?: number;
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of shared objects messages returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["ChatMessage"];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-share-object-to-chat": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Type of the object */
+                    objectType: string;
+                    /** @description ID of the object */
+                    objectId: string;
+                    /**
+                     * @description Additional metadata
+                     * @default
+                     */
+                    metaData?: string;
+                    /**
+                     * @description Guest name
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description Reference ID
+                     * @default
+                     */
+                    referenceId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Object shared successfully */
+            201: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Sharing object is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-summarize-chat": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Offset from where on the summary should be generated
+                     */
+                    fromMessageId: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id). If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** Format: int64 */
+                                taskId: number;
+                                /** Format: int64 */
+                                nextOffset?: number;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No messages found to summarize */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No AI provider available or summarizing failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ai-no-provider" | "ai-error";
+                            };
+                        };
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
+    };
+    "chat-get-message-context": {
+        parameters: {
+            query?: {
+                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
+                limit?: number;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The focused message which should be in the "middle" of the returned context */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message context returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"][];
+                        };
+                    };
+                };
+            };
+            /** @description No messages */
+            304: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "chat-edit-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Message edited successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Editing message is not possible, e.g. when the new message is empty or the message is too old */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to edit message */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Editing this message type is not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-delete-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message deleted successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Deleting message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to delete message */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Deleting this message type is not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminder"];
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-set-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Timestamp of the reminder
+                     */
+                    timestamp: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Reminder created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminder"];
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-delete-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder deleted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-upcoming-reminders": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminders returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminderUpcoming"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-set-read-marker": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID if the last read message (Optional only with `chat-read-last` capability)
+                     * @default null
+                     */
+                    lastReadMessage?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Read marker set successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-mark-unread": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Read marker set successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-objects-shared-in-room-overview": {
+        parameters: {
+            query?: {
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of shared objects messages of each type returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["ChatMessage"][];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-mentions": {
+        parameters: {
+            query: {
+                /** @description Text to search for */
+                search: string;
+                /** @description Maximum number of results */
+                limit?: number;
+                /** @description Include the user statuses */
+                includeStatus?: 0 | 1;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of mention suggestions returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMentionSuggestion"][];
                         };
                     };
                 };
