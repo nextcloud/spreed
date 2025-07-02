@@ -13,8 +13,27 @@
 			<h2 v-if="isDialog"
 				:id="dialogHeaderId"
 				class="media-settings__title nc-dialog-alike-header">
-				{{ t('spreed', 'Media settings') }}
+				{{ t('spreed', 'Check devices') }}
 			</h2>
+			<!-- Recording warning -->
+			<NcNoteCard v-if="showRecordingWarning && !isDeviceCheck && !isInLobby" type="warning">
+				<p v-if="isCurrentlyRecording">
+					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+				</p>
+				<p v-else>
+					<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+				</p>
+				<template v-if="isRecordingConsentRequired">
+					<p>
+						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+					</p>
+					<NcCheckboxRadioSwitch class="checkbox--warning"
+						:model-value="recordingConsentGiven"
+						@update:model-value="setRecordingConsentGiven">
+						{{ t('spreed', 'Give consent to the recording of this call') }}
+					</NcCheckboxRadioSwitch>
+				</template>
+			</NcNoteCard>
 			<div class="media-settings__content" :style="{ 'flex-direction': isMobile ? 'column' : 'row' }">
 				<!-- Preview -->
 				<div class="media-settings__preview">
@@ -153,69 +172,32 @@
 					<SetGuestUsername v-if="isGuest && isDialog"
 						class="media-settings__guest"
 						compact />
+
+					<!-- Moderator options before starting a call-->
+					<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording && !isDeviceCheck && !isInLobby"
+						v-model="isRecordingFromStart"
+						class="checkbox">
+						{{ t('spreed', 'Start recording immediately with the call') }}
+					</NcCheckboxRadioSwitch>
+					<!-- Notify call option-->
+					<NcCheckboxRadioSwitch v-if="showNotifyCallOption && !isDeviceCheck && token && isDialog"
+						v-model="notifyCall"
+						class="checkbox"
+						@update:model-value="setNotifyCall">
+						{{ t('spreed', 'Notify all participants about this call') }}
+					</NcCheckboxRadioSwitch>
 				</div>
 			</div>
-			<template v-if="!isDeviceCheck && !isInLobby">
-				<!-- Moderator options before starting a call-->
-				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-					v-model="isRecordingFromStart"
-					class="checkbox">
-					{{ t('spreed', 'Start recording immediately with the call') }}
-				</NcCheckboxRadioSwitch>
-				<!-- Recording warning -->
-				<NcNoteCard v-if="showRecordingWarning" type="warning">
-					<p v-if="isCurrentlyRecording">
-						<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
-					</p>
-					<p v-else>
-						<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
-					</p>
-					<template v-if="isRecordingConsentRequired">
-						<p>
-							{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
-						</p>
-						<NcCheckboxRadioSwitch class="checkbox--warning"
-							:model-value="recordingConsentGiven"
-							@update:model-value="setRecordingConsentGiven">
-							{{ t('spreed', 'Give consent to the recording of this call') }}
-						</NcCheckboxRadioSwitch>
-					</template>
-				</NcNoteCard>
-			</template>
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
-				<!-- Silent call -->
-				<template v-if="!isDeviceCheck && token && isDialog">
-					<NcActions v-if="showSilentCallOption" force-menu>
-						<NcActionButton v-if="!silentCall"
-							:name="t('spreed', 'Call without notification')"
-							close-after-click
-							@click="setSilentCall(true)">
-							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
-							<template #icon>
-								<IconBellOff :size="16" />
-							</template>
-						</NcActionButton>
-						<NcActionButton v-else
-							:name="t('spreed', 'Normal call')"
-							close-after-click
-							@click="setSilentCall(false)">
-							<template #icon>
-								<IconBell :size="16" />
-							</template>
-							{{ t('spreed', 'The conversation participants will be notified about this call') }}
-						</NcActionButton>
-					</NcActions>
-
-					<!-- Join call -->
-					<CallButton v-if="!isInCall"
-						class="call-button"
-						is-media-settings
-						:is-recording-from-start="isRecordingFromStart"
-						:disabled="disabledCallButton"
-						:recording-consent-given="recordingConsentGiven"
-						:silent-call="silentCall" />
-				</template>
+				<!-- Join call -->
+				<CallButton v-if="!isInCall && !isDeviceCheck && token && isDialog"
+					class="call-button"
+					is-media-settings
+					:is-recording-from-start="isRecordingFromStart"
+					:disabled="disabledCallButton"
+					:recording-consent-given="recordingConsentGiven"
+					:silent-call="!notifyCall" />
 				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
 					{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
 				</NcButton>
@@ -229,11 +211,12 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed, markRaw, ref } from 'vue'
+import { computed, h, markRaw, ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -254,6 +237,7 @@ import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
+import IconBackground from '../../../img/icon-replace-background.svg?raw'
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
@@ -282,6 +266,7 @@ export default {
 		NcActions,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcIconSvgWrapper,
 		NcModal,
 		NcPopover,
 		NcNoteCard,
@@ -348,7 +333,7 @@ export default {
 		const backgroundsTab = {
 			id: 'backgrounds',
 			label: t('spreed', 'Backgrounds'),
-			icon: markRaw(IconCreation),
+			icon: markRaw(() => h(NcIconSvgWrapper, { svg: IconBackground })),
 		}
 		const tabs = computed(() => isVirtualBackgroundAvailable.value ? [devicesTab, backgroundsTab] : [devicesTab])
 
@@ -392,7 +377,7 @@ export default {
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			silentCall: false,
+			notifyCall: true,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
@@ -494,7 +479,7 @@ export default {
 			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
-		showSilentCallOption() {
+		showNotifyCallOption() {
 			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
 		},
 
@@ -590,7 +575,7 @@ export default {
 					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
-				this.silentCall = !!BrowserStorage.getItem('silentCall_' + this.token)
+				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
@@ -732,9 +717,8 @@ export default {
 			this.videoDeviceStateChanged = !this.videoDeviceStateChanged
 		},
 
-		setSilentCall(value) {
-			this.silentCall = value
-			if (value) {
+		setNotifyCall(value) {
+			if (!value) {
 				BrowserStorage.setItem('silentCall_' + this.token, 'true')
 			} else {
 				BrowserStorage.removeItem('silentCall_' + this.token)
