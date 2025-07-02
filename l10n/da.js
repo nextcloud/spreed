@@ -605,7 +605,6 @@ OC.L10N.register(
     "No camera" : "Intet kamera",
     "Your default media state has been saved" : "Din standard medietilstand er blevet gemt",
     "Error while setting default media state" : "Din standard medietilstand er blevet gemt",
-    "Turn off camera and microphone by default when joining a call" : "Sluk kamera og mikrofon som standard, når du deltager i et opkald",
     "The call might be recorded." : "Opkaldes optages måske",
     "Call without notification" : "Ring uden besked",
     "Invalid path selected" : "Ugyldig filsti valgt",
@@ -715,7 +714,7 @@ OC.L10N.register(
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
     "Your personal setting has been saved" : "Din personlige indstilling er blevet gemt",
     "Error while setting personal setting" : "Fejl under angivelse af personlig indstilling",
-    "Choose devices" : "Vælg enheder",
+    "Turn off camera and microphone by default when joining a call" : "Sluk kamera og mikrofon som standard, når du deltager i et opkald",
     "Attachments folder" : "Mappe til vedhæftede filer",
     "Select location for attachments" : "Select location for attachments",
     "Appearance" : "Udseende",
@@ -840,6 +839,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere",
     "Copy conversation link" : "Kopier samtalelink",
     "Filter unread mentions" : "Filtrer ulæste omtaler",
-    "Close" : "Luk"
+    "Close" : "Luk",
+    "Choose devices" : "Vælg enheder"
 },
 "nplurals=2; plural=(n != 1);");

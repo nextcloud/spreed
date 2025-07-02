@@ -469,6 +469,8 @@ OC.L10N.register(
     "None" : "אין",
     "Devices" : "מכשירים",
     "No audio" : "אין שמע",
+    "Calls are not supported in your browser" : "אין תמיכה בשיחות בדפדפן שלך",
+    "Access to microphone was denied" : "הגישה למיקרופון נדחתה",
     "Invalid path selected" : "הנתיב שנבחר שגוי",
     "Upload" : "העלאה",
     "Files" : "קבצים",
@@ -518,9 +520,6 @@ OC.L10N.register(
     "Projects" : "מיזמים",
     "Link to a conversation" : "קישור לדיון",
     "Select conversation" : "בחירת דיון",
-    "Calls are not supported in your browser" : "אין תמיכה בשיחות בדפדפן שלך",
-    "Access to microphone was denied" : "הגישה למיקרופון נדחתה",
-    "Choose devices" : "בחירת התקנים",
     "Attachments folder" : "תיקיית הקבצים המצורפים",
     "Select location for attachments" : "בחירת מיקום לקבצים מצורפים",
     "Appearance" : "מראה",
@@ -610,6 +609,7 @@ OC.L10N.register(
     "Click the button below to join." : "יש ללחוץ על הכפתור שלהלן כדי להצטרף.",
     "{user} invited you to a private conversation" : "הוזמנת לדיון פרטי על ידי {user}",
     "Copy conversation link" : "העתקת קישור דיון",
-    "Close" : "סגירה"
+    "Close" : "סגירה",
+    "Choose devices" : "בחירת התקנים"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");
