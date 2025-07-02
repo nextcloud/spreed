@@ -136,6 +136,32 @@ class ThreadService {
 		$thread->setLastMessageId($lastMessageId);
 	}
 
+	/**
+	 * @param string[] $actorIds
+	 * @param string[] $actorsDirectlyMentioned
+	 */
+	public function markAttendeesAsMentioned(Room $room, string $actorType, array $actorIds, int $messageId, array $actorsDirectlyMentioned): void {
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_thread_attendees')
+			->set('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->andWhere($update->expr()->lt('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		if (!empty($actorsDirectlyMentioned)) {
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_thread_attendees')
+				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
+				->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorsDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)))
+				->andWhere($update->expr()->lt('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
+			$update->executeStatement();
+		}
+	}
+
 	public function deleteByRoom(Room $room): void {
 		$this->threadMapper->deleteByRoomId($room->getId());
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());
