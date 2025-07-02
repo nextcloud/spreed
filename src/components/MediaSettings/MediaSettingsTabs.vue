@@ -89,7 +89,6 @@ function handleTabsAfterClosed() {
 			<NcButton v-for="tab in tabs"
 				:id="getRefId('tab', tab.id)"
 				:key="tab.id"
-				wide
 				role="tab"
 				:variant="isSelected(tab.id) ? 'secondary' : 'tertiary'"
 				:aria-selected="isSelected(tab.id) ? 'true' : 'false'"
