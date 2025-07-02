@@ -450,9 +450,15 @@ class ChatManager {
 			if (!empty($alreadyNotifiedUsers)) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
 				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
+				if ($thread !== null) {
+					$this->threadService->markAttendeesAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
+				}
 			}
 			if (!empty($federatedUsersDirectlyMentioned)) {
 				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int)$comment->getId(), $federatedUsersDirectlyMentioned);
+				if ($thread !== null) {
+					$this->threadService->markAttendeesAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int)$comment->getId(), $federatedUsersDirectlyMentioned);
+				}
 			}
 
 			// User was not mentioned, send a normal notification

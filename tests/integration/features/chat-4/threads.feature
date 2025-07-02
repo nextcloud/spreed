@@ -44,3 +44,27 @@ Feature: chat-4/threads
     And user "participant1" creates thread "Message 1-1" in room "room" with 200
       | t.id      | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage | lastMessage |
       | Message 1 | 1            | Message 1-1   | Message 1         | 0                    | 0                   | Message 1    | Message 1-1 |
+
+  Scenario: Mention marker works ~~before and~~ only after threading for now
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1 @participant2" to room "room" with 201
+    And user "participant2" reads message "Message 1 @participant2" in room "room" with 200
+    When user "participant1" creates thread "Message 1 @participant2" in room "room" with 200
+    When user "participant2" creates thread "Message 1 @participant2" in room "room" with 200
+    Then user "participant1" sees the following threads in room "room" with 200
+      | t.id         | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage     | lastMessage |
+      | Message 1 @participant2 | 0 | 0       | Message 1 @participant2 | 0                    | 0                   | Message 1 @participant2 | NULL |
+    Then user "participant2" sees the following threads in room "room" with 200
+      | t.id         | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage     | lastMessage |
+#      | Message 1 @participant2 | 0 | 0       | Message 1 @participant2 | Message 1 @participant2 | Message 1 @participant2 | Message 1 @participant2 | NULL |
+      | Message 1 @participant2 | 0 | 0       | Message 1 @participant2 | 0                    | 0                   | Message 1 @participant2 | NULL |
+    When user "participant1" sends reply "Message 1-1 @participant2" on message "Message 1 @participant2" to room "room" with 201
+    Then user "participant1" sees the following threads in room "room" with 200
+      | t.id         | t.numReplies | t.lastMessage              | a.lastReadMessage      | a.lastMentionMessage | a.lastMentionDirect       | firstMessage | lastMessage |
+      | Message 1 @participant2 | 1 | Message 1-1 @participant2 | Message 1 @participant2 | 0                    | Message 1-1 @participant2 | Message 1 @participant2 | Message 1-1 @participant2 |
+    Then user "participant2" sees the following threads in room "room" with 200
+      | t.id         | t.numReplies | t.lastMessage | a.lastReadMessage | a.lastMentionMessage | a.lastMentionDirect | firstMessage | lastMessage |
+      | Message 1 @participant2 | 1 | Message 1-1 @participant2 | Message 1 @participant2 | Message 1-1 @participant2 | Message 1-1 @participant2 | Message 1 @participant2 | Message 1-1 @participant2 |
