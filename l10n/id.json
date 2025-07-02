@@ -341,7 +341,6 @@
     "Load more results" : "Muat lebih banyak hasil",
     "Projects" : "Proyek",
     "Search conversations or users" : "Cari percakapan atau pengguna",
-    "Choose devices" : "Pilih perangkat",
     "Attachments folder" : "Folder lampiran",
     "Appearance" : "Tampilan",
     "Privacy" : "Privasi",
@@ -377,6 +376,7 @@
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Close" : "Tutup"
+    "Close" : "Tutup",
+    "Choose devices" : "Pilih perangkat"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

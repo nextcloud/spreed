@@ -343,7 +343,6 @@ OC.L10N.register(
     "Load more results" : "Muat lebih banyak hasil",
     "Projects" : "Proyek",
     "Search conversations or users" : "Cari percakapan atau pengguna",
-    "Choose devices" : "Pilih perangkat",
     "Attachments folder" : "Folder lampiran",
     "Appearance" : "Tampilan",
     "Privacy" : "Privasi",
@@ -379,6 +378,7 @@ OC.L10N.register(
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Close" : "Tutup"
+    "Close" : "Tutup",
+    "Choose devices" : "Pilih perangkat"
 },
 "nplurals=1; plural=0;");
