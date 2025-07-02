@@ -59,6 +59,14 @@ class ThreadService {
 	}
 
 	/**
+	 * @param list<non-negative-int> $threadIds
+	 * @return list<Thread>
+	 */
+	public function findByThreadIds(array $threadIds): array {
+		return $this->threadMapper->findByIds($threadIds);
+	}
+
+	/**
 	 * @param int<1, 50> $limit
 	 * @param non-negative-int $offsetId
 	 * @return list<Thread>

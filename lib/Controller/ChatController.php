@@ -36,6 +36,7 @@ use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Reminder;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -412,7 +413,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function receiveMessages(int $lookIntoFuture,
+	public function receiveMessagesV1(
+		int $lookIntoFuture,
 		int $limit = 100,
 		int $lastKnownMessageId = 0,
 		int $lastCommonReadId = 0,
@@ -420,7 +422,114 @@ class ChatController extends AEnvironmentAwareOCSController {
 		int $setReadMarker = 1,
 		int $includeLastKnown = 0,
 		int $noStatusUpdate = 0,
-		int $markNotificationsAsRead = 1): DataResponse {
+		int $markNotificationsAsRead = 1,
+	): DataResponse {
+		return $this->receiveMessages(
+			$lookIntoFuture,
+			$limit,
+			$lastKnownMessageId,
+			$lastCommonReadId,
+			$timeout,
+			$setReadMarker,
+			$includeLastKnown,
+			$noStatusUpdate,
+			$markNotificationsAsRead,
+		);
+	}
+
+	/**
+	 * Receives chat messages from the given room
+	 *
+	 * - Receiving the history ($lookIntoFuture=0):
+	 *   The next $limit messages after $lastKnownMessageId will be returned.
+	 *   The new $lastKnownMessageId for the follow up query is available as
+	 *   `X-Chat-Last-Given` header.
+	 *
+	 * - Looking into the future ($lookIntoFuture=1):
+	 *   If there are currently no messages the response will not be sent
+	 *   immediately. Instead, HTTP connection will be kept open waiting for new
+	 *   messages to arrive and, when they do, then the response will be sent. The
+	 *   connection will not be kept open indefinitely, though; the number of
+	 *   seconds to wait for new messages to arrive can be set using the timeout
+	 *   parameter; the default timeout is 30 seconds, maximum timeout is 60
+	 *   seconds. If the timeout ends a successful but empty response will be
+	 *   sent.
+	 *   If messages have been returned (status=200) the new $lastKnownMessageId
+	 *   for the follow up query is available as `X-Chat-Last-Given` header.
+	 *
+	 * The limit specifies the maximum number of messages that will be returned,
+	 * although the actual number of returned messages could be lower if some
+	 * messages are not visible to the participant. Note that if none of the
+	 * messages are visible to the participant the returned number of messages
+	 * will be 0, yet the status will still be 200. Also note that
+	 * `X-Chat-Last-Given` may reference a message not visible and thus not
+	 * returned, but it should be used nevertheless as the $lastKnownMessageId
+	 * for the follow-up query.
+	 *
+	 * @param 0|1 $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
+	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
+	 * @param int $lastKnownMessageId The last known message (serves as offset)
+	 * @psalm-param non-negative-int $lastKnownMessageId
+	 * @param int $lastCommonReadId The last known common read message
+	 *                              (so the response is 200 instead of 304 when
+	 *                              it changes even when there are no messages)
+	 * @psalm-param non-negative-int $lastCommonReadId
+	 * @param int<0, 30> $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
+	 * @param 0|1 $setReadMarker Automatically set the last read marker when 1,
+	 *                           if your client does this itself via chat/{token}/read set to 0
+	 * @param 0|1 $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
+	 * @param 0|1 $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
+	 * @param 0|1 $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
+	 *
+	 * 200: Messages returned
+	 * 304: No messages
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion2}/chat/{token}', requirements: [
+		'apiVersion2' => '(v2)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function receiveMessagesV2(
+		int $lookIntoFuture,
+		int $limit = 100,
+		int $lastKnownMessageId = 0,
+		int $lastCommonReadId = 0,
+		int $timeout = 30,
+		int $setReadMarker = 1,
+		int $includeLastKnown = 0,
+		int $noStatusUpdate = 0,
+		int $markNotificationsAsRead = 1,
+	): DataResponse {
+		return $this->receiveMessages(
+			$lookIntoFuture,
+			$limit,
+			$lastKnownMessageId,
+			$lastCommonReadId,
+			$timeout,
+			$setReadMarker,
+			$includeLastKnown,
+			$noStatusUpdate,
+			$markNotificationsAsRead,
+		);
+	}
+
+	protected function receiveMessages(
+		int $apiVersion,
+		int $lookIntoFuture,
+		int $limit = 100,
+		int $lastKnownMessageId = 0,
+		int $lastCommonReadId = 0,
+		int $timeout = 30,
+		int $setReadMarker = 1,
+		int $includeLastKnown = 0,
+		int $noStatusUpdate = 0,
+		int $markNotificationsAsRead = 1,
+	): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -492,7 +601,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown);
 		}
 
-		return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
+		return $this->prepareCommentsAsDataResponse($apiVersion, $comments, $lastCommonReadId);
 	}
 
 	/**
@@ -630,7 +739,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 */
-	protected function prepareCommentsAsDataResponse(array $comments, int $lastCommonReadId = 0): DataResponse {
+	protected function prepareCommentsAsDataResponse(int $apiVersion, array $comments, int $lastCommonReadId = 0): DataResponse {
 		if (empty($comments)) {
 			if ($lastCommonReadId && $this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				$newLastCommonRead = $this->chatManager->getLastCommonReadMessage($this->room);
@@ -647,8 +756,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->sharePreloader->preloadShares($comments);
-		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
-		$threadMap = array_flip($this->threadService->validateThreadIds($potentialThreadIds));
+
+		$threadMap = [];
+		if ($apiVersion === 2) {
+			$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
+			$threads = $this->threadService->findByThreadIds($potentialThreadIds);
+			$threadAttendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $potentialThreadIds);
+			$threadIds = array_map(static fn (Thread $thread) => $thread->getId(), $threads);
+			$threadMap = array_combine($threadIds, $threads);
+		}
 
 		$i = 0;
 		$now = $this->timeFactory->getDateTime();
@@ -798,7 +914,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$commentsHistory = array_reverse($commentsHistory);
 		$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
 
-		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
+		// FIXME
+		return $this->prepareCommentsAsDataResponse(1, array_merge($commentsHistory, $commentsFuture));
 	}
 
 	/**
