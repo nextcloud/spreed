@@ -5,11 +5,8 @@
 
 <template>
 	<div class="username-form">
-		<p v-if="compact">
-			{{ t('spreed', 'Display name (required)') }}
-		</p>
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-else v-html="displayNameLabel" />
+		<h3 v-if="!compact" v-html="displayNameLabel" />
 
 		<NcButton v-if="!isEditingUsername && !compact"
 			@click="toggleEdit">
@@ -19,20 +16,23 @@
 			</template>
 		</NcButton>
 
-		<NcTextField v-else
-			ref="usernameInput"
-			v-model="guestUserName"
-			:placeholder="t('spreed', 'Guest')"
-			class="username-form__input"
-			label-outside
-			:show-trailing-button="!!guestUserName"
-			trailing-button-icon="arrowEnd"
-			:trailing-button-label="t('spreed', 'Save name')"
-			@trailing-button-click="updateDisplayName"
-			@keydown.enter="updateDisplayName"
-			@keydown.esc="toggleEdit" />
+		<div v-else class="username-form__display-name">
+			<IconAccountOutline class="username-form__display-name-icon" :size="20" />
+			<NcTextField
+				ref="usernameInput"
+				v-model="guestUserName"
+				:placeholder="t('spreed', 'Guest')"
+				class="username-form__input"
+				:label="t('spreed', 'Display name (required)')"
+				:show-trailing-button="!!guestUserName"
+				trailing-button-icon="arrowEnd"
+				:trailing-button-label="t('spreed', 'Save name')"
+				@trailing-button-click="updateDisplayName"
+				@keydown.enter="updateDisplayName"
+				@keydown.esc="toggleEdit" />
+		</div>
 
-		<div v-if="!compact" class="login-info">
+		<div class="login-info">
 			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
 			<NcButton
 				class="login-info__button"
@@ -55,6 +55,7 @@ import escapeHtml from 'escape-html'
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -132,19 +133,34 @@ function toggleEdit() {
 
 <style lang="scss" scoped>
 .username-form {
-	margin-block-end: 12px;
-	margin-inline: auto;
+
+	&__display-name {
+		display: flex;
+		gap: var(--default-grid-baseline);
+		flex-direction: row;
+		margin-block-start: 6px; // moved from NcTextField
+
+		&-icon {
+			flex-shrink: 0;
+			margin-inline-end: var(--default-grid-baseline);
+		}
+	}
 }
 
 .login-info {
 	display: flex;
 	align-items: center;
 	gap: calc(var(--default-grid-baseline) * 2);
-	padding-top: calc(var(--default-grid-baseline) * 2);
+	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 2) 0;
+	margin-inline-start: calc(var(--default-grid-baseline) + 20px); // 20px for checkbox alignment
 
 	&__button {
 		flex-shrink: 0;
 	}
+}
+
+:deep(.input-field) {
+	margin-block-start: 0;
 }
 
 </style>

@@ -131,6 +131,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 		justify-content: center;
 		align-items: center;
 		flex-shrink: 0;
+		margin-inline-end: var(--default-grid-baseline);
 	}
 
 	:deep(.v-select.select) {

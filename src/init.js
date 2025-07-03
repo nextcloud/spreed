@@ -129,6 +129,8 @@ function cleanOutdatedBrowserStorageKeys() {
 	const deprecatedKeys = [
 		'showMediaSettings_', // Migration from conversation level to Talk level settings
 		'devicesPreferred', // Migration to audioInputDevicePreferred|videoInputDevicePreferred
+		'audioInputDevicePreferred', // Not needed anymore
+		'videoInputDevicePreferred', // Not needed anymore
 	].map((key) => BrowserStorage.scopeKey(key)) // FIXME upstream: this is a private method
 
 	Object.keys(localStorage).forEach((key) => {

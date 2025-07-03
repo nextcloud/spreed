@@ -16,7 +16,9 @@
 				{{ t('spreed', 'Check devices') }}
 			</h2>
 			<!-- Recording warning -->
-			<NcNoteCard v-if="showRecordingWarning && !isDeviceCheck && !isInLobby" type="warning">
+			<NcNoteCard v-if="showRecordingWarning"
+				:class="{ 'media-settings__recording-warning--mobile': isMobile }"
+				type="warning">
 				<p v-if="isCurrentlyRecording">
 					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
 				</p>
@@ -34,7 +36,7 @@
 					</NcCheckboxRadioSwitch>
 				</template>
 			</NcNoteCard>
-			<div class="media-settings__content" :style="{ 'flex-direction': isMobile ? 'column' : 'row' }">
+			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
 				<!-- Preview -->
 				<div class="media-settings__preview">
 					<video v-show="showVideo"
@@ -134,7 +136,7 @@
 						</NcPopover>
 					</div>
 				</div>
-				<div class="media-settings__content-tabs">
+				<div class="media-settings__settings">
 					<!-- Tab panels -->
 					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
 						<template #tab-panel:devices>
@@ -169,38 +171,36 @@
 					</MediaSettingsTabs>
 
 					<!-- Guest display name setting-->
-					<SetGuestUsername v-if="isGuest && isDialog"
-						class="media-settings__guest"
-						compact />
+					<SetGuestUsername v-if="isGuest" compact />
 
 					<!-- Moderator options before starting a call-->
-					<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording && !isDeviceCheck && !isInLobby"
+					<NcCheckboxRadioSwitch v-if="showStartRecordingOption"
 						v-model="isRecordingFromStart"
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
 					<!-- Notify call option-->
-					<NcCheckboxRadioSwitch v-if="showNotifyCallOption && !isDeviceCheck && token && isDialog"
+					<NcCheckboxRadioSwitch v-if="showNotifyCallOption"
 						v-model="notifyCall"
 						class="checkbox"
 						@update:model-value="setNotifyCall">
 						{{ t('spreed', 'Notify all participants about this call') }}
 					</NcCheckboxRadioSwitch>
+
+					<NcButton v-if="showUpdateChangesButton"
+						class="action-button"
+						@click="closeModalAndApplySettings">
+						{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
+					</NcButton>
+					<!-- Join call -->
+					<CallButton v-else-if="isBeforeJoinCall"
+						class="action-button"
+						is-media-settings
+						:is-recording-from-start="isRecordingFromStart"
+						:disabled="disabledCallButton"
+						:recording-consent-given="recordingConsentGiven"
+						:silent-call="!notifyCall" />
 				</div>
-			</div>
-			<!-- buttons bar at the bottom -->
-			<div class="media-settings__call-buttons">
-				<!-- Join call -->
-				<CallButton v-if="!isInCall && !isDeviceCheck && token && isDialog"
-					class="call-button"
-					is-media-settings
-					:is-recording-from-start="isRecordingFromStart"
-					:disabled="disabledCallButton"
-					:recording-consent-given="recordingConsentGiven"
-					:silent-call="!notifyCall" />
-				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
-					{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
-				</NcButton>
 			</div>
 		</div>
 	</component>
@@ -220,8 +220,6 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconBell from 'vue-material-design-icons/Bell.vue'
-import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
@@ -275,8 +273,6 @@ export default {
 		VolumeIndicator,
 		SetGuestUsername,
 		// Icons
-		IconBell,
-		IconBellOff,
 		IconMicrophoneOff,
 		IconReflectHorizontal,
 		IconVideo,
@@ -475,12 +471,21 @@ export default {
 				|| (this.recordingConsent === CONFIG.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED)
 		},
 
+		isBeforeJoinCall() {
+			return !this.isInCall && !this.isInLobby && !this.isDeviceCheck
+		},
+
 		showRecordingWarning() {
-			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
+			return this.isBeforeJoinCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
 		showNotifyCallOption() {
-			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
+			return !this.hasCall && !this.isPublicShareAuthSidebar
+				&& this.isBeforeJoinCall
+		},
+
+		showStartRecordingOption() {
+			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
 		},
 
 		showUpdateChangesButton() {
@@ -672,10 +677,6 @@ export default {
 
 			if (page === 'device-check') {
 				this.isDeviceCheck = true
-				this.tabContent = 'devices'
-			}
-
-			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
 				this.tabContent = 'devices'
 			}
 		},
@@ -890,18 +891,16 @@ export default {
 <style lang="scss" scoped>
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
-	padding-bottom: 0;
 
 	&__preview {
 		position: relative;
-		margin: 0 auto auto;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border-radius: var(--border-radius-element, var(--border-radius-large));
 		background-color: var(--color-loading-dark);
-		width: 100%;
 		aspect-ratio: 4/3;
+		margin-inline-end: var(--default-grid-baseline);
 	}
 
 	&__preview > &__preview-mirror {
@@ -923,20 +922,20 @@ export default {
 	}
 
 	&__content {
-		display: flex;
+		display: grid;
+		grid-template-columns: 4fr 3fr;
 		gap: calc(var(--default-grid-baseline) * 2);
+
+		&--mobile {
+			grid-template-columns: 1fr;
+			gap: calc(var(--default-grid-baseline) * 4);
+		}
 	}
 
-	&__call-buttons {
+	&__settings {
+		max-width: 450px; // 1/2 large modal width
 		display: flex;
-		z-index: 1;
-		align-items: center;
-		justify-content: center;
-		gap: var(--default-grid-baseline);
-		position: sticky;
-		bottom: 0;
-		background-color: var(--color-main-background);
-		padding: 10px 0 20px;
+		flex-direction: column;
 	}
 
 	&__guest {
@@ -954,6 +953,9 @@ export default {
 		object-fit: contain;
 		max-height: 100%;
 		border-radius: var(--border-radius-element);
+		position: absolute;
+		top: 0;
+		inset-inline-start: 0;
 
 		&--mirrored {
 			transform: none !important;
@@ -972,15 +974,13 @@ export default {
 	}
 }
 
-.call-button {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.action-button {
+	margin-inline: auto;
+	margin-top: var(--default-grid-baseline);
 }
 
 .checkbox {
-	margin: calc(var(--default-grid-baseline) * 2);
-
+	margin-block: var(--default-grid-baseline);
 	&--warning {
 		&:focus-within :deep(.checkbox-radio-switch__label),
 		& :deep(.checkbox-radio-switch__label:hover) {
@@ -989,7 +989,12 @@ export default {
 	}
 }
 
-:deep(.modal-wrapper--normal > .modal-container) {
-	max-width: 500px !important;
+.media-settings__recording-warning--mobile {
+	max-width: 450px;
 }
+
+:deep(.modal-wrapper--large > .modal-container) {
+	width: unset;
+}
+
 </style>
