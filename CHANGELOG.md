@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.8 – 2025-07-03
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Remove items from the shared items list when a message is deleted
+  [#15222](https://github.com/nextcloud/spreed/issues/15222)
+- fix(chat): Allow deleting shared call recordings
+  [#15241](https://github.com/nextcloud/spreed/issues/15241)
+- fix(federation): Fix sending invites from conversations without an owner
+  [#15353](https://github.com/nextcloud/spreed/issues/15353)
+- fix(settings): Do not break when settings has an incomplete server URL
+  [#15452](https://github.com/nextcloud/spreed/issues/15452)
+
 ## 20.1.7 – 2025-05-22
 ### Changed
 - Update translations
