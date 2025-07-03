@@ -31,7 +31,6 @@
 			</div>
 		</div>
 		<MediaSettings :is-dialog="false" />
-		<SetGuestUsername v-if="currentUserIsGuest" class="guest-info" />
 	</div>
 </template>
 
@@ -42,9 +41,7 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
-import SetGuestUsername from './SetGuestUsername.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
-import { useActorStore } from '../stores/actor.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
 export default {
@@ -54,13 +51,11 @@ export default {
 	components: {
 		NcRichText,
 		RoomService,
-		SetGuestUsername,
 		MediaSettings,
 	},
 
 	setup() {
 		return {
-			actorStore: useActorStore(),
 			token: useGetToken(),
 		}
 	},
@@ -96,11 +91,6 @@ export default {
 		message() {
 			return t('spreed', 'This meeting is scheduled for {startTime}', { startTime: this.startTime })
 		},
-
-		// Determines whether the current user is a guest user
-		currentUserIsGuest() {
-			return !this.actorStore.userId
-		},
 	},
 
 	methods: {
@@ -128,6 +118,7 @@ export default {
 	&__countdown,
 	&__description {
 		margin-top: 25px;
+		max-width: $messages-list-max-width;
 	}
 
 	:deep(.rich-text--wrapper) {
@@ -135,11 +126,4 @@ export default {
 		@include markdown;
 	}
 }
-
-.guest-info {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
 </style>

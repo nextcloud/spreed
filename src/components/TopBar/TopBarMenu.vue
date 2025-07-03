@@ -56,7 +56,7 @@
 					<template #icon>
 						<IconVideo :size="20" />
 					</template>
-					{{ t('spreed', 'Media settings') }}
+					{{ t('spreed', 'Check devices') }}
 				</NcActionButton>
 				<NcActionSeparator />
 				<!-- Call layout switcher -->
