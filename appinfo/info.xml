@@ -60,9 +60,9 @@
 	</dependencies>
 
 	<background-jobs>
+		<job>OCA\Talk\BackgroundJob\CheckCertificates</job>
 		<job>OCA\Talk\BackgroundJob\CheckHostedSignalingServer</job>
 		<job>OCA\Talk\BackgroundJob\CheckMatterbridges</job>
-		<job>OCA\Talk\BackgroundJob\CheckTurnCertificate</job>
 		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
 		<job>OCA\Talk\BackgroundJob\ExpireObjectRooms</job>
 		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
