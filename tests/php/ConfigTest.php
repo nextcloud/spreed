@@ -308,6 +308,24 @@ class ConfigTest extends TestCase {
 			['wss://blabla.nextcloud.com:8443/', 'wss://blabla.nextcloud.com:8443'],
 			['wss://blabla.nextcloud.com:8443/signaling', 'wss://blabla.nextcloud.com:8443'],
 			['wss://blabla.nextcloud.com:8443/signaling/', 'wss://blabla.nextcloud.com:8443'],
+
+			// Admin got interrupted before finishing typing
+			['wss://', ''],
+			['ws://', ''],
+			['https://', ''],
+			['http://', ''],
+			['wss:/', ''],
+			['https:/', ''],
+			['wss:', ''],
+			['https:', ''],
+			['wss', 'wss'],
+			['https', 'https'],
+			['ws', 'ws'],
+			['http', 'http'],
+			['w', 'w'],
+			['htt', 'htt'],
+			['ht', 'ht'],
+			['h', 'h'],
 		];
 	}
 
