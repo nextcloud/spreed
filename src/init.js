@@ -89,17 +89,18 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 		return
 	}
 
-	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter((key) => key.startsWith('audioDisabled_')
-		|| key.startsWith('videoDisabled_')
-		|| key.startsWith('virtualBackgroundEnabled_')
-		|| key.startsWith('virtualBackgroundType_')
-		|| key.startsWith('virtualBackgroundBlurStrength_')
-		|| key.startsWith('virtualBackgroundUrl_'))
+	const deprecatedKeys = [
+		'audioDisabled_',
+		'videoDisabled_',
+		'virtualBackgroundEnabled_',
+		'virtualBackgroundType_',
+		'virtualBackgroundBlurStrength_',
+		'virtualBackgroundUrl_',
+	]
 
-	if (storageKeys.length) {
-		console.debug('Migrating localStorage keys to BrowserStorage', storageKeys)
-
-		storageKeys.forEach((key) => {
+	Object.keys(localStorage).forEach((key) => {
+		if (deprecatedKeys.some((deprecatedKey) => key.startsWith(deprecatedKey))) {
+			console.debug('Migrating localStorage key to BrowserStorage: %s', key)
 			BrowserStorage.setItem(key, localStorage.getItem(key))
 			localStorage.removeItem(key)
 
@@ -115,14 +116,14 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 					BrowserStorage.setItem(typeKey, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
 				}
 			}
-		})
-	}
+		}
+	})
 
 	BrowserStorage.setItem('localStorageMigrated', 'done')
 }
 
 /**
- *
+ * Clean up some deprecated (no longer in use) keys from @nextcloud/browser-storage
  */
 function cleanOutdatedBrowserStorageKeys() {
 	const deprecatedKeys = [
@@ -137,7 +138,13 @@ function cleanOutdatedBrowserStorageKeys() {
 	})
 }
 
-window.requestIdleCallback(() => {
+if (window.requestIdleCallback) {
+	window.requestIdleCallback(() => {
+		migrateDirectLocalStorageToNextcloudBrowserStorage()
+		cleanOutdatedBrowserStorageKeys()
+	})
+} else {
+	// Fallback for Safari
 	migrateDirectLocalStorageToNextcloudBrowserStorage()
 	cleanOutdatedBrowserStorageKeys()
-})
+}
