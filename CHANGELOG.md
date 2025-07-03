@@ -5,6 +5,42 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.1 – 2025-07-03
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Always render code blocks left-to-right
+  [#15364](https://github.com/nextcloud/spreed/issues/15364)
+- fix(call): Allow end-to-end encrypted calls in integrations like files and sharing
+  [#15415](https://github.com/nextcloud/spreed/issues/15415)
+- fix(sip): Add log message when direct dial-in had no match to help configuring phone numbers
+  [#15358](https://github.com/nextcloud/spreed/issues/15358)
+- fix(federation): Fix sending invites from conversations without an owner
+  [#15354](https://github.com/nextcloud/spreed/issues/15354)
+- fix(settings): Show errors when the websocket connection could not be opened
+  [#15368](https://github.com/nextcloud/spreed/issues/15368)
+- fix(settings): Validate that signaling private and public key match
+  [#15357](https://github.com/nextcloud/spreed/issues/15357)
+- fix(settings): Do not break when settings has an incomplete server URL
+  [#15453](https://github.com/nextcloud/spreed/issues/15453)
+
+## 20.1.8 – 2025-07-03
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Remove items from the shared items list when a message is deleted
+  [#15222](https://github.com/nextcloud/spreed/issues/15222)
+- fix(chat): Allow deleting shared call recordings
+  [#15241](https://github.com/nextcloud/spreed/issues/15241)
+- fix(federation): Fix sending invites from conversations without an owner
+  [#15353](https://github.com/nextcloud/spreed/issues/15353)
+- fix(settings): Do not break when settings has an incomplete server URL
+  [#15452](https://github.com/nextcloud/spreed/issues/15452)
+
 ## 21.1.0 – 2025-06-05
 ### Added
 - 📅 Improve handling of event conversations: filtered until close to the meeting, default expiration, tracking of event name and description
