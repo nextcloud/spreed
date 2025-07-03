@@ -305,25 +305,29 @@ class Config {
 			$urls[] = $this->getWebSocketDomainForSignalingServer($server['server']);
 		}
 
-		return $urls;
+		return array_filter($urls);
 	}
 
 	protected function getWebSocketDomainForSignalingServer(string $url): string {
+		if (str_ends_with($url, ':') || str_ends_with($url, ':/') || str_ends_with($url, '://')) {
+			return '';
+		}
+
 		$url .= '/';
 		if (str_starts_with($url, 'https://')) {
-			return 'wss://' . substr($url, 8, strpos($url, '/', 9) - 8);
+			return 'wss://' . substr($url, 8, strpos($url, '/', 8) - 8);
 		}
 
 		if (str_starts_with($url, 'http://')) {
-			return 'ws://' . substr($url, 7, strpos($url, '/', 8) - 7);
+			return 'ws://' . substr($url, 7, strpos($url, '/', 7) - 7);
 		}
 
 		if (str_starts_with($url, 'wss://')) {
-			return substr($url, 0, strpos($url, '/', 7));
+			return substr($url, 0, strpos($url, '/', 6));
 		}
 
 		if (str_starts_with($url, 'ws://')) {
-			return substr($url, 0, strpos($url, '/', 6));
+			return substr($url, 0, strpos($url, '/', 5));
 		}
 
 		$protocol = strpos($url, '://');
