@@ -996,9 +996,8 @@ export default {
 	}
 
 	&__quote {
-		margin: 0 calc(var(--default-grid-baseline) * 4) calc(var(--default-grid-baseline) * 2);
+		margin-block-end: var(--default-grid-baseline);
 		background-color: var(--color-background-hover);
-		padding: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2);
 		border-radius: var(--border-radius-large);
 	}
 
