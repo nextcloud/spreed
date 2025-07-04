@@ -8,7 +8,7 @@ import type { Component } from 'vue'
 import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
@@ -23,9 +23,11 @@ import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
+type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
+
 const { message, canCancel = false, editMessage = false } = defineProps<{
 	/** The quoted message object */
-	message: ChatMessage
+	message: ChatMessage | DeletedParentMessage
 	/** Whether to show remove / cancel action */
 	canCancel?: boolean
 	/** Whether to show edit actions */
@@ -43,7 +45,7 @@ const {
 	lastEditor,
 	actorDisplayName,
 	actorDisplayNameWithFallback,
-} = useMessageInfo(message)
+} = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
 
 const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value].filter((value) => value).join(' '))
 
@@ -51,7 +53,7 @@ const hash = computed(() => '#message_' + message.id)
 
 const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
 
-const isOwnMessageQuoted = computed(() => actorStore.checkIfSelfIsActor(message))
+const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 
 const richParameters = computed(() => {
 	const richParameters: Record<string, { component: Component, props: unknown }> = {}
@@ -85,7 +87,7 @@ const richParameters = computed(() => {
  * @return A simple message to show below the conversation name
  */
 const simpleQuotedMessage = computed(() => {
-	if (!message.id) {
+	if (!isExistingMessage(message)) {
 		return t('spreed', 'The message has expired or has been deleted')
 	}
 
@@ -114,9 +116,21 @@ const shortenedQuoteMessage = computed(() => {
 })
 
 /**
+ * Check whether message to quote (parent) existing on server
+ * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
+ */
+function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
+	return 'messageType' in message
+}
+
+/**
  * Abort replying / editing process
  */
 function handleAbort() {
+	if (!isExistingMessage(message)) {
+		return
+	}
+
 	if (editMessage) {
 		chatExtrasStore.removeMessageIdToEdit(message.token)
 	} else {
@@ -147,7 +161,7 @@ function handleQuoteClick() {
 		:class="{ 'quote-own-message': isOwnMessageQuoted }"
 		@click="handleQuoteClick">
 		<div class="quote__main">
-			<div v-if="message.id"
+			<div v-if="isExistingMessage(message)"
 				class="quote__main__author"
 				role="heading"
 				aria-level="4">
