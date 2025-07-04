@@ -16,7 +16,7 @@
 						:aria-label="dashboardButtonLabel"
 						@click="refreshTalkDashboard">
 						<template #icon>
-							<IconHome :size="20" />
+							<IconHomeOutline :size="20" />
 						</template>
 					</NcButton>
 				</TransitionWrapper>
@@ -37,7 +37,7 @@
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
-							<FilterIcon :size="15" />
+							<IconFilterOutline :size="15" />
 						</template>
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
@@ -46,7 +46,7 @@
 							:model-value="filters.includes('mentions')"
 							@click="handleFilter('mentions')">
 							<template #icon>
-								<AtIcon :size="20" />
+								<IconAt :size="20" />
 							</template>
 							{{ t('spreed', 'Unread mentions') }}
 						</NcActionButton>
@@ -56,7 +56,7 @@
 							:model-value="filters.includes('unread')"
 							@click="handleFilter('unread')">
 							<template #icon>
-								<MessageBadge :size="20" />
+								<IconMessageBadgeOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Unread messages') }}
 						</NcActionButton>
@@ -66,7 +66,7 @@
 							:model-value="filters.includes('events')"
 							@click="handleFilter('events')">
 							<template #icon>
-								<IconCalendar :size="20" />
+								<IconCalendarBlankOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Meeting conversations') }}
 						</NcActionButton>
@@ -76,7 +76,7 @@
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
 							<template #icon>
-								<FilterRemoveIcon :size="20" />
+								<IconFilterRemoveOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Clear filters') }}
 						</NcActionButton>
@@ -89,13 +89,13 @@
 						class="actions"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
-							<ChatPlus :size="20" />
+							<IconChatPlusOutline :size="20" />
 						</template>
 						<NcActionButton v-if="canStartConversations"
 							close-after-click
 							@click="showModalNewConversation">
 							<template #icon>
-								<Plus :size="20" />
+								<IconPlus :size="20" />
 							</template>
 							{{ t('spreed', 'Create a new conversation') }}
 						</NcActionButton>
@@ -104,7 +104,7 @@
 							close-after-click
 							@click="restoreNoteToSelfConversation">
 							<template #icon>
-								<Note :size="20" />
+								<IconNoteEditOutline :size="20" />
 							</template>
 							{{ t('spreed', 'New personal note') }}
 						</NcActionButton>
@@ -112,7 +112,7 @@
 						<NcActionButton close-after-click
 							@click="showModalListConversations">
 							<template #icon>
-								<List :size="20" />
+								<IconFormatListBulleted :size="20" />
 							</template>
 							{{ t('spreed', 'Join open conversations') }}
 						</NcActionButton>
@@ -121,7 +121,7 @@
 							close-after-click
 							@click="showModalCallPhoneDialog">
 							<template #icon>
-								<Phone :size="20" />
+								<IconPhoneOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Call a phone number') }}
 						</NcActionButton>
@@ -154,7 +154,7 @@
 				:name="t('spreed', 'Pending invitations')"
 				@click="showInvitationHandler">
 				<template #icon>
-					<AccountMultiplePlus :size="20" />
+					<IconAccountMultiplePlusOutline :size="20" />
 				</template>
 				<template #counter>
 					<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
@@ -169,15 +169,15 @@
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
-						<AtIcon v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
-						<MessageBadge v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
-						<IconArchive v-else-if="showArchived" :size="64" />
-						<MessageOutline v-else :size="64" />
+						<IconAt v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
+						<IconMessageBadgeOutline v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
+						<IconArchiveOutline v-else-if="showArchived" :size="64" />
+						<IconMessageOutline v-else :size="64" />
 					</template>
 					<template #action>
 						<NcButton v-if="isFiltered" @click="handleFilter(null)">
 							<template #icon>
-								<FilterRemoveIcon :size="20" />
+								<IconFilterRemoveOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Clear filter') }}
 						</NcButton>
@@ -229,7 +229,7 @@
 						wide
 						@click="showArchived = true">
 						<template #icon>
-							<IconArchive :size="20" />
+							<IconArchiveOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Archived conversations') }}
 						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
@@ -240,7 +240,7 @@
 
 				<NcButton variant="tertiary" wide @click="showSettings">
 					<template #icon>
-						<Cog :size="20" />
+						<IconCogOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Talk settings') }}
 				</NcButton>
@@ -267,22 +267,22 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
-import IconArchive from 'vue-material-design-icons/Archive.vue'
+import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
+import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import AtIcon from 'vue-material-design-icons/At.vue'
-import IconCalendar from 'vue-material-design-icons/CalendarBlank.vue'
-import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import FilterIcon from 'vue-material-design-icons/Filter.vue'
-import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
-import List from 'vue-material-design-icons/FormatListBulleted.vue'
-import IconHome from 'vue-material-design-icons/Home.vue'
-import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
-import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
-import Note from 'vue-material-design-icons/NoteEditOutline.vue'
-import Phone from 'vue-material-design-icons/Phone.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import IconAt from 'vue-material-design-icons/At.vue'
+import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
+import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
+import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
+import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
+import IconFormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
+import IconHomeOutline from 'vue-material-design-icons/HomeOutline.vue'
+import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
+import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -350,22 +350,22 @@ export default {
 		ConversationsListVirtual,
 		SearchConversationsResults,
 		// Icons
-		AccountMultiplePlus,
-		AtIcon,
-		MessageBadge,
-		MessageOutline,
-		FilterIcon,
-		FilterRemoveIcon,
-		IconArchive,
+		IconAccountMultiplePlusOutline,
+		IconAt,
+		IconMessageBadgeOutline,
+		IconMessageOutline,
+		IconFilterOutline,
+		IconFilterRemoveOutline,
+		IconArchiveOutline,
 		IconArrowLeft,
-		IconCalendar,
-		IconHome,
-		Phone,
-		Plus,
-		ChatPlus,
-		Cog,
-		List,
-		Note,
+		IconCalendarBlankOutline,
+		IconHomeOutline,
+		IconPhoneOutline,
+		IconPlus,
+		IconChatPlusOutline,
+		IconCogOutline,
+		IconFormatListBulleted,
+		IconNoteEditOutline,
 		NcEmptyContent,
 	},
 
