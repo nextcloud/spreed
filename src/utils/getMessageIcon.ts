@@ -5,14 +5,14 @@
 import type { ComponentPublicInstance } from 'vue'
 import type { Conversation } from '../types/index.ts'
 
-import IconCardText from 'vue-material-design-icons/CardText.vue'
-import IconContacts from 'vue-material-design-icons/Contacts.vue'
-import IconFile from 'vue-material-design-icons/File.vue'
-import IconImage from 'vue-material-design-icons/Image.vue'
-import IconMapMarker from 'vue-material-design-icons/MapMarker.vue'
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconMovie from 'vue-material-design-icons/Movie.vue'
-import IconMusicNote from 'vue-material-design-icons/MusicNote.vue'
+import IconCardTextOutline from 'vue-material-design-icons/CardTextOutline.vue'
+import IconContactsOutline from 'vue-material-design-icons/ContactsOutline.vue'
+import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
+import IconImageOutline from 'vue-material-design-icons/ImageOutline.vue'
+import IconMapMarkerOutline from 'vue-material-design-icons/MapMarkerOutline.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconMovieOutline from 'vue-material-design-icons/MovieOutline.vue'
+import IconMusicNoteOutline from 'vue-material-design-icons/MusicNoteOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import { MESSAGE } from '../constants.ts'
 
@@ -23,20 +23,20 @@ export const getMessageIcon = (lastMessage: Conversation['lastMessage']): Compon
 	const file = lastMessage.messageParameters?.file
 	if (file) {
 		if (file.mimetype?.startsWith('video')) {
-			return IconMovie // Media - Videos
+			return IconMovieOutline // Media - Videos
 		}
 		if (file.mimetype?.startsWith('image')) {
-			return IconImage // Media - Images
+			return IconImageOutline // Media - Images
 		}
 		if (file.mimetype?.startsWith('audio')) {
 			return lastMessage.messageType === MESSAGE.TYPE.VOICE_MESSAGE
-				? IconMicrophone // Voice messages
-				: IconMusicNote // Media - Audio
+				? IconMicrophoneOutline // Voice messages
+				: IconMusicNoteOutline // Media - Audio
 		}
 		if (file.mimetype === 'text/vcard') {
-			return IconContacts // Contacts
+			return IconContactsOutline // Contacts
 		}
-		return IconFile // Files
+		return IconFileOutline // Files
 	}
 
 	const object = lastMessage.messageParameters?.object
@@ -45,10 +45,10 @@ export const getMessageIcon = (lastMessage: Conversation['lastMessage']): Compon
 			return IconPoll // Polls
 		}
 		if (object?.type === 'deck-card') {
-			return IconCardText // Deck cards
+			return IconCardTextOutline // Deck cards
 		}
 		if (object?.type === 'geo-location') {
-			return IconMapMarker // Locations
+			return IconMapMarkerOutline // Locations
 		}
 	}
 
