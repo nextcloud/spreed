@@ -385,10 +385,14 @@ export default {
 				return
 			}
 
+			if (from.name === 'conversation' && from.params.token !== to.params.token) {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+			}
+
 			/**
 			 * This runs whenever the new route is a conversation.
 			 */
-			if (to.name === 'conversation') {
+			if (to.name === 'conversation' && from.params.token !== to.params.token) {
 				// Fetch conversation object, if it's not known yet to the client
 				if (!this.$store.getters.conversation(to.params.token)) {
 					const result = await this.fetchSingleConversation(to.params.token)
