@@ -226,7 +226,6 @@ export default {
 
 			if (this.token === this.conversation.token) {
 				this.$router.push({ name: 'root' })
-				this.tokenStore.updateToken('')
 			}
 
 			try {

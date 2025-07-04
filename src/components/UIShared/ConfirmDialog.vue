@@ -53,7 +53,7 @@ const emit = defineEmits<{
 	(event: 'close', value?: unknown): void
 }>()
 
-const inputValue = ref(props.inputProps.value ?? '')
+const inputValue = ref(props.inputProps?.value ?? '')
 
 /**
  * Emit result, if any (for spawnDialog callback)

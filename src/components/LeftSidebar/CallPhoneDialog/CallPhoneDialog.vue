@@ -59,6 +59,7 @@ import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { callSIPDialOut } from '../../../services/callsService.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { createLegacyConversation } from '../../../services/conversationsService.ts'
+import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useActorStore } from '../../../stores/actor.ts'
 
@@ -140,7 +141,6 @@ export default {
 				await addParticipant(conversation.token, this.participantPhoneItem.id, this.participantPhoneItem.source)
 
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } })
-				await this.$store.dispatch('joinConversation', { token: conversation.token })
 			} catch (exception) {
 				console.debug(exception)
 				showError(t('spreed', 'An error occurred while calling a phone number'))
@@ -152,9 +152,15 @@ export default {
 				return
 			}
 
-			this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
+			EventBus.once('joined-conversation', ({ token }) => {
+				if (conversation.token !== token) {
+					return
+				}
 
-			this.closeModal()
+				this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
+
+				this.closeModal()
+			})
 		},
 
 		async startPhoneCall(token, phoneNumber) {
