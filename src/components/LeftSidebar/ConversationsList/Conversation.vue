@@ -74,8 +74,8 @@
 
 				<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
 					<template #icon>
-						<IconEye v-if="item.unreadMessages" :size="16" />
-						<IconEyeOff v-else :size="16" />
+						<IconEyeOutline v-if="item.unreadMessages" :size="16" />
+						<IconEyeOffOutline v-else :size="16" />
 					</template>
 					{{ labelRead }}
 				</NcActionButton>
@@ -84,14 +84,14 @@
 					is-menu
 					@click="submenu = 'notifications'">
 					<template #icon>
-						<IconBell :size="16" />
+						<IconBellOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Notifications') }}
 				</NcActionButton>
 
 				<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
 					<template #icon>
-						<IconCog :size="16" />
+						<IconCogOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Conversation settings') }}
 				</NcActionButton>
@@ -101,8 +101,8 @@
 					close-after-click
 					@click="toggleArchiveConversation">
 					<template #icon>
-						<IconArchive v-if="!item.isArchived" :size="16" />
-						<IconArchiveOff v-else :size="16" />
+						<IconArchiveOutline v-if="!item.isArchived" :size="16" />
+						<IconArchiveOffOutline v-else :size="16" />
 					</template>
 					{{ labelArchive }}
 				</NcActionButton>
@@ -123,7 +123,7 @@
 					class="critical"
 					@click="isDeleteDialogOpen = true">
 					<template #icon>
-						<IconDelete :size="16" />
+						<IconDeleteOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Delete conversation') }}
 				</NcActionButton>
@@ -162,7 +162,7 @@
 						:model-value="notificationCalls"
 						@click="setNotificationCalls(!notificationCalls)">
 						<template #icon>
-							<IconPhoneRing :size="16" />
+							<IconPhoneRingOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Notify about calls') }}
 					</NcActionButton>
@@ -179,7 +179,7 @@
 						:model-value="item.isImportant"
 						@click="toggleImportant(!item.isImportant)">
 						<template #icon>
-							<IconMessageAlert :size="16" />
+							<IconMessageAlertOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Important conversation') }}
 					</NcActionButton>
@@ -191,7 +191,7 @@
 						:model-value="item.isSensitive"
 						@click="toggleSensitive(!item.isSensitive)">
 						<template #icon>
-							<IconShieldLock :size="16" />
+							<IconShieldLockOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Sensitive conversation') }}
 					</NcActionButton>
@@ -267,21 +267,21 @@ import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-import IconAccount from 'vue-material-design-icons/Account.vue'
-import IconArchive from 'vue-material-design-icons/Archive.vue'
-import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconArchiveOffOutline from 'vue-material-design-icons/ArchiveOffOutline.vue'
+import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import IconBell from 'vue-material-design-icons/Bell.vue'
-import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
-import IconEye from 'vue-material-design-icons/Eye.vue'
-import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
-import IconMessageAlert from 'vue-material-design-icons/MessageAlert.vue'
-import IconPhoneRing from 'vue-material-design-icons/PhoneRing.vue'
-import IconShieldLock from 'vue-material-design-icons/ShieldLock.vue'
+import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
+import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutline.vue'
+import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
+import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
@@ -307,21 +307,21 @@ export default {
 
 	components: {
 		ConversationIcon,
-		IconAccount,
-		IconArchive,
-		IconArchiveOff,
+		IconAccountOutline,
+		IconArchiveOutline,
+		IconArchiveOffOutline,
 		IconArrowLeft,
 		IconArrowRight,
-		IconBell,
-		IconCog,
+		IconBellOutline,
+		IconCogOutline,
 		IconContentCopy,
-		IconDelete,
+		IconDeleteOutline,
 		IconExitToApp,
-		IconEye,
-		IconEyeOff,
-		IconMessageAlert,
-		IconPhoneRing,
-		IconShieldLock,
+		IconEyeOutline,
+		IconEyeOffOutline,
+		IconMessageAlertOutline,
+		IconPhoneRingOutline,
+		IconShieldLockOutline,
 		IconStar,
 		IconVolumeHigh,
 		IconVolumeOff,
@@ -455,13 +455,13 @@ export default {
 		iconType() {
 			if (this.item.hasCall) {
 				return {
-					component: 'IconVideo',
+					component: IconVideo,
 					color: '#E9322D',
 					text: t('spreed', 'Call in progress'),
 				}
 			} else if (this.item.isFavorite) {
 				return {
-					component: 'IconStar',
+					component: IconStar,
 					color: '#FFCC00',
 					text: t('spreed', 'Favorite'),
 				}
@@ -540,7 +540,7 @@ export default {
 				case PARTICIPANT.NOTIFY.ALWAYS:
 					return IconVolumeHigh
 				case PARTICIPANT.NOTIFY.MENTION:
-					return IconAccount
+					return IconAccountOutline
 				case PARTICIPANT.NOTIFY.NEVER:
 				default:
 					return IconVolumeOff

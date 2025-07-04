@@ -8,11 +8,11 @@ import type { ParticipantSearchResult, Conversation as TypeConversation } from '
 
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-import IconChatPlus from 'vue-material-design-icons/ChatPlus.vue'
+import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import Hint from '../../UIShared/Hint.vue'
@@ -225,7 +225,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 				data-nav-id="conversation_create_new"
 				@click="emit('create-new-conversation', searchText)">
 				<template #icon>
-					<IconChatPlus :size="iconSize" />
+					<IconChatPlusOutline :size="iconSize" />
 				</template>
 				<template v-if="!isCompact" #subname>
 					{{ t('spreed', 'New group conversation') }}
