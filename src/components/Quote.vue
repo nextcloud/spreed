@@ -153,7 +153,7 @@ function handleQuoteClick() {
 	<component :is="component.tag"
 		:to="component.link"
 		class="quote"
-		:class="{ 'quote-own-message': isOwnMessageQuoted }"
+		:class="{ 'quote--own-message': isOwnMessageQuoted }"
 		@click="handleQuoteClick">
 		<!-- File preview -->
 		<span v-if="isFileShare || isObjectShare" class="quote__preview">
@@ -173,33 +173,38 @@ function handleQuoteClick() {
 			<NcLoadingIcon v-if="filePreview && filePreviewLoading" class="quote__preview--loading" />
 		</span>
 
-		<div class="quote__main">
-			<div v-if="isExistingMessage(message)"
-				class="quote__main__author"
+		<span class="quote__main">
+			<span v-if="isExistingMessage(message)"
+				class="quote__main-author"
 				role="heading"
 				aria-level="4">
 				<IconPencilOutline v-if="editMessage" :size="16" />
-				<AvatarWrapper v-else
+				<AvatarWrapper v-else-if="!(isFileShare || isObjectShare)"
 					:id="message.actorId"
 					:token="message.token"
 					:name="actorDisplayName"
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
-				<span class="quote__main__author-info">{{ actorInfo }}</span>
-				<div v-if="editMessage || lastEditor" class="quote__main__edit-hint">
+				<span class="quote__main-author-info">
+					{{ actorInfo }}
+				</span>
+				<span v-if="editMessage || lastEditor" class="quote__main-edit-hint">
 					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
-				</div>
-			</div>
-			<!-- Message text -->
-			<blockquote dir="auto" class="quote__main__text">
+				</span>
+			</span>
+			<span
+				role="blockquote"
+				dir="auto"
+				class="quote__main-text">
 				{{ shortenedQuoteMessage }}
-			</blockquote>
-		</div>
+			</span>
+		</span>
 
 		<NcButton v-if="canCancel"
 			class="quote__close"
 			variant="tertiary"
+			size="small"
 			:title="t('spreed', 'Cancel quote')"
 			:aria-label="t('spreed', 'Cancel quote')"
 			@click="handleAbort">
@@ -215,29 +220,30 @@ function handleQuoteClick() {
 
 .quote {
 	position: relative;
-	margin: 4px 0;
-	padding-block: 6px;
-	padding-inline-end: 6px;
-	padding-inline-start: 24px;
+	padding-block: calc(0.5 * var(--default-grid-baseline));
+	padding-inline: calc(1.5 * var(--default-grid-baseline)) var(--default-clickable-area);
 	display: flex;
+	gap: var(--default-grid-baseline);
 	max-width: $messages-text-max-width;
+	min-height: var(--clickable-area-small);
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
+	font-size: var(--font-size-small);
+	color: var(--color-text-maxcontrast);
 	background-color: var(--color-main-background);
 	overflow: hidden;
 
 	&::before {
 		content: ' ';
 		position: absolute;
-		top: 8px;
-		inset-inline-start: 8px;
-		height: calc(100% - 16px);
-		width: 8px;
-		border-radius: var(--border-radius);
-		background-color: var(--color-border);
+		top: 0;
+		inset-inline-start: 0;
+		height: 100%;
+		width: var(--default-grid-baseline);
+		background-color: var(--color-border-maxcontrast);
 	}
 
-	&.quote-own-message::before {
+	&.quote--own-message::before {
 		background-color: var(--color-primary-element);
 	}
 
@@ -264,42 +270,49 @@ function handleQuoteClick() {
 		}
 	}
 
+	// Two-line layout for quotes with preview
+	&__preview + .quote__main {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+	}
+
 	&__main {
 		display: flex;
-		flex-direction: column;
-		flex: 1 1 auto;
-		width: 100%;
+		align-items: center;
+		gap: calc(2 * var(--default-grid-baseline));
+		min-width: 0;
 
-		&__author {
+		&-author {
 			display: flex;
 			align-items: center;
-			gap: 4px;
-			color: var(--color-text-maxcontrast);
+			gap: calc(0.5 * var(--default-grid-baseline));
 
 			&-info {
+				flex-shrink: 0;
+				font-weight: 600;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 		}
 
-		&__text {
-			color: var(--color-text-maxcontrast);
+		&-text {
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
 			text-align: start;
 		}
 
-		&__edit-hint {
+		&-edit-hint {
 			flex-shrink: 0;
 		}
 	}
 
 	&__close {
 		position: absolute !important;
-		top: 4px;
-		inset-inline-end: 4px;
+		top: 0;
+		inset-inline-end: 0;
 	}
 }
 
