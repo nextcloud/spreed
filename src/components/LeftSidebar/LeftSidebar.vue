@@ -998,12 +998,8 @@ export default {
 				// this is triggered when the hash in the URL changes
 				return
 			}
-			if (from.name === 'conversation') {
-				this.$store.dispatch('leaveConversation', { token: from.params.token })
-			}
 			if (to.name === 'conversation') {
 				this.abortSearch()
-				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
 				this.scrollToConversation(to.params.token)
 			}

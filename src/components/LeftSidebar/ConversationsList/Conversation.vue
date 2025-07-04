@@ -415,7 +415,6 @@ export default {
 			try {
 				this.isLeaveDialogOpen = false
 				if (this.isActive) {
-					await this.$store.dispatch('leaveConversation', { token: this.item.token })
 					await this.$router.push({ name: 'root' })
 						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
 				}
