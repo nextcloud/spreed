@@ -356,7 +356,6 @@ export default {
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
 					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-					this.$store.dispatch('updateToken', '')
 				}
 			}
 		})
@@ -385,10 +384,14 @@ export default {
 				return
 			}
 
+			if (from.name === 'conversation' && from.params.token !== to.params.token) {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+			}
+
 			/**
 			 * This runs whenever the new route is a conversation.
 			 */
-			if (to.name === 'conversation') {
+			if (to.name === 'conversation' && from.params.token !== to.params.token) {
 				// Fetch conversation object, if it's not known yet to the client
 				if (!this.$store.getters.conversation(to.params.token)) {
 					const result = await this.fetchSingleConversation(to.params.token)
@@ -398,6 +401,7 @@ export default {
 						return
 					}
 				}
+				this.$store.dispatch('joinConversation', { token: to.params.token })
 			}
 
 			next()
@@ -407,7 +411,10 @@ export default {
 			/**
 			 * Update current token in the token store
 			 */
-			this.$store.dispatch('updateToken', to.params.token ?? '')
+			if (from.params.token !== to.params.token) {
+				this.$store.dispatch('updateToken', to.params.token ?? '')
+			}
+
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
@@ -628,7 +635,6 @@ export default {
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-				this.$store.dispatch('updateToken', '')
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
