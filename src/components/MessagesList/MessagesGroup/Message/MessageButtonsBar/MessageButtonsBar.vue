@@ -15,13 +15,22 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="canReply"
+			<NcButton v-if="canReply && (!supportThreads || !message.isThread)"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
-				@click="handleReply">
+				@click="handleReply(false)">
 				<template #icon>
 					<Reply :size="16" />
+				</template>
+			</NcButton>
+			<NcButton v-if="supportThreads"
+				variant="tertiary"
+				:aria-label="t('spreed', 'Reply in thread')"
+				:title="t('spreed', 'Reply in thread')"
+				@click="handleReply(true)">
+				<template #icon>
+					<IconForumOutline :size="16" />
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
@@ -138,6 +147,26 @@
 							</template>
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
+					</template>
+					<NcActionSeparator />
+					<template v-if="supportThreads">
+						<NcActionButton
+							v-if="message.isThread"
+							@click="$router.push({ query: { threadId: message.threadId } })">
+							<template #icon>
+								<IconForumOutline :size="16" />
+							</template>
+							{{ t('spreed', 'See thread') }}
+						</NcActionButton>
+
+						<NcActionButton
+							v-else
+							@click="chatExtrasStore.makeThread(message.token, message.threadId)">
+							<template #icon>
+								<IconForumOutline :size="16" />
+							</template>
+							{{ t('spreed', 'Make thread') }}
+						</NcActionButton>
 					</template>
 					<NcActionButton
 						v-if="canForwardMessage && !isInNoteToSelf"
@@ -318,6 +347,7 @@ import IconDownload from 'vue-material-design-icons/Download.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
@@ -330,6 +360,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../con
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
@@ -354,6 +385,7 @@ export default {
 		AlarmIcon,
 		IconArrowLeft,
 		IconBellOff,
+		IconForumOutline,
 		CalendarClock,
 		CloseCircleOutline,
 		Check,
@@ -435,6 +467,8 @@ export default {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const actorStore = useActorStore()
+		const chatExtrasStore = useChatExtrasStore()
+
 		const {
 			isEditable,
 			isDeleteable,
@@ -446,10 +480,12 @@ export default {
 			isConversationModifiable,
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
+		const supportThreads = hasTalkFeature(message.value.token, 'threads-v1') || true
 
 		return {
 			messageActions,
 			supportReminders,
+			supportThreads,
 			reactionsStore,
 			isEditable,
 			isCurrentUserOwnMessage,
@@ -460,6 +496,7 @@ export default {
 			isConversationReadOnly,
 			isConversationModifiable,
 			actorStore,
+			chatExtrasStore,
 		}
 	},
 
@@ -633,8 +670,8 @@ export default {
 
 	methods: {
 		t,
-		handleReply() {
-			this.$emit('reply')
+		handleReply(makeThread) {
+			this.$emit('reply', makeThread)
 		},
 
 		async handlePrivateReply() {

@@ -18,7 +18,7 @@ import {
 } from '../services/filesSharingServices.ts'
 import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import {
 	findUniquePath,
 	getFileExtension,

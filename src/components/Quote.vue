@@ -21,7 +21,7 @@ import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 
 const { message, canCancel = false, editMessage = false } = defineProps<{
 	/** The quoted message object */
@@ -49,7 +49,15 @@ const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServ
 
 const hash = computed(() => '#message_' + message.id)
 
-const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
+const component = computed(() => canCancel
+	? { tag: 'div', link: undefined }
+	: {
+			tag: 'router-link',
+			link: {
+				query: { threadId: message.isThread ? message.threadId : undefined },
+				hash: hash.value,
+			},
+		})
 
 const isOwnMessageQuoted = computed(() => actorStore.checkIfSelfIsActor(message))
 

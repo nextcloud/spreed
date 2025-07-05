@@ -18,9 +18,39 @@
 			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
-			:hide-call="false" />
+			:hide-call="false"
+			@click="$router.push({ query: {} })" />
 
-		<div class="top-bar__wrapper" :data-theme-dark="isInCall ? true : undefined">
+		<div
+			v-if="currentThread"
+			class="top-bar__wrapper">
+			<IconChevronRight class="bidirectional-icon" :size="20" />
+
+			<a role="button"
+				class="conversation-header"
+				@click="openConversationSettings">
+				<AvatarWrapper
+					:id="currentThread.first.actorId"
+					:token="token"
+					:name="currentThread.first.actorDisplayName"
+					:source="currentThread.first.actorType"
+					:size="AVATAR.SIZE.DEFAULT"
+					disable-menu
+					disable-tooltip />
+				<div class="conversation-header__text">
+					<p class="title">
+						{{ currentThread.first.actorDisplayName + ': ' + currentThread.first.message }}
+					</p>
+					<p v-if="currentThread.last" class="description">
+						{{ currentThread.last.actorDisplayName + ': ' + currentThread.last.message }}
+					</p>
+				</div>
+			</a>
+		</div>
+
+		<div v-else
+			class="top-bar__wrapper"
+			:data-theme-dark="isInCall ? true : undefined">
 			<!-- conversation header -->
 			<a role="button"
 				class="conversation-header"
@@ -119,6 +149,8 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -133,6 +165,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
@@ -146,6 +179,7 @@ export default {
 
 	components: {
 		// Components
+		AvatarWrapper,
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
 		CallButton,
@@ -162,6 +196,7 @@ export default {
 		// Icons
 		IconAccountMultiple,
 		IconAccountMultiplePlus,
+		IconChevronRight,
 	},
 
 	props: {
@@ -187,6 +222,7 @@ export default {
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			chatExtrasStore: useChatExtrasStore(),
 			CONVERSATION,
 			token: useGetToken(),
 		}
@@ -200,6 +236,13 @@ export default {
 	},
 
 	computed: {
+		currentThread() {
+			if (!this.$route.query.threadId) {
+				return null
+			}
+			return this.chatExtrasStore.getThread(this.token, +this.$route.query.threadId)
+		},
+
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
@@ -283,6 +326,15 @@ export default {
 				this.groupwareStore.getUpcomingEvents(value)
 			},
 		},
+
+		currentThread: {
+			immediate: true,
+			handler(value) {
+				if (this.$route.query.threadId && value === undefined) {
+					this.chatExtrasStore.getSingleThread(this.token, this.$route.query.threadId)
+				}
+			},
+		},
 	},
 
 	mounted() {
@@ -357,10 +409,16 @@ export default {
 .top-bar__wrapper {
 	flex: 1 0;
 	display: flex;
-	flex-wrap: wrap;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
+}
+
+.thread-header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: var(--default-grid-baseline);
 }
 
 .conversation-header {

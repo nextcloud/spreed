@@ -7,6 +7,7 @@
 import type {
 	Conversation,
 	DashboardEvent,
+	ThreadInfo,
 	UserProfileData,
 } from '../../types/index.ts'
 
@@ -15,6 +16,7 @@ import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref, watch } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useStore } from 'vuex'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -28,9 +30,11 @@ import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
+import SearchMessageItem from './SearchMessages/SearchMessageItem.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
@@ -55,6 +59,7 @@ const emit = defineEmits<{
 }>()
 
 const store = useStore()
+const chatExtrasStore = useChatExtrasStore()
 const groupwareStore = useGroupwareStore()
 
 const isDarkTheme = useIsDarkTheme()
@@ -142,6 +147,16 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 			color: event.calendars[0]?.calendarColor ?? 'var(--color-primary)',
 		}
 	})
+})
+
+const threadsInformation = computed<ThreadInfo[]>(() => {
+	if (!chatExtrasStore.threads[token.value]) {
+		// Request a list
+		chatExtrasStore.getThreadsList(token.value)
+		return []
+	}
+
+	return Object.values(chatExtrasStore.threads[token.value])
 })
 
 watch(token, async () => {
@@ -257,6 +272,22 @@ function handleHeaderClick() {
 						:start="event.start"
 						:href="event.href"
 						:color="event.color" />
+				</ul>
+			</div>
+			<div v-if="threadsInformation.length"
+				class="content__events">
+				<NcAppNavigationCaption :name="t('spreed', 'Threads')" />
+				<ul class="content__events-list">
+					<SearchMessageItem v-for="item of threadsInformation"
+						:key="`thread_${item.thread.id}`"
+						:message-id="item.first.id"
+						:title="item.first.message"
+						:subline="item.last.message"
+						:actor-id="item.first.actorId"
+						:actor-type="item.first.actorType"
+						:token="item.first.token"
+						:timestamp="item.last.timestamp"
+						:to="{ query: { threadId: item.thread.id } }" />
 				</ul>
 			</div>
 		</template>
@@ -491,6 +522,7 @@ function handleHeaderClick() {
 			line-height: 20px;
 			max-height: calc(4.5 * var(--item-height) + 4 * var(--default-grid-baseline));
 			overflow-y: auto;
+			overflow-x: hidden;
 
 			& > * {
 				margin-inline: calc(var(--default-grid-baseline) / 2);

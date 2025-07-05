@@ -219,6 +219,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 					...entry,
 					to: {
 						name: 'conversation',
+						// TODO query
 						hash: `#message_${entry.attributes.messageId}`,
 						params: {
 							token: entry.attributes.conversation,
@@ -338,7 +339,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					:actor-id="item.attributes.actorId"
 					:actor-type="item.attributes.actorType"
 					:token="item.attributes.conversation"
-					:timestamp="item.attributes.timestamp"
+					:timestamp="+item.attributes.timestamp"
 					:to="item.to" />
 			</template>
 			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"

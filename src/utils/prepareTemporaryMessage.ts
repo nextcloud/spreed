@@ -17,6 +17,8 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'actorType'
 	| 'actorDisplayName'
 	| 'silent'
+	| 'threadId'
+	| 'isThread'
 > & {
 	uploadId: string
 	index: number

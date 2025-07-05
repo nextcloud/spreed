@@ -74,7 +74,7 @@ import { useDocumentVisibility } from '../../composables/useDocumentVisibility.t
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
-import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { debugTimer } from '../../utils/debugTimer.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
@@ -181,6 +181,10 @@ export default {
 			return this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
+		currentThreadId() {
+			return this.$route.query.threadId ? +this.$route.query.threadId : null
+		},
+
 		/**
 		 * Gets the messages array. We need this because the DynamicScroller needs an array to
 		 * loop through.
@@ -188,7 +192,14 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
+			if (!this.currentThreadId) {
+				return this.$store.getters.messagesList(this.token)
+			}
+
 			return this.$store.getters.messagesList(this.token)
+				.filter((message) => {
+					return message.threadId === this.currentThreadId
+				})
 		},
 
 		isMessagesListPopulated() {

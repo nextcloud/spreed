@@ -65,7 +65,7 @@ import {
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useFederationStore } from '../stores/federation.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import pinia from '../stores/pinia.ts'

@@ -123,7 +123,7 @@ import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constan
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
-import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
+import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 
 const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
@@ -401,10 +401,11 @@ export default {
 			}
 		},
 
-		handleReply() {
+		handleReply(makeThread = false) {
 			this.chatExtrasStore.setParentIdToReply({
 				token: this.message.token,
 				id: this.message.id,
+				threadId: makeThread ? this.message.threadId : undefined,
 			})
 			EventBus.emit('focus-chat-input')
 		},
