@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d9af1019a2cefe8defdf79177e7dcc7",
+    "content-hash": "daf756cad758c689fb766dc0d0a5a834",
     "packages": [],
     "packages-dev": [
         {
@@ -1624,16 +1624,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.4.0",
+            "version": "v5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494"
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/447a020a1f875a434d62f2a401f53b82a396e494",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
                 "shasum": ""
             },
             "require": {
@@ -1676,9 +1676,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.4.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
             },
-            "time": "2024-12-30T11:07:19+00:00"
+            "time": "2025-05-31T08:24:38+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -2322,16 +2322,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.4.22",
+            "version": "v6.4.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "7d29659bc3c9d8e9a34e2c3414ef9e9e003e6cf3"
+                "reference": "9056771b8eca08d026cd3280deeec3cfd99c4d93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/7d29659bc3c9d8e9a34e2c3414ef9e9e003e6cf3",
-                "reference": "7d29659bc3c9d8e9a34e2c3414ef9e9e003e6cf3",
+                "url": "https://api.github.com/repos/symfony/console/zipball/9056771b8eca08d026cd3280deeec3cfd99c4d93",
+                "reference": "9056771b8eca08d026cd3280deeec3cfd99c4d93",
                 "shasum": ""
             },
             "require": {
@@ -2396,7 +2396,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.4.22"
+                "source": "https://github.com/symfony/console/tree/v6.4.23"
             },
             "funding": [
                 {
@@ -2412,7 +2412,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-07T07:05:04+00:00"
+            "time": "2025-06-27T19:37:22+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -3113,16 +3113,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "6.12.0",
+            "version": "6.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "cf420941d061a57050b6c468ef2c778faf40aee2"
+                "reference": "e71404b0465be25cf7f8a631b298c01c5ddd864f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/cf420941d061a57050b6c468ef2c778faf40aee2",
-                "reference": "cf420941d061a57050b6c468ef2c778faf40aee2",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/e71404b0465be25cf7f8a631b298c01c5ddd864f",
+                "reference": "e71404b0465be25cf7f8a631b298c01c5ddd864f",
                 "shasum": ""
             },
             "require": {
@@ -3227,7 +3227,7 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2025-05-28T12:52:06+00:00"
+            "time": "2025-07-04T09:56:28+00:00"
         },
         {
             "name": "webmozart/assert",
