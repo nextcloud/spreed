@@ -116,6 +116,8 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
 
+		<slot name="extra-action" />
+
 		<NcButton variant="tertiary"
 			:title="t('spreed', 'Refresh devices list')"
 			:aria-lebel="t('spreed', 'Refresh devices list')"
@@ -130,6 +132,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 	display: flex;
 	gap: var(--default-grid-baseline);
 	margin: calc(3 * var(--default-grid-baseline)) 0;
+	align-items: center;
 
 	&__icon {
 		display: flex;
@@ -141,6 +144,8 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 
 	:deep(.v-select.select) {
 		width: 100%;
+		min-width: 0;
+		margin: 0;
 	}
 }
 </style>

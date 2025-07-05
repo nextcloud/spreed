@@ -5,7 +5,6 @@
 
 <template>
 	<div class="media-devices-checker">
-		<IconVolumeHigh class="media-devices-checker__icon" :size="16" />
 		<NcButton :disabled="disabled"
 			variant="secondary"
 			@click="playTestSound">
@@ -23,7 +22,6 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import { useSoundsStore } from '../../stores/sounds.js'
 
 export default {
@@ -31,7 +29,6 @@ export default {
 	name: 'MediaDevicesSpeakerTest',
 
 	components: {
-		IconVolumeHigh,
 		NcButton,
 	},
 
@@ -95,7 +92,6 @@ export default {
 .media-devices-checker {
 	display: flex;
 	gap: var(--default-grid-baseline);
-	margin: calc(3 * var(--default-grid-baseline)) 0;
 
 	&__icon {
 		display: flex;
@@ -127,5 +123,9 @@ export default {
 	@for $i from 0 through 15 {
 		#{4 * $i}% { height: math.random(70) + 20%; }
 	}
+}
+
+:deep(.button-vue) {
+	padding-inline: 0;
 }
 </style>
