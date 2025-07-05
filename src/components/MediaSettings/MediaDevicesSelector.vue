@@ -8,10 +8,8 @@ import type { ComponentPublicInstance } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconRefresh from 'vue-material-design-icons/Refresh.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 
@@ -114,14 +112,10 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 			:aria-label-combobox="t('spreed', 'Select a device')"
 			:clearable="false"
 			:placeholder="deviceSelectorPlaceholder"
-			:disabled="!enabled || !deviceOptionsAvailable" />
+			:disabled="!enabled || !deviceOptionsAvailable"
+			@open="$emit('refresh')" />
 
-		<NcButton variant="tertiary"
-			:title="t('spreed', 'Refresh devices list')"
-			:aria-lebel="t('spreed', 'Refresh devices list')"
-			@click="$emit('refresh')">
-			<IconRefresh :size="20" />
-		</NcButton>
+		<slot name="extra-action" />
 	</div>
 </template>
 
@@ -129,7 +123,8 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 .media-devices-selector {
 	display: flex;
 	gap: var(--default-grid-baseline);
-	margin: calc(3 * var(--default-grid-baseline)) 0;
+	margin: calc(4 * var(--default-grid-baseline)) 0;
+	align-items: center;
 
 	&__icon {
 		display: flex;
@@ -141,6 +136,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 
 	:deep(.v-select.select) {
 		width: 100%;
+		margin: 0;
 	}
 }
 </style>
