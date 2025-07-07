@@ -4,28 +4,29 @@
 -->
 
 <script setup lang="ts">
-import type { Component } from 'vue'
 import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed } from 'vue'
+import { generateUrl } from '@nextcloud/router'
+import { computed, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichText from '@nextcloud/vue/components/NcRichText'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
-import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { getMessageIcon } from '../utils/getMessageIcon.ts'
+
+type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
 
 const { message, canCancel = false, editMessage = false } = defineProps<{
 	/** The quoted message object */
-	message: ChatMessage
+	message: ChatMessage | DeletedParentMessage
 	/** Whether to show remove / cancel action */
 	canCancel?: boolean
 	/** Whether to show edit actions */
@@ -38,44 +39,40 @@ const chatExtrasStore = useChatExtrasStore()
 
 const {
 	isFileShare,
-	isFileShareWithoutCaption,
+	isObjectShare,
 	remoteServer,
 	lastEditor,
 	actorDisplayName,
 	actorDisplayNameWithFallback,
-} = useMessageInfo(message)
+} = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
 
-const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value].filter((value) => value).join(' '))
+const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
 const hash = computed(() => '#message_' + message.id)
 
 const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
 
-const isOwnMessageQuoted = computed(() => actorStore.checkIfSelfIsActor(message))
+const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 
-const richParameters = computed(() => {
-	const richParameters: Record<string, { component: Component, props: unknown }> = {}
-	Object.keys(message.messageParameters).forEach((p: string) => {
-		const type = message.messageParameters[p].type
-		if (type === 'file') {
-			richParameters[p] = {
-				component: FilePreview,
-				props: {
-					token: message.token,
-					smallPreview: true,
-					rowLayout: !message.messageParameters[p].mimetype!.startsWith('image/'),
-					file: message.messageParameters[p],
-				},
-			}
-		} else {
-			richParameters[p] = {
-				component: DefaultParameter,
-				props: message.messageParameters[p],
-			}
+const filePreviewLoading = ref(true)
+const filePreviewFailed = ref(false)
+const filePreview = computed(() => {
+	if (!isExistingMessage(message) || !isFileShare || filePreviewFailed.value) {
+		return undefined
+	}
+
+	const fileData = Object.values(message.messageParameters).find((param) => param.type === 'file' && param['preview-available'] === 'yes')
+	if (fileData) {
+		return {
+			alt: fileData.name,
+			src: generateUrl('/core/preview?fileId={fileId}&x=32&y=32&a=1', { fileId: fileData.id }),
 		}
-	})
-	return richParameters
+	} else {
+		return undefined
+	}
 })
+
+const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
 
 /**
  * This is a simplified version of the last chat message.
@@ -85,7 +82,7 @@ const richParameters = computed(() => {
  * @return A simple message to show below the conversation name
  */
 const simpleQuotedMessage = computed(() => {
-	if (!message.id) {
+	if (!isExistingMessage(message)) {
 		return t('spreed', 'The message has expired or has been deleted')
 	}
 
@@ -114,9 +111,21 @@ const shortenedQuoteMessage = computed(() => {
 })
 
 /**
+ * Check whether message to quote (parent) existing on server
+ * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
+ */
+function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
+	return 'messageType' in message
+}
+
+/**
  * Abort replying / editing process
  */
 function handleAbort() {
+	if (!isExistingMessage(message)) {
+		return
+	}
+
 	if (editMessage) {
 		chatExtrasStore.removeMessageIdToEdit(message.token)
 	} else {
@@ -144,38 +153,58 @@ function handleQuoteClick() {
 	<component :is="component.tag"
 		:to="component.link"
 		class="quote"
-		:class="{ 'quote-own-message': isOwnMessageQuoted }"
+		:class="{ 'quote--own-message': isOwnMessageQuoted }"
 		@click="handleQuoteClick">
-		<div class="quote__main">
-			<div v-if="message.id"
-				class="quote__main__author"
+		<!-- File preview -->
+		<span v-if="isFileShare || isObjectShare" class="quote__preview">
+			<img
+				v-if="filePreview"
+				class="quote__preview-image"
+				:alt="filePreview.alt"
+				:src="filePreview.src"
+				@load="filePreviewLoading = false"
+				@error="filePreviewLoading = false; filePreviewFailed = true">
+			<component
+				:is="simpleQuotedMessageIcon"
+				v-else-if="simpleQuotedMessageIcon"
+				class="quote__preview-image"
+				fill-color="var(--color-text-maxcontrast)"
+				:size="34" />
+			<NcLoadingIcon v-if="filePreview && filePreviewLoading" class="quote__preview--loading" />
+		</span>
+
+		<span class="quote__main">
+			<span v-if="isExistingMessage(message)"
+				class="quote__main-author"
 				role="heading"
 				aria-level="4">
-				<AvatarWrapper :id="message.actorId"
+				<IconPencilOutline v-if="editMessage" :size="16" />
+				<AvatarWrapper v-else-if="!(isFileShare || isObjectShare)"
+					:id="message.actorId"
 					:token="message.token"
 					:name="actorDisplayName"
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
-				<span class="quote__main__author-info">{{ actorInfo }}</span>
-				<div v-if="editMessage" class="quote__main__edit-hint">
-					<IconPencil :size="16" />
-					{{ t('spreed', '(editing)') }}
-				</div>
-			</div>
-			<!-- File preview -->
-			<NcRichText v-if="isFileShare"
-				text="{file}"
-				:arguments="richParameters" />
-			<!-- Message text -->
-			<blockquote v-if="!isFileShareWithoutCaption" dir="auto" class="quote__main__text">
+				<span class="quote__main-author-info">
+					{{ actorInfo }}
+				</span>
+				<span v-if="editMessage || lastEditor" class="quote__main-edit-hint">
+					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
+				</span>
+			</span>
+			<span
+				role="blockquote"
+				dir="auto"
+				class="quote__main-text">
 				{{ shortenedQuoteMessage }}
-			</blockquote>
-		</div>
+			</span>
+		</span>
 
 		<NcButton v-if="canCancel"
 			class="quote__close"
 			variant="tertiary"
+			size="small"
 			:title="t('spreed', 'Cancel quote')"
 			:aria-label="t('spreed', 'Cancel quote')"
 			@click="handleAbort">
@@ -191,70 +220,99 @@ function handleQuoteClick() {
 
 .quote {
 	position: relative;
-	margin: 4px 0;
-	padding-block: 6px;
-	padding-inline-end: 6px;
-	padding-inline-start: 24px;
+	padding-block: calc(0.5 * var(--default-grid-baseline));
+	padding-inline: calc(1.5 * var(--default-grid-baseline)) var(--default-clickable-area);
 	display: flex;
+	gap: var(--default-grid-baseline);
 	max-width: $messages-text-max-width;
+	min-height: var(--clickable-area-small);
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
+	font-size: var(--font-size-small);
+	color: var(--color-text-maxcontrast);
 	background-color: var(--color-main-background);
 	overflow: hidden;
 
 	&::before {
 		content: ' ';
 		position: absolute;
-		top: 8px;
-		inset-inline-start: 8px;
-		height: calc(100% - 16px);
-		width: 8px;
-		border-radius: var(--border-radius);
-		background-color: var(--color-border);
+		top: 0;
+		inset-inline-start: 0;
+		height: 100%;
+		width: var(--default-grid-baseline);
+		background-color: var(--color-border-maxcontrast);
 	}
 
-	&.quote-own-message::before {
+	&.quote--own-message::before {
 		background-color: var(--color-primary-element);
+	}
+
+	&__preview {
+		position: relative;
+		flex-shrink: 0;
+		height: 2lh;
+		width: 2lh;
+		overflow: hidden;
+		border-radius: var(--border-radius);
+		background-color: var(--color-background-dark);
+
+		&-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		&--loading {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%
+		}
+	}
+
+	// Two-line layout for quotes with preview
+	&__preview + .quote__main {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
 	}
 
 	&__main {
 		display: flex;
-		flex-direction: column;
-		flex: 1 1 auto;
-		width: 100%;
+		align-items: center;
+		gap: calc(2 * var(--default-grid-baseline));
+		min-width: 0;
 
-		&__author {
+		&-author {
 			display: flex;
 			align-items: center;
-			gap: 4px;
-			color: var(--color-text-maxcontrast);
+			gap: calc(0.5 * var(--default-grid-baseline));
 
 			&-info {
+				flex-shrink: 0;
+				font-weight: 600;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 		}
 
-		&__text {
-			color: var(--color-text-maxcontrast);
+		&-text {
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
 			text-align: start;
 		}
 
-		&__edit-hint {
-			display: flex;
-			align-items: center;
-			gap: 4px;
+		&-edit-hint {
+			flex-shrink: 0;
 		}
 	}
 
 	&__close {
 		position: absolute !important;
-		top: 4px;
-		inset-inline-end: 4px;
+		top: 0;
+		inset-inline-end: 0;
 	}
 }
 
