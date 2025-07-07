@@ -18,10 +18,10 @@ use OCP\SetupCheck\SetupResult;
 
 class FederationLockCache implements ISetupCheck {
 	public function __construct(
-		readonly protected Config $talkConfig,
-		readonly protected ICacheFactory $cacheFactory,
-		readonly protected IURLGenerator $urlGenerator,
-		readonly protected IL10N $l,
+		protected readonly Config $talkConfig,
+		protected readonly ICacheFactory $cacheFactory,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly IL10N $l,
 	) {
 	}
 
