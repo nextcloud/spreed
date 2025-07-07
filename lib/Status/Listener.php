@@ -62,7 +62,7 @@ class Listener implements IEventListener {
 
 	protected function setUserStatus(BeforeParticipantModifiedEvent $event): void {
 
-		$status = IUserStatus::AWAY;
+		$status = IUserStatus::BUSY;
 
 		$userId = $event->getParticipant()->getAttendee()->getActorId();
 
@@ -90,13 +90,13 @@ class Listener implements IEventListener {
 	}
 
 	protected function revertUserStatusOnLeaveCall(BeforeParticipantModifiedEvent $event): void {
-		$this->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
+		$this->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::BUSY);
 	}
 
 	protected function revertUserStatusOnEndCallForEveryone(CallEndedForEveryoneEvent $event): void {
 		$userIds = $event->getUserIds();
 		if (!empty($userIds)) {
-			$this->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
+			$this->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::BUSY);
 		}
 	}
 }
