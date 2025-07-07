@@ -21,7 +21,7 @@ use OCP\EventDispatcher\IEventListener;
 class CircleEditedListener implements IEventListener {
 
 	public function __construct(
-		readonly private ParticipantService $participantService,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 

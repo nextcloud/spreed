@@ -6,7 +6,7 @@
 		"sort-packages": true
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^3.64.0",
+		"friendsofphp/php-cs-fixer": "^3.80.0",
 		"nextcloud/coding-standard": "^1.4.0"
 	}
 }
