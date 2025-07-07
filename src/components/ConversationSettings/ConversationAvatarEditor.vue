@@ -58,7 +58,7 @@
 					</NcButton>
 					<NcButton :title="t('spreed', 'Choose conversation picture from files')"
 						:aria-label="t('spreed', 'Choose conversation picture from files')"
-						@click="showFilePicker = true">
+						@click="showFilePicker">
 						<template #icon>
 							<Folder :size="20" />
 						</template>
@@ -94,20 +94,12 @@
 				</div>
 			</div>
 		</div>
-
-		<FilePicker v-if="showFilePicker"
-			:name="t('spreed', 'Choose your conversation picture')"
-			container="#vue-avatar-section"
-			:buttons="filePickerButtons"
-			:multiselect="false"
-			:mimetype-filter="validMimeTypes"
-			@close="showFilePicker = false" />
 	</section>
 </template>
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { FilePicker } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
@@ -132,7 +124,6 @@ export default {
 
 	components: {
 		ConversationIcon,
-		FilePicker,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
@@ -184,7 +175,6 @@ export default {
 	data() {
 		return {
 			showCropper: false,
-			showFilePicker: false,
 			loading: false,
 			cropperOptions: {
 				aspectRatio: 1,
@@ -217,14 +207,6 @@ export default {
 
 		showControls() {
 			return this.editable && (this.showCropper || this.emojiAvatar)
-		},
-
-		filePickerButtons() {
-			return [{
-				label: t('spreed', 'Choose'),
-				callback: (nodes) => this.handleFileChoose(nodes),
-				variant: 'primary',
-			}]
 		},
 	},
 
@@ -265,6 +247,21 @@ export default {
 				this.showCropper = true
 			}
 			reader.readAsDataURL(file)
+		},
+
+		async showFilePicker() {
+			const filePicker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
+				.setContainer('#vue-avatar-section')
+				.setMultiSelect(false)
+				.addMimeTypeFilter('image/png')
+				.addMimeTypeFilter('image/jpeg') // FIXME upstream: pass as array
+				.addButton({
+					label: t('spreed', 'Choose'),
+					callback: (nodes) => this.handleFileChoose(nodes),
+					variant: 'primary',
+				})
+				.build()
+			await filePicker.pickNodes()
 		},
 
 		async handleFileChoose(nodes) {

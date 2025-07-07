@@ -58,22 +58,13 @@
 				{{ locationHint }}
 			</em>
 			<div class="app-settings-section__wrapper">
-				<p class="app-settings-section__input" @click="showFilePicker = true">
+				<p class="app-settings-section__input" @click="showFilePicker">
 					{{ attachmentFolder }}
 				</p>
 				<NcButton variant="primary"
-					@click="showFilePicker = true">
+					@click="showFilePicker">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
-				<FilePicker v-if="showFilePicker"
-					:name="t('spreed', 'Select location for attachments')"
-					:path="attachmentFolder"
-					container=".app-settings-section__wrapper"
-					:buttons="filePickerButtons"
-					:multiselect="false"
-					:mimetype-filter="['httpd/unix-directory']"
-					allow-pick-directory
-					@close="showFilePicker = false" />
 			</div>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest && supportConversationsListStyle"
@@ -236,7 +227,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { FilePicker } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -273,7 +264,6 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
-		FilePicker,
 		IconMicrophone,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
@@ -306,7 +296,6 @@ export default {
 	data() {
 		return {
 			showSettings: false,
-			showFilePicker: false,
 			attachmentFolderLoading: true,
 			appearanceLoading: false,
 			privacyLoading: false,
@@ -360,14 +349,6 @@ export default {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 
-		filePickerButtons() {
-			return [{
-				label: t('spreed', 'Choose'),
-				callback: (nodes) => this.selectAttachmentFolder(nodes),
-				variant: 'primary',
-			}]
-		},
-
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
 		},
@@ -399,6 +380,23 @@ export default {
 
 	methods: {
 		t,
+
+		async showFilePicker() {
+			const filePicker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
+				.setContainer('.app-settings-section__wrapper')
+				.startAt(this.attachmentFolder)
+				.setMultiSelect(false)
+				.allowDirectories(true)
+				.addMimeTypeFilter('httpd/unix-directory')
+				.addButton({
+					label: t('spreed', 'Choose'),
+					callback: (nodes) => this.selectAttachmentFolder(nodes),
+					variant: 'primary',
+				})
+				.build()
+			await filePicker.pickNodes()
+		},
+
 		async selectAttachmentFolder(nodes) {
 			const path = nodes[0]?.path
 			if (!path) {
