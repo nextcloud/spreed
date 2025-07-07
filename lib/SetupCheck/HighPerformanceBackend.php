@@ -21,11 +21,11 @@ use OCP\Support\Subscription\IRegistry;
 class HighPerformanceBackend implements ISetupCheck {
 	public function __construct(
 		protected readonly Config $talkConfig,
-		readonly protected ICacheFactory $cacheFactory,
-		readonly protected IURLGenerator $urlGenerator,
-		readonly protected IL10N $l,
-		readonly protected Manager $signalManager,
-		readonly protected IRegistry $subscription,
+		protected readonly ICacheFactory $cacheFactory,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly IL10N $l,
+		protected readonly Manager $signalManager,
+		protected readonly IRegistry $subscription,
 	) {
 	}
 

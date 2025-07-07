@@ -16,7 +16,7 @@ use OCP\SetupCheck\SetupResult;
 class SIPConfiguration implements ISetupCheck {
 	public function __construct(
 		protected readonly Config $talkConfig,
-		readonly protected IL10N $l,
+		protected readonly IL10N $l,
 	) {
 	}
 
