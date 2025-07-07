@@ -28,7 +28,7 @@
 				:can-share-files="canShareFiles"
 				:can-create-poll="canCreatePoll"
 				@open-file-upload="openFileUploadWindow"
-				@handle-file-share="showFilePicker = true"
+				@handle-file-share="showFilePicker"
 				@update-new-file-dialog="updateNewFileDialog" />
 
 			<!-- Input area -->
@@ -159,18 +159,12 @@
 			:token="token"
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
-
-		<FilePicker v-if="showFilePicker"
-			:name="t('spreed', 'File to share')"
-			:buttons="filePickerButtons"
-			allow-pick-directory
-			@close="showFilePicker = false" />
 	</div>
 </template>
 
 <script>
 import { showError, showWarning } from '@nextcloud/dialogs'
-import { FilePicker } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
@@ -213,7 +207,6 @@ export default {
 	name: 'NewMessage',
 
 	components: {
-		FilePicker,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -315,7 +308,6 @@ export default {
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
 			showNewFileDialog: -1,
-			showFilePicker: false,
 			clipboardTimeStamp: null,
 			typingInterval: null,
 			wasTypingWithinInterval: false,
@@ -442,14 +434,6 @@ export default {
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
 				&& this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
-		},
-
-		filePickerButtons() {
-			return [{
-				label: t('spreed', 'Choose'),
-				callback: (nodes) => this.handleFileShare(nodes),
-				variant: 'primary',
-			}]
 		},
 
 		userAbsence() {
@@ -753,6 +737,19 @@ export default {
 					this.$store.dispatch('removeTemporaryMessageFromStore', { token: this.token, id })
 				}
 			}
+		},
+
+		async showFilePicker() {
+			const filePicker = getFilePickerBuilder(t('spreed', 'File to share'))
+				.setMultiSelect(true)
+				.allowDirectories(true)
+				.addButton({
+					label: t('spreed', 'Choose'),
+					callback: (nodes) => this.handleFileShare(nodes),
+					variant: 'primary',
+				})
+				.build()
+			await filePicker.pickNodes()
 		},
 
 		handleFileShare(nodes) {

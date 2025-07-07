@@ -31,7 +31,7 @@
 				</button>
 				<button class="background-editor__element"
 					:class="{ 'background-editor__element--selected': isCustomBackground }"
-					@click="showFilePicker = true">
+					@click="showFilePicker">
 					<IconFolder :size="20" />
 					{{ t('spreed', 'Files') }}
 				</button>
@@ -60,20 +60,12 @@
 			tabindex="-1"
 			aria-hidden="true"
 			@change="handleFileInput">
-
-		<FilePicker v-if="showFilePicker"
-			:name="t('spreed', 'Select a file')"
-			:path="relativeBackgroundsFolderPath"
-			container=".media-settings"
-			:buttons="filePickerButtons"
-			:multiselect="false"
-			@close="showFilePicker = false" />
 	</div>
 </template>
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { FilePicker } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
@@ -104,7 +96,6 @@ export default {
 	name: 'VideoBackgroundEditor',
 
 	components: {
-		FilePicker,
 		IconBlur,
 		IconCancel,
 		IconCheckBold,
@@ -139,7 +130,6 @@ export default {
 	data() {
 		return {
 			selectedBackground: undefined,
-			showFilePicker: false,
 		}
 	},
 
@@ -162,14 +152,6 @@ export default {
 
 		relativeBackgroundsFolderPath() {
 			return this.$store.getters.getAttachmentFolder() + '/Backgrounds'
-		},
-
-		filePickerButtons() {
-			return [{
-				label: t('spreed', 'Confirm'),
-				callback: (nodes) => this.handleFileChoose(nodes),
-				variant: 'primary',
-			}]
 		},
 	},
 
@@ -243,6 +225,20 @@ export default {
 				console.debug(error)
 				showError(t('spreed', 'Error while uploading the file'))
 			}
+		},
+
+		async showFilePicker() {
+			const filePicker = getFilePickerBuilder(t('spreed', 'Select a file'))
+				.setContainer('.media-settings')
+				.startAt(this.relativeBackgroundsFolderPath)
+				.setMultiSelect(false)
+				.addButton({
+					label: t('spreed', 'Confirm'),
+					callback: (nodes) => this.handleFileChoose(nodes),
+					variant: 'primary',
+				})
+				.build()
+			await filePicker.pickNodes()
 		},
 
 		handleFileChoose(nodes) {
