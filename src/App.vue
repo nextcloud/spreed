@@ -21,6 +21,7 @@
 
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
+import { showError } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -369,7 +370,7 @@ export default {
 					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
 					this.refreshCurrentConversation()
 				} else {
-					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed/not-found')
 					this.skipLeaveWarning = true
 					this.$router.push({ name: 'notfound' })
 				}
@@ -612,9 +613,18 @@ export default {
 				 */
 				EventBus.emit('conversations-received', { singleConversation: response.data.ocs.data })
 			} catch (exception) {
-				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.skipLeaveWarning = true
-				this.$router.push({ name: 'notfound' })
+				if (exception.response?.status === 404) {
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed/not-found')
+					this.skipLeaveWarning = true
+					this.$router.push({ name: 'notfound' })
+				} else if (exception.response?.status === 403) {
+					console.info('Attendee/IP address is no longer authorized to participate (banned). Redirecting to /apps/spreed/forbidden')
+					this.skipLeaveWarning = true
+					this.$router.push({ name: 'forbidden' })
+				} else {
+					console.error('Error getting room data', exception)
+					showError(t('spreed', 'Error occurred when getting the conversation information'))
+				}
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
