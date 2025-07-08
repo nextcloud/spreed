@@ -260,6 +260,7 @@
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -372,6 +373,7 @@ export default {
 	emits: ['click'],
 
 	setup(props) {
+		const isDarkTheme = useIsDarkTheme()
 		const submenu = ref(null)
 		const isLeaveDialogOpen = ref(false)
 		const isDeleteDialogOpen = ref(false)
@@ -386,6 +388,7 @@ export default {
 			submenu,
 			isLeaveDialogOpen,
 			isDeleteDialogOpen,
+			isDarkTheme,
 			counterType,
 			conversationInformation,
 			notificationLevels,
@@ -462,7 +465,7 @@ export default {
 			} else if (this.item.isFavorite) {
 				return {
 					component: IconStar,
-					color: '#FFCC00',
+					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
 					text: t('spreed', 'Favorite'),
 				}
 			}
