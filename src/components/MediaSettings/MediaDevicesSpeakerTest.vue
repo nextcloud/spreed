@@ -4,26 +4,29 @@
 -->
 
 <template>
-	<div class="media-devices-checker">
-		<IconVolumeHigh class="media-devices-checker__icon" :size="16" />
-		<NcButton :disabled="disabled"
-			variant="secondary"
-			@click="playTestSound">
-			{{ buttonLabel }}
-		</NcButton>
-		<div v-if="isPlayingTestSound" class="equalizer">
-			<div v-for="bar in equalizerBars"
-				:key="bar.key"
-				class="equalizer__bar"
-				:style="bar.style" />
-		</div>
-	</div>
+	<NcButton :disabled="disabled"
+		class="media-devices-speaker-test-button"
+		:title="buttonLabel"
+		:aria-label="buttonLabel"
+		variant="secondary"
+		@click="playTestSound">
+		<template #icon>
+			<div class="equalizer">
+				<div v-for="bar in equalizerBars"
+					:key="bar.key"
+					class="equalizer__bar"
+					:class="{ 'equalizer__bar--active': isPlayingTestSound }"
+					:style="bar.style" />
+			</div>
+		</template>
+		<!-- TRANSLATORS: Button to test speakers by playing a sound -->
+		{{ t('spreed', 'Test') }}
+	</NcButton>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import { useSoundsStore } from '../../stores/sounds.js'
 
 export default {
@@ -31,7 +34,6 @@ export default {
 	name: 'MediaDevicesSpeakerTest',
 
 	components: {
-		IconVolumeHigh,
 		NcButton,
 	},
 
@@ -61,11 +63,11 @@ export default {
 		},
 
 		equalizerBars() {
-			return Array.from(Array(4).keys()).map((item) => ({
+			return Array.from(Array(3).keys()).map((item) => ({
 				key: item,
 				style: {
-					height: Math.random() * 100 + '%',
-					animationDelay: Math.random() * -2 + 's',
+					height: this.isPlayingTestSound ? (Math.random() * 100 + '%') : (item % 2 === 0 ? '40%' : '60%'),
+					animationDelay: this.isPlayingTestSound ? (Math.random() * -2 + 's') : undefined,
 				},
 			}))
 		},
@@ -92,40 +94,33 @@ export default {
 <style lang="scss" scoped>
 @use 'sass:math';
 
-.media-devices-checker {
-	display: flex;
-	gap: var(--default-grid-baseline);
-	margin: calc(3 * var(--default-grid-baseline)) 0;
+.media-devices-speaker-test-button {
+	flex-shrink: 0;
+	margin-inline-end: calc(var(--default-grid-baseline) / 2);
+}
 
-	&__icon {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: var(--default-clickable-area);
-		flex-shrink: 0;
-	}
-
-	.equalizer {
-		margin-inline-start: 8px;
-		height: var(--default-clickable-area);
+.equalizer {
+		height: calc(var(--default-clickable-area) - var(--default-grid-baseline)); // - total margin block
 		display: flex;
 		align-items: center;
 
 		&__bar {
-			width: 8px;
+			width: 5px;
 			height: 100%;
-			background: var(--color-primary-element);
+			background: var(--color-main-text);
 			border-radius: 4px;
-			margin: 0 2px;
-			will-change: height;
-			animation: equalizer 2s steps(15, end) infinite;
+			margin: 0 1px;
+
+			&--active {
+				will-change: height;
+				animation: equalizer 2s steps(15, end) infinite;
+			}
 		}
 	}
-}
 
 @keyframes equalizer {
 	@for $i from 0 through 15 {
-		#{4 * $i}% { height: math.random(70) + 20%; }
+		#{3 * $i}% { height: math.random(40) + 20%; }
 	}
 }
 </style>
