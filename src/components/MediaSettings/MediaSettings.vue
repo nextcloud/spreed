@@ -129,8 +129,11 @@
 						:devices="devices"
 						:device-id="audioOutputId"
 						@refresh="updateDevices"
-						@update:device-id="handleAudioOutputIdChange" />
-					<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+						@update:device-id="handleAudioOutputIdChange">
+						<template #extra-action>
+							<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+						</template>
+					</MediaDevicesSelector>
 				</template>
 
 				<template #tab-panel:backgrounds>
