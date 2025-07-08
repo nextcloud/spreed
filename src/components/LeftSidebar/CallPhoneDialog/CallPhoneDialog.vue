@@ -128,10 +128,6 @@ export default {
 
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } })
 				await this.$store.dispatch('joinConversation', { token: conversation.token })
-
-				this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
-
-				this.closeModal()
 			} catch (exception) {
 				console.debug(exception)
 				showError(t('spreed', 'An error occurred while calling a phone number'))
@@ -139,7 +135,13 @@ export default {
 					this.$store.dispatch('deleteConversationFromServer', { token: conversation.token })
 				}
 				this.closeModal()
+
+				return
 			}
+
+			this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
+
+			this.closeModal()
 		},
 
 		async startPhoneCall(token, phoneNumber) {
