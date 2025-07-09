@@ -26,13 +26,13 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<IconDelete :size="20" />
+				<IconDeleteOutline :size="20" />
 			</template>
 		</NcButton>
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<IconAlertCircle v-else-if="errorMessage" :size="20" fill-color="var(--color-error)" />
+			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fill-color="var(--color-error)" />
 			<IconCheck v-else :size="20" fill-color="var(--color-success)" />
 			{{ connectionState }}
 		</span>
@@ -55,9 +55,9 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import IconAlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import { getWelcomeMessage } from '../../services/recordingService.js'
 
@@ -65,9 +65,9 @@ export default {
 	name: 'RecordingServer',
 
 	components: {
-		IconAlertCircle,
+		IconAlertCircleOutline,
 		IconCheck,
-		IconDelete,
+		IconDeleteOutline,
 		IconReload,
 		NcButton,
 		NcCheckboxRadioSwitch,

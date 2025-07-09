@@ -21,8 +21,8 @@
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">
 					<template #icon>
-						<AlertCircle v-if="virtualBackgroundAvailable === false" :size="20" />
-						<Check v-else-if="virtualBackgroundAvailable === true" :size="20" />
+						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" />
+						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" />
 						<span v-else class="icon icon-loading-small" />
 					</template>
 				</NcButton>
@@ -37,8 +37,8 @@ import { t } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
@@ -47,10 +47,10 @@ export default {
 	name: 'WebServerSetupChecks',
 
 	components: {
-		AlertCircle,
+		IconAlertCircleOutline,
 		NcButton,
 		NcNoteCard,
-		Check,
+		IconCheck,
 	},
 
 	data() {

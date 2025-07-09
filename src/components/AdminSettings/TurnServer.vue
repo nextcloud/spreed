@@ -55,9 +55,9 @@
 			@click="testServer">
 			<template #icon>
 				<span v-if="testing" class="icon icon-loading-small" />
-				<AlertCircle v-else-if="testingError" fill-color="#E9322D" />
-				<Check v-else-if="testingSuccess" fill-color="#46BA61" />
-				<Pulse v-else />
+				<IconAlertCircleOutline v-else-if="testingError" fill-color="#E9322D" />
+				<IconCheck v-else-if="testingSuccess" fill-color="#46BA61" />
+				<IconPulse v-else />
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"
@@ -65,7 +65,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete :size="20" />
+				<IconDeleteOutline :size="20" />
 			</template>
 		</NcButton>
 	</li>
@@ -81,10 +81,10 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Pulse from 'vue-material-design-icons/Pulse.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconPulse from 'vue-material-design-icons/Pulse.vue'
 import { isCertificateValid } from '../../services/certificateService.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
@@ -92,14 +92,14 @@ export default {
 	name: 'TurnServer',
 
 	components: {
-		AlertCircle,
-		Check,
-		Delete,
+		IconAlertCircleOutline,
+		IconCheck,
+		IconDeleteOutline,
 		NcButton,
 		NcSelect,
 		NcTextField,
 		NcPasswordField,
-		Pulse,
+		IconPulse,
 	},
 
 	props: {
