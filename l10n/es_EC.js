@@ -950,6 +950,7 @@ OC.L10N.register(
     "No microphone available" : "No hay micrófono disponible",
     "Select camera" : "Seleccione la cámara",
     "No camera available" : "No hay cámara disponible",
+    "Test" : "Prueba",
     "Devices" : "Dispositivos",
     "Backgrounds" : "Fondos",
     "No audio" : "Sin audio",

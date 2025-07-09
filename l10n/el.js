@@ -720,6 +720,7 @@ OC.L10N.register(
     "No microphone available" : "Δεν βρέθηκε μικρόφωνο",
     "Select camera" : "Επιλογή κάμερας",
     "No camera available" : "Δεν υπάρχει διαθέσιμη κάμερα",
+    "Test" : "Δοκιμή",
     "Devices" : "Συσκευές",
     "No audio" : "Χωρίς ήχο",
     "No camera" : "Χωρίς κάμερα",

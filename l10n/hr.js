@@ -759,6 +759,7 @@ OC.L10N.register(
     "No microphone available" : "Nema dostupnih mikrofona",
     "Select camera" : "Odaberi kameru",
     "No camera available" : "Nema dostupnih kamera",
+    "Test" : "Ispitivanje",
     "Devices" : "Uređaji",
     "No audio" : "Nema zvuka",
     "No camera" : "Nema kamere",

@@ -748,6 +748,7 @@ OC.L10N.register(
     "No microphone available" : "Perunu micròfonu a disponimentu",
     "Select camera" : "Seletziona sa fotocàmera",
     "No camera available" : "Peruna fotocàmera a disponimentu",
+    "Test" : "Proa",
     "Devices" : "Dispositivos",
     "No audio" : "Àudiu perunu",
     "No camera" : "Peruna fotocàmera",
