@@ -931,6 +931,7 @@ OC.L10N.register(
     "No microphone available" : "Няма наличен микрофон",
     "Select camera" : "Избор на камера",
     "No camera available" : "Няма налична камера",
+    "Test" : "Тест",
     "Devices" : "Устройства",
     "Backgrounds" : "Фонове",
     "No audio" : "Без аудио",

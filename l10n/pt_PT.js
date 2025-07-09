@@ -315,6 +315,7 @@ OC.L10N.register(
     "Groups" : "Grupos",
     "Teams" : "Grupos",
     "None" : "Nenhum",
+    "Test" : "Teste",
     "Invalid path selected" : "Caminho inválido selecionado",
     "Blur" : "Blur",
     "Upload" : "Enviar",
