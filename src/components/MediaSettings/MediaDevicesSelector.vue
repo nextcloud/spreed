@@ -7,11 +7,12 @@
 import type { ComponentPublicInstance } from 'vue'
 
 import { t } from '@nextcloud/l10n'
-import { computed } from 'vue'
+import { computed, h } from 'vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
+import IconVolumeOutline from '../../../img/icon-volume-high-outline.svg?raw'
 
 type NcSelectOption = { id: string | null, label: string }
 type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }
@@ -46,9 +47,12 @@ const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 
 const deviceIcon = computed<ComponentPublicInstance | null>(() => {
 	switch (props.kind) {
-		case 'audioinput': return IconMicrophone
-		case 'audiooutput': return IconVolumeHigh
-		case 'videoinput': return IconVideo
+		case 'audioinput': return IconMicrophoneOutline
+		case 'audiooutput': return h(NcIconSvgWrapper, {
+			svg: IconVolumeOutline,
+			size: 20,
+		})
+		case 'videoinput': return IconVideoOutline
 		default: return null
 	}
 })
@@ -137,6 +141,11 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 	:deep(.v-select.select) {
 		width: 100%;
 		margin: 0;
+	}
+
+	:deep(.icon-vue) {
+		min-width: auto;
+		width: 20px;
 	}
 }
 </style>

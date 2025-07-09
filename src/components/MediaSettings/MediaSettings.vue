@@ -220,7 +220,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
@@ -324,7 +324,7 @@ export default {
 		const devicesTab = {
 			id: 'devices',
 			label: t('spreed', 'Devices'),
-			icon: markRaw(IconCog),
+			icon: markRaw(IconCogOutline),
 		}
 		const backgroundsTab = {
 			id: 'backgrounds',

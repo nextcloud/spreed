@@ -12,7 +12,7 @@
 			@click="toggleEdit">
 			{{ t('spreed', 'Edit display name') }}
 			<template #icon>
-				<Pencil :size="20" />
+				<IconPencilOutline :size="20" />
 			</template>
 		</NcButton>
 
@@ -56,7 +56,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
