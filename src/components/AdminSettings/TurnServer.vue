@@ -54,7 +54,7 @@
 			:disabled="!testAvailable"
 			@click="testServer">
 			<template #icon>
-				<span v-if="testing" class="icon icon-loading-small" />
+				<NcLoadingIcon v-if="testing" :size="20" />
 				<IconAlertCircleOutline v-else-if="testingError" fill-color="#E9322D" />
 				<IconCheck v-else-if="testingSuccess" fill-color="#46BA61" />
 				<IconPulse v-else />
@@ -78,6 +78,7 @@ import hmacSHA1 from 'crypto-js/hmac-sha1.js'
 import debounce from 'debounce'
 import webrtcSupport from 'webrtcsupport'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -92,6 +93,7 @@ export default {
 	name: 'TurnServer',
 
 	components: {
+		NcLoadingIcon,
 		IconAlertCircleOutline,
 		IconCheck,
 		IconDeleteOutline,
@@ -213,15 +215,6 @@ export default {
 				{ value: 'turn', label: t('spreed', '{option} only', { option: 'turn:' }) },
 				{ value: 'turns', label: t('spreed', '{option} only', { option: 'turns:' }) },
 			]
-		},
-
-		testIconClasses() {
-			return {
-				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
-				'icon-loading-small': this.testing,
-				'icon-error': this.testingError,
-				'icon-checkmark': this.testingSuccess,
-			}
 		},
 
 		testResult() {

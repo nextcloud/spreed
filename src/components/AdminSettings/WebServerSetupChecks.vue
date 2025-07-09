@@ -23,7 +23,7 @@
 					<template #icon>
 						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" />
 						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" />
-						<span v-else class="icon icon-loading-small" />
+						<NcLoadingIcon v-else :size="20" />
 					</template>
 				</NcButton>
 			</li>
@@ -36,6 +36,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
@@ -47,6 +48,7 @@ export default {
 	name: 'WebServerSetupChecks',
 
 	components: {
+		NcLoadingIcon,
 		IconAlertCircleOutline,
 		NcButton,
 		NcNoteCard,
