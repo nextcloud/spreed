@@ -848,6 +848,7 @@ OC.L10N.register(
     "Select camera" : "Seleziona fotocamera",
     "No camera available" : "Nessuna fotocamera disponibile",
     "Select a device" : "Seleziona un dispositivo",
+    "Test" : "Prova",
     "Devices" : "Dispositivi",
     "No audio" : "Nessun audio",
     "No camera" : "Nessuna fotocamera",

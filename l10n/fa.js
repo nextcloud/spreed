@@ -989,6 +989,7 @@ OC.L10N.register(
     "No microphone available" : "No microphone available",
     "Select camera" : "Select camera",
     "No camera available" : "No camera available",
+    "Test" : "Test",
     "Devices" : "Devices",
     "Backgrounds" : "Backgrounds",
     "No audio" : "No audio",

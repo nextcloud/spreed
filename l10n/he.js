@@ -467,6 +467,7 @@ OC.L10N.register(
     "Other sources" : "מקורות אחרים",
     "You are currently waiting in the lobby" : "הנך בהמתנה בלובי",
     "None" : "אין",
+    "Test" : "בדיקה",
     "Devices" : "מכשירים",
     "No audio" : "אין שמע",
     "Calls are not supported in your browser" : "אין תמיכה בשיחות בדפדפן שלך",

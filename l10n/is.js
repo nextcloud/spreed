@@ -465,6 +465,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "You are currently waiting in the lobby",
     "None" : "Enginn",
     "Select a device" : "Veldu tæki",
+    "Test" : "Prófun",
     "Devices" : "Tæki",
     "No audio" : "Ekkert hljóð",
     "Invalid path selected" : "Ógild slóð valin",

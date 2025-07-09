@@ -1071,6 +1071,7 @@ OC.L10N.register(
     "Select camera" : "카메라 선택",
     "No camera available" : "사용 가능한 카메라 없음",
     "Select a device" : "장치 선택",
+    "Test" : "테스트",
     "Devices" : "장치",
     "Backgrounds" : "배경",
     "No audio" : "오디오 없음",

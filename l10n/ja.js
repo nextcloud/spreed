@@ -1088,6 +1088,7 @@ OC.L10N.register(
     "Select camera" : "カメラを選択",
     "No camera available" : "利用可能なカメラがありません",
     "Select a device" : "デバイスを選択する",
+    "Test" : "テスト",
     "Devices" : "端末",
     "Backgrounds" : "背景",
     "No audio" : "音声なし",
