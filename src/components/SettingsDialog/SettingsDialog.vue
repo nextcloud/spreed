@@ -23,7 +23,7 @@
 			<NcButton variant="secondary"
 				@click="openMediaSettings">
 				<template #icon>
-					<IconMicrophone :size="20" />
+					<IconMicrophoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
@@ -237,7 +237,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -264,7 +264,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
-		IconMicrophone,
+		IconMicrophoneOutline,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
