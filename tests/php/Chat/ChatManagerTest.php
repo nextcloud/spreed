@@ -292,8 +292,8 @@ class ChatManagerTest extends TestCase {
 			->willReturn(1234);
 
 		$this->commentsManager->expects($this->once())
-			->method('getForObjectSince')
-			->with('chat', 1234, $offset, 'desc', $limit)
+			->method('getCommentsWithVerbForObjectSinceComment')
+			->with('chat', 1234, [], $offset, 'desc', $limit)
 			->willReturn($expected);
 
 		$comments = $this->chatManager->getHistory($chat, $offset, $limit, false);
@@ -317,8 +317,8 @@ class ChatManagerTest extends TestCase {
 			->willReturn(1234);
 
 		$this->commentsManager->expects($this->once())
-			->method('getForObjectSince')
-			->with('chat', 1234, $offset, 'asc', $limit)
+			->method('getCommentsWithVerbForObjectSinceComment')
+			->with('chat', 1234, [], $offset, 'asc', $limit)
 			->willReturn($expected);
 
 		$this->notifier->expects($this->once())
@@ -352,8 +352,8 @@ class ChatManagerTest extends TestCase {
 			->willReturn(1234);
 
 		$this->commentsManager->expects($this->exactly(2))
-			->method('getForObjectSince')
-			->with('chat', 1234, $offset, 'asc', $limit)
+			->method('getCommentsWithVerbForObjectSinceComment')
+			->with('chat', 1234, [], $offset, 'asc', $limit)
 			->willReturnOnConsecutiveCalls(
 				[],
 				$expected
