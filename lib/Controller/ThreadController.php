@@ -130,6 +130,9 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		foreach ($threads as $thread) {
 			$firstMessage = $lastMessage = null;
 			$attendee = $attendees[$thread->getId()] ?? null;
+			if ($attendee === null) {
+				$attendee = ThreadAttendee::createFromParticipant($thread->getId(), $this->participant);
+			}
 
 			$first = $comments[$thread->getId()] ?? null;
 			if ($first !== null) {
@@ -145,7 +148,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 
 			$list[] = [
 				'thread' => $thread->jsonSerialize(),
-				'attendee' => $attendee?->jsonSerialize(),
+				'attendee' => $attendee->jsonSerialize(),
 				'first' => $firstMessage?->toArray($this->getResponseFormat()),
 				'last' => $lastMessage?->toArray($this->getResponseFormat()),
 			];

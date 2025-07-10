@@ -456,15 +456,11 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThreadAttendee = array{
  *      notificationLevel: 0|1|2|3,
- *      lastReadMessage: non-negative-int,
- *      lastMentionMessage: non-negative-int,
- *      lastMentionDirect: non-negative-int,
- *      readPrivacy: 0|1,
  * }
  *
  * @psalm-type TalkThreadInfo = array{
  *      thread: TalkThread,
- *      attendee: ?TalkThreadAttendee,
+ *      attendee: TalkThreadAttendee,
  *      first: ?TalkChatMessage,
  *      last: ?TalkChatMessage,
  * }

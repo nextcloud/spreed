@@ -45,6 +45,20 @@ class Version22000Date20250710124258 extends SimpleMigrationStep {
 			$table->addIndex(['last_activity'], 'talkthread_lastactive');
 		}
 
+		$table = $schema->getTable('talk_thread_attendees');
+		if ($table->hasColumn('last_read_message')) {
+			$table->dropColumn('last_read_message');
+		}
+		if ($table->hasColumn('last_mention_message')) {
+			$table->dropColumn('last_mention_message');
+		}
+		if ($table->hasColumn('last_mention_direct')) {
+			$table->dropColumn('last_mention_direct');
+		}
+		if ($table->hasColumn('read_privacy')) {
+			$table->dropColumn('read_privacy');
+		}
+
 		return $schema;
 	}
 }
