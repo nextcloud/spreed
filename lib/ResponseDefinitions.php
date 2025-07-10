@@ -449,8 +449,8 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThread = array{
  *     id: positive-int,
- *     roomId: positive-int,
  *     lastMessageId: non-negative-int,
+ *     lastActivity: non-negative-int,
  *     numReplies: non-negative-int,
  * }
  *

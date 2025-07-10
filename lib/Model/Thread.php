@@ -20,6 +20,10 @@ use OCP\DB\Types;
  * @method int getLastMessageId()
  * @method void setNumReplies(int $numReplies)
  * @method int getNumReplies()
+ * @method void setLastActivity(\DateTime $lastActivity)
+ * @method \DateTime|null getLastActivity()
+ * @method void setName(string $name)
+ * @method string getName()
  *
  * @psalm-import-type TalkThread from ResponseDefinitions
  */
@@ -27,11 +31,15 @@ class Thread extends Entity implements \JsonSerializable {
 	protected int $roomId = 0;
 	protected int $lastMessageId = 0;
 	protected int $numReplies = 0;
+	protected ?\DateTime $lastActivity = null;
+	protected string $name = '';
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
 		$this->addType('lastMessageId', Types::BIGINT);
 		$this->addType('numReplies', Types::BIGINT);
+		$this->addType('lastActivity', Types::DATETIME);
+		$this->addType('name', Types::STRING);
 	}
 
 	/**
@@ -41,9 +49,11 @@ class Thread extends Entity implements \JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'id' => max(1, $this->getId()),
-			'roomId' => max(1, $this->getRoomId()),
+			// 'roomId' => max(1, $this->getRoomId()),
 			'lastMessageId' => max(0, $this->getLastMessageId()),
 			'numReplies' => max(0, $this->getNumReplies()),
+			'lastActivity' => max(0, $this->getLastActivity()?->getTimestamp() ?? 0),
+			// 'name' => $this->getName(),
 		];
 	}
 }

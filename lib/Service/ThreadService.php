@@ -16,6 +16,7 @@ use OCA\Talk\Model\ThreadAttendeeMapper;
 use OCA\Talk\Model\ThreadMapper;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -26,6 +27,7 @@ class ThreadService {
 		protected IDBConnection $connection,
 		protected ThreadMapper $threadMapper,
 		protected ThreadAttendeeMapper $threadAttendeeMapper,
+		protected ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -37,6 +39,7 @@ class ThreadService {
 		$thread->setNumReplies($info['num_replies']);
 		$thread->setLastMessageId($info['last_message_id']);
 		$thread->setRoomId($room->getId());
+		$thread->setLastActivity($this->timeFactory->getDateTime());
 
 		try {
 			$this->threadMapper->insert($thread);
@@ -125,15 +128,19 @@ class ThreadService {
 	}
 
 	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
+		$dateTime = $this->timeFactory->getDateTime();
+
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_threads')
 			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
+			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($query->expr()->eq('id', $query->createNamedParameter($thread->getId())));
 		$query->executeStatement();
 
 		$thread->setNumReplies($thread->getNumReplies() + 1);
 		$thread->setLastMessageId($lastMessageId);
+		$thread->setLastActivity($dateTime);
 	}
 
 	/**
