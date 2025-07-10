@@ -8,6 +8,11 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Chat/CommentsManager.php">
+    <UndefinedMethod>
+      <code><![CDATA[getLastKnownComment]]></code>
+    </UndefinedMethod>
+  </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
     <UndefinedClass>
       <code><![CDATA[\OC_Util]]></code>
