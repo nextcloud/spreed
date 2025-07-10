@@ -2015,8 +2015,9 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "roomId",
+                    "roomToken",
                     "lastMessageId",
+                    "lastActivity",
                     "numReplies"
                 ],
                 "properties": {
@@ -2025,12 +2026,15 @@
                         "format": "int64",
                         "minimum": 1
                     },
-                    "roomId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "roomToken": {
+                        "type": "string"
                     },
                     "lastMessageId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 0
+                    },
+                    "lastActivity": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 0
@@ -2045,11 +2049,7 @@
             "ThreadAttendee": {
                 "type": "object",
                 "required": [
-                    "notificationLevel",
-                    "lastReadMessage",
-                    "lastMentionMessage",
-                    "lastMentionDirect",
-                    "readPrivacy"
+                    "notificationLevel"
                 ],
                 "properties": {
                     "notificationLevel": {
@@ -2060,29 +2060,6 @@
                             1,
                             2,
                             3
-                        ]
-                    },
-                    "lastReadMessage": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 0
-                    },
-                    "lastMentionMessage": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 0
-                    },
-                    "lastMentionDirect": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 0
-                    },
-                    "readPrivacy": {
-                        "type": "integer",
-                        "format": "int64",
-                        "enum": [
-                            0,
-                            1
                         ]
                     }
                 }
@@ -2100,8 +2077,7 @@
                         "$ref": "#/components/schemas/Thread"
                     },
                     "attendee": {
-                        "$ref": "#/components/schemas/ThreadAttendee",
-                        "nullable": true
+                        "$ref": "#/components/schemas/ThreadAttendee"
                     },
                     "first": {
                         "$ref": "#/components/schemas/ChatMessage",
@@ -20855,10 +20831,10 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/recent": {
             "get": {
-                "operationId": "thread-list-threads",
-                "summary": "Get list of threads in a conversation",
+                "operationId": "thread-get-recent-active-threads",
+                "summary": "Get recent active threads in a conversation",
                 "tags": [
                     "thread"
                 ],
@@ -20900,20 +20876,9 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64",
-                            "default": 25,
+                            "default": 50,
                             "minimum": 1,
                             "maximum": 50
-                        }
-                    },
-                    {
-                        "name": "offsetId",
-                        "in": "query",
-                        "description": "The last thread ID that was known, default 0 starts from the newest",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
                         }
                     },
                     {
