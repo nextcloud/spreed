@@ -43,10 +43,9 @@ class ThreadMapper extends QBMapper {
 
 	/**
 	 * @param int<1, 50> $limit
-	 * @param non-negative-int $offsetId
 	 * @return list<Thread>
 	 */
-	public function findByRoomId(int $roomId, int $limit, int $offsetId = 0): array {
+	public function getRecentByRoomId(int $roomId, int $limit): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -55,16 +54,8 @@ class ThreadMapper extends QBMapper {
 				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT,
 			))
-			->orderBy('id', 'DESC')
+			->orderBy('last_activity', 'DESC')
 			->setMaxResults($limit);
-
-		if ($offsetId !== 0) {
-			$query->andWhere($query->expr()->lt(
-				'id',
-				$query->createNamedParameter($offsetId, IQueryBuilder::PARAM_INT),
-				IQueryBuilder::PARAM_INT,
-			));
-		}
 
 		return $this->findEntities($query);
 	}

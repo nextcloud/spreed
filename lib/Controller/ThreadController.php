@@ -51,11 +51,9 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Get list of threads in a conversation
+	 * Get recent active threads in a conversation
 	 *
 	 * @param int<1, 50> $limit Number of threads to return
-	 * @param int $offsetId The last thread ID that was known, default 0 starts from the newest
-	 * @psalm-param non-negative-int $offsetId
 	 * @return DataResponse<Http::STATUS_OK, list<TalkThreadInfo>, array{}>
 	 *
 	 * 200: List of threads returned
@@ -63,12 +61,12 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
-	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/threads', requirements: [
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/threads/recent', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function listThreads(int $limit = 25, int $offsetId = 0): DataResponse {
-		$threads = $this->threadService->findByRoom($this->room, $limit, $offsetId);
+	public function getRecentActiveThreads(int $limit = 50): DataResponse {
+		$threads = $this->threadService->getRecentByRoomId($this->room, $limit);
 		$list = $this->prepareListOfThreads($threads);
 		return new DataResponse($list);
 	}

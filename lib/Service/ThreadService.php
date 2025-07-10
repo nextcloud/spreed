@@ -63,12 +63,11 @@ class ThreadService {
 
 	/**
 	 * @param int<1, 50> $limit
-	 * @param non-negative-int $offsetId
 	 * @return list<Thread>
 	 */
-	public function findByRoom(Room $room, int $limit, int $offsetId = 0): array {
+	public function getRecentByRoomId(Room $room, int $limit): array {
 		$limit = min(50, max(1, $limit));
-		return $this->threadMapper->findByRoomId($room->getId(), $limit, $offsetId);
+		return $this->threadMapper->getRecentByRoomId($room->getId(), $limit);
 	}
 
 	/**
