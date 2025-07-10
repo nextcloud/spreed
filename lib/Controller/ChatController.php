@@ -398,6 +398,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param 0|1 $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
 	 * @param 0|1 $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @param 0|1 $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
+	 * @param int $threadId Limit the chat message list to a given thread
+	 * @psalm-param non-negative-int $threadId
 	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 *
 	 * 200: Messages returned
@@ -412,7 +414,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function receiveMessages(int $lookIntoFuture,
+	public function receiveMessages(
+		int $lookIntoFuture,
 		int $limit = 100,
 		int $lastKnownMessageId = 0,
 		int $lastCommonReadId = 0,
@@ -420,7 +423,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 		int $setReadMarker = 1,
 		int $includeLastKnown = 0,
 		int $noStatusUpdate = 0,
-		int $markNotificationsAsRead = 1): DataResponse {
+		int $markNotificationsAsRead = 1,
+		int $threadId = 0,
+	): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -439,6 +444,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$includeLastKnown,
 				$noStatusUpdate,
 				$markNotificationsAsRead,
+				// FIXME support threads in federation $threadId,
 			);
 		}
 
@@ -489,7 +495,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		if ($lookIntoFuture) {
 			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead);
 		} else {
-			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown);
+			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown, $threadId);
 		}
 
 		return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
@@ -767,6 +773,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
 	 * @psalm-param non-negative-int $messageId
 	 * @param int<1, 100> $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+	 * @param int $threadId Limit the chat message list to a given thread
+	 * @psalm-param non-negative-int $threadId
 	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 *
 	 * 200: Message context returned
@@ -784,17 +792,25 @@ class ChatController extends AEnvironmentAwareOCSController {
 	])]
 	public function getMessageContext(
 		int $messageId,
-		int $limit = 50): DataResponse {
+		int $limit = 50,
+		int $threadId = 0,
+	): DataResponse {
 		$limit = min(100, $limit);
 
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
-			return $proxy->getMessageContext($this->room, $this->participant, $messageId, $limit);
+			return $proxy->getMessageContext(
+				$this->room,
+				$this->participant,
+				$messageId,
+				$limit,
+				// FIXME support threads in federation $threadId,
+			);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
-		$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true);
+		$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true, $threadId);
 		$commentsHistory = array_reverse($commentsHistory);
 		$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
 
