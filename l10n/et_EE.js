@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Select a device" : "Vali seade",
     "Playing …" : "Esitamisel…",
     "Test speakers" : "Testi kõlareid",
+    "Test" : "Katseta",
     "Devices" : "Seadmed",
     "Backgrounds" : "Taustad",
     "No audio" : "Heli puudub",
