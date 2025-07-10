@@ -147,7 +147,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			}
 
 			$list[] = [
-				'thread' => $thread->jsonSerialize(),
+				'thread' => $thread->toArray($this->room),
 				'attendee' => $attendee->jsonSerialize(),
 				'first' => $firstMessage?->toArray($this->getResponseFormat()),
 				'last' => $lastMessage?->toArray($this->getResponseFormat()),
