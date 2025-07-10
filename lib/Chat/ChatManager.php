@@ -848,9 +848,10 @@ class ChatManager {
 	 *                    timeout expired.
 	 */
 	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId = 0): array {
-		return $this->commentsManager->getForObjectSince(
+		return $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
 			'chat',
 			(string)$chat->getId(),
+			[],
 			$offset,
 			'desc',
 			$limit,
@@ -961,7 +962,7 @@ class ChatManager {
 		}
 
 		// Load data from the database
-		$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
 
 		if (empty($comments)) {
 			// We only write the cache when there were no new comments,
@@ -987,13 +988,13 @@ class ChatManager {
 	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+			$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
 		}
 
 		return $comments;
