@@ -9127,6 +9127,8 @@ export interface operations {
                 noStatusUpdate?: 0 | 1;
                 /** @description Set to 0 when notifications should not be marked as read (default 1) */
                 markNotificationsAsRead?: 0 | 1;
+                /** @description Limit the chat message list to a given thread */
+                threadId?: number;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
@@ -9582,6 +9584,8 @@ export interface operations {
             query?: {
                 /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
                 limit?: number;
+                /** @description Limit the chat message list to a given thread */
+                threadId?: number;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */

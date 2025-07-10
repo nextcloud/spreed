@@ -18337,6 +18337,17 @@
                         }
                     },
                     {
+                        "name": "threadId",
+                        "in": "query",
+                        "description": "Limit the chat message list to a given thread",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 0,
+                            "minimum": 0
+                        }
+                    },
+                    {
                         "name": "x-nextcloud-federation",
                         "in": "header",
                         "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
@@ -19161,6 +19172,17 @@
                             "default": 50,
                             "minimum": 1,
                             "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "threadId",
+                        "in": "query",
+                        "description": "Limit the chat message list to a given thread",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 0,
+                            "minimum": 0
                         }
                     },
                     {

@@ -847,8 +847,16 @@ class ChatManager {
 	 *                    creation date and message are relevant), or an empty array if the
 	 *                    timeout expired.
 	 */
-	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown): array {
-		return $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'desc', $limit, $includeLastKnown);
+	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId = 0): array {
+		return $this->commentsManager->getForObjectSince(
+			'chat',
+			(string)$chat->getId(),
+			$offset,
+			'desc',
+			$limit,
+			$includeLastKnown,
+			$threadId !== 0 ? (string)$threadId : '',
+		);
 	}
 
 	/**
