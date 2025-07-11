@@ -16,6 +16,7 @@ use OCA\Talk\Model\ThreadAttendeeMapper;
 use OCA\Talk\Model\ThreadMapper;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -26,6 +27,7 @@ class ThreadService {
 		protected IDBConnection $connection,
 		protected ThreadMapper $threadMapper,
 		protected ThreadAttendeeMapper $threadAttendeeMapper,
+		protected ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -37,6 +39,7 @@ class ThreadService {
 		$thread->setNumReplies($info['num_replies']);
 		$thread->setLastMessageId($info['last_message_id']);
 		$thread->setRoomId($room->getId());
+		$thread->setLastActivity($this->timeFactory->getDateTime());
 
 		try {
 			$this->threadMapper->insert($thread);
@@ -60,12 +63,11 @@ class ThreadService {
 
 	/**
 	 * @param int<1, 50> $limit
-	 * @param non-negative-int $offsetId
 	 * @return list<Thread>
 	 */
-	public function findByRoom(Room $room, int $limit, int $offsetId = 0): array {
+	public function getRecentByRoomId(Room $room, int $limit): array {
 		$limit = min(50, max(1, $limit));
-		return $this->threadMapper->findByRoomId($room->getId(), $limit, $offsetId);
+		return $this->threadMapper->getRecentByRoomId($room->getId(), $limit);
 	}
 
 	/**
@@ -91,13 +93,6 @@ class ThreadService {
 		$threadAttendee->setActorType($attendee->getActorType());
 		$threadAttendee->setActorId($attendee->getActorId());
 		$threadAttendee->setNotificationLevel($attendee->getNotificationLevel());
-		$threadAttendee->setReadPrivacy($attendee->getReadPrivacy());
-
-		// We only copy the read marker for now.
-		// If we copied the last mention and direct ids as well, all threads
-		// created would be marked as unread with a mention,
-		// when the conversation had an unread mention.
-		$threadAttendee->setLastReadMessage($attendee->getLastReadMessage());
 
 		try {
 			$this->threadAttendeeMapper->insert($threadAttendee);
@@ -125,41 +120,19 @@ class ThreadService {
 	}
 
 	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
+		$dateTime = $this->timeFactory->getDateTime();
+
 		$query = $this->connection->getQueryBuilder();
 		$query->update('talk_threads')
 			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
+			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($query->expr()->eq('id', $query->createNamedParameter($thread->getId())));
 		$query->executeStatement();
 
 		$thread->setNumReplies($thread->getNumReplies() + 1);
 		$thread->setLastMessageId($lastMessageId);
-	}
-
-	/**
-	 * @param string[] $actorIds
-	 * @param string[] $actorsDirectlyMentioned
-	 */
-	public function markAttendeesAsMentioned(Room $room, string $actorType, array $actorIds, int $messageId, array $actorsDirectlyMentioned): void {
-		$update = $this->connection->getQueryBuilder();
-		$update->update('talk_thread_attendees')
-			->set('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
-			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorIds, IQueryBuilder::PARAM_STR_ARRAY)))
-			->andWhere($update->expr()->lt('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		if (!empty($actorsDirectlyMentioned)) {
-			$update = $this->connection->getQueryBuilder();
-			$update->update('talk_thread_attendees')
-				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
-				->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
-				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorsDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)))
-				->andWhere($update->expr()->lt('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
-			$update->executeStatement();
-		}
+		$thread->setLastActivity($dateTime);
 	}
 
 	public function deleteByRoom(Room $room): void {

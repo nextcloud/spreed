@@ -2734,10 +2734,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $results));
 	}
 
-	#[Then('/^user "([^"]*)" sees the following threads in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
-	public function userSeesTheFollowingThreadsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+	#[Then('/^user "([^"]*)" sees the following recent threads in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSeesTheFollowingRecentThreadsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads/recent');
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$results = $this->getDataFromResponse($this->response);
@@ -2754,6 +2754,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$result = $this->getDataFromResponse($this->response);
 			$this->compareThreadsResponse($formData, [$result]);
 		}
+
+		sleep(1);
 	}
 
 	protected function compareThreadsResponse(?TableNode $formData, array $results): void {
@@ -2767,7 +2769,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount($count, $results, 'Result count does not match');
 
 		$expected = array_map(static function (array $result) {
-			foreach (['t.id', 't.lastMessage', 'a.lastReadMessage', 'a.lastMentionMessage', 'a.lastMentionDirect', 'firstMessage', 'lastMessage'] as $field) {
+			foreach (['t.id', 't.lastMessage', 'firstMessage', 'lastMessage'] as $field) {
 				if (isset($result[$field])) {
 					if ($result[$field] === '0') {
 						$result[$field] = 0;
@@ -2790,9 +2792,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				't.id' => $actual['thread']['id'],
 				't.numReplies' => $actual['thread']['numReplies'],
 				't.lastMessage' => $actual['thread']['lastMessageId'],
-				'a.lastReadMessage' => $actual['attendee']['lastReadMessage'] ?? null,
-				'a.lastMentionMessage' => $actual['attendee']['lastMentionMessage'] ?? null,
-				'a.lastMentionDirect' => $actual['attendee']['lastMentionDirect'] ?? null,
 				'firstMessage' => $actual['first']['id'] ?? null,
 				'lastMessage' => $actual['last']['id'] ?? null,
 			];

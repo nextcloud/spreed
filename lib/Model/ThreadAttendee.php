@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
@@ -25,14 +26,6 @@ use OCP\DB\Types;
  * @method string getActorId()
  * @method void setNotificationLevel(int $notificationLevel)
  * @method int getNotificationLevel()
- * @method void setLastReadMessage(int $lastReadMessage)
- * @method int getLastReadMessage()
- * @method void setLastMentionMessage(int $lastMentionMessage)
- * @method int getLastMentionMessage()
- * @method void setLastMentionDirect(int $lastMentionDirect)
- * @method int getLastMentionDirect()
- * @method void setReadPrivacy(int $readPrivacy)
- * @method int getReadPrivacy()
  *
  * @psalm-import-type TalkThreadAttendee from ResponseDefinitions
  */
@@ -43,21 +36,25 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected int $notificationLevel = 0;
-	protected int $lastReadMessage = 0;
-	protected int $lastMentionMessage = 0;
-	protected int $lastMentionDirect = 0;
-	protected int $readPrivacy = 0;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
 		$this->addType('threadId', Types::BIGINT);
+		$this->addType('attendeeId', Types::BIGINT);
 		$this->addType('actorType', Types::STRING);
 		$this->addType('actorId', Types::STRING);
 		$this->addType('notificationLevel', Types::INTEGER);
-		$this->addType('lastReadMessage', Types::INTEGER);
-		$this->addType('lastMentionMessage', Types::INTEGER);
-		$this->addType('lastMentionDirect', Types::BIGINT);
-		$this->addType('readPrivacy', Types::SMALLINT);
+	}
+
+	public static function createFromParticipant(int $threadId, Participant $participant): ThreadAttendee {
+		$attendee = new ThreadAttendee();
+		$attendee->setRoomId($participant->getRoom()->getId());
+		$attendee->setThreadId($threadId);
+		$attendee->setAttendeeId($participant->getAttendee()->getId());
+		$attendee->setNotificationLevel(Participant::NOTIFY_DEFAULT);
+		$attendee->setActorType($participant->getAttendee()->getActorType());
+		$attendee->setActorId($participant->getAttendee()->getActorId());
+		return $attendee;
 	}
 
 	/**
@@ -67,10 +64,6 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'notificationLevel' => min(3, max(0, $this->getNotificationLevel())),
-			'lastReadMessage' => max(0, $this->getLastReadMessage()),
-			'lastMentionMessage' => max(0, $this->getLastMentionMessage()),
-			'lastMentionDirect' => max(0, $this->getLastMentionDirect()),
-			'readPrivacy' => min(1, max(0, $this->getReadPrivacy())),
 		];
 	}
 }

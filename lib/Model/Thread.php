@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -20,30 +21,40 @@ use OCP\DB\Types;
  * @method int getLastMessageId()
  * @method void setNumReplies(int $numReplies)
  * @method int getNumReplies()
+ * @method void setLastActivity(\DateTime $lastActivity)
+ * @method \DateTime|null getLastActivity()
+ * @method void setName(string $name)
+ * @method string getName()
  *
  * @psalm-import-type TalkThread from ResponseDefinitions
  */
-class Thread extends Entity implements \JsonSerializable {
+class Thread extends Entity {
 	protected int $roomId = 0;
 	protected int $lastMessageId = 0;
 	protected int $numReplies = 0;
+	protected ?\DateTime $lastActivity = null;
+	protected string $name = '';
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
 		$this->addType('lastMessageId', Types::BIGINT);
 		$this->addType('numReplies', Types::BIGINT);
+		$this->addType('lastActivity', Types::DATETIME);
+		$this->addType('name', Types::STRING);
 	}
 
 	/**
 	 * @return TalkThread
 	 */
-	#[\Override]
-	public function jsonSerialize(): array {
+	public function toArray(Room $room): array {
 		return [
 			'id' => max(1, $this->getId()),
-			'roomId' => max(1, $this->getRoomId()),
+			// 'roomId' => max(1, $this->getRoomId()),
+			'roomToken' => $room->getToken(),
 			'lastMessageId' => max(0, $this->getLastMessageId()),
 			'numReplies' => max(0, $this->getNumReplies()),
+			'lastActivity' => max(0, $this->getLastActivity()?->getTimestamp() ?? 0),
+			// 'name' => $this->getName(),
 		];
 	}
 }

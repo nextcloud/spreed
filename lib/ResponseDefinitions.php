@@ -449,22 +449,19 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThread = array{
  *     id: positive-int,
- *     roomId: positive-int,
+ *     roomToken: string,
  *     lastMessageId: non-negative-int,
+ *     lastActivity: non-negative-int,
  *     numReplies: non-negative-int,
  * }
  *
  * @psalm-type TalkThreadAttendee = array{
  *      notificationLevel: 0|1|2|3,
- *      lastReadMessage: non-negative-int,
- *      lastMentionMessage: non-negative-int,
- *      lastMentionDirect: non-negative-int,
- *      readPrivacy: 0|1,
  * }
  *
  * @psalm-type TalkThreadInfo = array{
  *      thread: TalkThread,
- *      attendee: ?TalkThreadAttendee,
+ *      attendee: TalkThreadAttendee,
  *      first: ?TalkChatMessage,
  *      last: ?TalkChatMessage,
  * }

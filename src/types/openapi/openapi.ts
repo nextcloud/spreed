@@ -1593,15 +1593,15 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/recent": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get list of threads in a conversation */
-        get: operations["thread-list-threads"];
+        /** Get recent active threads in a conversation */
+        get: operations["thread-get-recent-active-threads"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2291,10 +2291,11 @@ export type components = {
         Thread: {
             /** Format: int64 */
             id: number;
-            /** Format: int64 */
-            roomId: number;
+            roomToken: string;
             /** Format: int64 */
             lastMessageId: number;
+            /** Format: int64 */
+            lastActivity: number;
             /** Format: int64 */
             numReplies: number;
         };
@@ -2304,17 +2305,6 @@ export type components = {
              * @enum {integer}
              */
             notificationLevel: 0 | 1 | 2 | 3;
-            /** Format: int64 */
-            lastReadMessage: number;
-            /** Format: int64 */
-            lastMentionMessage: number;
-            /** Format: int64 */
-            lastMentionDirect: number;
-            /**
-             * Format: int64
-             * @enum {integer}
-             */
-            readPrivacy: 0 | 1;
         };
         ThreadInfo: {
             thread: components["schemas"]["Thread"];
@@ -9693,13 +9683,11 @@ export interface operations {
             };
         };
     };
-    "thread-list-threads": {
+    "thread-get-recent-active-threads": {
         parameters: {
             query?: {
                 /** @description Number of threads to return */
                 limit?: number;
-                /** @description The last thread ID that was known, default 0 starts from the newest */
-                offsetId?: number;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
