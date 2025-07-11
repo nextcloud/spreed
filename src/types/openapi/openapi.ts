@@ -1600,7 +1600,10 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get recent active threads in a conversation */
+        /**
+         * Get recent active threads in a conversation
+         * @description Required capability: `threads`
+         */
         get: operations["thread-get-recent-active-threads"];
         put?: never;
         post?: never;
@@ -1617,7 +1620,10 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get thread info of a single thread */
+        /**
+         * Get thread info of a single thread
+         * @description Required capability: `threads`
+         */
         get: operations["thread-get-thread"];
         put?: never;
         post?: never;
@@ -1636,7 +1642,10 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Create a thread out of a message or reply chain */
+        /**
+         * Create a thread out of a message or reply chain
+         * @description Required capability: `threads`
+         */
         post: operations["thread-make-thread"];
         delete?: never;
         options?: never;
@@ -9690,6 +9699,8 @@ export interface operations {
                 limit?: number;
             };
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9721,6 +9732,8 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9759,7 +9772,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "thread";
+                                error: "thread" | "status";
                             };
                         };
                     };
@@ -9771,6 +9784,8 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9809,7 +9824,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message" | "top-most";
+                                error: "message" | "status" | "top-most";
                             };
                         };
                     };
@@ -9826,7 +9841,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message" | "top-most";
+                                error: "message" | "status" | "top-most";
                             };
                         };
                     };

@@ -20835,6 +20835,7 @@
             "get": {
                 "operationId": "thread-get-recent-active-threads",
                 "summary": "Get recent active threads in a conversation",
+                "description": "Required capability: `threads`",
                 "tags": [
                     "thread"
                 ],
@@ -20879,6 +20880,14 @@
                             "default": 50,
                             "minimum": 1,
                             "maximum": 50
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-federation",
+                        "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -20933,6 +20942,7 @@
             "get": {
                 "operationId": "thread-get-thread",
                 "summary": "Get thread info of a single thread",
+                "description": "Required capability: `threads`",
                 "tags": [
                     "thread"
                 ],
@@ -20976,6 +20986,14 @@
                             "type": "integer",
                             "format": "int64",
                             "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-federation",
+                        "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -21049,7 +21067,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "thread"
+                                                                "thread",
+                                                                "status"
                                                             ]
                                                         }
                                                     }
@@ -21068,6 +21087,7 @@
             "post": {
                 "operationId": "thread-make-thread",
                 "summary": "Create a thread out of a message or reply chain",
+                "description": "Required capability: `threads`",
                 "tags": [
                     "thread"
                 ],
@@ -21111,6 +21131,14 @@
                             "type": "integer",
                             "format": "int64",
                             "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-federation",
+                        "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -21185,6 +21213,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "message",
+                                                                "status",
                                                                 "top-most"
                                                             ]
                                                         }
@@ -21227,6 +21256,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "message",
+                                                                "status",
                                                                 "top-most"
                                                             ]
                                                         }
