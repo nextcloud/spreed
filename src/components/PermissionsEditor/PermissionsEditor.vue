@@ -13,38 +13,31 @@
 				<!-- eslint-disable-next-line vue/no-v-html -->
 				<p :id="dialogHeaderId" class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
-					<NcCheckboxRadioSwitch ref="callStart"
-						v-model="callStart"
+					<NcCheckboxRadioSwitch v-model="callStart"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch ref="lobbyIgnore"
-						v-model="lobbyIgnore"
+					<NcCheckboxRadioSwitch v-model="lobbyIgnore"
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch ref="chatMessagesAndReactions"
-						v-model="chatMessagesAndReactions"
+					<NcCheckboxRadioSwitch v-model="chatMessagesAndReactions"
 						class="checkbox">
 						{{ t('spreed', 'Can post messages and reactions') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch ref="publishAudio"
-						v-model="publishAudio"
+					<NcCheckboxRadioSwitch v-model="publishAudio"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch ref="publishVideo"
-						v-model="publishVideo"
+					<NcCheckboxRadioSwitch v-model="publishVideo"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch ref="publishScreen"
-						v-model="publishScreen"
+					<NcCheckboxRadioSwitch v-model="publishScreen"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</NcCheckboxRadioSwitch>
-					<NcButton ref="submit"
-						type="submit"
+					<NcButton type="submit"
 						class="button-update-permission"
 						variant="primary"
 						:disabled="submitButtonDisabled">

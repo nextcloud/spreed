@@ -11,6 +11,8 @@ const ignorePatterns = [
 	'@nextcloud/dialogs',
 	'@nextcloud/vue',
 	'@mdi/svg',
+	'@vueuse/core',
+	'@vueuse/shared',
 	'bail',
 	'ccount', // ESM dependency of remark-gfm
 	'comma-separated-tokens',
