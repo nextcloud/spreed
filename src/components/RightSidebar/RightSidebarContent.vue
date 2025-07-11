@@ -24,13 +24,17 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAccount from 'vue-material-design-icons/Account.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
+import ThreadItem from './Threads/ThreadItem.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
@@ -43,18 +47,21 @@ type MutualEvent = {
 	color: string
 }
 
+type SidebarContentState = 'default' | 'search' | 'threads'
+
 const props = defineProps<{
 	isUser: boolean
-	state: 'default' | 'search'
+	state: SidebarContentState
 	mode: 'compact' | 'preview' | 'full'
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:search', value: boolean): void
+	(event: 'update:state', value: SidebarContentState): void
 	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
 }>()
 
 const store = useStore()
+const chatExtrasStore = useChatExtrasStore()
 const groupwareStore = useGroupwareStore()
 
 const isDarkTheme = useIsDarkTheme()
@@ -63,6 +70,7 @@ const profileLoading = ref(false)
 const profileImageFailed = ref(false)
 
 const token = useGetToken()
+const supportThreads = computed(() => hasTalkFeature(token.value, 'threads') || true)
 
 const conversation = computed<Conversation>(() => {
 	return store.getters.conversation(token.value) ?? store.getters.dummyConversation
@@ -80,6 +88,11 @@ const profileActions = computed<UserProfileData['actions']>(() => {
 const sidebarTitle = computed(() => {
 	if (props.state === 'search') {
 		return t('spreed', 'Search in {name}', { name: conversation.value.displayName }, {
+			escape: false,
+			sanitize: false,
+		})
+	} else if (props.state === 'threads') {
+		return t('spreed', 'Threads in {name}', { name: conversation.value.displayName }, {
 			escape: false,
 			sanitize: false,
 		})
@@ -144,11 +157,14 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 	})
 })
 
+const threadsInformation = computed(() => supportThreads.value ? chatExtrasStore.getThreadsList(token.value).slice(0, 3) : [])
+
 watch(token, async () => {
 	profileLoading.value = true
 	await Promise.all([
 		groupwareStore.getUserProfileInformation(conversation.value),
 		groupwareStore.getUserMutualEvents(conversation.value),
+		supportThreads.value ? chatExtrasStore.fetchRecentThreadsList(token.value) : null,
 	])
 	profileLoading.value = false
 }, { immediate: true })
@@ -202,7 +218,7 @@ function handleHeaderClick() {
 				<NcButton variant="tertiary"
 					:title="t('spreed', 'Search messages')"
 					:aria-label="t('spreed', 'Search messages')"
-					@click="emit('update:search', true)">
+					@click="emit('update:state', 'search')">
 					<template #icon>
 						<IconMagnify :size="20" />
 					</template>
@@ -259,15 +275,33 @@ function handleHeaderClick() {
 						:color="event.color" />
 				</ul>
 			</div>
+			<div v-if="supportThreads && threadsInformation.length"
+				class="content__threads">
+				<NcAppNavigationCaption :name="t('spreed', 'Recent threads')" />
+				<ul class="content__threads-list">
+					<ThreadItem v-for="thread of threadsInformation"
+						:key="`thread_${thread.thread.id}`"
+						:thread="thread" />
+				</ul>
+				<NcButton
+					variant="tertiary"
+					wide
+					@click="emit('update:state', 'threads')">
+					<template #icon>
+						<IconDotsHorizontal :size="20" />
+					</template>
+					{{ t('spreed', 'Show all threads') }}
+				</NcButton>
+			</div>
 		</template>
 
 		<!-- Search messages in this conversation -->
-		<template v-else-if="isUser && state === 'search'">
+		<template v-else-if="isUser">
 			<div class="content__header content__header--row">
 				<NcButton variant="tertiary"
 					:title="t('spreed', 'Back')"
 					:aria-label="t('spreed', 'Back')"
-					@click="emit('update:search', false)">
+					@click="emit('update:state', 'default')">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" :size="20" />
 					</template>
@@ -479,7 +513,8 @@ function handleHeaderClick() {
 		gap: var(--default-grid-baseline);
 	}
 
-	&__events {
+	&__events,
+	&__threads {
 		// To align with NcAppSidebarTab content width
 		margin-inline: 10px;
 
@@ -491,6 +526,7 @@ function handleHeaderClick() {
 			line-height: 20px;
 			max-height: calc(4.5 * var(--item-height) + 4 * var(--default-grid-baseline));
 			overflow-y: auto;
+			overflow-x: hidden;
 
 			& > * {
 				margin-inline: calc(var(--default-grid-baseline) / 2);
