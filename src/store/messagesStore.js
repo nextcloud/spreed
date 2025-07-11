@@ -26,6 +26,7 @@ import {
 } from '../services/messagesService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
 import { useReactionsStore } from '../stores/reactions.js'
@@ -549,6 +550,7 @@ const actions = {
 			|| message.systemMessage === 'reaction'
 			|| message.systemMessage === 'reaction_deleted'
 			|| message.systemMessage === 'reaction_revoked'
+			|| message.systemMessage === 'thread_created'
 			|| message.systemMessage === 'message_edited') {
 			if (!message.parent) {
 				return
@@ -578,6 +580,15 @@ const actions = {
 					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
+					})
+			}
+
+			if (message.systemMessage === 'thread_created') {
+				// Check existing messages for having a threadId flag, and update them
+				context.getters.messagesList(token)
+					.filter((storedMessage) => storedMessage.threadId === message.threadId)
+					.forEach((storedMessage) => {
+						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
 			}
 
@@ -636,6 +647,15 @@ const actions = {
 		}
 
 		context.commit('addMessage', { token, message })
+
+		// if (message.isThread) {
+		// const chatExtrasStore = useChatExtrasStore()
+		// const thread = chatExtrasStore.getThread(token, message.threadId)
+		// chatExtrasStore.updateThread(token, thread.threadId, {
+		// thread: { ...thread.thread, numReplies: thread.numReplies++, lastActivity: message.timestamp },
+		// last: message,
+		// })
+		// }
 
 		if (message.messageParameters && [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_AUDIO, MESSAGE.TYPE.RECORD_VIDEO].includes(message.messageType)) {
 			if (message.messageParameters?.object || message.messageParameters?.file) {

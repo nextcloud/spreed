@@ -70,7 +70,7 @@ const profileLoading = ref(false)
 const profileImageFailed = ref(false)
 
 const token = useGetToken()
-const supportThreads = computed(() => hasTalkFeature(token.value, 'threads') || true)
+const supportThreads = computed(() => hasTalkFeature(token.value, 'threads') || true) // FIXME
 
 const conversation = computed<Conversation>(() => {
 	return store.getters.conversation(token.value) ?? store.getters.dummyConversation

@@ -475,7 +475,7 @@ export default {
 			isConversationModifiable,
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
-		const supportThreads = hasTalkFeature(message.value.token, 'threads') || true
+		const supportThreads = hasTalkFeature(message.value.token, 'threads') || true  // FIXME
 
 		return {
 			messageActions,
