@@ -55,6 +55,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	/**
 	 * Get recent active threads in a conversation
 	 *
+	 * Required capability: `threads`
+	 *
 	 * @param int<1, 50> $limit Number of threads to return
 	 * @return DataResponse<Http::STATUS_OK, list<TalkThreadInfo>, array{}>
 	 *
@@ -83,6 +85,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 
 	/**
 	 * Get thread info of a single thread
+	 *
+	 * Required capability: `threads`
 	 *
 	 * @param int $threadId The thread ID to get the info for
 	 * @psalm-param non-negative-int $threadId
@@ -177,6 +181,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 
 	/**
 	 * Create a thread out of a message or reply chain
+	 *
+	 * Required capability: `threads`
 	 *
 	 * @param int $messageId The message to create a thread for (Doesn't have to be the root)
 	 * @psalm-param non-negative-int $messageId
