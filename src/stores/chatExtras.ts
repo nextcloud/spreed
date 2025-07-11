@@ -54,6 +54,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
+		getThreadsList: (state) => (token: string): ThreadInfo[] => {
+			if (state.threads[token]) {
+				return Object.values(state.threads[token]).sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
+			} else {
+				return []
+			}
+		},
+
 		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]

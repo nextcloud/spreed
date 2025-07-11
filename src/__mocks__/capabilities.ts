@@ -100,6 +100,7 @@ export const mockedCapabilities: Capabilities = {
 			'mutual-calendar-events',
 			'upcoming-reminders',
 			'sensitive-conversations',
+			'threads',
 			// Conditional features
 			'message-expiration',
 			'reactions',
