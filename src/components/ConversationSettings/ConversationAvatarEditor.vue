@@ -31,7 +31,7 @@
 							<NcButton :title="t('spreed', 'Set emoji as conversation picture')"
 								:aria-label="t('spreed', 'Set emoji as conversation picture')">
 								<template #icon>
-									<EmoticonOutline :size="20" />
+									<IconEmoticonOutline :size="20" />
 								</template>
 							</NcButton>
 						</NcEmojiPicker>
@@ -42,7 +42,7 @@
 							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
 								:aria-label="t('spreed', 'Set background color for conversation picture')">
 								<template #icon>
-									<Palette :size="20" />
+									<IconPaletteOutline :size="20" />
 								</template>
 							</NcButton>
 						</NcColorPicker>
@@ -53,14 +53,14 @@
 						:aria-label="t('spreed', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
-							<Upload :size="20" />
+							<IconUploadOutline :size="20" />
 						</template>
 					</NcButton>
 					<NcButton :title="t('spreed', 'Choose conversation picture from files')"
 						:aria-label="t('spreed', 'Choose conversation picture from files')"
 						@click="showFilePicker">
 						<template #icon>
-							<Folder :size="20" />
+							<IconFolderOutline :size="20" />
 						</template>
 					</NcButton>
 
@@ -70,7 +70,7 @@
 						:aria-label="t('spreed', 'Remove conversation picture')"
 						@click="removeAvatar">
 						<template #icon>
-							<Delete :size="20" />
+							<IconDeleteOutline :size="20" />
 						</template>
 					</NcButton>
 				</div>
@@ -107,11 +107,11 @@ import VueCropper from 'vue-cropperjs'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Palette from 'vue-material-design-icons/Palette.vue'
-import Upload from 'vue-material-design-icons/Upload.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconFolderOutline from 'vue-material-design-icons/FolderOutline.vue'
+import IconPaletteOutline from 'vue-material-design-icons/PaletteOutline.vue'
+import IconUploadOutline from 'vue-material-design-icons/UploadOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import { AVATAR } from '../../constants.ts'
 
@@ -129,11 +129,11 @@ export default {
 		NcEmojiPicker,
 		VueCropper,
 		// Icons
-		Delete,
-		EmoticonOutline,
-		Folder,
-		Palette,
-		Upload,
+		IconDeleteOutline,
+		IconEmoticonOutline,
+		IconFolderOutline,
+		IconPaletteOutline,
+		IconUploadOutline,
 	},
 
 	props: {

@@ -19,7 +19,7 @@
 			<div class="basic-settings">
 				<div v-show="!enabled"
 					class="add-part-wrapper">
-					<Plus class="icon" :size="20" />
+					<IconPlus class="icon" :size="20" />
 					<NcSelect label="displayName"
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
@@ -47,7 +47,7 @@
 						:aria-label="t('spreed', 'Show Matterbridge log')"
 						@click="showLogContent">
 						<template #icon>
-							<Message :size="20" />
+							<IconMessageOutline :size="20" />
 						</template>
 					</NcButton>
 					<NcDialog
@@ -89,8 +89,8 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import Message from 'vue-material-design-icons/Message.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import BridgePart from './BridgePart.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import {
@@ -110,8 +110,8 @@ export default {
 		NcSelect,
 		NcTextArea,
 		// Icons
-		Message,
-		Plus,
+		IconMessageOutline,
+		IconPlus,
 	},
 
 	setup() {

@@ -17,19 +17,19 @@
 				<NcActionButton v-if="editable" close-after-click @click="$emit('editClicked')">
 					<template #icon>
 						<IconCheck v-if="editing" :size="20" />
-						<IconPencil v-else :size="20" />
+						<IconPencilOutline v-else :size="20" />
 					</template>
 					{{ editing ? t('spreed', 'Save') : t('spreed', 'Edit') }}
 				</NcActionButton>
 				<NcActionLink :href="type.infoTarget" target="_blank" close-after-click>
 					<template #icon>
-						<IconInformation :size="20" />
+						<IconInformationOutline :size="20" />
 					</template>
 					{{ t('spreed', 'More information') }}
 				</NcActionLink>
 				<NcActionButton v-if="editable" close-after-click @click="$emit('deletePart')">
 					<template #icon>
-						<IconDelete :size="20" />
+						<IconDeleteOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Delete') }}
 				</NcActionButton>
@@ -77,17 +77,17 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
-import IconInformation from 'vue-material-design-icons/Information.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 
 export default {
 	name: 'BridgePart',
 	components: {
 		IconCheck,
-		IconDelete,
-		IconInformation,
-		IconPencil,
+		IconDeleteOutline,
+		IconInformationOutline,
+		IconPencilOutline,
 		NcActionButton,
 		NcActionLink,
 		NcActions,

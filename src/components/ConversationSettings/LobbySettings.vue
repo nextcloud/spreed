@@ -54,7 +54,7 @@
 			</div>
 			<NcButton @click="isImportEmailsDialogOpen = true">
 				<template #icon>
-					<IconFileUpload :size="20" />
+					<IconFileUploadOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Import email participants') }}
 			</NcButton>
@@ -86,7 +86,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDateTimePicker from '@nextcloud/vue/components/NcDateTimePicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import IconFileUploadOutline from 'vue-material-design-icons/FileUploadOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 import { WEBINAR } from '../../constants.ts'
@@ -98,7 +98,7 @@ export default {
 	name: 'LobbySettings',
 
 	components: {
-		IconFileUpload,
+		IconFileUploadOutline,
 		IconPoll,
 		ImportEmailsDialog,
 		NcButton,

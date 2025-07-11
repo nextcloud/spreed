@@ -62,7 +62,7 @@
 				:aria-label="t('spreed', 'Edit permissions')"
 				@click="showPermissionsEditor = true">
 				<template #icon>
-					<Pencil :size="20" />
+					<IconPencilOutline :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -82,7 +82,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 import { PARTICIPANT } from '../../constants.ts'
 
@@ -96,7 +96,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
-		Pencil,
+		IconPencilOutline,
 	},
 
 	props: {
