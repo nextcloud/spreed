@@ -379,17 +379,17 @@ class CapabilitiesTest extends TestCase {
 
 	public function testCapabilitiesDocumentation(): void {
 		foreach (Capabilities::FEATURES as $feature) {
-			$suffix = '';
+			$suffix = ' - ';
 			if (in_array($feature, Capabilities::LOCAL_FEATURES)) {
-				$suffix = ' (local)';
+				$suffix = ' (local) - ';
 			}
 			$this->assertCapabilityIsDocumented("`$feature`" . $suffix);
 		}
 
 		foreach (Capabilities::CONDITIONAL_FEATURES as $feature) {
-			$suffix = '';
+			$suffix = ' - ';
 			if (in_array($feature, Capabilities::LOCAL_FEATURES)) {
-				$suffix = ' (local)';
+				$suffix = ' (local) - ';
 			}
 			$this->assertCapabilityIsDocumented("`$feature`" . $suffix);
 		}
