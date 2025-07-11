@@ -97,7 +97,7 @@
 				@click="handleResendInvitations">
 				<template #icon>
 					<NcLoadingIcon v-if="isSendingInvitations" />
-					<IconEmail v-else />
+					<IconEmailOutline v-else />
 				</template>
 				{{ t('spreed', 'Resend invitations') }}
 			</NcButton>
@@ -116,7 +116,7 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import IconClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
-import IconEmail from 'vue-material-design-icons/Email.vue'
+import IconEmailOutline from 'vue-material-design-icons/EmailOutline.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import generatePassword from '../../utils/generatePassword.ts'
@@ -135,7 +135,7 @@ export default {
 		IconClipboardTextOutline,
 		IconContentCopy,
 		IconContentSaveOutline,
-		IconEmail,
+		IconEmailOutline,
 	},
 
 	props: {

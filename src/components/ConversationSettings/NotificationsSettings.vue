@@ -10,7 +10,7 @@ import { t } from '@nextcloud/l10n'
 import { computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import IconAccount from 'vue-material-design-icons/Account.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 import { PARTICIPANT } from '../../constants.ts'
@@ -25,7 +25,7 @@ const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-convers
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, icon: IconVolumeHigh, label: t('spreed', 'All messages') },
-	{ value: PARTICIPANT.NOTIFY.MENTION, icon: IconAccount, label: t('spreed', '@-mentions only') },
+	{ value: PARTICIPANT.NOTIFY.MENTION, icon: IconAccountOutline, label: t('spreed', '@-mentions only') },
 	{ value: PARTICIPANT.NOTIFY.NEVER, icon: IconVolumeOff, label: t('spreed', 'Off') },
 ]
 

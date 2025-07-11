@@ -11,7 +11,7 @@
 		<NcButton variant="secondary"
 			@click="openBreakoutRoomsEditor">
 			<template #icon>
-				<DotsCircle :size="20" />
+				<IconDotsCircle :size="20" />
 			</template>
 			{{ t('spreed', 'Set up breakout rooms for this conversation') }}
 		</NcButton>
@@ -25,7 +25,7 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {
@@ -34,7 +34,7 @@ export default {
 	components: {
 		NcButton,
 		BreakoutRoomsEditor,
-		DotsCircle,
+		IconDotsCircle,
 	},
 
 	props: {

@@ -32,7 +32,7 @@
 				<NcEmptyContent v-else>
 					<template #icon>
 						<NcLoadingIcon v-if="isLoading" />
-						<AccountCancel v-else />
+						<IconAccountCancelOutline v-else />
 					</template>
 
 					<template #description>
@@ -50,7 +50,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import AccountCancel from 'vue-material-design-icons/AccountCancel.vue'
+import IconAccountCancelOutline from 'vue-material-design-icons/AccountCancelOutline.vue'
 import BannedItem from './BannedItem.vue'
 import { getConversationBans, unbanActor } from '../../../services/banService.ts'
 
@@ -64,7 +64,7 @@ export default {
 		NcLoadingIcon,
 		BannedItem,
 		// Icons
-		AccountCancel,
+		IconAccountCancelOutline,
 	},
 
 	props: {
