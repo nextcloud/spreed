@@ -549,6 +549,7 @@ const actions = {
 			|| message.systemMessage === 'reaction'
 			|| message.systemMessage === 'reaction_deleted'
 			|| message.systemMessage === 'reaction_revoked'
+			|| message.systemMessage === 'thread_created'
 			|| message.systemMessage === 'message_edited') {
 			if (!message.parent) {
 				return
@@ -578,6 +579,15 @@ const actions = {
 					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
+					})
+			}
+
+			if (message.systemMessage === 'thread_created') {
+				// Check existing messages for having a threadId flag, and update them
+				context.getters.messagesList(token)
+					.filter((storedMessage) => storedMessage.threadId === message.threadId)
+					.forEach((storedMessage) => {
+						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
 			}
 

@@ -139,6 +139,28 @@
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
+					<NcActionSeparator />
+					<template v-if="supportThreads && !threadId">
+						<NcActionButton
+							v-if="message.isThread"
+							close-after-click
+							@click="threadId = message.threadId">
+							<template #icon>
+								<IconForumOutline :size="16" />
+							</template>
+							{{ t('spreed', 'Go to thread') }}
+						</NcActionButton>
+
+						<NcActionButton
+							v-else-if="canCreateThread"
+							close-after-click
+							@click="chatExtrasStore.createThread(message.token, message.id)">
+							<template #icon>
+								<IconForumOutline :size="16" />
+							</template>
+							{{ t('spreed', 'Create a thread') }}
+						</NcActionButton>
+					</template>
 					<NcActionButton
 						v-if="canForwardMessage && !isInNoteToSelf"
 						key="forward-to-note"
@@ -318,6 +340,7 @@ import IconDownload from 'vue-material-design-icons/Download.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
@@ -325,11 +348,13 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
+import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
@@ -354,6 +379,7 @@ export default {
 		AlarmIcon,
 		IconArrowLeft,
 		IconBellOff,
+		IconForumOutline,
 		CalendarClock,
 		CloseCircleOutline,
 		Check,
@@ -435,6 +461,9 @@ export default {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const actorStore = useActorStore()
+		const chatExtrasStore = useChatExtrasStore()
+		const threadId = useGetThreadId()
+
 		const {
 			isEditable,
 			isDeleteable,
@@ -446,10 +475,12 @@ export default {
 			isConversationModifiable,
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
+		const supportThreads = hasTalkFeature(message.value.token, 'threads')
 
 		return {
 			messageActions,
 			supportReminders,
+			supportThreads,
 			reactionsStore,
 			isEditable,
 			isCurrentUserOwnMessage,
@@ -460,6 +491,8 @@ export default {
 			isConversationReadOnly,
 			isConversationModifiable,
 			actorStore,
+			chatExtrasStore,
+			threadId,
 		}
 	},
 
@@ -620,6 +653,11 @@ export default {
 
 		canReply() {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+		},
+
+		canCreateThread() {
+			// FIXME This is the same thing for now
+			return this.canReply
 		},
 	},
 
