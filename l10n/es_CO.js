@@ -15,6 +15,7 @@ OC.L10N.register(
     "Talk" : "Hablar",
     "Guest" : "Invitado",
     "- Spice up your messages with emojis from the emoji picker" : "Dale sabor a tus mensajes con emojis del selector de emoji",
+    "Message deleted by author" : "Mensaje borrado por el autor",
     "Administration" : "Administración",
     "System" : "Sistema",
     "Talk to %s" : "Hablar con %s",
