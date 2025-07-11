@@ -6,12 +6,22 @@
 import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { nextTick } from 'vue'
 import { createStore } from 'vuex'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useTokenStore } from '../../../stores/token.ts'
+
+function getByText(wrappers, text) {
+	return wrappers.find((wrapper) => wrapper.text().trim() === text)
+}
+
+function getPermissionCheckboxes(wrapper) {
+	return wrapper.getComponent(PermissionsEditor).findAllComponents(NcCheckboxRadioSwitch)
+}
 
 describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
@@ -73,26 +83,24 @@ describe('ParticipantPermissionsEditor.vue', () => {
 
 	describe('checkboxes render on mount', () => {
 		const testCheckboxRendering = async (participant) => {
-			// Arrange
 			const permissions = participant.permissions
 				|| (PARTICIPANT.PERMISSIONS.MAX_DEFAULT & ~PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) // Default from component
 
 			const permissionsMap = [
-				{ ref: 'callStart', value: !!(permissions & PARTICIPANT.PERMISSIONS.CALL_START) },
-				{ ref: 'lobbyIgnore', value: !!(permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) },
-				{ ref: 'chatMessagesAndReactions', value: !!(permissions & PARTICIPANT.PERMISSIONS.CHAT) },
-				{ ref: 'publishAudio', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) },
-				{ ref: 'publishVideo', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) },
-				{ ref: 'publishScreen', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN) },
+				{ label: 'Start a call', value: !!(permissions & PARTICIPANT.PERMISSIONS.CALL_START) },
+				{ label: 'Skip the lobby', value: !!(permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) },
+				{ label: 'Can post messages and reactions', value: !!(permissions & PARTICIPANT.PERMISSIONS.CHAT) },
+				{ label: 'Enable the microphone', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) },
+				{ label: 'Enable the camera', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) },
+				{ label: 'Share the screen', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN) },
 			]
 
-			// Act
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 
-			// Assert
+			const permissionCheckboxes = getPermissionCheckboxes(wrapper)
 			for (const permission of permissionsMap) {
-				expect(wrapper.findComponent(PermissionsEditor).findComponent({ ref: permission.ref })
-					.props('modelValue')).toBe(permission.value)
+				const checkbox = getByText(permissionCheckboxes, permission.label)
+				expect(checkbox.props('modelValue')).toBe(permission.value)
 			}
 		}
 
@@ -121,10 +129,12 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 
 			// Add a permission
-			await wrapper.findComponent(PermissionsEditor).setData({ lobbyIgnore: true })
+			const permissionCheckboxes = getPermissionCheckboxes(wrapper)
+			getByText(permissionCheckboxes, 'Skip the lobby').vm.$emit('update:modelValue', true)
+			await nextTick()
 
 			// Click the submit button
-			await wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).find('form').trigger('submit')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
@@ -144,10 +154,12 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			const wrapper = mountParticipantPermissionsEditor(participant)
 
 			// Remove a permission
-			await wrapper.findComponent(PermissionsEditor).setData({ publishAudio: false })
+			const permissionCheckboxes = getPermissionCheckboxes(wrapper)
+			getByText(permissionCheckboxes, 'Enable the microphone').vm.$emit('update:modelValue', false)
+			await nextTick()
 
 			// Click the submit button
-			await wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).find('form').trigger('submit')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
