@@ -20,6 +20,7 @@
 
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
+import { showError } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -358,7 +359,6 @@ export default {
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
 					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-					this.tokenStore.updateToken('')
 				}
 			}
 		})
@@ -372,6 +372,14 @@ export default {
 				// Nextcloud Talk configuration changed, reload the page when changing configuration
 				window.location = generateUrl('call/' + to.params.token)
 				return
+			}
+
+			if (from.name === 'conversation') {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+
+				if (to.name !== 'conversation') {
+					this.tokenStore.updateToken('')
+				}
 			}
 
 			/**
@@ -389,6 +397,8 @@ export default {
 				}
 				// Update current token in the token store
 				this.tokenStore.updateToken(to.params.token)
+
+				this.$store.dispatch('joinConversation', { token: to.params.token })
 			}
 
 			/**
@@ -586,9 +596,13 @@ export default {
 				 */
 				EventBus.emit('conversations-received', { singleConversation: response.data.ocs.data })
 			} catch (exception) {
-				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-				this.tokenStore.updateToken('')
+				if (exception.response?.status === 404) {
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
+					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+				} else {
+					console.error('Error getting room data', exception)
+					showError(t('spreed', 'Error occurred when getting the conversation information'))
+				}
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
