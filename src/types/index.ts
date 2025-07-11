@@ -237,6 +237,11 @@ export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-a
 	height: string
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
+export type ChatTask = SummarizeChatTask & {
+	fromMessageId: number
+	summary?: string
+}
+
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
 export type receiveMessagesResponse = ApiResponse<operations['chat-receive-messages']['responses'][200]['content']['application/json']>
 export type getMessageContextParams = operations['chat-get-message-context']['parameters']['query']
@@ -257,6 +262,15 @@ export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat'
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
 export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
 export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
+
+// Threads
+export type Thread = components['schemas']['Thread']
+export type ThreadAttendee = components['schemas']['ThreadAttendee']
+export type ThreadInfo = components['schemas']['ThreadInfo']
+export type getRecentThreadsParams = operations['thread-get-recent-active-threads']['parameters']['query']
+export type getRecentThreadsResponse = ApiResponse<operations['thread-get-recent-active-threads']['responses'][200]['content']['application/json']>
+export type getThreadResponse = ApiResponse<operations['thread-get-thread']['responses'][200]['content']['application/json']>
+export type createThreadResponse = ApiResponse<operations['thread-make-thread']['responses'][200]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
