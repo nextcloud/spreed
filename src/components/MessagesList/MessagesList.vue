@@ -71,6 +71,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -121,10 +122,13 @@ export default {
 	setup(props) {
 		const isDocumentVisible = useDocumentVisibility()
 		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
+		const threadId = useGetThreadId()
+
 		return {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			isChatVisible,
+			threadId,
 		}
 	},
 
@@ -188,7 +192,14 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
+			if (!this.threadId) {
+				return this.$store.getters.messagesList(this.token)
+			}
+
 			return this.$store.getters.messagesList(this.token)
+				.filter((message) => {
+					return message.threadId === this.threadId
+				})
 		},
 
 		isMessagesListPopulated() {
