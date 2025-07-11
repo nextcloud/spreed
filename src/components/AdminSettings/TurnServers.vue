@@ -35,8 +35,8 @@
 			:disabled="loading"
 			@click="newServer">
 			<template #icon>
-				<span v-if="loading" class="icon icon-loading-small" />
-				<Plus v-else :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPlus v-else :size="20" />
 			</template>
 			{{ t('spreed', 'Add a new TURN server') }}
 		</NcButton>
@@ -49,7 +49,8 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
@@ -57,9 +58,10 @@ export default {
 	name: 'TurnServers',
 
 	components: {
+		NcLoadingIcon,
 		NcButton,
 		TurnServer,
-		Plus,
+		IconPlus,
 		TransitionWrapper,
 	},
 

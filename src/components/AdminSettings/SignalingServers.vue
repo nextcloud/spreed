@@ -54,8 +54,8 @@
 			:disabled="loading"
 			@click="newServer">
 			<template #icon>
-				<span v-if="loading" class="icon icon-loading-small" />
-				<Plus v-else :size="20" />
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPlus v-else :size="20" />
 			</template>
 			{{ t('spreed', 'Add High-performance backend server') }}
 		</NcButton>
@@ -93,9 +93,10 @@ import debounce from 'debounce'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import { SIGNALING } from '../../constants.ts'
 

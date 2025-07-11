@@ -20,7 +20,7 @@
 				label-outside />
 		</div>
 
-		<AlertCircle v-show="!isValidServer"
+		<IconAlertCircleOutline v-show="!isValidServer"
 			class="stun-server__alert"
 			:title="t('spreed', 'The server address is invalid')"
 			fill-color="#E9322D" />
@@ -30,7 +30,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete :size="20" />
+				<IconDeleteOutline :size="20" />
 			</template>
 		</NcButton>
 	</li>
@@ -40,15 +40,15 @@
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 
 export default {
 	name: 'StunServer',
 
 	components: {
-		AlertCircle,
-		Delete,
+		IconAlertCircleOutline,
+		IconDeleteOutline,
 		NcButton,
 		NcTextField,
 	},

@@ -54,10 +54,10 @@
 			:disabled="!testAvailable"
 			@click="testServer">
 			<template #icon>
-				<span v-if="testing" class="icon icon-loading-small" />
-				<AlertCircle v-else-if="testingError" fill-color="#E9322D" />
-				<Check v-else-if="testingSuccess" fill-color="#46BA61" />
-				<Pulse v-else />
+				<NcLoadingIcon v-if="testing" :size="20" />
+				<IconAlertCircleOutline v-else-if="testingError" fill-color="#E9322D" />
+				<IconCheck v-else-if="testingSuccess" fill-color="#46BA61" />
+				<IconPulse v-else />
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"
@@ -65,7 +65,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete :size="20" />
+				<IconDeleteOutline :size="20" />
 			</template>
 		</NcButton>
 	</li>
@@ -78,13 +78,14 @@ import hmacSHA1 from 'crypto-js/hmac-sha1.js'
 import debounce from 'debounce'
 import webrtcSupport from 'webrtcsupport'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Pulse from 'vue-material-design-icons/Pulse.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconPulse from 'vue-material-design-icons/Pulse.vue'
 import { isCertificateValid } from '../../services/certificateService.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
@@ -92,14 +93,15 @@ export default {
 	name: 'TurnServer',
 
 	components: {
-		AlertCircle,
-		Check,
-		Delete,
+		NcLoadingIcon,
+		IconAlertCircleOutline,
+		IconCheck,
+		IconDeleteOutline,
 		NcButton,
 		NcSelect,
 		NcTextField,
 		NcPasswordField,
-		Pulse,
+		IconPulse,
 	},
 
 	props: {
@@ -213,15 +215,6 @@ export default {
 				{ value: 'turn', label: t('spreed', '{option} only', { option: 'turn:' }) },
 				{ value: 'turns', label: t('spreed', '{option} only', { option: 'turns:' }) },
 			]
-		},
-
-		testIconClasses() {
-			return {
-				'icon-category-monitoring': !this.testing && !this.testingError && !this.testingSuccess,
-				'icon-loading-small': this.testing,
-				'icon-error': this.testingError,
-				'icon-checkmark': this.testingSuccess,
-			}
 		},
 
 		testResult() {

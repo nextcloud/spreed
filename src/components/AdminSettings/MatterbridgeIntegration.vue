@@ -35,7 +35,7 @@
 			<NcButton :disabled="isInstalling"
 				@click="enableMatterbridgeApp">
 				<template v-if="isInstalling" #icon>
-					<span class="icon icon-loading-small" />
+					<NcLoadingIcon :size="20" />
 				</template>
 				{{ installButtonText }}
 			</NcButton>
@@ -49,6 +49,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import {
 	enableMatterbridgeApp,
 	getMatterbridgeVersion,
@@ -61,6 +62,7 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcLoadingIcon,
 	},
 
 	data() {
