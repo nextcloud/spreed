@@ -5,8 +5,7 @@
 
 <template>
 	<div class="lobby">
-		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
-		<div class="lobby emptycontent">
+		<div class="lobby__header">
 			<RoomService :size="64" />
 			<h2>{{ currentConversationName }}</h2>
 
@@ -31,7 +30,7 @@
 					use-extended-markdown />
 			</div>
 		</div>
-		<SetGuestUsername v-if="currentUserIsGuest" class="guest-info" />
+		<MediaSettings :is-dialog="false" />
 	</div>
 </template>
 
@@ -40,10 +39,9 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
+import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
-import SetGuestUsername from './SetGuestUsername.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
-import { useActorStore } from '../stores/actor.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
 export default {
@@ -51,15 +49,13 @@ export default {
 	name: 'LobbyScreen',
 
 	components: {
-		GuestWelcomeWindow,
 		NcRichText,
 		RoomService,
-		SetGuestUsername,
+		MediaSettings,
 	},
 
 	setup() {
 		return {
-			actorStore: useActorStore(),
 			token: useGetToken(),
 		}
 	},
@@ -95,15 +91,6 @@ export default {
 		message() {
 			return t('spreed', 'This meeting is scheduled for {startTime}', { startTime: this.startTime })
 		},
-
-		// Determines whether the current user is a guest user
-		currentUserIsGuest() {
-			return !this.actorStore.userId
-		},
-
-		isGuestWithoutDisplayName() {
-			return !this.actorStore.displayName && this.currentUserIsGuest
-		},
 	},
 
 	methods: {
@@ -119,17 +106,19 @@ export default {
 .lobby {
 	display: flex;
 	flex-direction: column;
+	margin: auto;
 
-	&__timer {
-		max-width: $messages-list-max-width;
-		margin: 0 auto;
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
 	}
 
 	&__countdown,
 	&__description {
-		max-width: $messages-list-max-width;
-		margin: 0 auto;
 		margin-top: 25px;
+		max-width: $messages-list-max-width;
 	}
 
 	:deep(.rich-text--wrapper) {
@@ -137,11 +126,4 @@ export default {
 		@include markdown;
 	}
 }
-
-.guest-info {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
 </style>

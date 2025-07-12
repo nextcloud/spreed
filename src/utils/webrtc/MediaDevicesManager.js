@@ -302,9 +302,6 @@ MediaDevicesManager.prototype = {
 				this._preferenceAudioInputList = newAudioInputList
 				BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
 			}
-			if (!BrowserStorage.getItem('audioInputDevicePreferred')) {
-				BrowserStorage.setItem('audioInputDevicePreferred', true)
-			}
 		} else if (kind === 'audiooutput') {
 			const newAudioOutputList = promoteMediaDevice({
 				kind,
@@ -331,9 +328,6 @@ MediaDevicesManager.prototype = {
 			if (newVideoInputList) {
 				this._preferenceVideoInputList = newVideoInputList
 				BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
-			}
-			if (!BrowserStorage.getItem('videoInputDevicePreferred')) {
-				BrowserStorage.setItem('videoInputDevicePreferred', true)
 			}
 		}
 	},

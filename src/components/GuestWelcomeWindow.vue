@@ -163,7 +163,7 @@ export default {
 }
 
 .separator {
-    margin: calc(var(--default-grid-baseline) * 5) 0 var(--default-grid-baseline);
+    margin: calc(var(--default-grid-baseline) * 3) 0 var(--default-grid-baseline);
     border-top: 1px solid;
 }
 </style>
