@@ -18,9 +18,48 @@
 			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
-			:hide-call="false" />
+			:hide-call="false"
+			@click="currentThread ? threadId = 0 : openConversationSettings()" />
 
-		<div class="top-bar__wrapper" :data-theme-dark="isInCall ? true : undefined">
+		<div
+			v-if="currentThread"
+			class="top-bar__wrapper">
+			<IconChevronRight class="bidirectional-icon" :size="20" />
+
+			<span class="conversation-header">
+				<AvatarWrapper
+					:id="currentThread.first.actorId"
+					:token="token"
+					:name="currentThread.first.actorDisplayName"
+					:source="currentThread.first.actorType"
+					:size="AVATAR.SIZE.DEFAULT"
+					disable-menu
+					disable-tooltip />
+				<div class="conversation-header__text">
+					<p class="title">
+						{{ currentThread.first.actorDisplayName.trim().split(' ')[0] + ': ' + currentThread.first.message }}
+					</p>
+					<p class="description">
+						{{ n('spreed', '%n reply', '%n replies', currentThread.thread.numReplies) }}
+					</p>
+				</div>
+			</span>
+
+			<NcButton
+				:aria-label="threadNotificationLabel"
+				:title="threadNotificationLabel"
+				:primary="!!threadNotification"
+				@click="() => {}">
+				<template #icon>
+					<IconBellOffOutline v-if="threadNotification" :size="20" />
+					<IconBellOutline v-else :size="20" />
+				</template>
+			</NcButton>
+		</div>
+
+		<div v-else
+			class="top-bar__wrapper"
+			:data-theme-dark="isInCall ? true : undefined">
 			<!-- conversation header -->
 			<a role="button"
 				class="conversation-header"
@@ -71,8 +110,8 @@
 				variant="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
-					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />
-					<IconAccountMultiple v-else :size="20" />
+					<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
+					<IconAccountMultipleOutline v-else :size="20" />
 				</template>
 				<template v-if="!canExtendOneToOneConversation" #default>
 					{{ participantsInCall }}
@@ -117,8 +156,12 @@ import { n, t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
+import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -129,10 +172,12 @@ import ReactionMenu from './ReactionMenu.vue'
 import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
@@ -146,6 +191,7 @@ export default {
 
 	components: {
 		// Components
+		AvatarWrapper,
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
 		CallButton,
@@ -160,8 +206,11 @@ export default {
 		TasksCounter,
 		ReactionMenu,
 		// Icons
-		IconAccountMultiple,
-		IconAccountMultiplePlus,
+		IconAccountMultipleOutline,
+		IconAccountMultiplePlusOutline,
+		IconBellOffOutline,
+		IconBellOutline,
+		IconChevronRight,
 	},
 
 	props: {
@@ -187,7 +236,9 @@ export default {
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			chatExtrasStore: useChatExtrasStore(),
 			CONVERSATION,
+			threadId: useGetThreadId(),
 			token: useGetToken(),
 		}
 	},
@@ -200,6 +251,27 @@ export default {
 	},
 
 	computed: {
+		currentThread() {
+			if (!this.threadId) {
+				return null
+			}
+			return this.chatExtrasStore.getThread(this.token, this.threadId)
+		},
+
+		threadNotification() {
+			if (this.currentThread) {
+				return this.currentThread.attendee.notificationLevel
+			}
+			return null
+		},
+
+		threadNotificationLabel() {
+			if (this.currentThread?.attendee.notificationLevel) {
+				return t('spreed', 'Unsubscribe from thread')
+			}
+			return t('spreed', 'Subscribe to thread')
+		},
+
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
@@ -283,6 +355,15 @@ export default {
 				this.groupwareStore.getUpcomingEvents(value)
 			},
 		},
+
+		currentThread: {
+			immediate: true,
+			handler(value) {
+				if (this.threadId && value === undefined) {
+					this.chatExtrasStore.fetchSingleThread(this.token, this.threadId)
+				}
+			},
+		},
 	},
 
 	mounted() {
@@ -357,10 +438,21 @@ export default {
 .top-bar__wrapper {
 	flex: 1 0;
 	display: flex;
-	flex-wrap: wrap;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
+}
+
+.thread-header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: var(--default-grid-baseline);
+}
+
+.conversation-icon,
+.conversation-icon * {
+	cursor: pointer;
 }
 
 .conversation-header {

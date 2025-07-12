@@ -41,6 +41,8 @@ describe('prepareTemporaryMessage', () => {
 		timestamp: 0,
 		token: TOKEN,
 		silent: false,
+		threadId: undefined,
+		isThread: undefined,
 	}
 
 	const parent = {
@@ -111,15 +113,26 @@ describe('prepareTemporaryMessage', () => {
 			},
 		},
 	}
+	const threadPayload = {
+		...defaultPayload,
+		threadId: 123,
+		isThread: true,
+	}
+	const threadResult = {
+		...defaultResult,
+		threadId: 123,
+		isThread: true,
+	}
 
 	const tests = [
 		[defaultPayload, defaultResult],
 		[{ ...defaultPayload, parent }, { ...defaultResult, parent }],
 		[textFilePayload, textFileResult],
 		[audioFilePayload, audioFileResult],
+		[threadPayload, threadResult],
 	]
 
-	it.only.each(tests)('test case %# to match expected result', (payload, result) => {
+	it.each(tests)('test case %# to match expected result', (payload, result) => {
 		const temporaryMessage = prepareTemporaryMessage(payload)
 		expect(temporaryMessage).toStrictEqual(result)
 	})

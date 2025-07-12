@@ -49,7 +49,7 @@
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<template #icon>
-								<EmoticonOutline :size="16" />
+								<IconEmoticonOutline :size="16" />
 							</template>
 						</NcButton>
 					</NcEmojiPicker>
@@ -59,7 +59,7 @@
 						:aria-label="t('spreed', 'Add emoji')"
 						:disabled="true">
 						<template #icon>
-							<EmoticonOutline :size="16" />
+							<IconEmoticonOutline :size="16" />
 						</template>
 					</NcButton>
 				</div>
@@ -93,11 +93,12 @@
 			</div>
 
 			<!-- Silent chat -->
-			<NcActions v-if="showSilentToggle"
+			<NcActions v-if="showSendActions"
 				force-menu
-				:primary="silentChat">
+				:primary="shouldCreateThread || silentChat">
 				<template #icon>
-					<BellOffIcon v-if="silentChat" :size="16" />
+					<IconForumOutline v-if="shouldCreateThread" :size="16" />
+					<IconBellOffOutline v-if="silentChat" :size="16" />
 				</template>
 				<NcActionButton close-after-click
 					:model-value="silentChat"
@@ -105,7 +106,16 @@
 					@click="toggleSilentChat">
 					{{ silentSendInfo }}
 					<template #icon>
-						<BellOffIcon :size="16" />
+						<IconBellOffOutline :size="16" />
+					</template>
+				</NcActionButton>
+				<NcActionButton close-after-click
+					:model-value="shouldCreateThread"
+					:name="shouldCreateThreadLabel"
+					@click="shouldCreateThread = !shouldCreateThread">
+					{{ shouldCreateThreadInfo }}
+					<template #icon>
+						<IconForumOutline :size="16" />
 					</template>
 				</NcActionButton>
 			</NcActions>
@@ -124,7 +134,7 @@
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleAbortEdit">
 					<template #icon>
-						<CloseIcon :size="20" />
+						<IconClose :size="20" />
 					</template>
 				</NcButton>
 				<NcButton :disabled="disabledEdit"
@@ -134,7 +144,7 @@
 					:aria-label="t('spreed', 'Edit message')"
 					@click="handleEdit">
 					<template #icon>
-						<CheckIcon :size="20" />
+						<IconCheck :size="20" />
 					</template>
 				</NcButton>
 			</template>
@@ -148,7 +158,7 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<SendIcon class="bidirectional-icon" :size="16" />
+						<IconSend class="bidirectional-icon" :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -175,11 +185,12 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import SendIcon from 'vue-material-design-icons/Send.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconSend from 'vue-material-design-icons/Send.vue'
 import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
@@ -188,6 +199,7 @@ import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -221,11 +233,12 @@ export default {
 		NewMessageTypingIndicator,
 		Quote,
 		// Icons
-		BellOffIcon,
-		CheckIcon,
-		CloseIcon,
-		EmoticonOutline,
-		SendIcon,
+		IconBellOffOutline,
+		IconForumOutline,
+		IconCheck,
+		IconClose,
+		IconEmoticonOutline,
+		IconSend,
 	},
 
 	props: {
@@ -288,6 +301,8 @@ export default {
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
 		const { createTemporaryMessage } = useTemporaryMessage()
+		const threadId = useGetThreadId()
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -298,6 +313,7 @@ export default {
 			autoComplete,
 			userData,
 			createTemporaryMessage,
+			threadId,
 		}
 	},
 
@@ -305,6 +321,7 @@ export default {
 		return {
 			text: '',
 			silentChat: false,
+			shouldCreateThread: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
 			showNewFileDialog: -1,
@@ -419,7 +436,15 @@ export default {
 				: t('spreed', 'Participants will not be notified about new messages')
 		},
 
-		showSilentToggle() {
+		shouldCreateThreadLabel() {
+			return t('spreed', 'Send and create a thread')
+		},
+
+		shouldCreateThreadInfo() {
+			return t('spreed', 'You will be notified about new messages in this thread')
+		},
+
+		showSendActions() {
 			return !this.broadcast && !this.isRecordingAudio && !this.messageToEdit
 		},
 
@@ -665,9 +690,16 @@ export default {
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
+				// // Check if reply requires to create a thread
+				// if (this.shouldCreateThread && !temporaryMessage.isThread) {
+				// await this.chatExtrasStore.createThread(this.token, temporaryMessage.threadId)
+				// }
+
 				this.dialog
 					? await this.submitMessage(this.token, temporaryMessage)
 					: await this.postMessage(this.token, temporaryMessage)
+
+				this.shouldCreateThread = false
 				this.resetTypingIndicator()
 			}
 		},

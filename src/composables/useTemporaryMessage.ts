@@ -10,6 +10,7 @@ import { useStore } from 'vuex'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
+import { useGetThreadId } from './useGetThreadId.ts'
 
 /**
  * Composable to generate temporary messages using defined in store information
@@ -19,19 +20,25 @@ export function useTemporaryMessage(context: Store<unknown>) {
 	const store = context ?? useStore()
 	const chatExtrasStore = useChatExtrasStore()
 	const actorStore = useActorStore()
+	const threadId = useGetThreadId()
 
 	/**
 	 * @param payload payload for generating a temporary message
 	 */
 	function createTemporaryMessage(payload: PrepareTemporaryMessagePayload) {
 		const parentId = chatExtrasStore.getParentIdToReply(payload.token)
+		const parent = parentId
+			? store.getters.message(payload.token, parentId)
+			: (threadId.value ? store.getters.message(payload.token, threadId.value) : undefined)
 
 		return prepareTemporaryMessage({
 			...payload,
 			actorId: actorStore.actorId ?? '',
 			actorType: actorStore.actorType ?? '',
 			actorDisplayName: actorStore.displayName,
-			parent: parentId && store.getters.message(payload.token, parentId),
+			parent,
+			threadId: threadId.value ? threadId.value : undefined,
+			isThread: threadId.value ? true : undefined,
 		})
 	}
 
