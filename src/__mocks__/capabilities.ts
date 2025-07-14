@@ -126,6 +126,7 @@ export const mockedCapabilities: Capabilities = {
 			'dashboard-event-rooms',
 			'mutual-calendar-events',
 			'upcoming-reminders',
+			'sensitive-conversations',
 		],
 		config: {
 			attachments: {
@@ -190,6 +191,7 @@ export const mockedCapabilities: Capabilities = {
 			],
 			call: [
 				'predefined-backgrounds',
+				'predefined-backgrounds-v2',
 				'can-upload-background',
 				'start-without-media',
 				'blur-virtual-background',
