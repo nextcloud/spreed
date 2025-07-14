@@ -16,8 +16,8 @@
 					class="dragover">
 					<template #icon>
 						<IconTrayArrowUp v-if="!isGuest && !isReadOnly" />
-						<IconAccount v-else-if="isGuest" />
-						<IconAlertOctagon v-else-if="isReadOnly" />
+						<IconAccountOutline v-else-if="isGuest" />
+						<IconAlertOctagonOutline v-else-if="isReadOnly" />
 					</template>
 				</NcEmptyContent>
 			</TransitionWrapper>
@@ -60,8 +60,8 @@ import { t } from '@nextcloud/l10n'
 import { provide } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import IconAccount from 'vue-material-design-icons/Account.vue'
-import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 import IconTrayArrowUp from 'vue-material-design-icons/TrayArrowUp.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
@@ -89,8 +89,8 @@ export default {
 		TransitionWrapper,
 		GuestWelcomeWindow,
 		// icons
-		IconAccount,
-		IconAlertOctagon,
+		IconAccountOutline,
+		IconAlertOctagonOutline,
 		IconChevronDoubleDown,
 		IconTrayArrowUp,
 	},
