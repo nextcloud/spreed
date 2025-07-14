@@ -53,14 +53,14 @@
 						:aria-label="t('spreed', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
-							<IconUploadOutline :size="20" />
+							<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 						</template>
 					</NcButton>
 					<NcButton :title="t('spreed', 'Choose conversation picture from files')"
 						:aria-label="t('spreed', 'Choose conversation picture from files')"
 						@click="showFilePicker">
 						<template #icon>
-							<IconFolderOutline :size="20" />
+							<IconFolder :size="20" />
 						</template>
 					</NcButton>
 
@@ -107,12 +107,13 @@ import VueCropper from 'vue-cropperjs'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import IconFolderOutline from 'vue-material-design-icons/FolderOutline.vue'
+import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
 import IconPaletteOutline from 'vue-material-design-icons/PaletteOutline.vue'
-import IconUploadOutline from 'vue-material-design-icons/UploadOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
+import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
 
 import 'cropperjs/dist/cropper.css'
@@ -127,13 +128,13 @@ export default {
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
+		NcIconSvgWrapper,
 		VueCropper,
 		// Icons
 		IconDeleteOutline,
 		IconEmoticonOutline,
-		IconFolderOutline,
+		IconFolder,
 		IconPaletteOutline,
-		IconUploadOutline,
 	},
 
 	props: {
@@ -166,6 +167,7 @@ export default {
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
 		return {
+			IconFileUpload,
 			isDarkTheme,
 			AVATAR,
 			validMimeTypes,
