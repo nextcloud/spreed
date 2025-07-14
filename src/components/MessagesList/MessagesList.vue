@@ -58,7 +58,7 @@
 			:name="t('spreed', 'No messages')"
 			:description="t('spreed', 'All messages have expired or have been deleted.')">
 			<template #icon>
-				<Message :size="64" />
+				<IconMessageOutline :size="64" />
 			</template>
 		</NcEmptyContent>
 	</div>
@@ -73,7 +73,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Message from 'vue-material-design-icons/Message.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
@@ -100,8 +100,8 @@ export default {
 	name: 'MessagesList',
 	components: {
 		IconArrowLeft,
+		IconMessageOutline,
 		LoadingPlaceholder,
-		Message,
 		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,

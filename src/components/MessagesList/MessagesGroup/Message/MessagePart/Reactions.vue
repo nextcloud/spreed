@@ -45,7 +45,7 @@
 			:title="t('spreed', 'Show all reactions')"
 			:aria-label="t('spreed', 'Show all reactions')"
 			@click="showAllReactions = true">
-			<HeartOutlineIcon :size="15" />
+			<IconHeartOutline :size="15" />
 		</NcButton>
 		<span v-else class="reaction-button--thumbnail" />
 
@@ -59,7 +59,7 @@
 				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
 				<template #icon>
-					<EmoticonPlusOutline :size="15" />
+					<IconEmoticonPlusOutline :size="15" />
 				</template>
 			</NcButton>
 		</NcEmojiPicker>
@@ -81,8 +81,8 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
-import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+import IconEmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
+import IconHeartOutline from 'vue-material-design-icons/HeartOutline.vue'
 import ReactionsList from './ReactionsList.vue'
 import { ATTENDEE } from '../../../../../constants.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -99,8 +99,8 @@ export default {
 		NcLoadingIcon,
 		NcPopover,
 		ReactionsList,
-		EmoticonPlusOutline,
-		HeartOutlineIcon,
+		IconEmoticonPlusOutline,
+		IconHeartOutline,
 	},
 
 	props: {

@@ -12,7 +12,7 @@
 				:title="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
-					<EmoticonOutline :size="20" />
+					<IconEmoticonOutline :size="20" />
 				</template>
 			</NcButton>
 			<NcButton v-if="canReply"
@@ -21,7 +21,7 @@
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
 				<template #icon>
-					<Reply :size="16" />
+					<IconReply :size="16" />
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
@@ -36,14 +36,14 @@
 							<span v-if="readInfo.showCommonReadIcon"
 								:title="readInfo.commonReadIconTitle"
 								:aria-label="readInfo.commonReadIconTitle">
-								<CheckAll :size="16" />
+								<IconCheckAll :size="16" />
 							</span>
 							<span v-else-if="readInfo.showSentIcon"
 								:title="readInfo.sentIconTitle"
 								:aria-label="readInfo.sentIconTitle">
-								<Check :size="16" />
+								<IconCheck :size="16" />
 							</span>
-							<ClockOutline v-else :size="16" />
+							<IconClockOutline v-else :size="16" />
 						</template>
 						{{ messageDateTime }}
 					</NcActionText>
@@ -52,14 +52,14 @@
 						class="edit-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
-							<ClockEditOutline :size="16" />
+							<IconClockEditOutline :size="16" />
 						</template>
 						{{ editedDateTime }}
 					</NcActionText>
 					<!-- Silent message information -->
 					<NcActionText v-if="readInfo.showSilentIcon">
 						<template #icon>
-							<IconBellOff :size="16" />
+							<IconBellOffOutline :size="16" />
 						</template>
 						{{ readInfo.silentIconTitle }}
 					</NcActionText>
@@ -71,7 +71,7 @@
 						is-menu
 						@click.stop="submenu = 'reminder'">
 						<template #icon>
-							<AlarmIcon :size="20" />
+							<IconAlarm :size="20" />
 						</template>
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
@@ -81,7 +81,7 @@
 						close-after-click
 						@click.stop="handlePrivateReply">
 						<template #icon>
-							<AccountIcon :size="20" />
+							<IconAccountOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
@@ -92,7 +92,7 @@
 						close-after-click
 						@click.stop="editMessage">
 						<template #icon>
-							<Pencil :size="20" />
+							<IconPencilOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Edit message') }}
 					</NcActionButton>
@@ -102,7 +102,7 @@
 						close-after-click
 						@click.stop="handleCopyMessageText">
 						<template #icon>
-							<ContentCopy :size="20" />
+							<IconContentCopy :size="20" />
 						</template>
 						{{ t('spreed', 'Copy message') }}
 					</NcActionButton>
@@ -111,7 +111,7 @@
 						close-after-click
 						@click.stop="handleCopyMessageLink">
 						<template #icon>
-							<OpenInNewIcon :size="20" />
+							<IconOpenInNew :size="20" />
 						</template>
 						{{ t('spreed', 'Copy message link') }}
 					</NcActionButton>
@@ -120,7 +120,7 @@
 						close-after-click
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
-							<EyeOffOutline :size="16" />
+							<IconEyeOffOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Mark as unread') }}
 					</NcActionButton>
@@ -128,13 +128,13 @@
 						<NcActionSeparator />
 						<NcActionLink :href="messageFile.link">
 							<template #icon>
-								<File :size="20" />
+								<IconFileOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Go to file') }}
 						</NcActionLink>
 						<NcActionLink v-if="!hideDownloadOption" :href="linkToFileDownload" :download="messageFile.name">
 							<template #icon>
-								<IconDownload :size="20" />
+								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
@@ -167,7 +167,7 @@
 						close-after-click
 						@click="forwardToNote">
 						<template #icon>
-							<Note :size="16" />
+							<IconNoteEditOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Note to self') }}
 					</NcActionButton>
@@ -177,7 +177,7 @@
 						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
-							<Share :size="16" />
+							<IconShare :size="16" />
 						</template>
 						{{ t('spreed', 'Forward message') }}
 					</NcActionButton>
@@ -197,7 +197,7 @@
 						@click.stop="$emit('showTranslateDialog', true)"
 						@close="$emit('showTranslateDialog', false)">
 						<template #icon>
-							<Translate :size="16" />
+							<IconTranslate :size="16" />
 						</template>
 						{{ t('spreed', 'Translate') }}
 					</NcActionButton>
@@ -208,7 +208,7 @@
 							close-after-click
 							@click.stop="handleDelete">
 							<template #icon>
-								<DeleteIcon :size="16" />
+								<IconDeleteOutline :size="16" />
 							</template>
 							{{ t('spreed', 'Delete') }}
 						</NcActionButton>
@@ -232,7 +232,7 @@
 						close-after-click
 						@click.stop="removeReminder">
 						<template #icon>
-							<CloseCircleOutline :size="20" />
+							<IconCloseCircleOutline :size="20" />
 						</template>
 						{{ clearReminderLabel }}
 					</NcActionButton>
@@ -256,7 +256,7 @@
 						is-native-picker
 						:min="new Date()">
 						<template #icon>
-							<CalendarClock :size="20" />
+							<IconCalendarClockOutline :size="20" />
 						</template>
 					</NcActionInput>
 
@@ -266,7 +266,7 @@
 						close-after-click
 						@click.stop="setReminder(customReminderTimestamp)">
 						<template #icon>
-							<Check :size="20" />
+							<IconCheck :size="20" />
 						</template>
 						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
@@ -300,7 +300,7 @@
 				<NcButton variant="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
-						<Plus :size="20" />
+						<IconPlus :size="20" />
 					</template>
 				</NcButton>
 			</NcEmojiPicker>
@@ -324,30 +324,31 @@ import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
-import AccountIcon from 'vue-material-design-icons/Account.vue'
-import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconBellOff from 'vue-material-design-icons/BellOff.vue'
-import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-import ClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue'
-import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
-import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import IconDownload from 'vue-material-design-icons/Download.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
-import File from 'vue-material-design-icons/File.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
+import IconClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
+import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
-import Note from 'vue-material-design-icons/NoteEditOutline.vue'
-import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import Reply from 'vue-material-design-icons/Reply.vue'
-import Share from 'vue-material-design-icons/Share.vue'
-import Translate from 'vue-material-design-icons/Translate.vue'
+import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
+import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconReply from 'vue-material-design-icons/Reply.vue'
+import IconShare from 'vue-material-design-icons/Share.vue'
+import IconTranslate from 'vue-material-design-icons/Translate.vue'
+import IconFileDownload from '../../../../../../img/material-icons/file-download.svg?raw'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
@@ -374,31 +375,31 @@ export default {
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
+		NcIconSvgWrapper,
 		// Icons
-		AccountIcon,
-		AlarmIcon,
+		IconAccountOutline,
+		IconAlarm,
 		IconArrowLeft,
-		IconBellOff,
+		IconBellOffOutline,
+		IconCalendarClockOutline,
+		IconCloseCircleOutline,
+		IconCheck,
+		IconCheckAll,
+		IconClockEditOutline,
+		IconClockOutline,
+		IconContentCopy,
+		IconDeleteOutline,
+		IconEmoticonOutline,
+		IconEyeOffOutline,
+		IconFileOutline,
 		IconForumOutline,
-		CalendarClock,
-		CloseCircleOutline,
-		Check,
-		CheckAll,
-		ClockEditOutline,
-		ClockOutline,
-		ContentCopy,
-		IconDownload,
-		DeleteIcon,
-		EmoticonOutline,
-		EyeOffOutline,
-		File,
-		Note,
-		OpenInNewIcon,
-		Pencil,
-		Plus,
-		Reply,
-		Share,
-		Translate,
+		IconNoteEditOutline,
+		IconOpenInNew,
+		IconPencilOutline,
+		IconPlus,
+		IconReply,
+		IconShare,
+		IconTranslate,
 	},
 
 	directives: {
@@ -478,6 +479,7 @@ export default {
 		const supportThreads = hasTalkFeature(message.value.token, 'threads')
 
 		return {
+			IconFileDownload,
 			messageActions,
 			supportReminders,
 			supportThreads,
