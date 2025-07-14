@@ -122,6 +122,7 @@ class Capabilities implements IPublicCapability {
 		'mutual-calendar-events',
 		'upcoming-reminders',
 		'sensitive-conversations',
+		'threads',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -151,6 +152,7 @@ class Capabilities implements IPublicCapability {
 		'dashboard-event-rooms',
 		'mutual-calendar-events',
 		'upcoming-reminders',
+		'sensitive-conversations',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -176,9 +178,6 @@ class Capabilities implements IPublicCapability {
 			'can-create',
 			'list-style',
 			'description-length',
-			'retention-event',
-			'retention-phone',
-			'retention-instant-meetings',
 		],
 		'federation' => [
 			'enabled',

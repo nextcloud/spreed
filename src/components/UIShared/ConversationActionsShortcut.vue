@@ -25,9 +25,9 @@ const props = defineProps<{
 }>()
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
-const retentionEventPeriod = getTalkConfig('local', 'conversations', 'retention-event')
-const retentionPhonePeriod = getTalkConfig('local', 'conversations', 'retention-phone')
-const retentionInstantMeetingPeriod = getTalkConfig('local', 'conversations', 'retention-instant-meetings')
+const retentionEventPeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-event'))
+const retentionPhonePeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-phone'))
+const retentionInstantMeetingPeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-instant-meetings'))
 
 const store = useStore()
 const router = useRouter()
@@ -37,11 +37,11 @@ const isModerator = computed(() => store.getters.isModerator)
 
 const expirationDuration = computed(() => {
 	if (props.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
-		return retentionEventPeriod
+		return retentionEventPeriod.value
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY) {
-		return retentionPhonePeriod
+		return retentionPhonePeriod.value
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING) {
-		return retentionInstantMeetingPeriod
+		return retentionInstantMeetingPeriod.value
 	}
 	return 0
 })

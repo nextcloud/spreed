@@ -20,6 +20,7 @@ use OCA\Talk\Service\ParticipantService;
  * @psalm-import-type TalkPoll from ResponseDefinitions
  * @psalm-import-type TalkPollDraft from ResponseDefinitions
  * @psalm-import-type TalkReaction from ResponseDefinitions
+ * @psalm-import-type TalkThreadInfo from ResponseDefinitions
  */
 class UserConverter {
 	/**
@@ -155,6 +156,34 @@ class UserConverter {
 		return array_map(
 			fn (array $message): array => $this->convertMessage($room, $message),
 			$messages
+		);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param TalkThreadInfo $threadInfo
+	 * @return TalkThreadInfo
+	 */
+	public function convertThreadInfo(Room $room, array $threadInfo): array {
+		$threadInfo['thread']['roomToken'] = $room->getToken();
+		if (isset($threadInfo['first'])) {
+			$threadInfo['first'] = $this->convertMessageParameters($room, $threadInfo['first']);
+		}
+		if (isset($threadInfo['last'])) {
+			$threadInfo['last'] = $this->convertMessageParameters($room, $threadInfo['last']);
+		}
+		return $threadInfo;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param list<TalkThreadInfo> $threadInfos
+	 * @return list<TalkThreadInfo>
+	 */
+	public function convertThreadInfos(Room $room, array $threadInfos): array {
+		return array_map(
+			fn (array $threadInfo): array => $this->convertThreadInfo($room, $threadInfo),
+			$threadInfos
 		);
 	}
 
