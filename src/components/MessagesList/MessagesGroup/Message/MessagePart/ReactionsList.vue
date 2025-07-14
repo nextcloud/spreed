@@ -15,7 +15,7 @@
 						:class="{ active: reactionFilter === reaction, 'all-reactions__button': reaction === '♡' }"
 						variant="tertiary"
 						@click="handleTabClick(reaction)">
-						<HeartOutlineIcon v-if="reaction === '♡'" :size="15" />
+						<IconHeartOutline v-if="reaction === '♡'" :size="15" />
 						<span v-else>
 							{{ reaction }}
 						</span>
@@ -49,7 +49,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+import IconHeartOutline from 'vue-material-design-icons/HeartOutline.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import { ATTENDEE, AVATAR } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
@@ -64,7 +64,7 @@ export default {
 		NcButton,
 		NcDialog,
 		NcLoadingIcon,
-		HeartOutlineIcon,
+		IconHeartOutline,
 	},
 
 	props: {

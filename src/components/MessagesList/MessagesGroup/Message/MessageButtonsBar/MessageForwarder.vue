@@ -24,7 +24,7 @@
 			@update:open="handleClose">
 			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
 				<template #icon>
-					<Check :size="64" />
+					<IconCheck :size="64" />
 				</template>
 			</NcEmptyContent>
 			<template #actions>
@@ -48,14 +48,14 @@ import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import Check from 'vue-material-design-icons/Check.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
 import RoomSelector from '../../../../RoomSelector.vue'
 
 export default {
 	name: 'MessageForwarder',
 
 	components: {
-		Check,
+		IconCheck,
 		NcButton,
 		NcDialog,
 		NcEmptyContent,
