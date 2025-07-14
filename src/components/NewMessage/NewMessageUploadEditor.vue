@@ -44,7 +44,7 @@
 						size="large"
 						@click="clickImportInput">
 						<template #icon>
-							<Plus :size="48" />
+							<IconPlus :size="48" />
 						</template>
 					</NcButton>
 				</TransitionWrapper>
@@ -81,7 +81,7 @@ import { t } from '@nextcloud/l10n'
 import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -97,7 +97,7 @@ export default {
 	components: {
 		NcModal,
 		FilePreview,
-		Plus,
+		IconPlus,
 		AudioPlayer,
 		NcButton,
 		NewMessage,
