@@ -402,22 +402,12 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
-			$thread = null;
-
 			if ($threadId) {
-				try {
-					$thread = $this->threadService->findByThreadId($threadId);
-				} catch (DoesNotExistException) {
-				}
+				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
 			}
 
 			if ($participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
-
-				if ($thread !== null) {
-					// FIXME Performance improvement, could update directly on the database without loading the thread first
-					$this->threadService->updateLastMessageInfoAfterReply($thread, $messageId);
-				}
 			}
 
 			// Update last_message
