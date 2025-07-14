@@ -15,6 +15,16 @@
 		<TransitionWrapper name="fade">
 			<div class="scroller__loading">
 				<NcLoadingIcon v-if="displayMessagesLoader" class="scroller__loading-element" :size="32" />
+				<!-- FIXME return from threaded view during the call -->
+				<NcButton
+					v-else-if="threadId && isInCall"
+					:title="t('spreed', 'Back')"
+					:aria-label="t('spreed', 'Back')"
+					@click="threadId = 0">
+					<template #icon>
+						<IconArrowLeft :size="20" />
+					</template>
+				</NcButton>
 			</div>
 		</TransitionWrapper>
 
@@ -63,8 +73,10 @@ import moment from '@nextcloud/moment'
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -84,8 +96,10 @@ const SCROLL_TOLERANCE = 10
 export default {
 	name: 'MessagesList',
 	components: {
+		IconArrowLeft,
 		LoadingPlaceholder,
 		Message,
+		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,
 		TransitionWrapper,
@@ -675,7 +689,13 @@ export default {
 				if (!this.$store.getters.getFirstKnownMessageId(token)) {
 					try {
 						// Start from message hash or unread marker
-						const startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
+						let startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
+						// Check if thread is initially opened
+						if (this.threadId) {
+							// FIXME temporary get thread messages from the start
+							startingMessageId = this.threadId
+						}
+
 						// First time load, initialize important properties
 						if (!startingMessageId) {
 							throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
@@ -1221,10 +1241,9 @@ export default {
 
 		async onRouteChange({ from, to }) {
 			if (from.name === 'conversation' && to.name === 'conversation'
-				&& from.params.token === to.params.token
-				&& from.hash !== to.hash) {
-				// the hash changed, need to focus/highlight another message
-				if (to.hash && to.hash.startsWith('#message_')) {
+				&& from.params.token === to.params.token) {
+				if (to.hash && to.hash.startsWith('#message_') && from.hash !== to.hash) {
+					// the hash changed, need to focus/highlight another message
 					const focusedId = this.getMessageIdFromHash(to.hash)
 					if (this.messagesList.find((m) => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
@@ -1246,6 +1265,21 @@ export default {
 						})
 						await this.getMessageContext(this.token, focusedId)
 						this.focusMessage(focusedId, true)
+					}
+				} else if (to.query.threadId && from.query.threadId !== to.query.threadId) {
+					// FIXME temporary get thread messages from the start
+					const topMostThreadMessage = this.$store.getters.messagesList(to.params.token).find((message) => message.id === +to.query.threadId)
+					if (!topMostThreadMessage) {
+						// Update environment around context to fill the gaps
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: +to.query.threadId,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: +to.query.threadId,
+						})
+						await this.getMessageContext(this.token, +to.query.threadId)
 					}
 				}
 			}
