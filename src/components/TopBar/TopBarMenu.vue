@@ -141,7 +141,7 @@
 				:href="downloadCallParticipantsLink"
 				target="_blank">
 				<template #icon>
-					<IconDownload :size="20" />
+					<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 				</template>
 				{{ t('spreed', 'Download attendance list') }}
 			</NcActionLink>
@@ -160,11 +160,11 @@ import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import IconDownload from 'vue-material-design-icons/Download.vue'
 import IconFile from 'vue-material-design-icons/File.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
@@ -176,6 +176,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
 import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
+import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import {
 	disableFullscreen,
 	enableFullscreen,
@@ -204,11 +205,11 @@ export default {
 		NcActions,
 		NcButton,
 		NcLoadingIcon,
+		NcIconSvgWrapper,
 		// Icons
 		IconCog,
 		IconDotsCircle,
 		IconDotsHorizontal,
-		IconDownload,
 		IconFile,
 		IconFullscreen,
 		IconFullscreenExit,
@@ -256,6 +257,7 @@ export default {
 
 	setup() {
 		return {
+			IconFileDownload,
 			isInCall: useIsInCall(),
 			isFullscreen: useDocumentFullscreen(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
