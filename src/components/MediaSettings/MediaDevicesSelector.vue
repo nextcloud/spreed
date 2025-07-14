@@ -12,7 +12,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
-import IconVolumeOutline from '../../../img/icon-volume-high-outline.svg?raw'
+import IconVolumeOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
 
 type NcSelectOption = { id: string | null, label: string }
 type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }
