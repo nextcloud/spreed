@@ -142,4 +142,48 @@ class ThreadController {
 
 		return new DataResponse($data, Http::STATUS_OK);
 	}
+
+	/**
+	 * @see \OCA\Talk\Controller\ThreadController::setNotificationLevel()
+	 *
+	 * @psalm-param non-negative-int $messageId
+	 * @psalm-param Participant::NOTIFY_* $level
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'level'|'message'|'status'|'top-most'}, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Thread info returned
+	 * 404: Thread not found
+	 */
+	public function setNotificationLevel(Room $room, Participant $participant, int $messageId, int $level): DataResponse {
+		$proxy = $this->proxy->post(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/threads/' . $messageId . '/notify',
+			['level' => $level],
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if ($statusCode !== Http::STATUS_OK) {
+			if (!in_array($statusCode, [
+				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_NOT_FOUND,
+			], true)) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+				$data = ['error' => 'status'];
+			} else {
+				/** @var array{error: 'message'|'top-most'} $data */
+				$data = $this->proxy->getOCSData($proxy, [
+					Http::STATUS_BAD_REQUEST,
+					Http::STATUS_NOT_FOUND,
+				]);
+			}
+			return new DataResponse($data, $statusCode);
+		}
+
+		/** @var TalkThreadInfo $data */
+		$data = $this->proxy->getOCSData($proxy);
+		$data = $this->userConverter->convertThreadInfo($room, $data);
+
+		return new DataResponse($data, Http::STATUS_OK);
+	}
 }

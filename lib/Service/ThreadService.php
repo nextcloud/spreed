@@ -84,7 +84,7 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function addAttendeeToThread(Attendee $attendee, Thread $thread): ThreadAttendee {
+	public function addAttendeeToThread(Attendee $attendee, Thread $thread, int $level): ThreadAttendee {
 		$threadAttendee = new ThreadAttendee();
 		$threadAttendee->setThreadId($thread->getId());
 		$threadAttendee->setRoomId($thread->getRoomId());
@@ -92,7 +92,7 @@ class ThreadService {
 		$threadAttendee->setAttendeeId($attendee->getId());
 		$threadAttendee->setActorType($attendee->getActorType());
 		$threadAttendee->setActorId($attendee->getActorId());
-		$threadAttendee->setNotificationLevel($attendee->getNotificationLevel());
+		$threadAttendee->setNotificationLevel($level);
 
 		try {
 			$this->threadAttendeeMapper->insert($threadAttendee);

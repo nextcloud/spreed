@@ -415,11 +415,7 @@ class ChatManager {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 
 				if ($thread !== null) {
-					$this->threadService->addAttendeeToThread(
-						$participant->getAttendee(),
-						$thread,
-					);
-
+					// FIXME Performance improvement, could update directly on the database without loading the thread first
 					$this->threadService->updateLastMessageInfoAfterReply($thread, $messageId);
 				}
 			}
