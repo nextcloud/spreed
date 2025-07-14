@@ -159,7 +159,6 @@ const regex = emojiRegex()
 // Regular expressions to check for task lists in message text like: - [ ], * [ ], + [ ],- [x], - [X]
 const checkboxRegexp = /^\s*[-+*]\s.*\[[\sxX]\]/
 const checkboxCheckedRegexp = /^\s*[-+*]\s.*\[[xX]\]/
-const supportUnbindConversation = hasTalkFeature('local', 'unbind-conversation')
 
 export default {
 	name: 'MessageBody',
@@ -281,8 +280,12 @@ export default {
 				|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING
 		},
 
+		supportUnbindConversation() {
+			return hasTalkFeature(this.message.token, 'unbind-conversation')
+		},
+
 		showConversationActionsShortcut() {
-			return supportUnbindConversation
+			return this.supportUnbindConversation
 				&& !this.isInCall && !this.isSidebar && this.$store.getters.isModeratorOrUser
 				&& this.hasRetentionPeriod
 				&& this.isCallEndedMessage
