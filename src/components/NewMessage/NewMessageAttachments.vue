@@ -10,14 +10,14 @@
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">
 		<template #icon>
-			<Plus :size="16" />
+			<IconPlus :size="16" />
 		</template>
 
 		<NcActionButton v-if="canUploadFiles"
 			close-after-click
 			@click="$emit('openFileUpload')">
 			<template #icon>
-				<Upload :size="20" />
+				<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 			</template>
 			{{ t('spreed', 'Upload from device') }}
 		</NcActionButton>
@@ -26,7 +26,7 @@
 			<NcActionButton close-after-click
 				@click="$emit('handleFileShare')">
 				<template #icon>
-					<Folder :size="20" />
+					<IconFolder :size="20" />
 				</template>
 				{{ shareFromNextcloudLabel }}
 			</NcActionButton>
@@ -47,7 +47,7 @@
 			close-after-click
 			@click="showPollEditor">
 			<template #icon>
-				<PollIcon :size="20" />
+				<IconPoll :size="20" />
 			</template>
 			{{ t('spreed', 'Create new poll') }}
 		</NcActionButton>
@@ -55,7 +55,7 @@
 		<NcActionButton close-after-click
 			@click="showSmartPicker">
 			<template #icon>
-				<SlashForwardBox :size="20" />
+				<NcIconSvgWrapper :svg="IconSmartPicker" :size="20" />
 			</template>
 			{{ t('spreed', 'Smart picker') }}
 		</NcActionButton>
@@ -67,11 +67,11 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import PollIcon from 'vue-material-design-icons/Poll.vue'
-import SlashForwardBox from 'vue-material-design-icons/SlashForwardBox.vue'
-import Upload from 'vue-material-design-icons/Upload.vue'
+import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
+import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
+import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
+import IconSmartPicker from '../../../img/material-icons/smart-picker.svg?raw'
 import { EventBus } from '../../services/EventBus.ts'
 
 export default {
@@ -82,11 +82,9 @@ export default {
 		NcActions,
 		NcIconSvgWrapper,
 		// Icons
-		Folder,
-		Plus,
-		PollIcon,
-		SlashForwardBox,
-		Upload,
+		IconFolder,
+		IconPlus,
+		IconPoll,
 	},
 
 	props: {
@@ -117,6 +115,13 @@ export default {
 	},
 
 	emits: ['updateNewFileDialog', 'openFileUpload', 'handleFileShare'],
+
+	setup() {
+		return {
+			IconFileUpload,
+			IconSmartPicker,
+		}
+	},
 
 	computed: {
 		fileTemplateOptions() {

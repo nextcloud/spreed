@@ -29,7 +29,7 @@
 				@error="onError">
 			<template v-if="!isLoading || fallbackLocalUrl">
 				<span v-if="isPlayable && !smallPreview" class="play-video-button">
-					<PlayCircleOutline :size="48"
+					<IconPlayCircleOutline :size="48"
 						fill-color="#ffffff" />
 				</span>
 				<NcProgressBar v-if="showUploadProgress"
@@ -54,7 +54,7 @@
 			:aria-label="removeAriaLabel"
 			@click="$emit('removeFile', file.id)">
 			<template #icon>
-				<Close />
+				<IconClose />
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
@@ -72,8 +72,8 @@ import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-import Close from 'vue-material-design-icons/Close.vue'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
 import { useViewer } from '../../../../../composables/useViewer.js'
@@ -98,8 +98,8 @@ export default {
 		NcProgressBar,
 		TransitionWrapper,
 		// Icons
-		Close,
-		PlayCircleOutline,
+		IconClose,
+		IconPlayCircleOutline,
 	},
 
 	props: {

@@ -62,8 +62,8 @@
 					:title="t('spreed', 'Show or collapse system messages')"
 					@click="toggleCombinedSystemMessage">
 					<template #icon>
-						<IconUnfoldMore v-if="isCombinedSystemMessageCollapsed" />
-						<IconUnfoldLess v-else />
+						<IconUnfoldMoreHorizontal v-if="isCombinedSystemMessageCollapsed" />
+						<IconUnfoldLessHorizontal v-else />
 					</template>
 				</NcButton>
 			</div>
@@ -104,9 +104,9 @@ import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconCreation from 'vue-material-design-icons/Creation.vue'
-import IconUnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
-import IconUnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
+import IconCreation from 'vue-material-design-icons/Creation.vue' // Filled as in Assistant app icon
+import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
+import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -134,8 +134,8 @@ export default {
 
 	components: {
 		IconCreation,
-		IconUnfoldLess,
-		IconUnfoldMore,
+		IconUnfoldLessHorizontal,
+		IconUnfoldMoreHorizontal,
 		MessageBody,
 		MessageButtonsBar,
 		MessageForwarder,

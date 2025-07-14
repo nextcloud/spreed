@@ -34,7 +34,7 @@
 			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
 			@click="toggleCollapsed">
 			<template #icon>
-				<ChevronUp class="icon" :class="{ 'icon--reverted': !collapsed }" :size="20" />
+				<IconChevronUp class="icon" :class="{ 'icon--reverted': !collapsed }" :size="20" />
 			</template>
 		</NcButton>
 		<p ref="absenceMessage" class="absence-reminder__message" :class="{ 'absence-reminder__message--collapsed': collapsed }">{{ userAbsenceMessage }}</p>
@@ -49,7 +49,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
-import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR } from '../../constants.ts'
@@ -59,7 +59,7 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		ChevronUp,
+		IconChevronUp,
 		NcButton,
 		NcNoteCard,
 		NcUserBubble,

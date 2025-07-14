@@ -9,7 +9,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -418,7 +418,7 @@ describe('FilePreview.vue', () => {
 
 					await wrapper.find('img').trigger('load')
 
-					const buttonEl = wrapper.findComponent(PlayCircleOutline)
+					const buttonEl = wrapper.findComponent(IconPlayCircleOutline)
 					expect(buttonEl.exists()).toBe(visible)
 				}
 
@@ -458,7 +458,7 @@ describe('FilePreview.vue', () => {
 
 					await wrapper.find('img').trigger('error')
 
-					const buttonEl = wrapper.findComponent(PlayCircleOutline)
+					const buttonEl = wrapper.findComponent(IconPlayCircleOutline)
 					expect(buttonEl.exists()).toBe(false)
 				})
 
