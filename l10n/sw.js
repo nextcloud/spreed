@@ -307,6 +307,7 @@ OC.L10N.register(
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.",
     "Guest access" : "Ufikiaji wa mgeni",
     "Password protection" : "Password protection",
+    "Set a password" : "Weka nenosiri",
     "Resend invitations" : "Tuma mialiko upya",
     "Lock conversation" : "Funga mazungumzo",
     "Edit" : "Hariri",
