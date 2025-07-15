@@ -1350,6 +1350,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 200);
 	}
 
+	#[Then('/^user "([^"]*)" sets call notifications to (enabled|disabled) for room "([^"]*)" \((v4)\)$/')]
+	public function userSetsCallNotificationLevelForRoom(string $user, string $level, string $identifier, string $apiVersion): void {
+		$this->setCurrentUser($user);
+
+		$intLevel = 1; // default
+		if ($level === 'disabled') {
+			$intLevel = 0;
+		}
+
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/notify-calls',
+			new TableNode([
+				['level', $intLevel],
+			])
+		);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
 	#[Then('/^user "([^"]*)" leaves room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userExitsRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
