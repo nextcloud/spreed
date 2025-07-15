@@ -332,13 +332,13 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 			<template v-if="searchResults.length !== 0">
 				<SearchMessageItem v-for="item of searchResults"
 					:key="`message_${item.attributes.messageId}`"
-					:message-id="item.attributes.messageId"
+					:message-id="+item.attributes.messageId"
 					:title="item.title"
 					:subline="item.subline"
 					:actor-id="item.attributes.actorId"
 					:actor-type="item.attributes.actorType"
 					:token="item.attributes.conversation"
-					:timestamp="item.attributes.timestamp"
+					:timestamp="+item.attributes.timestamp"
 					:to="item.to" />
 			</template>
 			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"

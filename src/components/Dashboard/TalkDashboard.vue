@@ -328,7 +328,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						}"
 						:actor-id="reminder.actorId"
 						:actor-type="reminder.actorType"
-						:timestamp="`${reminder.reminderTimestamp}`"
+						:timestamp="reminder.reminderTimestamp"
 						is-reminder />
 				</div>
 				<LoadingPlaceholder v-else-if="!remindersInitialised"
