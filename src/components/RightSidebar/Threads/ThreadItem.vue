@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import type { RouteLocationAsRelative } from 'vue-router'
 import type {
-	ChatMessage,
 	ThreadInfo,
 } from '../../../types/index.ts'
 
@@ -20,7 +19,8 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import { ATTENDEE } from '../../../constants.ts'
+import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
+import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const { thread } = defineProps<{ thread: ThreadInfo }>()
 
@@ -28,20 +28,18 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 
-const threadAuthor = computed(() => thread.first.actorDisplayName.trim().split(' ')[0])
+const threadAuthor = computed(() => getDisplayNameWithFallback(thread.first.actorDisplayName, thread.first.actorType, true))
 const lastActivity = computed(() => thread.thread.lastActivity * 1000)
-const name = computed(() => getSimpleLine(thread.first))
+const name = computed(() => parseToSimpleMessage(thread.first.message, thread.first.messageParameters))
 const subname = computed(() => {
 	if (!thread.last) {
 		return t('spreed', 'No messages')
 	}
-	const actor = thread.last.actorDisplayName.trim().split(' ')[0]
 
-	if (!actor && thread.last.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-		return t('spreed', 'Guest')
-	}
+	const actor = getDisplayNameWithFallback(thread.last.actorDisplayName, thread.last.actorType, true)
+	const lastMessage = parseToSimpleMessage(thread.last.message, thread.last.messageParameters)
 
-	return t('spreed', '{actor}: {lastMessage}', { actor, lastMessage: getSimpleLine(thread.last) }, {
+	return t('spreed', '{actor}: {lastMessage}', { actor, lastMessage }, {
 		escape: false,
 		sanitize: false,
 	})
@@ -65,25 +63,6 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 	}
 	return { dateStyle: 'short' }
 })
-
-/**
- * FIXME copied from conversation item/composable/quote component, should be shared from utils
- * @param message chat message object
- */
-function getSimpleLine(message: ChatMessage | undefined) {
-	if (!message) {
-		return ''
-	}
-
-	let text = message.message
-
-	Object.entries(message.messageParameters as ChatMessage['messageParameters']).forEach(([key, value]) => {
-		text = text.replaceAll('{' + key + '}', value.name)
-	})
-
-	return text
-}
-
 </script>
 
 <template>

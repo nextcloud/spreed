@@ -94,6 +94,7 @@ export default {
 		return {
 			loading: false,
 			isRefreshingCurrentConversation: false,
+			skipLeaveWarning: false,
 			recordingConsentGiven: false,
 			debounceRefreshCurrentConversation: () => {},
 		}
@@ -342,7 +343,8 @@ export default {
 				})
 			}
 
-			this.$router.push({ name: 'conversation', params: { token: params.token, skipLeaveWarning: true } })
+			this.skipLeaveWarning = true
+			this.$router.push({ name: 'conversation', params: { token: params.token } })
 		})
 
 		EventBus.on('conversations-received', (params) => {
@@ -357,7 +359,8 @@ export default {
 					this.refreshCurrentConversation()
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
-					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+					this.skipLeaveWarning = true
+					this.$router.push({ name: 'notfound' })
 					this.tokenStore.updateToken('')
 				}
 			}
@@ -409,7 +412,7 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || to.params?.skipLeaveWarning) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning) {
 				// Safe to navigate
 				beforeRouteChangeListener(to, from, next)
 			} else {
@@ -432,6 +435,7 @@ export default {
 					],
 				})
 			}
+			this.skipLeaveWarning = false
 		})
 	},
 
@@ -587,7 +591,8 @@ export default {
 				EventBus.emit('conversations-received', { singleConversation: response.data.ocs.data })
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+				this.skipLeaveWarning = true
+				this.$router.push({ name: 'notfound' })
 				this.tokenStore.updateToken('')
 			} finally {
 				this.isRefreshingCurrentConversation = false

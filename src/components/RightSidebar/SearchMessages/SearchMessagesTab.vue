@@ -58,7 +58,6 @@ const searchResults = ref<(UnifiedSearchResultEntry &
 			hash: string
 			params: {
 				token: string
-				skipLeaveWarning: boolean
 			}
 		}
 	})[]>([])
@@ -220,10 +219,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 					to: {
 						name: 'conversation',
 						hash: `#message_${entry.attributes.messageId}`,
-						params: {
-							token: entry.attributes.conversation,
-							skipLeaveWarning: true,
-						},
+						params: { token: entry.attributes.conversation },
 					},
 				}
 			}))
@@ -332,13 +328,13 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 			<template v-if="searchResults.length !== 0">
 				<SearchMessageItem v-for="item of searchResults"
 					:key="`message_${item.attributes.messageId}`"
-					:message-id="item.attributes.messageId"
+					:message-id="+item.attributes.messageId"
 					:title="item.title"
 					:subline="item.subline"
 					:actor-id="item.attributes.actorId"
 					:actor-type="item.attributes.actorType"
 					:token="item.attributes.conversation"
-					:timestamp="item.attributes.timestamp"
+					:timestamp="+item.attributes.timestamp"
 					:to="item.to" />
 			</template>
 			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"

@@ -323,12 +323,12 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						:token="reminder.roomToken"
 						:to="{
 							name: 'conversation',
-							params: { token: reminder.roomToken, skipLeaveWarning: true },
+							params: { token: reminder.roomToken },
 							hash: `#message_${reminder.messageId}`,
 						}"
 						:actor-id="reminder.actorId"
 						:actor-type="reminder.actorType"
-						:timestamp="`${reminder.reminderTimestamp}`"
+						:timestamp="reminder.reminderTimestamp"
 						is-reminder />
 				</div>
 				<LoadingPlaceholder v-else-if="!remindersInitialised"
