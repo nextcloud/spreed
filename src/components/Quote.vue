@@ -198,7 +198,6 @@ function handleQuoteClick() {
 		<NcButton v-if="canCancel"
 			class="quote__close"
 			variant="tertiary"
-			size="small"
 			:title="t('spreed', 'Cancel quote')"
 			:aria-label="t('spreed', 'Cancel quote')"
 			@click="handleAbort">
@@ -214,15 +213,15 @@ function handleQuoteClick() {
 
 .quote {
 	position: relative;
-	padding-block: calc(0.5 * var(--default-grid-baseline));
-	padding-inline: calc(1.5 * var(--default-grid-baseline)) var(--default-clickable-area);
+	padding-block: var(--default-grid-baseline);
+	padding-inline: calc(2 * var(--default-grid-baseline)) var(--default-clickable-area);
+	margin-bottom: var(--default-grid-baseline);
 	display: flex;
 	gap: var(--default-grid-baseline);
 	max-width: $messages-text-max-width;
-	min-height: var(--clickable-area-small);
+	min-height: var(--default-clickable-area);
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
-	font-size: var(--font-size-small);
 	color: var(--color-text-maxcontrast);
 	background-color: var(--color-main-background);
 	overflow: hidden;
@@ -280,7 +279,7 @@ function handleQuoteClick() {
 		&-author {
 			display: flex;
 			align-items: center;
-			gap: calc(0.5 * var(--default-grid-baseline));
+			gap: var(--default-grid-baseline);
 
 			&-info {
 				flex-shrink: 0;
