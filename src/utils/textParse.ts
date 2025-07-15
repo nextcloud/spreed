@@ -52,6 +52,23 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 }
 
 /**
+ * Parse message text to return human-readable string for mention substitutions
+ *
+ * @param text The string to parse
+ * @param parameters The parameters that contain the mentions
+ */
+function parseToSimpleMessage(text: string, parameters: ChatMessage['messageParameters'] | []): string {
+	if (!parameters || Array.isArray(parameters)) {
+		return text.trim()
+	}
+
+	Object.entries(parameters).forEach(([key, value]) => {
+		text = text.replaceAll('{' + key + '}', value.name)
+	})
+	return text.trim()
+}
+
+/**
  * Parse special symbols in text like &amp; &lt; &gt; &sect;
  * FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
  *
@@ -66,4 +83,5 @@ function parseSpecialSymbols(text: string): string {
 export {
 	parseMentions,
 	parseSpecialSymbols,
+	parseToSimpleMessage,
 }

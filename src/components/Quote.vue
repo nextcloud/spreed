@@ -22,6 +22,7 @@ import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
+import { parseToSimpleMessage } from '../utils/textParse.ts'
 
 type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
 
@@ -89,21 +90,9 @@ const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getM
 const simpleQuotedMessage = computed(() => {
 	if (!isExistingMessage(message)) {
 		return t('spreed', 'The message has expired or has been deleted')
+	} else {
+		return parseToSimpleMessage(message.message, message.messageParameters)
 	}
-
-	if (!Object.keys(message.messageParameters).length) {
-		return message.message
-	}
-
-	const params = message.messageParameters
-	let subtitle = message.message
-
-	// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-	Object.keys(params).forEach((parameterKey) => {
-		subtitle = subtitle.replaceAll('{' + parameterKey + '}', params[parameterKey].name)
-	})
-
-	return subtitle
 })
 
 /**

@@ -19,6 +19,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import { CONVERSATION } from '../../../constants.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
+import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const props = defineProps({
 	messageId: {
@@ -77,18 +78,11 @@ const name = computed(() => {
 	return t('spreed', '{actor} in {conversation}', { actor: props.title, conversation: conversation.value?.displayName ?? '' }, { escape: false, sanitize: false })
 })
 const richSubline = computed(() => {
-	if (!props.isReminder || !props.messageParameters || Array.isArray(props.messageParameters)) {
+	if (!props.isReminder) {
 		return props.subline
 	}
 
-	let text = props.subline.trim()
-
-	// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-	Object.entries(props.messageParameters).forEach(([key, value]) => {
-		text = text.replaceAll('{' + key + '}', value.name)
-	})
-
-	return text
+	return parseToSimpleMessage(props.subline, props.messageParameters)
 })
 const clearReminderLabel = computed(() => {
 	if (!props.isReminder) {
