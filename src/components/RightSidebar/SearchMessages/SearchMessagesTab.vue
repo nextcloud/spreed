@@ -58,7 +58,6 @@ const searchResults = ref<(UnifiedSearchResultEntry &
 			hash: string
 			params: {
 				token: string
-				skipLeaveWarning: boolean
 			}
 		}
 	})[]>([])
@@ -220,10 +219,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 					to: {
 						name: 'conversation',
 						hash: `#message_${entry.attributes.messageId}`,
-						params: {
-							token: entry.attributes.conversation,
-							skipLeaveWarning: true,
-						},
+						params: { token: entry.attributes.conversation },
 					},
 				}
 			}))

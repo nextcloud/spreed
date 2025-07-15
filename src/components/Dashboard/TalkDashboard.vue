@@ -323,7 +323,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						:token="reminder.roomToken"
 						:to="{
 							name: 'conversation',
-							params: { token: reminder.roomToken, skipLeaveWarning: true },
+							params: { token: reminder.roomToken },
 							hash: `#message_${reminder.messageId}`,
 						}"
 						:actor-id="reminder.actorId"
