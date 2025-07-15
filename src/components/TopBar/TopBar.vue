@@ -477,9 +477,8 @@ export default {
 
 .top-bar__icon-wrapper {
 	position: relative;
-	background-color: var(--color-background-dark);
 	border-radius: var(--border-radius-pill);
-	transition-property: width, padding;
+	transition-property: width, padding, background-color;
 	transition-duration: var(--animation-quick);
 
 	&:hover,
@@ -489,6 +488,7 @@ export default {
 	}
 
 	&--thread {
+		background-color: var(--color-background-dark);
 		width: calc(var(--default-clickable-area) + 40px); // AVATAR.SIZE.DEFAULT
 		padding-inline-start: var(--default-clickable-area);
 	}

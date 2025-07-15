@@ -260,6 +260,7 @@ export default {
 			contactsLoading: false,
 			unreadNotificationHandle: null,
 			contentState: 'default',
+			previousActiveTab: this.isInCall ? 'chat' : 'participants',
 		}
 	},
 
@@ -520,11 +521,13 @@ export default {
 			this.contentState = value
 			// FIXME upstream: NcAppSidebar should emit update:active
 			if (value === 'search') {
+				this.previousActiveTab = this.activeTab
 				this.activeTab = 'search-messages'
 			} else if (value === 'threads') {
+				this.previousActiveTab = this.activeTab
 				this.activeTab = 'threads'
 			} else {
-				this.activeTab = this.isInCall ? 'chat' : 'participants'
+				this.activeTab = this.previousActiveTab
 			}
 		},
 
