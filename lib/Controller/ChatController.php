@@ -716,7 +716,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 					$this->messageParser->parseMessage($message);
 
 					if ($message->getVisibility()) {
-						$loadedParents[$parentId] = $message->toArray($this->getResponseFormat());
+						$threadId = (int)$comment->getTopmostParentId() ?: $parentId;
+						$loadedParents[$parentId] = $message->toArray($this->getResponseFormat(), isset($threadMap[$threadId]));
 						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
 						continue;
 					}
