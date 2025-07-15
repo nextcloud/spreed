@@ -43,7 +43,7 @@
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
-			<Quote v-if="message.parent" :message="message.parent" />
+			<Quote v-if="showQuote" :message="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
@@ -146,6 +146,7 @@ import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
 import Poll from './Poll.vue'
+import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
@@ -218,11 +219,13 @@ export default {
 			isEditable,
 			isFileShare,
 		} = useMessageInfo(message)
+		const threadId = useGetThreadId()
 		const isSidebar = inject('chatView:isSidebar', false)
 
 		return {
 			isInCall: useIsInCall(),
 			pollsStore: usePollsStore(),
+			threadId,
 			isEditable,
 			isFileShare,
 			isSidebar,
@@ -241,6 +244,10 @@ export default {
 	},
 
 	computed: {
+		showQuote() {
+			return !!this.message.parent && this.message.parent.id !== this.threadId
+		},
+
 		renderedMessage() {
 			if (this.isFileShare && this.message.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs

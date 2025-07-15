@@ -17,11 +17,14 @@ import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCap
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
+import ThreadItem from '../Threads/ThreadItem.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
@@ -29,6 +32,7 @@ import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useActorStore } from '../../../stores/actor.ts'
+import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import {
@@ -41,6 +45,11 @@ import {
 const props = defineProps<{
 	active: boolean
 }>()
+
+const emit = defineEmits<{
+	(event: 'update:state', value: 'threads'): void
+}>()
+
 const token = useGetToken()
 const showSharedItemsBrowser = ref(false)
 const browserActiveTab = ref('')
@@ -48,6 +57,7 @@ const projectsEnabled = loadState('core', 'projects_enabled', false)
 const hasRelatedResources = ref(false)
 
 const store = useStore()
+const chatExtrasStore = useChatExtrasStore()
 const sharedItemsStore = useSharedItemsStore()
 const sidebarStore = useSidebarStore()
 const actorStore = useActorStore()
@@ -60,9 +70,13 @@ const canCreatePollDrafts = computed(() => {
 const sharedItems = computed(() => sharedItemsStore.sharedItems(token.value))
 const hasSharedItems = computed(() => Object.keys(sharedItems.value).length > 0)
 
+const supportThreads = computed(() => hasTalkFeature(token.value, 'threads'))
+const threadsInformation = computed(() => supportThreads.value ? chatExtrasStore.getThreadsList(token.value).slice(0, 3) : [])
+
 watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, isOpen]) => {
 	if (token && isActive && isOpen) {
 		sharedItemsStore.getSharedItemsOverview(token)
+		supportThreads.value && chatExtrasStore.fetchRecentThreadsList(token)
 	}
 }, { immediate: true })
 
@@ -110,6 +124,23 @@ function openPollDraftHandler() {
 				</template>
 				{{ t('spreed', 'Browse poll drafts') }}
 			</NcButton>
+			<!-- Threads overview -->
+			<template v-if="supportThreads && threadsInformation.length">
+				<NcAppNavigationCaption :name="t('spreed', 'Recent threads')" />
+				<ul class="threads-list">
+					<ThreadItem v-for="thread of threadsInformation"
+						:key="`thread_${thread.thread.id}`"
+						:thread="thread" />
+					<NcListItem
+						:name="t('spreed', 'Show more threads')"
+						one-line
+						@click="emit('update:state', 'threads')">
+						<template #icon>
+							<IconDotsHorizontal class="threads-icon" :size="20" />
+						</template>
+					</NcListItem>
+				</ul>
+			</template>
 			<!-- Shared items grouped by type -->
 			<template v-for="type in sharedItemsOrder" :key="type">
 				<div v-if="sharedItems[type]">
@@ -193,6 +224,16 @@ function openPollDraftHandler() {
 	&__loading,
 	&__empty-content {
 		flex: 1;
+	}
+}
+
+.threads {
+	&-list {
+		line-height: 20px;
+	}
+
+	&-icon {
+		width: 40px; // AVATAR.SIZE.DEFAULT
 	}
 }
 </style>

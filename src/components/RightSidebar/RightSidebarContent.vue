@@ -43,14 +43,16 @@ type MutualEvent = {
 	color: string
 }
 
+type SidebarContentState = 'default' | 'search' | 'threads'
+
 const props = defineProps<{
 	isUser: boolean
-	state: 'default' | 'search'
+	state: SidebarContentState
 	mode: 'compact' | 'preview' | 'full'
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:search', value: boolean): void
+	(event: 'update:state', value: SidebarContentState): void
 	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
 }>()
 
@@ -80,6 +82,11 @@ const profileActions = computed<UserProfileData['actions']>(() => {
 const sidebarTitle = computed(() => {
 	if (props.state === 'search') {
 		return t('spreed', 'Search in {name}', { name: conversation.value.displayName }, {
+			escape: false,
+			sanitize: false,
+		})
+	} else if (props.state === 'threads') {
+		return t('spreed', 'Threads in {name}', { name: conversation.value.displayName }, {
 			escape: false,
 			sanitize: false,
 		})
@@ -202,7 +209,7 @@ function handleHeaderClick() {
 				<NcButton variant="tertiary"
 					:title="t('spreed', 'Search messages')"
 					:aria-label="t('spreed', 'Search messages')"
-					@click="emit('update:search', true)">
+					@click="emit('update:state', 'search')">
 					<template #icon>
 						<IconMagnify :size="20" />
 					</template>
@@ -262,12 +269,12 @@ function handleHeaderClick() {
 		</template>
 
 		<!-- Search messages in this conversation -->
-		<template v-else-if="isUser && state === 'search'">
+		<template v-else-if="isUser">
 			<div class="content__header content__header--row">
 				<NcButton variant="tertiary"
 					:title="t('spreed', 'Back')"
 					:aria-label="t('spreed', 'Back')"
-					@click="emit('update:search', false)">
+					@click="emit('update:state', 'default')">
 					<template #icon>
 						<IconArrowLeft class="bidirectional-icon" :size="20" />
 					</template>

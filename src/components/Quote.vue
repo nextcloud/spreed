@@ -15,6 +15,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
+import { useGetThreadId } from '../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -36,6 +37,7 @@ const { message, canCancel = false, editMessage = false } = defineProps<{
 const route = useRoute()
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
+const threadId = useGetThreadId()
 
 const {
 	isFileShare,
@@ -48,9 +50,12 @@ const {
 
 const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
+const query = computed(() => ({ threadId: (isExistingMessage(message) && threadId.value === message.threadId) ? message.threadId : undefined }))
 const hash = computed(() => '#message_' + message.id)
 
-const component = computed(() => canCancel ? { tag: 'div', link: undefined } : { tag: 'router-link', link: { hash: hash.value } })
+const component = computed(() => canCancel
+	? { tag: 'div', link: undefined }
+	: { tag: 'router-link', link: { query: query.value, hash: hash.value } })
 
 const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 

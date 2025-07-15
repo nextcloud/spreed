@@ -54,6 +54,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
+		getThreadsList: (state) => (token: string): ThreadInfo[] => {
+			if (state.threads[token]) {
+				return Object.values(state.threads[token]).sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
+			} else {
+				return []
+			}
+		},
+
 		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]
@@ -124,24 +132,20 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		/**
-		 * Make a thread from a reply chain in given conversation
+		 * Create a thread from a reply chain in given conversation
+		 * If thread already exists, subscribe to it
 		 *
 		 * @param token - conversation token
-		 * @param threadId - thread id to fetch
+		 * @param messageId - message id of any reply in the chain
 		 */
-		async createThread(token: string, threadId: number) {
+		async createThread(token: string, messageId: number) {
 			try {
 				if (!this.threads[token]) {
 					this.threads[token] = {}
 				}
 
-				if (this.threads[token][threadId]) {
-					// Thread already exists, no need to create it again
-					return
-				}
-
-				const response = await createThreadForConversation(token, threadId)
-				this.threads[token][threadId] = response.data.ocs.data
+				const response = await createThreadForConversation(token, messageId)
+				this.threads[token][response.data.ocs.data.thread.id] = response.data.ocs.data
 			} catch (error) {
 				console.error('Error creating thread:', error)
 			}

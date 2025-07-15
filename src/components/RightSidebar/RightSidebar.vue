@@ -25,21 +25,28 @@
 			<RightSidebarContent ref="sidebarContent"
 				:is-user="!!getUserId"
 				:mode="CONTENT_MODES[contentModeIndex]"
-				:state="showSearchMessagesTab ? 'search' : 'default'"
+				:state="contentState"
 				@update:mode="handleUpdateMode"
-				@update:search="handleShowSearch" />
+				@update:state="handleUpdateState" />
 		</template>
 		<template #description>
 			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="showSearchMessagesTab"
+		<NcAppSidebarTab v-if="contentState === 'search'"
 			id="search-messages"
 			key="search-messages"
 			:order="0"
 			:name="t('spreed', 'Search messages')">
 			<SearchMessagesTab :is-active="activeTab === 'search-messages'"
-				@close="handleShowSearch(false)" />
+				@close="handleUpdateState('default')" />
+		</NcAppSidebarTab>
+		<NcAppSidebarTab v-else-if="contentState === 'threads'"
+			id="threads"
+			key="threads"
+			:order="0"
+			:name="t('spreed', 'Threads')">
+			<ThreadsTab @close="handleUpdateState('default')" />
 		</NcAppSidebarTab>
 		<template v-else>
 			<NcAppSidebarTab v-if="isInCall"
@@ -108,7 +115,7 @@
 				<template #icon>
 					<IconFolderMultipleImage :size="20" />
 				</template>
-				<SharedItemsTab :active="activeTab === 'shared-items'" />
+				<SharedItemsTab :active="activeTab === 'shared-items'" @update:state="handleUpdateState" />
 			</NcAppSidebarTab>
 		</template>
 	</NcAppSidebar>
@@ -140,6 +147,7 @@ import RightSidebarContent from './RightSidebarContent.vue'
 import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
+import ThreadsTab from './Threads/ThreadsTab.vue'
 import { useGetParticipants } from '../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
@@ -167,6 +175,7 @@ export default {
 		SearchMessagesTab,
 		SetGuestUsername,
 		SharedItemsTab,
+		ThreadsTab,
 		SipSettings,
 		// Icons
 		IconAccountMultiple,
@@ -250,7 +259,7 @@ export default {
 		return {
 			contactsLoading: false,
 			unreadNotificationHandle: null,
-			showSearchMessagesTab: false,
+			contentState: 'default',
 		}
 	},
 
@@ -427,6 +436,7 @@ export default {
 		isInCall(newValue) {
 			if (newValue) {
 				// Set 'chat' tab as active, and switch to it if sidebar is open
+				this.contentState = 'default'
 				this.activeTab = 'chat'
 				return
 			}
@@ -506,11 +516,13 @@ export default {
 			}
 		},
 
-		handleShowSearch(value) {
-			this.showSearchMessagesTab = value
+		handleUpdateState(value) {
+			this.contentState = value
 			// FIXME upstream: NcAppSidebar should emit update:active
-			if (value) {
+			if (value === 'search') {
 				this.activeTab = 'search-messages'
+			} else if (value === 'threads') {
+				this.activeTab = 'threads'
 			} else {
 				this.activeTab = this.isInCall ? 'chat' : 'participants'
 			}
