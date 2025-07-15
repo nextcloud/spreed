@@ -13,6 +13,7 @@ import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
+import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
 
@@ -91,13 +92,7 @@ export function useConversationInfo({
 			return ''
 		}
 
-		const author = lastMessage.value.actorDisplayName.trim().split(' ')[0]
-
-		if (!author && lastMessage.value.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-			return t('spreed', 'Guest')
-		}
-
-		return author
+		return getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType, true)
 	})
 
 	const conversationInformation = computed(() => {

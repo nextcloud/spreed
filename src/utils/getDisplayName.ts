@@ -9,10 +9,13 @@ import { ATTENDEE } from '../constants.ts'
  * Returns display name with 'Guest' or 'Deleted user' fallback if not provided
  * @param displayName possible name of participant
  * @param source actor type of participant
+ * @param firstNameOnly whether to return only the first name of display name
  */
-export function getDisplayNameWithFallback(displayName: string, source: string): string {
+export function getDisplayNameWithFallback(displayName: string, source: string, firstNameOnly: boolean = false): string {
 	if (displayName?.trim()) {
-		return displayName.trim()
+		return firstNameOnly
+			? displayName.trim().split(' ').shift()!
+			: displayName.trim()
 	}
 
 	if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(source)) {

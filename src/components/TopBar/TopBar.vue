@@ -192,6 +192,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
+import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../utils/textParse.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -273,7 +274,7 @@ export default {
 		},
 
 		threadName() {
-			const actor = this.currentThread.first.actorDisplayName.trim().split(' ')[0]
+			const actor = getDisplayNameWithFallback(this.currentThread.first.actorDisplayName, this.currentThread.first.actorType, true)
 			const lastMessage = parseToSimpleMessage(this.currentThread.first.message, this.currentThread.first.messageParameters)
 
 			return t('spreed', '{actor}: {lastMessage}', { actor, lastMessage }, {
