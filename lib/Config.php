@@ -583,6 +583,9 @@ class Config {
 	}
 
 	public function deriveSignalingTokenPublicKey(string $privateKey, string $alg): string {
+		// Clear any existing (unrelated) OpenSSL errors
+		while (openssl_error_string() !== false);
+
 		if (str_starts_with($alg, 'ES') || str_starts_with($alg, 'RS')) {
 			$opensslPrivateKey = openssl_pkey_get_private($privateKey);
 			$this->throwOnOpensslError();
