@@ -72,6 +72,7 @@ const hasSharedItems = computed(() => Object.keys(sharedItems.value).length > 0)
 
 const supportThreads = computed(() => hasTalkFeature(token.value, 'threads'))
 const threadsInformation = computed(() => supportThreads.value ? chatExtrasStore.getThreadsList(token.value).slice(0, 3) : [])
+const hasMoreThreads = computed(() => chatExtrasStore.getThreadsList(token.value).length > 3)
 
 watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, isOpen]) => {
 	if (token && isActive && isOpen) {
@@ -131,7 +132,7 @@ function openPollDraftHandler() {
 					<ThreadItem v-for="thread of threadsInformation"
 						:key="`thread_${thread.thread.id}`"
 						:thread="thread" />
-					<NcListItem
+					<NcListItem v-if="hasMoreThreads"
 						:name="t('spreed', 'Show more threads')"
 						one-line
 						@click="emit('update:state', 'threads')">
