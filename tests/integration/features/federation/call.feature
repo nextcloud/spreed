@@ -317,6 +317,26 @@ Feature: federation/call
     And user "participant1" has the following notifications
       | app | object_type | object_id | subject |
 
+  Scenario: Turning off call notifications also works
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And user "participant2" sets call notifications to disabled for room "LOCAL::room" (v4)
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    When user "participant1" joins call "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
   Scenario: missed silent call by federated user does not trigger call notification
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |

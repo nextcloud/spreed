@@ -796,6 +796,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 200: Call notification level updated successfully
 	 * 400: Updating call notification level is not possible
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function setNotificationCalls(int $level): DataResponse {
