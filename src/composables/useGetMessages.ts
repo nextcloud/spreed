@@ -10,7 +10,8 @@ import type {
 } from '../types/index.ts'
 
 import Axios from '@nextcloud/axios'
-import { computed, ref } from 'vue'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
@@ -26,6 +27,7 @@ function isAxiosErrorResponse(exception: unknown): exception is AxiosError<strin
 }
 
 let isUnmounting = false
+let expirationInterval: NodeJS.Timeout | undefined
 
 /**
  * Composable to provide control logic for fetching messages list
@@ -66,6 +68,49 @@ export function useGetMessagesProvider() {
 			&& firstKnownMessage.value.messageType === MESSAGE.TYPE.SYSTEM
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.value.systemMessage))
 	})
+
+	watch(chatIdentifier, (newValue, oldValue) => {
+		if (oldValue) {
+			store.dispatch('cancelPollNewMessages', { requestId: oldValue })
+		}
+		handleStartGettingMessagesPreconditions(currentToken.value)
+
+		/** Remove expired messages when joining a room */
+		store.dispatch('removeExpiredMessages', { token: currentToken.value })
+	}, { immediate: true })
+
+	subscribe('networkOffline', handleNetworkOffline)
+	subscribe('networkOnline', handleNetworkOnline)
+
+	/** Every 30 seconds we remove expired messages from the store */
+	expirationInterval = setInterval(() => {
+		store.dispatch('removeExpiredMessages', { token: currentToken.value })
+	}, 30_000)
+
+	onBeforeUnmount(() => {
+		unsubscribe('networkOffline', handleNetworkOffline)
+		unsubscribe('networkOnline', handleNetworkOnline)
+
+		store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
+		isUnmounting = true
+		clearInterval(expirationInterval)
+	})
+
+	/**
+	 * Stop polling due to offline
+	 */
+	function handleNetworkOffline() {
+		console.debug('Canceling message request as we are offline')
+		store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
+	}
+
+	/**
+	 * Resume polling, when back online
+	 */
+	function handleNetworkOnline() {
+		console.debug('Restarting polling of new chat messages')
+		pollNewMessages(currentToken.value)
+	}
 
 	/**
 	 * Initialize chat context borders and start fetching messages
@@ -259,13 +304,10 @@ export function useGetMessagesProvider() {
 		loadingOldMessages,
 		isInitialisingMessages,
 		stopFetchingOldMessages,
-		chatIdentifier,
 		isChatBeginningReached,
 
-		handleStartGettingMessagesPreconditions,
 		getMessageContext,
 		getOldMessages,
-		pollNewMessages,
 	}
 }
 

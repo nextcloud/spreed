@@ -66,7 +66,6 @@
 </template>
 
 <script>
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import debounce from 'debounce'
@@ -136,13 +135,10 @@ export default {
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
-			chatIdentifier,
 			isChatBeginningReached,
 
-			handleStartGettingMessagesPreconditions,
 			getMessageContext,
 			getOldMessages,
-			pollNewMessages,
 		} = useGetMessages()
 
 		const isDocumentVisible = useDocumentVisibility()
@@ -158,13 +154,10 @@ export default {
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
-			chatIdentifier,
 			isChatBeginningReached,
 
-			handleStartGettingMessagesPreconditions,
 			getMessageContext,
 			getOldMessages,
-			pollNewMessages,
 		}
 	},
 
@@ -187,8 +180,6 @@ export default {
 			previousScrollTopValue: null,
 
 			isFocusingMessage: false,
-
-			expirationInterval: null,
 
 			debounceUpdateReadMarkerPosition: () => {},
 
@@ -281,19 +272,6 @@ export default {
 			}
 		},
 
-		chatIdentifier: {
-			immediate: true,
-			handler(newValue, oldValue) {
-				if (oldValue) {
-					this.$store.dispatch('cancelPollNewMessages', { requestId: oldValue })
-				}
-				this.handleStartGettingMessagesPreconditions(this.token)
-
-				// Remove expired messages when joining a room
-				this.removeExpiredMessagesFromStore()
-			},
-		},
-
 		token(newToken, oldToken) {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
@@ -351,19 +329,10 @@ export default {
 		EventBus.on('focus-message', this.focusMessage)
 		EventBus.on('route-change', this.onRouteChange)
 		EventBus.on('message-height-changed', this.onMessageHeightChanged)
-		subscribe('networkOffline', this.handleNetworkOffline)
-		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
 
 		this.resizeObserver = new ResizeObserver(this.updateSize)
 		this.resizeObserver.observe(this.$refs.scroller)
-
-		/**
-		 * Every 30 seconds we remove expired messages from the store
-		 */
-		this.expirationInterval = window.setInterval(() => {
-			this.removeExpiredMessagesFromStore()
-		}, 30000)
 	},
 
 	beforeUnmount() {
@@ -375,19 +344,9 @@ export default {
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
 		EventBus.off('message-height-changed', this.onMessageHeightChanged)
-		this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
-		this.destroying = true
-
-		unsubscribe('networkOffline', this.handleNetworkOffline)
-		unsubscribe('networkOnline', this.handleNetworkOnline)
 
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
-		}
-
-		if (this.expirationInterval) {
-			clearInterval(this.expirationInterval)
-			this.expirationInterval = null
 		}
 	},
 
@@ -502,12 +461,6 @@ export default {
 			// Compare ids and stringified messages (look for temporary, edited, deleted messages, replaced from server)
 			return group1.messages.every((message, index) => group2.messages[index].id === message.id
 				&& JSON.stringify(group2.messages[index]) === JSON.stringify(message))
-		},
-
-		removeExpiredMessagesFromStore() {
-			this.$store.dispatch('removeExpiredMessages', {
-				token: this.token,
-			})
 		},
 
 		/**
@@ -1038,16 +991,6 @@ export default {
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
-		},
-
-		handleNetworkOffline() {
-			console.debug('Canceling message request as we are offline')
-			this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
-		},
-
-		handleNetworkOnline() {
-			console.debug('Restarting polling of new chat messages')
-			this.pollNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
