@@ -708,7 +708,7 @@ export default {
 					return
 				}
 				this.displayMessagesLoader = true
-				await this.getOldMessages(false)
+				await this.getOldMessages(this.token, false)
 				this.displayMessagesLoader = false
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
 					// scroll to previous position + added height

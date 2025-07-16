@@ -43,8 +43,9 @@ function isAxiosErrorResponse(exception: unknown): exception is AxiosError<strin
 	return exception !== null && typeof exception === 'object' && 'response' in exception
 }
 
-let isUnmounting = false
+let pollingTimeout: NodeJS.Timeout | undefined
 let expirationInterval: NodeJS.Timeout | undefined
+let pollingErrorTimeout = 1_000
 
 /**
  * Composable to provide control logic for fetching messages list
@@ -57,8 +58,6 @@ export function useGetMessagesProvider() {
 	const threadId = useGetThreadId()
 	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(currentToken.value))
 	const isInLobby = computed<boolean>(() => store.getters.isInLobby)
-
-	const pollingErrorTimeout = ref(1)
 
 	const loadingOldMessages = ref(false)
 	const isInitialisingMessages = ref(false)
@@ -109,7 +108,7 @@ export function useGetMessagesProvider() {
 		unsubscribe('networkOnline', handleNetworkOnline)
 
 		store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
-		isUnmounting = true
+		clearInterval(pollingTimeout)
 		clearInterval(expirationInterval)
 	})
 
@@ -220,9 +219,10 @@ export function useGetMessagesProvider() {
 	/**
 	 * Get messages history.
 	 *
+	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
 	 */
-	async function getOldMessages(includeLastKnown: boolean) {
+	async function getOldMessages(token: string, includeLastKnown: boolean) {
 		if (isChatBeginningReached.value) {
 			// Beginning of the chat reached, no more messages to load
 			return
@@ -230,22 +230,22 @@ export function useGetMessagesProvider() {
 		// Make the request
 		loadingOldMessages.value = true
 		try {
-			debugTimer.start(`${currentToken.value} | fetch history`)
+			debugTimer.start(`${token} | fetch history`)
 			await store.dispatch('fetchMessages', {
-				token: currentToken.value,
-				lastKnownMessageId: store.getters.getFirstKnownMessageId(currentToken.value),
+				token,
+				lastKnownMessageId: store.getters.getFirstKnownMessageId(token),
 				includeLastKnown,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
-			debugTimer.end(`${currentToken.value} | fetch history`, 'status 200')
+			debugTimer.end(`${token} | fetch history`, 'status 200')
 		} catch (exception) {
 			if (Axios.isCancel(exception)) {
-				debugTimer.end(`${currentToken.value} | fetch history`, 'cancelled')
+				debugTimer.end(`${token} | fetch history`, 'cancelled')
 				console.debug('The request has been canceled', exception)
 			}
 			if (isAxiosErrorResponse(exception) && exception?.response?.status === 304) {
 				// 304 - Not modified
-				debugTimer.end(`${currentToken.value} | fetch history`, 'status 304')
+				debugTimer.end(`${token} | fetch history`, 'status 304')
 				stopFetchingOldMessages.value = true
 			}
 		}
@@ -258,11 +258,6 @@ export function useGetMessagesProvider() {
 	 * @param token token of conversation where a method was called
 	 */
 	async function pollNewMessages(token: string) {
-		if (isUnmounting) {
-			console.debug('Prevent polling new messages on MessagesList being destroyed')
-			return
-		}
-
 		// Check that the token has not changed
 		if (currentToken.value !== token) {
 			console.debug(`token has changed to ${currentToken.value}, breaking the loop for ${token}`)
@@ -273,7 +268,7 @@ export function useGetMessagesProvider() {
 		try {
 			debugTimer.start(`${token} | long polling`)
 			// TODO: move polling logic to the store and also cancel timers on cancel
-			pollingErrorTimeout.value = 1
+			pollingErrorTimeout = 1_000
 			await store.dispatch('pollNewMessages', {
 				token,
 				lastKnownMessageId: store.getters.getLastKnownMessageId(token),
@@ -291,28 +286,31 @@ export function useGetMessagesProvider() {
 				debugTimer.end(`${token} | long polling`, 'status 304')
 				// 304 - Not modified
 				// This is not an error, so reset error timeout and poll again
-				pollingErrorTimeout.value = 1
-				setTimeout(() => {
+				pollingErrorTimeout = 1_000
+				clearTimeout(pollingTimeout)
+				pollingTimeout = setTimeout(() => {
 					pollNewMessages(token)
 				}, 500)
 				return
 			}
 
-			if (pollingErrorTimeout.value < 30) {
+			if (pollingErrorTimeout < 30_000) {
 				// Delay longer after each error
-				pollingErrorTimeout.value += 5
+				pollingErrorTimeout += 5_000
 			}
 
 			debugTimer.end(`${token} | long polling`, `status ${isAxiosErrorResponse(exception) ? exception?.response?.status : 'unknown'}`)
-			console.debug('Error happened while getting chat messages. Trying again in ', pollingErrorTimeout.value, exception)
+			console.debug('Error happened while getting chat messages. Trying again in %d seconds', pollingErrorTimeout / 1_000, exception)
 
-			setTimeout(() => {
+			clearTimeout(pollingTimeout)
+			pollingTimeout = setTimeout(() => {
 				pollNewMessages(token)
-			}, pollingErrorTimeout.value * 1000)
+			}, pollingErrorTimeout)
 			return
 		}
 
-		setTimeout(() => {
+		clearTimeout(pollingTimeout)
+		pollingTimeout = setTimeout(() => {
 			pollNewMessages(token)
 		}, 500)
 	}
