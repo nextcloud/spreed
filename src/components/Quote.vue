@@ -13,6 +13,7 @@ import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import { useGetThreadId } from '../composables/useGetThreadId.ts'
@@ -104,12 +105,22 @@ const shortenedQuoteMessage = computed(() => {
 	return simpleQuotedMessage.value.length >= 250 ? simpleQuotedMessage.value.substring(0, 250) + '…' : simpleQuotedMessage.value
 })
 
+const showThreadShortcut = computed(() => {
+	return !threadId.value && isExistingMessage(message) && message.isThread && message.threadId
+})
+
 /**
  * Check whether message to quote (parent) existing on server
  * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
  */
 function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
 	return 'messageType' in message
+}
+
+function goToThread() {
+	if (isExistingMessage(message) && message.threadId) {
+		threadId.value = message.threadId
+	}
 }
 
 /**
@@ -196,14 +207,23 @@ function handleQuoteClick() {
 		</span>
 
 		<NcButton v-if="canCancel"
-			class="quote__close"
+			class="quote__button"
 			variant="tertiary"
-			size="small"
 			:title="t('spreed', 'Cancel quote')"
 			:aria-label="t('spreed', 'Cancel quote')"
 			@click="handleAbort">
 			<template #icon>
 				<IconClose :size="20" />
+			</template>
+		</NcButton>
+		<NcButton v-else-if="showThreadShortcut"
+			class="quote__button"
+			variant="tertiary"
+			:title="t('spreed', 'Go to thread')"
+			:aria-label="t('spreed', 'Go to thread')"
+			@click.stop.prevent="goToThread">
+			<template #icon>
+				<IconForumOutline :size="20" />
 			</template>
 		</NcButton>
 	</component>
@@ -214,15 +234,15 @@ function handleQuoteClick() {
 
 .quote {
 	position: relative;
-	padding-block: calc(0.5 * var(--default-grid-baseline));
-	padding-inline: calc(1.5 * var(--default-grid-baseline)) var(--default-clickable-area);
+	padding-block: var(--default-grid-baseline);
+	padding-inline: calc(2 * var(--default-grid-baseline)) var(--default-clickable-area);
+	margin-bottom: var(--default-grid-baseline);
 	display: flex;
 	gap: var(--default-grid-baseline);
 	max-width: $messages-text-max-width;
-	min-height: var(--clickable-area-small);
+	min-height: var(--default-clickable-area);
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
-	font-size: var(--font-size-small);
 	color: var(--color-text-maxcontrast);
 	background-color: var(--color-main-background);
 	overflow: hidden;
@@ -280,7 +300,7 @@ function handleQuoteClick() {
 		&-author {
 			display: flex;
 			align-items: center;
-			gap: calc(0.5 * var(--default-grid-baseline));
+			gap: var(--default-grid-baseline);
 
 			&-info {
 				flex-shrink: 0;
@@ -303,10 +323,12 @@ function handleQuoteClick() {
 		}
 	}
 
-	&__close {
+	&__button {
 		position: absolute !important;
 		top: 0;
 		inset-inline-end: 0;
+		height: 100%;
+		border-radius: 0 !important;
 	}
 }
 

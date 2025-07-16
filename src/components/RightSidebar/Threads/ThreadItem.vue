@@ -12,7 +12,6 @@ import type {
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -26,7 +25,6 @@ const { thread } = defineProps<{ thread: ThreadInfo }>()
 
 const router = useRouter()
 const route = useRoute()
-const store = useStore()
 
 const threadAuthor = computed(() => getDisplayNameWithFallback(thread.first.actorDisplayName, thread.first.actorType, true))
 const lastActivity = computed(() => thread.thread.lastActivity * 1000)
@@ -147,7 +145,7 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 	}
 
 	&.list-item__wrapper--active .thread__details-replies {
-		color: var(--color-primary-text);
+		color: var(--color-primary-element-text);
 		background-color: transparent;
 	}
 }
