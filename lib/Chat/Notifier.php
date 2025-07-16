@@ -12,9 +12,11 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\ThreadAttendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -42,6 +44,7 @@ class Notifier {
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private ParticipantService $participantService,
+		private ThreadService $threadService,
 		private IConfig $config,
 		private ITimeFactory $timeFactory,
 		private Util $util,
@@ -258,10 +261,41 @@ class Notifier {
 		}
 
 		$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_ALWAYS);
+		$threadId = (int)$comment->getTopmostParentId();
+		/** @var array<int, ThreadAttendee> $threadAttendees */
+		$threadAttendees = [];
+		if ($threadId !== 0) {
+			$threadAttendees = $this->threadService->findAttendeesForNotificationByThreadId($threadId);
+		}
+
+		// Handle participants that only subscribed with Participant::NOTIFY_ALWAYS to the thread, but not the conversation
+		$threadAttendeeIds = array_filter($threadAttendees, static function (ThreadAttendee $threadAttendee): int|bool {
+			return $threadAttendee->getNotificationLevel() === Participant::NOTIFY_ALWAYS ? $threadAttendee->getAttendeeId() : false;
+		});
+		if (!empty($threadAttendeeIds)) {
+			$participantIds = array_map(static fn (Participant $participant): int => $participant->getAttendee()->getId(), $participants);
+			$missingParticipantIds = array_diff($threadAttendeeIds, $participantIds);
+			if (!empty($missingParticipantIds)) {
+				$missingParticipants = $this->participantService->getParticipantsByAttendeeId($chat, $missingParticipantIds);
+				if (!empty($missingParticipants)) {
+					$participants = array_merge($participants, $missingParticipants);
+				}
+			}
+		}
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
 		foreach ($participants as $participant) {
+			$attendeeId = $participant->getAttendee()->getId();
 			$shouldParticipantBeNotified = $this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers);
+
+			if (isset($threadAttendees[$attendeeId])) {
+				$threadAttendee = $threadAttendees[$attendeeId];
+				if ($threadAttendee->getNotificationLevel() !== Participant::NOTIFY_ALWAYS) {
+					// User unsubscribed from this thread
+					continue;
+				}
+			}
+
 			if ($shouldParticipantBeNotified === self::PRIORITY_NONE) {
 				continue;
 			}
@@ -653,6 +687,15 @@ class Notifier {
 			}
 
 			$notificationLevel = $attendee->getNotificationLevel();
+			$threadId = (int)$comment->getTopmostParentId();
+			if ($threadId !== 0) {
+				$threadAttendees = $this->threadService->findAttendeeByThreadIds($attendee, [$threadId]);
+				$threadAttendee = array_shift($threadAttendees);
+				if ($threadAttendee !== null && $threadAttendee->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
+					$notificationLevel = $threadAttendee->getNotificationLevel();
+				}
+			}
+
 			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 					$notificationLevel = Participant::NOTIFY_ALWAYS;

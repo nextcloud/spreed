@@ -1862,6 +1862,39 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Room $room
+	 * @param list<int> $attendeeIds
+	 * @return Participant[]
+	 */
+	public function getParticipantsByAttendeeId(Room $room, array $attendeeIds): array {
+		$query = $this->connection->getQueryBuilder();
+
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
+			// Currently we only care if the user has an active session at all, so we can select any
+			->leftJoin(
+				'a', 'talk_sessions', 's',
+				$query->expr()->andX(
+					$query->expr()->eq('s.attendee_id', 'a.id'),
+					$query->expr()->eq('s.state', $query->createNamedParameter(Session::STATE_ACTIVE, IQueryBuilder::PARAM_INT))
+				)
+			)
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('a.id', $query->createNamedParameter($attendeeIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$participants = $this->getParticipantsFromQuery($query, $room);
+
+		$uniqueAttendees = [];
+		foreach ($participants as $participant) {
+			$uniqueAttendees[$participant->getAttendee()->getId()] = $participant;
+		}
+
+		return array_values($uniqueAttendees);
+	}
+
+	/**
 	 * @return Participant[]
 	 */
 	public function getParticipantsByActorType(Room $room, string $actorType): array {
