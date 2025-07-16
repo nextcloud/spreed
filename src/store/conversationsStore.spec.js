@@ -714,7 +714,14 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			changeLobbyState.mockResolvedValue()
+			const response = generateOCSResponse({
+				payload: {
+					...testConversation,
+					lobbyState: WEBINAR.LOBBY.NON_MODERATORS,
+					lobbyTimer: 0,
+				},
+			})
+			changeLobbyState.mockResolvedValue(response)
 
 			await store.dispatch('toggleLobby', {
 				token: testToken,
@@ -732,7 +739,14 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			changeLobbyState.mockResolvedValue()
+			const response = generateOCSResponse({
+				payload: {
+					...testConversation,
+					lobbyState: WEBINAR.LOBBY.NONE,
+					lobbyTimer: 0,
+				},
+			})
+			changeLobbyState.mockResolvedValue(response)
 
 			await store.dispatch('toggleLobby', {
 				token: testToken,
@@ -841,7 +855,14 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			changeLobbyState.mockResolvedValue()
+			const response = generateOCSResponse({
+				payload: {
+					...testConversation,
+					lobbyState: WEBINAR.LOBBY.NON_MODERATORS,
+					lobbyTimer: 2300400,
+				},
+			})
+			changeLobbyState.mockResolvedValue(response)
 
 			await store.dispatch('setLobbyTimer', {
 				token: testToken,

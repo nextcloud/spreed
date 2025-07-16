@@ -625,22 +625,15 @@ const actions = {
 	},
 
 	async toggleLobby({ commit, getters }, { token, enableLobby }) {
-		if (!getters.conversations[token]) {
-			return
-		}
-
 		try {
-			const conversation = Object.assign({}, getters.conversations[token])
+			const response = await changeLobbyState(token, enableLobby ? WEBINAR.LOBBY.NON_MODERATORS : WEBINAR.LOBBY.NONE)
+			commit('addConversation', response.data.ocs.data)
+
 			if (enableLobby) {
-				await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
-				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
 				showSuccess(t('spreed', 'You restricted the conversation to moderators'))
 			} else {
-				await changeLobbyState(token, WEBINAR.LOBBY.NONE)
-				conversation.lobbyState = WEBINAR.LOBBY.NONE
 				showSuccess(t('spreed', 'You opened the conversation to everyone'))
 			}
-			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error occurred while updating webinar lobby: ', error)
 			if (enableLobby) {
@@ -721,15 +714,10 @@ const actions = {
 	},
 
 	async setLobbyTimer({ commit, getters }, { token, timestamp }) {
-		if (!getters.conversations[token]) {
-			return
-		}
-
 		try {
-			const conversation = Object.assign({}, getters.conversations[token], { lobbyTimer: timestamp })
 			// The backend requires the state and timestamp to be set together.
-			await changeLobbyState(token, conversation.lobbyState, timestamp)
-			commit('addConversation', conversation)
+			const response = await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS, timestamp)
+			commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while updating webinar lobby: ', error)
 		}
