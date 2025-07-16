@@ -82,6 +82,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
+import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
@@ -133,6 +134,18 @@ export default {
 	emits: ['update:isChatScrolledToBottom'],
 
 	setup(props) {
+		const {
+			pollingErrorTimeout,
+			loadingOldMessages,
+			isInitialisingMessages,
+			destroying,
+			stopFetchingOldMessages,
+			isParticipant,
+			isInLobby,
+			chatIdentifier,
+			isChatBeginningReached,
+		} = useGetMessages()
+
 		const isDocumentVisible = useDocumentVisibility()
 		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
 		const threadId = useGetThreadId()
@@ -142,6 +155,16 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			isChatVisible,
 			threadId,
+
+			pollingErrorTimeout,
+			loadingOldMessages,
+			isInitialisingMessages,
+			destroying,
+			stopFetchingOldMessages,
+			isParticipant,
+			isInLobby,
+			chatIdentifier,
+			isChatBeginningReached,
 		}
 	},
 
@@ -163,23 +186,13 @@ export default {
 			 */
 			previousScrollTopValue: null,
 
-			pollingErrorTimeout: 1,
-
-			loadingOldMessages: false,
-
-			isInitialisingMessages: false,
-
 			isFocusingMessage: false,
-
-			destroying: false,
 
 			expirationInterval: null,
 
 			debounceUpdateReadMarkerPosition: () => {},
 
 			debounceHandleScroll: () => {},
-
-			stopFetchingOldMessages: false,
 
 			isScrolling: null,
 
@@ -242,40 +255,12 @@ export default {
 			return this.$store.getters.hasMoreMessagesToLoad(this.token)
 		},
 
-		/**
-		 * Returns whether the current participant is a participant of the
-		 * current conversation or not.
-		 *
-		 * @return {boolean} true if it is already a participant, false
-		 *          otherwise.
-		 */
-		isParticipant() {
-			if (!this.conversation) {
-				return false
-			}
-
-			return !!this.$store.getters.findParticipant(this.token, this.conversation)?.attendeeId
-		},
-
-		isInLobby() {
-			return this.$store.getters.isInLobby
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		chatIdentifier() {
-			return this.token + ':' + this.isParticipant
-		},
-
 		currentDay() {
 			return convertToUnix(new Date().setHours(0, 0, 0, 0))
-		},
-
-		isChatBeginningReached() {
-			return this.stopFetchingOldMessages || (this.messagesList?.[0]?.messageType === MESSAGE.TYPE.SYSTEM
-				&& ['conversation_created', 'history_cleared'].includes(this.messagesList[0].systemMessage))
 		},
 	},
 

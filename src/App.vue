@@ -40,6 +40,7 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
+import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
@@ -72,6 +73,8 @@ export default {
 
 	setup() {
 		useDocumentTitle()
+		// Provide context for MessagesList mounted in different places
+		useGetMessagesProvider()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 

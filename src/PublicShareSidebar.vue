@@ -50,6 +50,7 @@ import InternalSignalingHint from './components/RightSidebar/InternalSignalingHi
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
+import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
@@ -96,6 +97,7 @@ export default {
 
 	setup() {
 		useHashCheck()
+		useGetMessagesProvider()
 
 		return {
 			isInCall: useIsInCall(),
