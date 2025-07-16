@@ -402,7 +402,7 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
-			if ($threadId) {
+			if ($threadId !== 0) {
 				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
 			}
 

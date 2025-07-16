@@ -75,10 +75,23 @@ class ThreadService {
 	 * @return array<int, ThreadAttendee> Key is the thread id
 	 */
 	public function findAttendeeByThreadIds(Attendee $attendee, array $threadIds): array {
-		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getId(), $threadIds);
+		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getActorType(), $attendee->getActorId(), $threadIds);
 		$threadAttendees = [];
 		foreach ($attendees as $threadAttendee) {
 			$threadAttendees[$threadAttendee->getThreadId()] = $threadAttendee;
+		}
+
+		return $threadAttendees;
+	}
+
+	/**
+	 * @return array<int, ThreadAttendee> Key is the attendee id
+	 */
+	public function findAttendeesForNotificationByThreadId(int $threadId): array {
+		$attendees = $this->threadAttendeeMapper->findAttendeesForNotification($threadId);
+		$threadAttendees = [];
+		foreach ($attendees as $threadAttendee) {
+			$threadAttendees[$threadAttendee->getAttendeeId()] = $threadAttendee;
 		}
 
 		return $threadAttendees;

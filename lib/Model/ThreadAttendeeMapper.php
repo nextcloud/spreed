@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Participant;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -36,23 +37,44 @@ class ThreadAttendeeMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $attendeeId
 	 * @param list<int> $threadIds
 	 * @return list<ThreadAttendee>
 	 */
-	public function findAttendeeByThreadIds(int $attendeeId, array $threadIds): array {
+	public function findAttendeeByThreadIds(string $actorType, string $actorId, array $threadIds): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq(
-				'attendee_id',
-				$query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT),
-				IQueryBuilder::PARAM_INT,
+				'actor_type',
+				$query->createNamedParameter($actorType),
+			))
+			->andWhere($query->expr()->eq(
+				'actor_id',
+				$query->createNamedParameter($actorId),
 			))
 			->andWhere($query->expr()->in(
 				'thread_id',
 				$query->createNamedParameter($threadIds, IQueryBuilder::PARAM_INT_ARRAY),
 				IQueryBuilder::PARAM_INT_ARRAY,
+			));
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @return list<ThreadAttendee>
+	 */
+	public function findAttendeesForNotification(int $threadId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq(
+				'thread_id',
+				$query->createNamedParameter($threadId, IQueryBuilder::PARAM_INT),
+			))
+			->andWhere($query->expr()->neq(
+				'notification_level',
+				$query->createNamedParameter(Participant::NOTIFY_DEFAULT, IQueryBuilder::PARAM_INT),
 			));
 
 		return $this->findEntities($query);
