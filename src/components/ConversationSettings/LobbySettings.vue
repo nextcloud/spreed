@@ -31,7 +31,7 @@
 					:disabled="lobbyTimerFieldDisabled"
 					type="datetime"
 					value-type="timestamp"
-					format="YYYY-MM-DD HH:mm"
+					format="yyyy-MM-dd HH:mm"
 					:minute-step="5"
 					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
 					v-bind="dateTimePickerAttrs"
