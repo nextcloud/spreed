@@ -71,7 +71,6 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import debounce from 'debounce'
-import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
@@ -152,8 +151,6 @@ export default {
 			 * A list of messages grouped by same day and then by author and time.
 			 */
 			messagesGroupedByDateByAuthor: {},
-
-			viewId: uniqueId('messagesList'),
 
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
@@ -269,7 +266,7 @@ export default {
 		},
 
 		chatIdentifier() {
-			return this.token + ':' + this.isParticipant + ':' + this.viewId
+			return this.token + ':' + this.isParticipant
 		},
 
 		currentDay() {
