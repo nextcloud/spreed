@@ -48,6 +48,13 @@ function patchTokenMap(conversation: Conversation) {
 }
 
 /**
+ * Get current Talk version in string format
+ */
+export function getTalkVersion(): string {
+	return localCapabilities?.spreed?.version ?? ''
+}
+
+/**
  * Check whether the feature is presented (in case of federation - on both servers)
  * @param token conversation token
  * @param feature feature capability in string format
