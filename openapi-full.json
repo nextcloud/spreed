@@ -21275,7 +21275,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}/notify": {
             "post": {
                 "operationId": "thread-set-notification-level",
-                "summary": "Create a thread out of a message or reply chain",
+                "summary": "Set notification level for a specific thread",
                 "description": "Required capability: `threads`",
                 "tags": [
                     "thread"
@@ -21363,7 +21363,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Thread successfully created",
+                        "description": "Successfully set notification level for thread",
                         "content": {
                             "application/json": {
                                 "schema": {

@@ -151,8 +151,9 @@ class ThreadController {
 	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'level'|'message'|'status'|'top-most'}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
-	 * 200: Thread info returned
-	 * 404: Thread not found
+	 * 200: Successfully set notification level for thread
+	 * 400: Root message is a system message and therefor not supported or notification level was invalid
+	 * 404: Message or top most message not found
 	 */
 	public function setNotificationLevel(Room $room, Participant $participant, int $messageId, int $level): DataResponse {
 		$proxy = $this->proxy->post(
@@ -171,7 +172,7 @@ class ThreadController {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 				$data = ['error' => 'status'];
 			} else {
-				/** @var array{error: 'message'|'top-most'} $data */
+				/** @var array{error: 'level'|'message'|'top-most'} $data */
 				$data = $this->proxy->getOCSData($proxy, [
 					Http::STATUS_BAD_REQUEST,
 					Http::STATUS_NOT_FOUND,

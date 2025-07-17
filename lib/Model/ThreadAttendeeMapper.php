@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCA\Talk\Participant;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -59,6 +60,29 @@ class ThreadAttendeeMapper extends QBMapper {
 			));
 
 		return $this->findEntities($query);
+	}
+
+	/**
+	 * @throws DoesNotExistException if the item does not exist
+	 */
+	public function findAttendeeByThreadId(string $actorType, string $actorId, int $threadId): ThreadAttendee {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq(
+				'actor_type',
+				$query->createNamedParameter($actorType),
+			))
+			->andWhere($query->expr()->eq(
+				'actor_id',
+				$query->createNamedParameter($actorId),
+			))
+			->andWhere($query->expr()->eq(
+				'thread_id',
+				$query->createNamedParameter($threadId),
+			));
+
+		return $this->findEntity($query);
 	}
 
 	/**

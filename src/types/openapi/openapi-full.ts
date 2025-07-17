@@ -1663,7 +1663,7 @@ export type paths = {
         get?: never;
         put?: never;
         /**
-         * Create a thread out of a message or reply chain
+         * Set notification level for a specific thread
          * @description Required capability: `threads`
          */
         post: operations["thread-set-notification-level"];
@@ -10436,7 +10436,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Thread successfully created */
+            /** @description Successfully set notification level for thread */
             200: {
                 headers: {
                     [name: string]: unknown;
