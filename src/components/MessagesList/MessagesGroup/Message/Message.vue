@@ -22,7 +22,8 @@
 				'combined-system': isCombinedSystemMessage,
 			}"
 			class="message-body">
-			<MessageBody :rich-parameters="richParameters"
+			<MessageBody ref="messageBodyInstance"
+				:rich-parameters="richParameters"
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
@@ -406,6 +407,21 @@ export default {
 				token: this.message.token,
 				id: this.message.id,
 			})
+
+			// Reply to selection
+			const selection = this.$refs.messageBodyInstance.getSelection()
+			if (selection) {
+				console.log('selection', { selection })
+				const quotedSelection = selection
+					.trim()
+					.split('\n')
+					.map(line => '> ' + line).join('\n')
+				console.log('quotedSelection', { quotedSelection })
+				if (quotedSelection) {
+					EventBus.emit('append-chat-input', quotedSelection)
+				}
+			}
+
 			EventBus.emit('focus-chat-input')
 		},
 
