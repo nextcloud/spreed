@@ -107,6 +107,10 @@ class CalendarIntegrationService {
 					continue;
 				}
 
+				if ($event['STATUS'][0] === 'CANCELLED') {
+					continue;
+				}
+
 				try {
 					$token = $this->roomService->parseRoomTokenFromUrl($location);
 					// Already returns public / open conversations
