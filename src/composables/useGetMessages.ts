@@ -5,19 +5,36 @@
 
 import type { AxiosError } from '@nextcloud/axios'
 import type {
+	ComputedRef,
+	InjectionKey,
+	Ref,
+} from 'vue'
+import type {
 	ChatMessage,
 	Conversation,
 } from '../types/index.ts'
 
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
+
+type GetMessagesContext = {
+	loadingOldMessages: Ref<boolean>
+	isInitialisingMessages: Ref<boolean>
+	stopFetchingOldMessages: Ref<boolean>
+	isChatBeginningReached: ComputedRef<boolean>
+
+	getMessageContext: (token: string, messageId: number) => Promise<void>
+	getOldMessages: (token: string, includeLastKnown: boolean) => Promise<void>
+}
+
+const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
 
 /**
  * Check whether caught error is from OCS API
@@ -300,7 +317,7 @@ export function useGetMessagesProvider() {
 		}, 500)
 	}
 
-	return {
+	provide(GET_MESSAGES_CONTEXT_KEY, {
 		loadingOldMessages,
 		isInitialisingMessages,
 		stopFetchingOldMessages,
@@ -308,13 +325,12 @@ export function useGetMessagesProvider() {
 
 		getMessageContext,
 		getOldMessages,
-	}
+	})
 }
 
 /**
  * Composable to inject control logic for fetching messages list in the component
  */
 export function useGetMessages() {
-	// FIXME
-	return useGetMessagesProvider()
+	return inject(GET_MESSAGES_CONTEXT_KEY)!
 }
