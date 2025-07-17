@@ -5,6 +5,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.2 – 2025-07-17
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(federation): Make sure some capabilities are correctly used from the remote host
+  [#15507](https://github.com/nextcloud/spreed/issues/15507)
+- fix(settings): Allow changing call notification level for federated conversations
+  [#15516](https://github.com/nextcloud/spreed/issues/15516)
+- fix(settings): Fix class name of background job checking certificates
+  [#15464](https://github.com/nextcloud/spreed/issues/15464)
+- fix(settings): Fix false-negative error being shown on certificate check if another check failed an SSL call
+  [#15525](https://github.com/nextcloud/spreed/issues/15525)
+- fix(polls): Fix deleting poll drafts
+  [#15536](https://github.com/nextcloud/spreed/issues/15536)
+
+## 20.1.9 – 2025-07-17
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(settings): Allow changing call notification level for federated conversations
+  [#15515](https://github.com/nextcloud/spreed/issues/15515)
+- fix(settings): Fix class name of background job checking certificates
+  [#15463](https://github.com/nextcloud/spreed/issues/15463)
+- fix(polls): Fix deleting poll drafts
+  [#15535](https://github.com/nextcloud/spreed/issues/15535)
+
 ## 21.1.1 – 2025-07-03
 ### Changed
 - Update translations
