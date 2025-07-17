@@ -300,6 +300,11 @@ class PollController extends AEnvironmentAwareController {
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
+			if (!$this->participant->hasModeratorPermissions(false)) {
+				// Only moderators can manage drafts
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
 			$this->pollService->deleteByPollId($poll->getId());
 			return new DataResponse([], Http::STATUS_ACCEPTED);
 		}

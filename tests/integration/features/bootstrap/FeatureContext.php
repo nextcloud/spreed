@@ -2569,6 +2569,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$response = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($response);
+			return;
+		}
+
 		$data = array_map(static function (array $poll): array {
 			$result = preg_match('/POLL_ID\(([^)]+)\)/', $poll['id'], $matches);
 			if ($result) {

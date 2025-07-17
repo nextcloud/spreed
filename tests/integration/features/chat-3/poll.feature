@@ -806,6 +806,41 @@ Feature: chat-2/poll
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
       | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
+  Scenario: Only author and moderators can close polls
+    Given user "participant3" exists
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant2" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant3" closes poll "What is the question?" in room "room" with 404
+    When user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    Then user "participant3" closes poll "What is the question?" in room "room" with 403
+    Then user "participant2" closes poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
+      | numVoters  | 0    |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | closed |
+      | votedSelf  | [] |
+      | details    | [] |
+    Then user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
+      | room | users         | participant2 | poll_closed          | {actor} ended the poll {poll}    | !ISSET | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant3","name":"participant3-displayname","mention-id":"participant3"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+
   Scenario: Drafts
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
@@ -863,3 +898,26 @@ Feature: chat-2/poll
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
       | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+
+  Scenario: Only moderators can delete drafts
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" creates a poll in room "room" with 200
+      | question   | What is the question? |
+      | options    | ["You","me"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | draft      | 1 |
+    Then user "participant2" closes poll "What is the question?" in room "room" with 404
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    Then user "participant2" closes poll "What is the question?" in room "room" with 404
+    When user "participant1" gets poll drafts for room "room" with 200
+      | id                                   | question                    | options      | actorType | actorId      | actorDisplayName         | status | resultMode | maxVotes |
+      | POLL_ID(What is the question?)       | What is the question?       | ["You","me"] | users     | participant1 | participant1-displayname | draft  | public     | 0        |
+    Then user "participant1" closes poll "What is the question?" in room "room" with 202
+    When user "participant1" gets poll drafts for room "room" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
+      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
