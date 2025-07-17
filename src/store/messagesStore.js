@@ -299,6 +299,10 @@ const mutations = {
 		const preparedMessage = !message.parent && storedMessage?.parent
 			? { ...message, parent: storedMessage.parent }
 			: message
+
+		if (preparedMessage.parent) {
+			preparedMessage.parent.isThread = preparedMessage.isThread
+		}
 		state.messages[token][message.id] = preparedMessage
 	},
 	/**
@@ -494,11 +498,7 @@ const mutations = {
 				delete state.messages[token][messageId]
 			}
 		})
-
-		if (atLeastOneThreadWasChanged) {
-			const chatExtrasStore = useChatExtrasStore()
-			chatExtrasStore.fetchRecentThreadsList(token)
-		}
+		return atLeastOneThreadWasChanged
 	},
 
 	easeMessageList(state, { token, lastReadMessage }) {
