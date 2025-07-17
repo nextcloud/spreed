@@ -17,7 +17,6 @@ use OCA\Talk\Model\ThreadMapper;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -97,22 +96,21 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function addAttendeeToThread(Attendee $attendee, Thread $thread, int $level): ThreadAttendee {
-		$threadAttendee = new ThreadAttendee();
-		$threadAttendee->setThreadId($thread->getId());
-		$threadAttendee->setRoomId($thread->getRoomId());
-
-		$threadAttendee->setAttendeeId($attendee->getId());
-		$threadAttendee->setActorType($attendee->getActorType());
-		$threadAttendee->setActorId($attendee->getActorId());
-		$threadAttendee->setNotificationLevel($level);
-
+	public function setNotificationLevel(Attendee $attendee, Thread $thread, int $level): ThreadAttendee {
 		try {
+			$threadAttendee = $this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $thread->getId());
+			$threadAttendee->setNotificationLevel($level);
+			$this->threadAttendeeMapper->update($threadAttendee);
+		} catch (DoesNotExistException) {
+			$threadAttendee = new ThreadAttendee();
+			$threadAttendee->setThreadId($thread->getId());
+			$threadAttendee->setRoomId($thread->getRoomId());
+
+			$threadAttendee->setAttendeeId($attendee->getId());
+			$threadAttendee->setActorType($attendee->getActorType());
+			$threadAttendee->setActorId($attendee->getActorId());
+			$threadAttendee->setNotificationLevel($level);
 			$this->threadAttendeeMapper->insert($threadAttendee);
-		} catch (Exception $e) {
-			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-				throw $e;
-			}
 		}
 
 		return $threadAttendee;

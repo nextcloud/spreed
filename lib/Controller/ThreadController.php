@@ -227,7 +227,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Create a thread out of a message or reply chain
+	 * Set notification level for a specific thread
 	 *
 	 * Required capability: `threads`
 	 *
@@ -237,7 +237,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 * @psalm-param Participant::NOTIFY_* $level
 	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'level'|'message'|'status'|'top-most'}, array{}>
 	 *
-	 * 200: Thread successfully created
+	 * 200: Successfully set notification level for thread
 	 * 400: Root message is a system message and therefor not supported or notification level was invalid
 	 * 404: Message or top most message not found
 	 */
@@ -277,7 +277,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$threadAttendee = $this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread, $level);
+		$threadAttendee = $this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread, $level);
 		$attendees = [$thread->getId() => $threadAttendee];
 		$list = $this->prepareListOfThreads([$thread], $attendees);
 
