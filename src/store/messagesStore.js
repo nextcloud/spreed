@@ -480,27 +480,6 @@ const mutations = {
 		}
 	},
 
-	removeExpiredMessages(state, { token }) {
-		if (!state.messages[token]) {
-			return
-		}
-
-		const timestamp = convertToUnix(Date.now())
-		const messageIds = Object.keys(state.messages[token])
-		let atLeastOneThreadWasChanged = false
-
-		messageIds.forEach((messageId) => {
-			if (state.messages[token][messageId].expirationTimestamp
-				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
-				if (state.messages[token][messageId].isThread) {
-					atLeastOneThreadWasChanged = true
-				}
-				delete state.messages[token][messageId]
-			}
-		})
-		return atLeastOneThreadWasChanged
-	},
-
 	easeMessageList(state, { token, lastReadMessage }) {
 		if (!state.messages[token]) {
 			return
@@ -666,6 +645,7 @@ const actions = {
 
 		if (message.systemMessage === 'history_cleared') {
 			sharedItemsStore.purgeSharedItemsStore(token, message.id)
+			chatExtrasStore.clearThreads(token, message.id)
 			context.commit('clearMessagesHistory', {
 				token,
 				id: message.id,
@@ -1461,7 +1441,20 @@ const actions = {
 	},
 
 	async removeExpiredMessages(context, { token }) {
-		context.commit('removeExpiredMessages', { token })
+		if (!context.state.messages[token]) {
+			return
+		}
+		const chatExtrasStore = useChatExtrasStore()
+		const timestamp = convertToUnix(Date.now())
+
+		context.getters.messagesList(token).forEach((message) => {
+			if (message.expirationTimestamp && timestamp > message.expirationTimestamp) {
+				if (message.isThread) {
+					chatExtrasStore.removeMessageFromThread(token, message.threadId, message.id)
+				}
+				context.commit('deleteMessage', { token, id: message.id })
+			}
+		})
 	},
 
 	async easeMessageList(context, { token }) {
