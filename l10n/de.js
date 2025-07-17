@@ -1782,6 +1782,7 @@ OC.L10N.register(
     "_{done} of %n task_::_{done} of %n tasks_" : ["{done} von %n Aufgabe","{done} von %n Aufgaben"],
     "Add participants to this call" : "Teilnehmer zu diesem Anruf hinzufügen",
     "_%n participant in call_::_%n participants in call_" : ["%n Anrufteilnehmer","%n Anrufteilnehmer"],
+    "_%n reply_::_%n replies_" : ["%n Antwort","%n Antworten"],
     "Disable background blur" : "Hintergrund ohne Unschärfe",
     "Blur background" : "Hintergrund unscharf darstellen",
     "You are not allowed to enable screensharing" : "Du bist nicht berechtigt, die Bildschirmfreigabe zu aktivieren",

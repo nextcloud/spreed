@@ -387,6 +387,7 @@ OC.L10N.register(
     "Settings" : "Mipangilio",
     "Multiple answers" : "Majibu mengi",
     "End poll" : "Maliza kura",
+    "guest" : "mgeni",
     "Remove group and members" : "Ndoa kundi na wanachama",
     "Remove team and members" : "Ondoa timu na wanachama",
     "Remove participant" : "Ondoa washiriki",
