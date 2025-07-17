@@ -211,6 +211,13 @@
 				</div>
 			</dl>
 		</NcAppSettingsSection>
+
+		<!-- Information about current version used. Talk Desktop has this in 'About' window -->
+		<p
+			v-if="!IS_DESKTOP"
+			class="app-settings-section__version">
+			{{ t('spreed', 'Talk version: {version}', { version: talkVersion }) }}
+		</p>
 	</NcAppSettingsDialog>
 </template>
 
@@ -229,7 +236,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import MediaDevicesPreview from './MediaDevicesPreview.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { setUserConfig } from '../../services/settingsService.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -238,6 +245,7 @@ import { isMac } from '../../utils/browserCheck.ts'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
+const talkVersion = getTalkVersion()
 const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 const isBackgroundBlurredState = serverSupportsBackgroundBlurred
@@ -267,6 +275,8 @@ export default {
 		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
+			IS_DESKTOP,
+			talkVersion,
 			CmdOrCtrl,
 			settingsStore,
 			soundsStore,
@@ -486,6 +496,12 @@ export default {
 	&__hint {
 		color: var(--color-text-maxcontrast);
 		padding: 8px 0;
+	}
+
+	&__version {
+		margin-block-end: calc(2 * var(--default-grid-baseline));
+		text-align: center;
+		color: var(--color-text-maxcontrast);
 	}
 
 	&__wrapper {
