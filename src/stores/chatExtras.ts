@@ -177,6 +177,31 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
+		clearThreads(token: string, messageId?: number) {
+			if (messageId) {
+				// Clear threads that are older than the given messageId
+				for (const threadId of Object.keys(Object(this.threads[token]))) {
+					if (+threadId < messageId) {
+						delete this.threads[token][+threadId]
+					}
+				}
+			} else {
+				// Clear all threads for the conversation
+				delete this.threads[token]
+			}
+		},
+
+		removeMessageFromThreads(token: string, messageId: number) {
+			for (const threadId of Object.keys(Object(this.threads[token]))) {
+				const thread = this.threads[token][+threadId]
+				if (thread.first?.id === messageId) {
+					thread.first = null
+				} else if (thread.last?.id === messageId) {
+					thread.last = null
+				}
+			}
+		},
+
 		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
@@ -318,7 +343,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		purgeChatExtras(token: string) {
 			this.removeParentIdToReply(token)
 			this.removeChatInput(token)
-			this.threads[token] = undefined
+			this.clearThreads(token)
 		},
 
 		setTasksCounters({ tasksCount, tasksDoneCount }: { tasksCount: number, tasksDoneCount: number }) {
