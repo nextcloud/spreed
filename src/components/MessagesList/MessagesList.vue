@@ -66,12 +66,9 @@
 </template>
 
 <script>
-import Axios from '@nextcloud/axios'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import debounce from 'debounce'
-import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
@@ -83,12 +80,12 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
+import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, CHAT, CONVERSATION, MESSAGE } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
-import { debugTimer } from '../../utils/debugTimer.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
@@ -134,6 +131,16 @@ export default {
 	emits: ['update:isChatScrolledToBottom'],
 
 	setup(props) {
+		const {
+			loadingOldMessages,
+			isInitialisingMessages,
+			stopFetchingOldMessages,
+			isChatBeginningReached,
+
+			getMessageContext,
+			getOldMessages,
+		} = useGetMessages()
+
 		const isDocumentVisible = useDocumentVisibility()
 		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
 		const threadId = useGetThreadId()
@@ -143,6 +150,14 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			isChatVisible,
 			threadId,
+
+			loadingOldMessages,
+			isInitialisingMessages,
+			stopFetchingOldMessages,
+			isChatBeginningReached,
+
+			getMessageContext,
+			getOldMessages,
 		}
 	},
 
@@ -152,8 +167,6 @@ export default {
 			 * A list of messages grouped by same day and then by author and time.
 			 */
 			messagesGroupedByDateByAuthor: {},
-
-			viewId: uniqueId('messagesList'),
 
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
@@ -166,23 +179,11 @@ export default {
 			 */
 			previousScrollTopValue: null,
 
-			pollingErrorTimeout: 1,
-
-			loadingOldMessages: false,
-
-			isInitialisingMessages: false,
-
 			isFocusingMessage: false,
-
-			destroying: false,
-
-			expirationInterval: null,
 
 			debounceUpdateReadMarkerPosition: () => {},
 
 			debounceHandleScroll: () => {},
-
-			stopFetchingOldMessages: false,
 
 			isScrolling: null,
 
@@ -245,40 +246,12 @@ export default {
 			return this.$store.getters.hasMoreMessagesToLoad(this.token)
 		},
 
-		/**
-		 * Returns whether the current participant is a participant of the
-		 * current conversation or not.
-		 *
-		 * @return {boolean} true if it is already a participant, false
-		 *          otherwise.
-		 */
-		isParticipant() {
-			if (!this.conversation) {
-				return false
-			}
-
-			return !!this.$store.getters.findParticipant(this.token, this.conversation)?.attendeeId
-		},
-
-		isInLobby() {
-			return this.$store.getters.isInLobby
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		chatIdentifier() {
-			return this.token + ':' + this.isParticipant + ':' + this.viewId
-		},
-
 		currentDay() {
 			return convertToUnix(new Date().setHours(0, 0, 0, 0))
-		},
-
-		isChatBeginningReached() {
-			return this.stopFetchingOldMessages || (this.messagesList?.[0]?.messageType === MESSAGE.TYPE.SYSTEM
-				&& ['conversation_created', 'history_cleared'].includes(this.messagesList[0].systemMessage))
 		},
 	},
 
@@ -289,17 +262,14 @@ export default {
 			}
 		},
 
-		chatIdentifier: {
-			immediate: true,
-			handler(newValue, oldValue) {
-				if (oldValue) {
-					this.$store.dispatch('cancelPollNewMessages', { requestId: oldValue })
-				}
-				this.handleStartGettingMessagesPreconditions(this.token)
-
-				// Remove expired messages when joining a room
-				this.removeExpiredMessagesFromStore()
-			},
+		isInitialisingMessages(newValue, oldValue) {
+			if (oldValue && !newValue) { // switching true -> false
+				this.$nextTick(() => {
+					// basically scrolling to either the last read message or the message in the URL anchor
+					// and there is a fallback to scroll to the bottom if the message is not found
+					this.scrollToFocusedMessage(this.getMessageIdFromHash())
+				})
+			}
 		},
 
 		token(newToken, oldToken) {
@@ -359,19 +329,10 @@ export default {
 		EventBus.on('focus-message', this.focusMessage)
 		EventBus.on('route-change', this.onRouteChange)
 		EventBus.on('message-height-changed', this.onMessageHeightChanged)
-		subscribe('networkOffline', this.handleNetworkOffline)
-		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
 
 		this.resizeObserver = new ResizeObserver(this.updateSize)
 		this.resizeObserver.observe(this.$refs.scroller)
-
-		/**
-		 * Every 30 seconds we remove expired messages from the store
-		 */
-		this.expirationInterval = window.setInterval(() => {
-			this.removeExpiredMessagesFromStore()
-		}, 30000)
 	},
 
 	beforeUnmount() {
@@ -383,19 +344,9 @@ export default {
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
 		EventBus.off('message-height-changed', this.onMessageHeightChanged)
-		this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
-		this.destroying = true
-
-		unsubscribe('networkOffline', this.handleNetworkOffline)
-		unsubscribe('networkOnline', this.handleNetworkOnline)
 
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
-		}
-
-		if (this.expirationInterval) {
-			clearInterval(this.expirationInterval)
-			this.expirationInterval = null
 		}
 	},
 
@@ -510,12 +461,6 @@ export default {
 			// Compare ids and stringified messages (look for temporary, edited, deleted messages, replaced from server)
 			return group1.messages.every((message, index) => group2.messages[index].id === message.id
 				&& JSON.stringify(group2.messages[index]) === JSON.stringify(message))
-		},
-
-		removeExpiredMessagesFromStore() {
-			this.$store.dispatch('removeExpiredMessages', {
-				token: this.token,
-			})
 		},
 
 		/**
@@ -678,187 +623,6 @@ export default {
 			this.debounceUpdateReadMarkerPosition()
 		},
 
-		async handleStartGettingMessagesPreconditions(token) {
-			if (token && this.isParticipant && !this.isInLobby) {
-				// prevent sticky mode before we have loaded anything
-				this.isInitialisingMessages = true
-				const focusMessageId = this.getMessageIdFromHash()
-
-				this.$store.dispatch('setVisualLastReadMessageId', { token, id: this.conversation.lastReadMessage })
-
-				if (!this.$store.getters.getFirstKnownMessageId(token)) {
-					try {
-						// Start from message hash or unread marker
-						let startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
-						// Check if thread is initially opened
-						if (this.threadId) {
-							// FIXME temporary get thread messages from the start
-							startingMessageId = this.threadId
-						}
-
-						// First time load, initialize important properties
-						if (!startingMessageId) {
-							throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
-						}
-						this.$store.dispatch('setFirstKnownMessageId', { token, id: startingMessageId })
-						this.$store.dispatch('setLastKnownMessageId', { token, id: startingMessageId })
-						// If MESSAGE.CHAT_BEGIN_ID we need to get the context from the beginning
-						// using 0 as the API does not support negative values
-						// Get chat messages before last read message and after it
-						await this.getMessageContext(token, startingMessageId !== MESSAGE.CHAT_BEGIN_ID ? startingMessageId : 0)
-					} catch (exception) {
-						console.debug(exception)
-						// Request was cancelled, stop getting preconditions and restore initial state
-						this.$store.dispatch('setFirstKnownMessageId', { token, id: null })
-						this.$store.dispatch('setLastKnownMessageId', { token, id: null })
-						return
-					}
-				}
-
-				this.$nextTick(() => {
-					// basically scrolling to either the last read message or the message in the URL anchor
-					// and there is a fallback to scroll to the bottom if the message is not found
-					this.scrollToFocusedMessage(focusMessageId)
-				})
-
-				this.isInitialisingMessages = false
-
-				// Once the history is received, starts looking for new messages.
-				await this.pollNewMessages(token)
-			} else {
-				this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
-			}
-		},
-
-		async getMessageContext(token, messageId) {
-			// Make the request
-			this.loadingOldMessages = true
-			try {
-				debugTimer.start(`${token} | get context`)
-				await this.$store.dispatch('getMessageContext', {
-					token,
-					messageId,
-					minimumVisible: CHAT.MINIMUM_VISIBLE,
-				})
-				debugTimer.end(`${token} | get context`, 'status 200')
-				this.loadingOldMessages = false
-			} catch (exception) {
-				if (Axios.isCancel(exception)) {
-					console.debug('The request has been canceled', exception)
-					debugTimer.end(`${token} | get context`, 'cancelled')
-					this.loadingOldMessages = false
-					throw exception
-				}
-
-				if (exception?.response?.status === 304 && exception?.response?.data === '') {
-					// 304 - Not modified
-					// Empty chat, no messages to load
-					debugTimer.end(`${token} | get context`, 'status 304')
-					this.$store.dispatch('loadedMessagesOfConversation', { token: this.token })
-					this.stopFetchingOldMessages = true
-				}
-			}
-			this.loadingOldMessages = false
-		},
-
-		/**
-		 * Get messages history.
-		 *
-		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
-		 */
-		async getOldMessages(includeLastKnown) {
-			if (this.isChatBeginningReached) {
-				// Beginning of the chat reached, no more messages to load
-				return
-			}
-			// Make the request
-			this.loadingOldMessages = true
-			try {
-				debugTimer.start(`${this.token} | fetch history`)
-				await this.$store.dispatch('fetchMessages', {
-					token: this.token,
-					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
-					includeLastKnown,
-					minimumVisible: CHAT.MINIMUM_VISIBLE,
-				})
-				debugTimer.end(`${this.token} | fetch history`, 'status 200')
-			} catch (exception) {
-				if (Axios.isCancel(exception)) {
-					debugTimer.end(`${this.token} | fetch history`, 'cancelled')
-					console.debug('The request has been canceled', exception)
-				}
-				if (exception?.response?.status === 304) {
-					// 304 - Not modified
-					debugTimer.end(`${this.token} | fetch history`, 'status 304')
-					this.stopFetchingOldMessages = true
-				}
-			}
-			this.loadingOldMessages = false
-		},
-
-		/**
-		 * Fetches the messages of a conversation given the conversation token.
-		 * Creates a long polling request for new messages.
-		 * @param token token of conversation where a method was called
-		 */
-		async pollNewMessages(token) {
-			if (this.destroying) {
-				console.debug('Prevent polling new messages on MessagesList being destroyed')
-				return
-			}
-			// Check that the token has not changed
-			if (this.token !== token) {
-				console.debug(`token has changed to ${this.token}, breaking the loop for ${token}`)
-				return
-			}
-			// Make the request
-			try {
-				debugTimer.start(`${token} | long polling`)
-				// TODO: move polling logic to the store and also cancel timers on cancel
-				this.pollingErrorTimeout = 1
-				await this.$store.dispatch('pollNewMessages', {
-					token,
-					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
-					requestId: this.chatIdentifier,
-				})
-				debugTimer.end(`${token} | long polling`, 'status 200')
-			} catch (exception) {
-				if (Axios.isCancel(exception)) {
-					debugTimer.end(`${token} | long polling`, 'cancelled')
-					console.debug('The request has been canceled', exception)
-					return
-				}
-
-				if (exception?.response?.status === 304) {
-					debugTimer.end(`${token} | long polling`, 'status 304')
-					// 304 - Not modified
-					// This is not an error, so reset error timeout and poll again
-					this.pollingErrorTimeout = 1
-					setTimeout(() => {
-						this.pollNewMessages(token)
-					}, 500)
-					return
-				}
-
-				if (this.pollingErrorTimeout < 30) {
-					// Delay longer after each error
-					this.pollingErrorTimeout += 5
-				}
-
-				debugTimer.end(`${token} | long polling`, `status ${exception?.response?.status}`)
-				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
-
-				setTimeout(() => {
-					this.pollNewMessages(token)
-				}, this.pollingErrorTimeout * 1000)
-				return
-			}
-
-			setTimeout(() => {
-				this.pollNewMessages(token)
-			}, 500)
-		},
-
 		checkSticky() {
 			const ulElements = this.$refs['dateGroup-' + this.token]
 			if (!ulElements) {
@@ -944,7 +708,7 @@ export default {
 					return
 				}
 				this.displayMessagesLoader = true
-				await this.getOldMessages(false)
+				await this.getOldMessages(this.token, false)
 				this.displayMessagesLoader = false
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
 					// scroll to previous position + added height
@@ -1227,16 +991,6 @@ export default {
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
-		},
-
-		handleNetworkOffline() {
-			console.debug('Canceling message request as we are offline')
-			this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
-		},
-
-		handleNetworkOnline() {
-			console.debug('Restarting polling of new chat messages')
-			this.pollNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
