@@ -595,6 +595,10 @@ const actions = {
 					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
+				// Fetch thread data in case it doesn't exist in the store yet
+				if (!chatExtrasStore.getThread(token, message.threadId) && chatExtrasStore.threads[token] !== undefined) {
+					chatExtrasStore.fetchSingleThread(token, message.threadId)
+				}
 			}
 
 			// Quit processing
