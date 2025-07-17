@@ -379,6 +379,11 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
+			if (!$this->participant->hasModeratorPermissions(false)) {
+				// Only moderators can manage drafts
+				return new DataResponse(['error' => PollPropertyException::REASON_POLL], Http::STATUS_NOT_FOUND);
+			}
+
 			$this->pollService->deleteByPollId($poll->getId());
 			return new DataResponse(null, Http::STATUS_ACCEPTED);
 		}
