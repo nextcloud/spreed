@@ -318,6 +318,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		purgeChatExtras(token: string) {
 			this.removeParentIdToReply(token)
 			this.removeChatInput(token)
+			this.threads[token] = undefined
 		},
 
 		setTasksCounters({ tasksCount, tasksDoneCount }: { tasksCount: number, tasksDoneCount: number }) {
