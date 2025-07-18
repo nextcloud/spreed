@@ -13,7 +13,7 @@
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<TransitionWrapper name="fade">
-			<div class="scroller__loading">
+			<div ref="scrollerLoader" class="scroller__loading">
 				<NcLoadingIcon v-if="displayMessagesLoader" class="scroller__loading-element" :size="32" />
 				<!-- FIXME return from threaded view during the call -->
 				<NcButton
@@ -89,6 +89,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
+const LOAD_HISTORY_THRESHOLD = 800
 
 export default {
 	name: 'MessagesList',
@@ -701,7 +702,7 @@ export default {
 				this.setChatScrolledToBottom(false)
 			}
 
-			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
+			if ((scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'up')
 				|| skipHeightCheck) {
 				if (this.loadingOldMessages || this.isChatBeginningReached) {
 					// already loading, don't do it twice
@@ -952,6 +953,17 @@ export default {
 			// FIXME: because scrollToBottom is also triggered and it is wrapped in $nextTick
 			// We need to trigger this at the same time (nextTick) to avoid focusing and then scrolling to bottom
 			this.$nextTick(() => {
+				if (smooth) {
+					const newTop = scrollElement.getBoundingClientRect().top - this.$refs.scrollerLoader.getBoundingClientRect().top
+					if (this.$refs.scroller.scrollTop > newTop) {
+						// Imitate scrolling the whole distance to the element
+						// If this goes to scrollTop < LOAD_HISTORY_THRESHOLD, might initiate loading of old messages
+						this.$refs.scroller.scrollTo({
+							top: Math.max(LOAD_HISTORY_THRESHOLD, newTop),
+							behavior: 'instant',
+						})
+					}
+				}
 				scrollElement.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
 					block: 'center',
