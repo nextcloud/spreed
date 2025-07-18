@@ -5,8 +5,6 @@
 
 <template>
 	<div ref="messageMain"
-		v-element-size="[onResize, { width: 0, height: 22.5 }]"
-		v-intersection-observer="onIntersectionObserver"
 		class="message-main">
 		<!-- System or deleted message body content -->
 		<div v-if="isSystemMessage || isDeletedMessage"
@@ -130,7 +128,6 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-import { vElementSize as ElementSize, vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
 import { inject, toRefs } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -179,11 +176,6 @@ export default {
 		CheckAllIcon,
 		ContentCopyIcon,
 		ReloadIcon,
-	},
-
-	directives: {
-		IntersectionObserver,
-		ElementSize,
 	},
 
 	props: {
@@ -238,8 +230,6 @@ export default {
 			showReloadButton: false,
 			currentCodeBlock: null,
 			copyButtonOffset: 0,
-			isVisible: false,
-			previousSize: { width: 0, height: 22.5 }, // default height of one-line message body without widgets
 		}
 	},
 
@@ -490,29 +480,6 @@ export default {
 			if (messageId === this.message.id) {
 				this.isEditing = value
 			}
-		},
-
-		onIntersectionObserver([{ isIntersecting }]) {
-			this.isVisible = isIntersecting
-		},
-
-		onResize({ width, height }) {
-			const oldWidth = this.previousSize?.width
-			const oldHeight = this.previousSize?.height
-			this.previousSize = { width, height }
-
-			if (!this.isVisible) {
-				return
-			}
-			if (oldWidth && oldWidth !== width) {
-				// Resizing messages list
-				return
-			}
-			if (height === 0) {
-				// component is unmounted
-				return
-			}
-			EventBus.emit('message-height-changed', { heightDiff: height - oldHeight })
 		},
 	},
 }
