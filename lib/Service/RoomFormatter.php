@@ -403,6 +403,11 @@ class RoomFormatter {
 			}
 		}
 
+		if ($roomData['lastReadMessage'] === 0) {
+			// Guest in a fully expired chat, no history, just loading the chat from beginning for now
+			$roomData['lastReadMessage'] = ChatManager::UNREAD_FIRST_MESSAGE;
+		}
+
 		if ($currentUser instanceof IUser
 			&& $attendee->getActorType() === Attendee::ACTOR_USERS
 			&& $roomData['lastReadMessage'] === ChatManager::UNREAD_FIRST_MESSAGE
