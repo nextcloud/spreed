@@ -13,7 +13,7 @@ Feature: integration/dashboard-talk
       |dashboardRoom     | 2       | dashboardRoom-attachment | null    | null     | null     | null      | 1                | 1         |
       |dashboardRoom     | 2       | dashboardRoom-attendees  | 1       | 1        | null     | null      | 0                | 1         |
       |dashboardRoom     | 2       | dashboardRoom-recurring  | null    | null     | null     | null      | 0                | 1         |
-
+      |dashboardRoom     | 2       | dashboardRoom-no-status  | null    | null     | null     | null      | 0                | 1         |
   Scenario: User gets mutual events for a one to one conversation
     Given user "participant1" exists and has an email address
     Given user "participant2" exists and has an email address
