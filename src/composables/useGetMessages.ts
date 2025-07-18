@@ -9,6 +9,7 @@ import type {
 	InjectionKey,
 	Ref,
 } from 'vue'
+import type { RouteLocation } from 'vue-router'
 import type {
 	ChatMessage,
 	Conversation,
@@ -20,6 +21,7 @@ import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
+import { EventBus } from '../services/EventBus.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -30,7 +32,6 @@ type GetMessagesContext = {
 	stopFetchingOldMessages: Ref<boolean>
 	isChatBeginningReached: ComputedRef<boolean>
 
-	getMessageContext: (token: string, messageId: number) => Promise<void>
 	getOldMessages: (token: string, includeLastKnown: boolean) => Promise<void>
 }
 
@@ -97,6 +98,7 @@ export function useGetMessagesProvider() {
 
 	subscribe('networkOffline', handleNetworkOffline)
 	subscribe('networkOnline', handleNetworkOnline)
+	EventBus.on('route-change', onRouteChange)
 
 	/** Every 30 seconds we remove expired messages from the store */
 	expirationInterval = setInterval(() => {
@@ -106,6 +108,7 @@ export function useGetMessagesProvider() {
 	onBeforeUnmount(() => {
 		unsubscribe('networkOffline', handleNetworkOffline)
 		unsubscribe('networkOnline', handleNetworkOnline)
+		EventBus.off('route-change', onRouteChange)
 
 		store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
 		clearInterval(pollingTimeout)
@@ -126,6 +129,55 @@ export function useGetMessagesProvider() {
 	function handleNetworkOnline() {
 		console.debug('Restarting polling of new chat messages')
 		pollNewMessages(currentToken.value)
+	}
+
+	/**
+	 * Handle route changes to initialize chat or thread, and focus given message
+	 */
+	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
+		if (from.name === 'conversation' && to.name === 'conversation'
+			&& from.params.token === to.params.token && typeof to.params.token === 'string') {
+			if (to.hash && to.hash.startsWith('#message_') && from.hash !== to.hash) {
+				// the hash changed, need to focus/highlight another message
+				const focusedId = parseInt(to.hash.slice(9), 10)
+				if (store.getters.messagesList(to.params.token).find((message: ChatMessage) => message.id === focusedId)) {
+					// need some delay (next tick is too short) to be able to run
+					// after the browser's native "scroll to anchor" from
+					// the hash
+					window.setTimeout(() => {
+						// scroll to message in URL anchor
+						EventBus.emit('focus-message', focusedId)
+					}, 2)
+				} else {
+					// Update environment around context to fill the gaps
+					store.dispatch('setFirstKnownMessageId', {
+						token: to.params.token,
+						id: focusedId,
+					})
+					store.dispatch('setLastKnownMessageId', {
+						token: to.params.token,
+						id: focusedId,
+					})
+					await getMessageContext(to.params.token, focusedId)
+					EventBus.emit('focus-message', focusedId)
+				}
+			} else if (to.query.threadId && from.query.threadId !== to.query.threadId) {
+				// FIXME temporary get thread messages from the start
+				const topMostThreadMessage = store.getters.messagesList(to.params.token).find((message: ChatMessage) => message.id === +to.query.threadId)
+				if (!topMostThreadMessage) {
+					// Update environment around context to fill the gaps
+					store.dispatch('setFirstKnownMessageId', {
+						token: to.params.token,
+						id: +to.query.threadId,
+					})
+					store.dispatch('setLastKnownMessageId', {
+						token: to.params.token,
+						id: +to.query.threadId,
+					})
+					await getMessageContext(to.params.token, +to.query.threadId)
+				}
+			}
+		}
 	}
 
 	/**
@@ -321,7 +373,6 @@ export function useGetMessagesProvider() {
 		stopFetchingOldMessages,
 		isChatBeginningReached,
 
-		getMessageContext,
 		getOldMessages,
 	})
 }
