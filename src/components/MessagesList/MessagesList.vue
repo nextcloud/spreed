@@ -1112,6 +1112,14 @@ export default {
 					newTop = this.$refs.scroller.scrollHeight
 					this.setChatScrolledToBottom(true)
 				}
+
+				if (options?.smooth && this.$refs.scroller.scrollTop < newTop - 1.5 * window.innerHeight) {
+					// Imitate scrolling the whole distance to the element
+					this.$refs.scroller.scrollTo({
+						top: newTop - 1.5 * window.innerHeight,
+						behavior: 'instant',
+					})
+				}
 				this.$refs.scroller.scrollTo({
 					top: newTop,
 					behavior: options?.smooth ? 'smooth' : 'auto',

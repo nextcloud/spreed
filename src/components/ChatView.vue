@@ -205,6 +205,7 @@ export default {
 		},
 
 		scrollToBottom() {
+			this.$router.replace({ hash: '' })
 			EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
 		},
 	},
