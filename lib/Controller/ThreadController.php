@@ -241,6 +241,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		$thread = $this->threadService->createThread($this->room, $threadId);
 		$this->chatManager->addSystemMessage(
 			$this->room,
+			$this->participant,
 			$this->participant->getAttendee()->getActorType(),
 			$this->participant->getAttendee()->getActorId(),
 			json_encode(['message' => 'thread_created', 'parameters' => ['thread' => $threadId]]),
