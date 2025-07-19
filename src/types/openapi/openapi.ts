@@ -1653,6 +1653,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}/notify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set notification level for a specific thread
+         * @description Required capability: `threads`
+         */
+        post: operations["thread-set-notification-level"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
 export type webhooks = Record<string, never>;
 export type components = {
@@ -9842,6 +9862,85 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "message" | "status" | "top-most";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "thread-set-notification-level": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The message to create a thread for (Doesn't have to be the root) */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New level
+                     */
+                    level: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Successfully set notification level for thread */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ThreadInfo"];
+                        };
+                    };
+                };
+            };
+            /** @description Root message is a system message and therefor not supported or notification level was invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "level" | "message" | "status" | "top-most";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message or top most message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "level" | "message" | "status" | "top-most";
                             };
                         };
                     };

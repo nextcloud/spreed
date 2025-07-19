@@ -402,26 +402,12 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
-			$thread = null;
-
-			if ($threadId) {
-				try {
-					$thread = $this->threadService->findByThreadId($threadId);
-				} catch (DoesNotExistException) {
-				}
+			if ($threadId !== 0) {
+				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
 			}
 
 			if ($participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
-
-				if ($thread !== null) {
-					$this->threadService->addAttendeeToThread(
-						$participant->getAttendee(),
-						$thread,
-					);
-
-					$this->threadService->updateLastMessageInfoAfterReply($thread, $messageId);
-				}
 			}
 
 			// Update last_message
