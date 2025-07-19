@@ -207,7 +207,9 @@ export default {
 	created() {
 		window.addEventListener('beforeunload', this.preventUnload)
 		useHotKey('f', this.handleAppSearch, { ctrl: true, stop: true, prevent: true })
-		useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
+		if (getCurrentUser()) {
+			useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
+		}
 	},
 
 	beforeDestroy() {
