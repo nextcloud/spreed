@@ -75,8 +75,6 @@ export function useGetMessagesProvider() {
 		return !!store.getters.findParticipant(currentToken.value, conversation.value)?.attendeeId
 	})
 
-	const chatIdentifier = computed(() => currentToken.value + ':' + isParticipant.value)
-
 	const firstKnownMessage = computed<ChatMessage | undefined>(() => {
 		return store.getters.message(currentToken.value, store.getters.getFirstKnownMessageId(currentToken.value))
 	})
@@ -86,20 +84,14 @@ export function useGetMessagesProvider() {
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.value.systemMessage))
 	})
 
-	watch(chatIdentifier, (newValue, oldValue) => {
-		if (oldValue) {
-			store.dispatch('cancelPollNewMessages', { requestId: oldValue })
-		}
-		if (currentToken.value && isParticipant.value && !isInLobby.value) {
+	watch(() => isParticipant.value && !isInLobby.value, (shouldStartGettingMessagesPreconditions: boolean) => {
+		if (currentToken.value && shouldStartGettingMessagesPreconditions) {
 			const focusMessageId = route?.hash?.startsWith('#message_') ? parseInt(route.hash.slice(9), 10) : null
 			handleStartGettingMessagesPreconditions(currentToken.value, focusMessageId)
 		} else {
-			store.dispatch('cancelPollNewMessages', { requestId: newValue })
+			store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		}
-
-		/** Remove expired messages when joining a room */
-		store.dispatch('removeExpiredMessages', { token: currentToken.value })
-	}, { immediate: true })
+	})
 
 	subscribe('networkOffline', handleNetworkOffline)
 	subscribe('networkOnline', handleNetworkOnline)
@@ -115,7 +107,7 @@ export function useGetMessagesProvider() {
 		unsubscribe('networkOnline', handleNetworkOnline)
 		EventBus.off('route-change', onRouteChange)
 
-		store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
+		store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		clearInterval(pollingTimeout)
 		clearInterval(expirationInterval)
 	})
@@ -126,7 +118,7 @@ export function useGetMessagesProvider() {
 	function handleNetworkOffline() {
 		if (currentToken.value) {
 			console.debug('Canceling message request as we are offline')
-			store.dispatch('cancelPollNewMessages', { requestId: chatIdentifier.value })
+			store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		}
 	}
 
@@ -146,6 +138,23 @@ export function useGetMessagesProvider() {
 	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
 		const focusMessageId = to.hash && to.hash.startsWith('#message_') ? parseInt(to.hash.slice(9), 10) : null
 
+		/** Cancel previously opened chat requests */
+		if (from.name === 'conversation' && from.params.token) {
+			store.dispatch('cancelPollNewMessages', { requestId: from.params.token })
+		}
+
+		if (from.params.token !== to.params.token && isParticipant.value && !isInLobby.value) {
+			handleStartGettingMessagesPreconditions(to.params.token as string, focusMessageId)
+		} else {
+			store.dispatch('cancelPollNewMessages', { requestId: to.params.token })
+		}
+
+		/** Remove expired messages when joining a room */
+		if (to.name === 'conversation' && to.params.token) {
+			store.dispatch('removeExpiredMessages', { token: to.params.token })
+		}
+
+		/** Handle navigation within the same conversation */
 		if (from.name === 'conversation' && to.name === 'conversation'
 			&& from.params.token === to.params.token && typeof to.params.token === 'string') {
 			if (from.hash !== to.hash && focusMessageId !== null) {
@@ -179,6 +188,11 @@ export function useGetMessagesProvider() {
 	 * @param focusMessageId message id to get context around (null if not specified)
 	 */
 	async function handleStartGettingMessagesPreconditions(token: string, focusMessageId: number | null) {
+		if (isInitialisingMessages.value) {
+			// Already initialising messages
+			return
+		}
+
 		// prevent sticky mode before we have loaded anything
 		isInitialisingMessages.value = true
 
@@ -315,7 +329,7 @@ export function useGetMessagesProvider() {
 			await store.dispatch('pollNewMessages', {
 				token,
 				lastKnownMessageId: store.getters.getLastKnownMessageId(token),
-				requestId: chatIdentifier.value,
+				requestId: token,
 			})
 			debugTimer.end(`${token} | long polling`, 'status 200')
 		} catch (exception) {
