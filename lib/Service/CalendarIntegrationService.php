@@ -107,7 +107,7 @@ class CalendarIntegrationService {
 					continue;
 				}
 
-				if ($event['STATUS'][0] === 'CANCELLED') {
+				if (isset($event['STATUS']) && $event['STATUS'][0] === 'CANCELLED') {
 					continue;
 				}
 
