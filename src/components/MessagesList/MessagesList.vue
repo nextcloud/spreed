@@ -138,7 +138,6 @@ export default {
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 
-			getMessageContext,
 			getOldMessages,
 		} = useGetMessages()
 
@@ -157,7 +156,6 @@ export default {
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 
-			getMessageContext,
 			getOldMessages,
 		}
 	},
@@ -328,7 +326,6 @@ export default {
 
 		EventBus.on('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.on('focus-message', this.focusMessage)
-		EventBus.on('route-change', this.onRouteChange)
 		window.addEventListener('focus', this.onWindowFocus)
 
 		this.resizeObserver = new ResizeObserver(this.updateSize)
@@ -342,7 +339,6 @@ export default {
 		window.removeEventListener('focus', this.onWindowFocus)
 		EventBus.off('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.off('focus-message', this.focusMessage)
-		EventBus.off('route-change', this.onRouteChange)
 
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
@@ -1009,52 +1005,6 @@ export default {
 		 */
 		getFirstKnownMessageId() {
 			return this.messagesList[0].id.toString()
-		},
-
-		async onRouteChange({ from, to }) {
-			if (from.name === 'conversation' && to.name === 'conversation'
-				&& from.params.token === to.params.token) {
-				if (to.hash && to.hash.startsWith('#message_') && from.hash !== to.hash) {
-					// the hash changed, need to focus/highlight another message
-					const focusedId = this.getMessageIdFromHash(to.hash)
-					if (this.messagesList.find((m) => m.id === focusedId)) {
-						// need some delay (next tick is too short) to be able to run
-						// after the browser's native "scroll to anchor" from
-						// the hash
-						window.setTimeout(() => {
-							// scroll to message in URL anchor
-							this.focusMessage(focusedId, true)
-						}, 2)
-					} else {
-						// Update environment around context to fill the gaps
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: focusedId,
-						})
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: focusedId,
-						})
-						await this.getMessageContext(this.token, focusedId)
-						this.focusMessage(focusedId, true)
-					}
-				} else if (to.query.threadId && from.query.threadId !== to.query.threadId) {
-					// FIXME temporary get thread messages from the start
-					const topMostThreadMessage = this.$store.getters.messagesList(to.params.token).find((message) => message.id === +to.query.threadId)
-					if (!topMostThreadMessage) {
-						// Update environment around context to fill the gaps
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: +to.query.threadId,
-						})
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: +to.query.threadId,
-						})
-						await this.getMessageContext(this.token, +to.query.threadId)
-					}
-				}
-			}
 		},
 
 		setChatScrolledToBottom(value, { auto = false } = {}) {
