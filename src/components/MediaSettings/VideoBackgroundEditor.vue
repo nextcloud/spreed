@@ -288,16 +288,19 @@ export default {
 
 <style scoped lang="scss">
 .background-editor {
+	--background-button-height: calc(var(--default-grid-baseline) * 16);
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: calc(var(--default-grid-baseline) * 2);
 	margin-top: calc(var(--default-grid-baseline) * 2);
+	max-height: calc(var(--background-button-height) * 3 + var(--default-grid-baseline) * 4);
+	overflow-y: auto;
 
 	&__element {
 		border: none;
 		margin: 0 !important;
 		border-radius: var(--border-radius-element, calc(var(--border-radius-large) * 1.5));
-		height: calc(var(--default-grid-baseline) * 16);
+		height: var(--background-button-height);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;

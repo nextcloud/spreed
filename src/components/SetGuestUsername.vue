@@ -6,27 +6,31 @@
 <template>
 	<div class="username-form">
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-html="displayNameLabel" />
+		<h3 v-if="!compact" v-html="displayNameLabel" />
 
-		<NcButton v-if="!isEditingUsername"
+		<NcButton v-if="!isEditingUsername && !compact"
 			@click="toggleEdit">
 			{{ t('spreed', 'Edit display name') }}
 			<template #icon>
-				<Pencil :size="20" />
+				<IconPencilOutline :size="20" />
 			</template>
 		</NcButton>
 
-		<NcTextField v-else
-			ref="usernameInput"
-			v-model="guestUserName"
-			:placeholder="t('spreed', 'Guest')"
-			class="username-form__input"
-			:show-trailing-button="!!guestUserName"
-			trailing-button-icon="arrowEnd"
-			:trailing-button-label="t('spreed', 'Save name')"
-			@trailing-button-click="updateDisplayName"
-			@keydown.enter="updateDisplayName"
-			@keydown.esc="toggleEdit" />
+		<div v-else class="username-form__display-name">
+			<IconAccountOutline class="username-form__display-name-icon" :size="20" />
+			<NcTextField
+				ref="usernameInput"
+				v-model="guestUserName"
+				:placeholder="t('spreed', 'Guest')"
+				class="username-form__input"
+				:label="t('spreed', 'Display name (required)')"
+				:show-trailing-button="!!guestUserName"
+				trailing-button-icon="arrowEnd"
+				:trailing-button-label="t('spreed', 'Save name')"
+				@trailing-button-click="updateDisplayName"
+				@keydown.enter="updateDisplayName"
+				@keydown.esc="toggleEdit" />
+		</div>
 
 		<div class="login-info">
 			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
@@ -51,12 +55,16 @@ import escapeHtml from 'escape-html'
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
+const { compact = false } = defineProps<{
+	compact: boolean
+}>()
 const loginUrl = `${generateUrl('/login')}?redirect_url=${encodeURIComponent(window.location.pathname)}`
 
 const actorStore = useActorStore()
@@ -125,19 +133,34 @@ function toggleEdit() {
 
 <style lang="scss" scoped>
 .username-form {
-	margin-block-end: 12px;
-	margin-inline: auto;
+
+	&__display-name {
+		display: flex;
+		gap: var(--default-grid-baseline);
+		flex-direction: row;
+		margin-block-start: 6px; // moved from NcTextField
+
+		&-icon {
+			flex-shrink: 0;
+			margin-inline-end: var(--default-grid-baseline);
+		}
+	}
 }
 
 .login-info {
 	display: flex;
 	align-items: center;
 	gap: calc(var(--default-grid-baseline) * 2);
-	padding-top: calc(var(--default-grid-baseline) * 2);
+	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 2) 0;
+	margin-inline-start: calc(var(--default-grid-baseline) + 20px); // 20px for checkbox alignment
 
 	&__button {
 		flex-shrink: 0;
 	}
+}
+
+:deep(.input-field) {
+	margin-block-start: 0;
 }
 
 </style>

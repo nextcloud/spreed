@@ -4,231 +4,223 @@
 -->
 
 <template>
-	<NcModal v-if="modal"
-		:label-id="dialogHeaderId"
-		@close="closeModal">
+	<component :is="isDialog ? 'NcModal' : 'div'"
+		v-if="show"
+		:size="isDialog ? 'large' : undefined"
+		:label-id="isDialog ? dialogHeaderId : undefined"
+		@close="close">
 		<div class="media-settings">
-			<h2 :id="dialogHeaderId" class="media-settings__title nc-dialog-alike-header">
-				{{ t('spreed', 'Media settings') }}
+			<h2 v-if="isDialog"
+				:id="dialogHeaderId"
+				class="media-settings__title nc-dialog-alike-header">
+				{{ t('spreed', 'Check devices') }}
 			</h2>
-			<!-- Preview -->
-			<div class="media-settings__preview">
-				<video v-show="showVideo"
-					ref="video"
-					class="preview__video"
-					:class="{ 'preview__video--mirrored': isMirrored }"
-					disablePictureInPicture
-					tabindex="-1" />
-				<NcButton v-if="showVideo"
-					variant="secondary"
-					class="media-settings__preview-mirror"
-					:title="mirrorToggleLabel"
-					:aria-label="mirrorToggleLabel"
-					@click="isMirrored = !isMirrored">
-					<template #icon>
-						<IconReflectHorizontal :size="20" />
-					</template>
-				</NcButton>
-				<div v-show="!showVideo"
-					class="preview__novideo">
-					<VideoBackground :display-name="displayName"
-						:user="userId" />
-					<AvatarWrapper :id="userId"
-						:token="token"
-						:name="displayName"
-						:source="actorStore.actorType"
-						:size="AVATAR.SIZE.EXTRA_LARGE"
-						disable-menu
-						disable-tooltip />
-				</div>
-
-				<!-- Audio and video toggles -->
-				<div class="media-settings__toggles">
-					<!-- Audio toggle -->
-					<NcButton v-if="!audioStreamError"
-						variant="tertiary"
-						:title="audioButtonTitle"
-						:aria-label="audioButtonTitle"
-						:disabled="!audioPreviewAvailable"
-						@click="toggleAudio">
+			<!-- Recording warning -->
+			<NcNoteCard v-if="showRecordingWarning"
+				:class="{ 'media-settings__recording-warning--mobile': isMobile }"
+				type="warning">
+				<p v-if="isCurrentlyRecording">
+					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+				</p>
+				<p v-else>
+					<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+				</p>
+				<template v-if="isRecordingConsentRequired">
+					<p>
+						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+					</p>
+					<NcCheckboxRadioSwitch class="checkbox--warning"
+						:model-value="recordingConsentGiven"
+						@update:model-value="setRecordingConsentGiven">
+						{{ t('spreed', 'Give consent to the recording of this call') }}
+					</NcCheckboxRadioSwitch>
+				</template>
+			</NcNoteCard>
+			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
+				<!-- Preview -->
+				<div class="media-settings__preview">
+					<video v-show="showVideo"
+						ref="video"
+						class="preview__video"
+						:class="{ 'preview__video--mirrored': isMirrored }"
+						disablePictureInPicture
+						tabindex="-1" />
+					<NcButton v-if="showVideo"
+						variant="secondary"
+						class="media-settings__preview-mirror"
+						:title="mirrorToggleLabel"
+						:aria-label="mirrorToggleLabel"
+						@click="isMirrored = !isMirrored">
 						<template #icon>
-							<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
-								:audio-enabled="audioOn"
-								:current-volume="currentVolume"
-								:volume-threshold="currentThreshold"
-								overlay-muted-color="#888888" />
+							<IconReflectHorizontal :size="20" />
 						</template>
 					</NcButton>
-					<NcPopover v-else
-						:title="t('spreed', 'Show more info')"
-						close-on-click-outside
-						no-focus-trap>
-						<template #trigger>
-							<NcButton variant="error"
-								:aria-label="t('spreed', 'Audio is not available')">
-								<template #icon>
-									<IconMicrophoneOff :size="20" />
-								</template>
-							</NcButton>
-						</template>
-						<template #default>
-							<p class="media-settings__device-error">
-								{{ audioStreamErrorMessage }}
-							</p>
-						</template>
-					</NcPopover>
+					<div v-show="!showVideo"
+						class="preview__novideo">
+						<VideoBackground :display-name="displayName"
+							:user="userId" />
+						<AvatarWrapper :id="userId"
+							:token="token"
+							:name="displayName"
+							:source="actorStore.actorType"
+							:size="AVATAR.SIZE.EXTRA_LARGE"
+							disable-menu
+							disable-tooltip />
+					</div>
 
-					<!-- Video toggle -->
-					<NcButton v-if="!videoStreamError"
-						variant="tertiary"
-						:title="videoButtonTitle"
-						:aria-label="videoButtonTitle"
-						:disabled="!videoPreviewAvailable"
-						@click="toggleVideo">
-						<template #icon>
-							<IconVideo v-if="videoOn" :size="20" />
-							<IconVideoOff v-else :size="20" />
-						</template>
-					</NcButton>
-					<NcPopover v-else
-						:title="t('spreed', 'Show more info')"
-						close-on-click-outside
-						no-focus-trap>
-						<template #trigger>
-							<NcButton variant="error"
-								:aria-label="t('spreed', 'Video is not available')">
-								<template #icon>
-									<IconVideoOff :size="20" />
-								</template>
-							</NcButton>
-						</template>
-						<template #default>
-							<p class="media-settings__device-error">
-								{{ videoStreamErrorMessage }}
-							</p>
-						</template>
-					</NcPopover>
+					<!-- Audio and video toggles -->
+					<div class="media-settings__toggles">
+						<!-- Audio toggle -->
+						<NcButton v-if="!audioStreamError"
+							variant="tertiary"
+							:title="audioButtonTitle"
+							:aria-label="audioButtonTitle"
+							:disabled="!audioPreviewAvailable"
+							@click="toggleAudio">
+							<template #icon>
+								<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+									:audio-enabled="audioOn"
+									:current-volume="currentVolume"
+									:volume-threshold="currentThreshold"
+									overlay-muted-color="#888888" />
+							</template>
+						</NcButton>
+						<NcPopover v-else
+							:title="t('spreed', 'Show more info')"
+							close-on-click-outside
+							no-focus-trap>
+							<template #trigger>
+								<NcButton variant="error"
+									:aria-label="t('spreed', 'Audio is not available')">
+									<template #icon>
+										<IconMicrophoneOff :size="20" />
+									</template>
+								</NcButton>
+							</template>
+							<template #default>
+								<p class="media-settings__device-error">
+									{{ audioStreamErrorMessage }}
+								</p>
+							</template>
+						</NcPopover>
+
+						<!-- Video toggle -->
+						<NcButton v-if="!videoStreamError"
+							variant="tertiary"
+							:title="videoButtonTitle"
+							:aria-label="videoButtonTitle"
+							:disabled="!videoPreviewAvailable"
+							@click="toggleVideo">
+							<template #icon>
+								<IconVideo v-if="videoOn" :size="20" />
+								<IconVideoOff v-else :size="20" />
+							</template>
+						</NcButton>
+						<NcPopover v-else
+							:title="t('spreed', 'Show more info')"
+							close-on-click-outside
+							no-focus-trap>
+							<template #trigger>
+								<NcButton variant="error"
+									:aria-label="t('spreed', 'Video is not available')">
+									<template #icon>
+										<IconVideoOff :size="20" />
+									</template>
+								</NcButton>
+							</template>
+							<template #default>
+								<p class="media-settings__device-error">
+									{{ videoStreamErrorMessage }}
+								</p>
+							</template>
+						</NcPopover>
+					</div>
 				</div>
-			</div>
-
-			<!-- Tab panels -->
-			<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
-				<template #tab-panel:devices>
-					<MediaDevicesSelector kind="audioinput"
-						:devices="devices"
-						:device-id="audioInputId"
-						@refresh="updateDevices"
-						@update:device-id="handleAudioInputIdChange" />
-					<MediaDevicesSelector kind="videoinput"
-						:devices="devices"
-						:device-id="videoInputId"
-						@refresh="updateDevices"
-						@update:device-id="handleVideoInputIdChange" />
-					<MediaDevicesSelector v-if="audioOutputSupported"
-						kind="audiooutput"
-						:devices="devices"
-						:device-id="audioOutputId"
-						@refresh="updateDevices"
-						@update:device-id="handleAudioOutputIdChange">
-						<template #extra-action>
-							<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+				<div class="media-settings__settings">
+					<!-- Tab panels -->
+					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
+						<template #tab-panel:devices>
+							<MediaDevicesSelector kind="audioinput"
+								:devices="devices"
+								:device-id="audioInputId"
+								@refresh="updateDevices"
+								@update:device-id="handleAudioInputIdChange" />
+							<MediaDevicesSelector kind="videoinput"
+								:devices="devices"
+								:device-id="videoInputId"
+								@refresh="updateDevices"
+								@update:device-id="handleVideoInputIdChange" />
+							<MediaDevicesSelector v-if="audioOutputSupported"
+								kind="audiooutput"
+								:devices="devices"
+								:device-id="audioOutputId"
+								@refresh="updateDevices"
+								@update:device-id="handleAudioOutputIdChange">
+								<template #extra-action>
+									<MediaDevicesSpeakerTest :disabled="audioStreamError" />
+								</template>
+							</MediaDevicesSelector>
 						</template>
-					</MediaDevicesSelector>
-				</template>
 
-				<template #tab-panel:backgrounds>
-					<VideoBackgroundEditor class="media-settings__tab"
-						:token="token"
-						:skip-blur-virtual-background="skipBlurVirtualBackground"
-						@update-background="handleUpdateVirtualBackground" />
-				</template>
-			</MediaSettingsTabs>
+						<template #tab-panel:backgrounds>
+							<VideoBackgroundEditor class="media-settings__tab"
+								:token="token"
+								:skip-blur-virtual-background="skipBlurVirtualBackground"
+								@update-background="handleUpdateVirtualBackground" />
+						</template>
+					</MediaSettingsTabs>
 
-			<template v-if="!isDeviceCheck">
-				<!-- Moderator options before starting a call-->
-				<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-					v-model="isRecordingFromStart"
-					class="checkbox">
-					{{ t('spreed', 'Start recording immediately with the call') }}
-				</NcCheckboxRadioSwitch>
+					<!-- Guest display name setting-->
+					<SetGuestUsername v-if="isGuest" compact />
 
-				<!-- Recording warning -->
-				<NcNoteCard v-if="showRecordingWarning" type="warning">
-					<p v-if="isCurrentlyRecording">
-						<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
-					</p>
-					<p v-else>
-						<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
-					</p>
-					<template v-if="isRecordingConsentRequired">
-						<p>
-							{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
-						</p>
-						<NcCheckboxRadioSwitch class="checkbox--warning"
-							:model-value="recordingConsentGiven"
-							@update:model-value="setRecordingConsentGiven">
-							{{ t('spreed', 'Give consent to the recording of this call') }}
-						</NcCheckboxRadioSwitch>
-					</template>
-				</NcNoteCard>
-			</template>
-			<!-- buttons bar at the bottom -->
-			<div class="media-settings__call-buttons">
-				<!-- Silent call -->
-				<template v-if="!isDeviceCheck">
-					<NcActions v-if="showSilentCallOption" force-menu>
-						<NcActionButton v-if="!silentCall"
-							:name="t('spreed', 'Call without notification')"
-							close-after-click
-							@click="setSilentCall(true)">
-							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
-							<template #icon>
-								<IconBellOff :size="16" />
-							</template>
-						</NcActionButton>
-						<NcActionButton v-else
-							:name="t('spreed', 'Normal call')"
-							close-after-click
-							@click="setSilentCall(false)">
-							<template #icon>
-								<IconBell :size="16" />
-							</template>
-							{{ t('spreed', 'The conversation participants will be notified about this call') }}
-						</NcActionButton>
-					</NcActions>
+					<!-- Moderator options before starting a call-->
+					<NcCheckboxRadioSwitch v-if="showStartRecordingOption"
+						v-model="isRecordingFromStart"
+						class="checkbox">
+						{{ t('spreed', 'Start recording immediately with the call') }}
+					</NcCheckboxRadioSwitch>
+					<!-- Notify call option-->
+					<NcCheckboxRadioSwitch v-if="showNotifyCallOption"
+						v-model="notifyCall"
+						class="checkbox"
+						@update:model-value="setNotifyCall">
+						{{ t('spreed', 'Notify all participants about this call') }}
+					</NcCheckboxRadioSwitch>
 
+					<NcButton v-if="showUpdateChangesButton"
+						class="action-button"
+						@click="closeModalAndApplySettings">
+						{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
+					</NcButton>
 					<!-- Join call -->
-					<CallButton v-if="!isInCall"
-						class="call-button"
+					<CallButton v-else-if="isBeforeJoinCall"
+						class="action-button"
 						is-media-settings
 						:is-recording-from-start="isRecordingFromStart"
-						:disabled="isRecordingConsentRequired && !recordingConsentGiven"
+						:disabled="disabledCallButton"
 						:recording-consent-given="recordingConsentGiven"
-						:silent-call="silentCall" />
-				</template>
-				<NcButton v-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
-					{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
-				</NcButton>
+						:silent-call="!notifyCall" />
+				</div>
 			</div>
 		</div>
-	</NcModal>
+	</component>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-import { computed, markRaw, ref } from 'vue'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, h, markRaw, ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconBell from 'vue-material-design-icons/Bell.vue'
-import IconBellOff from 'vue-material-design-icons/BellOff.vue'
-import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
@@ -236,17 +228,19 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
+import SetGuestUsername from '../SetGuestUsername.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
+import IconBackground from '../../../img/icon-replace-background.svg?raw'
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -270,15 +264,15 @@ export default {
 		NcActions,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcIconSvgWrapper,
 		NcModal,
 		NcPopover,
 		NcNoteCard,
 		VideoBackground,
 		VideoBackgroundEditor,
 		VolumeIndicator,
+		SetGuestUsername,
 		// Icons
-		IconBell,
-		IconBellOff,
 		IconMicrophoneOff,
 		IconReflectHorizontal,
 		IconVideo,
@@ -289,6 +283,11 @@ export default {
 		recordingConsentGiven: {
 			type: Boolean,
 			default: false,
+		},
+
+		isDialog: {
+			type: Boolean,
+			default: true,
 		},
 	},
 
@@ -320,17 +319,17 @@ export default {
 			virtualBackground,
 		} = useDevices(video, false)
 
-		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value.isAvailable())
+		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value?.isAvailable())
 
 		const devicesTab = {
 			id: 'devices',
 			label: t('spreed', 'Devices'),
-			icon: markRaw(IconCog),
+			icon: markRaw(IconCogOutline),
 		}
 		const backgroundsTab = {
 			id: 'backgrounds',
 			label: t('spreed', 'Backgrounds'),
-			icon: markRaw(IconCreation),
+			icon: markRaw(() => h(NcIconSvgWrapper, { svg: IconBackground })),
 		}
 		const tabs = computed(() => isVirtualBackgroundAvailable.value ? [devicesTab, backgroundsTab] : [devicesTab])
 
@@ -364,16 +363,17 @@ export default {
 			supportDefaultBlurVirtualBackground,
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			isMobile: useIsMobile(),
 		}
 	},
 
 	data() {
 		return {
-			modal: false,
-			tabContent: undefined,
+			show: false,
+			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			silentCall: false,
+			notifyCall: true,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
@@ -396,6 +396,10 @@ export default {
 				this.token,
 				this.actorStore.actorId,
 			)
+		},
+
+		isGuest() {
+			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 
 		userId() {
@@ -467,12 +471,21 @@ export default {
 				|| (this.recordingConsent === CONFIG.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED)
 		},
 
-		showRecordingWarning() {
-			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
+		isBeforeJoinCall() {
+			return !this.isInCall && !this.isInLobby && !this.isDeviceCheck
 		},
 
-		showSilentCallOption() {
-			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
+		showRecordingWarning() {
+			return this.isBeforeJoinCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
+		},
+
+		showNotifyCallOption() {
+			return !this.hasCall && !this.isPublicShareAuthSidebar
+				&& this.isBeforeJoinCall
+		},
+
+		showStartRecordingOption() {
+			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
 		},
 
 		showUpdateChangesButton() {
@@ -543,10 +556,18 @@ export default {
 			return t('spreed', 'Error while accessing camera')
 		},
 
+		disabledCallButton() {
+			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
+				|| (this.isGuest && !this.actorStore.displayName.length)
+		},
+
+		forceShowMediaSettings() {
+			return this.isGuest && this.hasCall && this.isDialog
+		},
 	},
 
 	watch: {
-		modal(newValue) {
+		show(newValue) {
 			if (newValue) {
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
@@ -559,7 +580,7 @@ export default {
 					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
-				this.silentCall = !!BrowserStorage.getItem('silentCall_' + this.token)
+				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
@@ -610,6 +631,15 @@ export default {
 			}
 		},
 
+		forceShowMediaSettings: {
+			intermediate: true,
+			handler(value) {
+				if (value) {
+					this.showMediaSettings()
+				}
+			},
+		},
+
 		connectionFailed(value) {
 			if (value) {
 				this.skipBlurVirtualBackground = false
@@ -618,19 +648,29 @@ export default {
 	},
 
 	beforeMount() {
-		subscribe('talk:media-settings:show', this.showModal)
+		subscribe('talk:media-settings:show', this.showMediaSettings)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},
 
+	mounted() {
+		if (!this.isDialog) {
+			this.showMediaSettings()
+		}
+	},
+
 	beforeUnmount() {
-		unsubscribe('talk:media-settings:show', this.showModal)
+		unsubscribe('talk:media-settings:show', this.showMediaSettings)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
+
+		if (!this.isDialog) {
+			this.close()
+		}
 	},
 
 	methods: {
 		t,
-		showModal(page) {
-			this.modal = true
+		showMediaSettings(page) {
+			this.show = true
 			if (page === 'video-verification') {
 				this.isPublicShareAuthSidebar = true
 			}
@@ -639,14 +679,10 @@ export default {
 				this.isDeviceCheck = true
 				this.tabContent = 'devices'
 			}
-
-			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
-				this.tabContent = 'devices'
-			}
 		},
 
-		closeModal() {
-			this.modal = false
+		close() {
+			this.show = false
 			this.updatedBackground = undefined
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
@@ -682,9 +718,8 @@ export default {
 			this.videoDeviceStateChanged = !this.videoDeviceStateChanged
 		},
 
-		setSilentCall(value) {
-			this.silentCall = value
-			if (value) {
+		setNotifyCall(value) {
+			if (!value) {
 				BrowserStorage.setItem('silentCall_' + this.token, 'true')
 			} else {
 				BrowserStorage.removeItem('silentCall_' + this.token)
@@ -702,7 +737,7 @@ export default {
 				emit('local-video-control-button:toggle-video')
 			}
 
-			this.closeModal()
+			this.close()
 		},
 
 		handleUpdateBackground(background) {
@@ -856,18 +891,16 @@ export default {
 <style lang="scss" scoped>
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
-	padding-bottom: 0;
 
 	&__preview {
 		position: relative;
-		margin: 0 auto calc(var(--default-grid-baseline) * 4);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border-radius: var(--border-radius-element, var(--border-radius-large));
 		background-color: var(--color-loading-dark);
-		width: 100%;
 		aspect-ratio: 4/3;
+		margin-inline-end: var(--default-grid-baseline);
 	}
 
 	&__preview > &__preview-mirror {
@@ -885,18 +918,28 @@ export default {
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
+		z-index: 2;
 	}
 
-	&__call-buttons {
+	&__content {
+		display: grid;
+		grid-template-columns: 4fr 3fr;
+		gap: calc(var(--default-grid-baseline) * 2);
+
+		&--mobile {
+			grid-template-columns: 1fr;
+			gap: calc(var(--default-grid-baseline) * 4);
+		}
+	}
+
+	&__settings {
+		max-width: 450px; // 1/2 large modal width
 		display: flex;
-		z-index: 1;
-		align-items: center;
-		justify-content: center;
-		gap: var(--default-grid-baseline);
-		position: sticky;
-		bottom: 0;
-		background-color: var(--color-main-background);
-		padding: 10px 0 20px;
+		flex-direction: column;
+	}
+
+	&__guest {
+		margin-top: var(--default-grid-baseline);
 	}
 
 	&__device-error {
@@ -910,6 +953,9 @@ export default {
 		object-fit: contain;
 		max-height: 100%;
 		border-radius: var(--border-radius-element);
+		position: absolute;
+		top: 0;
+		inset-inline-start: 0;
 
 		&--mirrored {
 			transform: none !important;
@@ -928,17 +974,13 @@ export default {
 	}
 }
 
-.call-button {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.action-button {
+	margin-inline: auto;
+	margin-top: var(--default-grid-baseline);
 }
 
 .checkbox {
-	display: flex;
-	justify-content: center;
-	margin: calc(var(--default-grid-baseline) * 2);
-
+	margin-block: var(--default-grid-baseline);
 	&--warning {
 		&:focus-within :deep(.checkbox-radio-switch__label),
 		& :deep(.checkbox-radio-switch__label:hover) {
@@ -947,7 +989,12 @@ export default {
 	}
 }
 
-:deep(.modal-wrapper--normal > .modal-container) {
-	max-width: 500px !important;
+.media-settings__recording-warning--mobile {
+	max-width: 450px;
 }
+
+:deep(.modal-wrapper--large > .modal-container) {
+	width: unset;
+}
+
 </style>
