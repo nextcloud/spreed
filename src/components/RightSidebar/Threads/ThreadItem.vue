@@ -17,6 +17,7 @@ import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconCommentAlertOutline from 'vue-material-design-icons/CommentAlertOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
@@ -26,9 +27,19 @@ const { thread } = defineProps<{ thread: ThreadInfo }>()
 const router = useRouter()
 const route = useRoute()
 
-const threadAuthor = computed(() => getDisplayNameWithFallback(thread.first.actorDisplayName, thread.first.actorType, true))
+const threadAuthor = computed(() => {
+	if (!thread.first) {
+		return
+	}
+	return getDisplayNameWithFallback(thread.first.actorDisplayName, thread.first.actorType, true)
+})
 const lastActivity = computed(() => thread.thread.lastActivity * 1000)
-const name = computed(() => parseToSimpleMessage(thread.first.message, thread.first.messageParameters))
+const name = computed(() => {
+	if (!thread.first) {
+		return t('spreed', 'Thread origin message expired')
+	}
+	return parseToSimpleMessage(thread.first.message, thread.first.messageParameters)
+})
 const subname = computed(() => {
 	if (!thread.last) {
 		return t('spreed', 'No messages')
@@ -72,14 +83,22 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 		force-menu>
 		<template #icon>
 			<AvatarWrapper
+				v-if="thread.first"
 				:id="thread.first.actorId"
 				:name="thread.first.actorDisplayName"
 				:source="thread.first.actorType"
 				disable-menu
 				:token="thread.thread.roomToken" />
+			<IconCommentAlertOutline
+				v-else
+				:size="20" />
 		</template>
 		<template #name>
-			<span class="thread__author">{{ threadAuthor }}</span>
+			<span
+				v-if="threadAuthor"
+				class="thread__author">
+				{{ threadAuthor }}
+			</span>
 			<span>{{ name }}</span>
 		</template>
 		<template #subname>

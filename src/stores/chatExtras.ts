@@ -181,7 +181,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * Remove a thread from the store
 		 *
 		 * @param token - conversation token
-		 * @param threadId - thread id to remove
+		 * @param messageId - message id to remove all preceding threads (remove all, if omitted)
 		 */
 		clearThreads(token: string, messageId?: number) {
 			if (messageId) {
@@ -211,11 +211,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 			const thread = this.threads[token][threadId]
 			if (thread.first.id === messageId) {
+				// @ts-expect-error - missing null type in ThreadInfo
 				thread.first = null
 			} else {
 				this.threads[token][threadId].thread.numReplies -= 1
 				if (thread.last.id === messageId) {
-					thread.last = null
+					// Last message was removed but there might be older messages in the thread
+					// that don't have expiration timestamp
+					this.fetchSingleThread(token, threadId)
 				}
 			}
 		},
