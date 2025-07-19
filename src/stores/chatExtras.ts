@@ -178,6 +178,52 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		/**
+		 * Remove a thread from the store
+		 *
+		 * @param token - conversation token
+		 * @param messageId - message id to remove all preceding threads (remove all, if omitted)
+		 */
+		clearThreads(token: string, messageId?: number) {
+			if (messageId) {
+				// Clear threads that are older than the given messageId
+				for (const threadId of Object.keys(Object(this.threads[token]))) {
+					if (+threadId < messageId) {
+						delete this.threads[token][+threadId]
+					}
+				}
+			} else {
+				// Clear all threads for the conversation
+				delete this.threads[token]
+			}
+		},
+
+		/**
+		 * Remove a message from a thread object
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to remove message from
+		 * @param messageId - message id to remove
+		 */
+		removeMessageFromThread(token: string, threadId: number, messageId: number) {
+			if (!this.threads[token]?.[threadId]) {
+				return
+			}
+
+			const thread = this.threads[token][threadId]
+			if (thread.first.id === messageId) {
+				// @ts-expect-error - missing null type in ThreadInfo
+				thread.first = null
+			} else {
+				this.threads[token][threadId].thread.numReplies -= 1
+				if (thread.last.id === messageId) {
+					// Last message was removed but there might be older messages in the thread
+					// that don't have expiration timestamp
+					this.fetchSingleThread(token, threadId)
+				}
+			}
+		},
+
+		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
 		 * @param token - conversation token
@@ -318,6 +364,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		purgeChatExtras(token: string) {
 			this.removeParentIdToReply(token)
 			this.removeChatInput(token)
+			this.clearThreads(token)
 		},
 
 		setTasksCounters({ tasksCount, tasksDoneCount }: { tasksCount: number, tasksDoneCount: number }) {

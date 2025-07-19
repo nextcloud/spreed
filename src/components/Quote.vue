@@ -117,6 +117,9 @@ function isExistingMessage(message: ChatMessage | DeletedParentMessage): message
 	return 'messageType' in message
 }
 
+/**
+ * Go to thread if it exists
+ */
 function goToThread() {
 	if (isExistingMessage(message) && message.threadId) {
 		threadId.value = message.threadId
