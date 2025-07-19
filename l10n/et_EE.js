@@ -1717,6 +1717,7 @@ OC.L10N.register(
     "Raise or lower hand" : "Anna käega märku või lõpeta märguandmine",
     "Mouse wheel" : "Hiire ratas",
     "Zoom-in / zoom-out a screen share" : "Suumi jagatavas ekraanis sisse/välja",
+    "Talk version: {version}" : "Talk-kõnerakenduse versioon: {version}",
     "Start call silently" : "Helista vaikselt",
     "Start call" : "Helista",
     "End call" : "Lõpeta kõne",

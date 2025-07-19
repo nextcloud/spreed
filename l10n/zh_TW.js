@@ -1771,6 +1771,7 @@ OC.L10N.register(
     "Raise or lower hand" : "舉起或放下手",
     "Mouse wheel" : "滑鼠滾輪",
     "Zoom-in / zoom-out a screen share" : "放大/縮小螢幕分享",
+    "Talk version: {version}" : "Talk 版本：{version}",
     "Start call silently" : "安靜地開始通話",
     "Start call" : "開始通話",
     "End call" : "結束通話",
