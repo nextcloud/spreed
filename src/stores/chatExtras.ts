@@ -177,6 +177,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
+		/**
+		 * Remove a thread from the store
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to remove
+		 */
 		clearThreads(token: string, messageId?: number) {
 			if (messageId) {
 				// Clear threads that are older than the given messageId
@@ -191,12 +197,24 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
-		removeMessageFromThreads(token: string, messageId: number) {
-			for (const threadId of Object.keys(Object(this.threads[token]))) {
-				const thread = this.threads[token][+threadId]
-				if (thread.first?.id === messageId) {
-					thread.first = null
-				} else if (thread.last?.id === messageId) {
+		/**
+		 * Remove a message from a thread object
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to remove message from
+		 * @param messageId - message id to remove
+		 */
+		removeMessageFromThread(token: string, threadId: number, messageId: number) {
+			if (!this.threads[token]?.[threadId]) {
+				return
+			}
+
+			const thread = this.threads[token][threadId]
+			if (thread.first.id === messageId) {
+				thread.first = null
+			} else {
+				this.threads[token][threadId].thread.numReplies -= 1
+				if (thread.last.id === messageId) {
 					thread.last = null
 				}
 			}

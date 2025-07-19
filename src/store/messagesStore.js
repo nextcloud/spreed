@@ -1448,15 +1448,15 @@ const actions = {
 		if (!context.state.messages[token]) {
 			return
 		}
-			const chatExtrasStore = useChatExtrasStore()
+		const chatExtrasStore = useChatExtrasStore()
 		const timestamp = convertToUnix(Date.now())
 		const messageIds = Object.keys(context.state.messages[token])
 
 		messageIds.forEach((messageId) => {
-			if (context.state.messages[token][messageId].expirationTimestamp
-				&& timestamp > context.state.messages[token][messageId].expirationTimestamp) {
-				if (context.state.messages[token][messageId].isThread) {
-					chatExtrasStore.removeThreadFromMessages(token, messageId)
+			const message = context.state.messages[token][messageId]
+			if (message.expirationTimestamp && timestamp > message.expirationTimestamp) {
+				if (message.isThread) {
+					chatExtrasStore.removeMessageFromThread(token, message.threadId, messageId)
 				}
 				context.commit('deleteMessage', { token, id: messageId })
 			}
