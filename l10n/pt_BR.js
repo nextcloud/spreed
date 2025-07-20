@@ -1771,6 +1771,7 @@ OC.L10N.register(
     "Raise or lower hand" : "Levantar ou baixar a mão",
     "Mouse wheel" : "Roda do mouse",
     "Zoom-in / zoom-out a screen share" : "Aumentar / diminuir o zoom de um compartilhamento de tela",
+    "Talk version: {version}" : "Versão do Talk: {version}",
     "Start call silently" : "Iniciar chamada silenciosamente",
     "Start call" : "Iniciar chamada",
     "End call" : "Encerrar chamada",
