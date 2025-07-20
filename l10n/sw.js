@@ -267,6 +267,7 @@ OC.L10N.register(
     "Created at" : "Imetengenezwa katika",
     "Shared secret" : "Shared secret",
     "Recording consent" : "Idhini ya kurekodi",
+    "Error code" : "Error code",
     "{option1} and {option2}" : "{option1} and {option2}",
     "Failed" : "Imeshindwa",
     "OK" : "OK",
