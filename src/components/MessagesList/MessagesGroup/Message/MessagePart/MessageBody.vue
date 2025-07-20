@@ -586,10 +586,6 @@ export default {
 	}
 }
 
-:deep(.rich-text--wrapper) {
-	direction: inherit;
-}
-
 // Always render code blocks LTR
 :deep(.rich-text--wrapper) pre {
 	direction: ltr;
