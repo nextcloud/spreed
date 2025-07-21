@@ -85,6 +85,7 @@ import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
@@ -148,6 +149,7 @@ export default {
 		return {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
+			chatStore: useChatStore(),
 			isChatVisible,
 			threadId,
 
@@ -207,10 +209,10 @@ export default {
 		 */
 		messagesList() {
 			if (!this.threadId) {
-				return this.$store.getters.messagesList(this.token)
+				return this.chatStore.getMessagesList(this.token)
 			}
 
-			return this.$store.getters.messagesList(this.token)
+			return this.chatStore.getMessagesList(this.token)
 				.filter((message) => {
 					return message.threadId === this.threadId
 				})

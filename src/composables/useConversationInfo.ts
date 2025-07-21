@@ -9,8 +9,8 @@ import type { ChatMessage, Conversation } from '../types/index.ts'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { computed, ref, toRef } from 'vue'
-import { useStore } from 'vuex'
-import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
+import { CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
@@ -40,6 +40,8 @@ export function useConversationInfo({
 	exposeMessagesRef = ref(null),
 	exposeDescriptionRef = ref(null),
 }: Payload) {
+	const chatStore = useChatStore()
+
 	const exposeMessages = exposeMessagesRef.value !== null ? exposeMessagesRef.value : !isSearchResult.value
 	const exposeDescription = exposeDescriptionRef.value !== null ? exposeDescriptionRef.value : isSearchResult.value
 
@@ -111,8 +113,7 @@ export function useConversationInfo({
 		if (item.value.objectType === CONVERSATION.OBJECT_TYPE.EVENT
 			&& startTime && startTime > Date.now()) {
 			// Check if there is a message to display
-			const store = useStore()
-			const hasHumanMessage = item.value.unreadMessages !== 0 || store.getters.messagesList(item.value.token).some((message: ChatMessage) => {
+			const hasHumanMessage = item.value.unreadMessages !== 0 || chatStore.getMessagesList(item.value.token).some((message: ChatMessage) => {
 				return message.systemMessage === '' && message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 			})
 
