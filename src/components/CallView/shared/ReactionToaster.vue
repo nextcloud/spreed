@@ -32,7 +32,7 @@
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
