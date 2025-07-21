@@ -26,6 +26,7 @@ import {
 } from '../services/messagesService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
 import { useReactionsStore } from '../stores/reactions.js'
@@ -298,6 +299,10 @@ const mutations = {
 		const preparedMessage = !message.parent && storedMessage?.parent
 			? { ...message, parent: storedMessage.parent }
 			: message
+
+		if (preparedMessage.parent) {
+			preparedMessage.parent.isThread = preparedMessage.isThread
+		}
 		state.messages[token][message.id] = preparedMessage
 	},
 	/**
@@ -475,21 +480,6 @@ const mutations = {
 		}
 	},
 
-	removeExpiredMessages(state, { token }) {
-		if (!state.messages[token]) {
-			return
-		}
-
-		const timestamp = convertToUnix(Date.now())
-		const messageIds = Object.keys(state.messages[token])
-		messageIds.forEach((messageId) => {
-			if (state.messages[token][messageId].expirationTimestamp
-				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
-				delete state.messages[token][messageId]
-			}
-		})
-	},
-
 	easeMessageList(state, { token, lastReadMessage }) {
 		if (!state.messages[token]) {
 			return
@@ -544,6 +534,7 @@ const actions = {
 	processMessage(context, { token, message }) {
 		const sharedItemsStore = useSharedItemsStore()
 		const actorStore = useActorStore()
+		const chatExtrasStore = useChatExtrasStore()
 
 		if (message.systemMessage === 'message_deleted'
 			|| message.systemMessage === 'reaction'
@@ -574,6 +565,21 @@ const actions = {
 				if (message.parent.id === context.getters.conversation(token).lastMessage?.id) {
 					context.dispatch('updateConversationLastMessage', { token, lastMessage: message.parent })
 				}
+
+				const thread = chatExtrasStore.getThread(token, message.parent.threadId)
+				// update threads, if it is the first or the last message in the thread
+				if (thread && (thread.last?.id === message.parent.id || thread.first?.id === message.parent.id)) {
+					const updatedData = {
+						thread: {
+							...thread.thread,
+							lastActivity: message.parent.timestamp,
+						},
+						first: (thread.first?.id === message.parent.id) ? message.parent : undefined,
+						last: (thread.last?.id === message.parent.id) ? message.parent : undefined,
+					}
+					chatExtrasStore.updateThread(token, message.parent.threadId, updatedData)
+				}
+
 				// Check existing messages for having a deleted / edited message as parent, and update them
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
@@ -589,6 +595,10 @@ const actions = {
 					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
+				// Fetch thread data in case it doesn't exist in the store yet
+				if (!chatExtrasStore.getThread(token, message.threadId) && chatExtrasStore.threads[token] !== undefined) {
+					chatExtrasStore.fetchSingleThread(token, message.threadId)
+				}
 			}
 
 			// Quit processing
@@ -639,6 +649,7 @@ const actions = {
 
 		if (message.systemMessage === 'history_cleared') {
 			sharedItemsStore.purgeSharedItemsStore(token, message.id)
+			chatExtrasStore.clearThreads(token, message.id)
 			context.commit('clearMessagesHistory', {
 				token,
 				id: message.id,
@@ -646,6 +657,24 @@ const actions = {
 		}
 
 		context.commit('addMessage', { token, message })
+
+		// Update threads
+		if (message.isThread) {
+			const thread = chatExtrasStore.getThread(token, message.threadId)
+			if (thread) {
+				const updateNumReplies = thread.thread.lastMessageId < message.id
+				chatExtrasStore.updateThread(message.token, message.threadId, {
+					thread: {
+						id: message.threadId,
+						roomToken: message.token,
+						lastMessageId: message.id,
+						lastActivity: message.timestamp,
+						numReplies: thread.thread.numReplies + (updateNumReplies ? 1 : 0),
+					},
+					last: message,
+				})
+			}
+		}
 
 		if (message.messageParameters && [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_AUDIO, MESSAGE.TYPE.RECORD_VIDEO].includes(message.messageType)) {
 			if (message.messageParameters?.object || message.messageParameters?.file) {
@@ -1416,7 +1445,20 @@ const actions = {
 	},
 
 	async removeExpiredMessages(context, { token }) {
-		context.commit('removeExpiredMessages', { token })
+		if (!context.state.messages[token]) {
+			return
+		}
+		const chatExtrasStore = useChatExtrasStore()
+		const timestamp = convertToUnix(Date.now())
+
+		context.getters.messagesList(token).forEach((message) => {
+			if (message.expirationTimestamp && timestamp > message.expirationTimestamp) {
+				if (message.isThread) {
+					chatExtrasStore.removeMessageFromThread(token, message.threadId, message.id)
+				}
+				context.commit('deleteMessage', { token, id: message.id })
+			}
+		})
 	},
 
 	async easeMessageList(context, { token }) {
