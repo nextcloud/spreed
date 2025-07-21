@@ -67,9 +67,7 @@ function isSelected(tabId: string) {
  * @param tabId - New selected tabId
  */
 function handleTabClick(tabId: string) {
-	if (isActive(tabId)) {
-		isOpen.value = !isOpen.value
-	} else {
+	if (!isActive(tabId)) {
 		emit('update:active', tabId)
 		isOpen.value = true
 	}
@@ -91,7 +89,6 @@ function handleTabsAfterClosed() {
 			<NcButton v-for="tab in tabs"
 				:id="getRefId('tab', tab.id)"
 				:key="tab.id"
-				wide
 				role="tab"
 				:variant="isSelected(tab.id) ? 'secondary' : 'tertiary'"
 				:aria-selected="isSelected(tab.id) ? 'true' : 'false'"
@@ -125,6 +122,10 @@ function handleTabsAfterClosed() {
 </template>
 
 <style lang="scss" scoped>
+.tabs {
+	margin-bottom: auto;
+}
+
 .tab-list {
 	display: flex;
 	justify-content: center;

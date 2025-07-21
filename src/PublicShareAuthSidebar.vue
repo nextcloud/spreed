@@ -25,7 +25,7 @@
 
 <script>
 import { getCurrentUser, getGuestNickname } from '@nextcloud/auth'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import CallView from './components/CallView/CallView.vue'
@@ -134,8 +134,6 @@ export default {
 				this.actorStore.setCurrentUser(currentUser)
 			} else if (guestNickname) {
 				this.actorStore.setDisplayName(guestNickname)
-			} else {
-				subscribe('talk:guest-name:added', this.showGuestMediaSettings)
 			}
 
 			await this.$store.dispatch('joinConversation', { token: this.token })
@@ -167,13 +165,7 @@ export default {
 				this.fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
 			}
 
-			if (currentUser || guestNickname) {
-				// Joining the call needs to be done once the participant identifier
-				// has been set, which is done once the conversation has been
-				// fetched. MediaSettings are called to set up audio and video devices
-				// and also to give a consent to recording, if set up
-				emit('talk:media-settings:show', 'video-verification')
-			}
+			emit('talk:media-settings:show', 'video-verification')
 		},
 
 		async fetchCurrentConversation() {
@@ -200,14 +192,6 @@ export default {
 				this.$store.dispatch('deleteConversation', this.token)
 				this.tokenStore.updateToken('')
 			}
-		},
-
-		async showGuestMediaSettings() {
-			// Guest needs to add their display name right after joining conversation,
-			// before fetching and showing media settings. Then, this latter will be triggered
-			// by the guest name addition event.
-			emit('talk:media-settings:show', 'video-verification')
-			unsubscribe('talk:guest-name:added', this.showGuestMediaSettings)
 		},
 	},
 }
