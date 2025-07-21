@@ -9,7 +9,7 @@ import type { Conversation, DashboardEventRoom } from '../../types/index.ts'
 
 import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import { useNow } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'

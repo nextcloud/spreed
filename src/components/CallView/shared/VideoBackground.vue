@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 
 export default {
 	name: 'VideoBackground',
