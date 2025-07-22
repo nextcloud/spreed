@@ -26,6 +26,7 @@ import {
 } from '../services/messagesService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
@@ -992,6 +993,10 @@ const actions = {
 		}
 
 		context.commit('loadedMessagesOfConversation', { token })
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data, {
+			mergeBy: +lastKnownMessageId,
+		})
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | fetch history`, 'first chunk')
@@ -1087,6 +1092,9 @@ const actions = {
 		}
 
 		context.commit('loadedMessagesOfConversation', { token })
+
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data)
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | get context`, 'first chunk')
@@ -1265,6 +1273,11 @@ const actions = {
 		}
 
 		context.commit('loadedMessagesOfConversation', { token })
+
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data, {
+			mergeBy: +lastKnownMessageId,
+		})
 
 		return response
 	},

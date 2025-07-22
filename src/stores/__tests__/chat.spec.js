@@ -83,4 +83,80 @@ describe('chatStore', () => {
 			expect(chatStore.getMessagesList('token3')).toEqual([]) // Neither messages nor blocks
 		})
 	})
+
+	describe('process messages chunks', () => {
+		it('creates a new block, if not created yet', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA)])
+		})
+
+		it('extends an existing block, if messages overlap', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockE)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(1)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA, chatBlockE)])
+		})
+
+		it('creates a new block, if adjacent status to existing blocks is unknown', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA), outputSet(chatBlockB)])
+		})
+
+		it('extends an existing block, if messages are adjacent by options.mergeBy', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockD, { mergeBy: mockMessages[109].id })
+			chatStore.processChatBlocks(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockD, chatBlockA), outputSet(chatBlockB, chatBlockF)])
+		})
+
+		it('merges existing blocks, if resulting sets overlap', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
+
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
+			chatStore.processChatBlocks(TOKEN, chatBlockE)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(1)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA, chatBlockE, chatBlockB, chatBlockF)])
+		})
+
+		it('retains the correct order of blocks', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(3)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA), outputSet(chatBlockB), outputSet(chatBlockC)])
+		})
+	})
 })
