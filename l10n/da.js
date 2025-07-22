@@ -606,7 +606,6 @@ OC.L10N.register(
     "Your default media state has been saved" : "Din standard medietilstand er blevet gemt",
     "Error while setting default media state" : "Din standard medietilstand er blevet gemt",
     "The call might be recorded." : "Opkaldes optages måske",
-    "Call without notification" : "Ring uden besked",
     "Select a file" : "Vælg en fil",
     "Invalid path selected" : "Ugyldig filsti valgt",
     "Blur" : "Slør",
@@ -839,6 +838,7 @@ OC.L10N.register(
     "Don't warn about connectivity issues in calls with more than 2 participants" : "Advar ikke om forbindelsesproblemer i opkald med mere end 2 deltagere",
     "Copy conversation link" : "Kopier samtalelink",
     "Filter unread mentions" : "Filtrer ulæste omtaler",
+    "Call without notification" : "Ring uden besked",
     "Close" : "Luk",
     "Choose devices" : "Vælg enheder"
 },
