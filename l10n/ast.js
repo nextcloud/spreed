@@ -676,9 +676,7 @@ OC.L10N.register(
     "Access to microphone was denied" : "Negóse l'accesu al micrófonu",
     "Error while accessing microphone" : "Hebo un error mentanto s'accedía al micrófonu",
     "Access to camera is only possible with HTTPS" : "L'accesu a la cámara namás ye posible con HTTPS",
-    "Media settings" : "Configuración multimedia",
     "The call is being recorded." : "La llamada ta grabándose",
-    "Normal call" : "Llamada normal",
     "Invalid path selected" : "Seleicionóse un camín inválidu",
     "Blur" : "Emborrinar",
     "Upload" : "Xunir",
@@ -958,6 +956,8 @@ OC.L10N.register(
     "You were invited to a conversation." : "Convidáronte a una conversación.",
     "{user} invited you to a private conversation" : "{user} convidóte a una conversación privada",
     "Copy conversation link" : "Copiar l'enllaz de la conversación",
+    "Media settings" : "Configuración multimedia",
+    "Normal call" : "Llamada normal",
     "Close" : "Zarrar",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Anovóse Nextcloud Talk. Tienes de volver cargar la páxina enantes de poder aniciar o xunite a una llamada."
 },

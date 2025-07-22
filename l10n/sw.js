@@ -353,8 +353,8 @@ OC.L10N.register(
     "None" : "Hakuna",
     "Devices" : "Vifaa",
     "The call might be recorded." : "Simu inaweza kuwa imerekodiwa",
-    "Call without notification" : "Call without notification",
     "Invalid path selected" : "Njia iliyochaguliwa si halali",
+    "Blur" : "Blur",
     "Files" : "Mafaili",
     "Message sent" : "Ujumbe umetumwa",
     "Later today – {timeLocale}" : "Baadaye leo-{timeLocale}",
@@ -464,6 +464,7 @@ OC.L10N.register(
     "Agenda" : "Ajenda",
     "Call summary" : "Muhtasari wa simu",
     "Call summary - {title}" : "Muhtasari wa simu-{title}",
+    "Call without notification" : "Call without notification",
     "Close" : "Funga"
 },
 "nplurals=2; plural=(n != 1);");
