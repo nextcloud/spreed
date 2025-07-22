@@ -130,10 +130,47 @@ export const useChatStore = defineStore('chat', () => {
 		return false
 	}
 
+	/**
+	 * Adds the message id to the main chat block
+	 * (It is expected to appear in most recent one)
+	 */
+	function addMessageToChatBlocks(token: string, message: ChatMessage) {
+		if (!chatBlocks[token]) {
+			chatBlocks[token] = [new Set<number>([message.id])]
+		} else {
+			chatBlocks[token][0].add(message.id)
+		}
+	}
+
+	/**
+	 * Removes one or more message ids from all chat blocks
+	 */
+	function removeMessagesFromChatBlocks(token: string, messageIds: number | number[]) {
+		if (!chatBlocks[token]) {
+			return
+		}
+
+		const messageIdArray = Array.isArray(messageIds) ? messageIds : [messageIds]
+
+		chatBlocks[token] = chatBlocks[token].reduce<Set<number>[]>((acc, block) => {
+			messageIdArray.forEach((id) => block.delete(id))
+			if (block.size > 0) {
+				acc.push(block)
+			}
+			return acc
+		}, [])
+
+		if (chatBlocks[token].length === 0) {
+			delete chatBlocks[token]
+		}
+	}
+
 	return {
 		chatBlocks,
 
 		getMessagesList,
 		processChatBlocks,
+		addMessageToChatBlocks,
+		removeMessagesFromChatBlocks,
 	}
 })

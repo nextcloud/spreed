@@ -159,4 +159,95 @@ describe('chatStore', () => {
 			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA), outputSet(chatBlockB), outputSet(chatBlockC)])
 		})
 	})
+
+	describe('add messages', () => {
+		it('creates a new block, if not created yet', () => {
+			// Act
+			chatStore.addMessageToChatBlocks(TOKEN, chatBlockD[0])
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockD)])
+		})
+
+		it('extends the most recent block', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Act
+			chatStore.addMessageToChatBlocks(TOKEN, chatBlockD[0])
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockD, chatBlockA), outputSet(chatBlockB)])
+		})
+
+		it('does nothing, if message is already present in the most recent block', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.addMessageToChatBlocks(TOKEN, chatBlockA[0])
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA)])
+		})
+	})
+
+	describe('remove messages', () => {
+		it('does nothing, if no blocks are created yet', () => {
+			// Act
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockD[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+
+		it('does nothing, if message is not present in existing blocks', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockD[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA)])
+		})
+
+		it('removes a message id from all blocks', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockA[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet([chatBlockA[1]])])
+		})
+
+		it('removes a list of message ids and clears up empty blocks', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Act
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockB.map((message) => message.id))
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(1)
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA)])
+		})
+
+		it('clears up store after removing of all blocks', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Act
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockB.map((message) => message.id))
+			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockA.map((message) => message.id))
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+	})
 })

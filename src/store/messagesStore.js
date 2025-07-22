@@ -510,6 +510,8 @@ const mutations = {
 		newMessagesToRemove.forEach((messageId) => {
 			delete state.messages[token][messageId]
 		})
+		const chatStore = useChatStore()
+		chatStore.removeMessagesFromChatBlocks(token, [...messagesToRemove, ...newMessagesToRemove].map((id) => +id))
 
 		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token].toString())) {
 			state.firstKnown[token] = +newFirstKnown
@@ -760,6 +762,8 @@ const actions = {
 	 */
 	addTemporaryMessage(context, { token, message }) {
 		context.commit('addTemporaryMessage', { token, message })
+		const chatStore = useChatStore()
+		chatStore.addMessageToChatBlocks(token, message)
 		// Update conversations list order
 		context.dispatch('updateConversationLastActive', token)
 	},
@@ -788,6 +792,9 @@ const actions = {
 	 */
 	removeTemporaryMessageFromStore(context, { token, id }) {
 		context.commit('deleteMessage', { token, id })
+
+		const chatStore = useChatStore()
+		chatStore.removeMessagesFromChatBlocks(token, id)
 	},
 
 	/**
@@ -1338,6 +1345,8 @@ const actions = {
 			// Own message might have been added already by polling, which is more up-to-date (e.g. reactions)
 			if (!context.state.messages[token]?.[response.data.ocs.data.id]) {
 				context.dispatch('processMessage', { token, message: response.data.ocs.data })
+				const chatStore = useChatStore()
+				chatStore.addMessageToChatBlocks(token, response.data.ocs.data)
 			}
 
 			return response
@@ -1462,6 +1471,7 @@ const actions = {
 			return
 		}
 		const chatExtrasStore = useChatExtrasStore()
+		const chatStore = useChatStore()
 		const timestamp = convertToUnix(Date.now())
 
 		context.getters.messagesList(token).forEach((message) => {
@@ -1470,6 +1480,7 @@ const actions = {
 					chatExtrasStore.removeMessageFromThread(token, message.threadId, message.id)
 				}
 				context.commit('deleteMessage', { token, id: message.id })
+				chatStore.removeMessagesFromChatBlocks(token, message.id)
 			}
 		})
 	},
