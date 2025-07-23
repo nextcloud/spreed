@@ -86,7 +86,7 @@ export function useGetMessagesProvider() {
 	})
 
 	/** Initial check to ensure context is created once route is available */
-	router.isReady().then(() => {
+	router?.isReady().then(() => {
 		if (currentToken.value && isParticipant.value && !isInLobby.value) {
 			handleStartGettingMessagesPreconditions(currentToken.value)
 		}
@@ -95,7 +95,7 @@ export function useGetMessagesProvider() {
 	watch(
 		[currentToken, () => isParticipant.value && !isInLobby.value],
 		([newToken, canGetMessages], [oldToken, _oldCanGetMessages]) => {
-			if (route.name === START_LOCATION.name) { // Direct object comparison does not work
+			if (route && route.name === START_LOCATION.name) { // Direct object comparison does not work
 				return
 			}
 			if (oldToken && oldToken !== newToken) {
@@ -201,7 +201,7 @@ export function useGetMessagesProvider() {
 	async function handleStartGettingMessagesPreconditions(token: string) {
 		// prevent sticky mode before we have loaded anything
 		isInitialisingMessages.value = true
-		const focusMessageId = getMessageIdFromHash(route.hash)
+		const focusMessageId = getMessageIdFromHash(route?.hash)
 
 		store.dispatch('setVisualLastReadMessageId', { token, id: conversation.value!.lastReadMessage })
 
