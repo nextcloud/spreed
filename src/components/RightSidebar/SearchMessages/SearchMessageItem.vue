@@ -7,6 +7,7 @@
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { computed } from 'vue'
+import { useRoute } from 'vue-router/composables'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -15,6 +16,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import { useStore } from '../../../composables/useStore.js'
 import { CONVERSATION } from '../../../constants.ts'
+import { EventBus } from '../../../services/EventBus.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
 
 const props = defineProps({
@@ -61,6 +63,7 @@ const props = defineProps({
 })
 
 const store = useStore()
+const route = useRoute()
 const dashboardStore = useDashboardStore()
 
 const conversation = computed(() => store.getters.conversation(props.token))
@@ -91,6 +94,16 @@ const clearReminderLabel = computed(() => {
 	}
 	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(+props.timestamp * 1000).format('ddd LT') })
 })
+
+/**
+ * Focus selected message
+ */
+function handleResultClick() {
+	if (route.hash === '#message_' + props.messageId) {
+		// Already on this message route, just trigger highlight
+		EventBus.emit('focus-message', +props.messageId)
+	}
+}
 </script>
 
 <template>
@@ -98,7 +111,8 @@ const clearReminderLabel = computed(() => {
 		:name="name"
 		:to="to"
 		:title="richSubline"
-		force-menu>
+		force-menu
+		@click="handleResultClick">
 		<template #icon>
 			<AvatarWrapper v-if="!isReminder || isOneToOneConversation"
 				:id="actorId"
