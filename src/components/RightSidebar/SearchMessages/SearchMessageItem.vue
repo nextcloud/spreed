@@ -19,6 +19,7 @@ import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import { CONVERSATION } from '../../../constants.ts'
+import { EventBus } from '../../../services/EventBus.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
@@ -68,6 +69,16 @@ const clearReminderLabel = computed(() => {
 const active = computed(() => {
 	return route.fullPath === router.resolve(props.to).fullPath
 })
+
+/**
+ * Focus selected message
+ */
+function handleResultClick() {
+	if (route.hash === '#message_' + props.messageId) {
+		// Already on this message route, just trigger highlight
+		EventBus.emit('focus-message', props.messageId)
+	}
+}
 </script>
 
 <template>
@@ -76,7 +87,8 @@ const active = computed(() => {
 		:to="to"
 		:active="active"
 		:title="richSubline"
-		force-menu>
+		force-menu
+		@click="handleResultClick">
 		<template #icon>
 			<AvatarWrapper v-if="!isReminder || isOneToOneConversation"
 				:id="actorId"
