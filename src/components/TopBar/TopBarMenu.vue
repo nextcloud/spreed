@@ -36,28 +36,7 @@
 					{{ t('spreed', 'Check devices') }}
 				</NcActionButton>
 				<NcActionSeparator />
-				<!-- Call layout switcher -->
-				<NcActionButton v-if="showCallLayoutSwitch"
-					close-after-click
-					@click="changeView">
-					<template #icon>
-						<IconViewGrid v-if="!isGrid" :size="20" />
-						<IconViewGallery v-else :size="20" />
-					</template>
-					{{ changeViewText }}
-				</NcActionButton>
 			</template>
-
-			<!-- Fullscreen -->
-			<NcActionButton :aria-label="t('spreed', 'Toggle full screen')"
-				close-after-click
-				@click="toggleFullscreen">
-				<template #icon>
-					<IconFullscreen v-if="!isFullscreen" :size="20" />
-					<IconFullscreenExit v-else :size="20" />
-				</template>
-				{{ labelFullscreen }}
-			</NcActionButton>
 
 			<!-- Go to file -->
 			<NcActionLink v-if="isFileConversation"
@@ -122,12 +101,22 @@
 				</template>
 				{{ t('spreed', 'Download attendance list') }}
 			</NcActionLink>
+			<!-- Fullscreen -->
+			<NcActionButton v-if="!isInCall"
+				:aria-label="t('spreed', 'Toggle full screen')"
+				close-after-click
+				@click="toggleFullscreen">
+				<template #icon>
+					<IconFullscreen v-if="!isFullscreen" :size="20" />
+					<IconFullscreenExit v-else :size="20" />
+				</template>
+				{{ labelFullscreen }}
+			</NcActionButton>
 		</NcActions>
 	</div>
 </template>
 
 <script>
-import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -148,8 +137,6 @@ import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
-import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
-import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import {
 	disableFullscreen,
@@ -159,7 +146,6 @@ import {
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useCallViewStore } from '../../stores/callView.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -184,8 +170,6 @@ export default {
 		IconRecordCircle,
 		IconStop,
 		IconVideo,
-		IconViewGallery,
-		IconViewGrid,
 	},
 
 	props: {
@@ -216,9 +200,8 @@ export default {
 	setup() {
 		return {
 			IconFileDownload,
-			isInCall: useIsInCall(),
 			isFullscreen: useDocumentFullscreen(),
-			callViewStore: useCallViewStore(),
+			isInCall: useIsInCall(),
 		}
 	},
 
@@ -252,16 +235,6 @@ export default {
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		changeViewText() {
-			return this.isGrid
-				? t('spreed', 'Speaker view')
-				: t('spreed', 'Grid view')
-		},
-
-		isGrid() {
-			return this.callViewStore.isGrid
 		},
 
 		participantType() {
@@ -303,10 +276,6 @@ export default {
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
-		showCallLayoutSwitch() {
-			return !this.callViewStore.isEmptyCallView
-		},
-
 		canDownloadCallParticipants() {
 			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate
 		},
@@ -314,10 +283,6 @@ export default {
 		downloadCallParticipantsLink() {
 			return generateOcsUrl('apps/spreed/api/v4/call/{token}/download', { token: this.token })
 		},
-	},
-
-	created() {
-		useHotKey('f', this.toggleFullscreen)
 	},
 
 	methods: {
@@ -349,11 +314,6 @@ export default {
 				emit('toggle-navigation', { open: false })
 				enableFullscreen()
 			}
-		},
-
-		changeView() {
-			this.callViewStore.setCallViewMode({ token: this.token, isGrid: !this.isGrid, clearLast: false })
-			this.callViewStore.setSelectedVideoPeerId(null)
 		},
 
 		showMediaSettingsDialog() {
