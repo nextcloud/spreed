@@ -1095,6 +1095,11 @@ export default {
 	&__content {
 		max-width: $messages-list-max-width;
 		margin: 0 auto;
+
+		/* Safe margin to fit MessageButtonsBar on screen for last one-line message */
+		&:last-of-type {
+			margin-bottom: calc(var(--default-clickable-area) - var(--clickable-area-small) - var(--default-grid-baseline));
+		}
 	}
 
 	&__loading {
@@ -1142,10 +1147,6 @@ export default {
 		color: var(--color-text-maxcontrast);
 		background-color: var(--color-background-dark);
 		border-radius: var(--border-radius-element, var(--border-radius-pill));
-	}
-
-	&:last-child {
-		margin-bottom: 16px;
 	}
 }
 

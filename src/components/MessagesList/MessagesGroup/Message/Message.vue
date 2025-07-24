@@ -491,7 +491,8 @@ export default {
 		inset-inline-end: 0;
 		width: fit-content;
 		height: 100%;
-		padding: 8px 8px 0 0;
+		padding-top: var(--default-grid-baseline);
+		padding-inline-end: var(--default-grid-baseline);
 	}
 }
 
