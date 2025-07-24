@@ -138,6 +138,7 @@ export default {
 
 	setup(props) {
 		const {
+			contextMessageId,
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
@@ -158,6 +159,7 @@ export default {
 			isChatVisible,
 			threadId,
 
+			contextMessageId,
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
@@ -213,14 +215,10 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
-			if (!this.threadId) {
-				return this.chatStore.getMessagesList(this.token)
-			}
-
-			return this.chatStore.getMessagesList(this.token)
-				.filter((message) => {
-					return message.threadId === this.threadId
-				})
+			return this.chatStore.getMessagesList(this.token, {
+				messageId: this.contextMessageId,
+				threadId: this.threadId,
+			})
 		},
 
 		isMessagesListPopulated() {

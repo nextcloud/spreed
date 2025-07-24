@@ -1032,10 +1032,11 @@ const actions = {
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the conversation token;
 	 * @param {number} data.messageId Message id to get the context for;
+	 * @param {number} data.threadId Thread id to get the context for;
 	 * @param {object} data.requestOptions request options;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 */
-	async getMessageContext(context, { token, messageId, requestOptions, minimumVisible }) {
+	async getMessageContext(context, { token, messageId, threadId, requestOptions, minimumVisible }) {
 		minimumVisible = (typeof minimumVisible === 'undefined') ? Math.floor(CHAT.MINIMUM_VISIBLE / 2) : minimumVisible
 
 		context.dispatch('cancelGetMessageContext')
@@ -1048,6 +1049,7 @@ const actions = {
 		const response = await request({
 			token,
 			messageId,
+			threadId,
 			limit: CHAT.FETCH_LIMIT / 2,
 		}, requestOptions)
 

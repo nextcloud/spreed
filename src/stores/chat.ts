@@ -12,6 +12,13 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
 
+type GetMessagesListOptions = {
+	/** if given, look for Set that has it */
+	messageId?: number
+	/** if given, look for thread Set */
+	threadId?: number
+}
+
 type ProcessChatBlocksOptions = {
 	/** if given, look for Set that has it */
 	mergeBy?: number
@@ -43,14 +50,37 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Returns list of messages, belonging to current context
 	 */
-	function getMessagesList(token: string): ChatMessage[] {
+	function getMessagesList(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): ChatMessage[] {
 		if (!store.state.messagesStore.messages[token] || !chatBlocks[token]) {
 			return []
 		}
 
-		// FIXME temporary show all messages from al blocks - no behaviour change
-		return Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))
-			.sort((a, b) => a - b)
+		if (threadId) {
+			// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
+			return prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+				.filter((message) => {
+					return message.threadId === threadId
+				})
+		}
+
+		if (messageId <= 0) {
+			// Fallback or constant, return first block
+			return prepareMessagesList(token, chatBlocks[token][0])
+		}
+
+		// Otherwise look for a set containing given context id
+		const contextBlock = chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+		return prepareMessagesList(token, contextBlock)
+	}
+
+	/**
+	 * Returns list of messages from given set
+	 */
+	function prepareMessagesList(token: string, block: Set<number>): ChatMessage[] {
+		return Array.from(block).sort((a, b) => a - b)
 			.reduce<ChatMessage[]>((acc, id) => {
 				const message = store.state.messagesStore.messages[token][id]
 				if (message) {
@@ -59,6 +89,25 @@ export const useChatStore = defineStore('chat', () => {
 				}
 				return acc
 			}, [])
+	}
+
+	/**
+	 * Returns whether message is known in any of blocks (then it exists in store)
+	 */
+	function hasMessage(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): boolean {
+		if (!chatBlocks[token]) {
+			return false
+		}
+
+		if (threadId) {
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
+		}
+
+		return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
 	}
 
 	/**
@@ -177,6 +226,7 @@ export const useChatStore = defineStore('chat', () => {
 		lastKnown,
 
 		getMessagesList,
+		hasMessage,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,

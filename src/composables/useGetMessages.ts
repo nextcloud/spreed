@@ -28,6 +28,7 @@ import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
 type GetMessagesContext = {
+	contextMessageId: Ref<number>
 	loadingOldMessages: Ref<boolean>
 	isInitialisingMessages: Ref<boolean>
 	stopFetchingOldMessages: Ref<boolean>
@@ -63,6 +64,7 @@ export function useGetMessagesProvider() {
 	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(currentToken.value))
 	const isInLobby = computed<boolean>(() => store.getters.isInLobby)
 
+	const contextMessageId = ref<number>(0)
 	const loadingOldMessages = ref(false)
 	const isInitialisingMessages = ref(false)
 	const stopFetchingOldMessages = ref(false)
@@ -173,27 +175,29 @@ export function useGetMessagesProvider() {
 
 		const focusMessageId = getMessageIdFromHash(to.hash)
 		if (from.hash !== to.hash && focusMessageId !== null) {
-			// the hash changed, need to focus/highlight another message
-			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, focusMessageId) as ChatMessage | Record<string, never>))
-			if (!hasMessageInStore) {
-				// message not found in the list, need to fetch it first
-				await getMessageContext(to.params.token, focusMessageId)
-			}
-			// need some delay (next tick is too short) to be able to run
-			// after the browser's native "scroll to anchor" from the hash
-			window.setTimeout(() => {
-				EventBus.emit('focus-message', focusMessageId)
-			}, 2)
-			return
+			contextMessageId.value = focusMessageId
+		} else if (to.query.threadId && from.query.threadId !== to.query.threadId) {
+			// FIXME temporary get thread messages from the start
+			contextMessageId.value = +to.query.threadId
+		} else {
+			contextMessageId.value = chatStore.lastKnown[to.params.token]
 		}
 
-		if (to.query.threadId && from.query.threadId !== to.query.threadId) {
-			// FIXME temporary get thread messages from the start
-			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, to.query.threadId) as ChatMessage | Record<string, never>))
-			if (!hasMessageInStore) {
-				await getMessageContext(to.params.token, +to.query.threadId)
-			}
+		const hasMessageInStore = chatStore.hasMessage(to.params.token, {
+			messageId: contextMessageId.value,
+			threadId: to.query.threadId ? +to.query.threadId : 0,
+		})
+		if (!hasMessageInStore) {
+			// message not found in the list, need to fetch it first
+			await getMessageContext(to.params.token, contextMessageId.value, (to.query.threadId ? +to.query.threadId : 0))
 		}
+
+		// need some delay (next tick is too short) to be able to run
+		// after the browser's native "scroll to anchor" from the hash
+		window.setTimeout(() => {
+			// FIXME should not highlight for last message
+			EventBus.emit('focus-message', contextMessageId.value)
+		}, 2)
 	}
 
 	/**
@@ -203,26 +207,25 @@ export function useGetMessagesProvider() {
 	async function handleStartGettingMessagesPreconditions(token: string) {
 		// prevent sticky mode before we have loaded anything
 		isInitialisingMessages.value = true
+
+		// Start from message hash or unread marker
 		const focusMessageId = getMessageIdFromHash(route.hash)
+		contextMessageId.value = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
+
+		if (threadId.value) {
+			// FIXME temporary get thread messages from the start
+			contextMessageId.value = threadId.value
+		}
 
 		store.dispatch('setVisualLastReadMessageId', { token, id: conversation.value!.lastReadMessage })
 
-		if (!store.getters.getFirstKnownMessageId(token)) {
+		if (!chatStore.chatBlocks[token]) {
 			try {
-				// Start from message hash or unread marker
-				let startingMessageId = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
-				// Check if thread is initially opened
-				if (threadId.value) {
-					// FIXME temporary get thread messages from the start
-					startingMessageId = threadId.value
+				if (!contextMessageId.value) {
+					throw new Error(`[DEBUG] spreed: context message ID is ${contextMessageId.value}`)
 				}
 
-				// First time load, initialize important properties
-				if (!startingMessageId) {
-					throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
-				}
-
-				await getMessageContext(token, startingMessageId)
+				await getMessageContext(token, contextMessageId.value, threadId.value)
 			} catch (exception) {
 				console.debug(exception)
 				// Request was cancelled, stop getting preconditions and restore initial state
@@ -242,9 +245,10 @@ export function useGetMessagesProvider() {
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
 	 * @param token token of conversation where a method was called
-	 * @param messageId messageId
+	 * @param messageId context messageId
+	 * @param threadId thread id
 	 */
-	async function getMessageContext(token: string, messageId: number) {
+	async function getMessageContext(token: string, messageId: number, threadId: number) {
 		loadingOldMessages.value = true
 		try {
 			debugTimer.start(`${token} | get context`)
@@ -258,6 +262,7 @@ export function useGetMessagesProvider() {
 				// using 0 as the API does not support negative values
 				// Get chat messages before last read message and after it
 				messageId: messageId !== MESSAGE.CHAT_BEGIN_ID ? messageId : 0,
+				threadId: threadId !== 0 ? threadId : undefined,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
@@ -382,6 +387,7 @@ export function useGetMessagesProvider() {
 	}
 
 	provide(GET_MESSAGES_CONTEXT_KEY, {
+		contextMessageId,
 		loadingOldMessages,
 		isInitialisingMessages,
 		stopFetchingOldMessages,
