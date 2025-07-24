@@ -988,32 +988,6 @@ export default {
 			return true // element found
 		},
 
-		/**
-		 * gets the last known message id.
-		 *
-		 * @return {string} The last known message id.
-		 */
-		getLastKnownMessageId() {
-			let i = this.messagesList.length - 1
-
-			while (i >= 0) {
-				if (!this.messagesList[i].id.toString().startsWith('temp-')) {
-					return this.messagesList[i].id
-				}
-				i--
-			}
-			return '0'
-		},
-
-		/**
-		 * gets the first message's id.
-		 *
-		 * @return {string}
-		 */
-		getFirstKnownMessageId() {
-			return this.messagesList[0].id.toString()
-		},
-
 		setChatScrolledToBottom(value, { auto = false } = {}) {
 			let isScrolledToBottom = value
 			if (auto) {
