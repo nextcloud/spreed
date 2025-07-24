@@ -26,6 +26,7 @@ import {
 	updateLastReadMessage,
 } from '../services/messagesService.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -78,11 +79,15 @@ describe('messagesStore', () => {
 	let updateConversationLastActiveAction
 	let reactionsStore
 	let actorStore
+	let chatStore
 
 	beforeEach(() => {
+		jest.spyOn(require('vuex'), 'useStore').mockReturnValue(store)
+
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		actorStore = useActorStore()
+		chatStore = useChatStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 

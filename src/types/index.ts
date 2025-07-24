@@ -35,6 +35,8 @@ export type ApiErrorResponse<T = null> = AxiosError<{
 	}
 }>
 
+export type TokenMap<T> = Record<string, T>
+
 type SpreedCapabilities = components['schemas']['Capabilities']
 
 // From https://github.com/nextcloud/password_policy/blob/master/lib/Capabilities.php

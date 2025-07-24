@@ -194,6 +194,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
+import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -292,6 +293,7 @@ export default {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			groupwareStore: useGroupwareStore(),
+			chatStore: useChatStore(),
 			settingsStore: useSettingsStore(),
 			tokenStore: useTokenStore(),
 			supportTypingStatus,
@@ -887,7 +889,7 @@ export default {
 			}
 
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast((message) => {
+			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token).findLast((message) => {
 				return this.actorStore.checkIfSelfIsActor(message)
 					&& !message.isTemporary && !message.systemMessage
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
