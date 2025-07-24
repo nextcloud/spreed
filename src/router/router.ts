@@ -3,9 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { RouteRecordRaw } from 'vue-router'
 import { generateUrl, getRootUrl } from '@nextcloud/router'
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import {
+	createMemoryHistory,
+	createRouter,
+	createWebHashHistory,
+	createWebHistory,
+} from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
+import ChatView from '../components/ChatView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
@@ -27,48 +34,66 @@ function generateTalkWebBasePath(): string {
 	})
 }
 
-export default createRouter({
-	// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
-	history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
+const routes: RouteRecordRaw[] = [
+	{
+		path: '/apps/spreed',
+		name: 'root',
+		component: WelcomeView,
+		props: true,
+	},
+	{
+		path: '/apps/spreed/not-found',
+		name: 'notfound',
+		component: NotFoundView,
+		props: true,
+	},
+	{
+		path: '/apps/spreed/forbidden',
+		name: 'forbidden',
+		component: ForbiddenView,
+		props: true,
+	},
+	{
+		path: '/apps/spreed/duplicate-session',
+		name: 'duplicatesession',
+		component: SessionConflictView,
+		props: true,
+	},
+	{
+		path: '/call/:token',
+		name: 'conversation',
+		component: MainView,
+		props: true,
+	},
+	{
+		path: '/call/:token/recording',
+		name: 'recording',
+		component: CallView,
+		props: true,
+	},
+]
 
-	linkActiveClass: 'active',
+const integrationRoutes: RouteRecordRaw[] = [
+	{
+		path: '/call/:token',
+		name: 'conversation',
+		component: ChatView,
+		props: { isSidebar: true },
+	},
+]
 
-	routes: [
-		{
-			path: '/apps/spreed',
-			name: 'root',
-			component: WelcomeView,
-			props: true,
-		},
-		{
-			path: '/apps/spreed/not-found',
-			name: 'notfound',
-			component: NotFoundView,
-			props: true,
-		},
-		{
-			path: '/apps/spreed/forbidden',
-			name: 'forbidden',
-			component: ForbiddenView,
-			props: true,
-		},
-		{
-			path: '/apps/spreed/duplicate-session',
-			name: 'duplicatesession',
-			component: SessionConflictView,
-			props: true,
-		},
-		{
-			path: '/call/:token',
-			name: 'conversation',
-			component: MainView,
-			props: true,
-		},
-		{
-			path: '/call/:token/recording',
-			name: 'recording',
-			component: CallView,
-			props: true,
-		},
-	],
-})
+export default function createTalkRouter({ integration } = { integration: false }) {
+	if (integration) {
+		return createRouter({
+			history: createMemoryHistory(generateTalkWebBasePath()),
+			routes: integrationRoutes,
+		})
+	}
+
+	return createRouter({
+		// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
+		history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
+		linkActiveClass: 'active',
+		routes,
+	})
+}

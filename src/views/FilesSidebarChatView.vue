@@ -8,7 +8,7 @@
 		<InternalSignalingHint />
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
 		<CallFailedDialog v-if="connectionFailed" :token="token" />
-		<ChatView class="talk-tab__chat-view" is-sidebar />
+		<router-view class="talk-tab__chat-view" />
 		<PollManager />
 		<PollViewer />
 		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
