@@ -4,20 +4,32 @@
 -->
 
 <script setup lang="ts">
+import { showWarning } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
+import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
+import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import ReactionMenu from '../TopBar/ReactionMenu.vue'
 import TopBarMediaControls from '../TopBar/TopBarMediaControls.vue'
+import {
+	disableFullscreen,
+	enableFullscreen,
+	useDocumentFullscreen,
+} from '../../composables/useDocumentFullscreen.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
+import { useCallViewStore } from '../../stores/callView.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 const { isSidebar = false } = defineProps<{
@@ -30,6 +42,8 @@ const store = useStore()
 const token = useGetToken()
 const actorStore = useActorStore()
 const breakoutRoomsStore = useBreakoutRoomsStore()
+const isFullscreen = useDocumentFullscreen()
+const callViewStore = useCallViewStore()
 
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
@@ -55,6 +69,20 @@ const raiseHandButtonLabel = computed(() => {
 		: t('spreed', 'Lower hand (R)')
 })
 
+const fullscreenLabel = computed(() => {
+	return isFullscreen.value
+		? t('spreed', 'Exit full screen (F)')
+		: t('spreed', 'Full screen (F)')
+})
+
+const changeViewLabel = computed(() => {
+	return isGrid.value
+		? t('spreed', 'Speaker view')
+		: t('spreed', 'Grid view')
+})
+
+const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
+const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 
 let lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
@@ -63,7 +91,8 @@ let lowerHandTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Hand raising functionality
 /**
- *
+ * Toggle the hand raised state for the local media model and update the store.
+ * If the user is in a breakout room, it also handles the request for assistance.
  */
 function toggleHandRaised() {
 	const newState = !isHandRaised.value
@@ -118,13 +147,72 @@ watch(() => localMediaModel.attributes.speaking, (speaking) => {
 	}, lowerHandDelay)
 })
 
+/**
+ * Toggles the full screen mode of the call view.
+ * If the sidebar is open, it does nothing.
+ * If there is an open modal, it shows a warning.
+ */
+function toggleFullscreen() {
+	if (isSidebar) {
+		return
+	}
+
+	// Don't toggle fullscreen if there is an open modal
+	// FIXME won't be needed without Fulscreen API
+	if (Array.from(document.body.children).filter((child) => {
+		return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
+			&& window.getComputedStyle(child).display !== 'none'
+	}).length !== 0) {
+		showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
+		return
+	}
+
+	if (isFullscreen.value) {
+		disableFullscreen()
+	} else {
+		emit('toggle-navigation', { open: false })
+		enableFullscreen()
+	}
+}
+
+/**
+ * Switches the call view mode between grid and speaker view.
+ */
+function changeView() {
+	callViewStore.setCallViewMode({ token: token.value, isGrid: !isGrid.value, clearLast: false })
+	callViewStore.setSelectedVideoPeerId(null)
+}
+
 // Keyboard shortcuts
 useHotKey('r', toggleHandRaised)
+useHotKey('f', toggleFullscreen)
 </script>
 
 <template>
 	<div class="bottom-bar" data-theme-dark>
-		<!--  fullscreen and grid view buttons -->
+		<div class="bottom-bar-call-controls">
+			<!-- Fullscreen -->
+			<NcButton :aria-label="fullscreenLabel"
+				:variant="isFullscreen ? 'secondary' : 'tertiary'"
+				:title="fullscreenLabel"
+				@click="toggleFullscreen">
+				<template #icon>
+					<IconFullscreen v-if="!isFullscreen" :size="20" />
+					<IconFullscreenExit v-else :size="20" />
+				</template>
+			</NcButton>
+			<!-- Call layout switcher -->
+			<NcButton v-if="showCallLayoutSwitch"
+				variant="tertiary"
+				:aria-label="changeViewLabel"
+				:title="changeViewLabel"
+				@click="changeView">
+				<template #icon>
+					<IconViewGrid v-if="!isGrid" :size="20" />
+					<IconViewGallery v-else :size="20" />
+				</template>
+			</NcButton>
+		</div>
 
 		<div class="bottom-bar-call-controls">
 			<!-- Local media controls -->
