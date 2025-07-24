@@ -5,20 +5,8 @@
 
 <template>
 	<div class="top-bar-menu">
-		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
-			<NcButton :title="raiseHandButtonLabel"
-				:aria-label="raiseHandButtonLabel"
-				variant="tertiary"
-				@click.stop="toggleHandRaised">
-				<template #icon>
-					<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-					<IconHandBackLeft :size="18" />
-				</template>
-			</NcButton>
-		</TransitionExpand>
-
 		<NcActions v-if="!isSidebar"
+			force-menu
 			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
 			variant="tertiary">
@@ -28,17 +16,6 @@
 			</template>
 
 			<template v-if="showActions && isInCall">
-				<!-- Raise hand -->
-				<NcActionButton close-after-click
-					@click="toggleHandRaised">
-					<!-- The following icon is much bigger than all the others
-					so we reduce its size -->
-					<template #icon>
-						<IconHandBackLeft :size="16" />
-					</template>
-					{{ raiseHandButtonLabel }}
-				</NcActionButton>
-
 				<!-- Moderator actions -->
 				<template v-if="!isOneToOneConversation && canFullModerate">
 					<NcActionButton close-after-click
@@ -159,7 +136,6 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconCog from 'vue-material-design-icons/Cog.vue'
@@ -168,14 +144,12 @@ import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconFile from 'vue-material-design-icons/File.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
 import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
-import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import {
 	disableFullscreen,
@@ -185,25 +159,18 @@ import {
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useActorStore } from '../../stores/actor.ts'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
-
-const AUTO_LOWER_HAND_THRESHOLD = 3000
-const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 export default {
 	name: 'TopBarMenu',
 
 	components: {
-		TransitionExpand,
 		NcActionButton,
 		NcActionLink,
 		NcActionSeparator,
 		NcActions,
-		NcButton,
 		NcLoadingIcon,
 		NcIconSvgWrapper,
 		// Icons
@@ -213,7 +180,6 @@ export default {
 		IconFile,
 		IconFullscreen,
 		IconFullscreenExit,
-		IconHandBackLeft,
 		IconMicrophoneOff,
 		IconRecordCircle,
 		IconStop,
@@ -228,14 +194,6 @@ export default {
 		 */
 		token: {
 			type: String,
-			required: true,
-		},
-
-		/**
-		 * The local media model
-		 */
-		model: {
-			type: Object,
 			required: true,
 		},
 
@@ -260,18 +218,13 @@ export default {
 			IconFileDownload,
 			isInCall: useIsInCall(),
 			isFullscreen: useDocumentFullscreen(),
-			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
-			actorStore: useActorStore(),
 		}
 	},
 
 	data() {
 		return {
 			boundaryElement: document.querySelector('.main-view'),
-			lowerHandTimeout: null,
-			speakingTimestamp: null,
-			lowerHandDelay: AUTO_LOWER_HAND_THRESHOLD,
 		}
 	},
 
@@ -309,29 +262,6 @@ export default {
 
 		isGrid() {
 			return this.callViewStore.isGrid
-		},
-
-		isVirtualBackgroundAvailable() {
-			return this.model.attributes.virtualBackgroundAvailable
-		},
-
-		isVirtualBackgroundEnabled() {
-			return this.model.attributes.virtualBackgroundEnabled
-		},
-
-		isHandRaised() {
-			return this.model.attributes.raisedHand?.state === true
-		},
-
-		raiseHandButtonLabel() {
-			if (!this.isHandRaised) {
-				return disableKeyboardShortcuts
-					? t('spreed', 'Raise hand')
-					: t('spreed', 'Raise hand (R)')
-			}
-			return disableKeyboardShortcuts
-				? t('spreed', 'Lower hand')
-				: t('spreed', 'Lower hand (R)')
 		},
 
 		participantType() {
@@ -373,13 +303,6 @@ export default {
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
-		// True if current conversation is a breakout room and the breakout room has started
-		// And a call is in progress
-		userIsInBreakoutRoomAndInCall() {
-			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
-				&& this.isInCall
-		},
-
 		showCallLayoutSwitch() {
 			return !this.callViewStore.isEmptyCallView
 		},
@@ -393,37 +316,7 @@ export default {
 		},
 	},
 
-	watch: {
-		'model.attributes.speaking'(speaking) {
-			// user stops speaking in lowerHandTimeout
-			if (this.lowerHandTimeout !== null && !speaking) {
-				this.lowerHandDelay = Math.max(0, this.lowerHandDelay - (Date.now() - this.speakingTimestamp))
-				clearTimeout(this.lowerHandTimeout)
-				this.lowerHandTimeout = null
-
-				return
-			}
-
-			// user is not speaking OR timeout is already running OR hand is not raised
-			if (!speaking || this.lowerHandTimeout !== null || !this.isHandRaised) {
-				return
-			}
-
-			this.speakingTimestamp = Date.now()
-			this.lowerHandTimeout = setTimeout(() => {
-				this.lowerHandTimeout = null
-				this.speakingTimestamp = null
-				this.lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
-
-				if (this.isHandRaised) {
-					this.toggleHandRaised()
-				}
-			}, this.lowerHandDelay)
-		},
-	},
-
 	created() {
-		useHotKey('r', this.toggleHandRaised)
 		useHotKey('f', this.toggleFullscreen)
 	},
 
@@ -465,37 +358,6 @@ export default {
 
 		showMediaSettingsDialog() {
 			emit('talk:media-settings:show')
-		},
-
-		toggleHandRaised() {
-			if (!this.isInCall) {
-				return
-			}
-			const newState = !this.isHandRaised
-			this.model.toggleHandRaised(newState)
-			this.$store.dispatch(
-				'setParticipantHandRaised',
-				{
-					sessionId: this.actorStore.sessionId,
-					raisedHand: this.model.attributes.raisedHand,
-				},
-			)
-			// If the current conversation is a break-out room and the user is not a moderator,
-			// also send request for assistance to the moderators.
-			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
-				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
-					.filter((sessionId) => sessionId !== this.actorStore.sessionId)
-					.length !== 0
-				if (hasRaisedHands) {
-					return // Assistance is already requested by someone in the room
-				}
-				const hasAssistanceRequested = this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
-				if (newState && !hasAssistanceRequested) {
-					this.breakoutRoomsStore.requestAssistance(this.token)
-				} else if (!newState && hasAssistanceRequested) {
-					this.breakoutRoomsStore.dismissRequestAssistance(this.token)
-				}
-			}
 		},
 
 		openConversationSettings() {

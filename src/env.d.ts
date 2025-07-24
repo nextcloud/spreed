@@ -20,6 +20,9 @@ declare global {
 		AppConfig: {
 			setValue: (app: string, key: string, value: string | number | boolean, options?: { success?: () => void, error?: () => void }) => void
 		}
+		Accessibility: {
+			disableKeyboardShortcuts: () => boolean
+		}
 	}
 
 	const OC: {
