@@ -127,6 +127,8 @@
 					:is-sidebar="isSidebar"
 					@click-video="handleClickLocalVideo" />
 			</div>
+
+			<BottomBar :is-sidebar="isSidebar" />
 		</template>
 	</div>
 </template>
@@ -138,6 +140,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { provide, ref } from 'vue'
+import BottomBar from './BottomBar.vue'
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LocalVideo from './shared/LocalVideo.vue'
@@ -167,6 +170,7 @@ export default {
 	name: 'CallView',
 
 	components: {
+		BottomBar,
 		EmptyCallView,
 		Grid,
 		LocalVideo,
@@ -845,8 +849,9 @@ export default {
 #videos {
 	position: absolute;
 	width: 100%;
-	height: calc(100% - 51px);
+	height: calc(100% - 99px);
 	top: 51px; // TopBar height
+	bottom: 48px; // BottomBar height
 	overflow: hidden;
 	display: flex;
 	justify-content: space-around;
