@@ -234,7 +234,7 @@ describe('MessagesList.vue', () => {
 				isReplyable: true,
 			}])
 
-			const dateSeparators = wrapper.findAll('.messages-group__date')
+			const dateSeparators = wrapper.findAll('.messages-date')
 			expect(dateSeparators).toHaveLength(3)
 			expect(dateSeparators.at(0).text()).toBe('2 days ago, May 9, 2020')
 			expect(dateSeparators.at(1).text()).toBe('Yesterday, May 10, 2020')

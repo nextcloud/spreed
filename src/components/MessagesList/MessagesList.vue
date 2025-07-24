@@ -34,15 +34,14 @@
 			:data-date-timestamp="dateTimestamp"
 			class="scroller__content"
 			:class="{ 'has-sticky': dateTimestamp === stickyDate }">
-			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-group__date">
-				<span class="messages-group__date-text" role="heading" aria-level="3">
+			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-date">
+				<span class="messages-date__text" role="heading" aria-level="3">
 					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
 			</li>
 			<component :is="messagesGroupComponent[group.type]"
 				v-for="group in list"
 				:key="group.id"
-				class="messages-group"
 				:token="token"
 				:messages="group.messages"
 				:previous-message-id="group.previousMessageId"
@@ -1125,20 +1124,18 @@ export default {
 	}
 }
 
-.messages-group {
-	&__date {
-		position: sticky;
-		top: 0;
-		display: grid;
-		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
-		z-index: 2;
-		margin-inline-start: calc($messages-avatar-width);
-		margin-bottom: 5px;
-		padding-inline: var(--default-grid-baseline);
-		pointer-events: none;
-	}
+.messages-date {
+	position: sticky;
+	top: 0;
+	display: grid;
+	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	z-index: 2;
+	margin-inline-start: calc($messages-avatar-width);
+	margin-bottom: 5px;
+	padding-inline: var(--default-grid-baseline);
+	pointer-events: none;
 
-	&__date-text {
+	&__text {
 		margin: 0 auto;
 		padding: var(--default-grid-baseline) calc(3 * var(--default-grid-baseline));
 		text-wrap: nowrap;
@@ -1152,13 +1149,13 @@ export default {
 	}
 }
 
-.has-sticky .messages-group__date {
+.has-sticky .messages-date {
 	transition: opacity 0.3s ease-in-out;
 	transition-delay: 2s;
 	opacity: 0;
 }
 
-.scroller--isScrolling .has-sticky .messages-group__date {
+.scroller--isScrolling .has-sticky .messages-date {
 	opacity: 1;
 	transition: opacity 0s;
 }
