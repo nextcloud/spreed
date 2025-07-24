@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OC\Authentication\Token\IProvider;
+use OC\Authentication\Token\IToken;
 use OCA\Circles\Model\Circle;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
@@ -81,21 +83,23 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Calendar\CalendarEventStatus;
-use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
+use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IPhoneNumberUtil;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\ISecureRandom;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -148,6 +152,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected BanService $banService,
 		protected IURLGenerator $url,
 		protected IL10N $l,
+		protected IClientService $clientService,
+		protected IProvider $authTokenProvider,
+		protected ISession $serverSession,
+		protected ISecureRandom $random,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -2835,7 +2843,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		$eventBuilder = $this->calendarManager->createEventBuilder();
-		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId, [$calendarUri]);
+		$principalUri = 'principals/users/' . $this->userId;
+		$calendars = $this->calendarManager->getCalendarsForPrincipal($principalUri, [$calendarUri]);
 
 		if (empty($calendars)) {
 			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
@@ -2919,12 +2928,50 @@ class RoomController extends AEnvironmentAwareOCSController {
 			);
 		}
 
+		$ics = $eventBuilder->toIcs();
+		$name = $this->room->getToken() . '-' . $this->timeFactory->getTime() . '.ics';
+		$calendarUri = $this->url->getBaseUrl() . '/remote.php/dav/calendars/' . $user->getUID() . '/' . $calendar->getUri() . '/' . $name;
+
 		try {
-			$eventBuilder->createInCalendar($calendar);
-		} catch (\InvalidArgumentException|CalendarException $e) {
-			$this->logger->debug('Failed to get calendar to schedule a meeting', ['exception' => $e]);
+			$loginname = $this->serverSession->get('loginname');
+			$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
+
+			$this->authTokenProvider->generateToken(
+				$token,
+				$user->getUID(),
+				$loginname,
+				null,
+				'Nextcloud Spreed Calendar Integration',
+				IToken::TEMPORARY_TOKEN,
+				IToken::DO_NOT_REMEMBER
+			);
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to get calendar to schedule a meeting', ['exception' => $e]);
 			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
 		}
+
+		$client = $this->clientService->newClient();
+		$options = [
+			'headers' => [
+				'Content-Type' => 'text/html; charset=UTF-8',
+			],
+			'nextcloud' => [
+				'allow_local_address' => true,
+			],
+			'body' => $ics,
+			'verify' => false,
+			'auth' => [$loginname, $token],
+		];
+
+		try {
+			$client->put($calendarUri, $options);
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to get calendar to schedule a meeting', ['exception' => $e]);
+			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
+		} finally {
+			$this->authTokenProvider->invalidateToken($token);
+		}
+
 
 		return new DataResponse(null, Http::STATUS_OK);
 	}

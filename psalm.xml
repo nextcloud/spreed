@@ -85,6 +85,7 @@
 		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
+		<file name="tests/stubs/oc_authentication_token_provider.php" />
 		<file name="tests/stubs/oc_comments_comment.php" />
 		<file name="tests/stubs/oc_comments_manager.php" />
 		<file name="tests/stubs/oc_core_command_base.php" />
