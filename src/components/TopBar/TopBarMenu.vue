@@ -36,28 +36,7 @@
 					{{ t('spreed', 'Check devices') }}
 				</NcActionButton>
 				<NcActionSeparator />
-				<!-- Call layout switcher -->
-				<NcActionButton v-if="showCallLayoutSwitch"
-					close-after-click
-					@click="changeView">
-					<template #icon>
-						<IconViewGrid v-if="!isGrid" :size="20" />
-						<IconViewGallery v-else :size="20" />
-					</template>
-					{{ changeViewText }}
-				</NcActionButton>
 			</template>
-
-			<!-- Fullscreen -->
-			<NcActionButton :aria-label="t('spreed', 'Toggle full screen')"
-				close-after-click
-				@click="toggleFullscreen">
-				<template #icon>
-					<IconFullscreen v-if="!isFullscreen" :size="20" />
-					<IconFullscreenExit v-else :size="20" />
-				</template>
-				{{ labelFullscreen }}
-			</NcActionButton>
 
 			<!-- Go to file -->
 			<NcActionLink v-if="isFileConversation"
@@ -127,7 +106,6 @@
 </template>
 
 <script>
-import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -142,23 +120,13 @@ import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconDownload from 'vue-material-design-icons/Download.vue'
 import IconFile from 'vue-material-design-icons/File.vue'
-import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
-import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
-import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
-import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
-import {
-	disableFullscreen,
-	enableFullscreen,
-	useDocumentFullscreen,
-} from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { useCallViewStore } from '../../stores/callView.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -177,14 +145,10 @@ export default {
 		IconDotsHorizontal,
 		IconDownload,
 		IconFile,
-		IconFullscreen,
-		IconFullscreenExit,
 		IconMicrophoneOff,
 		IconRecordCircle,
 		IconStop,
 		IconVideo,
-		IconViewGallery,
-		IconViewGrid,
 	},
 
 	props: {
@@ -215,8 +179,6 @@ export default {
 	setup() {
 		return {
 			isInCall: useIsInCall(),
-			isFullscreen: useDocumentFullscreen(),
-			callViewStore: useCallViewStore(),
 		}
 	},
 
@@ -229,12 +191,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		labelFullscreen() {
-			return this.isFullscreen
-				? t('spreed', 'Exit full screen (F)')
-				: t('spreed', 'Full screen (F)')
 		},
 
 		isFileConversation() {
@@ -250,16 +206,6 @@ export default {
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		changeViewText() {
-			return this.isGrid
-				? t('spreed', 'Speaker view')
-				: t('spreed', 'Grid view')
-		},
-
-		isGrid() {
-			return this.callViewStore.isGrid
 		},
 
 		participantType() {
@@ -301,10 +247,6 @@ export default {
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
-		showCallLayoutSwitch() {
-			return !this.callViewStore.isEmptyCallView
-		},
-
 		canDownloadCallParticipants() {
 			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate
 		},
@@ -314,44 +256,12 @@ export default {
 		},
 	},
 
-	created() {
-		useHotKey('f', this.toggleFullscreen)
-	},
-
 	methods: {
 		t,
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 				callParticipantModel.forceMute()
 			})
-		},
-
-		toggleFullscreen() {
-			if (this.isSidebar) {
-				return
-			}
-
-			// Don't toggle fullscreen if there is an open modal
-			// FIXME won't be needed without Fulscreen API
-			if (Array.from(document.body.childNodes).filter((child) => {
-				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
-					&& window.getComputedStyle(child).display !== 'none'
-			}).length !== 0) {
-				showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
-				return
-			}
-
-			if (this.isFullscreen) {
-				disableFullscreen()
-			} else {
-				emit('toggle-navigation', { open: false })
-				enableFullscreen()
-			}
-		},
-
-		changeView() {
-			this.callViewStore.setCallViewMode({ token: this.token, isGrid: !this.isGrid, clearLast: false })
-			this.callViewStore.setSelectedVideoPeerId(null)
 		},
 
 		showMediaSettingsDialog() {
