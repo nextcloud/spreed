@@ -142,27 +142,13 @@
 			<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
 				:token="token" />
 
-			<!-- Reactions menu -->
-			<ReactionMenu v-if="isInCall && hasReactionSupport"
-				:token="token"
-				:supported-reactions="supportedReactions"
-				:local-call-participant-model="localCallParticipantModel" />
-
-			<!-- Local media controls -->
-			<TopBarMediaControls v-if="isInCall"
-				:token="token"
-				:model="localMediaModel"
-				:is-sidebar="isSidebar"
-				:local-call-participant-model="localCallParticipantModel" />
-
 			<!-- TopBar menu -->
 			<TopBarMenu :token="token"
 				:show-actions="!isSidebar"
 				:is-sidebar="isSidebar"
-				:model="localMediaModel"
 				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-			<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
+			<CallButton v-if="!isInCall" shrink-on-mobile />
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
@@ -194,9 +180,7 @@ import ConversationIcon from '../ConversationIcon.vue'
 import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
-import ReactionMenu from './ReactionMenu.vue'
 import TasksCounter from './TasksCounter.vue'
-import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -209,7 +193,6 @@ import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../utils/textParse.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
-import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
@@ -240,7 +223,6 @@ export default {
 		CallTime,
 		ConversationIcon,
 		ExtendOneToOneDialog,
-		TopBarMediaControls,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -248,7 +230,6 @@ export default {
 		NcRichText,
 		TopBarMenu,
 		TasksCounter,
-		ReactionMenu,
 		// Icons
 		IconAccountMultipleOutline,
 		IconAccountMultiplePlusOutline,
@@ -275,8 +256,6 @@ export default {
 		return {
 			AVATAR,
 			PARTICIPANT,
-			localCallParticipantModel,
-			localMediaModel,
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
@@ -369,14 +348,6 @@ export default {
 				return t('spreed', 'Add participants to this call')
 			}
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
-		},
-
-		supportedReactions() {
-			return getTalkConfig(this.token, 'call', 'supported-reactions')
-		},
-
-		hasReactionSupport() {
-			return this.isInCall && this.supportedReactions?.length > 0
 		},
 
 		showCalendarEvents() {

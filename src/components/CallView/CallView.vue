@@ -127,6 +127,8 @@
 					:is-sidebar="isSidebar"
 					@click-video="handleClickLocalVideo" />
 			</div>
+
+			<BottomBar :is-sidebar="isSidebar" />
 		</template>
 	</div>
 </template>
@@ -138,6 +140,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { provide, ref } from 'vue'
+import BottomBar from './BottomBar.vue'
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LocalVideo from './shared/LocalVideo.vue'
@@ -167,6 +170,7 @@ export default {
 	name: 'CallView',
 
 	components: {
+		BottomBar,
 		EmptyCallView,
 		Grid,
 		LocalVideo,
@@ -833,6 +837,8 @@ export default {
 	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
 	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
+	--top-bar-height: 51px;
+	--bottom-bar-height: 56px;
 
 	&.call-container__blurred {
 		backdrop-filter: blur(25px);
@@ -845,8 +851,9 @@ export default {
 #videos {
 	position: absolute;
 	width: 100%;
-	height: calc(100% - 51px);
-	top: 51px; // TopBar height
+	height: calc(100% - (var(--top-bar-height) + var(--bottom-bar-height)));
+	top: var(--top-bar-height);
+	bottom: var(--bottom-bar-height);
 	overflow: hidden;
 	display: flex;
 	justify-content: space-around;
@@ -894,6 +901,8 @@ export default {
 	&--sidebar {
 		width: 150px;
 		height: 100px;
+		bottom: var(--bottom-bar-height);
+		margin: var(--default-grid-baseline);
 	}
 }
 
