@@ -39,7 +39,7 @@
 					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
 			</li>
-			<component :is="messagesGroupComponent(group)"
+			<component :is="messagesGroupComponent[group.type]"
 				v-for="group in list"
 				:key="group.id"
 				class="messages-group"
@@ -90,6 +90,11 @@ import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 const LOAD_HISTORY_THRESHOLD = 800
+
+const messagesGroupComponent = {
+	system: MessagesSystemGroup,
+	default: MessagesGroup,
+}
 
 export default {
 	name: 'MessagesList',
@@ -146,6 +151,7 @@ export default {
 		const threadId = useGetThreadId()
 
 		return {
+			messagesGroupComponent,
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			isChatVisible,
@@ -389,7 +395,7 @@ export default {
 						dateTimestamp,
 						previousMessageId: lastMessage?.id || 0,
 						nextMessageId: 0,
-						isSystemMessagesGroup: message.systemMessage.length !== 0,
+						type: message.systemMessage.length !== 0 ? 'system' : 'default',
 					}
 
 					// Update the previous group with the next message id
@@ -1030,10 +1036,6 @@ export default {
 					this.dateSeparatorLabels[dateTimestamp] = this.generateDateSeparator(dateTimestamp)
 				})
 			}, 2)
-		},
-
-		messagesGroupComponent(group) {
-			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
 		},
 
 		updateTasksCount() {
