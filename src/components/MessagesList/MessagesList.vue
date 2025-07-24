@@ -34,15 +34,14 @@
 			:data-date-timestamp="dateTimestamp"
 			class="scroller__content"
 			:class="{ 'has-sticky': dateTimestamp === stickyDate }">
-			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-group__date">
-				<span class="messages-group__date-text" role="heading" aria-level="3">
+			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-date">
+				<span class="messages-date__text" role="heading" aria-level="3">
 					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
 			</li>
-			<component :is="messagesGroupComponent(group)"
+			<component :is="messagesGroupComponent[group.type]"
 				v-for="group in list"
 				:key="group.id"
-				class="messages-group"
 				:token="token"
 				:messages="group.messages"
 				:previous-message-id="group.previousMessageId"
@@ -91,6 +90,11 @@ import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 const LOAD_HISTORY_THRESHOLD = 800
+
+const messagesGroupComponent = {
+	system: MessagesSystemGroup,
+	default: MessagesGroup,
+}
 
 export default {
 	name: 'MessagesList',
@@ -147,6 +151,7 @@ export default {
 		const threadId = useGetThreadId()
 
 		return {
+			messagesGroupComponent,
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			chatStore: useChatStore(),
@@ -391,7 +396,7 @@ export default {
 						dateTimestamp,
 						previousMessageId: lastMessage?.id || 0,
 						nextMessageId: 0,
-						isSystemMessagesGroup: message.systemMessage.length !== 0,
+						type: message.systemMessage.length !== 0 ? 'system' : 'default',
 					}
 
 					// Update the previous group with the next message id
@@ -1034,10 +1039,6 @@ export default {
 			}, 2)
 		},
 
-		messagesGroupComponent(group) {
-			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
-		},
-
 		updateTasksCount() {
 			if (!this.$refs.scroller) {
 				return
@@ -1096,6 +1097,11 @@ export default {
 	&__content {
 		max-width: $messages-list-max-width;
 		margin: 0 auto;
+
+		/* Safe margin to fit MessageButtonsBar on screen for last one-line message */
+		&:last-of-type {
+			margin-bottom: calc(var(--default-clickable-area) - var(--clickable-area-small) - var(--default-grid-baseline));
+		}
 	}
 
 	&__loading {
@@ -1125,20 +1131,18 @@ export default {
 	}
 }
 
-.messages-group {
-	&__date {
-		position: sticky;
-		top: 0;
-		display: grid;
-		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
-		z-index: 2;
-		margin-inline-start: calc($messages-avatar-width);
-		margin-bottom: 5px;
-		padding-inline: var(--default-grid-baseline);
-		pointer-events: none;
-	}
+.messages-date {
+	position: sticky;
+	top: 0;
+	display: grid;
+	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	z-index: 2;
+	margin-inline-start: calc($messages-avatar-width);
+	margin-bottom: 5px;
+	padding-inline: var(--default-grid-baseline);
+	pointer-events: none;
 
-	&__date-text {
+	&__text {
 		margin: 0 auto;
 		padding: var(--default-grid-baseline) calc(3 * var(--default-grid-baseline));
 		text-wrap: nowrap;
@@ -1146,19 +1150,15 @@ export default {
 		background-color: var(--color-background-dark);
 		border-radius: var(--border-radius-element, var(--border-radius-pill));
 	}
-
-	&:last-child {
-		margin-bottom: 16px;
-	}
 }
 
-.has-sticky .messages-group__date {
+.has-sticky .messages-date {
 	transition: opacity 0.3s ease-in-out;
 	transition-delay: 2s;
 	opacity: 0;
 }
 
-.scroller--isScrolling .has-sticky .messages-group__date {
+.scroller--isScrolling .has-sticky .messages-date {
 	opacity: 1;
 	transition: opacity 0s;
 }

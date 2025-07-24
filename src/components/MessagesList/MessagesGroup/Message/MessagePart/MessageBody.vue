@@ -495,6 +495,7 @@ export default {
 	grid-row-gap: var(--default-grid-baseline);
 	justify-content: space-between;
 	align-items: flex-start;
+	min-height: var(--clickable-area-small);
 	min-width: 100%;
 
 	&__text {

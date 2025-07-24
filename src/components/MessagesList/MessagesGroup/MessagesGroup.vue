@@ -45,8 +45,6 @@ export default {
 		Message,
 	},
 
-	inheritAttrs: false,
-
 	props: {
 		/**
 		 * The conversation token.
