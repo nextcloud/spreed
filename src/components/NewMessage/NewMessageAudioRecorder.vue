@@ -12,7 +12,7 @@
 			:disabled="!canStartRecording"
 			@click="start">
 			<template #icon>
-				<Microphone :size="16" />
+				<IconMicrophoneOutline :size="16" />
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
@@ -21,7 +21,7 @@
 				:aria-label="abortRecordingTitle"
 				@click="abortRecording">
 				<template #icon>
-					<Close :size="16" />
+					<IconClose :size="16" />
 				</template>
 			</NcButton>
 			<div class="audio-recorder__info">
@@ -35,7 +35,7 @@
 				:class="{ 'audio-recorder__trigger--recording': isRecording }"
 				@click="stop">
 				<template #icon>
-					<Check :size="16" />
+					<IconCheck :size="16" />
 				</template>
 			</NcButton>
 		</div>
@@ -47,9 +47,9 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { MediaRecorder } from 'extendable-media-recorder'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import Check from 'vue-material-design-icons/Check.vue'
-import Close from 'vue-material-design-icons/Close.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
@@ -58,9 +58,9 @@ export default {
 	name: 'NewMessageAudioRecorder',
 
 	components: {
-		Microphone,
-		Close,
-		Check,
+		IconMicrophoneOutline,
+		IconClose,
+		IconCheck,
 		NcButton,
 	},
 

@@ -8,8 +8,8 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import Check from 'vue-material-design-icons/Check.vue'
-import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import Quote from '../../../Quote.vue'
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
@@ -782,8 +782,8 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			expect(wrapper.findComponent(Check).exists()).toBe(false)
-			expect(wrapper.findComponent(CheckAll).exists()).toBe(true)
+			expect(wrapper.findComponent(IconCheck).exists()).toBe(false)
+			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(true)
 		})
 
 		test('displays sent icon when own message was sent', () => {
@@ -799,8 +799,8 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			expect(wrapper.findComponent(Check).exists()).toBe(true)
-			expect(wrapper.findComponent(CheckAll).exists()).toBe(false)
+			expect(wrapper.findComponent(IconCheck).exists()).toBe(true)
+			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(false)
 		})
 
 		test('does not displays check icon for other people\'s messages', () => {
@@ -818,8 +818,8 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			expect(wrapper.findComponent(Check).exists()).toBe(false)
-			expect(wrapper.findComponent(CheckAll).exists()).toBe(false)
+			expect(wrapper.findComponent(IconCheck).exists()).toBe(false)
+			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(false)
 		})
 	})
 })

@@ -20,7 +20,7 @@
 					:options="optionsFrom"
 					no-wrap />
 
-				<ArrowRight class="bidirectional-icon" />
+				<IconArrowRight class="bidirectional-icon" />
 
 				<NcSelect v-model="selectedTo"
 					class="translate-dialog__select"
@@ -56,7 +56,7 @@
 		<template v-if="translatedMessage" #actions>
 			<NcButton @click="handleCopyTranslation">
 				<template #icon>
-					<ContentCopy />
+					<IconContentCopy />
 				</template>
 				{{ t('spreed', 'Copy translated text') }}
 			</NcButton>
@@ -72,8 +72,8 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import { getTranslationLanguages, translateText } from '../../../../../services/translationService.js'
 
 export default {
@@ -86,8 +86,8 @@ export default {
 		NcRichText,
 		NcSelect,
 		// Icons
-		ArrowRight,
-		ContentCopy,
+		IconArrowRight,
+		IconContentCopy,
 	},
 
 	props: {

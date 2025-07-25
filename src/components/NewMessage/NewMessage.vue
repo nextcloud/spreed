@@ -49,7 +49,7 @@
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<template #icon>
-								<EmoticonOutline :size="16" />
+								<IconEmoticonOutline :size="16" />
 							</template>
 						</NcButton>
 					</NcEmojiPicker>
@@ -59,7 +59,7 @@
 						:aria-label="t('spreed', 'Add emoji')"
 						:disabled="true">
 						<template #icon>
-							<EmoticonOutline :size="16" />
+							<IconEmoticonOutline :size="16" />
 						</template>
 					</NcButton>
 				</div>
@@ -97,7 +97,7 @@
 				force-menu
 				:primary="silentChat">
 				<template #icon>
-					<BellOffIcon v-if="silentChat" :size="16" />
+					<IconBellOffOutline v-if="silentChat" :size="16" />
 				</template>
 				<NcActionButton close-after-click
 					:model-value="silentChat"
@@ -105,7 +105,7 @@
 					@click="toggleSilentChat">
 					{{ silentSendInfo }}
 					<template #icon>
-						<BellOffIcon :size="16" />
+						<IconBellOffOutline :size="16" />
 					</template>
 				</NcActionButton>
 			</NcActions>
@@ -124,7 +124,7 @@
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleAbortEdit">
 					<template #icon>
-						<CloseIcon :size="20" />
+						<IconClose :size="20" />
 					</template>
 				</NcButton>
 				<NcButton :disabled="disabledEdit"
@@ -134,7 +134,7 @@
 					:aria-label="t('spreed', 'Edit message')"
 					@click="handleEdit">
 					<template #icon>
-						<CheckIcon :size="20" />
+						<IconCheck :size="20" />
 					</template>
 				</NcButton>
 			</template>
@@ -148,7 +148,7 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<SendIcon class="bidirectional-icon" :size="16" />
+						<IconSend class="bidirectional-icon" :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -175,11 +175,11 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import SendIcon from 'vue-material-design-icons/Send.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconSend from 'vue-material-design-icons/Send.vue'
 import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
@@ -222,11 +222,11 @@ export default {
 		NewMessageTypingIndicator,
 		Quote,
 		// Icons
-		BellOffIcon,
-		CheckIcon,
-		CloseIcon,
-		EmoticonOutline,
-		SendIcon,
+		IconBellOffOutline,
+		IconCheck,
+		IconClose,
+		IconEmoticonOutline,
+		IconSend,
 	},
 
 	props: {

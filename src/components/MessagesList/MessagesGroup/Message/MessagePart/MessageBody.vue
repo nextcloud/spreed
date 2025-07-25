@@ -15,7 +15,7 @@
 				'message-highlighted': showJoinCallButton,
 			}">
 			<!-- Message content / text -->
-			<CancelIcon v-if="isDeletedMessage" :size="16" />
+			<IconCancel v-if="isDeletedMessage" :size="16" />
 			<NcRichText :text="renderedMessage"
 				:arguments="richParameters"
 				autolink
@@ -65,7 +65,7 @@
 				:style="{ top: copyButtonOffset }"
 				@click="copyCodeBlock">
 				<template #icon>
-					<ContentCopyIcon :size="16" />
+					<IconContentCopy :size="16" />
 				</template>
 			</NcButton>
 		</div>
@@ -90,10 +90,10 @@
 					:aria-label="sendingErrorIconTitle"
 					@click="handleRetry">
 					<template #icon>
-						<ReloadIcon :size="16" />
+						<IconReload :size="16" />
 					</template>
 				</NcButton>
-				<AlertCircleIcon v-else :size="16" />
+				<IconAlertCircleOutline v-else :size="16" />
 			</div>
 			<div v-else-if="showLoadingIcon"
 				:title="loadingIconTitle"
@@ -103,19 +103,19 @@
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
 				:aria-label="readInfo.commonReadIconTitle">
-				<CheckAllIcon :size="16" />
+				<IconCheckAll :size="16" />
 			</div>
 			<div v-else-if="readInfo.showSentIcon"
 				:title="readInfo.sentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.sentIconTitle">
-				<CheckIcon :size="16" />
+				<IconCheck :size="16" />
 			</div>
 			<div v-else-if="readInfo.showSilentIcon"
 				:title="readInfo.silentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.silentIconTitle">
-				<IconBellOff :size="16" />
+				<IconBellOffOutline :size="16" />
 			</div>
 		</div>
 
@@ -132,13 +132,13 @@ import emojiRegex from 'emoji-regex'
 import { inject, toRefs } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
-import IconBellOff from 'vue-material-design-icons/BellOff.vue'
-import CancelIcon from 'vue-material-design-icons/Cancel.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
-import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
-import ReloadIcon from 'vue-material-design-icons/Reload.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCancel from 'vue-material-design-icons/Cancel.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconReload from 'vue-material-design-icons/Reload.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
@@ -169,13 +169,13 @@ export default {
 		Quote,
 		ConversationActionsShortcut,
 		// Icons
-		AlertCircleIcon,
-		IconBellOff,
-		CancelIcon,
-		CheckIcon,
-		CheckAllIcon,
-		ContentCopyIcon,
-		ReloadIcon,
+		IconAlertCircleOutline,
+		IconBellOffOutline,
+		IconCancel,
+		IconCheck,
+		IconCheckAll,
+		IconContentCopy,
+		IconReload,
 	},
 
 	props: {
