@@ -4,33 +4,64 @@
 -->
 
 <template>
-	<NcPopover ref="popover"
-		:boundary="boundaryElement"
-		:show-triggers="[]"
-		:hide-triggers="['click']"
-		:auto-hide="false"
-		no-focus-trap
-		:shown="popupShown">
-		<template #trigger>
-			<NcButton :title="audioButtonTitle"
-				:variant="variant"
-				:aria-label="audioButtonAriaLabel"
-				:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
-				:disabled="!isAudioAllowed"
-				@click.stop="toggleAudio">
-				<template #icon>
-					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
-						:audio-enabled="showMicrophoneOn"
-						:current-volume="model.attributes.currentVolume"
-						:volume-threshold="model.attributes.volumeThreshold"
-						overlay-muted-color="#888888" />
-				</template>
-			</NcButton>
-		</template>
-		<div class="popover-hint">
-			<span>{{ speakingWhileMutedWarner?.message }}</span>
-		</div>
-	</NcPopover>
+	<div class="local-audio-control-wrapper">
+		<NcPopover ref="popover"
+			:boundary="boundaryElement"
+			:show-triggers="[]"
+			:hide-triggers="['click']"
+			:auto-hide="false"
+			no-focus-trap
+			:shown="popupShown">
+			<template #trigger>
+				<NcButton :title="audioButtonTitle"
+					class="audio-control-button"
+					:variant="variant"
+					:aria-label="audioButtonAriaLabel"
+					:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+					:disabled="!isAudioAllowed"
+					@click.stop="toggleAudio">
+					<template #icon>
+						<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+							:audio-enabled="showMicrophoneOn"
+							:current-volume="model.attributes.currentVolume"
+							:volume-threshold="model.attributes.volumeThreshold"
+							overlay-muted-color="#888888" />
+					</template>
+				</NcButton>
+			</template>
+			<div class="popover-hint">
+				<span>{{ speakingWhileMutedWarner?.message }}</span>
+			</div>
+		</NcPopover>
+
+		<NcActions v-if="showDevices"
+			class="audio-selector-button"
+			@open="updateDevices">
+			<template #icon>
+				<IconChevronUp :size="16" />
+			</template>
+			<NcActionCaption :name="t('spreed', 'Select a microphone')" />
+			<NcActionButton v-for="device in audioInputDevices"
+				:key="device.deviceId ?? 'none'"
+				type="radio"
+				:model-value="audioInputId"
+				:value="device.deviceId"
+				:title="device.label"
+				@click="handleAudioInputIdChange(device.deviceId)">
+				{{ device.label }}
+			</NcActionButton>
+			<NcActionCaption :name="t('spreed', 'Select a speaker')" />
+			<NcActionButton v-for="device in audioOutputDevices"
+				:key="device.deviceId ?? 'none'"
+				type="radio"
+				:model-value="audioOutputId"
+				:value="device.deviceId"
+				:title="device.label"
+				@click="handleAudioOutputIdChange(device.deviceId)">
+				{{ device.label }}
+			</NcActionButton>
+		</NcActions>
+	</div>
 </template>
 
 <script>
@@ -38,9 +69,14 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { onBeforeUnmount, ref, watch } from 'vue'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
+import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -49,9 +85,13 @@ export default {
 	name: 'LocalAudioControlButton',
 
 	components: {
+		NcActions,
+		NcActionButton,
+		NcActionCaption,
 		NcButton,
 		NcPopover,
 		VolumeIndicator,
+		IconChevronUp,
 	},
 
 	props: {
@@ -107,6 +147,15 @@ export default {
 			})
 		}
 
+		const {
+			devices,
+			audioInputId,
+			audioOutputId,
+			updateDevices,
+			audioOutputSupported,
+			updatePreferences,
+		} = useDevices(props.token, false)
+
 		/**
 		 * Check if component is visible and not obstructed by others
 		 * @param element HTML element
@@ -124,6 +173,12 @@ export default {
 			popover,
 			popupShown,
 			speakingWhileMutedWarner,
+			devices,
+			audioInputId,
+			audioOutputId,
+			updateDevices,
+			audioOutputSupported,
+			updatePreferences,
 		}
 	},
 
@@ -165,6 +220,14 @@ export default {
 				? t('spreed', 'Mute audio')
 				: t('spreed', 'Unmute audio')
 		},
+
+		audioInputDevices() {
+			return [...this.devices.filter((device) => device.kind === 'audioinput'), { deviceId: null, label: t('spreed', 'None') }]
+		},
+
+		audioOutputDevices() {
+			return this.devices.filter((device) => device.kind === 'audiooutput')
+		},
 	},
 
 	created() {
@@ -202,6 +265,16 @@ export default {
 				this.model.enableAudio()
 			}
 		},
+
+		handleAudioInputIdChange(audioInputId) {
+			this.audioInputId = audioInputId
+			this.updatePreferences('audioinput')
+		},
+
+		handleAudioOutputIdChange(audioOutputId) {
+			this.audioOutputId = audioOutputId
+			this.updatePreferences('audiooutput')
+		},
 	},
 }
 </script>
@@ -215,5 +288,31 @@ export default {
 	padding: calc(3 * var(--default-grid-baseline));
 	max-width: 300px;
 	text-align: start;
+}
+
+.audio-selector-button :deep(.action-item__menutoggle) {
+	--button-size: var(--clickable-area-small);
+	height: var(--default-clickable-area);
+	border-end-start-radius: 2px;
+	border-start-start-radius: 2px;
+}
+
+.audio-control-button {
+	border-start-end-radius: 2px;
+	border-end-end-radius: 2px;
+}
+
+.local-audio-control-wrapper {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) / 2);
+}
+
+:deep(.action-button__longtext) {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 </style>

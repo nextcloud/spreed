@@ -4,26 +4,52 @@
 -->
 
 <template>
-	<NcButton :title="videoButtonTitle"
-		:variant="variant"
-		:aria-label="videoButtonAriaLabel"
-		:class="{ 'no-video-available': !model.attributes.videoAvailable }"
-		:disabled="!isVideoAllowed"
-		@click.stop="toggleVideo">
-		<template #icon>
-			<VideoIcon v-if="showVideoOn" :size="20" />
-			<VideoOff v-else :size="20" />
-		</template>
-	</NcButton>
+	<div class="local-video-control-wrapper">
+		<NcButton :title="videoButtonTitle"
+			class="video-control-button"
+			:variant="variant"
+			:aria-label="videoButtonAriaLabel"
+			:class="{ 'no-video-available': !model.attributes.videoAvailable }"
+			:disabled="!isVideoAllowed"
+			@click.stop="toggleVideo">
+			<template #icon>
+				<VideoIcon v-if="showVideoOn" :size="20" />
+				<VideoOff v-else :size="20" />
+			</template>
+		</NcButton>
+
+		<NcActions v-if="showDevices"
+			class="video-selector-button"
+			@open="updateDevices">
+			<template #icon>
+				<IconChevronUp :size="16" />
+			</template>
+			<NcActionCaption :name="t('spreed', 'Select a video device')" />
+			<NcActionButton v-for="device in videoDevices"
+				:key="device.deviceId ?? 'none'"
+				type="radio"
+				:model-value="videoInputId"
+				:value="device.deviceId"
+				:title="device.label"
+				@click="handleVideoInputIdChange(device.deviceId)">
+				{{ device.label }}
+			</NcActionButton>
+		</NcActions>
+	</div>
 </template>
 
 <script>
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 
@@ -31,9 +57,14 @@ export default {
 	name: 'LocalVideoControlButton',
 
 	components: {
+		NcActions,
+		NcActionButton,
+		NcActionCaption,
 		NcButton,
+		NcActions,
 		VideoIcon,
 		VideoOff,
+		IconChevronUp,
 	},
 
 	props: {
@@ -61,6 +92,21 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const {
+			devices,
+			videoInputId,
+			updateDevices,
+			updatePreferences,
+		} = useDevices(undefined, false)
+		return {
+			devices,
+			videoInputId,
+			updateDevices,
+			updatePreferences,
+		}
 	},
 
 	computed: {
@@ -113,6 +159,10 @@ export default {
 
 			return t('spreed', 'Enable video. Your connection will be briefly interrupted when enabling the video for the first time')
 		},
+
+		videoDevices() {
+			return [...this.devices.filter((device) => device.kind === 'videoinput'), { deviceId: null, label: t('spreed', 'None') }]
+		},
 	},
 
 	created() {
@@ -149,6 +199,12 @@ export default {
 				this.model.enableVideo()
 			}
 		},
+
+		handleVideoInputIdChange(videoInputId) {
+			this.videoInputId = videoInputId
+			this.updatePreferences('videoinput')
+		},
+
 	},
 }
 </script>
@@ -156,5 +212,31 @@ export default {
 <style scoped lang="scss">
 .no-video-available {
 	opacity: .7;
+}
+
+.video-selector-button :deep(.action-item__menutoggle) {
+	--button-size: var(--clickable-area-small);
+	height: var(--default-clickable-area);
+	border-end-start-radius: 2px;
+	border-start-start-radius: 2px;
+}
+
+.video-control-button {
+	border-start-end-radius: 2px;
+	border-end-end-radius: 2px;
+}
+
+.local-video-control-wrapper {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) / 2);
+}
+
+:deep(.action-button__longtext) {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 </style>
