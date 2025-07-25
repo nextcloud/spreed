@@ -22,6 +22,7 @@ import { START_LOCATION, useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -55,6 +56,7 @@ export function useGetMessagesProvider() {
 	const store = useStore()
 	const router = useRouter()
 	const route = useRoute()
+	const chatStore = useChatStore()
 
 	const currentToken = useGetToken()
 	const threadId = useGetThreadId()
@@ -205,7 +207,7 @@ export function useGetMessagesProvider() {
 
 		store.dispatch('setVisualLastReadMessageId', { token, id: conversation.value!.lastReadMessage })
 
-		if (!store.getters.getFirstKnownMessageId(token)) {
+		if (!chatStore.chatBlocks[token]) {
 			try {
 				// Start from message hash or unread marker
 				let startingMessageId = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage

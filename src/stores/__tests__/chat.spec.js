@@ -100,6 +100,44 @@ describe('chatStore', () => {
 		})
 	})
 
+	describe('get first and last known messages', () => {
+		it('returns given message id if chat blocks are not yet available', () => {
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
+		})
+
+		it('returns first / last known id of first block if no message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockE)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN)).toBe(chatBlockA[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN)).toBe(chatBlockE[2].id)
+		})
+
+		it('returns first / last known id of first block if no message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockA[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockA[1].id)
+		})
+
+		it('returns first / last known id of containing block if message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[1].id)
+		})
+	})
+
 	describe('process messages chunks', () => {
 		it('creates a new block, if not created yet', () => {
 			// Act

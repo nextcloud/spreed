@@ -12,6 +12,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 
@@ -30,6 +31,8 @@ export function useDocumentTitle() {
 	const router = useRouter()
 	const route = useRoute()
 	const isDocumentVisible = useDocumentVisibility()
+
+	const chatStore = useChatStore()
 
 	const defaultPageTitle = ref<string>(getDefaultPageTitle())
 	const showAsterisk = ref(false)
@@ -122,7 +125,7 @@ export function useDocumentTitle() {
 			} else {
 				// @ts-expect-error: Property 'id' does not exist on type ChatProxyMessage
 				const lastMessageId = lastMessage.id ?? 0
-				const lastKnownMessageId = store.getters.getLastKnownMessageId(token) ?? 0
+				const lastKnownMessageId = Math.max(...chatStore.chatBlocks[token][0]) ?? 0
 				acc[token].lastMessageId = Math.max(lastMessageId, lastKnownMessageId)
 			}
 			acc[token].unreadMessages = unreadMessages

@@ -97,6 +97,64 @@ export const useChatStore = defineStore('chat', () => {
 	}
 
 	/**
+	 * Returns first known message id, belonging to current context. Defaults to given messageId
+	 */
+	function getFirstKnownId(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number {
+		if (!chatBlocks[token]) {
+			return messageId
+		}
+
+		if (threadId) {
+			// If topmost message of thread is in the store, return its id
+			if (hasMessage(token, { messageId: threadId, threadId })) {
+				return threadId
+			}
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return Math.min(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+				.filter((message) => {
+					return message.threadId === threadId
+				}).map((message) => message.id))
+		}
+
+		if (messageId <= 0) {
+			return Math.min(...chatBlocks[token][0])
+		}
+
+		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
+		return contextBlock ? Math.min(...contextBlock) : Math.min(...chatBlocks[token][0])
+	}
+
+	/**
+	 * Returns last known message id, belonging to current context. Defaults to given messageId
+	 */
+	function getLastKnownId(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number {
+		if (!chatBlocks[token]) {
+			return messageId
+		}
+
+		if (threadId) {
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return Math.max(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+				.filter((message) => {
+					return message.threadId === threadId
+				}).map((message) => message.id))
+		}
+
+		if (messageId <= 0) {
+			return Math.max(...chatBlocks[token][0])
+		}
+
+		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
+		return contextBlock ? Math.max(...contextBlock) : Math.max(...chatBlocks[token][0])
+	}
+
+	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
 	 */
@@ -241,6 +299,8 @@ export const useChatStore = defineStore('chat', () => {
 
 		getMessagesList,
 		hasMessage,
+		getFirstKnownId,
+		getLastKnownId,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,
