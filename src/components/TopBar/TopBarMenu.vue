@@ -15,9 +15,9 @@
 				<IconDotsHorizontal :size="20" />
 			</template>
 
-			<template v-if="showActions && isInCall">
+			<template v-if="isInCall && canFullModerate">
 				<!-- Moderator actions -->
-				<template v-if="!isOneToOneConversation && canFullModerate">
+				<template v-if="!isOneToOneConversation">
 					<NcActionButton close-after-click
 						@click="forceMuteOthers">
 						<template #icon>
@@ -27,15 +27,35 @@
 					</NcActionButton>
 				</template>
 
-				<!-- Device settings -->
-				<NcActionButton close-after-click
-					@click="showMediaSettingsDialog">
-					<template #icon>
-						<IconVideo :size="20" />
-					</template>
-					{{ t('spreed', 'Check devices') }}
-				</NcActionButton>
-				<NcActionSeparator />
+				<!-- Call recording -->
+				<template v-if="canModerateRecording">
+					<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
+						close-after-click
+						@click="startRecording">
+						<template #icon>
+							<IconRecordCircle :size="20" />
+						</template>
+						{{ t('spreed', 'Start recording') }}
+					</NcActionButton>
+					<NcActionButton v-else-if="isStartingRecording && isInCall"
+						close-after-click
+						@click="stopRecording">
+						<template #icon>
+							<NcLoadingIcon :size="20" />
+						</template>
+						{{ t('spreed', 'Cancel recording start') }}
+					</NcActionButton>
+					<NcActionButton v-else-if="isRecording && isInCall"
+						close-after-click
+						@click="stopRecording">
+						<template #icon>
+							<IconStop :size="20" />
+						</template>
+						{{ t('spreed', 'Stop recording') }}
+					</NcActionButton>
+				</template>
+
+				<NcActionSeparator v-if="!isOneToOneConversation || canModerateRecording" />
 			</template>
 
 			<!-- Go to file -->
@@ -49,33 +69,15 @@
 				{{ t('spreed', 'Go to file') }}
 			</NcActionLink>
 
-			<!-- Call recording -->
-			<template v-if="canModerateRecording">
-				<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
-					close-after-click
-					@click="startRecording">
-					<template #icon>
-						<IconRecordCircle :size="20" />
-					</template>
-					{{ t('spreed', 'Start recording') }}
-				</NcActionButton>
-				<NcActionButton v-else-if="isStartingRecording && isInCall"
-					close-after-click
-					@click="stopRecording">
-					<template #icon>
-						<NcLoadingIcon :size="20" />
-					</template>
-					{{ t('spreed', 'Cancel recording start') }}
-				</NcActionButton>
-				<NcActionButton v-else-if="isRecording && isInCall"
-					close-after-click
-					@click="stopRecording">
-					<template #icon>
-						<IconStop :size="20" />
-					</template>
-					{{ t('spreed', 'Stop recording') }}
-				</NcActionButton>
-			</template>
+			<!-- Device settings -->
+			<NcActionButton v-if="isInCall"
+				close-after-click
+				@click="showMediaSettingsDialog">
+				<template #icon>
+					<IconVideo :size="20" />
+				</template>
+				{{ t('spreed', 'Check devices') }}
+			</NcActionButton>
 
 			<!-- Breakout rooms -->
 			<NcActionButton v-if="canConfigureBreakoutRooms"
@@ -87,14 +89,6 @@
 				{{ t('spreed', 'Set up breakout rooms') }}
 			</NcActionButton>
 
-			<!-- Conversation settings -->
-			<NcActionButton close-after-click
-				@click="openConversationSettings">
-				<template #icon>
-					<IconCogOutline :size="20" />
-				</template>
-				{{ t('spreed', 'Conversation settings') }}
-			</NcActionButton>
 			<NcActionLink v-if="isInCall && canDownloadCallParticipants"
 				:href="downloadCallParticipantsLink"
 				target="_blank">
@@ -113,6 +107,15 @@
 					<IconFullscreenExit v-else :size="20" />
 				</template>
 				{{ labelFullscreen }}
+			</NcActionButton>
+
+			<!-- Conversation settings -->
+			<NcActionButton close-after-click
+				@click="openConversationSettings">
+				<template #icon>
+					<IconCogOutline :size="20" />
+				</template>
+				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
 		</NcActions>
 
@@ -265,7 +268,7 @@ export default {
 		},
 
 		canModerateRecording() {
-			return this.canFullModerate && (getTalkConfig(this.token, 'call', 'recording') || false)
+			return getTalkConfig(this.token, 'call', 'recording') || false
 		},
 
 		canConfigureBreakoutRooms() {
