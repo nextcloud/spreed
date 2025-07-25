@@ -91,7 +91,7 @@
 			<NcActionButton close-after-click
 				@click="openConversationSettings">
 				<template #icon>
-					<IconCog :size="20" />
+					<IconCogOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
@@ -115,6 +115,17 @@
 				{{ labelFullscreen }}
 			</NcActionButton>
 		</NcActions>
+
+		<NcButton v-else
+			class="top-bar__icon-wrapper"
+			:aria-label="t('spreed', 'Check devices')"
+			:title="t('spreed', 'Check devices')"
+			variant="tertiary"
+			@click="showMediaSettingsDialog">
+			<template #icon>
+				<IconCogOutline :size="20" />
+			</template>
+		</NcButton>
 	</div>
 </template>
 
@@ -127,9 +138,10 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconFile from 'vue-material-design-icons/File.vue'
@@ -159,10 +171,11 @@ export default {
 		NcActionLink,
 		NcActionSeparator,
 		NcActions,
+		NcButton,
 		NcLoadingIcon,
 		NcIconSvgWrapper,
 		// Icons
-		IconCog,
+		IconCogOutline,
 		IconDotsCircle,
 		IconDotsHorizontal,
 		IconFile,

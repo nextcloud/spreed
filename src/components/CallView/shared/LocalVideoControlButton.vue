@@ -6,7 +6,6 @@
 <template>
 	<div class="local-video-control-wrapper">
 		<NcButton :title="videoButtonTitle"
-			class="video-control-button"
 			:variant="variant"
 			:aria-label="videoButtonAriaLabel"
 			:class="{
@@ -94,6 +93,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showDevices: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

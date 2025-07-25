@@ -14,7 +14,6 @@
 			:shown="popupShown">
 			<template #trigger>
 				<NcButton :title="audioButtonTitle"
-					class="audio-control-button"
 					:variant="variant"
 					:aria-label="audioButtonAriaLabel"
 					:class="{
@@ -133,6 +132,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showDevices: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

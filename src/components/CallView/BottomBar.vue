@@ -190,7 +190,7 @@ useHotKey('f', toggleFullscreen)
 
 <template>
 	<div class="bottom-bar" data-theme-dark>
-		<div class="bottom-bar-call-controls">
+		<div v-if="!isSidebar" class="bottom-bar-call-controls">
 			<!-- Fullscreen -->
 			<NcButton :aria-label="fullscreenLabel"
 				:variant="isFullscreen ? 'secondary' : 'tertiary'"
@@ -228,7 +228,7 @@ useHotKey('f', toggleFullscreen)
 				:supported-reactions="supportedReactions"
 				:local-call-participant-model="localCallParticipantModel" />
 
-			<NcButton
+			<NcButton v-if="!isSidebar"
 				:title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
 				:variant="isHandRaised ? 'secondary' : 'tertiary'"
