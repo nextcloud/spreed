@@ -68,7 +68,7 @@ async function fetchMessages({
 			lookIntoFuture,
 			lastKnownMessageId,
 			threadId,
-			limit,
+			limit: 20,
 			includeLastKnown: includeLastKnown ? 1 : 0,
 		} as receiveMessagesParams,
 	})
@@ -95,7 +95,7 @@ async function pollNewMessages({
 			setReadMarker: 0,
 			lookIntoFuture: CHAT.FETCH_NEW,
 			lastKnownMessageId,
-			limit,
+			limit: 20,
 			includeLastKnown: 0,
 			markNotificationsAsRead: 0,
 		} as receiveMessagesParams,
@@ -118,7 +118,7 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
 		...options,
 		params: {
 			threadId,
-			limit,
+			limit: 20,
 		} as getMessageContextParams,
 	})
 }

@@ -122,7 +122,8 @@ export function useDocumentTitle() {
 			} else {
 				// @ts-expect-error: Property 'id' does not exist on type ChatProxyMessage
 				const lastMessageId = lastMessage.id ?? 0
-				const lastKnownMessageId = store.getters.getLastKnownMessageId(token) ?? 0
+				const lastKnownMessageId = 0
+				// store.getters.getLastKnownMessageId(token) ?? 0
 				acc[token].lastMessageId = Math.max(lastMessageId, lastKnownMessageId)
 			}
 			acc[token].unreadMessages = unreadMessages

@@ -188,6 +188,7 @@ import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -289,6 +290,8 @@ export default {
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
 		const { createTemporaryMessage } = useTemporaryMessage()
+		const threadId = useGetThreadId()
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -299,6 +302,7 @@ export default {
 			supportTypingStatus,
 			autoComplete,
 			userData,
+			threadId,
 			createTemporaryMessage,
 		}
 	},
@@ -889,7 +893,9 @@ export default {
 			}
 
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token).findLast((message) => {
+			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token, {
+				threadId: this.threadId,
+			}).findLast((message) => {
 				return this.actorStore.checkIfSelfIsActor(message)
 					&& !message.isTemporary && !message.systemMessage
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)

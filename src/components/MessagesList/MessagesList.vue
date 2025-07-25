@@ -138,12 +138,15 @@ export default {
 
 	setup(props) {
 		const {
+			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 
 			getOldMessages,
+			getNewMessages,
 		} = useGetMessages()
 
 		const isDocumentVisible = useDocumentVisibility()
@@ -158,12 +161,15 @@ export default {
 			isChatVisible,
 			threadId,
 
+			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 
 			getOldMessages,
+			getNewMessages,
 		}
 	},
 
@@ -213,14 +219,10 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
-			if (!this.threadId) {
-				return this.chatStore.getMessagesList(this.token)
-			}
-
-			return this.chatStore.getMessagesList(this.token)
-				.filter((message) => {
-					return message.threadId === this.threadId
-				})
+			return this.chatStore.getMessagesList(this.token, {
+				messageId: this.contextMessageId,
+				threadId: this.threadId,
+			})
 		},
 
 		isMessagesListPopulated() {
@@ -670,12 +672,12 @@ export default {
 				return
 			}
 
-			if (!this.$store.getters.getFirstKnownMessageId(this.token)) {
-				// This can happen if the browser is fast enough to close the sidebar
-				// when switching from a one-to-one to a group conversation.
-				console.debug('Ignoring handleScroll as the messages history is empty')
-				return
-			}
+			// if (!this.$store.getters.getFirstKnownMessageId(this.token)) {
+			// 	// This can happen if the browser is fast enough to close the sidebar
+			// 	// when switching from a one-to-one to a group conversation.
+			// 	console.debug('Ignoring handleScroll as the messages history is empty')
+			// 	return
+			// }
 
 			if (this.isInitialisingMessages) {
 				console.debug('Ignore handleScroll as we are initialising the message history')
@@ -703,23 +705,42 @@ export default {
 				this.setChatScrolledToBottom(false)
 			}
 
-			if ((scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'up')
-				|| skipHeightCheck) {
-				if (this.loadingOldMessages || this.isChatBeginningReached) {
-					// already loading, don't do it twice
-					return
-				}
-				this.displayMessagesLoader = true
-				await this.getOldMessages(this.token, false)
-				this.displayMessagesLoader = false
-				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
-					// scroll to previous position + added height
-					this.$refs.scroller.scrollTo({
-						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
-					})
-				}
-				this.setChatScrolledToBottom(false, { auto: true })
-			}
+			// FIXME disable scrolling
+			// if ((scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'up')
+			// 	|| skipHeightCheck) {
+			// 	if (this.loadingOldMessages || this.isChatBeginningReached) {
+			// 		// already loading, don't do it twice
+			// 		return
+			// 	}
+			// 	this.displayMessagesLoader = true
+			// 	await this.getOldMessages(this.token, false)
+			// 	this.displayMessagesLoader = false
+			// 	if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+			// 		// scroll to previous position + added height
+			// 		this.$refs.scroller.scrollTo({
+			// 			top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+			// 		})
+			// 	}
+			// 	this.setChatScrolledToBottom(false, { auto: true })
+			// } else if ((scrollHeight > clientHeight && scrollOffsetFromBottom < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'down')
+			// 	|| skipHeightCheck) {
+			// 	console.log('fetch new')
+			// 	// FIXME
+			// 	if (this.loadingNewMessages || !this.hasMoreMessagesToLoad) {
+			// 		// already loading, don't do it twice
+			// 		return
+			// 	}
+			// 	this.displayMessagesLoader = true
+			// 	await this.getNewMessages(this.token, false)
+			// 	this.displayMessagesLoader = false
+			// 	if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+			// 		// scroll to previous position + added height
+			// 		this.$refs.scroller.scrollTo({
+			// 			top: scrollTop,
+			// 		})
+			// 	}
+			// 	this.setChatScrolledToBottom(false, { auto: true })
+			// }
 
 			this.debounceUpdateReadMarkerPosition()
 		},
@@ -1045,6 +1066,17 @@ export default {
 				}
 
 				this.isScrolling = 'up'
+				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else if (event.deltaY > 0) {
+				// FIXME
+				if (!this.hasMoreMessagesToLoad) {
+					// Remove event listener as it needs to be triggered
+					// only when it's not confirmed that the chat end is reached
+					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
+					return
+				}
+
+				this.isScrolling = 'down'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},

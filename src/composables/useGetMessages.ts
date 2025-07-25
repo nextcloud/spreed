@@ -22,17 +22,21 @@ import { START_LOCATION, useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
 type GetMessagesContext = {
+	contextMessageId: Ref<number>
 	loadingOldMessages: Ref<boolean>
+	loadingNewMessages: Ref<boolean>
 	isInitialisingMessages: Ref<boolean>
 	stopFetchingOldMessages: Ref<boolean>
 	isChatBeginningReached: ComputedRef<boolean>
 
 	getOldMessages: (token: string, includeLastKnown: boolean) => Promise<void>
+	getNewMessages: (token: string, includeLastKnown: boolean) => Promise<void>
 }
 
 const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
@@ -55,13 +59,16 @@ export function useGetMessagesProvider() {
 	const store = useStore()
 	const router = useRouter()
 	const route = useRoute()
+	const chatStore = useChatStore()
 
 	const currentToken = useGetToken()
 	const threadId = useGetThreadId()
 	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(currentToken.value))
 	const isInLobby = computed<boolean>(() => store.getters.isInLobby)
 
+	const contextMessageId = ref<number>(0)
 	const loadingOldMessages = ref(false)
+	const loadingNewMessages = ref(false)
 	const isInitialisingMessages = ref(false)
 	const stopFetchingOldMessages = ref(false)
 
@@ -76,9 +83,9 @@ export function useGetMessagesProvider() {
 		return !!store.getters.findParticipant(currentToken.value, conversation.value)?.attendeeId
 	})
 
-	const firstKnownMessage = computed<ChatMessage | undefined>(() => {
-		return store.getters.message(currentToken.value, store.getters.getFirstKnownMessageId(currentToken.value))
-	})
+	// const firstKnownMessage = computed<ChatMessage | undefined>(() => {
+	// 	return store.getters.message(currentToken.value, store.getters.getFirstKnownMessageId(currentToken.value))
+	// })
 	const isChatBeginningReached = computed(() => {
 		return stopFetchingOldMessages.value || (!!firstKnownMessage.value
 			&& firstKnownMessage.value.messageType === MESSAGE.TYPE.SYSTEM
@@ -171,27 +178,29 @@ export function useGetMessagesProvider() {
 
 		const focusMessageId = getMessageIdFromHash(to.hash)
 		if (from.hash !== to.hash && focusMessageId !== null) {
-			// the hash changed, need to focus/highlight another message
-			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, focusMessageId) as ChatMessage | Record<string, never>))
-			if (!hasMessageInStore) {
-				// message not found in the list, need to fetch it first
-				await getMessageContext(to.params.token, focusMessageId)
-			}
-			// need some delay (next tick is too short) to be able to run
-			// after the browser's native "scroll to anchor" from the hash
-			window.setTimeout(() => {
-				EventBus.emit('focus-message', focusMessageId)
-			}, 2)
-			return
+			contextMessageId.value = focusMessageId
+		} else if (to.query.threadId && from.query.threadId !== to.query.threadId) {
+			// FIXME temporary get thread messages from the start
+			contextMessageId.value = +to.query.threadId
+		} else {
+			contextMessageId.value = chatStore.lastKnown[to.params.token]
 		}
 
-		if (to.query.threadId && from.query.threadId !== to.query.threadId) {
-			// FIXME temporary get thread messages from the start
-			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, to.query.threadId) as ChatMessage | Record<string, never>))
-			if (!hasMessageInStore) {
-				await getMessageContext(to.params.token, +to.query.threadId)
-			}
+		const hasMessageInStore = chatStore.hasMessage(to.params.token, {
+			messageId: contextMessageId.value,
+			threadId: to.query.threadId ? +to.query.threadId : 0,
+		})
+		if (!hasMessageInStore) {
+			// message not found in the list, need to fetch it first
+			await getMessageContext(to.params.token, contextMessageId.value, (to.query.threadId ? +to.query.threadId : 0))
 		}
+
+		// need some delay (next tick is too short) to be able to run
+		// after the browser's native "scroll to anchor" from the hash
+		window.setTimeout(() => {
+			// FIXME should not highlight for last message
+			EventBus.emit('focus-message', contextMessageId.value)
+		}, 2)
 	}
 
 	/**
@@ -201,31 +210,30 @@ export function useGetMessagesProvider() {
 	async function handleStartGettingMessagesPreconditions(token: string) {
 		// prevent sticky mode before we have loaded anything
 		isInitialisingMessages.value = true
+
+		// Start from message hash or unread marker
 		const focusMessageId = getMessageIdFromHash(route.hash)
+		contextMessageId.value = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
+
+		if (threadId.value) {
+			// FIXME temporary get thread messages from the start
+			contextMessageId.value = threadId.value
+		}
 
 		store.dispatch('setVisualLastReadMessageId', { token, id: conversation.value!.lastReadMessage })
 
-		if (!store.getters.getFirstKnownMessageId(token)) {
+		if (!chatStore.chatBlocks[token]) {
 			try {
-				// Start from message hash or unread marker
-				let startingMessageId = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
-				// Check if thread is initially opened
-				if (threadId.value) {
-					// FIXME temporary get thread messages from the start
-					startingMessageId = threadId.value
+				if (!contextMessageId.value) {
+					throw new Error(`[DEBUG] spreed: context message ID is ${contextMessageId.value}`)
 				}
 
-				// First time load, initialize important properties
-				if (!startingMessageId) {
-					throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
-				}
-
-				await getMessageContext(token, startingMessageId)
+				await getMessageContext(token, contextMessageId.value, threadId.value)
 			} catch (exception) {
 				console.debug(exception)
 				// Request was cancelled, stop getting preconditions and restore initial state
-				store.dispatch('setFirstKnownMessageId', { token, id: null })
-				store.dispatch('setLastKnownMessageId', { token, id: null })
+				// store.dispatch('setFirstKnownMessageId', { token, id: null })
+				// store.dispatch('setLastKnownMessageId', { token, id: null })
 				return
 			}
 		}
@@ -240,15 +248,20 @@ export function useGetMessagesProvider() {
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
 	 * @param token token of conversation where a method was called
-	 * @param messageId messageId
+	 * @param messageId context messageId
+	 * @param threadId thread id
 	 */
-	async function getMessageContext(token: string, messageId: number) {
+	async function getMessageContext(token: string, messageId: number, threadId: number) {
 		loadingOldMessages.value = true
 		try {
 			debugTimer.start(`${token} | get context`)
+			// Check whether to update first/last known messages or handle context in isolation (old messages, thread messages)
+			// const isMainContext = messageId > chatStore.getFirstKnown(token)
 			// Update environment around context
-			store.dispatch('setFirstKnownMessageId', { token, id: messageId })
-			store.dispatch('setLastKnownMessageId', { token, id: messageId })
+			// if (isMainContext) {
+			// 	store.dispatch('setFirstKnownMessageId', { token, id: messageId })
+			// 	store.dispatch('setLastKnownMessageId', { token, id: messageId })
+			// }
 			// Make the request
 			await store.dispatch('getMessageContext', {
 				token,
@@ -256,6 +269,8 @@ export function useGetMessagesProvider() {
 				// using 0 as the API does not support negative values
 				// Get chat messages before last read message and after it
 				messageId: messageId !== MESSAGE.CHAT_BEGIN_ID ? messageId : 0,
+				threadId: threadId !== 0 ? threadId : undefined,
+				// isMainContext,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
@@ -297,8 +312,10 @@ export function useGetMessagesProvider() {
 			debugTimer.start(`${token} | fetch history`)
 			await store.dispatch('fetchMessages', {
 				token,
-				lastKnownMessageId: store.getters.getFirstKnownMessageId(token),
+				lastKnownMessageId: chatStore.getFirstKnown(token, { messageId: contextMessageId.value }), // TODO check
+				threadId: threadId.value,
 				includeLastKnown,
+				lookIntoFuture: CHAT.FETCH_OLD,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | fetch history`, 'status 200')
@@ -314,6 +331,45 @@ export function useGetMessagesProvider() {
 			}
 		}
 		loadingOldMessages.value = false
+	}
+
+	/**
+	 * Get messages history (for new messages).
+	 *
+	 * @param token token of conversation where a method was called
+	 * @param includeLastKnown Include or exclude the last known message in the response
+	 */
+	async function getNewMessages(token: string, includeLastKnown: boolean) {
+		// // FIXME End of the chat reached, no more messages to load
+		// // if (hasMoreMessagesToLoad.value) {
+		// // 	return
+		// // }
+		//
+		// // Make the request
+		// loadingNewMessages.value = true
+		// try {
+		// 	debugTimer.start(`${token} | fetch history (new)`)
+		// 	await store.dispatch('fetchMessages', {
+		// 		token,
+		// 		lastKnownMessageId: chatStore.getLastKnown(token, { messageId: contextMessageId.value }), // TODO check
+		// 		threadId: threadId.value,
+		// 		includeLastKnown,
+		// 		lookIntoFuture: CHAT.FETCH_NEW,
+		// 		minimumVisible: CHAT.MINIMUM_VISIBLE,
+		// 	})
+		// 	debugTimer.end(`${token} | fetch history (new)`, 'status 200')
+		// } catch (exception) {
+		// 	if (Axios.isCancel(exception)) {
+		// 		debugTimer.end(`${token} | fetch history (new)`, 'cancelled')
+		// 		console.debug('The request has been canceled', exception)
+		// 	}
+		// 	if (isAxiosErrorResponse(exception) && exception?.response?.status === 304) {
+		// 		// 304 - Not modified
+		// 		debugTimer.end(`${token} | fetch history (new)`, 'status 304')
+		// 		// hasMoreMessagesToLoad.value = true // FIXME
+		// 	}
+		// }
+		// loadingNewMessages.value = false
 	}
 
 	/**
@@ -335,7 +391,7 @@ export function useGetMessagesProvider() {
 			pollingErrorTimeout = 1_000
 			await store.dispatch('pollNewMessages', {
 				token,
-				lastKnownMessageId: store.getters.getLastKnownMessageId(token),
+				lastKnownMessageId: chatStore.lastKnown[token],
 				requestId: token,
 			})
 			debugTimer.end(`${token} | long polling`, 'status 200')
@@ -380,12 +436,15 @@ export function useGetMessagesProvider() {
 	}
 
 	provide(GET_MESSAGES_CONTEXT_KEY, {
+		contextMessageId,
 		loadingOldMessages,
+		loadingNewMessages,
 		isInitialisingMessages,
 		stopFetchingOldMessages,
 		isChatBeginningReached,
 
 		getOldMessages,
+		getNewMessages,
 	})
 }
 
