@@ -17,6 +17,7 @@ use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Model\ThreadAttendee;
+use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
@@ -212,29 +213,97 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			// Todo: What if the root already expired
-			$comment = $this->chatManager->getTopMostComment($this->room, (string)$messageId);
+			$thread = $this->ensureThread($messageId);
 		} catch (NotFoundException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
+
+		$list = $this->prepareListOfThreads([$thread], []);
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
+	}
+
+	/**
+	 * Set notification level for a specific thread
+	 *
+	 * Required capability: `threads`
+	 *
+	 * @param int $messageId The message to create a thread for (Doesn't have to be the root)
+	 * @psalm-param non-negative-int $messageId
+	 * @param int $level New level
+	 * @psalm-param Participant::NOTIFY_* $level
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'level'|'message'|'status'|'top-most'}, array{}>
+	 *
+	 * 200: Successfully set notification level for thread
+	 * 400: Root message is a system message and therefor not supported or notification level was invalid
+	 * 404: Message or top most message not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/threads/{messageId}/notify', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function setNotificationLevel(int $messageId, int $level): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController::class);
+			return $proxy->setNotificationLevel($this->room, $this->participant, $messageId, $level);
+		}
+
+		if (!\in_array($level, [
+			Participant::NOTIFY_DEFAULT,
+			Participant::NOTIFY_ALWAYS,
+			Participant::NOTIFY_MENTION,
+			Participant::NOTIFY_NEVER,
+		], true)) {
+			return new DataResponse(['error' => 'level'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$thread = $this->ensureThread($messageId);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$threadAttendee = $this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread, $level);
+		$attendees = [$thread->getId() => $threadAttendee];
+		$list = $this->prepareListOfThreads([$thread], $attendees);
+
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
+	}
+
+	/**
+	 * @throws NotFoundException
+	 * @throws \InvalidArgumentException
+	 */
+	protected function ensureThread(int $messageId): Thread {
+		// Todo: What if the root already expired
+		$comment = $this->chatManager->getTopMostComment($this->room, (string)$messageId);
 
 		$threadId = (int)$comment->getId();
 
 		$threadMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($threadMessage);
 		if ($threadMessage->getMessageType() === ChatManager::VERB_SYSTEM) {
-			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+			throw new \InvalidArgumentException('message');
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($threadId);
-			$threadAttendee = $this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
-			$attendees = [$thread->getId() => $threadAttendee];
-
-			$list = $this->prepareListOfThreads([$thread], $attendees);
-			/** @var TalkThreadInfo $threadInfo */
-			$threadInfo = array_shift($list);
-			return new DataResponse($threadInfo);
+			return $this->threadService->findByThreadId($threadId);
 		} catch (DoesNotExistException) {
 		}
 
@@ -252,12 +321,6 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			true
 		);
 
-		$threadAttendee = $this->threadService->addAttendeeToThread($this->participant->getAttendee(), $thread);
-		$attendees = [$thread->getId() => $threadAttendee];
-
-		$list = $this->prepareListOfThreads([$thread], $attendees);
-		/** @var TalkThreadInfo $threadInfo */
-		$threadInfo = array_shift($list);
-		return new DataResponse($threadInfo);
+		return $thread;
 	}
 }

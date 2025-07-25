@@ -17,7 +17,6 @@ use OCA\Talk\Model\ThreadMapper;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -75,7 +74,7 @@ class ThreadService {
 	 * @return array<int, ThreadAttendee> Key is the thread id
 	 */
 	public function findAttendeeByThreadIds(Attendee $attendee, array $threadIds): array {
-		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getId(), $threadIds);
+		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getActorType(), $attendee->getActorId(), $threadIds);
 		$threadAttendees = [];
 		foreach ($attendees as $threadAttendee) {
 			$threadAttendees[$threadAttendee->getThreadId()] = $threadAttendee;
@@ -84,22 +83,34 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function addAttendeeToThread(Attendee $attendee, Thread $thread): ThreadAttendee {
-		$threadAttendee = new ThreadAttendee();
-		$threadAttendee->setThreadId($thread->getId());
-		$threadAttendee->setRoomId($thread->getRoomId());
+	/**
+	 * @return array<int, ThreadAttendee> Key is the attendee id
+	 */
+	public function findAttendeesForNotificationByThreadId(int $threadId): array {
+		$attendees = $this->threadAttendeeMapper->findAttendeesForNotification($threadId);
+		$threadAttendees = [];
+		foreach ($attendees as $threadAttendee) {
+			$threadAttendees[$threadAttendee->getAttendeeId()] = $threadAttendee;
+		}
 
-		$threadAttendee->setAttendeeId($attendee->getId());
-		$threadAttendee->setActorType($attendee->getActorType());
-		$threadAttendee->setActorId($attendee->getActorId());
-		$threadAttendee->setNotificationLevel($attendee->getNotificationLevel());
+		return $threadAttendees;
+	}
 
+	public function setNotificationLevel(Attendee $attendee, Thread $thread, int $level): ThreadAttendee {
 		try {
+			$threadAttendee = $this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $thread->getId());
+			$threadAttendee->setNotificationLevel($level);
+			$this->threadAttendeeMapper->update($threadAttendee);
+		} catch (DoesNotExistException) {
+			$threadAttendee = new ThreadAttendee();
+			$threadAttendee->setThreadId($thread->getId());
+			$threadAttendee->setRoomId($thread->getRoomId());
+
+			$threadAttendee->setAttendeeId($attendee->getId());
+			$threadAttendee->setActorType($attendee->getActorType());
+			$threadAttendee->setActorId($attendee->getActorId());
+			$threadAttendee->setNotificationLevel($level);
 			$this->threadAttendeeMapper->insert($threadAttendee);
-		} catch (Exception $e) {
-			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-				throw $e;
-			}
 		}
 
 		return $threadAttendee;
@@ -119,7 +130,7 @@ class ThreadService {
 		$query->executeStatement();
 	}
 
-	public function updateLastMessageInfoAfterReply(Thread $thread, int $lastMessageId): void {
+	public function updateLastMessageInfoAfterReply(int $threadId, int $lastMessageId): void {
 		$dateTime = $this->timeFactory->getDateTime();
 
 		$query = $this->connection->getQueryBuilder();
@@ -127,12 +138,8 @@ class ThreadService {
 			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
 			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
-			->where($query->expr()->eq('id', $query->createNamedParameter($thread->getId())));
+			->where($query->expr()->eq('id', $query->createNamedParameter($threadId)));
 		$query->executeStatement();
-
-		$thread->setNumReplies($thread->getNumReplies() + 1);
-		$thread->setLastMessageId($lastMessageId);
-		$thread->setLastActivity($dateTime);
 	}
 
 	public function deleteByRoom(Room $room): void {

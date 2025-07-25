@@ -2783,6 +2783,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		sleep(1);
 	}
 
+	#[Then('/^user "([^"]*)" subscribes to thread "([^"]*)" in room "([^"]*)" with notification level (\d+) with (\d+)(?: \((v1)\))?$/')]
+	public function userSubscribesThreadInRoom(string $user, string $message, string $identifier, int $level, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads/' . self::$textToMessageId[$message] . '/notify',
+			['level' => $level],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData !== null) {
+			$result = $this->getDataFromResponse($this->response);
+			$this->compareThreadsResponse($formData, [$result]);
+		}
+	}
+
 	protected function compareThreadsResponse(?TableNode $formData, array $results): void {
 		if ($formData === null) {
 			Assert::assertEmpty($results);
@@ -2794,9 +2810,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount($count, $results, 'Result count does not match');
 
 		$expected = array_map(static function (array $result) {
-			foreach (['t.id', 't.lastMessage', 'firstMessage', 'lastMessage'] as $field) {
+			foreach (['t.id', 't.lastMessage', 'a.notificationLevel', 'firstMessage', 'lastMessage'] as $field) {
 				if (isset($result[$field])) {
-					if ($result[$field] === '0') {
+					if ($field === 'a.notificationLevel') {
+						$result[$field] = (int)$result[$field];
+					} elseif ($result[$field] === '0') {
 						$result[$field] = 0;
 					} elseif ($result[$field] === 'NULL') {
 						$result[$field] = null;
@@ -2817,6 +2835,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				't.id' => $actual['thread']['id'],
 				't.numReplies' => $actual['thread']['numReplies'],
 				't.lastMessage' => $actual['thread']['lastMessageId'],
+				'a.notificationLevel' => $actual['attendee']['notificationLevel'],
 				'firstMessage' => $actual['first']['id'] ?? null,
 				'lastMessage' => $actual['last']['id'] ?? null,
 			];
