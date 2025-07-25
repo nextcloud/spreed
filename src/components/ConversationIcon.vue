@@ -25,7 +25,7 @@
 				role="img"
 				aria-hidden="false"
 				:aria-label="conversationType.label">
-				<component :is="conversationType.icon" :size="12" />
+				<component :is="conversationType.icon" :size="size * 0.3" />
 			</span>
 		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
@@ -42,11 +42,11 @@
 			:verbose-status="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
-			<IconVideo :size="20" fill-color="#E9322D" />
+			<IconVideo :size="size * 0.5" fill-color="#E9322D" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite" class="overlap-icon">
-			<IconStar :size="20" fill-color="#FFCC00" />
+			<IconStar :size="size * 0.5" fill-color="#FFCC00" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
@@ -239,8 +239,8 @@ export default {
 		display: flex;
 		align-content: center;
 		justify-content: center;
-		height: clamp(14px, 40%, 18px);
-		width: clamp(14px, 40%, 18px);
+		height: clamp(10px, 40%, 18px);
+		width: clamp(10px, 40%, 18px);
 		border: 1px solid var(--color-main-background);
 		background-color: var(--color-main-background);
 		color: var(--color-main-text);
@@ -250,7 +250,7 @@ export default {
 	.overlap-icon {
 		position: absolute;
 		top: 0;
-		inset-inline-start: calc(var(--icon-size) - 12px);
+		inset-inline-start: calc(var(--icon-size) * 0.7);
 		line-height: 100%;
 		display: inline-block;
 		vertical-align: middle;

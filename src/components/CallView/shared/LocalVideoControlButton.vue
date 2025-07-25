@@ -6,10 +6,12 @@
 <template>
 	<div class="local-video-control-wrapper">
 		<NcButton :title="videoButtonTitle"
-			class="video-control-button"
 			:variant="variant"
 			:aria-label="videoButtonAriaLabel"
-			:class="{ 'no-video-available': !model.attributes.videoAvailable }"
+			:class="{
+				'no-video-available': !model.attributes.videoAvailable,
+				'video-control-button': showDevices,
+			}"
 			:disabled="!isVideoAllowed"
 			@click.stop="toggleVideo">
 			<template #icon>
@@ -91,6 +93,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showDevices: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

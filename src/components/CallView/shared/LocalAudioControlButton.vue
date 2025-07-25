@@ -14,10 +14,12 @@
 			:shown="popupShown">
 			<template #trigger>
 				<NcButton :title="audioButtonTitle"
-					class="audio-control-button"
 					:variant="variant"
 					:aria-label="audioButtonAriaLabel"
-					:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+					:class="{
+						'no-audio-available': !model.attributes.audioAvailable,
+						'audio-control-button': showDevices,
+					}"
 					:disabled="!isAudioAllowed"
 					@click.stop="toggleAudio">
 					<template #icon>
@@ -123,6 +125,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showDevices: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
