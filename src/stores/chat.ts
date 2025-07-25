@@ -37,6 +37,8 @@ export const useChatStore = defineStore('chat', () => {
 	const store = useStore()
 
 	const chatBlocks = reactive<TokenMap<Set<number>[]>>({})
+	const firstKnown = reactive<TokenMap<number>>({})
+	const lastKnown = reactive<TokenMap<number>>({})
 
 	/**
 	 * Returns list of messages, belonging to current context
@@ -62,14 +64,16 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
+	 * Afterwards, cache first and last known message ids for the first block
 	 */
 	function processChatBlocks(token: string, messages: ChatMessage[], options?: ProcessChatBlocksOptions): void {
-		const newMessageIds = messages.map((message) => message.id)
-		const newMessageIdsSet = new Set(newMessageIds)
+		const newMessageIdsSet = new Set(messages.map((message) => message.id))
 
 		if (!chatBlocks[token]) {
 			// If no blocks exist, create a new one with the first message. First in array will be considered main block
 			chatBlocks[token] = [newMessageIdsSet]
+			firstKnown[token] = Math.min(...newMessageIdsSet)
+			lastKnown[token] = Math.max(...newMessageIdsSet)
 			return
 		}
 
@@ -78,6 +82,8 @@ export const useChatStore = defineStore('chat', () => {
 		}
 
 		chatBlocks[token] = mergeAndSortChatBlocks(chatBlocks[token], newMessageIdsSet)
+		firstKnown[token] = Math.min(...chatBlocks[token][0])
+		lastKnown[token] = Math.max(...chatBlocks[token][0])
 	}
 
 	/**
@@ -167,6 +173,8 @@ export const useChatStore = defineStore('chat', () => {
 
 	return {
 		chatBlocks,
+		firstKnown,
+		lastKnown,
 
 		getMessagesList,
 		processChatBlocks,

@@ -22,6 +22,7 @@ import { START_LOCATION, useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
+import { useChatStore } from '../stores/chat.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -55,6 +56,7 @@ export function useGetMessagesProvider() {
 	const store = useStore()
 	const router = useRouter()
 	const route = useRoute()
+	const chatStore = useChatStore()
 
 	const currentToken = useGetToken()
 	const threadId = useGetThreadId()
@@ -335,7 +337,7 @@ export function useGetMessagesProvider() {
 			pollingErrorTimeout = 1_000
 			await store.dispatch('pollNewMessages', {
 				token,
-				lastKnownMessageId: store.getters.getLastKnownMessageId(token),
+				lastKnownMessageId: chatStore.lastKnown[token],
 				requestId: token,
 			})
 			debugTimer.end(`${token} | long polling`, 'status 200')
