@@ -14,10 +14,12 @@
 			:shown="popupShown">
 			<template #trigger>
 				<NcButton :title="audioButtonTitle"
-					class="audio-control-button"
 					:variant="variant"
 					:aria-label="audioButtonAriaLabel"
-					:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+					:class="{
+						'no-audio-available': !model.attributes.audioAvailable,
+						'audio-control-button': showDevices,
+					}"
 					:disabled="!isAudioAllowed"
 					@click.stop="toggleAudio">
 					<template #icon>
@@ -34,7 +36,8 @@
 			</div>
 		</NcPopover>
 
-		<NcPopover close-on-click-outside>
+		<NcPopover v-if="showDevices"
+			close-on-click-outside>
 			<template #trigger>
 				<NcButton class="audio-selector-button"
 					:title="t('spreed', 'Select audio input device')"
@@ -117,6 +120,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showDevices: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

@@ -25,7 +25,7 @@
 			<ConversationIcon :key="conversation.token"
 				:offline="isOffline"
 				:item="conversation"
-				:size="AVATAR.SIZE.DEFAULT"
+				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
 				:disable-menu="false"
 				show-user-online-status
 				:hide-favorite="false"
@@ -414,16 +414,18 @@ export default {
 	}
 
 	.talk-sidebar-callview & {
-		margin-inline-end: var(--default-clickable-area);
+		padding-inline-end: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 3);
 		align-items: flex-start;
-	}
-
-	&--sidebar {
-		padding: calc(2 * var(--default-grid-baseline));
+		padding-block: calc(2 * var(--default-grid-baseline)) 0px;
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
 
 		.top-bar__icon-wrapper {
 			margin-inline-start: 0;
 		}
+	}
+
+	&--sidebar {
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
 	&--authorised:not(.top-bar--sidebar) {

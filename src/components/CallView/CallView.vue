@@ -15,7 +15,7 @@
 		<template v-else>
 			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
 
-			<div id="videos">
+			<div id="videos" :class="{ 'is-sidebar': isSidebar }">
 				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					class="video__promoted"
 					:class="{ 'full-page': showFullPage }">
@@ -859,6 +859,21 @@ export default {
 	flex-direction: column;
 	padding: calc(var(--default-grid-baseline) * 2);
 	padding-block-start: 0;
+
+	&.is-sidebar {
+		width: 100%;
+		height: 100%;
+		top: 0;
+		bottom: 0;
+		padding: 0;
+
+		:deep(.video-container-big) {
+			width: 100%;
+			height: 100%;
+			padding: 0;
+			border-radius: 0;
+		}
+	}
 }
 
 .video__promoted {
@@ -899,6 +914,8 @@ export default {
 	&--sidebar {
 		width: 150px;
 		height: 100px;
+		bottom: 48px; // BottomBar height
+		margin: var(--default-grid-baseline);
 	}
 }
 
