@@ -493,7 +493,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead);
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId);
 		} else {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown, $threadId);
 		}
@@ -817,7 +817,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		} else {
 			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true, $threadId);
 			$commentsHistory = array_reverse($commentsHistory);
-			$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+			$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false, threadId: $threadId);
 		}
 
 		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
