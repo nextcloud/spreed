@@ -56,16 +56,27 @@
 				</div>
 			</span>
 
-			<NcButton
-				:aria-label="threadNotificationLabel"
-				:title="threadNotificationLabel"
-				:primary="!!threadNotification"
-				@click="() => {}">
+			<NcActions
+				:aria-label="t('spreed', 'Subscribe to thread')"
+				:title="t('spreed', 'Subscribe to thread')"
+				:variant="threadNotificationVariant">
 				<template #icon>
-					<IconBellOffOutline v-if="threadNotification" :size="20" />
-					<IconBellOutline v-else :size="20" />
+					<component :is="notificationLevelIcons[threadNotification]" :size="20" />
 				</template>
-			</NcButton>
+				<NcActionButton v-for="level in notificationLevels"
+					:key="level.value"
+					:model-value="threadNotification.toString()"
+					:value="level.value.toString()"
+					:description="level.description"
+					type="radio"
+					close-after-click
+					@click="chatExtrasStore.setThreadNotificationLevel(token, threadId, level.value)">
+					<template #icon>
+						<component :is="notificationLevelIcons[level.value]" :size="16" />
+					</template>
+					{{ level.label }}
+				</NcActionButton>
+			</NcActions>
 		</div>
 
 		<div v-else
@@ -164,6 +175,8 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
@@ -172,6 +185,7 @@ import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMul
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
@@ -186,7 +200,7 @@ import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { AVATAR, CONVERSATION } from '../../constants.ts'
+import { AVATAR, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
@@ -199,6 +213,20 @@ import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/i
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
+
+const notificationLevelIcons = {
+	[PARTICIPANT.NOTIFY.DEFAULT]: IconBellOutline,
+	[PARTICIPANT.NOTIFY.ALWAYS]: IconBellRingOutline,
+	[PARTICIPANT.NOTIFY.MENTION]: IconBellOutline,
+	[PARTICIPANT.NOTIFY.NEVER]: IconBellOffOutline,
+}
+
+const notificationLevels = [
+	{ value: PARTICIPANT.NOTIFY.DEFAULT, label: t('spreed', 'Default'), description: t('spreed', 'Follow conversation settings') },
+	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
+	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
+	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
+]
 
 export default {
 	name: 'TopBar',
@@ -213,6 +241,8 @@ export default {
 		ConversationIcon,
 		ExtendOneToOneDialog,
 		TopBarMediaControls,
+		NcActionButton,
+		NcActions,
 		NcButton,
 		NcPopover,
 		NcRichText,
@@ -223,8 +253,6 @@ export default {
 		IconAccountMultipleOutline,
 		IconAccountMultiplePlusOutline,
 		IconArrowLeft,
-		IconBellOffOutline,
-		IconBellOutline,
 		IconChevronRight,
 	},
 
@@ -246,6 +274,7 @@ export default {
 	setup() {
 		return {
 			AVATAR,
+			PARTICIPANT,
 			localCallParticipantModel,
 			localMediaModel,
 			groupwareStore: useGroupwareStore(),
@@ -255,6 +284,8 @@ export default {
 			CONVERSATION,
 			threadId: useGetThreadId(),
 			token: useGetToken(),
+			notificationLevels,
+			notificationLevelIcons,
 		}
 	},
 
@@ -287,14 +318,14 @@ export default {
 			if (this.currentThread) {
 				return this.currentThread.attendee.notificationLevel
 			}
-			return null
+			return PARTICIPANT.NOTIFY.DEFAULT
 		},
 
-		threadNotificationLabel() {
-			if (this.currentThread?.attendee.notificationLevel) {
-				return t('spreed', 'Unsubscribe from thread')
+		threadNotificationVariant() {
+			if ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION].includes(this.currentThread?.attendee.notificationLevel)) {
+				return 'secondary'
 			}
-			return t('spreed', 'Subscribe to thread')
+			return 'tertiary'
 		},
 
 		isOneToOneConversation() {

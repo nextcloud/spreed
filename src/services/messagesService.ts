@@ -7,7 +7,6 @@ import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	ChatMessage,
 	clearHistoryResponse,
-	createThreadResponse,
 	deleteMessageResponse,
 	editMessageParams,
 	editMessageResponse,
@@ -25,6 +24,8 @@ import type {
 	receiveMessagesResponse,
 	setReadMarkerParams,
 	setReadMarkerResponse,
+	setThreadNotificationLevelParams,
+	setThreadNotificationLevelResponse,
 	summarizeChatParams,
 	summarizeChatResponse,
 } from '../types/index.ts'
@@ -275,15 +276,17 @@ async function getSingleThreadForConversation(token: string, threadId: number, o
  *
  * @param token The conversation token
  * @param messageId The message id of any message belonging to the future thread
+ * @param level Level for thread notifications 0|1|2
  * @param [options] Axios request options
  */
-async function createThreadForConversation(token: string, messageId: number, options?: AxiosRequestConfig): createThreadResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{messageId}', { token, messageId }), undefined, options)
+async function setThreadNotificationLevel(token: string, messageId: number, level: number, options?: AxiosRequestConfig): setThreadNotificationLevelResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{messageId}/notify', { token, messageId }), {
+		level,
+	} as setThreadNotificationLevelParams, options)
 }
 
 export {
 	clearConversationHistory,
-	createThreadForConversation,
 	deleteMessage,
 	editMessage,
 	fetchMessages,
@@ -294,6 +297,7 @@ export {
 	postNewMessage,
 	postRichObjectToConversation,
 	setConversationUnread,
+	setThreadNotificationLevel,
 	summarizeChat,
 	updateLastReadMessage,
 }
