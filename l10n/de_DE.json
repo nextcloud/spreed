@@ -263,7 +263,7 @@
     "{actor} ended the call (Duration {duration})" : "{actor} hat den Anruf beendet (Dauer {duration})",
     "_Call with %n guest was ended, as it reached the maximum call duration (Duration {duration})_::_Call with %n guests was ended, as it reached the maximum call duration (Duration {duration})_" : ["Anruf mit %n Gast wurde beendet, da die maximale Gesprächsdauer erreicht wurde (Dauer {duration})","Anruf mit %n Gästen wurde beendet, da die maximale Gesprächsdauer erreicht wurde (Dauer {duration})"],
     "_Call with %n guest ended (Duration {duration})_::_Call with %n guests ended (Duration {duration})_" : ["Anruf mit %n Gast wurde beendet (Dauer {duration})","Anruf mit %n Gästen wurde beendet (Dauer {duration})"],
-    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} hat den Anruf mit %nGast beendet (Duration {duration})","{actor} hat den Anruf mit %n Gästen beendet (Duration {duration})"],
+    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} hat den Anruf mit %n Gast beendet (Duration {duration})","{actor} hat den Anruf mit %n Gästen beendet (Duration {duration})"],
     "Call with {user1} was ended, as it reached the maximum call duration (Duration {duration})" : "Anruf mit {user1} wurde beendet, da die maximale Gesprächsdauer erreicht wurde (Dauer {duration}) ",
     "Call with {user1} ended (Duration {duration})" : "Anruf mit {user1} beendet (Dauer {duration})",
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} hat den Anruf mit {user1} beendet (Duration {duration})",
