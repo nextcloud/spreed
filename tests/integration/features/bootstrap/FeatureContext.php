@@ -46,8 +46,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $userToAttendeeId;
 	/** @var array<string, int> */
 	protected static array $textToMessageId;
+	/** @var array<string, int> */
+	protected static array $titleToThreadId;
 	/** @var array<int, string> */
 	protected static array $messageIdToText;
+	/** @var array<int, string> */
+	protected static array $threadIdToTitle;
 	/** @var array<string, int> */
 	protected static array $aiTaskIds;
 	/** @var array<string, int> */
@@ -222,6 +226,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$userToBanId = [];
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
+		self::$titleToThreadId = [];
+		self::$threadIdToTitle = [];
 		self::$questionToPollId = [];
 		self::$lastNotifications = [];
 		self::$phoneNumberToActorId = [];
@@ -1915,6 +1921,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^user "([^"]*)" (silent sends|sends) message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->userPostThreadToRoom($user, $sendingMode, '', $message, $identifier, $statusCode, $apiVersion);
+	}
+
+	#[Then('/^user "([^"]*)" (silent sends|sends) thread "([^"]*)" with message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userPostThreadToRoom(string $user, string $sendingMode, string $title, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
 		$message = str_replace('{$LOCAL_URL}', $this->localServerUrl, $message);
@@ -1930,12 +1941,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$message .= "\n" . str_repeat('1', 32000);
 		}
 
+		$data = [['message', $message]];
 		if ($sendingMode === 'silent sends') {
-			$body = new TableNode([['message', $message], ['silent', true]]);
-		} else {
-			$body = new TableNode([['message', $message]]);
+			$data[] = ['silent', true];
+		}
+		if ($title !== '') {
+			$data[] = ['threadTitle', $title];
 		}
 
+		$body = new TableNode($data);
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier],
@@ -1948,6 +1962,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($response['id'])) {
 			self::$textToMessageId[$message] = $response['id'];
 			self::$messageIdToText[$response['id']] = $message;
+			if ($title !== '') {
+				self::$titleToThreadId[$title] = $response['id'];
+				self::$threadIdToTitle[$response['id']] = $title;
+			}
 		}
 	}
 
@@ -2810,7 +2828,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount($count, $results, 'Result count does not match');
 
 		$expected = array_map(static function (array $result) {
-			foreach (['t.id', 't.lastMessage', 'a.notificationLevel', 'firstMessage', 'lastMessage'] as $field) {
+			foreach (['t.id', 't.title', 't.lastMessage', 'a.notificationLevel', 'firstMessage', 'lastMessage'] as $field) {
 				if (isset($result[$field])) {
 					if ($field === 'a.notificationLevel') {
 						$result[$field] = (int)$result[$field];
@@ -2818,6 +2836,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 						$result[$field] = 0;
 					} elseif ($result[$field] === 'NULL') {
 						$result[$field] = null;
+					} elseif ($field === 't.title') {
+						$result[$field] = trim($result[$field]);
 					} else {
 						$result[$field] = self::$textToMessageId[$result[$field]];
 					}
@@ -2833,6 +2853,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($expected, array_map(static function ($actual) {
 			$compare = [
 				't.id' => $actual['thread']['id'],
+				't.title' => $actual['thread']['title'],
 				't.numReplies' => $actual['thread']['numReplies'],
 				't.lastMessage' => $actual['thread']['lastMessageId'],
 				'a.notificationLevel' => $actual['attendee']['notificationLevel'],

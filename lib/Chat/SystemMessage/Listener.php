@@ -34,6 +34,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SampleConversationsService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -66,6 +67,7 @@ class Listener implements IEventListener {
 		protected Manager $manager,
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
+		protected ThreadService $threadService,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
 	) {
@@ -476,10 +478,11 @@ class Listener implements IEventListener {
 				}
 			} catch (NotFoundException) {
 			}
-
 		}
 
-		return $this->chatManager->addSystemMessage(
+		$threadTitle = $parameters['metaData']['threadTitle'] ?? '';
+
+		$comment = $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
@@ -489,6 +492,12 @@ class Listener implements IEventListener {
 			$shouldSkipLastMessageUpdate,
 			$silent,
 		);
+
+		if ($parent === null && $threadTitle !== '') {
+			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+		}
+
+		return $comment;
 	}
 
 	protected function getUserId(): ?string {

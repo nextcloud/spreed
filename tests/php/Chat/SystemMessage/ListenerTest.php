@@ -21,6 +21,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -51,6 +52,7 @@ class ListenerTest extends TestCase {
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected MessageParser&MockObject $messageParser;
+	protected ThreadService&MockObject $threadService;
 	protected LoggerInterface&MockObject $logger;
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
@@ -77,6 +79,7 @@ class ListenerTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
+		$this->threadService = $this->createMock(ThreadService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
@@ -88,10 +91,10 @@ class ListenerTest extends TestCase {
 		$this->handlers = [];
 
 		$this->eventDispatcher->method('addListener')
-			->will($this->returnCallback(function ($eventName, $handler): void {
+			->willReturnCallback(function ($eventName, $handler): void {
 				$this->handlers[$eventName] ??= [];
 				$this->handlers[$eventName][] = $handler;
-			}));
+			});
 
 		$this->listener = new Listener(
 			$this->request,
@@ -103,12 +106,13 @@ class ListenerTest extends TestCase {
 			$this->manager,
 			$this->participantService,
 			$this->messageParser,
+			$this->threadService,
 			$l,
 			$this->logger,
 		);
 	}
 
-	private function dispatch($eventName, $event) {
+	private function dispatch(string $eventName, $event): void {
 		$handlers = $this->handlers[$eventName];
 		$this->assertCount(1, $handlers);
 
