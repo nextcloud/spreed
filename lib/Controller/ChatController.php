@@ -773,9 +773,14 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
-		$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true);
-		$commentsHistory = array_reverse($commentsHistory);
-		$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+		if ($messageId === 0) {
+			// Guest in a fully expired chat, no history, just loading the chat from beginning for now
+			$commentsHistory = $commentsFuture = [];
+		} else {
+			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true);
+			$commentsHistory = array_reverse($commentsHistory);
+			$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+		}
 
 		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
 	}
