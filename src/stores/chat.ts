@@ -12,6 +12,13 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
 
+type GetMessagesListOptions = {
+	/** if given, look for Set that has it */
+	messageId?: number
+	/** if given, look for thread Set */
+	threadId?: number
+}
+
 type ProcessChatBlocksOptions = {
 	/** if given, look for Set that has it */
 	mergeBy?: number
@@ -46,8 +53,19 @@ export const useChatStore = defineStore('chat', () => {
 			return []
 		}
 
-		// FIXME temporary show all messages from al blocks - no behaviour change
-		return Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))
+		// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
+		const contextBlock = chatBlocks[token].reduce<Set<number>>((acc, set) => {
+			set.forEach((id) => acc.add(id))
+			return acc
+		}, new Set())
+		return prepareMessagesList(token, contextBlock)
+	}
+
+	/**
+	 * Returns list of messages from given set
+	 */
+	function prepareMessagesList(token: string, block: Set<number>): ChatMessage[] {
+		return Array.from(block).sort((a, b) => a - b)
 			.sort((a, b) => a - b)
 			.reduce<ChatMessage[]>((acc, id) => {
 				const message = store.state.messagesStore.messages[token][id]
@@ -60,12 +78,30 @@ export const useChatStore = defineStore('chat', () => {
 	}
 
 	/**
+	 * Returns whether message is known in any of blocks (then it exists in store)
+	 */
+	function hasMessage(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): boolean {
+		if (!chatBlocks[token]) {
+			return false
+		}
+
+		if (threadId) {
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
+		}
+
+		return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
+	}
+
+	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
 	 */
 	function processChatBlocks(token: string, messages: ChatMessage[], options?: ProcessChatBlocksOptions): void {
-		const newMessageIds = messages.map((message) => message.id)
-		const newMessageIdsSet = new Set(newMessageIds)
+		const newMessageIdsSet = new Set(messages.map((message) => message.id))
 
 		if (!chatBlocks[token]) {
 			// If no blocks exist, create a new one with the first message. First in array will be considered main block
@@ -161,16 +197,54 @@ export const useChatStore = defineStore('chat', () => {
 		}, [])
 
 		if (chatBlocks[token].length === 0) {
-			delete chatBlocks[token]
+			purgeChatStore(token)
 		}
+	}
+
+	/**
+	 * Clears the messages entry from the store for the given token starting from defined id
+	 */
+	function clearMessagesHistory(token: string, idToDelete: number) {
+		if (!chatBlocks[token]) {
+			return
+		}
+
+		const deleteIndex = chatBlocks[token].findIndex((block) => Math.max(...block) < idToDelete)
+		if (deleteIndex === -1) {
+			// Not found, nothing to delete
+			return
+		} else if (deleteIndex === 0) {
+			// If first block is to be deleted, remove all blocks
+			purgeChatStore(token)
+			return
+		} else {
+			// Remove all blocks with max id less than given id
+			chatBlocks[token] = chatBlocks[token].slice(0, deleteIndex)
+			const lastBlock = chatBlocks[token].at(-1)!
+			for (const id of lastBlock) {
+				if (id < idToDelete) {
+					lastBlock.delete(id)
+				}
+			}
+		}
+	}
+
+	/**
+	 * Clears the store for the given token
+	 */
+	function purgeChatStore(token: string) {
+		delete chatBlocks[token]
 	}
 
 	return {
 		chatBlocks,
 
 		getMessagesList,
+		hasMessage,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,
+		clearMessagesHistory,
+		purgeChatStore,
 	}
 })

@@ -61,6 +61,22 @@ describe('chatStore', () => {
 		jest.clearAllMocks()
 	})
 
+	describe('check for existence', () => {
+		it('returns false if chat blocks are not yet available', () => {
+			// Assert
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeFalsy()
+		})
+
+		it('returns boolean whether message is known by the store', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Assert
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeTruthy()
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[101].id })).toBeFalsy()
+		})
+	})
+
 	describe('get a list of messages', () => {
 		it('returns an array if both messages and blocks present', () => {
 			// Arrange
@@ -248,6 +264,52 @@ describe('chatStore', () => {
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+	})
+
+	describe('cleanup messages', () => {
+		it('does nothing, if no blocks are created yet', () => {
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockA[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+
+		it('does nothing, if no blocks are behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockC[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA), outputSet(chatBlockB)])
+		})
+
+		it('purges a store, if all blocks are behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockA[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+
+		it('cleans up messages behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockB[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet([chatBlockB[0]])])
 		})
 	})
 })
