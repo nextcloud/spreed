@@ -4,33 +4,62 @@
 -->
 
 <template>
-	<NcPopover ref="popover"
-		:boundary="boundaryElement"
-		:show-triggers="[]"
-		:hide-triggers="['click']"
-		:auto-hide="false"
-		no-focus-trap
-		:shown="popupShown">
-		<template #trigger>
-			<NcButton :title="audioButtonTitle"
-				:variant="variant"
-				:aria-label="audioButtonAriaLabel"
-				:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
-				:disabled="!isAudioAllowed"
-				@click.stop="toggleAudio">
-				<template #icon>
-					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
-						:audio-enabled="showMicrophoneOn"
-						:current-volume="model.attributes.currentVolume"
-						:volume-threshold="model.attributes.volumeThreshold"
-						overlay-muted-color="#888888" />
-				</template>
-			</NcButton>
-		</template>
-		<div class="popover-hint">
-			<span>{{ speakingWhileMutedWarner?.message }}</span>
-		</div>
-	</NcPopover>
+	<div class="local-audio-control-wrapper">
+		<NcPopover ref="popover"
+			:boundary="boundaryElement"
+			:show-triggers="[]"
+			:hide-triggers="['click']"
+			:auto-hide="false"
+			no-focus-trap
+			:shown="popupShown">
+			<template #trigger>
+				<NcButton :title="audioButtonTitle"
+					class="audio-control-button"
+					:variant="variant"
+					:aria-label="audioButtonAriaLabel"
+					:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+					:disabled="!isAudioAllowed"
+					@click.stop="toggleAudio">
+					<template #icon>
+						<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+							:audio-enabled="showMicrophoneOn"
+							:current-volume="model.attributes.currentVolume"
+							:volume-threshold="model.attributes.volumeThreshold"
+							overlay-muted-color="#888888" />
+					</template>
+				</NcButton>
+			</template>
+			<div class="popover-hint">
+				<span>{{ speakingWhileMutedWarner?.message }}</span>
+			</div>
+		</NcPopover>
+
+		<NcPopover close-on-click-outside>
+			<template #trigger>
+				<NcButton class="audio-selector-button"
+					:title="t('spreed', 'Select audio input device')"
+					:aria-label="t('spreed', 'Select audio input device')"
+					:variant="variant">
+					<template #icon>
+						<IconChevronUp :size="16" />
+					</template>
+				</NcButton>
+			</template>
+			<div class="audio-selector-popover">
+				<MediaDevicesSelector kind="audioinput"
+					:devices="devices"
+					:device-id="audioInputId"
+					@refresh="updateDevices"
+					@update:device-id="handleAudioInputIdChange" />
+				<MediaDevicesSelector v-if="audioOutputSupported"
+					kind="audiooutput"
+					:devices="devices"
+					:device-id="audioOutputId"
+					@refresh="updateDevices"
+					@update:device-id="handleAudioOutputIdChange" />
+			</div>
+		</NcPopover>
+	</div>
 </template>
 
 <script>
@@ -40,7 +69,10 @@ import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { onBeforeUnmount, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import MediaDevicesSelector from '../../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
+import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -52,6 +84,8 @@ export default {
 		NcButton,
 		NcPopover,
 		VolumeIndicator,
+		MediaDevicesSelector,
+		IconChevronUp,
 	},
 
 	props: {
@@ -107,6 +141,15 @@ export default {
 			})
 		}
 
+		const {
+			devices,
+			audioInputId,
+			audioOutputId,
+			updateDevices,
+			audioOutputSupported,
+			updatePreferences,
+		} = useDevices(props.token, false)
+
 		/**
 		 * Check if component is visible and not obstructed by others
 		 * @param element HTML element
@@ -124,6 +167,12 @@ export default {
 			popover,
 			popupShown,
 			speakingWhileMutedWarner,
+			devices,
+			audioInputId,
+			audioOutputId,
+			updateDevices,
+			audioOutputSupported,
+			updatePreferences,
 		}
 	},
 
@@ -202,6 +251,16 @@ export default {
 				this.model.enableAudio()
 			}
 		},
+
+		handleAudioInputIdChange(audioInputId) {
+			this.audioInputId = audioInputId
+			this.updatePreferences('audioinput')
+		},
+
+		handleAudioOutputIdChange(audioOutputId) {
+			this.audioOutputId = audioOutputId
+			this.updatePreferences('audiooutput')
+		},
 	},
 }
 </script>
@@ -215,5 +274,35 @@ export default {
 	padding: calc(3 * var(--default-grid-baseline));
 	max-width: 300px;
 	text-align: start;
+}
+
+.audio-selector-popover {
+	display: flex;
+	flex-direction: row;
+	gap: calc(2 * var(--default-grid-baseline));
+	width: calc(328px * 2 + var(--default-grid-baseline) * 8);
+	padding-inline: calc(var(--default-grid-baseline) * 2);
+}
+
+.audio-selector-button {
+	--button-size: 24px;
+	height: var(--default-clickable-area);
+	border-end-start-radius: 2px;
+	border-start-start-radius: 2px;
+}
+
+.audio-control-button {
+	border-start-end-radius: 2px;
+	border-end-end-radius: 2px;
+}
+
+.local-audio-control-wrapper {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) / 2);
+}
+
+:deep(.v-select.select) {
+	width: 300px !important;
 }
 </style>

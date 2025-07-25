@@ -675,6 +675,10 @@ export default {
 				this.isPublicShareAuthSidebar = true
 			}
 
+			if (page === 'video-background') {
+				this.tabContent = 'backgrounds'
+			}
+
 			if (page === 'device-check') {
 				this.isDeviceCheck = true
 				this.tabContent = 'devices'
