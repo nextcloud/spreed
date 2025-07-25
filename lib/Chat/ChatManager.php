@@ -187,11 +187,13 @@ class ChatManager {
 		$this->setMessageExpiration($chat, $comment);
 
 		$shouldFlush = $this->notificationManager->defer();
+		$threadId = 0;
 
 		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, parent: $replyTo, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
+			$threadId = (int)$comment->getTopmostParentId();
 
 			if (!$shouldSkipLastMessageUpdate) {
 				// Update last_message
@@ -248,6 +250,9 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+		if ($threadId !== 0) {
+			$this->cache->remove($chat->getToken() . '/' . $threadId);
+		}
 
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
@@ -274,10 +279,12 @@ class ChatManager {
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
 		$comment->setVerb(self::VERB_MESSAGE); // Has to be 'comment', so it counts as unread message
 
+		$threadId = 0;
 		$event = new BeforeSystemMessageSentEvent($chat, $comment);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
+			$threadId = (int)$comment->getTopmostParentId();
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
@@ -288,6 +295,9 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+		if ($threadId !== 0) {
+			$this->cache->remove($chat->getToken() . '/' . $threadId);
+		}
 
 		return $comment;
 	}
@@ -312,11 +322,13 @@ class ChatManager {
 			Message::METADATA_CAN_MENTION_ALL => true,
 		];
 		$comment->setMetaData($metaData);
+		$threadId = 0;
 
 		$event = new BeforeSystemMessageSentEvent($chat, $comment);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
+			$threadId = (int)$comment->getTopmostParentId();
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
@@ -327,6 +339,9 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+		if ($threadId !== 0) {
+			$this->cache->remove($chat->getToken() . '/' . $threadId);
+		}
 
 		return $comment;
 	}
@@ -397,6 +412,7 @@ class ChatManager {
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 
+		$threadId = 0;
 		$shouldFlush = $this->notificationManager->defer();
 		try {
 			$this->commentsManager->save($comment);
@@ -449,6 +465,9 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+		if ($threadId !== 0) {
+			$this->cache->remove($chat->getToken() . '/' . $threadId);
+		}
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
 		}
@@ -875,51 +894,40 @@ class ChatManager {
 	 * seconds. If the timeout ends a successful but empty response will be
 	 * sent.
 	 *
-	 * @param Room $chat
 	 * @param int $offset Last known message id
-	 * @param int $limit
-	 * @param int $timeout
-	 * @param IUser|null $user
-	 * @param bool $includeLastKnown
-	 * @param bool $markNotificationsAsRead (defaults to true)
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *                    creation date and message are relevant), or an empty array if the
 	 *                    timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true): array {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true, int $threadId = 0): array {
 		if ($markNotificationsAsRead && $user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 
 		if ($this->cache instanceof NullCache
 			|| $this->cache instanceof ArrayCache) {
-			return $this->waitForNewMessagesWithDatabase($chat, $offset, $limit, $timeout, $includeLastKnown);
+			return $this->waitForNewMessagesWithDatabase($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId);
 		}
 
-		return $this->waitForNewMessagesWithCache($chat, $offset, $limit, $timeout, $includeLastKnown);
+		return $this->waitForNewMessagesWithCache($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId);
 	}
 
 	/**
 	 * Check the cache until we found new messages, or the timeout was reached
 	 *
-	 * @param Room $chat
-	 * @param int $offset
-	 * @param int $limit
-	 * @param int $timeout
-	 * @param bool $includeLastKnown
 	 * @return IComment[]
 	 */
-	protected function waitForNewMessagesWithCache(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
+	protected function waitForNewMessagesWithCache(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId): array {
 		$elapsedTime = 0;
 
-		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
+		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			$this->connection->close();
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
+			$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId);
 		}
 
 		return $comments;
@@ -928,27 +936,36 @@ class ChatManager {
 	/**
 	 * Check the cache for the last message id or check the database for updates
 	 *
-	 * @param Room $chat
-	 * @param int $offset
-	 * @param int $limit
-	 * @param bool $includeLastKnown
 	 * @return IComment[]
 	 */
-	protected function checkCacheOrDatabase(Room $chat, int $offset, int $limit, bool $includeLastKnown): array {
-		$cachedId = $this->cache->get($chat->getToken());
+	protected function checkCacheOrDatabase(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId): array {
+		$cacheKey = $chat->getToken();
+		if ($threadId !== 0) {
+			$cacheKey .= '/' . $threadId;
+		}
+		$cachedId = $this->cache->get($cacheKey);
 		if ($offset === $cachedId) {
 			// Cache hit, nothing new ¯\_(ツ)_/¯
 			return [];
 		}
 
 		// Load data from the database
-		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
+			'chat',
+			(string)$chat->getId(),
+			[],
+			$offset,
+			'asc',
+			$limit,
+			$includeLastKnown,
+			$threadId !== 0 ? (string)$threadId : '',
+		);
 
 		if (empty($comments)) {
 			// We only write the cache when there were no new comments,
 			// otherwise it could happen that this is not the last message,
 			// but the last within $limit
-			$this->cache->set($chat->getToken(), $offset, 30);
+			$this->cache->set($cacheKey, $offset, 30);
 			return [];
 		}
 
@@ -958,23 +975,36 @@ class ChatManager {
 	/**
 	 * Check the database for new messages until there a new messages or we exceeded the timeout
 	 *
-	 * @param Room $chat
-	 * @param int $offset
-	 * @param int $limit
-	 * @param int $timeout
-	 * @param bool $includeLastKnown
-	 * @return array
+	 * @return IComment[]
 	 */
-	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
+	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId): array {
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
+			'chat',
+			(string)$chat->getId(),
+			[],
+			$offset,
+			'asc',
+			$limit,
+			$includeLastKnown,
+			$threadId !== 0 ? (string)$threadId : '',
+		);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment('chat', (string)$chat->getId(), [], $offset, 'asc', $limit, $includeLastKnown);
+			$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
+				'chat',
+				(string)$chat->getId(),
+				[],
+				$offset,
+				'asc',
+				$limit,
+				$includeLastKnown,
+				$threadId !== 0 ? (string)$threadId : '',
+			);
 		}
 
 		return $comments;
