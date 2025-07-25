@@ -56,7 +56,7 @@ class ChatController {
 	 * 413: Message too long
 	 * 429: Mention rate limit exceeded (guests only)
 	 */
-	public function sendMessage(Room $room, Participant $participant, string $message, string $referenceId, int $replyTo, bool $silent): DataResponse {
+	public function sendMessage(Room $room, Participant $participant, string $message, string $referenceId, int $replyTo, bool $silent, string $threadTitle): DataResponse {
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
@@ -67,6 +67,7 @@ class ChatController {
 				'referenceId' => $referenceId,
 				'replyTo' => $replyTo,
 				'silent' => $silent,
+				'threadTitle' => $threadTitle,
 			],
 		);
 

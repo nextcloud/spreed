@@ -24,7 +24,6 @@ use OCP\DB\Types;
  * @method void setLastActivity(\DateTime $lastActivity)
  * @method \DateTime|null getLastActivity()
  * @method void setName(string $name)
- * @method string getName()
  *
  * @psalm-import-type TalkThread from ResponseDefinitions
  */
@@ -43,6 +42,15 @@ class Thread extends Entity {
 		$this->addType('name', Types::STRING);
 	}
 
+	public function getName(): string {
+		if ($this->name !== '') {
+			return $this->name;
+		}
+
+		// FIXME temporary workaround against empty titles
+		return 'Thread #' . $this->getId();
+	}
+
 	/**
 	 * @return TalkThread
 	 */
@@ -54,7 +62,7 @@ class Thread extends Entity {
 			'lastMessageId' => max(0, $this->getLastMessageId()),
 			'numReplies' => max(0, $this->getNumReplies()),
 			'lastActivity' => max(0, $this->getLastActivity()?->getTimestamp() ?? 0),
-			// 'name' => $this->getName(),
+			'title' => $this->getName(),
 		];
 	}
 }
