@@ -111,6 +111,60 @@ export const useChatStore = defineStore('chat', () => {
 	}
 
 	/**
+	 * Returns first known message, belonging to current context. Defaults to given messageId
+	 */
+	function getFirstKnown(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number {
+		if (!chatBlocks[token]) {
+			return messageId
+		}
+
+		if (threadId) {
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return Math.min(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+				.filter((message) => {
+					return message.threadId === threadId
+				}).map((message) => message.id))
+		}
+
+		if (messageId <= 0) {
+			return firstKnown[token]
+		}
+
+		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
+		return contextBlock ? Math.min(...contextBlock) : firstKnown[token]
+	}
+
+	/**
+	 * Returns last known message, belonging to current context. Defaults to given messageId
+	 */
+	function getLastKnown(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number {
+		if (!chatBlocks[token]) {
+			return messageId
+		}
+
+		if (threadId) {
+			// FIXME temporary check all messages for given thread from all chat blocks
+			return Math.max(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+				.filter((message) => {
+					return message.threadId === threadId
+				}).map((message) => message.id))
+		}
+
+		if (messageId <= 0) {
+			return lastKnown[token]
+		}
+
+		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
+		return contextBlock ? Math.max(...contextBlock) : lastKnown[token]
+	}
+
+	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
 	 * Afterwards, cache first and last known message ids for the first block
@@ -227,6 +281,8 @@ export const useChatStore = defineStore('chat', () => {
 
 		getMessagesList,
 		hasMessage,
+		getFirstKnown,
+		getLastKnown,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,
