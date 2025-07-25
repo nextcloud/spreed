@@ -272,7 +272,8 @@ export type ThreadInfo = components['schemas']['ThreadInfo']
 export type getRecentThreadsParams = operations['thread-get-recent-active-threads']['parameters']['query']
 export type getRecentThreadsResponse = ApiResponse<operations['thread-get-recent-active-threads']['responses'][200]['content']['application/json']>
 export type getThreadResponse = ApiResponse<operations['thread-get-thread']['responses'][200]['content']['application/json']>
-export type createThreadResponse = ApiResponse<operations['thread-make-thread']['responses'][200]['content']['application/json']>
+export type setThreadNotificationLevelParams = operations['thread-set-notification-level']['requestBody']['content']['application/json']
+export type setThreadNotificationLevelResponse = ApiResponse<operations['thread-set-notification-level']['responses'][200]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
