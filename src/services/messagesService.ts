@@ -136,12 +136,13 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
  * @param payload.silent whether the message should trigger a notifications
  * @param [options] Axios request options
  */
-async function postNewMessage({ token, message, actorDisplayName, referenceId, parent, silent }: PostNewMessagePayload, options?: AxiosRequestConfig): postNewMessageResponse {
+async function postNewMessage({ token, message, actorDisplayName, referenceId, parent, threadTitle, silent }: PostNewMessagePayload, options?: AxiosRequestConfig): postNewMessageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo: parent?.id,
+		threadTitle,
 		silent,
 	} as postNewMessageParams, options)
 }

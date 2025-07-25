@@ -454,6 +454,7 @@ const actions = {
 				messageType !== MESSAGE.TYPE.COMMENT ? { messageType } : {},
 				caption && index === lastIndex ? { caption } : {},
 				options?.silent ? { silent: options.silent } : {},
+				options?.threadTitle ? { threadTitle: options.threadTitle } : {},
 				parent ? { replyTo: parent.id } : {},
 			))
 

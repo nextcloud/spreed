@@ -193,21 +193,24 @@ export default {
 			})
 		},
 
-		async handleUpload({ token, temporaryMessage }) {
+		async handleUpload({ token, temporaryMessage, threadTitle }) {
 			if (this.files.length) {
 				// Create a share with optional caption
 				await this.$store.dispatch('uploadFiles', {
 					token,
 					uploadId: this.currentUploadId,
 					caption: temporaryMessage.message,
-					options: { silent: temporaryMessage.silent },
+					options: {
+						threadTitle,
+						silent: temporaryMessage.silent,
+					},
 				})
 			} else {
 				this.$store.dispatch('discardUpload', this.currentUploadId)
 				if (temporaryMessage.message.trim()) {
 					// Proceed as a normal message
 					try {
-						await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
+						await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle })
 					} catch (e) {
 						console.error(e)
 					}

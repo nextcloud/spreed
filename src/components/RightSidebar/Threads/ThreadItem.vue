@@ -27,26 +27,16 @@ const { thread } = defineProps<{ thread: ThreadInfo }>()
 const router = useRouter()
 const route = useRoute()
 
-const threadAuthor = computed(() => {
-	if (!thread.first) {
-		return
-	}
-	return getDisplayNameWithFallback(thread.first.actorDisplayName, thread.first.actorType, true)
-})
 const lastActivity = computed(() => thread.thread.lastActivity * 1000)
-const name = computed(() => {
-	if (!thread.first) {
-		return t('spreed', 'Thread origin message expired')
-	}
-	return parseToSimpleMessage(thread.first.message, thread.first.messageParameters)
-})
 const subname = computed(() => {
-	if (!thread.last) {
+	if (!thread.last && !thread.first) {
 		return t('spreed', 'No messages')
 	}
 
-	const actor = getDisplayNameWithFallback(thread.last.actorDisplayName, thread.last.actorType, true)
-	const lastMessage = parseToSimpleMessage(thread.last.message, thread.last.messageParameters)
+	const threadMessage = thread.last ?? thread.first
+
+	const actor = getDisplayNameWithFallback(threadMessage.actorDisplayName, threadMessage.actorType, true)
+	const lastMessage = parseToSimpleMessage(threadMessage.message, threadMessage.messageParameters)
 
 	return t('spreed', '{actor}: {lastMessage}', { actor, lastMessage }, {
 		escape: false,
@@ -77,7 +67,7 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 <template>
 	<NcListItem :data-nav-id="`thread_${thread.thread.id}`"
 		class="thread"
-		:name="name"
+		:name="thread.thread.title"
 		:to="to"
 		:active="active"
 		force-menu>
@@ -94,12 +84,7 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 				:size="20" />
 		</template>
 		<template #name>
-			<span
-				v-if="threadAuthor"
-				class="thread__author">
-				{{ threadAuthor }}
-			</span>
-			<span>{{ name }}</span>
+			<span>{{ thread.thread.title }}</span>
 		</template>
 		<template #subname>
 			{{ subname }}
