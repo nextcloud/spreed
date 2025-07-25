@@ -60,7 +60,7 @@
 				:aria-label="threadNotificationLabel"
 				:title="threadNotificationLabel"
 				:primary="!!threadNotification"
-				@click="() => {}">
+				@click="chatExtrasStore.setThreadNotificationLevel(token, threadId, threadNotification ? 0 : 1)">
 				<template #icon>
 					<IconBellOffOutline v-if="threadNotification" :size="20" />
 					<IconBellOutline v-else :size="20" />
