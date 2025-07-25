@@ -121,7 +121,10 @@
 							</template>
 							{{ t('spreed', 'Go to file') }}
 						</NcActionLink>
-						<NcActionLink v-if="!hideDownloadOption" :href="linkToFileDownload" :download="messageFile.name">
+						<NcActionLink v-if="!hideDownloadOption"
+							:href="linkToFileDownload"
+							:download="messageFile.name"
+							close-after-click>
 							<template #icon>
 								<IconDownload :size="20" />
 							</template>
