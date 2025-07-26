@@ -808,7 +808,7 @@ OC.L10N.register(
     "@-mentions only" : "Vaid @-mainimised",
     "Off" : "Pole kasutusel",
     "General settings" : "Üldised seadistusted",
-    "Default notification settings" : "Vaikimisi teavistuste seadistused",
+    "Default notification settings" : "Vaikimisi teavituste seadistused",
     "Default group notification" : "Vaikimisi grupiteavitus",
     "Default group notification for new groups" : "Vaikimisi grupiteavitus uute gruppide jaoks",
     "Integration into other apps" : "Lõiming muude rakendustega",

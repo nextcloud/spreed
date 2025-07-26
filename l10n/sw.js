@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Talk" : "Talk",
     "Guest" : "Mgeni",
     "Incoming call" : "Muito uanoingia",
     "Message deleted by author" : "Message deleted by author",
@@ -286,6 +287,8 @@ OC.L10N.register(
     "Connecting …" : "Inaunganisha...",
     "Copy link" : "Nakili kiungio",
     "You" : "Wewe",
+    "Collapse" : "Collapse",
+    "Expand" : "Expand",
     "Drop your files to upload" : "Dondosha mafaili yako kupakia",
     "Scroll to bottom" : "Scroll to bottom",
     "Public conversation" : "Mazungumzo ya umma",
@@ -457,6 +460,8 @@ OC.L10N.register(
     "Please reload the page." : "Tafadhali pakia ukurasa upya ",
     "Do not disturb" : "Acha kusumbua",
     "Away" : "Mbali",
+    "Default" : "Chaguo msingi",
+    "The password is wrong. Try again." : "The password is wrong. Try again.",
     "iOS app" : "Programu ya iOS",
     "__language_name__" : "_lugha_jina_",
     "Call summary (%s)" : "Muhtasari wa simu (%s)",
