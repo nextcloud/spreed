@@ -1814,8 +1814,12 @@
                 ],
                 "properties": {
                     "federation": {
-                        "$ref": "#/components/schemas/SignalingFederationSettings",
-                        "nullable": true
+                        "nullable": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SignalingFederationSettings"
+                            }
+                        ]
                     },
                     "helloAuthParams": {
                         "type": "object",
@@ -1985,12 +1989,20 @@
                         "$ref": "#/components/schemas/ThreadAttendee"
                     },
                     "first": {
-                        "$ref": "#/components/schemas/ChatMessage",
-                        "nullable": true
+                        "nullable": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ChatMessage"
+                            }
+                        ]
                     },
                     "last": {
-                        "$ref": "#/components/schemas/ChatMessage",
-                        "nullable": true
+                        "nullable": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ChatMessage"
+                            }
+                        ]
                     }
                 }
             }
@@ -3007,8 +3019,12 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/Bot",
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Bot"
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -3038,8 +3054,12 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/Bot",
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Bot"
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -3167,8 +3187,12 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/Bot",
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Bot"
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -17901,8 +17925,12 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/ChatMessageWithParent",
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/ChatMessageWithParent"
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -18571,8 +18599,12 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/ChatMessageWithParent",
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/ChatMessageWithParent"
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }

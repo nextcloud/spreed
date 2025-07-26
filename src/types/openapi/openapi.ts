@@ -2292,7 +2292,7 @@ export type components = {
             userId: string;
         };
         SignalingSettings: {
-            federation: components["schemas"]["SignalingFederationSettings"];
+            federation: components["schemas"]["SignalingFederationSettings"] | null;
             helloAuthParams: {
                 "1.0": {
                     userid: string | null;
@@ -2338,8 +2338,8 @@ export type components = {
         ThreadInfo: {
             thread: components["schemas"]["Thread"];
             attendee: components["schemas"]["ThreadAttendee"];
-            first: components["schemas"]["ChatMessage"];
-            last: components["schemas"]["ChatMessage"];
+            first: components["schemas"]["ChatMessage"] | null;
+            last: components["schemas"]["ChatMessage"] | null;
         };
     };
     responses: never;
@@ -2729,7 +2729,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Bot"];
+                            data: components["schemas"]["Bot"] | null;
                         };
                     };
                 };
@@ -2743,7 +2743,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Bot"];
+                            data: components["schemas"]["Bot"] | null;
                         };
                     };
                 };
@@ -2792,7 +2792,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Bot"];
+                            data: components["schemas"]["Bot"] | null;
                         };
                     };
                 };
@@ -8705,7 +8705,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
                         };
                     };
                 };
@@ -8927,7 +8927,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
                         };
                     };
                 };
