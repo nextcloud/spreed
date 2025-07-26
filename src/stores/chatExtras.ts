@@ -210,12 +210,11 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 
 			const thread = this.threads[token][threadId]
-			if (thread.first.id === messageId) {
-				// @ts-expect-error - missing null type in ThreadInfo
+			if (thread.first?.id === messageId) {
 				thread.first = null
 			} else {
 				this.threads[token][threadId].thread.numReplies -= 1
-				if (thread.last.id === messageId) {
+				if (thread.last?.id === messageId) {
 					// Last message was removed but there might be older messages in the thread
 					// that don't have expiration timestamp
 					this.fetchSingleThread(token, threadId)
