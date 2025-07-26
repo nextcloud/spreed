@@ -55,7 +55,7 @@ const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServ
 const query = computed(() => ({ threadId: (isExistingMessage(message) && threadId.value === message.threadId) ? message.threadId : undefined }))
 const hash = computed(() => '#message_' + message.id)
 
-const component = computed(() => canCancel
+const component = computed(() => (canCancel || !route)
 	? { tag: 'div', link: undefined }
 	: { tag: 'router-link', link: { query: query.value, hash: hash.value } })
 
@@ -150,7 +150,7 @@ function handleQuoteClick() {
 		return
 	}
 
-	if (route.hash === hash.value) {
+	if (route?.hash === hash.value) {
 		// Already on this message route, just trigger highlight
 		EventBus.emit('focus-message', message.id)
 	}
