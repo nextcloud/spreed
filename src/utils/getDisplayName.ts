@@ -14,7 +14,7 @@ import { ATTENDEE } from '../constants.ts'
 export function getDisplayNameWithFallback(displayName: string, source: string, firstNameOnly: boolean = false): string {
 	if (displayName?.trim()) {
 		return firstNameOnly
-			? displayName.trim().split(' ').shift()!
+			? displayName.trim().split(' ').shift()!.replace(/[,.]/g, '')
 			: displayName.trim()
 	}
 

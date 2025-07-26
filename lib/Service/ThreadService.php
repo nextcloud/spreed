@@ -30,24 +30,13 @@ class ThreadService {
 	) {
 	}
 
-	public function createThread(Room $room, int $threadId): Thread {
-		$info = $this->getThreadInfoFromDatabase($threadId);
-
+	public function createThread(Room $room, int $threadId, string $title): Thread {
 		$thread = new Thread();
 		$thread->setId($threadId);
-		$thread->setNumReplies($info['num_replies']);
-		$thread->setLastMessageId($info['last_message_id']);
+		$thread->setName($title);
 		$thread->setRoomId($room->getId());
 		$thread->setLastActivity($this->timeFactory->getDateTime());
-
-		try {
-			$this->threadMapper->insert($thread);
-		} catch (\OCP\DB\Exception $e) {
-			// FIXME catch only unique constraint violation on primary key
-			if ($e->getReason() !== \OCP\DB\Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-				throw $e;
-			}
-		}
+		$this->threadMapper->insert($thread);
 
 		return $thread;
 	}
@@ -145,26 +134,6 @@ class ThreadService {
 	public function deleteByRoom(Room $room): void {
 		$this->threadMapper->deleteByRoomId($room->getId());
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());
-	}
-
-	/**
-	 * @param int $threadId
-	 * @return array{num_replies: int, last_message_id: int}
-	 */
-	protected function getThreadInfoFromDatabase(int $threadId): array {
-		$query = $this->connection->getQueryBuilder();
-		$query->select($query->func()->count('*', 'num_replies'))
-			->selectAlias($query->func()->max('id'), 'last_message_id')
-			->from('comments')
-			->where($query->expr()->eq('topmost_parent_id', $query->createNamedParameter($threadId)));
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		return [
-			'num_replies' => $row['num_replies'] ?? 0,
-			'last_message_id' => $row['last_message_id'] ?? 0,
-		];
 	}
 
 	public function validateThreadIds(array $potentialThreadIds): array {

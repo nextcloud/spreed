@@ -27,7 +27,9 @@
 				:can-upload-files="canUploadFiles"
 				:can-share-files="canShareFiles"
 				:can-create-poll="canCreatePoll"
+				:can-create-thread="canCreateThread"
 				@open-file-upload="openFileUploadWindow"
+				@create-thread="setCreateThread"
 				@handle-file-share="showFilePicker"
 				@update-new-file-dialog="updateNewFileDialog" />
 
@@ -72,6 +74,13 @@
 				<NcNoteCard v-if="showMentionEditHint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
+				<NcTextField
+					v-if="threadCreating"
+					v-model="threadTitle"
+					:placeholder="t('spreed', 'Thread title')"
+					:disabled="disabled"
+					show-trailing-button
+					@trailing-button-click="setCreateThread(false)" />
 				<NcRichContenteditable ref="richContenteditable"
 					:key="container"
 					v-model="text"
@@ -148,7 +157,8 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<IconSend class="bidirectional-icon" :size="16" />
+						<IconForumOutline v-if="threadCreating" :size="16" />
+						<IconSend v-else class="bidirectional-icon" :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -175,10 +185,12 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue'
 import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
@@ -188,6 +200,7 @@ import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -214,6 +227,7 @@ export default {
 		NcEmojiPicker,
 		NcNoteCard,
 		NcRichContenteditable,
+		NcTextField,
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
 		NewMessageAudioRecorder,
@@ -226,6 +240,7 @@ export default {
 		IconCheck,
 		IconClose,
 		IconEmoticonOutline,
+		IconForumOutline,
 		IconSend,
 	},
 
@@ -288,7 +303,9 @@ export default {
 		const { token } = toRefs(props)
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
+		const threadId = useGetThreadId()
 		const { createTemporaryMessage } = useTemporaryMessage()
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -299,6 +316,7 @@ export default {
 			supportTypingStatus,
 			autoComplete,
 			userData,
+			threadId,
 			createTemporaryMessage,
 		}
 	},
@@ -315,6 +333,8 @@ export default {
 			wasTypingWithinInterval: false,
 			debouncedUpdateChatInput: debounce(this.updateChatInput, 200),
 			preservedSelectionRange: null,
+			threadCreating: false,
+			threadTitle: '',
 		}
 	},
 
@@ -390,6 +410,10 @@ export default {
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 		},
 
+		canCreateThread() {
+			return !this.isReadOnly && !this.noChatPermission && !this.parentMessage && !this.threadId
+		},
+
 		currentConversationIsJoined() {
 			return this.tokenStore.currentConversationIsJoined
 		},
@@ -430,7 +454,7 @@ export default {
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating
 		},
 
 		showTypingStatus() {
@@ -497,6 +521,7 @@ export default {
 			if (newValue) {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
 				this.chatExtrasStore.removeParentIdToReply(this.token)
+				this.setCreateThread(false)
 			} else {
 				this.text = this.chatInput
 			}
@@ -505,6 +530,13 @@ export default {
 		parentMessage(newValue) {
 			if (newValue && this.messageToEdit) {
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			}
+			this.setCreateThread(false)
+		},
+
+		threadId(newValue) {
+			if (newValue) {
+				this.setCreateThread(false)
 			}
 		},
 
@@ -532,6 +564,7 @@ export default {
 				this.clearTypingInterval()
 				this.checkAbsenceStatus()
 				this.clearSilentState()
+				this.setCreateThread(false)
 			},
 		},
 	},
@@ -666,26 +699,30 @@ export default {
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
+				const threadTitle = this.threadCreating
+					? this.threadTitle || temporaryMessage.message
+					: undefined
 
 				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage)
-					: await this.postMessage(this.token, temporaryMessage)
+					? await this.submitMessage(this.token, temporaryMessage, threadTitle)
+					: await this.postMessage(this.token, temporaryMessage, threadTitle)
 				this.resetTypingIndicator()
+				this.setCreateThread(false)
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(token, temporaryMessage) {
+		async postMessage(token, temporaryMessage, threadTitle) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async submitMessage(token, temporaryMessage) {
-			this.$emit('submit', { token, temporaryMessage })
+		async submitMessage(token, temporaryMessage, threadTitle) {
+			this.$emit('submit', { token, temporaryMessage, threadTitle })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
@@ -738,6 +775,13 @@ export default {
 
 					this.$store.dispatch('removeTemporaryMessageFromStore', { token: this.token, id })
 				}
+			}
+		},
+
+		setCreateThread(value) {
+			this.threadCreating = value
+			if (!value) {
+				this.threadTitle = ''
 			}
 		},
 

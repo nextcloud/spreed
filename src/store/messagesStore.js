@@ -591,6 +591,8 @@ const actions = {
 					})
 			}
 
+			// FIXME remove, no longer a system message
+			// FIXME fetch single thread when posting
 			if (message.systemMessage === 'thread_created') {
 				// Check existing messages for having a threadId flag, and update them
 				context.getters.messagesList(token)
@@ -1312,9 +1314,10 @@ const actions = {
 	 * @param {object} data Passed in parameters
 	 * @param {string} data.token token of the conversation
 	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data.threadTitle if given, creates a thread with that title
 	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, { token, temporaryMessage, options }) {
+	async postNewMessage(context, { token, temporaryMessage, threadTitle, options }) {
 		context.dispatch('addTemporaryMessage', { token, message: temporaryMessage })
 
 		const { request, cancel } = CancelableRequest(postNewMessage)
@@ -1330,7 +1333,15 @@ const actions = {
 		}, 30000)
 
 		try {
-			const response = await request(temporaryMessage, options)
+			const response = await request({
+				token,
+				threadTitle,
+				message: temporaryMessage.message,
+				actorDisplayName: temporaryMessage.actorDisplayName,
+				referenceId: temporaryMessage.referenceId,
+				replyTo: temporaryMessage.parent?.id,
+				silent: temporaryMessage.silent,
+			}, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
@@ -1347,6 +1358,7 @@ const actions = {
 				context.dispatch('processMessage', { token, message: response.data.ocs.data })
 				const chatStore = useChatStore()
 				chatStore.addMessageToChatBlocks(token, response.data.ocs.data)
+				// FIXME fetch a thread if the message is a thread starter
 			}
 
 			return response
