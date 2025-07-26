@@ -51,7 +51,7 @@ export const useBotsStore = defineStore('bots', {
 				? await disableBotForConversation(token, bot.id)
 				: await enableBotForConversation(token, bot.id)
 
-			this.bots[token][bot.id] = response.data.ocs.data
+			this.bots[token][bot.id] = response.data.ocs.data!
 		},
 	},
 })
