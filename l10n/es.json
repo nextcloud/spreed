@@ -77,6 +77,7 @@
     "- Schedule a meeting into your calendar from within a conversation" : "- Agendar reuniones dentro de su calendario directamente desde una conversación",
     "- Search for messages of the current conversation directly in the right sidebar" : "- Buscar mensajes de la conversación actual directamente en la barra lateral derecha",
     "- See more conversations on a first glance with the new compact list (enable in the Talk settings)" : "- Vea más conversaciones de un vistazo con la nueva lista compacta (habilitar en los ajustes de Talk)",
+    "- Meeting conversations now sync the title and description from the calendar and are hidden with a search filter until they are close to the start" : "- Las conversaciones de las Reuniones ahora sincronizan el título y la descripción desde el calendario y están ocultas con un filtro de búsqueda hasta que están por comenzar",
     "_All %n participant_::_All %n participants_" : ["%n participante","Todos los %n participantes","Todos los %n participantes"],
     "Talk updates ✅" : "Actualizaciones de Talk ✅",
     "Reaction deleted by author" : "Reacción borrada por el autor",
