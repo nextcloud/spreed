@@ -283,6 +283,7 @@ OC.L10N.register(
     "Calendar" : "Kalenda",
     "Attendees" : "Wahudhuriaji",
     "Save" : "Hifadhi",
+    "No results" : "No results",
     "Done" : "Imefanyika",
     "Connecting …" : "Inaunganisha...",
     "Copy link" : "Nakili kiungio",
