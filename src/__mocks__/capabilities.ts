@@ -150,6 +150,7 @@ export const mockedCapabilities: Capabilities = {
 				'max-duration': 0,
 				'blur-virtual-background': false,
 				'end-to-end-encryption': false,
+				'live-transcription': false,
 			},
 			chat: {
 				'max-length': 32000,
