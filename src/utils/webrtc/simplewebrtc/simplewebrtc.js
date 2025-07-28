@@ -128,6 +128,10 @@ export default function SimpleWebRTC(opts) {
 			// "raisedHand" can be received from a participant without a Peer
 			// object if that participant is not sending audio nor video.
 			self.emit('raisedHand', { id: message.from, raised: message.payload })
+		} else if (message.type === 'transcript') {
+			// "transcript" will be received from the transcription service,
+			// which will not have a Peer object.
+			self.emit('transcript', { id: message.speakerSessionId, message: message.message })
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
 				if (message.sid && !self.connection.hasFeature('mcu')) {
