@@ -69,6 +69,15 @@
 					</template>
 					{{ changeViewText }}
 				</NcActionButton>
+
+				<NcActionButton v-if="isLiveTranscriptionSupported"
+					close-after-click
+					@click="toggleLiveTranscription">
+					<template #icon>
+						<IconSubtitles :size="20" />
+					</template>
+					{{ liveTranscriptionButtonLabel }}
+				</NcActionButton>
 			</template>
 
 			<!-- Fullscreen -->
@@ -150,7 +159,10 @@
 </template>
 
 <script>
-import { showWarning } from '@nextcloud/dialogs'
+import {
+	showError,
+	showWarning,
+} from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -172,6 +184,7 @@ import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
+import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
 import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
@@ -217,6 +230,7 @@ export default {
 		IconMicrophoneOff,
 		IconRecordCircle,
 		IconStop,
+		IconSubtitles,
 		IconVideo,
 		IconViewGallery,
 		IconViewGrid,
@@ -332,6 +346,18 @@ export default {
 			return disableKeyboardShortcuts
 				? t('spreed', 'Lower hand')
 				: t('spreed', 'Lower hand (R)')
+		},
+
+		isLiveTranscriptionSupported() {
+			return getTalkConfig(this.token, 'call', 'live-transcription') || false
+		},
+
+		liveTranscriptionButtonLabel() {
+			if (!this.callViewStore.isLiveTranscriptionEnabled) {
+				return t('spreed', 'Enable live transcription')
+			}
+
+			return t('spreed', 'Disable live transcription')
 		},
 
 		participantType() {
@@ -495,6 +521,34 @@ export default {
 				} else if (!newState && hasAssistanceRequested) {
 					this.breakoutRoomsStore.dismissRequestAssistance(this.token)
 				}
+			}
+		},
+
+		async toggleLiveTranscription() {
+			if (!this.isInCall) {
+				return
+			}
+
+			if (!this.callViewStore.isLiveTranscriptionEnabled) {
+				this.enableLiveTranscription()
+			} else {
+				this.disableLiveTranscription()
+			}
+		},
+
+		async enableLiveTranscription() {
+			try {
+				await this.callViewStore.enableLiveTranscription(this.token)
+			} catch (error) {
+				showError(t('spreed', 'Failed to enable live transcription'))
+			}
+		},
+
+		async disableLiveTranscription() {
+			try {
+				await this.callViewStore.disableLiveTranscription(this.token)
+			} catch (error) {
+				showError(t('spreed', 'Failed to disable live transcription'))
 			}
 		},
 
