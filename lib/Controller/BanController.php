@@ -33,7 +33,7 @@ class BanController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Ban an actor or IP address
+	 * Ban an actor or IP addressTEST
 	 *
 	 * Required capability: `ban-v1`
 	 *
