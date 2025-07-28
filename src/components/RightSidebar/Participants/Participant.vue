@@ -55,7 +55,7 @@
 					:disabled="disabled"
 					@click="dialOutPhoneNumber">
 					<template #icon>
-						<Phone :size="20" />
+						<IconPhoneOutline :size="20" />
 					</template>
 				</NcButton>
 				<template v-else>
@@ -65,7 +65,7 @@
 						:disabled="disabled"
 						@click="hangupPhoneNumber">
 						<template #icon>
-							<PhoneHangup :size="20" />
+							<IconPhoneHangupOutline :size="20" />
 						</template>
 					</NcButton>
 					<DialpadPanel :disabled="disabled"
@@ -90,7 +90,7 @@
 					:aria-label="t('spreed', 'Move back to lobby')"
 					@click="setLobbyPermission(false)">
 					<template #icon>
-						<AccountMinusIcon :size="20" />
+						<IconAccountMinusOutline :size="20" />
 					</template>
 				</NcButton>
 				<NcButton v-else
@@ -99,7 +99,7 @@
 					:aria-label="t('spreed', 'Move to conversation')"
 					@click="setLobbyPermission(true)">
 					<template #icon>
-						<AccountPlusIcon :size="20" />
+						<IconAccountPlusOutline :size="20" />
 					</template>
 				</NcButton>
 			</template>
@@ -113,7 +113,7 @@
 			<!-- Information and rights -->
 			<NcActionText v-if="attendeePin" :name="t('spreed', 'Dial-in PIN')">
 				<template #icon>
-					<Lock :size="20" />
+					<IconLockOutline :size="20" />
 				</template>
 				{{ attendeePin }}
 			</NcActionText>
@@ -123,7 +123,7 @@
 				close-after-click
 				@click="demoteFromModerator">
 				<template #icon>
-					<Account :size="20" />
+					<IconAccountOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Demote from moderator') }}
 			</NcActionButton>
@@ -132,7 +132,7 @@
 				close-after-click
 				@click="promoteToModerator">
 				<template #icon>
-					<Crown :size="20" />
+					<IconCrownOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
@@ -141,7 +141,7 @@
 				close-after-click
 				@click="resendInvitation">
 				<template #icon>
-					<Email :size="20" />
+					<IconEmailOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Resend invitation') }}
 			</NcActionButton>
@@ -150,7 +150,7 @@
 				close-after-click
 				@click="sendCallNotification">
 				<template #icon>
-					<Bell :size="20" />
+					<IconBellOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
@@ -160,7 +160,7 @@
 					close-after-click
 					@click="dialOutPhoneNumber">
 					<template #icon>
-						<Phone :size="20" />
+						<IconPhoneOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Dial out phone number') }}
 				</NcActionButton>
@@ -170,7 +170,7 @@
 						close-after-click
 						@click="unmutePhoneNumber">
 						<template #icon>
-							<PhoneInTalk :size="20" />
+							<IconPhoneInTalkOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Resume call for phone number') }}
 					</NcActionButton>
@@ -179,7 +179,7 @@
 							close-after-click
 							@click="holdPhoneNumber">
 							<template #icon>
-								<PhonePaused :size="20" />
+								<IconPhonePausedOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Put phone number on hold') }}
 						</NcActionButton>
@@ -188,7 +188,7 @@
 							close-after-click
 							@click="unmutePhoneNumber">
 							<template #icon>
-								<Microphone :size="20" />
+								<IconMicrophoneOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Unmute phone number') }}
 						</NcActionButton>
@@ -197,7 +197,7 @@
 							close-after-click
 							@click="mutePhoneNumber">
 							<template #icon>
-								<MicrophoneOff :size="20" />
+								<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
 							</template>
 							{{ t('spreed', 'Mute phone number') }}
 						</NcActionButton>
@@ -207,7 +207,7 @@
 					close-after-click
 					@click="copyPhoneNumber">
 					<template #icon>
-						<ContentCopy :size="20" />
+						<IconContentCopy :size="20" />
 					</template>
 					{{ t('spreed', 'Copy phone number') }}
 				</NcActionButton>
@@ -222,7 +222,7 @@
 					close-after-click
 					@click="applyDefaultPermissions">
 					<template #icon>
-						<LockReset :size="20" />
+						<IconLockReset :size="20" />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</NcActionButton>
@@ -230,7 +230,7 @@
 					close-after-click
 					@click="grantAllPermissions">
 					<template #icon>
-						<LockOpenVariant :size="20" />
+						<IconLockOpenVariantOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</NcActionButton>
@@ -238,7 +238,7 @@
 					close-after-click
 					@click="removeAllPermissions">
 					<template #icon>
-						<Lock :size="20" />
+						<IconLockOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</NcActionButton>
@@ -246,7 +246,7 @@
 					close-after-click
 					@click="permissionsEditor = true">
 					<template #icon>
-						<Pencil :size="20" />
+						<IconPencilOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
 				</NcActionButton>
@@ -261,7 +261,7 @@
 				close-after-click
 				@click="isRemoveDialogOpen = true">
 				<template #icon>
-					<Delete :size="20" />
+					<IconDeleteOutline :size="20" />
 				</template>
 				{{ removeParticipantLabel }}
 			</NcActionButton>
@@ -317,32 +317,33 @@ import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import Account from 'vue-material-design-icons/Account.vue'
-import AccountMinusIcon from 'vue-material-design-icons/AccountMinus.vue'
-import AccountPlusIcon from 'vue-material-design-icons/AccountPlus.vue'
-import Bell from 'vue-material-design-icons/Bell.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import Crown from 'vue-material-design-icons/Crown.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Email from 'vue-material-design-icons/Email.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Lock from 'vue-material-design-icons/Lock.vue'
-import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
-import LockReset from 'vue-material-design-icons/LockReset.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Phone from 'vue-material-design-icons/Phone.vue'
-import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
-import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
-import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
-import Tune from 'vue-material-design-icons/Tune.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
+import IconAccountMinusOutline from 'vue-material-design-icons/AccountMinusOutline.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
+import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconEmailOutline from 'vue-material-design-icons/EmailOutline.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconLockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import IconLockOutline from 'vue-material-design-icons/LockOutline.vue'
+import IconLockReset from 'vue-material-design-icons/LockReset.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
+import IconPhoneInTalkOutline from 'vue-material-design-icons/PhoneInTalkOutline.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import IconPhonePausedOutline from 'vue-material-design-icons/PhonePausedOutline.vue'
+import IconTune from 'vue-material-design-icons/Tune.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
+import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-off-outline.svg?raw'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants.ts'
@@ -373,31 +374,31 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcDialog,
+		NcIconSvgWrapper,
 		NcListItem,
 		NcTextArea,
 		ParticipantPermissionsEditor,
 		// Icons
-		Account,
-		AccountMinusIcon,
-		AccountPlusIcon,
-		Bell,
-		ContentCopy,
-		Crown,
-		Delete,
-		Email,
-		HandBackLeft,
-		Lock,
-		LockOpenVariant,
-		LockReset,
-		Microphone,
-		MicrophoneOff,
-		Pencil,
-		Phone,
-		PhoneInTalk,
-		PhoneHangup,
-		PhonePaused,
-		Tune,
-		VideoIcon,
+		IconAccountOutline,
+		IconAccountMinusOutline,
+		IconAccountPlusOutline,
+		IconBellOutline,
+		IconContentCopy,
+		IconCrownOutline,
+		IconDeleteOutline,
+		IconEmailOutline,
+		IconHandBackLeftOutline,
+		IconLockOutline,
+		IconLockOpenVariantOutline,
+		IconLockReset,
+		IconMicrophoneOutline,
+		IconPencilOutline,
+		IconPhoneOutline,
+		IconPhoneInTalkOutline,
+		IconPhoneHangupOutline,
+		IconPhonePausedOutline,
+		IconTune,
+		IconVideoOutline,
 	},
 
 	props: {
@@ -418,6 +419,7 @@ export default {
 
 	setup() {
 		return {
+			IconMicrophoneOffOutline,
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
@@ -575,13 +577,13 @@ export default {
 			if (this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return null
 			} else if (this.isHandRaised) {
-				return { icon: HandBackLeft, size: 18, title: t('spreed', 'Raised their hand') }
+				return { icon: IconHandBackLeftOutline, size: 18, title: t('spreed', 'Raised their hand') }
 			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
-				return { icon: VideoIcon, size: 20, title: t('spreed', 'Joined with video') }
+				return { icon: IconVideoOutline, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {
-				return { icon: Phone, size: 20, title: t('spreed', 'Joined via phone') }
+				return { icon: IconPhoneOutline, size: 20, title: t('spreed', 'Joined via phone') }
 			} else {
-				return { icon: Microphone, size: 20, title: t('spreed', 'Joined with audio') }
+				return { icon: IconMicrophoneOutline, size: 20, title: t('spreed', 'Joined with audio') }
 			}
 		},
 
@@ -758,11 +760,11 @@ export default {
 			}
 
 			if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.MAX_CUSTOM) {
-				return LockOpenVariant
+				return IconLockOpenVariantOutline
 			} else if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.CUSTOM) {
-				return Lock
+				return IconLockOutline
 			} else if (this.attendeePermissions !== PARTICIPANT.PERMISSIONS.DEFAULT) {
-				return Tune
+				return IconTune
 			}
 			return undefined
 		},
