@@ -13,6 +13,7 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
@@ -39,6 +40,7 @@ class CapabilitiesTest extends TestCase {
 	protected IAppManager&MockObject $appManager;
 	protected ITranslationManager&MockObject $translationManager;
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
+	protected LiveTranscriptionService&MockObject $liveTranscriptionService;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected ICache&MockObject $talkCache;
 
@@ -52,6 +54,7 @@ class CapabilitiesTest extends TestCase {
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->translationManager = $this->createMock(ITranslationManager::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
+		$this->liveTranscriptionService = $this->createMock(LiveTranscriptionService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->talkCache = $this->createMock(ICache::class);
 
@@ -79,6 +82,7 @@ class CapabilitiesTest extends TestCase {
 			$this->appManager,
 			$this->translationManager,
 			$this->taskProcessingManager,
+			$this->liveTranscriptionService,
 			$this->cacheFactory,
 		);
 	}
@@ -148,6 +152,7 @@ class CapabilitiesTest extends TestCase {
 						'max-duration' => 0,
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
+						'live-transcription' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -319,6 +324,7 @@ class CapabilitiesTest extends TestCase {
 						'max-duration' => 0,
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
+						'live-transcription' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -463,6 +469,31 @@ class CapabilitiesTest extends TestCase {
 
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
+	}
+
+	public static function dataTestConfigCallLiveTranscription(): array {
+		return [
+			[Config::SIGNALING_EXTERNAL, true, true],
+			[Config::SIGNALING_EXTERNAL, false, false],
+			[Config::SIGNALING_INTERNAL, true, false],
+			[Config::SIGNALING_INTERNAL, false, false],
+		];
+	}
+
+	#[DataProvider('dataTestConfigCallLiveTranscription')]
+	public function testConfigCallLiveTranscription(string $signalingMode, bool $liveTranscriptionAppEnabled, bool $expectedEnabled): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn($signalingMode);
+
+		$this->liveTranscriptionService->expects($this->any())
+			->method('isLiveTranscriptionAppEnabled')
+			->willReturn($liveTranscriptionAppEnabled);
+
+		$data = $capabilities->getCapabilities();
+		$this->assertEquals($data['spreed']['config']['call']['live-transcription'], $expectedEnabled);
 	}
 
 	public function testCapabilitiesTranslations(): void {
