@@ -147,6 +147,7 @@ class CapabilitiesTest extends TestCase {
 						'max-duration' => 0,
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
+						'live-transcription' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -461,6 +462,26 @@ class CapabilitiesTest extends TestCase {
 
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
+	}
+
+	public static function dataTestConfigCallLiveTranscription(): array {
+		return [
+			[true],
+			[false],
+		];
+	}
+
+	#[DataProvider('dataTestConfigCallLiveTranscription')]
+	public function testConfigCallLiveTranscription(bool $enabled): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->appManager->expects($this->once())
+			->method('isEnabledForUser')
+			->with('live_transcription')
+			->willReturn($enabled);
+
+		$data = $capabilities->getCapabilities();
+		$this->assertEquals($data['spreed']['config']['call']['live-transcription'], $enabled);
 	}
 
 	public function testCapabilitiesTranslations(): void {

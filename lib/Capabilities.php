@@ -249,6 +249,7 @@ class Capabilities implements IPublicCapability {
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
+					'live-transcription' => $this->appManager->isEnabledForUser('live_transcription'),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
