@@ -19,6 +19,7 @@ return array_merge_recursive(
 	include(__DIR__ . '/routes/routesFilesIntegrationController.php'),
 	include(__DIR__ . '/routes/routesGuestController.php'),
 	include(__DIR__ . '/routes/routesHostedSignalingServerController.php'),
+	include(__DIR__ . '/routes/routesLiveTranscriptionController.php'),
 	include(__DIR__ . '/routes/routesMatterbridgeController.php'),
 	include(__DIR__ . '/routes/routesMatterbridgeSettingsController.php'),
 	include(__DIR__ . '/routes/routesPageController.php'),
