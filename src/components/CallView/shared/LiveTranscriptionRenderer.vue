@@ -207,6 +207,8 @@ export default {
 		/**
 		 * Scroll to the bottom, one line at a time, with a small pause at each
 		 * line.
+		 *
+		 * If there are no more lines the no longer visible blocks are removed.
 		 */
 		scrollToBottomLineByLine() {
 			if (this.pendingScrollToBottomLineByLine) {
@@ -214,6 +216,8 @@ export default {
 			}
 
 			if (!this.scrollToNextLine()) {
+				this.removeNoLongerVisibleTranscriptBlocks()
+
 				return
 			}
 
@@ -293,6 +297,38 @@ export default {
 				top: scrollToTop,
 				behavior: 'smooth',
 			})
+		},
+
+		/**
+		 * Remove all the transcript blocks fully above the top of the
+		 * transcript element.
+		 */
+		removeNoLongerVisibleTranscriptBlocks() {
+			const count = this.getNoLongerVisibleTranscriptBlocksCount()
+			this.transcriptBlocks.splice(0, count)
+			this.lastScrolledToBlockAndLine!.block = this.lastScrolledToBlockAndLine!.block - count
+
+			// The same scroll position is expected to be automatically kept
+			// after the elements are removed, so the scroll is not explicitly
+			// adjusted.
+		},
+
+		/**
+		 * @return {number} the number of no longer visible transcript blocks.
+		 */
+		getNoLongerVisibleTranscriptBlocksCount() {
+			const transcriptTop = this.$refs.transcript.getBoundingClientRect().top
+
+			let count = 0
+			for (let i = 0; i < this.lastScrolledToBlockAndLine!.block; i++) {
+				if (this.$refs.transcriptBlocks![i].$el.getBoundingClientRect().bottom > transcriptTop) {
+					return count
+				}
+
+				count++
+			}
+
+			return count
 		},
 	},
 }
