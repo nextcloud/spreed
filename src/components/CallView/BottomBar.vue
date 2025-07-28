@@ -4,6 +4,10 @@
 -->
 
 <script setup lang="ts">
+import {
+	showError,
+	showWarning,
+} from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { computed, toValue, watch } from 'vue'
@@ -13,6 +17,7 @@ import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
 import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -54,6 +59,16 @@ const hasReactionSupport = computed(() => supportedReactions.value && supportedR
 const canModerate = computed(() => [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
 	.includes(conversation.value.participantType))
 
+const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, 'call', 'live-transcription') || false)
+
+const liveTranscriptionButtonLabel = computed(() => {
+	if (!callViewStore.isLiveTranscriptionEnabled) {
+		return t('spreed', 'Enable live transcription')
+	}
+
+	return t('spreed', 'Disable live transcription')
+})
+
 const isHandRaised = computed(() => localMediaModel.attributes.raisedHand.state === true)
 
 const raiseHandButtonLabel = computed(() => {
@@ -82,6 +97,41 @@ const changeViewLabel = computed(() => {
 const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+
+/**
+ * Toggle live transcriptions.
+ */
+async function toggleLiveTranscription() {
+	if (!callViewStore.isLiveTranscriptionEnabled) {
+		enableLiveTranscription()
+	} else {
+		disableLiveTranscription()
+	}
+}
+
+/**
+ * Enable live transcriptions.
+ */
+async function enableLiveTranscription() {
+	try {
+		await callViewStore.enableLiveTranscription(token.value)
+	} catch (error) {
+		showError(t('spreed', 'Failed to enable live transcription'))
+	}
+}
+
+/**
+ * Disable live transcriptions.
+ */
+async function disableLiveTranscription() {
+	try {
+		await callViewStore.disableLiveTranscription(token.value)
+	} catch (error) {
+		// Not being able to disable the live transcription is not really
+		// relevant for the user, as the transcript will be no longer visible in
+		// the UI anyway, so no error is shown in that case.
+	}
+}
 
 let lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
 let speakingTimestamp: number | null = null
@@ -196,6 +246,16 @@ useHotKey('r', toggleHandRaised)
 				:token="token"
 				:supported-reactions="supportedReactions"
 				:local-call-participant-model="localCallParticipantModel" />
+
+			<NcButton v-if="isLiveTranscriptionSupported"
+				:title="liveTranscriptionButtonLabel"
+				:aria-label="liveTranscriptionButtonLabel"
+				:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+				@click="toggleLiveTranscription">
+				<template #icon>
+					<IconSubtitles :size="20" />
+				</template>
+			</NcButton>
 
 			<NcButton v-if="!isSidebar"
 				:title="raiseHandButtonLabel"

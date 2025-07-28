@@ -8,6 +8,10 @@ import type { Conversation } from '../types/index.ts'
 import { defineStore } from 'pinia'
 import { CONVERSATION } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
+import {
+	disableLiveTranscription,
+	enableLiveTranscription,
+} from '../services/liveTranscriptionService.ts'
 
 type State = {
 	forceCallView: boolean
@@ -20,6 +24,7 @@ type State = {
 	presentationStarted: boolean
 	selectedVideoPeerId: string | null
 	callEndedTimeout: NodeJS.Timeout | number | undefined
+	isLiveTranscriptionEnabled: boolean
 }
 
 type CallViewModePayload = {
@@ -41,6 +46,7 @@ export const useCallViewStore = defineStore('callView', {
 		presentationStarted: false,
 		selectedVideoPeerId: null,
 		callEndedTimeout: undefined,
+		isLiveTranscriptionEnabled: false,
 	}),
 
 	getters: {
@@ -163,6 +169,38 @@ export const useCallViewStore = defineStore('callView', {
 		resetCallHasJustEnded() {
 			clearTimeout(this.callEndedTimeout)
 			this.callEndedTimeout = undefined
+		},
+
+		/**
+		 * @throws error if live transcription could not be enabled.
+		 */
+		async enableLiveTranscription(token: string) {
+			try {
+				await enableLiveTranscription(token)
+
+				this.isLiveTranscriptionEnabled = true
+			} catch (error) {
+				console.error(error)
+
+				throw error
+			}
+		},
+
+		/**
+		 * @throws error if live transcription could not be enabled.
+		 */
+		async disableLiveTranscription(token: string) {
+			try {
+				// Locally disable transcriptions even if they could not be
+				// disabled in the server.
+				this.isLiveTranscriptionEnabled = false
+
+				await disableLiveTranscription(token)
+			} catch (error) {
+				console.error(error)
+
+				throw error
+			}
 		},
 	},
 })
