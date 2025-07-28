@@ -19,6 +19,7 @@
 			</p>
 			<p class="transcript-block__chunks">
 				<span v-for="(item, index) in chunksWithSeparator"
+					ref="chunks"
 					:key="index">
 					{{ item }}
 				</span>
@@ -33,6 +34,16 @@ import type { PropType, StyleValue } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
+
+declare module 'vue' {
+	interface TypeRefs {
+		chunks: undefined | Array<HTMLDivElement>
+	}
+
+	interface ComponentCustomProperties {
+		$refs: TypeRefs
+	}
+}
 
 interface CallParticipantModel {
 	attributes: {
@@ -80,6 +91,7 @@ export default {
 	data() {
 		return {
 			AVATAR,
+			lines: [] as Array<{ lastChunkIndex: number }>,
 		}
 	},
 
@@ -125,6 +137,106 @@ export default {
 			}
 
 			return chunksWithSeparator
+		},
+	},
+
+	methods: {
+		resetLines() {
+			this.lines = []
+		},
+
+		updateLines() {
+			if (!this.$refs.chunks || !this.$refs.chunks.length) {
+				return
+			}
+
+			if (!this.lines.length) {
+				const firstChunkClientRectsLength = this.$refs.chunks[0].getClientRects().length
+
+				// If there is a single chunk and it has several bounding
+				// rectangles each rectangle will be in its own line.
+				for (let i = 0; i < firstChunkClientRectsLength; i++) {
+					this.lines.push({
+						lastChunkIndex: 0,
+					})
+				}
+			}
+
+			const lastKnownChunkIndex = this.lines.at(-1)!.lastChunkIndex
+			if (lastKnownChunkIndex >= this.$refs.chunks.length - 1) {
+				return
+			}
+
+			let lastKnownChunkElement = this.$refs.chunks[lastKnownChunkIndex]
+			let lastKnownChunkElementTop = lastKnownChunkElement.getClientRects()[lastKnownChunkElement.getClientRects().length - 1].top
+
+			for (let i = lastKnownChunkIndex + 1; i < this.$refs.chunks.length; i++) {
+				const nextChunkElement = this.$refs.chunks[i]
+
+				// Separators are inline rather than inline-block, so they have
+				// different top and bottom boundaries and they should not be
+				// taken into account.
+				if (nextChunkElement.classList.contains('separator')) {
+					continue
+				}
+
+				const nextChunkElementClientRects = nextChunkElement.getClientRects()
+				const nextChunkElementTop = nextChunkElementClientRects[0].top
+
+				// If the first bounding rectangle has the same top value as the
+				// last known one they will be in the same line. Otherwise it
+				// will be in a new line.
+				if (nextChunkElementTop === lastKnownChunkElementTop) {
+					this.lines.at(-1)!.lastChunkIndex = i
+				} else {
+					this.lines.push({
+						lastChunkIndex: i,
+					})
+				}
+
+				// Any bounding rectangle after the first one will be in its own
+				// line.
+				for (let j = 1; j < nextChunkElementClientRects.length; j++) {
+					this.lines.push({
+						lastChunkIndex: i,
+					})
+				}
+
+				lastKnownChunkElement = nextChunkElement
+				lastKnownChunkElementTop = lastKnownChunkElement.getClientRects()[lastKnownChunkElement.getClientRects().length - 1].top
+			}
+		},
+
+		getLineBoundaries() {
+			this.updateLines()
+
+			const lineHeight = parseFloat(window.getComputedStyle(this.$el).getPropertyValue('line-height'))
+
+			let clientRectIndex = 0
+
+			return this.lines.map((line, index) => {
+				const clientRectsOfLastChunkInLine = this.$refs.chunks![line.lastChunkIndex].getClientRects()
+
+				if (index > 0 && line.lastChunkIndex === this.lines[index - 1].lastChunkIndex) {
+					clientRectIndex++
+				} else {
+					clientRectIndex = 0
+				}
+
+				const currentClientRectsOfLastChunkInLine = clientRectsOfLastChunkInLine[clientRectIndex]
+
+				// Chunks are shown as inline spans, which do not have the full
+				// line height. The spans are vertically centered on the line,
+				// so there is the same extra space at the top and at the
+				// bottom.
+				const chunkHeight = currentClientRectsOfLastChunkInLine.bottom - currentClientRectsOfLastChunkInLine.top
+				const chunkToLineHeightDifference = lineHeight - chunkHeight
+
+				return {
+					top: currentClientRectsOfLastChunkInLine.top - (chunkToLineHeightDifference / 2),
+					bottom: currentClientRectsOfLastChunkInLine.bottom + (chunkToLineHeightDifference / 2),
+				}
+			})
 		},
 	},
 }

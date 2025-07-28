@@ -4,8 +4,10 @@
 -->
 
 <template>
-	<div class="transcript">
+	<div ref="transcript"
+		class="transcript">
 		<TranscriptBlock v-for="item in transcriptBlocks"
+			ref="transcriptBlocks"
 			:key="item.id"
 			:token="token"
 			:model="item.model"
@@ -17,6 +19,17 @@
 import type { PropType } from 'vue'
 
 import TranscriptBlock from './TranscriptBlock.vue'
+
+declare module 'vue' {
+	interface TypeRefs {
+		transcript: HTMLDivElement
+		transcriptBlocks: undefined | Array<TranscriptBlock>
+	}
+
+	interface ComponentCustomProperties {
+		$refs: TypeRefs
+	}
+}
 
 interface CallParticipantModel {
 	attributes: {
@@ -37,6 +50,13 @@ interface TranscriptBlockData {
 	model: CallParticipantModel
 	chunks: Array<string>
 }
+
+interface BlockAndLine {
+	block: number
+	line: number
+}
+
+type TranscriptBlock = InstanceType<typeof TranscriptBlock>
 
 export default {
 	name: 'LiveTranscriptionRenderer',
@@ -63,7 +83,10 @@ export default {
 	data() {
 		return {
 			registeredModels: {} as { [key: string]: CallParticipantModel },
+			resizeObserver: null as null | ResizeObserver,
 			transcriptBlocks: [] as TranscriptBlockData[],
+			lastScrolledToBlockAndLine: null as null | BlockAndLine,
+			pendingScrollToBottomLineByLine: undefined as undefined | ReturnType<typeof setTimeout>,
 		}
 	},
 
@@ -88,14 +111,67 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.resizeObserver = new ResizeObserver(this.handleResize)
+		this.resizeObserver.observe(this.$refs.transcript)
+	},
+
 	beforeUnmount() {
 		Object.keys(this.registeredModels).forEach((modelId) => {
 			this.registeredModels[modelId].off('transcript', this.handleTranscript)
 			delete this.registeredModels[modelId]
 		})
+
+		this.resizeObserver!.disconnect()
+
+		clearTimeout(this.pendingScrollToBottomLineByLine)
 	},
 
 	methods: {
+		/**
+		 * Handle resizings of the transcript element.
+		 *
+		 * After the transcript is resized the previous lines might have
+		 * changed. For simplicity, and given that it was probably at the bottom
+		 * or close to it already, rather than trying to keep the same visible
+		 * lines the transcript is just scrolled to the bottom; any pending
+		 * scroll to bottom is also cancelled.
+		 */
+		handleResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
+			if (!this.$refs.transcriptBlocks) {
+				return
+			}
+
+			for (let i = 0; i < this.$refs.transcriptBlocks.length; i++) {
+				this.$refs.transcriptBlocks[i].resetLines()
+			}
+
+			this.$refs.transcript.scrollTo({
+				top: this.$refs.transcript.scrollHeight,
+			})
+
+			// This should not happen, but just in case
+			if (!this.lastScrolledToBlockAndLine) {
+				this.lastScrolledToBlockAndLine = {
+					block: 0,
+					line: 0,
+				}
+			}
+
+			this.lastScrolledToBlockAndLine.block = this.$refs.transcriptBlocks.length - 1
+
+			const lastTranscriptBlock = this.$refs.transcriptBlocks[this.lastScrolledToBlockAndLine.block]
+			const lastTranscriptBlockLineBoundaries = lastTranscriptBlock.getLineBoundaries()
+
+			this.lastScrolledToBlockAndLine.line = lastTranscriptBlockLineBoundaries.length - 1
+
+			if (this.pendingScrollToBottomLineByLine) {
+				clearTimeout(this.pendingScrollToBottomLineByLine)
+
+				this.pendingScrollToBottomLineByLine = undefined
+			}
+		},
+
 		/**
 		 * Handle a new received transcript.
 		 *
@@ -122,6 +198,101 @@ export default {
 			}
 
 			lastTranscriptBlock.chunks.push(message)
+
+			this.$nextTick(() => {
+				this.scrollToBottomLineByLine()
+			})
+		},
+
+		/**
+		 * Scroll to the bottom, one line at a time, with a small pause at each
+		 * line.
+		 */
+		scrollToBottomLineByLine() {
+			if (this.pendingScrollToBottomLineByLine) {
+				return
+			}
+
+			if (!this.scrollToNextLine()) {
+				return
+			}
+
+			this.pendingScrollToBottomLineByLine = setTimeout(() => {
+				this.pendingScrollToBottomLineByLine = undefined
+
+				this.scrollToBottomLineByLine()
+			}, 2000)
+		},
+
+		/**
+		 * Scroll to the next line after the last visible one.
+		 *
+		 * @return {boolean} true if there was a line to scroll to, false
+		 *         otherwise.
+		 */
+		scrollToNextLine() {
+			if (!this.lastScrolledToBlockAndLine) {
+				this.scrollToBlockAndLine(0, 0)
+
+				return true
+			}
+
+			const lastScrolledToBlockLineBoundaries = this.$refs.transcriptBlocks![this.lastScrolledToBlockAndLine.block].getLineBoundaries()
+			if (this.lastScrolledToBlockAndLine.line < lastScrolledToBlockLineBoundaries.length - 1) {
+				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block, this.lastScrolledToBlockAndLine.line + 1)
+
+				return true
+			}
+
+			if (this.lastScrolledToBlockAndLine.block < this.$refs.transcriptBlocks!.length - 1) {
+				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block + 1, 0)
+
+				return true
+			}
+
+			return false
+		},
+
+		/**
+		 * Scroll to the given line in the given block.
+		 *
+		 * The bottom of the line will be aligned with the bottom of the
+		 * transcript element (unless the internal area of the transcript is not
+		 * large enough yet to be scrolled).
+		 *
+		 * @param {number} block the index of the block in the current list of
+		 *        blocks.
+		 * @param {number} line the index of the line in the current list of
+		 *        lines of the block.
+		 */
+		scrollToBlockAndLine(block: number, line: number) {
+			this.lastScrolledToBlockAndLine = {
+				block,
+				line,
+			}
+
+			const transcriptBoundaries = this.$refs.transcript.getBoundingClientRect()
+			const transcriptTop = transcriptBoundaries.top
+			const transcriptHeight = transcriptBoundaries.bottom - transcriptBoundaries.top
+
+			const scrollToBlockLineBoundaries = this.$refs.transcriptBlocks![block].getLineBoundaries()
+			const scrollToLineLineBoundaries = scrollToBlockLineBoundaries[line]
+			const scrollToLineHeight = scrollToLineLineBoundaries.bottom - scrollToLineLineBoundaries.top
+
+			const scrollToLineRelativeLineBoundaries = {
+				top: scrollToLineLineBoundaries.top - transcriptTop,
+				bottom: scrollToLineLineBoundaries.bottom - transcriptTop,
+			}
+
+			// Align bottom of line with bottom of transcript
+			const scrollToTop = this.$refs.transcript.scrollTop
+				+ (scrollToLineRelativeLineBoundaries.top - transcriptHeight)
+				+ scrollToLineHeight
+
+			this.$refs.transcript.scrollTo({
+				top: scrollToTop,
+				behavior: 'smooth',
+			})
 		},
 	},
 }
@@ -147,7 +318,6 @@ export default {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	justify-content: flex-end;
 
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	backdrop-filter: var(--filter-background-blur);
