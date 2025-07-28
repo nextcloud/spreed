@@ -71,6 +71,7 @@ export default function CallParticipantModel(options) {
 	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
 	this._handleRemoteVideoBlockedBound = this._handleRemoteVideoBlocked.bind(this)
 	this._handleReactionBound = this._handleReaction.bind(this)
+	this._handleTranscriptBound = this._handleTranscript.bind(this)
 
 	this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound)
 	this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound)
@@ -80,6 +81,7 @@ export default function CallParticipantModel(options) {
 	this._webRtc.on('channelMessage', this._handleChannelMessageBound)
 	this._webRtc.on('raisedHand', this._handleRaisedHandBound)
 	this._webRtc.on('reaction', this._handleReactionBound)
+	this._webRtc.on('transcript', this._handleTranscriptBound)
 }
 
 CallParticipantModel.prototype = {
@@ -410,6 +412,15 @@ CallParticipantModel.prototype = {
 		}
 
 		this._trigger('reaction', [data.reaction])
+	},
+
+	_handleTranscript(data) {
+		// A transcript could be sent even if there is no Peer object (yet).
+		if (this.get('peerId') !== data.id) {
+			return
+		}
+
+		this._trigger('transcript', [data.message])
 	},
 
 }
