@@ -2609,7 +2609,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/ban/{token}": {
             "post": {
                 "operationId": "ban-ban-actor",
-                "summary": "Ban an actor or IP address",
+                "summary": "Ban an actor or IP addressTEST",
                 "description": "Required capability: `ban-v1`",
                 "tags": [
                     "ban"

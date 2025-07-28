@@ -71,7 +71,7 @@ export type paths = {
         get: operations["ban-list-bans"];
         put?: never;
         /**
-         * Ban an actor or IP address
+         * Ban an actor or IP addressTEST
          * @description Required capability: `ban-v1`
          */
         post: operations["ban-ban-actor"];
