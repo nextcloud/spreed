@@ -396,7 +396,27 @@ class Listener implements IEventListener {
 			$silent = false;
 		}
 
-		$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
+		$threadTitle = '';
+		if (isset($metaData['threadTitle'])) {
+			if (is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
+				$threadTitle = trim($metaData['threadTitle']);
+			}
+			unset($metaData['threadTitle']);
+		}
+
+		$comment = $this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
+
+		if ($threadTitle !== '' && $comment->getParentId() === '') {
+			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+			$this->sendSystemMessage(
+				$room,
+				'thread_created',
+				['thread' => (int)$comment->getId()],
+				shouldSkipLastMessageUpdate: true,
+				silent: true,
+			);
+		}
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
@@ -480,9 +500,7 @@ class Listener implements IEventListener {
 			}
 		}
 
-		$threadTitle = $parameters['metaData']['threadTitle'] ?? '';
-
-		$comment = $this->chatManager->addSystemMessage(
+		return $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
@@ -492,12 +510,6 @@ class Listener implements IEventListener {
 			$shouldSkipLastMessageUpdate,
 			$silent,
 		);
-
-		if ($parent === null && $threadTitle !== '') {
-			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
-		}
-
-		return $comment;
 	}
 
 	protected function getUserId(): ?string {
