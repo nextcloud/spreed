@@ -17,9 +17,9 @@ $requirementsWithToken = [
 
 return [
 	'ocs' => [
-		/** @see \OCA\Talk\Controller\TranscriptionController::enable() */
-		['name' => 'Transcription#enable', 'url' => '/api/{apiVersion}/transcription/{token}', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
-		/** @see \OCA\Talk\Controller\TranscriptionController::disable() */
-		['name' => 'Transcription#disable', 'url' => '/api/{apiVersion}/transcription/{token}', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\LiveTranscriptionController::enable() */
+		['name' => 'LiveTranscription#enable', 'url' => '/api/{apiVersion}/live-transcription/{token}', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\LiveTranscriptionController::disable() */
+		['name' => 'LiveTranscription#disable', 'url' => '/api/{apiVersion}/live-transcription/{token}', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 	],
 ];

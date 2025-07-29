@@ -8,15 +8,20 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use \RuntimeException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\App\IAppManager;
 use OCP\Http\Client\IResponse;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class LiveTranscriptionService {
 
 	public function __construct(
 		private ?string $userId,
+		private IAppManager $appManager,
+		private IUserManager $userManager,
 		protected LoggerInterface $logger,
 	) {
 	}
@@ -53,7 +58,7 @@ class LiveTranscriptionService {
 	 * @throws RuntimeException if the external app "live_transcription" is not
 	 *         available, or if the request failed.
 	 */
-	private function requestToExAppLiveTranscription(string $route, string $params): IResponse {
+	private function requestToExAppLiveTranscription(string $route, array $params): ?IResponse {
 		$user = $this->userManager->get($this->userId);
 		if (!$this->appManager->isEnabledForUser('app_api', $user)) {
 			$this->logger->error('AppAPI is not enabled');
