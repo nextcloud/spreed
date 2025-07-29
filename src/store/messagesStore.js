@@ -599,8 +599,20 @@ const actions = {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
-				if (!chatExtrasStore.getThread(token, message.threadId) && chatExtrasStore.threads[token] !== undefined) {
-					chatExtrasStore.fetchSingleThread(token, message.threadId)
+				if (!chatExtrasStore.getThread(token, message.threadId)) {
+					chatExtrasStore.addThread(token, {
+						thread: {
+							id: message.threadId,
+							roomToken: token,
+							title: message.messageParameters.title.name,
+							lastMessageId: message.threadId,
+							lastActivity: message.timestamp,
+							numReplies: 0,
+						},
+						attendee: { notificationLevel: 0 },
+						first: message.parent,
+						last: null,
+					})
 				}
 			}
 
@@ -668,8 +680,7 @@ const actions = {
 				const updateNumReplies = thread.thread.lastMessageId < message.id
 				chatExtrasStore.updateThread(message.token, message.threadId, {
 					thread: {
-						id: message.threadId,
-						roomToken: message.token,
+						...thread.thread,
 						lastMessageId: message.id,
 						lastActivity: message.timestamp,
 						numReplies: thread.thread.numReplies + (updateNumReplies ? 1 : 0),
