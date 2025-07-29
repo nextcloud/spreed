@@ -211,9 +211,14 @@ export default {
 		},
 
 		scrollToBottom() {
-			// Reset the hash from focused message id (but keep the thread id)
-			this.$router.replace({ query: this.$route.query, hash: '' })
-			EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
+			if (this.$route.hash) {
+				// Reset the hash from focused message id (but keep the thread id)
+				// Scrolling will be handled by the useGetMessages composable
+				this.$router.replace({ query: this.$route.query, hash: '' })
+			} else {
+				// If the hash is already empty, simply scroll to the bottom
+				EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
+			}
 		},
 	},
 

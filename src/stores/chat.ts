@@ -66,11 +66,10 @@ export const useChatStore = defineStore('chat', () => {
 				})
 		}
 
-		// FIXME temporary show all messages for given token from all chat blocks - no behaviour change
-		const contextBlock = chatBlocks[token].reduce<Set<number>>((acc, set) => {
-			set.forEach((id) => acc.add(id))
-			return acc
-		}, new Set())
+		// Look for a set containing given context id (return first block as fallback for not found / constants)
+		const contextBlock = (messageId <= 0)
+			? chatBlocks[token][0]
+			: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 		return prepareMessagesList(token, contextBlock)
 	}
 
