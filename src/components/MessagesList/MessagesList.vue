@@ -670,7 +670,7 @@ export default {
 				return
 			}
 
-			if (!this.$store.getters.getFirstKnownMessageId(this.token)) {
+			if (!this.chatStore.chatBlocks[this.token]) {
 				// This can happen if the browser is fast enough to close the sidebar
 				// when switching from a one-to-one to a group conversation.
 				console.debug('Ignoring handleScroll as the messages history is empty')

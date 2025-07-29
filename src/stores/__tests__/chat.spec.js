@@ -61,6 +61,22 @@ describe('chatStore', () => {
 		jest.clearAllMocks()
 	})
 
+	describe('check for existence', () => {
+		it('returns false if chat blocks are not yet available', () => {
+			// Assert
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeFalsy()
+		})
+
+		it('returns boolean whether message is known by the store', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+
+			// Assert
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeTruthy()
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[101].id })).toBeFalsy()
+		})
+	})
+
 	describe('get a list of messages', () => {
 		it('returns an array if both messages and blocks present', () => {
 			// Arrange
@@ -81,6 +97,44 @@ describe('chatStore', () => {
 			expect(chatStore.getMessagesList('token1')).toEqual([]) // No chat blocks
 			expect(chatStore.getMessagesList('token2')).toEqual([]) // No messages in store
 			expect(chatStore.getMessagesList('token3')).toEqual([]) // Neither messages nor blocks
+		})
+	})
+
+	describe('get first and last known messages', () => {
+		it('returns given message id if chat blocks are not yet available', () => {
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
+		})
+
+		it('returns first / last known id of first block if no message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockE)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN)).toBe(chatBlockA[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN)).toBe(chatBlockE[2].id)
+		})
+
+		it('returns first / last known id of first block if no message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockA[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockA[1].id)
+		})
+
+		it('returns first / last known id of containing block if message id was given', () => {
+			// Act
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[1].id)
 		})
 	})
 
@@ -248,6 +302,52 @@ describe('chatStore', () => {
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+	})
+
+	describe('cleanup messages', () => {
+		it('does nothing, if no blocks are created yet', () => {
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockA[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+
+		it('does nothing, if no blocks are behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockC[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA), outputSet(chatBlockB)])
+		})
+
+		it('purges a store, if all blocks are behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockA[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toBeUndefined()
+		})
+
+		it('cleans up messages behind id to delete', () => {
+			// Arrange
+			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			chatStore.processChatBlocks(TOKEN, chatBlockC)
+
+			// Act
+			chatStore.clearMessagesHistory(TOKEN, chatBlockB[0].id)
+
+			// Assert
+			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet([chatBlockB[0]])])
 		})
 	})
 })

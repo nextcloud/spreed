@@ -835,6 +835,8 @@ const actions = {
 	 */
 	purgeMessagesStore(context, token) {
 		context.commit('purgeMessagesStore', token)
+		const chatStore = useChatStore()
+		chatStore.purgeChatStore(token)
 	},
 
 	/**
@@ -847,6 +849,8 @@ const actions = {
 	 */
 	clearMessagesHistory(context, { token, id }) {
 		context.commit('clearMessagesHistory', { token, id })
+		const chatStore = useChatStore()
+		chatStore.clearMessagesHistory(token, id)
 	},
 
 	/**
