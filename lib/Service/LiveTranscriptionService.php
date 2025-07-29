@@ -10,6 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\Http\Client\IResponse;
 use Psr\Log\LoggerInterface;
 
 class LiveTranscriptionService {
@@ -22,7 +23,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws RuntimeException if the external app "live_transcription" is not
-	 *         available.
+	 *         available, or if the request failed.
 	 */
 	public function enable(Room $room, Participant $participant): void {
 		$params = [
@@ -31,12 +32,12 @@ class LiveTranscriptionService {
 			'enable' => true,
 		];
 
-		$this->requestToExAppLiveTranscription($params);
+		$this->requestToExAppLiveTranscription('/transcribeCall', $params);
 	}
 
 	/**
 	 * @throws RuntimeException if the external app "live_transcription" is not
-	 *         available.
+	 *         available, or if the request failed.
 	 */
 	public function disable(Room $room, Participant $participant): void {
 		$params = [
@@ -45,14 +46,14 @@ class LiveTranscriptionService {
 			'enable' => true,
 		];
 
-		$this->requestToExAppLiveTranscription($params);
+		$this->requestToExAppLiveTranscription('/transcribeCall', $params);
 	}
 
 	/**
 	 * @throws RuntimeException if the external app "live_transcription" is not
-	 *         available.
+	 *         available, or if the request failed.
 	 */
-	private function requestToExAppLiveTranscription(string $method, string $params): void {
+	private function requestToExAppLiveTranscription(string $route, string $params): IResponse {
 		$user = $this->userManager->get($this->userId);
 		if (!$this->appManager->isEnabledForUser('app_api', $user)) {
 			$this->logger->error('AppAPI is not enabled');
@@ -73,10 +74,23 @@ class LiveTranscriptionService {
 
 		$response = $appApiFunctions->exAppRequest(
 			'live_transcription',
-			'/transcribeCall',
+			$route,
 			$this->userId,
 			'POST',
 			$params,
 		);
+
+		if (is_array($response) && isset($response['error'])) {
+			$this->logger->error('Request to external app live_transcription failed: ' . $response['error']);
+			throw new RuntimeException('request');
+		}
+		if (is_array($response)) {
+			// AppApi only uses array responses for errors, so this should never
+			// happen.
+			$this->logger->error('Request to external app live_transcription failed: response is not a valid response object');
+			throw new RuntimeException('response');
+		}
+
+		return $response;
 	}
 }
