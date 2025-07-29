@@ -206,6 +206,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
 	 * 201: Message sent successfully
@@ -225,11 +226,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = ''): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
-			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent);
+			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent, $threadTitle);
 		}
 
 		if (trim($message) === '') {
@@ -262,6 +263,22 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent);
+			if ($replyTo === 0 && $threadTitle !== '') {
+				$this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
+
+				$this->chatManager->addSystemMessage(
+					$this->room,
+					$this->participant->getAttendee()->getActorType(),
+					$this->participant->getAttendee()->getActorId(),
+					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId()]]),
+					$this->timeFactory->getDateTime(),
+					false,
+					null,
+					$comment,
+					true,
+					true
+				);
+			}
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (IRateLimitExceededException) {

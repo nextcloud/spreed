@@ -14,9 +14,9 @@ import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import {
-	createThreadForConversation,
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
+	setThreadNotificationLevel,
 	summarizeChat,
 } from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
@@ -137,17 +137,18 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param token - conversation token
 		 * @param messageId - message id of any reply in the chain
+		 * @param level - new level of notification for thread
 		 */
-		async createThread(token: string, messageId: number) {
+		async setThreadNotificationLevel(token: string, messageId: number, level: number) {
 			try {
 				if (!this.threads[token]) {
 					this.threads[token] = {}
 				}
 
-				const response = await createThreadForConversation(token, messageId)
+				const response = await setThreadNotificationLevel(token, messageId, level)
 				this.threads[token][response.data.ocs.data.thread.id] = response.data.ocs.data
 			} catch (error) {
-				console.error('Error creating thread:', error)
+				console.error('Error updating thread notification level:', error)
 			}
 		},
 

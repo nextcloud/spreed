@@ -1925,6 +1925,7 @@
                 "required": [
                     "id",
                     "roomToken",
+                    "title",
                     "lastMessageId",
                     "lastActivity",
                     "numReplies"
@@ -1936,6 +1937,9 @@
                         "minimum": 1
                     },
                     "roomToken": {
+                        "type": "string"
+                    },
+                    "title": {
                         "type": "string"
                     },
                     "lastMessageId": {
@@ -17849,6 +17853,11 @@
                                         "type": "boolean",
                                         "default": false,
                                         "description": "If sent silent the chat message will not create any notifications"
+                                    },
+                                    "threadTitle": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Only supported when not replying, when given will create a thread (requires `threads` capability)"
                                     }
                                 }
                             }
@@ -21020,195 +21029,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}": {
-            "post": {
-                "operationId": "thread-make-thread",
-                "summary": "Create a thread out of a message or reply chain",
-                "description": "Required capability: `threads`",
-                "tags": [
-                    "thread"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "messageId",
-                        "in": "path",
-                        "description": "The message to create a thread for (Doesn't have to be the root)",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-federation",
-                        "in": "header",
-                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Thread successfully created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/ThreadInfo"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Root message is a system message and therefor not supported",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "message",
-                                                                "status",
-                                                                "top-most"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Message or top most message not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "message",
-                                                                "status",
-                                                                "top-most"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}/notify": {
             "post": {
                 "operationId": "thread-set-notification-level",
@@ -21330,7 +21150,7 @@
                         }
                     },
                     "400": {
-                        "description": "Root message is a system message and therefor not supported or notification level was invalid",
+                        "description": "Notification level was invalid",
                         "content": {
                             "application/json": {
                                 "schema": {

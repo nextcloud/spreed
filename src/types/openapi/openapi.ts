@@ -1633,26 +1633,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create a thread out of a message or reply chain
-         * @description Required capability: `threads`
-         */
-        post: operations["thread-make-thread"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{messageId}/notify": {
         parameters: {
             query?: never;
@@ -2321,6 +2301,7 @@ export type components = {
             /** Format: int64 */
             id: number;
             roomToken: string;
+            title: string;
             /** Format: int64 */
             lastMessageId: number;
             /** Format: int64 */
@@ -8691,6 +8672,11 @@ export interface operations {
                      * @default false
                      */
                     silent?: boolean;
+                    /**
+                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
+                     * @default
+                     */
+                    threadTitle?: string;
                 };
             };
         };
@@ -9800,75 +9786,6 @@ export interface operations {
             };
         };
     };
-    "thread-make-thread": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description The message to create a thread for (Doesn't have to be the root) */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Thread successfully created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ThreadInfo"];
-                        };
-                    };
-                };
-            };
-            /** @description Root message is a system message and therefor not supported */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message" | "status" | "top-most";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message or top most message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message" | "status" | "top-most";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
     "thread-set-notification-level": {
         parameters: {
             query?: never;
@@ -9912,7 +9829,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Root message is a system message and therefor not supported or notification level was invalid */
+            /** @description Notification level was invalid */
             400: {
                 headers: {
                     [name: string]: unknown;

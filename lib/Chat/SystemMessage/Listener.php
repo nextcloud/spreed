@@ -34,6 +34,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SampleConversationsService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -66,6 +67,7 @@ class Listener implements IEventListener {
 		protected Manager $manager,
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
+		protected ThreadService $threadService,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
 	) {
@@ -394,7 +396,27 @@ class Listener implements IEventListener {
 			$silent = false;
 		}
 
-		$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
+		$threadTitle = '';
+		if (isset($metaData['threadTitle'])) {
+			if (is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
+				$threadTitle = trim($metaData['threadTitle']);
+			}
+			unset($metaData['threadTitle']);
+		}
+
+		$comment = $this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
+
+		if ($threadTitle !== '' && $comment->getParentId() === '') {
+			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+			$this->sendSystemMessage(
+				$room,
+				'thread_created',
+				['thread' => (int)$comment->getId()],
+				shouldSkipLastMessageUpdate: true,
+				silent: true,
+			);
+		}
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
@@ -476,7 +498,6 @@ class Listener implements IEventListener {
 				}
 			} catch (NotFoundException) {
 			}
-
 		}
 
 		return $this->chatManager->addSystemMessage(
