@@ -38,7 +38,6 @@ import { CHAT } from '../constants.ts'
 
 type ReceiveMessagesPayload = Partial<receiveMessagesParams> & { token: string }
 type GetMessageContextPayload = getMessageContextParams & { token: string, messageId: number }
-type PostNewMessagePayload = Omit<postNewMessageParams, 'replyTo'> & { token: string, parent: ChatMessage }
 type DeleteMessagePayload = { token: string, id: number }
 type EditMessagePayload = { token: string, messageId: number, updatedMessage: editMessageParams['message'] }
 
@@ -132,17 +131,26 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
  * @param payload.message The message text
  * @param payload.actorDisplayName The display name of the actor
  * @param payload.referenceId A reference id to identify the message later again
- * @param payload.parent The message to be replied to
+ * @param payload.replyTo The message id to be replied to
  * @param payload.silent whether the message should trigger a notifications
  * @param [options] Axios request options
  */
-async function postNewMessage({ token, message, actorDisplayName, referenceId, parent, silent }: PostNewMessagePayload, options?: AxiosRequestConfig): postNewMessageResponse {
+async function postNewMessage({
+	token,
+	message,
+	actorDisplayName,
+	referenceId,
+	replyTo,
+	silent,
+	threadTitle,
+}: postNewMessageParams & { token: string }, options?: AxiosRequestConfig): postNewMessageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,
-		replyTo: parent?.id,
+		replyTo,
 		silent,
+		threadTitle,
 	} as postNewMessageParams, options)
 }
 

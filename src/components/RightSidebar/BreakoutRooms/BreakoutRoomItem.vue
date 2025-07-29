@@ -229,9 +229,9 @@ export default {
 			this.showParticipants = !this.showParticipants
 		},
 
-		async sentMessageToRoom({ token, temporaryMessage, options }) {
+		async sentMessageToRoom({ token, temporaryMessage, threadTitle, options }) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle, options })
 				showSuccess(t('spreed', 'The message was sent to "{roomName}"', { roomName: this.roomName }))
 				this.isDialogOpened = false
 			} catch (e) {

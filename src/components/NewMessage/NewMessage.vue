@@ -85,6 +85,8 @@
 				<NcRichContenteditable ref="richContenteditable"
 					:key="container"
 					v-model="text"
+					:class="{ 'new-message-form__input-rich--required': errorTitle }"
+					:title="errorTitle"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -324,6 +326,7 @@ export default {
 	data() {
 		return {
 			text: '',
+			errorTitle: '',
 			silentChat: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
@@ -525,6 +528,7 @@ export default {
 		},
 
 		text(newValue) {
+			this.errorTitle = ''
 			if (this.currentUploadId && !this.upload) {
 				return
 			} else if (this.dialog && this.broadcast) {
@@ -701,6 +705,10 @@ export default {
 
 			if (this.hasText) {
 				this.text = parseSpecialSymbols(this.text)
+			} else if (this.threadCreating && !this.hasText) {
+				// TRANSLATORS Error indicator: do not allow to create a thread without a message text
+				this.errorTitle = t('spreed', 'Message text is required')
+				return
 			}
 
 			// Clear input content from store
@@ -708,36 +716,44 @@ export default {
 			this.chatExtrasStore.removeChatInput(this.token)
 
 			if (this.hasText || (this.dialog && this.upload)) {
+				const message = this.text.trim()
+				// Substitute thread title with message text, if missing
+				const threadTitle = this.threadCreating
+					? this.threadTitle.trim() || this.text.trim()
+					: undefined
+
 				const temporaryMessage = this.createTemporaryMessage({
-					message: this.text.trim(),
+					message,
 					token: this.token,
 					silent: this.silentChat,
 				})
 				this.text = ''
+				this.chatExtrasStore.removeThreadTitle(this.token)
+
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage)
-					: await this.postMessage(this.token, temporaryMessage)
+					? await this.submitMessage(this.token, temporaryMessage, threadTitle)
+					: await this.postMessage(this.token, temporaryMessage, threadTitle)
 				this.resetTypingIndicator()
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(token, temporaryMessage) {
+		async postMessage(token, temporaryMessage, threadTitle) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async submitMessage(token, temporaryMessage) {
-			this.$emit('submit', { token, temporaryMessage })
+		async submitMessage(token, temporaryMessage, threadTitle) {
+			this.$emit('submit', { token, temporaryMessage, threadTitle })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
@@ -1072,6 +1088,12 @@ export default {
 
 		& + :deep(.rich-contenteditable > .rich-contenteditable__input) {
 			min-height: calc(2lh + 2 * var(--contenteditable-block-offset) + 4px);
+		}
+	}
+
+	&__input-rich {
+		&--required :deep(.rich-contenteditable__input) {
+			border-color: var(--color-error) !important;
 		}
 	}
 

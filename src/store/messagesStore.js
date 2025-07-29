@@ -1327,9 +1327,10 @@ const actions = {
 	 * @param {object} data Passed in parameters
 	 * @param {string} data.token token of the conversation
 	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data.threadTitle if given, creates a thread with that title
 	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, { token, temporaryMessage, options }) {
+	async postNewMessage(context, { token, temporaryMessage, threadTitle, options }) {
 		context.dispatch('addTemporaryMessage', { token, message: temporaryMessage })
 
 		const { request, cancel } = CancelableRequest(postNewMessage)
@@ -1345,7 +1346,15 @@ const actions = {
 		}, 30000)
 
 		try {
-			const response = await request(temporaryMessage, options)
+			const response = await request({
+				token,
+				message: temporaryMessage.message,
+				actorDisplayName: temporaryMessage.actorDisplayName,
+				referenceId: temporaryMessage.referenceId,
+				replyTo: temporaryMessage.parent?.id,
+				silent: temporaryMessage.silent,
+				threadTitle,
+			}, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
