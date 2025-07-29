@@ -1644,7 +1644,7 @@ OC.L10N.register(
     "Move back to lobby" : "Retourner à la salle d'attente",
     "Move to conversation" : "Déplacer dans la conversatio",
     "Dial-in PIN" : "Code PIN",
-    "Demote from moderator" : "Destituer de modérateur",
+    "Demote from moderator" : "Retirer le statut de modérateur",
     "Promote to moderator" : "Promouvoir comme modérateur",
     "Resend invitation" : "Renvoyer l'invitation",
     "Send call notification" : "Envoyer une notification d'appel",
