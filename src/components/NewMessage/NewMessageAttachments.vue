@@ -52,6 +52,16 @@
 			{{ t('spreed', 'Create new poll') }}
 		</NcActionButton>
 
+		<NcActionButton
+			v-if="canCreateThread"
+			close-after-click
+			@click="$emit('createThread', true)">
+			<template #icon>
+				<IconForumOutline :size="16" />
+			</template>
+			{{ t('spreed', 'Create a thread') }}
+		</NcActionButton>
+
 		<NcActionButton close-after-click
 			@click="showSmartPicker">
 			<template #icon>
@@ -68,6 +78,7 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
@@ -83,6 +94,7 @@ export default {
 		NcIconSvgWrapper,
 		// Icons
 		IconFolder,
+		IconForumOutline,
 		IconPlus,
 		IconPoll,
 	},
@@ -112,9 +124,14 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
+		canCreateThread: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
-	emits: ['updateNewFileDialog', 'openFileUpload', 'handleFileShare'],
+	emits: ['updateNewFileDialog', 'openFileUpload', 'handleFileShare', 'createThread'],
 
 	setup() {
 		return {

@@ -23,6 +23,7 @@ import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
 	threads: Record<string, Record<number, ThreadInfo>>
+	threadTitle: Record<string, string>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
 	messageIdToEdit: Record<string, number>
@@ -38,6 +39,7 @@ type State = {
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
 		threads: {},
+		threadTitle: {},
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -60,6 +62,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			} else {
 				return []
 			}
+		},
+
+		getThreadTitle: (state) => (token: string) => {
+			return state.threadTitle[token]
 		},
 
 		getParentIdToReply: (state) => (token: string) => {
@@ -235,6 +241,27 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				this.restoreChatInput(token)
 			}
 			return this.chatInput[token] ?? ''
+		},
+
+		/**
+		 * Add a thread title to the store
+		 *
+		 * @param payload action payload
+		 * @param payload.token - conversation token
+		 * @param payload.title - title from input
+		 */
+		setThreadTitle(token: string, title: string) {
+			this.threadTitle[token] = title
+		},
+
+		/**
+		 * Removes a thread title id from the store
+		 * (after posting message or dismissing the operation)
+		 *
+		 * @param token - conversation token
+		 */
+		removeThreadTitle(token: string) {
+			delete this.threadTitle[token]
 		},
 
 		/**
