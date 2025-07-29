@@ -30,12 +30,14 @@ import { useGetToken } from './useGetToken.ts'
 type GetMessagesContext = {
 	contextMessageId: Ref<number>
 	loadingOldMessages: Ref<boolean>
+	loadingNewMessages: Ref<boolean>
 	isInitialisingMessages: Ref<boolean>
 	stopFetchingOldMessages: Ref<boolean>
 	isChatBeginningReached: ComputedRef<boolean>
 	isChatEndReached: ComputedRef<boolean>
 
 	getOldMessages: (token: string, includeLastKnown: boolean) => Promise<void>
+	getNewMessages: (token: string, includeLastKnown: boolean) => Promise<void>
 }
 
 const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
@@ -67,6 +69,7 @@ export function useGetMessagesProvider() {
 
 	const contextMessageId = ref<number>(0)
 	const loadingOldMessages = ref(false)
+	const loadingNewMessages = ref(false)
 	const isInitialisingMessages = ref(false)
 	const stopFetchingOldMessages = ref(false)
 
@@ -339,6 +342,46 @@ export function useGetMessagesProvider() {
 	}
 
 	/**
+	 * Get messages history (for new messages).
+	 *
+	 * @param token token of conversation where a method was called
+	 * @param includeLastKnown Include or exclude the last known message in the response
+	 */
+	async function getNewMessages(token: string, includeLastKnown: boolean) {
+		if (isChatEndReached.value) {
+			// End of the chat reached, do not conflict with polling
+			return
+		}
+
+		// Make the request
+		loadingNewMessages.value = true
+		const lastKnownMessageId = chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
+		try {
+			debugTimer.start(`${token} | fetch history (new)`)
+			await store.dispatch('fetchMessages', {
+				token,
+				lastKnownMessageId,
+				threadId,
+				includeLastKnown,
+				lookIntoFuture: CHAT.FETCH_NEW,
+				minimumVisible: CHAT.MINIMUM_VISIBLE,
+			})
+			debugTimer.end(`${token} | fetch history (new)`, 'status 200')
+		} catch (exception) {
+			if (Axios.isCancel(exception)) {
+				debugTimer.end(`${token} | fetch history (new)`, 'cancelled')
+				console.debug('The request has been canceled', exception)
+			}
+			if (isAxiosErrorResponse(exception) && exception?.response?.status === 304) {
+				// 304 - Not modified
+				debugTimer.end(`${token} | fetch history (new)`, 'status 304')
+			}
+		}
+		loadingNewMessages.value = false
+	}
+
+	/**
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
 	 * @param token token of conversation where a method was called
@@ -404,12 +447,14 @@ export function useGetMessagesProvider() {
 	provide(GET_MESSAGES_CONTEXT_KEY, {
 		contextMessageId,
 		loadingOldMessages,
+		loadingNewMessages,
 		isInitialisingMessages,
 		stopFetchingOldMessages,
 		isChatBeginningReached,
 		isChatEndReached,
 
 		getOldMessages,
+		getNewMessages,
 	})
 }
 

@@ -48,6 +48,15 @@
 				:next-message-id="group.nextMessageId" />
 		</ul>
 
+		<TransitionWrapper name="fade">
+			<span v-if="isMessagesListPopulated && loadingNewMessages" class="scroller__loading-new">
+				<span class="scroller__loading-new-wrapper">
+					<NcLoadingIcon :size="20" />
+					{{ t('spreed', 'Loading …') }}
+				</span>
+			</span>
+		</TransitionWrapper>
+
 		<template v-if="!isMessagesListPopulated">
 			<LoadingPlaceholder type="messages"
 				class="messages-list__placeholder"
@@ -140,12 +149,14 @@ export default {
 		const {
 			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 			isChatEndReached,
 
 			getOldMessages,
+			getNewMessages,
 		} = useGetMessages()
 
 		const isDocumentVisible = useDocumentVisibility()
@@ -162,12 +173,14 @@ export default {
 
 			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
 			isChatEndReached,
 
 			getOldMessages,
+			getNewMessages,
 		}
 	},
 
@@ -715,6 +728,22 @@ export default {
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
+			} else if ((scrollHeight > clientHeight && scrollOffsetFromBottom < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'down')
+				|| skipHeightCheck) {
+				if (this.loadingNewMessages || this.isChatEndReached) {
+					// already loading, don't do it twice
+					return
+				}
+				this.displayMessagesLoader = true
+				await this.getNewMessages(this.token, false)
+				this.displayMessagesLoader = false
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					// scroll to previous position + added height
+					this.$refs.scroller.scrollTo({
+						top: scrollTop,
+					})
+				}
+				this.setChatScrolledToBottom(false, { auto: true })
 			}
 
 			this.debounceUpdateReadMarkerPosition()
@@ -1042,6 +1071,16 @@ export default {
 
 				this.isScrolling = 'up'
 				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else if (event.deltaY > 0) {
+				if (this.isChatEndReached) {
+					// Remove event listener as it needs to be triggered
+					// only when it's not confirmed that the chat end is reached
+					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
+					return
+				}
+
+				this.isScrolling = 'down'
+				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
 	},
@@ -1084,6 +1123,21 @@ export default {
 			position: absolute;
 			top: 0;
 			inset-inline-start: calc(2 * var(--default-grid-baseline));
+		}
+	}
+
+	&__loading-new {
+		display: grid;
+		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+		max-width: $messages-list-max-width;
+		margin-inline: auto;
+		padding-inline-start: calc($messages-avatar-width);
+
+		&-wrapper {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: var(--default-grid-baseline);
 		}
 	}
 }
