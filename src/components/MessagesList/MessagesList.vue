@@ -143,6 +143,7 @@ export default {
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
+			isChatEndReached,
 
 			getOldMessages,
 		} = useGetMessages()
@@ -164,6 +165,7 @@ export default {
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
+			isChatEndReached,
 
 			getOldMessages,
 		}
@@ -244,10 +246,6 @@ export default {
 		 */
 		isSticky() {
 			return this.isChatScrolledToBottom && !this.isInitialisingMessages
-		},
-
-		hasMoreMessagesToLoad() {
-			return this.$store.getters.hasMoreMessagesToLoad(this.token)
 		},
 
 		conversation() {
@@ -690,7 +688,7 @@ export default {
 			const scrollOffsetFromBottom = Math.abs(scrollOffsetFromTop - clientHeight)
 
 			// For chats that are scrolled to bottom and not fitted in one screen
-			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
+			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && this.isChatEndReached && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
@@ -844,7 +842,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
-			if (this.isSticky && !this.hasMoreMessagesToLoad) {
+			if (this.isSticky && this.isChatEndReached) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return

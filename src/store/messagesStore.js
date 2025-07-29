@@ -90,14 +90,6 @@ const state = () => ({
 	 * Map of conversation token to message list
 	 */
 	messages: {},
-	/**
-	 * Map of conversation token to first known message id
-	 */
-	firstKnown: {},
-	/**
-	 * Map of conversation token to last known message id
-	 */
-	lastKnown: {},
 
 	/**
 	 * Cached last read message id for display.
@@ -138,24 +130,6 @@ const state = () => ({
 })
 
 const getters = {
-	/**
-	 * Returns whether more messages can be loaded, which means that the current
-	 * message list doesn't yet contain all future messages.
-	 * If false, the next call to "pollNewMessages" will be blocking/long-polling.
-	 *
-	 * @param {object} state the state object.
-	 * @param {object} getters the getters object.
-	 * @return {boolean} true if more messages exist that needs loading, false otherwise
-	 */
-	hasMoreMessagesToLoad: (state, getters) => (token) => {
-		const conversation = getters.conversation(token)
-		if (!conversation) {
-			return false
-		}
-
-		return getters.getLastKnownMessageId(token) < conversation.lastMessage?.id
-	},
-
 	isMessagesListPopulated: (state) => (token) => {
 		return !!state.loadedMessages[token]
 	},
@@ -188,20 +162,6 @@ const getters = {
 			return message.referenceId === referenceId
 				&& ('' + message.id).startsWith('temp-')
 		})
-	},
-
-	getFirstKnownMessageId: (state) => (token) => {
-		if (state.firstKnown[token] !== undefined) {
-			return state.firstKnown[token]
-		}
-		return null
-	},
-
-	getLastKnownMessageId: (state) => (token) => {
-		if (state.lastKnown[token]) {
-			return state.lastKnown[token]
-		}
-		return null
 	},
 
 	getVisualLastReadMessageId: (state) => (token) => {
@@ -374,26 +334,6 @@ const mutations = {
 	 * @param {object} state current store state;
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token Token of the conversation
-	 * @param {string} data.id Id of the first known chat message
-	 */
-	setFirstKnownMessageId(state, { token, id }) {
-		state.firstKnown[token] = id
-	},
-
-	/**
-	 * @param {object} state current store state;
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token Token of the conversation
-	 * @param {string} data.id Id of the last known chat message
-	 */
-	setLastKnownMessageId(state, { token, id }) {
-		state.lastKnown[token] = id
-	},
-
-	/**
-	 * @param {object} state current store state;
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token Token of the conversation
 	 * @param {string} data.id Id of the last read chat message
 	 */
 	setVisualLastReadMessageId(state, { token, id }) {
@@ -407,12 +347,6 @@ const mutations = {
 	 * @param {string} token Token of the conversation
 	 */
 	purgeMessagesStore(state, token) {
-		if (state.firstKnown[token]) {
-			delete state.firstKnown[token]
-		}
-		if (state.lastKnown[token]) {
-			delete state.lastKnown[token]
-		}
 		if (state.visualLastReadMessageId[token]) {
 			delete state.visualLastReadMessageId[token]
 		}
@@ -431,8 +365,6 @@ const mutations = {
 	 * @param {number} payload.id the id of the message to be the first one after clear;
 	 */
 	clearMessagesHistory(state, { token, id }) {
-		state.firstKnown[token] = id
-
 		if (state.visualLastReadMessageId[token] && state.visualLastReadMessageId[token] < id) {
 			state.visualLastReadMessageId[token] = id
 		}
@@ -512,13 +444,6 @@ const mutations = {
 		})
 		const chatStore = useChatStore()
 		chatStore.removeMessagesFromChatBlocks(token, [...messagesToRemove, ...newMessagesToRemove].map((id) => +id))
-
-		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token].toString())) {
-			state.firstKnown[token] = +newFirstKnown
-		}
-		if (state.lastKnown[token] && newMessagesToRemove.includes(state.lastKnown[token].toString())) {
-			state.lastKnown[token] = +newLastKnown
-		}
 	},
 }
 
@@ -812,26 +737,6 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token Token of the conversation
-	 * @param {string} data.id Id of the first known chat message
-	 */
-	setFirstKnownMessageId(context, { token, id }) {
-		context.commit('setFirstKnownMessageId', { token, id })
-	},
-
-	/**
-	 * @param {object} context default store context;
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token Token of the conversation
-	 * @param {string} data.id Id of the last known chat message
-	 */
-	setLastKnownMessageId(context, { token, id }) {
-		context.commit('setLastKnownMessageId', { token, id })
-	},
-
-	/**
-	 * @param {object} context default store context;
-	 * @param {object} data the wrapping object;
-	 * @param {string} data.token Token of the conversation
 	 * @param {string} data.id Id of the last read chat message
 	 */
 	setVisualLastReadMessageId(context, { token, id }) {
@@ -968,7 +873,10 @@ const actions = {
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 
-		let newestKnownMessageId = 0
+		const haveLastGiven = 'x-chat-last-given' in response.headers
+		let lastGivenMessageId = haveLastGiven
+			? parseInt(response.headers['x-chat-last-given'], 10)
+			: lastKnownMessageId
 
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
@@ -986,7 +894,12 @@ const actions = {
 				guestNameStore.addGuestName(message, { noUpdate: true })
 			}
 			context.dispatch('processMessage', { token, message })
-			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+
+			if (!haveLastGiven) {
+				lastGivenMessageId = lookIntoFuture === CHAT.FETCH_NEW
+					? Math.max(lastGivenMessageId, message.id)
+					: Math.min(lastGivenMessageId, message.id)
+			}
 
 			if (message.systemMessage !== 'reaction'
 				&& message.systemMessage !== 'reaction_deleted'
@@ -997,26 +910,6 @@ const actions = {
 			}
 		})
 
-		if (response.headers['x-chat-last-given']) {
-			const id = parseInt(response.headers['x-chat-last-given'], 10)
-			if (lookIntoFuture === CHAT.FETCH_NEW) {
-				context.dispatch('setLastKnownMessageId', { token, id })
-			} else {
-				context.dispatch('setFirstKnownMessageId', { token, id })
-			}
-		}
-
-		// For guests we also need to set the last known message id
-		// after the first grab of the history, otherwise they start loading
-		// the full history with fetchMessages().
-		if (includeLastKnown && newestKnownMessageId
-			&& !context.getters.getLastKnownMessageId(token)) {
-			context.dispatch('setLastKnownMessageId', {
-				token,
-				id: newestKnownMessageId,
-			})
-		}
-
 		context.commit('loadedMessagesOfConversation', { token })
 		const chatStore = useChatStore()
 		chatStore.processChatBlocks(token, response.data.ocs.data, {
@@ -1026,14 +919,11 @@ const actions = {
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | fetch history`, 'first chunk')
-			const lastKnownMessageId = lookIntoFuture === CHAT.FETCH_NEW
-				? context.getters.getLastKnownMessageId(token)
-				: context.getters.getFirstKnownMessageId(token)
 			// There are not yet enough visible messages loaded, so fetch another chunk.
 			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
 				token,
-				lastKnownMessageId,
+				lastKnownMessageId: lastGivenMessageId,
 				includeLastKnown,
 				threadId,
 				lookIntoFuture,
@@ -1111,21 +1001,6 @@ const actions = {
 			}
 		})
 
-		if (!context.getters.getFirstKnownMessageId(token) || oldestKnownMessageId < context.getters.getFirstKnownMessageId(token)
-			|| context.getters.getFirstKnownMessageId(token) === MESSAGE.CHAT_BEGIN_ID) {
-			context.dispatch('setFirstKnownMessageId', {
-				token,
-				id: oldestKnownMessageId,
-			})
-		}
-
-		if (!context.getters.getLastKnownMessageId(token) || newestKnownMessageId > context.getters.getLastKnownMessageId(token)) {
-			context.dispatch('setLastKnownMessageId', {
-				token,
-				id: newestKnownMessageId,
-			})
-		}
-
 		context.commit('loadedMessagesOfConversation', { token })
 
 		const chatStore = useChatStore()
@@ -1137,7 +1012,7 @@ const actions = {
 			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
 				token,
-				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+				lastKnownMessageId: oldestKnownMessageId,
 				includeLastKnown: false,
 				threadId,
 				lookIntoFuture: CHAT.FETCH_OLD,
@@ -1181,8 +1056,6 @@ const actions = {
 	/**
 	 * Fetches newly created messages that belong to a particular conversation
 	 * specified with its token.
-	 *
-	 * This call will long-poll when hasMoreMessagesToLoad() returns false.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
@@ -1284,11 +1157,6 @@ const actions = {
 				countNewMessages = 0
 				hasNewMention = conversation.unreadMention
 			}
-		})
-
-		context.dispatch('setLastKnownMessageId', {
-			token,
-			id: parseInt(response.headers['x-chat-last-given'], 10),
 		})
 
 		if (conversation?.lastMessage && lastMessage.id > conversation.lastMessage.id) {
