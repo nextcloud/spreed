@@ -652,7 +652,6 @@ export default {
 
 	&.one-to-one {
 		width: calc(100% - var(--grid-gap) * 2);
-		height: calc(100% - var(--grid-gap));
 	}
 
 	& .videoWrapper {

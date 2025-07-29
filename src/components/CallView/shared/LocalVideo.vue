@@ -403,7 +403,7 @@ export default {
 .video-container-big {
 	position: absolute;
 	width: calc(100% - var(--grid-gap) * 2);
-	height: calc(100% - var(--grid-gap));
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 
