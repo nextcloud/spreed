@@ -150,16 +150,6 @@
 							</template>
 							{{ t('spreed', 'Go to thread') }}
 						</NcActionButton>
-
-						<NcActionButton
-							v-else-if="canCreateThread"
-							close-after-click
-							@click="chatExtrasStore.createThread(message.token, message.id)">
-							<template #icon>
-								<IconForumOutline :size="16" />
-							</template>
-							{{ t('spreed', 'Create a thread') }}
-						</NcActionButton>
 					</template>
 					<NcActionButton
 						v-if="canForwardMessage && !isInNoteToSelf"
@@ -354,7 +344,6 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../con
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
-import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
@@ -461,7 +450,6 @@ export default {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const actorStore = useActorStore()
-		const chatExtrasStore = useChatExtrasStore()
 		const threadId = useGetThreadId()
 
 		const {
@@ -491,7 +479,6 @@ export default {
 			isConversationReadOnly,
 			isConversationModifiable,
 			actorStore,
-			chatExtrasStore,
 			threadId,
 		}
 	},
@@ -653,11 +640,6 @@ export default {
 
 		canReply() {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-		},
-
-		canCreateThread() {
-			// FIXME This is the same thing for now
-			return this.canReply
 		},
 	},
 
