@@ -138,6 +138,7 @@ export default {
 
 	setup(props) {
 		const {
+			contextMessageId,
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
@@ -158,6 +159,7 @@ export default {
 			isChatVisible,
 			threadId,
 
+			contextMessageId,
 			loadingOldMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
@@ -214,6 +216,7 @@ export default {
 		 */
 		messagesList() {
 			return this.chatStore.getMessagesList(this.token, {
+				messageId: this.contextMessageId,
 				threadId: this.threadId,
 			})
 		},
