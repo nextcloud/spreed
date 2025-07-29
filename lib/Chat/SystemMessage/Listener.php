@@ -406,7 +406,7 @@ class Listener implements IEventListener {
 
 		$comment = $this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
 
-		if ($threadTitle !== '' && $comment->getParentId() === '') {
+		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
 			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
 
 			$this->sendSystemMessage(
