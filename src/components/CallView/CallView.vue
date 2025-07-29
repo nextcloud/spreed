@@ -859,8 +859,7 @@ export default {
 	justify-content: space-around;
 	align-items: flex-end;
 	flex-direction: column;
-	padding: calc(var(--default-grid-baseline) * 2);
-	padding-block-start: 0;
+	padding-inline: calc(var(--default-grid-baseline) * 2);
 
 	&.is-sidebar {
 		width: 100%;
