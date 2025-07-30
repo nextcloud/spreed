@@ -7,31 +7,39 @@
 	<span class="volume-indicator-wrapper"
 		:style="{ height: size + 'px', width: size + 'px' }"
 		:class="{ overload: hasOverload }">
-		<span class="volume-indicator volume-indicator-primary" :style="{ height: iconPrimaryHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
-			<IconMicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+		<span class="volume-indicator volume-indicator-primary"
+			:style="{ height: iconPrimaryHeight + 'px' }">
+			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<NcIconSvgWrapper v-else
+				:svg="IconMicrophoneOffOutline"
+				:size="size"
+				:fill-color="primaryColor" />
 		</span>
 
 		<span v-if="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
-			<IconMicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
+			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<NcIconSvgWrapper v-else
+				:svg="IconMicrophoneOffOutline"
+				:size="size"
+				:fill-color="overlayMutedColor" />
 		</span>
 	</span>
 </template>
 
 <script>
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 
 export default {
 	name: 'VolumeIndicator',
 
 	components: {
-		IconMicrophone,
-		IconMicrophoneOff,
+		IconMicrophoneOutline,
+		NcIconSvgWrapper,
 	},
 
 	props: {
@@ -79,6 +87,12 @@ export default {
 			type: String,
 			default: undefined,
 		},
+	},
+
+	setup() {
+		return {
+			IconMicrophoneOffOutline,
+		}
 	},
 
 	computed: {
@@ -174,5 +188,10 @@ export default {
 	&-overlay {
 		color: var(--color-error);
 	}
+}
+
+:deep(.icon-vue) {
+	min-height: unset;
+	min-width: unset;
 }
 </style>
