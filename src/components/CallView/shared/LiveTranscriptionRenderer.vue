@@ -8,6 +8,9 @@
 		class="transcript">
 		<p v-html="transcript" />
 	</div>
+	<div class="transcript">
+		<p ref="transcriptParagraph" />
+	</div>
 </template>
 
 <script>
@@ -34,7 +37,12 @@ export default {
 			registeredModels: {},
 			transcript: '',
 			currentSpeaker: null,
+			transcripts: [],
 		}
+	},
+
+	mounted() {
+		window.transcriptionRenderer = this
 	},
 
 	watch: {
@@ -67,13 +75,70 @@ export default {
 
 	methods: {
 		handleTranscript(model, message) {
-			if (/*this.currentSpeaker &&*/ this.currentSpeaker !== model.attributes.peerId) {
+			if (this.currentSpeaker && this.currentSpeaker !== model.attributes.peerId) {
 				this.transcript += '<br>'
 				this.currentSpeaker = model.attributes.peerId
 			}
 
 			this.transcript += message
-		}
+
+			const transcriptSpan = document.createElement('span')
+			transcriptSpan.textContent = message
+			this.transcripts.push(transcriptSpan)
+
+			this.$refs.transcriptParagraph.appendChild(transcriptSpan)
+
+			this.$nextTick(() => {
+				console.log(transcriptSpan.getClientRects())
+			})
+		},
+
+		removeFirstNoLongerVisibleLine() {
+			if (this.transcripts.length === 0) {
+				return
+			}
+
+			const firstLineTop = this.transcripts[0].getClientRects()[0].top
+
+			const transcriptsInFirstLine = []
+			let transcriptsInFirstLineBottom = 0
+			for (let transcript of this.transcripts) {
+				const transcriptFirstLineClientRect = transcript.getClientRects()[0]
+				if (transcriptFirstLineClientRect.top > firstLineTop) {
+					break;
+				}
+
+				transcriptsInFirstLine.push(transcript)
+				transcriptsInFirstLineBottom = Math.max(transcriptsInFirstLineBottom, transcriptFirstLineClientRect.bottom)
+			}
+
+			const paragraphTop = this.$refs.transcriptParagraph.getBoundingClientRect().top
+
+			if (transcriptsInFirstLineBottom > paragraphTop) {
+				return
+			}
+
+			const lastTranscriptInFirstLine = transcriptsInFirstLine.at(-1)
+			let lastClientRectInLastTranscriptInFirstLine = lastTranscriptInFirstLine.getClientRects().at(-1)
+
+			if (lastClientRectInLastTranscriptInFirstLine.bottom > paragraphTop) {
+				return
+			}
+
+			const replaceLastTranscript = lastTranscriptInFirstLine.getClientRects().length > 1
+			const placeholderWidth = lastClientRectInLastTranscriptInFirstLine.width
+			const placeholderHeight = lastClientRectInLastTranscriptInFirstLine.height
+
+			for (let transcript of transcriptsInFirstLine) {
+				this.$refs.transcriptParagraph.removeChild(transcript)
+			}
+
+			if (replaceLastTranscript) {
+				const placeholder = document.createElement('span')
+				placeholder.setAttribute('style', 'width: ' + placeholderWidth + 'px; height: ' + placeholderHeight + 'px;')
+				this.$refs.transcriptParagraph.prepend(placeholder)
+			}
+		},
 	},
 }
 </script>
