@@ -2916,6 +2916,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if ($result) {
 					$message['messageParameters'] = str_replace($matches[0], '"' . self::$questionToPollId[$matches[1]] . '"', $message['messageParameters']);
 				}
+				$result = preg_match('/THREAD_ID\(([^)]+)\)/', $message['messageParameters'], $matches);
+				if ($result) {
+					$message['messageParameters'] = str_replace($matches[0], '"thread\/' . self::$titleToThreadId[$matches[1]] . '"', $message['messageParameters']);
+				}
 				$message['messageParameters'] = str_replace('{$REMOTE_URL}', trim(json_encode(trim($this->remoteServerUrl, '/')), '"'), $message['messageParameters']);
 			}
 			return $message;

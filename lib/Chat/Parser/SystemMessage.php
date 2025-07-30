@@ -573,7 +573,12 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You set up Matterbridge to synchronize this conversation with other chats');
 			}
 		} elseif ($message === 'thread_created') {
-			$parsedMessage = $this->l->t('{actor} created a thread');
+			$parsedMessage = $this->l->t('{actor} created thread {title}');
+			$parsedParameters['title'] = [
+				'type' => 'highlight',
+				'id' => 'thread/' . $parameters['thread'],
+				'name' => $parameters['title'] ?? (string)$parameters['thread'],
+			];
 		} elseif ($message === 'matterbridge_config_edited') {
 			$parsedMessage = $this->l->t('{actor} updated the Matterbridge configuration');
 			if ($currentUserIsActor) {

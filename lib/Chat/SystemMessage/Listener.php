@@ -412,7 +412,7 @@ class Listener implements IEventListener {
 			$this->sendSystemMessage(
 				$room,
 				'thread_created',
-				['thread' => (int)$comment->getId()],
+				['thread' => (int)$comment->getId(), 'title' => $threadTitle],
 				shouldSkipLastMessageUpdate: true,
 				silent: true,
 			);

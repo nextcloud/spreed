@@ -270,7 +270,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 					$this->room,
 					$this->participant->getAttendee()->getActorType(),
 					$this->participant->getAttendee()->getActorId(),
-					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId()]]),
+					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $threadTitle]]),
 					$this->timeFactory->getDateTime(),
 					false,
 					null,
