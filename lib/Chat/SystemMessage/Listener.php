@@ -396,6 +396,12 @@ class Listener implements IEventListener {
 			$silent = false;
 		}
 
+		$replyTo = null;
+		if (isset($metaData['replyTo'])) {
+			$replyTo = (int)$metaData['replyTo'];
+			unset($metaData['replyTo']);
+		}
+
 		$threadTitle = '';
 		if (isset($metaData['threadTitle'])) {
 			if (is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
@@ -404,7 +410,13 @@ class Listener implements IEventListener {
 			unset($metaData['threadTitle']);
 		}
 
-		$comment = $this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
+		$comment = $this->sendSystemMessage(
+			$room,
+			'file_shared',
+			['share' => $share->getId(), 'metaData' => $metaData],
+			silent: $silent,
+			replyTo: $replyTo,
+		);
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
 			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
@@ -412,9 +424,10 @@ class Listener implements IEventListener {
 			$this->sendSystemMessage(
 				$room,
 				'thread_created',
-				['thread' => (int)$comment->getId()],
+				['thread' => (int)$comment->getId(), 'title' => $threadTitle],
 				shouldSkipLastMessageUpdate: true,
 				silent: true,
+				parent: $comment,
 			);
 		}
 	}
@@ -451,7 +464,17 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], ?Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false, bool $forceSystemAsActor = false): IComment {
+	protected function sendSystemMessage(
+		Room $room,
+		string $message,
+		array $parameters = [],
+		?Participant $participant = null,
+		bool $shouldSkipLastMessageUpdate = false,
+		bool $silent = false,
+		bool $forceSystemAsActor = false,
+		?int $replyTo = null,
+		?IComment $parent = null,
+	): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();
@@ -486,9 +509,7 @@ class Listener implements IEventListener {
 			$referenceId = (string)$referenceId;
 		}
 
-		$parent = null;
-		$replyTo = $parameters['metaData']['replyTo'] ?? null;
-		if ($replyTo !== null) {
+		if ($parent === null && $replyTo !== null) {
 			try {
 				$parentComment = $this->chatManager->getParentComment($room, (string)$replyTo);
 				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
