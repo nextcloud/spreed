@@ -1056,6 +1056,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $parent
 	 * @return IShare[]
 	 */
+	#[\Override]
 	public function getChildren(IShare $parent): array {
 		$children = [];
 
