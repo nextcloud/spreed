@@ -21,7 +21,7 @@
 					<NcActionButton close-after-click
 						@click="forceMuteOthers">
 						<template #icon>
-							<IconMicrophoneOff :size="20" />
+							<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
 						</template>
 						{{ t('spreed', 'Mute others') }}
 					</NcActionButton>
@@ -33,7 +33,7 @@
 						close-after-click
 						@click="startRecording">
 						<template #icon>
-							<IconRecordCircle :size="20" />
+							<IconRecordCircleOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Start recording') }}
 					</NcActionButton>
@@ -72,7 +72,7 @@
 				close-after-click
 				@click="showMediaSettingsDialog">
 				<template #icon>
-					<IconVideo :size="20" />
+					<IconVideoOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcActionButton>
@@ -148,11 +148,11 @@ import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconFile from 'vue-material-design-icons/File.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import IconRecordCircleOutline from 'vue-material-design-icons/RecordCircleOutline.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
+import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 import {
 	disableFullscreen,
 	enableFullscreen,
@@ -182,10 +182,9 @@ export default {
 		IconFile,
 		IconFullscreen,
 		IconFullscreenExit,
-		IconMicrophoneOff,
-		IconRecordCircle,
+		IconRecordCircleOutline,
 		IconStop,
-		IconVideo,
+		IconVideoOutline,
 	},
 
 	props: {
@@ -216,6 +215,7 @@ export default {
 	setup() {
 		return {
 			IconFileDownload,
+			IconMicrophoneOffOutline,
 			isFullscreen: useDocumentFullscreen(),
 			isInCall: useIsInCall(),
 		}

@@ -93,7 +93,7 @@
 								<NcButton variant="error"
 									:aria-label="t('spreed', 'Audio is not available')">
 									<template #icon>
-										<IconMicrophoneOff :size="20" />
+										<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
 									</template>
 								</NcButton>
 							</template>
@@ -112,8 +112,8 @@
 							:disabled="!videoPreviewAvailable"
 							@click="toggleVideo">
 							<template #icon>
-								<IconVideo v-if="videoOn" :size="20" />
-								<IconVideoOff v-else :size="20" />
+								<IconVideoOutline v-if="videoOn" :size="20" />
+								<IconVideoOffOutline v-else :size="20" />
 							</template>
 						</NcButton>
 						<NcPopover v-else
@@ -124,7 +124,7 @@
 								<NcButton variant="error"
 									:aria-label="t('spreed', 'Video is not available')">
 									<template #icon>
-										<IconVideoOff :size="20" />
+										<IconVideoOffOutline :size="20" />
 									</template>
 								</NcButton>
 							</template>
@@ -222,10 +222,9 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconCreation from 'vue-material-design-icons/Creation.vue'
-import IconMicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
-import IconVideoOff from 'vue-material-design-icons/VideoOff.vue'
+import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
@@ -235,6 +234,7 @@ import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
+import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 import IconBackground from '../../../img/material-icons/replace-background.svg?raw'
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -273,10 +273,9 @@ export default {
 		VolumeIndicator,
 		SetGuestUsername,
 		// Icons
-		IconMicrophoneOff,
 		IconReflectHorizontal,
-		IconVideo,
-		IconVideoOff,
+		IconVideoOutline,
+		IconVideoOffOutline,
 	},
 
 	props: {
@@ -364,6 +363,7 @@ export default {
 			actorStore: useActorStore(),
 			token: useGetToken(),
 			isMobile: useIsMobile(),
+			IconMicrophoneOffOutline,
 		}
 	},
 
