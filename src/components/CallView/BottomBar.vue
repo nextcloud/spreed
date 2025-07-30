@@ -13,7 +13,7 @@ import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
 import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
 import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -236,7 +236,7 @@ useHotKey('f', toggleFullscreen)
 				<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
 				<template #icon>
-					<IconHandBackLeft :size="16" />
+					<IconHandBackLeftOutline :size="16" />
 				</template>
 			</NcButton>
 		</div>

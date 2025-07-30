@@ -15,8 +15,8 @@
 			:disabled="!isVideoAllowed"
 			@click.stop="toggleVideo">
 			<template #icon>
-				<VideoIcon v-if="showVideoOn" :size="20" />
-				<VideoOff v-else :size="20" />
+				<IconVideoOutline v-if="showVideoOn" :size="20" />
+				<IconVideoOffOutline v-else :size="20" />
 			</template>
 		</NcButton>
 
@@ -50,8 +50,8 @@ import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
@@ -64,9 +64,9 @@ export default {
 		NcActionButton,
 		NcActionCaption,
 		NcButton,
-		VideoIcon,
-		VideoOff,
 		IconChevronUp,
+		IconVideoOutline,
+		IconVideoOffOutline,
 	},
 
 	props: {
