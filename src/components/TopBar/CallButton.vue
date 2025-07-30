@@ -31,7 +31,7 @@
 			@click="leaveCall(true)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangup v-else :size="20" /> <!-- here -->
+				<IconPhoneHangup v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
@@ -52,15 +52,15 @@
 			</template>
 		</NcButton>
 		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
+			class="leave-call-actions--split"
 			:disabled="loading"
-			:aria-label="leaveCallCombinedLabel"
-			:menu-name="showButtonText ? leaveCallCombinedLabel : undefined"
 			force-name
-			:variant="isScreensharing ? 'tertiary' : 'error'">
+			placement="top-end"
+			:aria-label="leaveCallActionsLabel"
+			:inline="1"
+			:variant="leaveCallButtonVariant">
 			<template #icon>
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangup v-else-if="!isBreakoutRoom" :size="20" />
-				<IconArrowLeft v-else class="bidirectional-icon" :size="20" />
+				<IconChevronUp :size="20" />
 			</template>
 			<NcActionButton v-if="isBreakoutRoom"
 				@click="switchToParentRoom">
@@ -69,9 +69,11 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcActionButton>
-			<NcActionButton @click="leaveCall(false)">
+			<NcActionButton class="leave-call-button--split"
+				@click="leaveCall(false)">
 				<template #icon>
-					<IconPhoneHangup :size="20" />
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<IconPhoneHangup v-else :size="20" />
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
@@ -96,6 +98,7 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
 import IconPhoneDial from 'vue-material-design-icons/PhoneDial.vue'
 import IconPhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
@@ -126,6 +129,7 @@ export default {
 		NcButton,
 		// Icons
 		IconArrowLeft,
+		IconChevronUp,
 		IconPhone,
 		IconPhoneDial,
 		IconPhoneHangup,
@@ -272,8 +276,8 @@ export default {
 			return t('spreed', 'Back to main room')
 		},
 
-		leaveCallCombinedLabel() {
-			return this.leaveCallLabel + ' ▼'
+		leaveCallActionsLabel() {
+			return t('spreed', 'More actions')
 		},
 
 		startCallLabel() {
@@ -342,6 +346,13 @@ export default {
 
 		isJoiningCall() {
 			return this.$store.getters.isJoiningCall(this.token)
+		},
+
+		leaveCallButtonVariant() {
+			if (this.isScreensharing) {
+				return 'tertiary'
+			}
+			return this.isBreakoutRoom ? 'primary' : 'error'
 		},
 	},
 
@@ -474,6 +485,22 @@ export default {
 <style lang="scss" scoped>
 #call_button {
 	margin: 0 auto;
+}
+
+.leave-call-actions--split {
+	gap: calc(var(--default-grid-baseline) / 2);
+}
+
+.leave-call-actions--split :deep(.action-item--single) {
+	border-start-end-radius: 2px;
+	border-end-end-radius: 2px;
+}
+
+.leave-call-actions--split :deep(.action-item__menutoggle) {
+	--button-size: var(--clickable-area-small);
+	height: var(--default-clickable-area);
+	border-start-start-radius: 2px;
+	border-end-start-radius: 2px;
 }
 
 </style>
