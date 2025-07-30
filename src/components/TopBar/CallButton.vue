@@ -14,7 +14,7 @@
 			@click="handleClick">
 			<template #icon>
 				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
-				<IconPhoneDial v-else-if="isPhoneRoom" :size="20" />
+				<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
 				<IconPhoneOutline v-else-if="silentCall" :size="20" />
 				<IconPhone v-else :size="20" />
 			</template>
@@ -31,7 +31,7 @@
 			@click="leaveCall(true)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangup v-else :size="20" />
+				<IconPhoneHangupOutline v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
@@ -45,7 +45,7 @@
 			@click="leaveCall(false)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangup v-else :size="20" />
+				<IconPhoneHangupOutline v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ leaveCallLabel }}
@@ -73,13 +73,13 @@
 				@click="leaveCall(false)">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<IconPhoneHangup v-else :size="20" />
+					<IconPhoneHangupOutline v-else :size="20" />
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
 			<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 				<template #icon>
-					<IconPhoneOff :size="20" />
+					<IconPhoneOffOutline :size="20" />
 				</template>
 				{{ t('spreed', 'End call for everyone') }}
 			</NcActionButton>
@@ -100,9 +100,9 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
-import IconPhoneDial from 'vue-material-design-icons/PhoneDial.vue'
-import IconPhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
-import IconPhoneOff from 'vue-material-design-icons/PhoneOff.vue'
+import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
+import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
+import IconPhoneOffOutline from 'vue-material-design-icons/PhoneOffOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -131,9 +131,9 @@ export default {
 		IconArrowLeft,
 		IconChevronUp,
 		IconPhone,
-		IconPhoneDial,
-		IconPhoneHangup,
-		IconPhoneOff,
+		IconPhoneDialOutline,
+		IconPhoneHangupOutline,
+		IconPhoneOffOutline,
 		IconPhoneOutline,
 		NcLoadingIcon,
 	},
