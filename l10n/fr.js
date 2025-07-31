@@ -207,7 +207,6 @@ OC.L10N.register(
     "The shared location is malformed" : "L'emplacement partagé est mal formaté",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} a configuré Matterbridge pour synchroniser la conversation avec d'autres messageries instantanées",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Vous avez configuré Matterbridge pour synchroniser la conversation avec d'autres messageries instantanées",
-    "{actor} created a thread" : "{actor} a créé un fil de discussion",
     "{actor} updated the Matterbridge configuration" : "{actor} a mis à jour la configuration de Matterbridge",
     "You updated the Matterbridge configuration" : "Vous avez modifié la configuration de Matterbridge",
     "{actor} removed the Matterbridge configuration" : "{actor} a supprimé la configuration de Matterbridge",
