@@ -104,6 +104,55 @@ class ThreadController {
 	/**
 	 * @see \OCA\Talk\Controller\ThreadController::setNotificationLevel()
 	 *
+	 * @psalm-param non-negative-int $threadId
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Thread renamed successfully
+	 * 400: When the provided title is empty
+	 * 404: Thread not found
+	 */
+	public function renameThread(Room $room, Participant $participant, int $threadId, string $threadTitle): DataResponse {
+		$proxy = $this->proxy->put(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/threads/' . $threadId,
+			['threadTitle' => $threadTitle],
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if ($statusCode !== Http::STATUS_OK) {
+			if (!in_array($statusCode, [
+				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_NOT_FOUND,
+			], true)) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+				$data = ['error' => 'thread'];
+			} elseif ($statusCode === Http::STATUS_BAD_REQUEST) {
+				/** @var array{error: 'title'} $data */
+				$data = $this->proxy->getOCSData($proxy, [
+					Http::STATUS_BAD_REQUEST,
+				]);
+			} else {
+				/** @var array{error: 'thread'} $data */
+				$data = $this->proxy->getOCSData($proxy, [
+					Http::STATUS_NOT_FOUND,
+				]);
+			}
+			return new DataResponse($data, $statusCode);
+		}
+
+		/** @var TalkThreadInfo $data */
+		$data = $this->proxy->getOCSData($proxy);
+		$data = $this->userConverter->convertThreadInfo($room, $data);
+
+		return new DataResponse($data, Http::STATUS_OK);
+	}
+
+
+	/**
+	 * @see \OCA\Talk\Controller\ThreadController::setNotificationLevel()
+	 *
 	 * @psalm-param non-negative-int $messageId
 	 * @psalm-param Participant::NOTIFY_* $level
 	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'level'|'message'|'status'|'top-most'}, array{}>

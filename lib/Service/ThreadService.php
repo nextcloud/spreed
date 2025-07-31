@@ -50,6 +50,19 @@ class ThreadService {
 	}
 
 	/**
+	 * @throws \InvalidArgumentException When the name is empty
+	 */
+	public function renameThread(Thread $thread, string $name): Thread {
+		if ($name === '') {
+			throw new \InvalidArgumentException('name');
+		}
+		$thread->setName($name);
+		$this->threadMapper->update($thread);
+
+		return $thread;
+	}
+
+	/**
 	 * @param int<1, 50> $limit
 	 * @return list<Thread>
 	 */
