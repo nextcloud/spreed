@@ -207,7 +207,6 @@ OC.L10N.register(
     "The shared location is malformed" : "Paylaşılmış konum biçimi hatalı",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} bu görüşmeyi diğer sohbetler ile eşitlemek için Matterbridge kurulumu yaptı",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Bu görüşmeyi diğer sohbetler ile eşitlemek için Matterbridge kurulumu yaptınız",
-    "{actor} created a thread" : "{actor} bir konu oluşturdu",
     "{actor} updated the Matterbridge configuration" : "{actor} Matterbridge yapılandırmasını güncelledi",
     "You updated the Matterbridge configuration" : "Matterbridge yapılandırmasını güncellediniz",
     "{actor} removed the Matterbridge configuration" : "{actor} Matterbridge yapılandırmasını sildi",

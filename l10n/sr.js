@@ -207,7 +207,6 @@ OC.L10N.register(
     "The shared location is malformed" : "Дељена локација није исправно формирана",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} је подесио Matterbridge да синхронизује овај чет са осталим четовима",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Подесили сте Matterbridge да синхронизује овај чет са осталим четовима",
-    "{actor} created a thread" : "{actor} је креирао низ",
     "{actor} updated the Matterbridge configuration" : "{actor} је ажурирао Matterbridge конфигурацију",
     "You updated the Matterbridge configuration" : "Ажурирали сте Matterbridge конфигурацију",
     "{actor} removed the Matterbridge configuration" : "{actor} је уклонио Matterbridge конфигурацију",

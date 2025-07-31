@@ -207,7 +207,6 @@ OC.L10N.register(
     "The shared location is malformed" : "Udostępniona lokalizacja jest zniekształcona",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} skonfigurował Matterbridge, aby zsynchronizować tę rozmowę z innymi czatami",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Skonfigurowałeś Matterbridge, aby zsynchronizować tę rozmowę z innymi czatami",
-    "{actor} created a thread" : "{actor} utworzył wątek",
     "{actor} updated the Matterbridge configuration" : "{actor} zaktualizował konfigurację Matterbridge",
     "You updated the Matterbridge configuration" : "Zaktualizowałeś konfigurację Matterbridge",
     "{actor} removed the Matterbridge configuration" : "{actor} usunął konfigurację Matterbridge",
