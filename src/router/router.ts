@@ -7,11 +7,13 @@ import type { RouteRecordRaw } from 'vue-router'
 
 import { generateUrl, getRootUrl } from '@nextcloud/router'
 import {
+	createMemoryHistory,
 	createRouter,
 	createWebHashHistory,
 	createWebHistory,
 } from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
+import ChatView from '../components/ChatView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
@@ -80,6 +82,25 @@ export function createTalkRouter() {
 		// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
 		history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
 		linkActiveClass: 'active',
+		routes,
+	})
+}
+
+/**
+ * Returns a router object for the integration app (Files Sidebar, Files Share authentication)
+ */
+export function createMemoryRouter() {
+	const routes: RouteRecordRaw[] = [
+		{
+			path: '/call/:token',
+			name: 'conversation',
+			component: ChatView,
+			props: { isSidebar: true },
+		},
+	]
+
+	return createRouter({
+		history: createMemoryHistory(generateTalkWebBasePath()),
 		routes,
 	})
 }

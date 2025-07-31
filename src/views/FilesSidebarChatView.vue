@@ -8,7 +8,7 @@
 		<InternalSignalingHint />
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
 		<CallFailedDialog v-if="connectionFailed" :token="token" />
-		<ChatView class="talk-tab__chat-view" is-sidebar />
+		<RouterView class="talk-tab__chat-view" />
 		<PollManager />
 		<PollViewer />
 		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
@@ -17,8 +17,8 @@
 
 <script>
 
+import { useRouter } from 'vue-router'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
-import ChatView from '../components/ChatView.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import PollManager from '../components/PollViewer/PollManager.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
@@ -27,6 +27,7 @@ import CallButton from '../components/TopBar/CallButton.vue'
 import { useGetMessagesProvider } from '../composables/useGetMessages.ts'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { useIsInCall } from '../composables/useIsInCall.js'
+import { EventBus } from '../services/EventBus.ts'
 
 export default {
 
@@ -36,13 +37,19 @@ export default {
 		InternalSignalingHint,
 		CallButton,
 		CallFailedDialog,
-		ChatView,
 		MediaSettings,
 		PollManager,
 		PollViewer,
 	},
 
 	setup() {
+		const router = useRouter()
+		router.beforeEach((to, from) => {
+			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
+				EventBus.emit('route-change', { from, to })
+			}
+		})
+
 		useGetMessagesProvider()
 
 		return {
