@@ -278,7 +278,7 @@ export default {
 				return null
 			}
 
-			const virtualBackgroundEnabled = this.isVirtualBackgroundAvailable && this.model.attributes.virtualBackgroundEnabled
+			const virtualBackgroundEnabled = this.model.attributes.virtualBackgroundAvailable && this.model.attributes.virtualBackgroundEnabled
 
 			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
 				return {
