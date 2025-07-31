@@ -264,13 +264,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 		try {
 			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent);
 			if ($replyTo === 0 && $threadTitle !== '') {
-				$this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
+				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
 
 				$this->chatManager->addSystemMessage(
 					$this->room,
 					$this->participant->getAttendee()->getActorType(),
 					$this->participant->getAttendee()->getActorId(),
-					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $threadTitle]]),
+					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
 					$this->timeFactory->getDateTime(),
 					false,
 					null,

@@ -31,6 +31,9 @@ class ThreadService {
 	}
 
 	public function createThread(Room $room, int $threadId, string $title): Thread {
+		if (mb_strlen($title) > 203) {
+			$title = mb_substr($title, 0, 200) . '…';
+		}
 		$thread = new Thread();
 		$thread->setId($threadId);
 		$thread->setName($title);
@@ -50,13 +53,16 @@ class ThreadService {
 	}
 
 	/**
-	 * @throws \InvalidArgumentException When the name is empty
+	 * @throws \InvalidArgumentException When the title is empty
 	 */
-	public function renameThread(Thread $thread, string $name): Thread {
-		if ($name === '') {
+	public function renameThread(Thread $thread, string $title): Thread {
+		if ($title === '') {
 			throw new \InvalidArgumentException('name');
 		}
-		$thread->setName($name);
+		if (mb_strlen($title) > 203) {
+			$title = mb_substr($title, 0, 200) . '…';
+		}
+		$thread->setName($title);
 		$this->threadMapper->update($thread);
 
 		return $thread;

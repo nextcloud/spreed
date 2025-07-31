@@ -419,12 +419,12 @@ class Listener implements IEventListener {
 		);
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
-			$this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+			$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
 
 			$this->sendSystemMessage(
 				$room,
 				'thread_created',
-				['thread' => (int)$comment->getId(), 'title' => $threadTitle],
+				['thread' => (int)$comment->getId(), 'title' => $thread->getName()],
 				shouldSkipLastMessageUpdate: true,
 				silent: true,
 				parent: $comment,

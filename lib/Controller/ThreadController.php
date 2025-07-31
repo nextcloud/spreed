@@ -190,7 +190,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			$this->room,
 			$this->participant->getAttendee()->getActorType(),
 			$this->participant->getAttendee()->getActorId(),
-			json_encode(['message' => 'thread_renamed', 'parameters' => ['thread' => $threadId, 'title' => $threadTitle]]),
+			json_encode(['message' => 'thread_renamed', 'parameters' => ['thread' => $threadId, 'title' => $thread->getName()]]),
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
