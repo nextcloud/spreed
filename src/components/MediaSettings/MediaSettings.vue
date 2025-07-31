@@ -915,6 +915,8 @@ export default {
 		padding: calc(0.5 * var(--default-grid-baseline));
 		position: absolute;
 		bottom: calc(var(--default-grid-baseline) * -2);
+		inset-inline-start: 50%;
+		transform: translateX(-50%);
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
