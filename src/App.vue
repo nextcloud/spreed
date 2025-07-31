@@ -46,7 +46,6 @@ import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.ts'
-import Router from './router/router.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
@@ -413,7 +412,7 @@ export default {
 		 * When app is initializing and router is not ready yet,
 		 * first navigation will be made from initial state { name : undefined }
 		 */
-		Router.beforeEach((to, from, next) => {
+		this.$router.beforeEach((to, from, next) => {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
