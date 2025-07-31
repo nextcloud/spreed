@@ -205,7 +205,6 @@
     "The shared location is malformed" : "分享的位置变形",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} 设置了 Matterbridge，使此对话与其他聊天同步",
     "You set up Matterbridge to synchronize this conversation with other chats" : "你设置了 Matterbridge，以将此对话与其他聊天同步",
-    "{actor} created a thread" : "{actor} 创建了一个帖子",
     "{actor} updated the Matterbridge configuration" : "{actor} 更新了 Matterbridge 配置",
     "You updated the Matterbridge configuration" : "你更新了 Matterbridge 配置",
     "{actor} removed the Matterbridge configuration" : "{actor} 移除了 Matterbridge 配置",

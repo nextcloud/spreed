@@ -205,7 +205,6 @@
     "The shared location is malformed" : "La ubicación compartida está malformada",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} ha configurado Matterbridge para sincronizar esta conversación con otros chats",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Tu has configurado Matterbridge para sincronizar esta conversación con otros chats",
-    "{actor} created a thread" : "{actor} creó un hilo",
     "{actor} updated the Matterbridge configuration" : "{actor} actualizó la configuración de Matterbridge",
     "You updated the Matterbridge configuration" : "Tu actualizaste la configuración de Matterbridge",
     "{actor} removed the Matterbridge configuration" : "{actor} la configuración de Matterbridge",

@@ -207,7 +207,6 @@ OC.L10N.register(
     "The shared location is malformed" : "Неправильно указано общее местоположение ",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} настроил(а) Matterbridge для обмена сообщениями с другими чатами",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Вы настроили Matterbridge для обмена сообщениями с другими чатами",
-    "{actor} created a thread" : "{actor} создал(а) тему",
     "{actor} updated the Matterbridge configuration" : "{actor} изменил(а) конфигурацию системы обмена сообщениями Matterbridge",
     "You updated the Matterbridge configuration" : "Вы изменили конфигурацию системы обмена сообщениями Matterbridge",
     "{actor} removed the Matterbridge configuration" : "{actor} удалил(а) конфигурацию системы обмена сообщениями Matterbridge",
