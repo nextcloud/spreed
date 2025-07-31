@@ -85,8 +85,8 @@ const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 
-const lowerHandDelay = ref(AUTO_LOWER_HAND_THRESHOLD)
-const speakingTimestamp = ref<number | null>(null)
+let lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
+let speakingTimestamp: number | null = null
 let lowerHandTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Hand raising functionality
@@ -124,7 +124,7 @@ function toggleHandRaised() {
 // Auto-lower hand when speaking
 watch(() => localMediaModel.attributes.speaking, (speaking) => {
 	if (lowerHandTimeout !== null && !speaking) {
-		lowerHandDelay.value = Math.max(0, lowerHandDelay.value - (Date.now() - speakingTimestamp.value!))
+		lowerHandDelay = Math.max(0, lowerHandDelay - (Date.now() - speakingTimestamp!))
 		clearTimeout(lowerHandTimeout)
 		lowerHandTimeout = null
 		return
@@ -135,16 +135,16 @@ watch(() => localMediaModel.attributes.speaking, (speaking) => {
 		return
 	}
 
-	speakingTimestamp.value = Date.now()
+	speakingTimestamp = Date.now()
 	lowerHandTimeout = setTimeout(() => {
 		lowerHandTimeout = null
-		speakingTimestamp.value = null
-		lowerHandDelay.value = AUTO_LOWER_HAND_THRESHOLD
+		speakingTimestamp = null
+		lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
 
 		if (isHandRaised.value) {
 			toggleHandRaised()
 		}
-	}, lowerHandDelay.value)
+	}, lowerHandDelay)
 })
 
 /**
