@@ -905,6 +905,7 @@ const actions = {
 				&& message.systemMessage !== 'reaction_deleted'
 				&& message.systemMessage !== 'reaction_revoked'
 				&& message.systemMessage !== 'poll_voted'
+				// FIXME message is inside of a thread, when threadId === undefined
 			) {
 				minimumVisible--
 			}
@@ -996,6 +997,7 @@ const actions = {
 				&& message.systemMessage !== 'reaction_deleted'
 				&& message.systemMessage !== 'reaction_revoked'
 				&& message.systemMessage !== 'poll_voted'
+				// FIXME message is inside of a thread, when threadId === undefined
 			) {
 				minimumVisible--
 			}

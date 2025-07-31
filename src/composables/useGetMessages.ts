@@ -236,7 +236,7 @@ export function useGetMessagesProvider() {
 		const focusMessageId = getMessageIdFromHash(route.hash)
 		contextMessageId.value = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
 
-		if (contextThreadId.value) {
+		if (contextThreadId.value && focusMessageId === null) {
 			// FIXME temporary get thread messages from the start
 			contextMessageId.value = contextThreadId.value
 		}
