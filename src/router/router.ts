@@ -3,8 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { RouteRecordRaw } from 'vue-router'
+
 import { generateUrl, getRootUrl } from '@nextcloud/router'
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import {
+	createRouter,
+	createWebHashHistory,
+	createWebHistory,
+} from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'
@@ -27,13 +33,11 @@ function generateTalkWebBasePath(): string {
 	})
 }
 
-export default createRouter({
-	// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
-	history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
-
-	linkActiveClass: 'active',
-
-	routes: [
+/**
+ * Returns a router object for the main app (Talk, Talk Recording, Talk Desktop)
+ */
+export function createTalkRouter() {
+	const routes: RouteRecordRaw[] = [
 		{
 			path: '/apps/spreed',
 			name: 'root',
@@ -70,5 +74,12 @@ export default createRouter({
 			component: CallView,
 			props: true,
 		},
-	],
-})
+	]
+
+	return createRouter({
+		// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
+		history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
+		linkActiveClass: 'active',
+		routes,
+	})
+}
