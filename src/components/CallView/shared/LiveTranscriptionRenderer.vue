@@ -4,10 +4,6 @@
 -->
 
 <template>
-	<div v-if="transcript.length > 0"
-		class="transcript">
-		<p v-html="transcript" />
-	</div>
 	<div class="transcript">
 		<p ref="transcriptParagraph" />
 	</div>
@@ -35,7 +31,6 @@ export default {
 	data() {
 		return {
 			registeredModels: {},
-			transcript: '',
 			currentSpeaker: null,
 			transcripts: [],
 		}
@@ -76,8 +71,6 @@ export default {
 	methods: {
 		handleTranscript(model, message) {
 			if (this.currentSpeaker && this.currentSpeaker !== model.attributes.peerId) {
-				this.transcript += '<br>'
-
 				this.currentSpeaker = model.attributes.peerId
 
 				const lineBreak = document.createElement('br')
@@ -85,8 +78,6 @@ export default {
 
 				this.$refs.transcriptParagraph.append(lineBreak)
 			}
-
-			this.transcript += message
 
 			const transcriptSpan = document.createElement('span')
 			transcriptSpan.textContent = message
