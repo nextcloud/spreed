@@ -17,13 +17,14 @@
 					:variant="variant"
 					:aria-label="audioButtonAriaLabel"
 					:class="{
-						'no-audio-available': !model.attributes.audioAvailable,
+						'no-audio-available': !isAudioAvailable,
 						'audio-control-button': showDevices,
 					}"
 					:disabled="!isAudioAllowed"
 					@click.stop="toggleAudio">
 					<template #icon>
-						<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+						<VolumeIndicator
+							:audio-preview-available="isAudioAvailable"
 							:audio-enabled="showMicrophoneOn"
 							:current-volume="model.attributes.currentVolume"
 							:volume-threshold="model.attributes.volumeThreshold"
@@ -37,6 +38,7 @@
 		</NcPopover>
 
 		<NcActions v-if="showDevices"
+			:disabled="!isAudioAvailable || !isAudioAllowed"
 			class="audio-selector-button"
 			@open="updateDevices">
 			<template #icon>
@@ -52,6 +54,7 @@
 				@click="handleAudioInputIdChange(device.deviceId)">
 				{{ device.label }}
 			</NcActionButton>
+			<NcActionSeparator />
 			<NcActionCaption :name="t('spreed', 'Select a speaker')" />
 			<NcActionButton v-for="device in audioOutputDevices"
 				:key="device.deviceId ?? 'none'"
@@ -74,6 +77,7 @@ import { onBeforeUnmount, ref, watch } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
@@ -90,6 +94,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcActionCaption,
+		NcActionSeparator,
 		NcButton,
 		NcPopover,
 		VolumeIndicator,
@@ -194,8 +199,12 @@ export default {
 			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 		},
 
+		isAudioAvailable() {
+			return this.model.attributes.audioAvailable
+		},
+
 		showMicrophoneOn() {
-			return this.model.attributes.audioAvailable && this.model.attributes.audioEnabled
+			return this.isAudioAvailable && this.model.attributes.audioEnabled
 		},
 
 		audioButtonTitle() {
@@ -203,7 +212,7 @@ export default {
 				return t('spreed', 'You are not allowed to enable audio')
 			}
 
-			if (!this.model.attributes.audioAvailable) {
+			if (!this.isAudioAvailable) {
 				return t('spreed', 'No audio. Click to select device')
 			}
 
@@ -219,7 +228,7 @@ export default {
 		},
 
 		audioButtonAriaLabel() {
-			if (!this.model.attributes.audioAvailable) {
+			if (!this.isAudioAvailable) {
 				return t('spreed', 'No audio. Click to select device')
 			}
 
@@ -253,7 +262,7 @@ export default {
 	methods: {
 		t,
 		toggleAudio() {
-			if (!this.model.attributes.audioAvailable) {
+			if (!this.isAudioAvailable) {
 				emit('talk:media-settings:show')
 				return
 			}
@@ -286,7 +295,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .no-audio-available {
 	opacity: .7;
 }
@@ -315,11 +324,27 @@ export default {
 	gap: calc(var(--default-grid-baseline) / 2);
 }
 
+// Overwriting NcActionButton styles
 :deep(.action-button__longtext) {
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding: 0;
+	max-width: 350px;
+}
+
+:deep(.action-button__longtext-wrapper) {
+	max-width: 350px;
+}
+
+:deep(.action-button__icon) {
+	width: 0;
+	margin-inline-start: calc(var(--default-grid-baseline) * 3);
+}
+
+:deep(.action-button > span) {
+	height: var(--default-clickable-area);
 }
 </style>

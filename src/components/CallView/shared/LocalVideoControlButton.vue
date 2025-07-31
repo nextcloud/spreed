@@ -9,7 +9,7 @@
 			:variant="variant"
 			:aria-label="videoButtonAriaLabel"
 			:class="{
-				'no-video-available': !model.attributes.videoAvailable,
+				'no-video-available': !isVideoAvailable,
 				'video-control-button': showDevices,
 			}"
 			:disabled="!isVideoAllowed"
@@ -21,6 +21,7 @@
 		</NcButton>
 
 		<NcActions v-if="showDevices"
+			:disabled="!isVideoAvailable || !isVideoAllowed"
 			class="video-selector-button"
 			@open="updateDevices">
 			<template #icon>
@@ -120,8 +121,12 @@ export default {
 			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 		},
 
+		isVideoAvailable() {
+			return this.model.attributes.videoAvailable
+		},
+
 		showVideoOn() {
-			return this.model.attributes.videoAvailable && this.model.attributes.videoEnabled
+			return this.isVideoAvailable && this.model.attributes.videoEnabled
 		},
 
 		videoButtonTitle() {
@@ -129,7 +134,7 @@ export default {
 				return t('spreed', 'You are not allowed to enable video')
 			}
 
-			if (!this.model.attributes.videoAvailable) {
+			if (!this.isVideoAvailable) {
 				return t('spreed', 'No video. Click to select device')
 			}
 
@@ -151,7 +156,7 @@ export default {
 		},
 
 		videoButtonAriaLabel() {
-			if (!this.model.attributes.videoAvailable) {
+			if (!this.isVideoAvailable) {
 				return t('spreed', 'No video. Click to select device')
 			}
 
@@ -186,7 +191,7 @@ export default {
 	methods: {
 		t,
 		toggleVideo() {
-			if (!this.model.attributes.videoAvailable) {
+			if (!this.isVideoAvailable) {
 				emit('talk:media-settings:show')
 				return
 			}
@@ -238,11 +243,27 @@ export default {
 	gap: calc(var(--default-grid-baseline) / 2);
 }
 
+// Overwriting NcActionButton styles
 :deep(.action-button__longtext) {
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding: 0;
+	max-width: 350px;
+}
+
+:deep(.action-button__longtext-wrapper) {
+	max-width: 350px;
+}
+
+:deep(.action-button__icon) {
+	width: 0;
+	margin-inline-start: calc(var(--default-grid-baseline) * 3);
+}
+
+:deep(.action-button > span) {
+	height: var(--default-clickable-area);
 }
 </style>
