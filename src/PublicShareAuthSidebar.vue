@@ -14,7 +14,7 @@
 				<TopBar is-in-call is-sidebar />
 				<CallView :token="token" is-sidebar />
 				<InternalSignalingHint />
-				<ChatView is-sidebar />
+				<RouterView />
 				<PollManager />
 				<PollViewer />
 				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
@@ -29,7 +29,6 @@ import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import CallView from './components/CallView/CallView.vue'
-import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollManager from './components/PollViewer/PollManager.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
@@ -56,7 +55,6 @@ export default {
 	components: {
 		InternalSignalingHint,
 		CallView,
-		ChatView,
 		MediaSettings,
 		PollManager,
 		PollViewer,
@@ -136,6 +134,7 @@ export default {
 				this.actorStore.setDisplayName(guestNickname)
 			}
 
+			await this.$router.push({ name: 'conversation', params: { token: this.token } })
 			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// Add guest name to the store, only possible after joining the conversation

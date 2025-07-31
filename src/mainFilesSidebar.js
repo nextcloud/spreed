@@ -8,6 +8,7 @@ import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive } from 'vue'
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
+import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
@@ -27,14 +28,18 @@ __webpack_nonce__ = getCSPNonce()
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
+const router = createMemoryRouter()
+
 const newCallView = () => createApp(FilesSidebarCallViewApp)
 	.use(store)
 	.use(pinia)
+	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
 
 const newTab = () => createApp(FilesSidebarTabApp)
 	.use(store)
 	.use(pinia)
+	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
 
 if (!window.OCA.Talk) {

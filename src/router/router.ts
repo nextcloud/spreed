@@ -7,16 +7,19 @@ import type { RouteRecordRaw } from 'vue-router'
 
 import { generateUrl, getRootUrl } from '@nextcloud/router'
 import {
+	createMemoryHistory,
 	createRouter,
 	createWebHashHistory,
 	createWebHistory,
 } from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
+import ChatView from '../components/ChatView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import SessionConflictView from '../views/SessionConflictView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
+import { EventBus } from '../services/EventBus.ts'
 
 /**
  * Generate base url for Talk Web app based on server's root
@@ -82,4 +85,39 @@ export function createTalkRouter() {
 		linkActiveClass: 'active',
 		routes,
 	})
+}
+
+/**
+ * Returns a router object for the integration app (Files Sidebar, Files Share authentication)
+ */
+export function createMemoryRouter() {
+	const routes: RouteRecordRaw[] = [
+		{
+			path: '/call/:token',
+			name: 'conversation',
+			component: ChatView,
+			props: { isSidebar: true },
+		},
+	]
+
+	const router = createRouter({
+		history: createMemoryHistory(generateTalkWebBasePath()),
+		routes,
+	})
+
+	router.beforeEach((to, from) => {
+		if (to.name === 'conversation' && (from.params.token && from.params.token !== to.params.token)) {
+			// in case of a link to a different conversation, open it in a new tab
+			window.open(window.location.origin + router.resolve(to).href, '_blank', 'noopener,noreferrer')
+			// cancel the navigation in current tab
+			return false
+		} else if (to.name !== 'conversation') {
+			// cancel the navigation in current tab
+			return false
+		}
+
+		EventBus.emit('route-change', { from, to })
+	})
+
+	return router
 }
