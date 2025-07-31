@@ -63,7 +63,6 @@ export default {
 		NcActionButton,
 		NcActionCaption,
 		NcButton,
-		NcActions,
 		IconChevronUp,
 		IconVideoOutline,
 		IconVideoOffOutline,
