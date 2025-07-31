@@ -12,7 +12,11 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {string} token conversation token
  */
 const enableLiveTranscription = async (token) => {
-	await axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
+	const signalingSessionId = window.signaling.getSessionId()
+
+	await axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }), {
+		signalingSessionId,
+	})
 }
 
 /**
@@ -21,7 +25,11 @@ const enableLiveTranscription = async (token) => {
  * @param {string} token conversation token
  */
 const disableLiveTranscription = async (token) => {
-	await axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
+	const signalingSessionId = window.signaling.getSessionId()
+
+	await axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }), {
+		signalingSessionId,
+	})
 }
 
 export {

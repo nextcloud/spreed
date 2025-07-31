@@ -39,7 +39,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireParticipant]
-	public function enable(): DataResponse {
+	public function enable(string $signalingSessionId): DataResponse {
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
@@ -49,7 +49,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->liveTranscriptionService->enable($this->room, $this->participant);
+			$this->liveTranscriptionService->enable($this->room, $signalingSessionId);
 		} catch (\RuntimeException $e) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}
@@ -68,7 +68,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireParticipant]
-	public function disable(): DataResponse {
+	public function disable(string $signalingSessionId): DataResponse {
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
@@ -78,7 +78,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->liveTranscriptionService->disable($this->room, $this->participant);
+			$this->liveTranscriptionService->disable($this->room, $signalingSessionId);
 		} catch (\RuntimeException $e) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}

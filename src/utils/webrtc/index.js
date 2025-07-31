@@ -115,6 +115,7 @@ async function connectSignaling(token) {
 		}
 		signaling.disconnect()
 		signaling = null
+		window.signaling = null
 		if (encryption) {
 			encryption.close()
 			encryption = null
@@ -125,6 +126,7 @@ async function connectSignaling(token) {
 
 	if (!signaling) {
 		signaling = Signaling.createConnection(settings)
+		window.signaling = signaling
 		signaling.on('updateSettings', async function() {
 			const settings = await getSignalingSettings(token)
 			console.debug('Received updated settings', settings)
