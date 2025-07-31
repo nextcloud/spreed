@@ -149,6 +149,7 @@ class ChatManager {
 		?IComment $replyTo = null,
 		bool $shouldSkipLastMessageUpdate = false,
 		bool $silent = false,
+		int $threadId = 0,
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -167,6 +168,8 @@ class ChatManager {
 		}
 		if ($replyTo !== null) {
 			$comment->setParentId($replyTo->getId());
+		} elseif ($threadId !== 0) {
+			$comment->setParentId((string)$threadId);
 		}
 
 		$messageDecoded = json_decode($message, true);

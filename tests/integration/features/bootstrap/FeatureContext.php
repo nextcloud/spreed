@@ -1969,6 +1969,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Then('/^user "([^"]*)" renames thread "([^"]*)" to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userRenamesThreadInRoom(string $user, string $oldTitle, string $newTitle, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$threadId = self::$titleToThreadId[$oldTitle];
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/threads/' . $threadId,
+			new TableNode([['threadTitle', $newTitle]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		self::$titleToThreadId[$newTitle] = $threadId;
+		self::$threadIdToTitle[$threadId] = $newTitle;
+	}
+
 	#[Then('/^user "([^"]*)" edits message ("[^"]*"|\'[^\']*\') in room "([^"]*)" to ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
 	public function userEditsMessageToRoom(string $user, string $oldMessage, string $identifier, string $newMessage, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$oldMessage = substr($oldMessage, 1, -1);
