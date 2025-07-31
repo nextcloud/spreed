@@ -599,8 +599,20 @@ const actions = {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
-				if (!chatExtrasStore.getThread(token, message.threadId) && chatExtrasStore.threads[token] !== undefined) {
-					chatExtrasStore.fetchSingleThread(token, message.threadId)
+				if (!chatExtrasStore.getThread(token, message.threadId)) {
+					chatExtrasStore.addThread(token, {
+						thread: {
+							id: message.threadId,
+							roomToken: token,
+							title: message.messageParameters.title.name,
+							lastMessageId: message.threadId,
+							lastActivity: message.timestamp,
+							numReplies: 0,
+						},
+						attendee: { notificationLevel: 0 },
+						first: message.parent,
+						last: null,
+					})
 				}
 			}
 
@@ -668,8 +680,7 @@ const actions = {
 				const updateNumReplies = thread.thread.lastMessageId < message.id
 				chatExtrasStore.updateThread(message.token, message.threadId, {
 					thread: {
-						id: message.threadId,
-						roomToken: message.token,
+						...thread.thread,
 						lastMessageId: message.id,
 						lastActivity: message.timestamp,
 						numReplies: thread.thread.numReplies + (updateNumReplies ? 1 : 0),
@@ -1316,9 +1327,10 @@ const actions = {
 	 * @param {object} data Passed in parameters
 	 * @param {string} data.token token of the conversation
 	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data.threadTitle if given, creates a thread with that title
 	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, { token, temporaryMessage, options }) {
+	async postNewMessage(context, { token, temporaryMessage, threadTitle, options }) {
 		context.dispatch('addTemporaryMessage', { token, message: temporaryMessage })
 
 		const { request, cancel } = CancelableRequest(postNewMessage)
@@ -1334,7 +1346,15 @@ const actions = {
 		}, 30000)
 
 		try {
-			const response = await request(temporaryMessage, options)
+			const response = await request({
+				token,
+				message: temporaryMessage.message,
+				actorDisplayName: temporaryMessage.actorDisplayName,
+				referenceId: temporaryMessage.referenceId,
+				replyTo: temporaryMessage.parent?.id,
+				silent: temporaryMessage.silent,
+				threadTitle,
+			}, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 

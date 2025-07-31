@@ -27,7 +27,9 @@
 				:can-upload-files="canUploadFiles"
 				:can-share-files="canShareFiles"
 				:can-create-poll="canCreatePoll"
+				:can-create-thread="canCreateThread"
 				@open-file-upload="openFileUploadWindow"
+				@create-thread="setCreateThread"
 				@handle-file-share="showFilePicker"
 				@update-new-file-dialog="updateNewFileDialog" />
 
@@ -72,9 +74,19 @@
 				<NcNoteCard v-if="showMentionEditHint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
+				<NcTextField
+					v-if="threadCreating"
+					v-model="threadTitle"
+					class="new-message-form__thread-title"
+					:label="t('spreed', 'Thread title')"
+					:disabled="disabled"
+					show-trailing-button
+					@trailing-button-click="setCreateThread(false)" />
 				<NcRichContenteditable ref="richContenteditable"
 					:key="container"
 					v-model="text"
+					:class="{ 'new-message-form__input-rich--required': errorTitle }"
+					:title="errorTitle"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -148,7 +160,8 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<IconSend class="bidirectional-icon" :size="16" />
+						<IconForumOutline v-if="threadCreating" :size="16" />
+						<IconSend v-else class="bidirectional-icon" :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -175,10 +188,12 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue'
 import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
@@ -188,6 +203,7 @@ import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -214,6 +230,7 @@ export default {
 		NcEmojiPicker,
 		NcNoteCard,
 		NcRichContenteditable,
+		NcTextField,
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
 		NewMessageAudioRecorder,
@@ -226,6 +243,7 @@ export default {
 		IconCheck,
 		IconClose,
 		IconEmoticonOutline,
+		IconForumOutline,
 		IconSend,
 	},
 
@@ -288,6 +306,7 @@ export default {
 		const { token } = toRefs(props)
 		const supportTypingStatus = getTalkConfig(token.value, 'chat', 'typing-privacy') !== undefined
 		const { autoComplete, userData } = useChatMentions(token)
+		const threadId = useGetThreadId()
 		const { createTemporaryMessage } = useTemporaryMessage()
 		return {
 			actorStore: useActorStore(),
@@ -299,6 +318,7 @@ export default {
 			supportTypingStatus,
 			autoComplete,
 			userData,
+			threadId,
 			createTemporaryMessage,
 		}
 	},
@@ -306,6 +326,7 @@ export default {
 	data() {
 		return {
 			text: '',
+			errorTitle: '',
 			silentChat: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
@@ -357,11 +378,10 @@ export default {
 		},
 
 		sendMessageLabel() {
-			if (this.silentChat) {
-				return t('spreed', 'Send message silently')
-			} else {
-				return t('spreed', 'Send message')
+			if (this.threadCreating) {
+				return this.silentChat ? t('spreed', 'Create a thread silently') : t('spreed', 'Create a thread')
 			}
+			return this.silentChat ? t('spreed', 'Send message silently') : t('spreed', 'Send message')
 		},
 
 		parentMessage() {
@@ -430,7 +450,7 @@ export default {
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating
 		},
 
 		showTypingStatus() {
@@ -466,6 +486,29 @@ export default {
 		canEditMessage() {
 			return hasTalkFeature(this.token, 'edit-messages')
 		},
+
+		supportThreads() {
+			return hasTalkFeature(this.token, 'threads')
+		},
+
+		canCreateThread() {
+			return this.supportThreads && !this.isReadOnly && !this.noChatPermission
+				&& !this.threadId && !this.broadcast && !this.threadCreating
+		},
+
+		threadTitle: {
+			get() {
+				return this.chatExtrasStore.getThreadTitle(this.token)
+			},
+
+			set(value) {
+				this.chatExtrasStore.setThreadTitle(this.token, value)
+			},
+		},
+
+		threadCreating() {
+			return this.threadTitle !== undefined
+		},
 	},
 
 	watch: {
@@ -485,6 +528,7 @@ export default {
 		},
 
 		text(newValue) {
+			this.errorTitle = ''
 			if (this.currentUploadId && !this.upload) {
 				return
 			} else if (this.dialog && this.broadcast) {
@@ -496,15 +540,27 @@ export default {
 		messageToEdit(newValue) {
 			if (newValue) {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
-				this.chatExtrasStore.removeParentIdToReply(this.token)
+				this.chatExtrasStore.removeThreadTitle(this.token)
+				if (this.parentMessage) {
+					this.chatExtrasStore.removeParentIdToReply(this.token)
+				}
 			} else {
 				this.text = this.chatInput
 			}
 		},
 
 		parentMessage(newValue) {
-			if (newValue && this.messageToEdit) {
-				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			if (newValue) {
+				this.chatExtrasStore.removeThreadTitle(this.token)
+				if (this.messageToEdit) {
+					this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				}
+			}
+		},
+
+		threadId(newValue) {
+			if (newValue) {
+				this.setCreateThread(false)
 			}
 		},
 
@@ -649,6 +705,10 @@ export default {
 
 			if (this.hasText) {
 				this.text = parseSpecialSymbols(this.text)
+			} else if (this.threadCreating && !this.hasText) {
+				// TRANSLATORS Error indicator: do not allow to create a thread without a message text
+				this.errorTitle = t('spreed', 'Message text is required')
+				return
 			}
 
 			// Clear input content from store
@@ -656,36 +716,44 @@ export default {
 			this.chatExtrasStore.removeChatInput(this.token)
 
 			if (this.hasText || (this.dialog && this.upload)) {
+				const message = this.text.trim()
+				// Substitute thread title with message text, if missing
+				const threadTitle = this.threadCreating
+					? this.threadTitle.trim() || this.text.trim()
+					: undefined
+
 				const temporaryMessage = this.createTemporaryMessage({
-					message: this.text.trim(),
+					message,
 					token: this.token,
 					silent: this.silentChat,
 				})
 				this.text = ''
+				this.chatExtrasStore.removeThreadTitle(this.token)
+
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage)
-					: await this.postMessage(this.token, temporaryMessage)
+					? await this.submitMessage(this.token, temporaryMessage, threadTitle)
+					: await this.postMessage(this.token, temporaryMessage, threadTitle)
 				this.resetTypingIndicator()
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(token, temporaryMessage) {
+		async postMessage(token, temporaryMessage, threadTitle) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async submitMessage(token, temporaryMessage) {
-			this.$emit('submit', { token, temporaryMessage })
+		async submitMessage(token, temporaryMessage, threadTitle) {
+			this.$emit('submit', { token, temporaryMessage, threadTitle })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
@@ -738,6 +806,16 @@ export default {
 
 					this.$store.dispatch('removeTemporaryMessageFromStore', { token: this.token, id })
 				}
+			}
+		},
+
+		setCreateThread(value) {
+			if (value) {
+				this.chatExtrasStore.setThreadTitle(this.token, '')
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			} else {
+				this.chatExtrasStore.removeThreadTitle(this.token)
 			}
 		},
 
@@ -998,6 +1076,25 @@ export default {
 		margin-block-end: var(--default-grid-baseline);
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
+	}
+
+	&__thread-title {
+		margin-bottom: var(--default-grid-baseline);
+
+		// Override input style to match NcRichContenteditable
+		:deep(.input-field__input) {
+			border: 2px solid var(--color-border-maxcontrast);
+		}
+
+		& + :deep(.rich-contenteditable > .rich-contenteditable__input) {
+			min-height: calc(2lh + 2 * var(--contenteditable-block-offset) + 4px);
+		}
+	}
+
+	&__input-rich {
+		&--required :deep(.rich-contenteditable__input) {
+			border-color: var(--color-error) !important;
+		}
 	}
 
 	// put a grey round background when popover is opened or hover-focused

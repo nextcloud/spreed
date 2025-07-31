@@ -1664,6 +1664,7 @@ describe('messagesStore', () => {
 
 			const baseMessage = {
 				actorId: 'actor-id-1',
+				actorDisplayName: 'actor-display-name-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'blah',
 				token: TOKEN,
@@ -1674,6 +1675,7 @@ describe('messagesStore', () => {
 				...baseMessage,
 				id: 'temp-123',
 				sendingFailure: '',
+				silent: false,
 			}
 
 			const messageResponse = {
@@ -1696,9 +1698,17 @@ describe('messagesStore', () => {
 				},
 			})
 			updateLastReadMessage.mockResolvedValue(response2)
-			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {
+			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage }).catch(() => {
 			})
-			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
+			expect(postNewMessage).toHaveBeenCalledWith({
+				token: TOKEN,
+				message: 'blah',
+				actorDisplayName: 'actor-display-name-1',
+				referenceId: 'abc123',
+				replyTo: undefined,
+				silent: false,
+				threadTitle: undefined,
+			}, undefined)
 			expect(store.getters.isSendingMessages).toBe(true)
 
 			await flushPromises()

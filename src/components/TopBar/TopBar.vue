@@ -48,7 +48,7 @@
 					disable-tooltip />
 				<div class="conversation-header__text">
 					<p class="title">
-						{{ threadName }}
+						{{ currentThread.thread.title }}
 					</p>
 					<p class="description">
 						{{ n('spreed', '%n reply', '%n replies', currentThread.thread.numReplies) }}
@@ -302,16 +302,6 @@ export default {
 				return null
 			}
 			return this.chatExtrasStore.getThread(this.token, this.threadId)
-		},
-
-		threadName() {
-			const actor = getDisplayNameWithFallback(this.currentThread.first.actorDisplayName, this.currentThread.first.actorType, true)
-			const lastMessage = parseToSimpleMessage(this.currentThread.first.message, this.currentThread.first.messageParameters)
-
-			return t('spreed', '{actor}: {lastMessage}', { actor, lastMessage }, {
-				escape: false,
-				sanitize: false,
-			})
 		},
 
 		threadNotification() {

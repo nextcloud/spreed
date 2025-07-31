@@ -135,7 +135,7 @@ describe('messagesService', () => {
 			message: 'hello world!',
 			actorDisplayName: 'actor-display-name',
 			referenceId: 'reference-id',
-			parent: { id: 111 },
+			replyTo: 111,
 			silent: false,
 		}, {
 			dummyOption: true,
@@ -149,6 +149,7 @@ describe('messagesService', () => {
 				referenceId: 'reference-id',
 				replyTo: 111,
 				silent: false,
+				threadTitle: undefined,
 			},
 			{
 				dummyOption: true,

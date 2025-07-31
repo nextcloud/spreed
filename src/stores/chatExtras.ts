@@ -23,6 +23,7 @@ import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
 	threads: Record<string, Record<number, ThreadInfo>>
+	threadTitle: Record<string, string>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
 	messageIdToEdit: Record<string, number>
@@ -38,6 +39,7 @@ type State = {
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
 		threads: {},
+		threadTitle: {},
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -60,6 +62,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			} else {
 				return []
 			}
+		},
+
+		getThreadTitle: (state) => (token: string) => {
+			return state.threadTitle[token]
 		},
 
 		getParentIdToReply: (state) => (token: string) => {
@@ -92,6 +98,20 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 	actions: {
 		/**
+		 * Add a thread to the store for given conversation
+		 *
+		 * @param token - conversation token
+		 * @param thread - thread information
+		 */
+		async addThread(token: string, thread: ThreadInfo) {
+			if (!this.threads[token]) {
+				this.threads[token] = {}
+			}
+
+			this.threads[token][thread.thread.id] = thread
+		},
+
+		/**
 		 * Fetch a thread from server in given conversation
 		 *
 		 * @param token - conversation token
@@ -99,12 +119,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		async fetchSingleThread(token: string, threadId: number) {
 			try {
-				if (!this.threads[token]) {
-					this.threads[token] = {}
-				}
-
 				const response = await getSingleThreadForConversation(token, threadId)
-				this.threads[token][threadId] = response.data.ocs.data
+				this.addThread(token, response.data.ocs.data)
 			} catch (error) {
 				console.error('Error fetching thread:', error)
 			}
@@ -117,14 +133,9 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		async fetchRecentThreadsList(token: string) {
 			try {
-				if (!this.threads[token]) {
-					this.threads[token] = {}
-				}
-
 				const response = await getRecentThreadsForConversation({ token })
-
 				response.data.ocs.data.forEach((threadInfo) => {
-					this.threads[token][threadInfo.thread.id] = threadInfo
+					this.addThread(token, threadInfo)
 				})
 			} catch (error) {
 				console.error('Error fetching threads:', error)
@@ -141,12 +152,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		async setThreadNotificationLevel(token: string, messageId: number, level: number) {
 			try {
-				if (!this.threads[token]) {
-					this.threads[token] = {}
-				}
-
 				const response = await setThreadNotificationLevel(token, messageId, level)
-				this.threads[token][response.data.ocs.data.thread.id] = response.data.ocs.data
+				this.addThread(token, response.data.ocs.data)
 			} catch (error) {
 				console.error('Error updating thread notification level:', error)
 			}
@@ -234,6 +241,27 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				this.restoreChatInput(token)
 			}
 			return this.chatInput[token] ?? ''
+		},
+
+		/**
+		 * Add a thread title to the store
+		 *
+		 * @param payload action payload
+		 * @param payload.token - conversation token
+		 * @param payload.title - title from input
+		 */
+		setThreadTitle(token: string, title: string) {
+			this.threadTitle[token] = title
+		},
+
+		/**
+		 * Removes a thread title id from the store
+		 * (after posting message or dismissing the operation)
+		 *
+		 * @param token - conversation token
+		 */
+		removeThreadTitle(token: string) {
+			delete this.threadTitle[token]
 		},
 
 		/**
