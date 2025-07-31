@@ -38,7 +38,6 @@
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { useRouter } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
@@ -95,13 +94,6 @@ export default {
 	},
 
 	setup() {
-		const router = useRouter()
-		router.beforeEach((to, from) => {
-			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
-				EventBus.emit('route-change', { from, to })
-			}
-		})
-
 		useHashCheck()
 		useGetMessagesProvider()
 

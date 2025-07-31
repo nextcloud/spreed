@@ -28,7 +28,6 @@ import { getCurrentUser, getGuestNickname } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { useRouter } from 'vue-router'
 import CallView from './components/CallView/CallView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollManager from './components/PollViewer/PollManager.vue'
@@ -64,13 +63,6 @@ export default {
 	},
 
 	setup() {
-		const router = useRouter()
-		router.beforeEach((to, from) => {
-			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
-				EventBus.emit('route-change', { from, to })
-			}
-		})
-
 		useHashCheck()
 		useGetMessagesProvider()
 
