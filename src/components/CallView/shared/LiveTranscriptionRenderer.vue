@@ -77,7 +77,13 @@ export default {
 		handleTranscript(model, message) {
 			if (this.currentSpeaker && this.currentSpeaker !== model.attributes.peerId) {
 				this.transcript += '<br>'
+
 				this.currentSpeaker = model.attributes.peerId
+
+				const lineBreak = document.createElement('br')
+				this.transcripts.push(lineBreak)
+
+				this.$refs.transcriptParagraph.append(lineBreak)
 			}
 
 			this.transcript += message
@@ -86,16 +92,17 @@ export default {
 			transcriptSpan.textContent = message
 			this.transcripts.push(transcriptSpan)
 
-			this.$refs.transcriptParagraph.appendChild(transcriptSpan)
+			this.$refs.transcriptParagraph.append(transcriptSpan)
 
 			this.$nextTick(() => {
-				console.log(transcriptSpan.getClientRects())
+				while (this.removeFirstNoLongerVisibleLine()) {
+				}
 			})
 		},
 
 		removeFirstNoLongerVisibleLine() {
 			if (this.transcripts.length === 0) {
-				return
+				return false
 			}
 
 			const firstLineTop = this.transcripts[0].getClientRects()[0].top
@@ -112,17 +119,17 @@ export default {
 				transcriptsInFirstLineBottom = Math.max(transcriptsInFirstLineBottom, transcriptFirstLineClientRect.bottom)
 			}
 
-			const paragraphTop = this.$refs.transcriptParagraph.getBoundingClientRect().top
+			const paragraphWrapperTop = this.$refs.transcriptParagraph.parentElement.getBoundingClientRect().top
 
-			if (transcriptsInFirstLineBottom > paragraphTop) {
-				return
+			if (transcriptsInFirstLineBottom > paragraphWrapperTop) {
+				return false
 			}
 
 			const lastTranscriptInFirstLine = transcriptsInFirstLine.at(-1)
-			let lastClientRectInLastTranscriptInFirstLine = lastTranscriptInFirstLine.getClientRects().at(-1)
+			let lastClientRectInLastTranscriptInFirstLine = lastTranscriptInFirstLine.getClientRects()[lastTranscriptInFirstLine.getClientRects().length - 1]
 
-			if (lastClientRectInLastTranscriptInFirstLine.bottom > paragraphTop) {
-				return
+			if (lastClientRectInLastTranscriptInFirstLine.bottom > paragraphWrapperTop) {
+				return false
 			}
 
 			const replaceLastTranscript = lastTranscriptInFirstLine.getClientRects().length > 1
@@ -135,9 +142,11 @@ export default {
 
 			if (replaceLastTranscript) {
 				const placeholder = document.createElement('span')
-				placeholder.setAttribute('style', 'width: ' + placeholderWidth + 'px; height: ' + placeholderHeight + 'px;')
+				placeholder.setAttribute('style', 'display: inline-block; width: ' + placeholderWidth + 'px; height: ' + placeholderHeight + 'px;')
 				this.$refs.transcriptParagraph.prepend(placeholder)
 			}
+
+			return true
 		},
 	},
 }
