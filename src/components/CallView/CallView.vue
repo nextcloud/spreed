@@ -837,6 +837,8 @@ export default {
 	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
 	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
+	--top-bar-height: 51px;
+	--bottom-bar-height: 56px;
 
 	&.call-container__blurred {
 		backdrop-filter: blur(25px);
@@ -849,9 +851,9 @@ export default {
 #videos {
 	position: absolute;
 	width: 100%;
-	height: calc(100% - 107px); // 51px TopBar + 56px BottomBar
-	top: 51px; // TopBar height
-	bottom: 56px; // BottomBar height
+	height: calc(100% - (var(--top-bar-height) + var(--bottom-bar-height)));
+	top: var(--top-bar-height);
+	bottom: var(--bottom-bar-height);
 	overflow: hidden;
 	display: flex;
 	justify-content: space-around;
