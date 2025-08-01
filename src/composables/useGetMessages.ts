@@ -177,7 +177,7 @@ export function useGetMessagesProvider() {
 			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, focusMessageId) as ChatMessage | Record<string, never>))
 			if (!hasMessageInStore) {
 				// message not found in the list, need to fetch it first
-				await getMessageContext(to.params.token, focusMessageId)
+				await getMessageContext(to.params.token, focusMessageId, threadId.value)
 			}
 			// need some delay (next tick is too short) to be able to run
 			// after the browser's native "scroll to anchor" from the hash
@@ -191,7 +191,7 @@ export function useGetMessagesProvider() {
 			// FIXME temporary get thread messages from the start
 			const hasMessageInStore = ('id' in (store.getters.message(to.params.token, to.query.threadId) as ChatMessage | Record<string, never>))
 			if (!hasMessageInStore) {
-				await getMessageContext(to.params.token, +to.query.threadId)
+				await getMessageContext(to.params.token, +to.query.threadId, +to.query.threadId)
 			}
 		}
 	}
@@ -222,7 +222,7 @@ export function useGetMessagesProvider() {
 					throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
 				}
 
-				await getMessageContext(token, startingMessageId)
+				await getMessageContext(token, startingMessageId, threadId.value)
 			} catch (exception) {
 				console.debug(exception)
 				// Request was cancelled, stop getting preconditions and restore initial state
@@ -242,9 +242,10 @@ export function useGetMessagesProvider() {
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
 	 * @param token token of conversation where a method was called
-	 * @param messageId messageId
+	 * @param messageId context messageId
+	 * @param threadId context thread id
 	 */
-	async function getMessageContext(token: string, messageId: number) {
+	async function getMessageContext(token: string, messageId: number, threadId: number) {
 		loadingOldMessages.value = true
 		try {
 			debugTimer.start(`${token} | get context`)
@@ -258,6 +259,7 @@ export function useGetMessagesProvider() {
 				// using 0 as the API does not support negative values
 				// Get chat messages before last read message and after it
 				messageId: messageId !== MESSAGE.CHAT_BEGIN_ID ? messageId : 0,
+				threadId: threadId !== 0 ? threadId : undefined,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
@@ -301,6 +303,7 @@ export function useGetMessagesProvider() {
 				token,
 				lastKnownMessageId: store.getters.getFirstKnownMessageId(token),
 				includeLastKnown,
+				threadId: threadId.value !== 0 ? threadId.value : undefined,
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | fetch history`, 'status 200')

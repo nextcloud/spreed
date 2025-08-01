@@ -49,6 +49,7 @@ type EditMessagePayload = { token: string, messageId: number, updatedMessage: ed
  * @param data.token the conversation token;
  * @param data.lastKnownMessageId last known message id;
  * @param data.includeLastKnown whether to include the last known message in the response;
+ * @param data.threadId The thread id to retrieve data
  * @param [data.lookIntoFuture=0] direction of message fetch
  * @param [data.limit=100] Number of messages to load
  * @param [options] Axios request options
@@ -110,6 +111,7 @@ async function pollNewMessages({
  * @param data the wrapping object;
  * @param data.token the conversation token;
  * @param data.messageId last known message id;
+ * @param data.threadId The thread id to retrieve data
  * @param [data.limit=50] Number of messages to load
  * @param [options] Axios request options
  */

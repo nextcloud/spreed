@@ -160,6 +160,10 @@ export const useChatStore = defineStore('chat', () => {
 	function processChatBlocks(token: string, messages: ChatMessage[], options?: ProcessChatBlocksOptions): void {
 		const newMessageIdsSet = new Set(messages.map((message) => message.id))
 
+		if (options?.threadId) {
+			// FIXME handle thread messages separately
+		}
+
 		if (!chatBlocks[token]) {
 			// If no blocks exist, create a new one with the first message. First in array will be considered main block
 			chatBlocks[token] = [newMessageIdsSet]
