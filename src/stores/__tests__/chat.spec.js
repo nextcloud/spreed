@@ -46,6 +46,13 @@ describe('chatStore', () => {
 		return new Set([...messages, ...rest.flat()].map((message) => message.id))
 	}
 
+	function processMessages(token, messages, chatBlockOptions = {}) {
+		messages.forEach((message) => {
+			vuexStore.dispatch('processMessage', { token, message })
+		})
+		chatStore.processChatBlocks(token, messages, chatBlockOptions)
+	}
+
 	beforeEach(() => {
 		vuexStore = createStore(storeConfig)
 		jest.spyOn(require('vuex'), 'useStore').mockReturnValue(vuexStore)
@@ -69,7 +76,7 @@ describe('chatStore', () => {
 
 		it('returns boolean whether message is known by the store', () => {
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Assert
 			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeTruthy()
@@ -80,9 +87,7 @@ describe('chatStore', () => {
 	describe('get a list of messages', () => {
 		it('returns an array if both messages and blocks present', () => {
 			// Arrange
-			vuexStore.dispatch('processMessage', { token: TOKEN, message: mockMessages[110] })
-			vuexStore.dispatch('processMessage', { token: TOKEN, message: mockMessages[109] })
-			chatStore.processChatBlocks(TOKEN, [mockMessages[110], mockMessages[109]])
+			processMessages(TOKEN, [mockMessages[110], mockMessages[109]])
 
 			// Assert
 			expect(chatStore.getMessagesList(TOKEN)).toEqual([mockMessages[109], mockMessages[110]])
@@ -109,8 +114,8 @@ describe('chatStore', () => {
 
 		it('returns first / last known id of first block if no message id was given', () => {
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockE)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockE)
 
 			// Assert
 			expect(chatStore.getLastKnownId(TOKEN)).toBe(chatBlockA[0].id)
@@ -119,8 +124,8 @@ describe('chatStore', () => {
 
 		it('returns first / last known id of first block if no message id was given', () => {
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockC)
 
 			// Assert
 			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockA[0].id)
@@ -129,8 +134,8 @@ describe('chatStore', () => {
 
 		it('returns first / last known id of containing block if message id was given', () => {
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 
 			// Assert
 			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[0].id)
@@ -141,7 +146,7 @@ describe('chatStore', () => {
 	describe('process messages chunks', () => {
 		it('creates a new block, if not created yet', () => {
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toEqual([outputSet(chatBlockA)])
@@ -149,10 +154,10 @@ describe('chatStore', () => {
 
 		it('extends an existing block, if messages overlap', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockE)
+			processMessages(TOKEN, chatBlockE)
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(1)
@@ -161,10 +166,10 @@ describe('chatStore', () => {
 
 		it('creates a new block, if adjacent status to existing blocks is unknown', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockB)
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
@@ -173,12 +178,12 @@ describe('chatStore', () => {
 
 		it('extends an existing block, if messages are adjacent by options.mergeBy', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockD, { mergeBy: mockMessages[109].id })
-			chatStore.processChatBlocks(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
+			processMessages(TOKEN, chatBlockD, { mergeBy: mockMessages[109].id })
+			processMessages(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
@@ -187,13 +192,13 @@ describe('chatStore', () => {
 
 		it('merges existing blocks, if resulting sets overlap', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(2)
 
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
-			chatStore.processChatBlocks(TOKEN, chatBlockE)
+			processMessages(TOKEN, chatBlockF, { mergeBy: mockMessages[105].id })
+			processMessages(TOKEN, chatBlockE)
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(1)
@@ -202,11 +207,11 @@ describe('chatStore', () => {
 
 		it('retains the correct order of blocks', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockC)
 
 			// Act
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockB)
 
 			// Assert
 			expect(chatStore.chatBlocks[TOKEN]).toHaveLength(3)
@@ -225,8 +230,8 @@ describe('chatStore', () => {
 
 		it('extends the most recent block', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 
 			// Act
 			chatStore.addMessageToChatBlocks(TOKEN, chatBlockD[0])
@@ -237,7 +242,7 @@ describe('chatStore', () => {
 
 		it('does nothing, if message is already present in the most recent block', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
 			chatStore.addMessageToChatBlocks(TOKEN, chatBlockA[0])
@@ -258,7 +263,7 @@ describe('chatStore', () => {
 
 		it('does nothing, if message is not present in existing blocks', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
 			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockD[0].id)
@@ -269,7 +274,7 @@ describe('chatStore', () => {
 
 		it('removes a message id from all blocks', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
 			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockA[0].id)
@@ -280,8 +285,8 @@ describe('chatStore', () => {
 
 		it('removes a list of message ids and clears up empty blocks', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 
 			// Act
 			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockB.map((message) => message.id))
@@ -293,8 +298,8 @@ describe('chatStore', () => {
 
 		it('clears up store after removing of all blocks', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
 
 			// Act
 			chatStore.removeMessagesFromChatBlocks(TOKEN, chatBlockB.map((message) => message.id))
@@ -316,8 +321,8 @@ describe('chatStore', () => {
 
 		it('does nothing, if no blocks are behind id to delete', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockA)
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
 
 			// Act
 			chatStore.clearMessagesHistory(TOKEN, chatBlockC[0].id)
@@ -328,8 +333,8 @@ describe('chatStore', () => {
 
 		it('purges a store, if all blocks are behind id to delete', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
-			chatStore.processChatBlocks(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockC)
 
 			// Act
 			chatStore.clearMessagesHistory(TOKEN, chatBlockA[0].id)
@@ -340,8 +345,8 @@ describe('chatStore', () => {
 
 		it('cleans up messages behind id to delete', () => {
 			// Arrange
-			chatStore.processChatBlocks(TOKEN, chatBlockB)
-			chatStore.processChatBlocks(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockB)
+			processMessages(TOKEN, chatBlockC)
 
 			// Act
 			chatStore.clearMessagesHistory(TOKEN, chatBlockB[0].id)
