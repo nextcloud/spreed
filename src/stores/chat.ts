@@ -66,7 +66,6 @@ export const useChatStore = defineStore('chat', () => {
 	 */
 	function prepareMessagesList(token: string, block: Set<number>): ChatMessage[] {
 		return Array.from(block).sort((a, b) => a - b)
-			.sort((a, b) => a - b)
 			.reduce<ChatMessage[]>((acc, id) => {
 				const message = store.state.messagesStore.messages[token][id]
 				if (message) {
@@ -113,7 +112,7 @@ export const useChatStore = defineStore('chat', () => {
 				return threadId
 			}
 			// FIXME temporary check all messages for given thread from all chat blocks
-			return Math.min(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+			return Math.min(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
 				.filter((message) => {
 					return message.threadId === threadId
 				}).map((message) => message.id))
@@ -140,7 +139,7 @@ export const useChatStore = defineStore('chat', () => {
 
 		if (threadId) {
 			// FIXME temporary check all messages for given thread from all chat blocks
-			return Math.max(...prepareMessagesList(token, new Set(Array.from(chatBlocks[token].flatMap((set) => Array.from(set)))))
+			return Math.max(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
 				.filter((message) => {
 					return message.threadId === threadId
 				}).map((message) => message.id))
