@@ -20,19 +20,24 @@ describe('chatStore', () => {
 	 * |       | [109,108] |               | [106,105] |       | [103,102,101] |
 	 * | D     |           | E             |           | F     |               |
 	 * | [110] |           | [108,107,106] |           | [104] |               |
+	 *
+	 * Threads are as follows:
+	 * - 101, 103, 106 are in thread 101
+	 * - 104, 107, 109 are in thread 104
+	 * - 102, 105, 108, 110 are not in any thread
 	 */
 
 	const mockMessages = {
-		101: { id: 101, message: 'Hello' },
-		102: { id: 102, message: 'World' },
-		103: { id: 103, message: '!' },
-		104: { id: 104, message: 'Lorem ipsum' },
-		105: { id: 105, message: 'dolor sit amet' },
-		106: { id: 106, message: 'consectetur adipiscing elit' },
-		107: { id: 107, message: 'Vestibulum quis' },
-		108: { id: 108, message: 'sed diam nonumy' },
-		109: { id: 109, message: 'eirmod tempor invidunt' },
-		110: { id: 110, message: 'ut labore et dolore' },
+		101: { id: 101, threadId: 101, isThread: true, message: 'Hello' },
+		102: { id: 102, threadId: 102, isThread: false, message: 'World' },
+		103: { id: 103, threadId: 101, isThread: true, message: '!' },
+		104: { id: 104, threadId: 104, isThread: true, message: 'Lorem ipsum' },
+		105: { id: 105, threadId: 105, isThread: false, message: 'dolor sit amet' },
+		106: { id: 106, threadId: 101, isThread: true, message: 'consectetur adipiscing elit' },
+		107: { id: 107, threadId: 104, isThread: true, message: 'Vestibulum quis' },
+		108: { id: 108, threadId: 108, isThread: false, message: 'sed diam nonumy' },
+		109: { id: 109, threadId: 104, isThread: true, message: 'eirmod tempor invidunt' },
+		110: { id: 110, threadId: 110, isThread: false, message: 'ut labore et dolore' },
 	}
 
 	const chatBlockA = [mockMessages[109], mockMessages[108]]
@@ -82,6 +87,15 @@ describe('chatStore', () => {
 			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id })).toBeTruthy()
 			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[101].id })).toBeFalsy()
 		})
+
+		it('returns boolean whether thread message is known by the store', () => {
+			// Act
+			processMessages(TOKEN, chatBlockA)
+
+			// Assert
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[109].id, threadId: 104 })).toBeTruthy()
+			expect(chatStore.hasMessage(TOKEN, { messageId: mockMessages[108].id, threadId: 104 })).toBeFalsy()
+		})
 	})
 
 	describe('get a list of messages', () => {
@@ -91,6 +105,15 @@ describe('chatStore', () => {
 
 			// Assert
 			expect(chatStore.getMessagesList(TOKEN)).toEqual([mockMessages[109], mockMessages[110]])
+		})
+
+		it('returns an array of thread messages only', () => {
+			// Arrange
+			processMessages(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockE)
+
+			// Assert
+			expect(chatStore.getMessagesList(TOKEN, { threadId: 101 })).toEqual([mockMessages[101], mockMessages[103], mockMessages[106]])
 		})
 
 		it('returns an empty array if no messages or blocks present', () => {
@@ -110,6 +133,15 @@ describe('chatStore', () => {
 			// Assert
 			expect(chatStore.getLastKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
 			expect(chatStore.getFirstKnownId(TOKEN, { messageId: mockMessages[109].id })).toBe(mockMessages[109].id)
+		})
+
+		it('returns thread id of containing block if thread id was given and message is in the store', () => {
+			// Act
+			processMessages(TOKEN, chatBlockC)
+			processMessages(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id, threadId: 101 })).toBe(chatBlockC[2].id)
 		})
 
 		it('returns first / last known id of first block if no message id was given', () => {
@@ -140,6 +172,16 @@ describe('chatStore', () => {
 			// Assert
 			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[0].id)
 			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id })).toBe(chatBlockB[1].id)
+		})
+
+		it('returns first / last known id of containing thread block if message id was given', () => {
+			// Act
+			processMessages(TOKEN, chatBlockA)
+			processMessages(TOKEN, chatBlockB)
+
+			// Assert
+			expect(chatStore.getLastKnownId(TOKEN, { messageId: chatBlockB[0].id, threadId: 101 })).toBe(chatBlockB[0].id)
+			expect(chatStore.getFirstKnownId(TOKEN, { messageId: chatBlockB[0].id, threadId: 101 })).toBe(chatBlockB[0].id)
 		})
 	})
 

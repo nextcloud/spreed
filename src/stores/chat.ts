@@ -22,6 +22,8 @@ type GetMessagesListOptions = {
 type ProcessChatBlocksOptions = {
 	/** if given, look for Set that has it */
 	mergeBy?: number
+	/** if given, look for thread Set */
+	threadId?: number
 }
 
 /**
@@ -48,12 +50,23 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Returns list of messages, belonging to current context
 	 */
-	function getMessagesList(token: string): ChatMessage[] {
+	function getMessagesList(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): ChatMessage[] {
 		if (!store.state.messagesStore.messages[token] || !chatBlocks[token]) {
 			return []
 		}
 
-		// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
+		if (threadId) {
+			// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
+			return prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
+				.filter((message) => {
+					return message.threadId === threadId
+				})
+		}
+
+		// FIXME temporary show all messages for given token from all chat blocks - no behaviour change
 		const contextBlock = chatBlocks[token].reduce<Set<number>>((acc, set) => {
 			set.forEach((id) => acc.add(id))
 			return acc
@@ -90,6 +103,7 @@ export const useChatStore = defineStore('chat', () => {
 		if (threadId) {
 			// FIXME temporary check all messages for given thread from all chat blocks
 			return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
+				&& store.state.messagesStore.messages[token][messageId]?.threadId === threadId
 		}
 
 		return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1

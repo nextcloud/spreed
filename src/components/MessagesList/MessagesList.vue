@@ -213,14 +213,9 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
-			if (!this.threadId) {
-				return this.chatStore.getMessagesList(this.token)
-			}
-
-			return this.chatStore.getMessagesList(this.token)
-				.filter((message) => {
-					return message.threadId === this.threadId
-				})
+			return this.chatStore.getMessagesList(this.token, {
+				threadId: this.threadId,
+			})
 		},
 
 		isMessagesListPopulated() {
