@@ -98,17 +98,22 @@ export function useGetMessagesProvider() {
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.systemMessage)
 	})
 
+	const conversationLastMessageId = computed<number>(() => {
+		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
+			return conversation.value.lastMessage.id
+		}
+
+		// Federated conversations do not provide lastMessage.id, fallback to last known message
+		return chatStore.getLastKnownId(currentToken.value, { threadId: contextThreadId.value })
+	})
+
 	const isChatEndReached = computed(() => {
 		const conversation = store.getters.conversation(currentToken.value) as Conversation | undefined
 		if (!conversation || !conversation.lastMessage) {
 			// Do not block attempts to fetch new messages inside each block
 			return false
 		}
-		// Federated conversations do not provide lastMessage.id, fallback to last known message in the most recent block store
-		const conversationLastMessageId = ('id' in conversation.lastMessage)
-			? conversation.lastMessage.id
-			: Math.max(...chatStore.chatBlocks[currentToken.value][0])
-		return chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value }) >= conversationLastMessageId
+		return chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value }) >= conversationLastMessageId.value
 	})
 
 	/** Initial check to ensure context is created once route is available */
@@ -207,7 +212,7 @@ export function useGetMessagesProvider() {
 			contextMessageId.value = conversation.value.lastReadMessage
 		} else {
 			// last known message in the most recent block store
-			contextMessageId.value = Math.max(...chatStore.chatBlocks[to.params.token][0])
+			contextMessageId.value = conversationLastMessageId.value
 		}
 		stopFetchingOldMessages.value = false
 
