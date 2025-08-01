@@ -36,7 +36,7 @@ export default function LocalMediaModel() {
 		virtualBackgroundUrl: null,
 		localScreen: null,
 		token: '',
-		raisedHand: false,
+		raisedHand: { state: false, timestamp: Date.now() },
 	})
 
 	this._handleLocalStreamRequestedBound = this._handleLocalStreamRequested.bind(this)

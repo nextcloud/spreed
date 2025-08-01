@@ -46,24 +46,14 @@
 		<LocalAudioControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
+			:show-devices="!isSidebar"
 			variant="tertiary" />
 
 		<LocalVideoControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
+			:show-devices="!isSidebar"
 			variant="tertiary" />
-
-		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
-			:title="toggleVirtualBackgroundButtonLabel"
-			variant="tertiary"
-			:aria-label="toggleVirtualBackgroundButtonLabel"
-			:class="blurButtonClass"
-			@click.stop="toggleVirtualBackground">
-			<template #icon>
-				<IconBlur v-if="isVirtualBackgroundEnabled" :size="20" />
-				<IconBlurOff v-else :size="20" />
-			</template>
-		</NcButton>
 
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
@@ -114,8 +104,6 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconBlur from 'vue-material-design-icons/Blur.vue'
-import IconBlurOff from 'vue-material-design-icons/BlurOff.vue'
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconMonitorOff from 'vue-material-design-icons/MonitorOff.vue'
 import IconMonitorShare from 'vue-material-design-icons/MonitorShare.vue'
@@ -139,8 +127,6 @@ export default {
 		NcButton,
 		NcPopover,
 		// Icons
-		IconBlur,
-		IconBlurOff,
 		IconMonitor,
 		IconMonitorOff,
 		IconMonitorShare,
@@ -187,32 +173,12 @@ export default {
 	},
 
 	computed: {
-		isVirtualBackgroundAvailable() {
-			return this.model.attributes.virtualBackgroundAvailable
-		},
-
-		isVirtualBackgroundEnabled() {
-			return this.model.attributes.virtualBackgroundEnabled
-		},
-
-		toggleVirtualBackgroundButtonLabel() {
-			return this.isVirtualBackgroundEnabled
-				? t('spreed', 'Disable background blur')
-				: t('spreed', 'Blur background')
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
 		isScreensharingAllowed() {
 			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN
-		},
-
-		blurButtonClass() {
-			return {
-				'blur-disabled': this.isVirtualBackgroundEnabled,
-			}
 		},
 
 		screenSharingButtonClass() {
@@ -312,7 +278,7 @@ export default {
 				return null
 			}
 
-			const virtualBackgroundEnabled = this.isVirtualBackgroundAvailable && this.model.attributes.virtualBackgroundEnabled
+			const virtualBackgroundEnabled = this.model.attributes.virtualBackgroundAvailable && this.model.attributes.virtualBackgroundEnabled
 
 			if (!this.model.attributes.audioEnabled && this.model.attributes.videoEnabled && virtualBackgroundEnabled && this.model.attributes.localScreen) {
 				return {
@@ -396,14 +362,6 @@ export default {
 
 	methods: {
 		t,
-
-		toggleVirtualBackground() {
-			if (this.model.attributes.virtualBackgroundEnabled) {
-				this.model.disableVirtualBackground()
-			} else {
-				this.model.enableVirtualBackground()
-			}
-		},
 
 		toggleScreenSharingMenu() {
 			if (!this.isScreensharingAllowed) {
