@@ -178,6 +178,7 @@ export default {
 			// if this conversation is joined again.
 			await this.$store.dispatch('purgeParticipantsStore', this.token)
 
+			await this.$router.push({ name: 'conversation', params: { token: this.token } })
 			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// The current participant (which is automatically set when fetching

@@ -8,6 +8,7 @@ import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
+import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
@@ -87,14 +88,18 @@ function getShareToken() {
 	return shareTokenElement.value
 }
 
+const router = createMemoryRouter()
+
 createApp(PublicShareAuthRequestPasswordButton, { shareToken: getShareToken() })
 	.use(pinia)
 	.use(store)
+	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
 	.mount('#request-password')
 
 createApp(PublicShareAuthSidebar)
 	.use(pinia)
 	.use(store)
+	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
 	.mount(document.querySelector('#talk-sidebar'))
