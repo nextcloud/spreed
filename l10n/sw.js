@@ -385,6 +385,7 @@ OC.L10N.register(
     "Copy translated text" : "Nakili maandishi yaliyotafsiriwa",
     "Contact" : "Mawasiliano",
     "{stack} in {board}" : "{stack} katika {board}",
+    "Remove {fileName}" : "Remove {fileName}",
     "Poll" : "Kura ya maoni",
     "Today" : "Leo",
     "Yesterday" : "Jana",

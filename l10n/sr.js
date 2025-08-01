@@ -1504,6 +1504,7 @@ OC.L10N.register(
     "No permission to post messages in this conversation" : "Нема дозвола за објављивање порука у овај разговор",
     "Joining conversation …" : "Приступа се разговору...",
     "Write a message without notification" : "Напиши поруку без обавештења",
+    "Create a thread" : "Креирај нит",
     "Send message silently" : "Пошаљи поруку у тишини",
     "Send message" : "Пошаљи поруку",
     "Send without notification" : "Пошаљи без обавештења",
