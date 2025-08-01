@@ -130,11 +130,13 @@ export default {
 			for (let transcript of transcriptsInFirstLine) {
 				this.$refs.transcriptParagraph.removeChild(transcript)
 			}
+			this.transcripts.splice(0, transcriptsInFirstLine.length)
 
 			if (replaceLastTranscript) {
 				const placeholder = document.createElement('span')
 				placeholder.setAttribute('style', 'display: inline-block; width: ' + placeholderWidth + 'px; height: ' + placeholderHeight + 'px;')
 				this.$refs.transcriptParagraph.prepend(placeholder)
+				this.transcripts.unshift(placeholder)
 			}
 
 			return true
