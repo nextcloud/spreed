@@ -1228,6 +1228,13 @@ const actions = {
 		}, 30000)
 
 		try {
+			// New message should be appended to the most recent block without gaps
+			const chatStore = useChatStore()
+			const conversation = context.rootGetters.conversation(token)
+			const conversationLastMessageId = ('id' in conversation.lastMessage)
+				? conversation.lastMessage.id
+				: chatStore.getLastKnownId(token, { threadId: temporaryMessage.threadId })
+
 			const response = await request({
 				token,
 				message: temporaryMessage.message,
@@ -1251,8 +1258,10 @@ const actions = {
 			// Own message might have been added already by polling, which is more up-to-date (e.g. reactions)
 			if (!context.state.messages[token]?.[response.data.ocs.data.id]) {
 				context.dispatch('processMessage', { token, message: response.data.ocs.data })
-				const chatStore = useChatStore()
-				chatStore.addMessageToChatBlocks(token, response.data.ocs.data)
+				chatStore.processChatBlocks(token, [response.data.ocs.data], {
+					mergeBy: conversationLastMessageId,
+					threadId: response.data.ocs.data.threadId,
+				})
 			}
 
 			return response

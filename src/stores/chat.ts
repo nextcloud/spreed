@@ -40,6 +40,14 @@ function checkIfIntersect(parentBlock: Set<number>, childBlock: Set<number>): bo
 }
 
 /**
+ * Return an array of only numeric ids from given set
+ * (temporary messages have a string id)
+ */
+function filterNumericIds(block: Set<number | string>): number[] {
+	return Array.from(block).filter((id): id is number => Number.isInteger(id))
+}
+
+/**
  * Store for conversation chats
  */
 export const useChatStore = defineStore('chat', () => {
@@ -127,16 +135,14 @@ export const useChatStore = defineStore('chat', () => {
 			// FIXME temporary check all messages for given thread from all chat blocks
 			return Math.min(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
 				.filter((message) => {
-					return message.threadId === threadId
+					return message.threadId === threadId && Number.isInteger(message.id)
 				}).map((message) => message.id))
 		}
 
-		if (messageId <= 0) {
-			return Math.min(...chatBlocks[token][0])
-		}
-
-		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
-		return contextBlock ? Math.min(...contextBlock) : Math.min(...chatBlocks[token][0])
+		const contextBlock = (messageId <= 0)
+			? chatBlocks[token][0]
+			: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+		return Math.min(...filterNumericIds(contextBlock))
 	}
 
 	/**
@@ -154,16 +160,14 @@ export const useChatStore = defineStore('chat', () => {
 			// FIXME temporary check all messages for given thread from all chat blocks
 			return Math.max(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
 				.filter((message) => {
-					return message.threadId === threadId
+					return message.threadId === threadId && Number.isInteger(message.id)
 				}).map((message) => message.id))
 		}
 
-		if (messageId <= 0) {
-			return Math.max(...chatBlocks[token][0])
-		}
-
-		const contextBlock = chatBlocks[token].find((set) => set.has(messageId))
-		return contextBlock ? Math.max(...contextBlock) : Math.max(...chatBlocks[token][0])
+		const contextBlock = (messageId <= 0)
+			? chatBlocks[token][0]
+			: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+		return Math.max(...filterNumericIds(contextBlock))
 	}
 
 	/**
