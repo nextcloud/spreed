@@ -27,9 +27,7 @@ const enableLiveTranscription = async (token) => {
 const disableLiveTranscription = async (token) => {
 	const signalingSessionId = window.signaling.getSessionId()
 
-	await axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }), {
-		signalingSessionId,
-	})
+	await axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}?signalingSessionId={signalingSessionId}', { token, signalingSessionId }))
 }
 
 export {
