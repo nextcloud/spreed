@@ -442,6 +442,9 @@ export default {
 
 		.top-bar__icon-wrapper {
 			margin-inline-start: 0;
+			height: var(--default-clickable-area);
+			display: flex;
+			align-items: center;
 		}
 	}
 
