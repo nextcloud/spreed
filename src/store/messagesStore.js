@@ -936,6 +936,7 @@ const actions = {
 	 * @param {string} data.token the conversation token;
 	 * @param {object} data.requestOptions request options;
 	 * @param {string} data.lastKnownMessageId last known message id;
+	 * @param {number} data.threadId Thread id to fetch messages for;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 * @param {number} [data.lookIntoFuture=0] direction of message fetch
@@ -944,6 +945,7 @@ const actions = {
 		token,
 		lastKnownMessageId,
 		includeLastKnown,
+		threadId,
 		requestOptions,
 		minimumVisible,
 		lookIntoFuture = CHAT.FETCH_OLD,
@@ -961,6 +963,7 @@ const actions = {
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
+			threadId,
 			lookIntoFuture,
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
@@ -1018,6 +1021,7 @@ const actions = {
 		const chatStore = useChatStore()
 		chatStore.processChatBlocks(token, response.data.ocs.data, {
 			mergeBy: +lastKnownMessageId,
+			threadId,
 		})
 
 		if (minimumVisible > 0) {
@@ -1031,6 +1035,7 @@ const actions = {
 				token,
 				lastKnownMessageId,
 				includeLastKnown,
+				threadId,
 				lookIntoFuture,
 				minimumVisible,
 			})
@@ -1047,10 +1052,17 @@ const actions = {
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the conversation token;
 	 * @param {number} data.messageId Message id to get the context for;
+	 * @param {number} data.threadId Thread id to get the context for;
 	 * @param {object} data.requestOptions request options;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 */
-	async getMessageContext(context, { token, messageId, requestOptions, minimumVisible }) {
+	async getMessageContext(context, {
+		token,
+		messageId,
+		threadId,
+		requestOptions,
+		minimumVisible,
+	}) {
 		minimumVisible = (typeof minimumVisible === 'undefined') ? Math.floor(CHAT.MINIMUM_VISIBLE / 2) : minimumVisible
 
 		context.dispatch('cancelGetMessageContext')
@@ -1063,6 +1075,7 @@ const actions = {
 		const response = await request({
 			token,
 			messageId,
+			threadId,
 			limit: CHAT.FETCH_LIMIT / 2,
 		}, requestOptions)
 
@@ -1116,7 +1129,7 @@ const actions = {
 		context.commit('loadedMessagesOfConversation', { token })
 
 		const chatStore = useChatStore()
-		chatStore.processChatBlocks(token, response.data.ocs.data)
+		chatStore.processChatBlocks(token, response.data.ocs.data, { threadId })
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | get context`, 'first chunk')
@@ -1126,6 +1139,7 @@ const actions = {
 				token,
 				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
 				includeLastKnown: false,
+				threadId,
 				lookIntoFuture: CHAT.FETCH_OLD,
 				minimumVisible: minimumVisible * 2,
 			})

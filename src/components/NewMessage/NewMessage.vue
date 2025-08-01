@@ -967,7 +967,9 @@ export default {
 			}
 
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token).findLast((message) => {
+			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token, {
+				threadId: this.threadId,
+			}).findLast((message) => {
 				return this.actorStore.checkIfSelfIsActor(message)
 					&& !message.isTemporary && !message.systemMessage
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)

@@ -211,7 +211,8 @@ export default {
 		},
 
 		scrollToBottom() {
-			this.$router.replace({ hash: '' })
+			// Reset the hash from focused message id (but keep the thread id)
+			this.$router.replace({ query: this.$route.query, hash: '' })
 			EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
 		},
 	},
