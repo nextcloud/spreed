@@ -71,13 +71,13 @@ export default {
 	methods: {
 		handleTranscript(model, message) {
 			if (this.currentSpeaker && this.currentSpeaker !== model.attributes.peerId) {
-				this.currentSpeaker = model.attributes.peerId
-
 				const lineBreak = document.createElement('br')
 				this.transcripts.push(lineBreak)
 
 				this.$refs.transcriptParagraph.append(lineBreak)
 			}
+
+			this.currentSpeaker = model.attributes.peerId
 
 			const transcriptSpan = document.createElement('span')
 			transcriptSpan.textContent = message
