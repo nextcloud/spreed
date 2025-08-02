@@ -575,6 +575,7 @@ OC.L10N.register(
     "Back" : "Назад",
     "Cancel" : "Откажи",
     "Add participant \"{user}\"" : "Додади учесник \"{user}\"",
+    "Loading …" : "Се вчитува…",
     "From" : "Од",
     "To" : "До",
     "Calendar" : "Календар",
