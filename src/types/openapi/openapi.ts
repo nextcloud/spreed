@@ -1625,7 +1625,11 @@ export type paths = {
          * @description Required capability: `threads`
          */
         get: operations["thread-get-thread"];
-        put?: never;
+        /**
+         * Rename a thread
+         * @description Required capability: `threads`
+         */
+        put: operations["thread-rename-thread"];
         post?: never;
         delete?: never;
         options?: never;
@@ -9779,6 +9783,82 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "thread" | "status";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "thread-rename-thread": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The thread ID to get the info for */
+                threadId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New thread title, must not be empty */
+                    threadTitle: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Thread renamed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ThreadInfo"];
+                        };
+                    };
+                };
+            };
+            /** @description When the provided title is empty */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "title";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Thread not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "thread";
                             };
                         };
                     };
