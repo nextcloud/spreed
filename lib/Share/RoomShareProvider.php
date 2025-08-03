@@ -16,6 +16,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
@@ -60,6 +61,7 @@ class RoomShareProvider implements IShareProvider {
 		private IEventDispatcher $dispatcher,
 		private Manager $manager,
 		private ParticipantService $participantService,
+		protected RoomService $roomService,
 		protected ITimeFactory $timeFactory,
 		private IL10N $l,
 		private IMimeTypeLoader $mimeTypeLoader,
@@ -151,6 +153,8 @@ class RoomShareProvider implements IShareProvider {
 
 			return $this->getRawShare($shareId);
 		}, $this->dbConnection);
+
+		$this->roomService->setHasAttachments($room);
 
 		return $this->createShareObject($data);
 	}
@@ -787,7 +791,7 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomTokensForUser($userId);
+		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
 
 		/** @var IShare[] $shares */
 		$shares = [];
