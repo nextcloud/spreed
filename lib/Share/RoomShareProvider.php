@@ -793,18 +793,15 @@ class RoomShareProvider implements IShareProvider {
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
 		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
 
+		if (empty($allRooms)) {
+			return [];
+		}
+
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$start = 0;
-		while (true) {
-			$rooms = array_slice($allRooms, $start, 100);
-			$start += 100;
-
-			if ($rooms === []) {
-				break;
-			}
-
+		$chunks = array_chunk($allRooms, 250);
+		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
 				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
