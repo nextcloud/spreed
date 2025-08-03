@@ -519,9 +519,13 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
+				if (isset($parameters['share'])) {
+					$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				} else {
+					$parsedParameters['file'] = $this->getFileByFileId($room, $participant, (int)$parameters['fileId'], $allowInaccurate, $metaData);
+				}
 				if (isset($metaData['messageType'])) {
 					if ($metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
 						$chatMessage->setMessageType(ChatManager::VERB_VOICE_MESSAGE);
@@ -539,7 +543,8 @@ class SystemMessage implements IEventListener {
 				if (isset($metaData['caption']) && $metaData['caption'] !== '') {
 					$parsedMessage = $metaData['caption'];
 				}
-			} catch (\Exception) {
+			} catch (\Exception $e) {
+				nvlog(get_class($e) . '--' . $e->getMessage());
 				$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
@@ -866,6 +871,128 @@ class SystemMessage implements IEventListener {
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 			'hide-download' => $share->getHideDownload() ? 'yes' : 'no',
+		];
+
+		// If a preview is available, check if we can get the dimensions of the file from the metadata API
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
+				}
+
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
+			} catch (FilesMetadataNotFoundException) {
+			}
+		}
+
+		if ($node instanceof FileInfo && $node->getMimeType() === 'text/vcard') {
+			$vCard = $node->getContent();
+
+			$vObject = Reader::read($vCard);
+			if (!empty($vObject->FN)) {
+				$data['contact-name'] = (string)$vObject->FN;
+			}
+
+			$photo = $this->photoCache->getPhotoFromVObject($vObject);
+			if ($photo) {
+				$data['contact-photo-mimetype'] = $photo['Content-Type'];
+				$data['contact-photo'] = base64_encode($photo['body']);
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @throws InvalidPathException
+	 * @throws NotFoundException
+	 * @throws ShareNotFound
+	 */
+	protected function getFileByFileId(Room $room, ?Participant $participant, int $fileId, bool $allowInaccurate, array $parameters): array {
+		if ($allowInaccurate) {
+			return [
+				'type' => 'file',
+				'id' => (string)$fileId,
+				'name' => $parameters['fileName'],
+				'path' => $parameters['fileName'],
+				'mimetype' => $parameters['mimeType'],
+			];
+		}
+
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
+			if (!$userFolder instanceof Node) {
+				throw new ShareNotFound();
+			}
+
+			$node = $userFolder->getFirstNodeById($fileId);
+			if (!$node instanceof Node) {
+				// FIXME This should be much more sensible, e.g.
+				// 1. Only be executed on "Waiting for new messages"
+				// 2. Once per request
+				\OC_Util::tearDownFS();
+				\OC_Util::setupFS($participant->getAttendee()->getActorId());
+				$userNodes = $userFolder->getById($fileId);
+
+				if (empty($userNodes)) {
+					throw new NotFoundException('File was not found');
+				}
+
+				/** @var Node $node */
+				$node = reset($userNodes);
+			}
+
+			$fullPath = $node->getPath();
+			$pathSegments = explode('/', $fullPath, 4);
+			$name = $node->getName();
+			$size = $node->getSize();
+			$path = $pathSegments[3] ?? $name;
+
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
+				'fileid' => $fileId,
+			]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new ShareNotFound();
+		} else {
+			if ($allowInaccurate) {
+				$node = $share->getNodeCacheEntry();
+			} else {
+				$node = $share->getNode();
+				$this->dispatcher->dispatchTyped(new OverwritePublicSharePropertiesEvent($share));
+			}
+
+			$name = $node->getName();
+			$size = $node->getSize();
+			$path = $name;
+
+			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', [
+				'token' => $share->getToken(),
+			]);
+		}
+
+		$fileId = $node->getId();
+		if ($node instanceof FileInfo) {
+			$isPreviewAvailable = $this->previewManager->isAvailable($node);
+		} else {
+			$isPreviewAvailable = $size > 0 && $this->previewManager->isMimeSupported($node->getMimeType());
+		}
+
+		$data = [
+			'type' => 'file',
+			'id' => (string)$fileId,
+			'name' => $name,
+			'size' => (string)$size,
+			'path' => $path,
+			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => (string)$node->getPermissions(),
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => /*$share?->getHideDownload() ? 'yes' :*/ 'no', // FIXME
 		];
 
 		// If a preview is available, check if we can get the dimensions of the file from the metadata API
