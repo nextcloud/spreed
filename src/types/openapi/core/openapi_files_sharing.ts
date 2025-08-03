@@ -468,6 +468,7 @@ export type components = {
              * @enum {integer}
              */
             hide_download: 0 | 1;
+            is_trusted_server?: boolean;
             "is-mount-root": boolean;
             id: string;
             /** Format: int64 */
