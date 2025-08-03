@@ -1198,7 +1198,7 @@ export type components = {
             userId: string | null;
             appId: string;
             input: components["schemas"]["TaskProcessingIO"];
-            output: components["schemas"]["TaskProcessingIO"];
+            output: components["schemas"]["TaskProcessingIO"] | null;
             customId: string | null;
             /** Format: int64 */
             completionExpectedAt: number | null;
@@ -2342,7 +2342,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
@@ -2394,7 +2394,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
@@ -2429,7 +2429,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
@@ -2474,7 +2474,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
@@ -2511,7 +2511,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
@@ -2558,7 +2558,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 references: {
-                                    [key: string]: components["schemas"]["Reference"];
+                                    [key: string]: components["schemas"]["Reference"] | null;
                                 };
                             };
                         };
