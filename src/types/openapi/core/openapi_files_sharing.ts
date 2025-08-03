@@ -468,6 +468,7 @@ export type components = {
              * @enum {integer}
              */
             hide_download: 0 | 1;
+            is_trusted_server?: boolean;
             "is-mount-root": boolean;
             id: string;
             /** Format: int64 */
@@ -559,15 +560,15 @@ export type components = {
         ShareeLookup: components["schemas"]["Sharee"] & {
             extra: {
                 federationId: string;
-                name: components["schemas"]["Lookup"];
-                email: components["schemas"]["Lookup"];
-                address: components["schemas"]["Lookup"];
-                website: components["schemas"]["Lookup"];
-                twitter: components["schemas"]["Lookup"];
-                phone: components["schemas"]["Lookup"];
-                twitter_signature: components["schemas"]["Lookup"];
-                website_signature: components["schemas"]["Lookup"];
-                userid: components["schemas"]["Lookup"];
+                name: components["schemas"]["Lookup"] | null;
+                email: components["schemas"]["Lookup"] | null;
+                address: components["schemas"]["Lookup"] | null;
+                website: components["schemas"]["Lookup"] | null;
+                twitter: components["schemas"]["Lookup"] | null;
+                phone: components["schemas"]["Lookup"] | null;
+                twitter_signature: components["schemas"]["Lookup"] | null;
+                website_signature: components["schemas"]["Lookup"] | null;
+                userid: components["schemas"]["Lookup"] | null;
             };
             value: components["schemas"]["ShareeValue"] & {
                 globalScale: boolean;
