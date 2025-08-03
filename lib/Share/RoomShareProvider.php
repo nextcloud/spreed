@@ -826,11 +826,7 @@ class RoomShareProvider implements IShareProvider {
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
 					$rooms,
 					IQueryBuilder::PARAM_STR_ARRAY
-				)))
-				->andWhere($qb->expr()->orX(
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('file')),
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('folder'))
-				));
+				)));
 
 			$cursor = $qb->executeQuery();
 			while ($data = $cursor->fetch()) {
