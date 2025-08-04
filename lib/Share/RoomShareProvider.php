@@ -831,6 +831,10 @@ class RoomShareProvider implements IShareProvider {
 
 			$cursor = $qb->executeQuery();
 			while ($data = $cursor->fetch()) {
+				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
+					continue;
+				}
+
 				if (!$this->isAccessibleResult($data)) {
 					continue;
 				}
