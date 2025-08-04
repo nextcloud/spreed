@@ -532,7 +532,7 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC netiek atbalstīta jūsu pārlūkprogrammā",
     "Please use a different browser like Firefox or Chrome" : "Lūdzu, izmantojiet citu pārlūkprogrammu, piemēram Firefox vai Chrome",
     "Error while accessing microphone & camera" : "Kļūda, piekļūstot mikrofonam un kamerai",
-    "The password is wrong. Try again." : "Nepareiza parole. Mēģiniet vēlreiz.",
+    "The password is wrong. Try again." : "Nepareiza parole. Jāmēģina vēlreiz.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
@@ -543,7 +543,7 @@ OC.L10N.register(
     "Reports" : "Atskaites",
     "%s invited you to a conversation." : "%s uzaicināja jūs uz sarunu.",
     "You were invited to a conversation." : "Jūs uzaicinājāt uz sarunu.",
-    "Click the button below to join." : "Noklikšķiniet uz tālāk esošās pogas, lai pievienotos.",
+    "Click the button below to join." : "Jāklikšķina uz zemāk esošās pogas, lai pievienotos.",
     "Join »%s«" : "Pievienoties »%s«",
     "{user} invited you to a private conversation" : "{user} uzaicināja jūs uz privātu sarunu",
     "Close" : "Aizvērt"
