@@ -42,7 +42,7 @@ jobs:
 
       - name: Get app version number
         id: app-version
-        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # master
+        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # v1.0.0
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
           expression: "//info//version/text()"
@@ -53,7 +53,7 @@ jobs:
 
       - name: Get appinfo data
         id: appinfo
-        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # master
+        uses: skjnldsv/xpath-action@f5b036e9d973f42c86324833fd00be90665fbf77 # v1.0.0
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
           expression: "//info//dependencies//nextcloud/@min-version"
@@ -87,7 +87,7 @@ jobs:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
       - name: Set up php ${{ steps.php-versions.outputs.php-min }}
-        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2.34.1
+        uses: shivammathur/setup-php@ccf2c627fe61b1b4d924adfcbd19d661a18133a0 # v2.35.2
         with:
           php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
@@ -173,7 +173,7 @@ jobs:
           tar -zcvf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
 
       - name: Attach tarball to github release
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # v2
+        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # v2.11.2
         id: attach_to_release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -183,7 +183,7 @@ jobs:
           overwrite: true
 
       - name: Upload app to Nextcloud appstore
-        uses: nextcloud-releases/nextcloud-appstore-push-action@a011fe619bcf6e77ddebc96f9908e1af4071b9c1 # v1
+        uses: nextcloud-releases/nextcloud-appstore-push-action@a011fe619bcf6e77ddebc96f9908e1af4071b9c1 # v1.0.3
         with:
           app_name: ${{ env.APP_NAME }}
           appstore_token: ${{ secrets.APPSTORE_TOKEN }}
