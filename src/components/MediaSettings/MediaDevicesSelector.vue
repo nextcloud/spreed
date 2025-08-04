@@ -127,7 +127,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 .media-devices-selector {
 	display: flex;
 	gap: var(--default-grid-baseline);
-	margin: calc(4 * var(--default-grid-baseline)) 0;
+	margin: calc(2 * var(--default-grid-baseline)) 0;
 	align-items: center;
 
 	&__icon {
