@@ -28,6 +28,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -121,6 +122,83 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		if ($thread->getRoomId() !== $this->room->getId()) {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
+
+		$list = $this->prepareListOfThreads([$thread]);
+		/** @var TalkThreadInfo $threadInfo */
+		$threadInfo = array_shift($list);
+		return new DataResponse($threadInfo);
+	}
+
+	/**
+	 * Rename a thread
+	 *
+	 * Required capability: `threads`
+	 *
+	 * @param int $threadId The thread ID to get the info for
+	 * @psalm-param non-negative-int $threadId
+	 * @param string $threadTitle New thread title, must not be empty
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 *
+	 * 200: Thread renamed successfully
+	 * 400: When the provided title is empty
+	 * 404: Thread not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/chat/{token}/threads/{threadId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'threadId' => '[0-9]+',
+	])]
+	public function renameThread(int $threadId, string $threadTitle): DataResponse {
+		$threadTitle = trim($threadTitle);
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController::class);
+			return $proxy->renameThread($this->room, $this->participant, $threadId, $threadTitle);
+		}
+
+		try {
+			$thread = $this->threadService->findByThreadId($threadId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($thread->getRoomId() !== $this->room->getId()) {
+			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+		}
+
+		# FIXME Only allow for moderator and original author
+
+		try {
+			$this->threadService->renameThread($thread, $threadTitle);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => 'title'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$threadId);
+		} catch (NotFoundException) {
+			// Root message expired, continuing without replying
+			$comment = null;
+		}
+
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'thread_renamed', 'parameters' => ['thread' => $threadId, 'title' => $thread->getName()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true,
+			true,
+			$threadId,
+		);
 
 		$list = $this->prepareListOfThreads([$thread]);
 		/** @var TalkThreadInfo $threadInfo */

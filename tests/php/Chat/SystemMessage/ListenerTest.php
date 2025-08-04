@@ -242,6 +242,7 @@ class ListenerTest extends TestCase {
 				null,
 				false,
 				false,
+				0,
 			];
 		}
 		if (!empty($consecutive)) {
@@ -343,6 +344,7 @@ class ListenerTest extends TestCase {
 				null,
 				false,
 				false,
+				0,
 			];
 		}
 		if (isset($consecutive)) {

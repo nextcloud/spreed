@@ -574,10 +574,23 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'thread_created') {
 			$parsedMessage = $this->l->t('{actor} created thread {title}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You created thread {title}');
+			}
 			$parsedParameters['title'] = [
 				'type' => 'highlight',
 				'id' => 'thread/' . $parameters['thread'],
 				'name' => $parameters['title'] ?? (string)$parameters['thread'],
+			];
+		} elseif ($message === 'thread_renamed') {
+			$parsedMessage = $this->l->t('{actor} renamed thread {title}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You renamed thread {title}');
+			}
+			$parsedParameters['title'] = [
+				'type' => 'highlight',
+				'id' => 'thread/' . $parameters['thread'],
+				'name' => $parameters['title'],
 			];
 		} elseif ($message === 'matterbridge_config_edited') {
 			$parsedMessage = $this->l->t('{actor} updated the Matterbridge configuration');
