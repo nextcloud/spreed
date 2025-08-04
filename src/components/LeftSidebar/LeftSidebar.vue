@@ -37,7 +37,7 @@
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
-							<IconFilterOutline :size="15" />
+							<IconFilterOutline :size="20" />
 						</template>
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
