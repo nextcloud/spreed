@@ -800,7 +800,7 @@ class RoomShareProvider implements IShareProvider {
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$chunks = array_chunk($allRooms, 250);
+		$chunks = array_chunk($allRooms, 100);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
