@@ -55,7 +55,7 @@
 					:disabled="disabled"
 					@click="dialOutPhoneNumber">
 					<template #icon>
-						<IconPhoneOutline :size="20" />
+						<IconPhoneDialOutline :size="20" />
 					</template>
 				</NcButton>
 				<template v-else>
@@ -160,7 +160,7 @@
 					close-after-click
 					@click="dialOutPhoneNumber">
 					<template #icon>
-						<IconPhoneOutline :size="20" />
+						<IconPhoneDialOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Dial out phone number') }}
 				</NcActionButton>
@@ -334,9 +334,9 @@ import IconLockOutline from 'vue-material-design-icons/LockOutline.vue'
 import IconLockReset from 'vue-material-design-icons/LockReset.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
 import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
 import IconPhoneInTalkOutline from 'vue-material-design-icons/PhoneInTalkOutline.vue'
-import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPhonePausedOutline from 'vue-material-design-icons/PhonePausedOutline.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
@@ -393,7 +393,7 @@ export default {
 		IconLockReset,
 		IconMicrophoneOutline,
 		IconPencilOutline,
-		IconPhoneOutline,
+		IconPhoneDialOutline,
 		IconPhoneInTalkOutline,
 		IconPhoneHangupOutline,
 		IconPhonePausedOutline,
@@ -581,7 +581,7 @@ export default {
 			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
 				return { icon: IconVideoOutline, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {
-				return { icon: IconPhoneOutline, size: 20, title: t('spreed', 'Joined via phone') }
+				return { icon: IconPhoneDialOutline, size: 20, title: t('spreed', 'Joined via phone') }
 			} else {
 				return { icon: IconMicrophoneOutline, size: 20, title: t('spreed', 'Joined with audio') }
 			}
