@@ -80,14 +80,6 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/MatterbridgeManager.php">
-    <UndefinedClass>
-      <code><![CDATA[$this->tokenProvider]]></code>
-      <code><![CDATA[$this->tokenProvider]]></code>
-      <code><![CDATA[$this->tokenProvider]]></code>
-      <code><![CDATA[private]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess>
       <code><![CDATA[$return['num_rooms']]]></code>
