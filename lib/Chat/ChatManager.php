@@ -1030,13 +1030,20 @@ class ChatManager {
 		}
 		if ($search === '' || $this->searchIsPartOfConversationNameOrAtAll($search, $roomDisplayName)) {
 			$participantCount = $this->participantService->getNumberOfUsers($room);
-			$results[] = [
+
+			$atAllResult = [
 				'id' => 'all',
 				'label' => $roomDisplayName,
-				'details' => $this->l->n('All %n participant', 'All %n participants', $participantCount),
 				'source' => 'calls',
 				'mentionId' => 'all',
 			];
+
+			if ($participantCount > 1) {
+				// TRANSLATORS The string will only be used with more than 1 participant, so you can keep the "All" in all plural forms
+				$atAllResult['details'] = $this->l->n('All %n participant', 'All %n participants', $participantCount);
+			}
+
+			$results[] = $atAllResult;
 		}
 		return $results;
 	}
