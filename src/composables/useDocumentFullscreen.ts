@@ -3,18 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { DeepReadonly, Ref } from 'vue'
-
+import { emit } from '@nextcloud/event-bus'
 import { createSharedComposable } from '@vueuse/core'
-import { onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
+import { onBeforeUnmount, readonly, ref } from 'vue'
+
+const isFullscreen = ref<boolean>(document.fullscreenElement !== null)
 
 /**
  * Composable to check whether the page is displayed at fullscreen
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is displayed at fullscreen
  */
 function useDocumentFullscreenComposable() {
-	const isFullscreen = ref<boolean>(document.fullscreenElement !== null)
-
 	const changeIsFullscreen = () => {
 		isFullscreen.value = document.fullscreenElement !== null
 
@@ -39,7 +38,9 @@ function useDocumentFullscreenComposable() {
 /**
  * Enable a fullscreen with Fullscreen API
  */
-export async function enableFullscreen() {
+async function enableFullscreen() {
+	emit('toggle-navigation', { open: false })
+
 	if (document.body.requestFullscreen) {
 		await document.body.requestFullscreen()
 	} else if (document.body.webkitRequestFullscreen) {
@@ -50,11 +51,24 @@ export async function enableFullscreen() {
 /**
  * Disable a fullscreen
  */
-export async function disableFullscreen() {
+async function disableFullscreen() {
 	if (document.exitFullscreen) {
 		await document.exitFullscreen()
 	} else if (document.webkitExitFullscreen) {
 		await document.webkitExitFullscreen()
+	}
+}
+
+/**
+ * Toggles the full screen mode of the call view.
+ * If the sidebar is open, it does nothing.
+ * If there is an open modal, it shows a warning.
+ */
+export function toggleFullscreen() {
+	if (isFullscreen.value) {
+		disableFullscreen()
+	} else {
+		enableFullscreen()
 	}
 }
 

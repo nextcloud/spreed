@@ -39,6 +39,10 @@ import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
+import {
+	toggleFullscreen,
+	useDocumentFullscreen,
+} from './composables/useDocumentFullscreen.ts'
 import { useDocumentTitle } from './composables/useDocumentTitle.ts'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useGetToken } from './composables/useGetToken.ts'
@@ -77,6 +81,7 @@ export default {
 		useGetMessagesProvider()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
+		useDocumentFullscreen()
 
 		return {
 			token: useGetToken(),
@@ -209,6 +214,7 @@ export default {
 	created() {
 		window.addEventListener('beforeunload', this.preventUnload)
 		useHotKey('f', this.handleAppSearch, { ctrl: true, stop: true, prevent: true })
+		useHotKey('f', toggleFullscreen)
 		if (getCurrentUser()) {
 			useHotKey('Escape', this.openRoot, { stop: true, prevent: true })
 		}
