@@ -732,7 +732,7 @@ class ChatManagerTest extends TestCase {
 					'actor_id' => 'user',
 				])],
 				1,
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all', 'details' => 'All 1 participant']],
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']],
 			],
 			[
 				'all',
