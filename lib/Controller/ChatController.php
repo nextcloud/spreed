@@ -268,6 +268,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 				$this->chatManager->addSystemMessage(
 					$this->room,
+					$this->participant,
 					$this->participant->getAttendee()->getActorType(),
 					$this->participant->getAttendee()->getActorId(),
 					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
@@ -362,7 +363,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		]);
 
 		try {
-			$comment = $this->chatManager->addSystemMessage($this->room, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
+			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
