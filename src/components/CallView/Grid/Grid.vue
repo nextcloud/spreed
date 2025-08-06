@@ -100,6 +100,7 @@
 				<LocalVideo v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
+					:class="{ 'local-video--highlighted': isLessThanTwoVideos }"
 					:is-stripe="true"
 					:show-controls="false"
 					:token="token"
@@ -1127,6 +1128,10 @@ export default {
 		/* needed again to override default active button style */
 		background: none;
 	}
+}
+
+.local-video--highlighted {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 </style>
