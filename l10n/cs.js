@@ -1777,6 +1777,7 @@ OC.L10N.register(
     "Mouse wheel" : "Kolečko myši",
     "Zoom-in / zoom-out a screen share" : "Přiblížit/oddálit sdílení obrazovky",
     "Talk version: {version}" : "Verze Talk: {version}",
+    "More actions" : "Další akce",
     "Start call silently" : "Zahájit hovor tiše",
     "Start call" : "Zavolat",
     "End call" : "Ukončit hovor",

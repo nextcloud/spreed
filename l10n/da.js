@@ -742,6 +742,7 @@ OC.L10N.register(
     "Raise or lower hand" : "Løft eller sænk hånden",
     "Mouse wheel" : "Musehjul",
     "Zoom-in / zoom-out a screen share" : "Zoom ind / zoom ud på en skærmdeling",
+    "More actions" : "Flere handlinger",
     "Start call" : "Start opkald",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Snak blev opdateret, du kan ikke starte eller deltage i et opkald.",
     "End call for everyone" : "Afslut opkald for alle",
