@@ -86,7 +86,7 @@ class Listener implements IEventListener {
 			$actorType = Attendee::ACTOR_GUESTS;
 			$actorId = Attendee::ACTOR_ID_SYSTEM;
 		}
-		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
+		$this->chatManager->addSystemMessage($room, $actor, $actorType, $actorId, json_encode([
 			'message' => $message,
 			'parameters' => [
 				'users' => $userIds,
