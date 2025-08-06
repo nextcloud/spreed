@@ -17,7 +17,7 @@ $messages-list-max-width: calc($messages-avatar-width + $messages-text-max-width
 $messages-input-max-width: calc($messages-list-max-width - 100px);
 
 // background color of call container
-$color-call-background: rgba(34, 34, 34, 0.8);
+$color-call-background: rgba(0, 0, 0, 0.7);
 
 // transition
 $transition-duration-quick: var(--animation-quick, 100ms);

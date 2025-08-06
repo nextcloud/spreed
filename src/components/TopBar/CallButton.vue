@@ -488,7 +488,7 @@ export default {
 }
 
 .leave-call-actions--split {
-	gap: calc(var(--default-grid-baseline) / 2);
+	gap: 1px;
 }
 
 .leave-call-actions--split :deep(.action-item--single) {
