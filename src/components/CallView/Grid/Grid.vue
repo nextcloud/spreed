@@ -971,6 +971,7 @@ export default {
 	inset-inline-start: 0;
 
 	&:has(.stripe-wrapper) {
+		margin-top: var(--grid-gap);
 		bottom: var(--grid-gap);
 		padding-inline: var(--grid-gap);
 	}
@@ -1105,7 +1106,7 @@ export default {
 
 .stripe--collapse {
 	position: absolute !important;
-	top: calc(-1 * (var(--default-clickable-area) + var(--navigation-position) / 2));
+	top: calc(-1 * var(--default-clickable-area));
 	inset-inline-end: var(--navigation-position);
 }
 

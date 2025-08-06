@@ -265,9 +265,9 @@ useHotKey('f', toggleFullscreen)
 	align-items: center;
 	flex-direction: row;
 	gap: var(--default-grid-baseline);
+}
 
-	:deep(.button-vue) {
-		background-color: var(--color-primary-light);
-	}
+:deep(.button-vue--tertiary) {
+	background-color: var(--color-primary-light);
 }
 </style>

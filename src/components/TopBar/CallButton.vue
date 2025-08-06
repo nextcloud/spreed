@@ -4,87 +4,82 @@
 -->
 
 <template>
-	<div>
-		<NcButton v-if="showStartCallButton"
-			id="call_button"
-			:title="startCallTitle"
-			:aria-label="startCallLabel"
-			:disabled="startCallButtonDisabled || loading || isJoiningCall"
-			:variant="hasCall ? 'success' : 'primary'"
-			@click="handleClick">
-			<template #icon>
-				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
-				<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
-				<IconPhoneOutline v-else-if="silentCall" :size="20" />
-				<IconPhone v-else :size="20" />
-			</template>
-			<template v-if="showButtonText" #default>
-				{{ startCallLabel }}
-			</template>
-		</NcButton>
+	<NcButton v-if="showStartCallButton"
+		:title="startCallTitle"
+		:aria-label="startCallLabel"
+		:disabled="startCallButtonDisabled || loading || isJoiningCall"
+		:variant="hasCall ? 'success' : 'primary'"
+		@click="handleClick">
+		<template #icon>
+			<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
+			<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
+			<IconPhoneOutline v-else-if="silentCall" :size="20" />
+			<IconPhone v-else :size="20" />
+		</template>
+		<template v-if="showButtonText" #default>
+			{{ startCallLabel }}
+		</template>
+	</NcButton>
 
-		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
-			id="call_button"
-			:aria-label="endCallLabel"
-			variant="error"
-			:disabled="loading"
-			@click="leaveCall(true)">
+	<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
+		:aria-label="endCallLabel"
+		variant="error"
+		:disabled="loading"
+		@click="leaveCall(true)">
+		<template #icon>
+			<NcLoadingIcon v-if="loading" :size="20" />
+			<IconPhoneHangupOutline v-else :size="20" />
+		</template>
+		<template v-if="showButtonText" #default>
+			{{ endCallLabel }}
+		</template>
+	</NcButton>
+	<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
+		:aria-label="leaveCallLabel"
+		:variant="isScreensharing ? 'tertiary' : 'error'"
+		:disabled="loading"
+		@click="leaveCall(false)">
+		<template #icon>
+			<NcLoadingIcon v-if="loading" :size="20" />
+			<IconPhoneHangupOutline v-else :size="20" />
+		</template>
+		<template v-if="showButtonText" #default>
+			{{ leaveCallLabel }}
+		</template>
+	</NcButton>
+	<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
+		class="leave-call-actions--split"
+		:disabled="loading"
+		force-name
+		placement="top-end"
+		:aria-label="leaveCallActionsLabel"
+		:inline="1"
+		:variant="leaveCallButtonVariant">
+		<template #icon>
+			<IconChevronUp :size="20" />
+		</template>
+		<NcActionButton v-if="isBreakoutRoom"
+			@click="switchToParentRoom">
 			<template #icon>
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangupOutline v-else :size="20" />
+				<IconArrowLeft class="bidirectional-icon" :size="20" />
 			</template>
-			<template v-if="showButtonText" #default>
-				{{ endCallLabel }}
-			</template>
-		</NcButton>
-		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
-			id="call_button"
-			:aria-label="leaveCallLabel"
-			:variant="isScreensharing ? 'tertiary' : 'error'"
-			:disabled="loading"
+			{{ backToMainRoomLabel }}
+		</NcActionButton>
+		<NcActionButton class="leave-call-button--split"
 			@click="leaveCall(false)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<IconPhoneHangupOutline v-else :size="20" />
 			</template>
-			<template v-if="showButtonText" #default>
-				{{ leaveCallLabel }}
-			</template>
-		</NcButton>
-		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
-			class="leave-call-actions--split"
-			:disabled="loading"
-			force-name
-			placement="top-end"
-			:aria-label="leaveCallActionsLabel"
-			:inline="1"
-			:variant="leaveCallButtonVariant">
+			{{ leaveCallLabel }}
+		</NcActionButton>
+		<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 			<template #icon>
-				<IconChevronUp :size="20" />
+				<IconPhoneOffOutline :size="20" />
 			</template>
-			<NcActionButton v-if="isBreakoutRoom"
-				@click="switchToParentRoom">
-				<template #icon>
-					<IconArrowLeft class="bidirectional-icon" :size="20" />
-				</template>
-				{{ backToMainRoomLabel }}
-			</NcActionButton>
-			<NcActionButton class="leave-call-button--split"
-				@click="leaveCall(false)">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<IconPhoneHangupOutline v-else :size="20" />
-				</template>
-				{{ leaveCallLabel }}
-			</NcActionButton>
-			<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
-				<template #icon>
-					<IconPhoneOffOutline :size="20" />
-				</template>
-				{{ t('spreed', 'End call for everyone') }}
-			</NcActionButton>
-		</NcActions>
-	</div>
+			{{ t('spreed', 'End call for everyone') }}
+		</NcActionButton>
+	</NcActions>
 </template>
 
 <script>
@@ -483,12 +478,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#call_button {
-	margin: 0 auto;
-}
-
 .leave-call-actions--split {
-	gap: calc(var(--default-grid-baseline) / 2);
+	gap: 1px;
 }
 
 .leave-call-actions--split :deep(.action-item--single) {

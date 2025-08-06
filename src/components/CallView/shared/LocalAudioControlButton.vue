@@ -323,7 +323,7 @@ export default {
 .local-audio-control-wrapper {
 	display: flex;
 	align-items: center;
-	gap: calc(var(--default-grid-baseline) / 2);
+	gap: 1px;
 }
 
 // Overwriting NcActionButton styles

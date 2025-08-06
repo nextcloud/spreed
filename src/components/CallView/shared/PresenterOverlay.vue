@@ -184,8 +184,8 @@ export default {
 .presenter-overlay--collapsed {
 	position: absolute !important;
 	opacity: .7;
-	bottom: 48px;
-	inset-inline-end: 0;
+	bottom: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+	inset-inline-end: var(--grid-gap);
 
 	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
