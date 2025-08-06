@@ -5,6 +5,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.3 – 2025-08-06
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(meetings): invitation emails for Talk created events not sent
+  [#15634](https://github.com/nextcloud/spreed/issues/15634)
+- fix(dashboard): don't show cancelled events in upcoming events
+  [#15544](https://github.com/nextcloud/spreed/issues/15544)
+- fix(dashboard): prevent accidentally forwarding guests to dashboard via Esc key
+  [#15560](https://github.com/nextcloud/spreed/issues/15560)
+- fix(chat): close Download menu after interaction
+  [#15587](https://github.com/nextcloud/spreed/issues/15587)
+- fix(chat): empty content for guests after chat is cleared
+  [#15550](https://github.com/nextcloud/spreed/issues/15550)
+- fix(chat): fix search result scroll when clicking twice
+  [#15612](https://github.com/nextcloud/spreed/issues/15612)
+
 ## 21.1.2 – 2025-07-17
 ### Changed
 - Update translations
