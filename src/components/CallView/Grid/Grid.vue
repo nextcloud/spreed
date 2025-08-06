@@ -968,6 +968,11 @@ export default {
 	position: relative;
 	bottom: 0;
 	inset-inline-start: 0;
+
+	&:has(.stripe-wrapper) {
+		bottom: var(--grid-gap);
+		padding-inline: var(--grid-gap);
+	}
 }
 
 .grid {
@@ -1100,7 +1105,7 @@ export default {
 .stripe--collapse {
 	position: absolute !important;
 	top: calc(-1 * (var(--default-clickable-area) + var(--navigation-position) / 2));
-	inset-inline-end: calc(var(--navigation-position) / 2) ;
+	inset-inline-end: var(--navigation-position);
 }
 
 .stripe--collapse,
