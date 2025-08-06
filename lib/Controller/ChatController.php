@@ -320,7 +320,7 @@ class ChatController extends AEnvironmentAwareController {
 		]);
 
 		try {
-			$comment = $this->chatManager->addSystemMessage($this->room, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
+			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {

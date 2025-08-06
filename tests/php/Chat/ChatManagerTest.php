@@ -458,7 +458,7 @@ class ChatManagerTest extends TestCase {
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
 			->method('addSystemMessage')
-			->with($chat, Attendee::ACTOR_USERS, 'user', $this->anything(), $this->anything(), false, null, $comment)
+			->with($chat, $participant, Attendee::ACTOR_USERS, 'user', $this->anything(), $this->anything(), false, null, $comment)
 			->willReturn($systemMessage);
 
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
@@ -543,7 +543,7 @@ class ChatManagerTest extends TestCase {
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
 			->method('addSystemMessage')
-			->with($chat, Attendee::ACTOR_USERS, 'user', $this->anything(), $this->anything(), false, null, $comment)
+			->with($chat, $participant, Attendee::ACTOR_USERS, 'user', $this->anything(), $this->anything(), false, null, $comment)
 			->willReturn($systemMessage);
 
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
@@ -646,6 +646,7 @@ class ChatManagerTest extends TestCase {
 			->method('addSystemMessage')
 			->with(
 				$chat,
+				null,
 				'users',
 				'admin',
 				json_encode(['message' => 'history_cleared', 'parameters' => []]),
