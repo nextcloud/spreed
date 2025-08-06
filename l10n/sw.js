@@ -280,6 +280,7 @@ OC.L10N.register(
     "Back" : "Rudi",
     "Cancel" : "Cancel",
     "Now" : "Sasa",
+    "Invite {user}" : "Invite {user}",
     "Loading …" : "Inapakia",
     "From" : "Tangu/ kutoka",
     "To" : "Mpaka/ hadi",

@@ -1687,6 +1687,7 @@ OC.L10N.register(
     "Raise or lower hand" : "Aixecar o baixar la mà",
     "Mouse wheel" : "Roda del ratolí",
     "Zoom-in / zoom-out a screen share" : "Apropar/reduir una pantalla compartida",
+    "More actions" : "Més accions",
     "Start call silently" : "Inicia la trucada en silenci",
     "Start call" : "Inicia trucada",
     "End call" : "Finalitzar la trucada",
