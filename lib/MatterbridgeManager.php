@@ -646,6 +646,7 @@ class MatterbridgeManager {
 	private function sendSystemMessage(Room $room, string $userId, string $message): void {
 		$this->chatManager->addSystemMessage(
 			$room,
+			null,
 			Attendee::ACTOR_USERS,
 			$userId,
 			json_encode(['message' => $message, 'parameters' => []]),
