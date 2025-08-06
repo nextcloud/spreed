@@ -833,6 +833,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Atayos del tecláu",
     "Search" : "Buscar",
     "Space bar" : "Barra d'espaciu",
+    "More actions" : "Más aiciones",
     "Start call" : "Aniciar la llamada",
     "End call" : "Finar la llamada",
     "Stop recording" : "Parar la grabación",

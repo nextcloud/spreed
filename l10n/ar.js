@@ -1689,6 +1689,7 @@ OC.L10N.register(
     "Raise or lower hand" : "رفع أو خفض اليد ",
     "Mouse wheel" : "عجلة الفارة",
     "Zoom-in / zoom-out a screen share" : "تكبير/تصغير شاشة مُشارَكة",
+    "More actions" : "إجراءات إضافية",
     "Start call silently" : "بدء اتصال صامت",
     "Start call" : "ابدء مكالمة",
     "End call" : "إقطَع المكالمة",
