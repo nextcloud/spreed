@@ -401,6 +401,11 @@ class Listener implements IEventListener {
 			$replyTo = (int)$metaData['replyTo'];
 			unset($metaData['replyTo']);
 		}
+		$threadId = null;
+		if (isset($metaData['threadId'])) {
+			$threadId = (int)$metaData['threadId'];
+			unset($metaData['threadId']);
+		}
 
 		$threadTitle = '';
 		if (isset($metaData['threadTitle'])) {
@@ -416,6 +421,7 @@ class Listener implements IEventListener {
 			['share' => $share->getId(), 'metaData' => $metaData],
 			silent: $silent,
 			replyTo: $replyTo,
+			threadId: $threadId,
 		);
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
@@ -474,6 +480,7 @@ class Listener implements IEventListener {
 		bool $forceSystemAsActor = false,
 		?int $replyTo = null,
 		?IComment $parent = null,
+		?int $threadId = null,
 	): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
@@ -519,6 +526,10 @@ class Listener implements IEventListener {
 				}
 			} catch (NotFoundException) {
 			}
+		} elseif ($parent === null && $threadId !== null) {
+			if (!$this->threadService->validateThread($room->getId(), $threadId)) {
+				$threadId = null;
+			}
 		}
 
 		return $this->chatManager->addSystemMessage(
@@ -530,6 +541,7 @@ class Listener implements IEventListener {
 			$parent,
 			$shouldSkipLastMessageUpdate,
 			$silent,
+			$threadId ?? 0,
 		);
 	}
 

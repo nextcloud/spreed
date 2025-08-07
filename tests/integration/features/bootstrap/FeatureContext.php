@@ -2472,16 +2472,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertStringStartsWith($response['referenceId'], $referenceId);
 	}
 
-	#[Then('/^user "([^"]*)" sends reply ("[^"]*"|\'[^\']*\') on message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
-	public function userSendsReplyToRoom(string $user, string $reply, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+	#[Then('/^user "([^"]*)" sends reply ("[^"]*"|\'[^\']*\') on (message|thread) ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSendsReplyToRoom(string $user, string $reply, string $messageOrThread, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$reply = substr($reply, 1, -1);
 		$message = substr($message, 1, -1);
-		$replyTo = self::$textToMessageId[$message];
+
+		if ($messageOrThread === 'message') {
+			$replyTo = self::$textToMessageId[$message];
+			$replyTo = ['replyTo', $replyTo];
+		} else {
+			$replyTo = self::$titleToThreadId[$message];
+			$replyTo = ['threadId', $replyTo];
+		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier],
-			new TableNode([['message', $reply], ['replyTo', $replyTo]])
+			new TableNode([['message', $reply], $replyTo])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
