@@ -36,7 +36,8 @@ class PhoneNumberMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('phone_number', $query->createNamedParameter($phoneNumber, IQueryBuilder::PARAM_STR)));
+			->where($query->expr()->eq('phone_number', $query->createNamedParameter($phoneNumber, IQueryBuilder::PARAM_STR)))
+			->orderBy('id', 'ASC');
 
 		return $this->findEntity($query);
 	}
