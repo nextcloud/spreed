@@ -111,3 +111,22 @@ Feature: chat-4/threads
     And user "participant1" subscribes to thread "Message 1" in room "room" with notification level 0 with 200
       | t.id      | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | Thread 1 | 0            | 0             | 0                   | Message 1    | NULL        |
+
+  Scenario: List of subscribed threads
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room1" with 201
+    Given user "participant2" creates room "room2" (v4)
+      | roomType | 2 |
+      | roomName | room2 |
+    And user "participant2" adds user "participant1" to room "room2" with 200 (v4)
+    And user "participant2" sends thread "Thread 2" with message "Message 2" to room "room2" with 201
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "room1" with 201
+    And user "participant1" subscribes to thread "Message 1" in room "room1" with notification level 0 with 200
+    And user "participant1" subscribes to thread "Message 2" in room "room2" with notification level 0 with 200
+    Then user "participant1" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
+      | Message 2 | room2   | Thread 2 | 0            | 0             | 0                   | Message 2    | NULL        |

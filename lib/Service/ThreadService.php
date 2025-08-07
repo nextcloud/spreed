@@ -78,6 +78,47 @@ class ThreadService {
 	}
 
 	/**
+	 * @param int<1, 100> $limit
+	 * @param non-negative-int $offset
+	 */
+	public function getRecentByActor(string $actorType, string $actorId, int $limit, int $offset): array {
+		$limit = min(100, max(1, $limit));
+
+		$query = $this->connection->getQueryBuilder();
+		$query->select('a.*', 't.*')
+			->selectAlias('t.id', 't_id')
+			->from('talk_thread_attendees', 'a')
+			->leftJoin('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
+			// FIXME ORDER BY last_activity and subscription moment of the user for better sorting?
+			->orderBy('t.last_activity', 'DESC')
+			->setMaxResults($limit);
+
+		if ($offset > 0) {
+			$query->setFirstResult($offset);
+		}
+
+		$results = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			if ($row['t_id'] === null) {
+				// Thread was deleted and this entry is useless, should clean up
+				continue;
+			}
+
+			$roomId = (int)$row['room_id'];
+			$results[$roomId][] = [
+				'thread' => Thread::createFromRow($row),
+				'attendee' => ThreadAttendee::createFromRow($row),
+			];
+		}
+		$result->closeCursor();
+
+		return $results;
+	}
+
+	/**
 	 * @param list<int> $threadIds
 	 * @return array<int, ThreadAttendee> Key is the thread id
 	 */

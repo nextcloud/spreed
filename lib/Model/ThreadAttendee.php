@@ -46,6 +46,17 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 		$this->addType('notificationLevel', Types::INTEGER);
 	}
 
+	public static function createFromRow(array $row): ThreadAttendee {
+		$attendee = new ThreadAttendee();
+		$attendee->setRoomId((int)$row['room_id']);
+		$attendee->setThreadId((int)$row['thread_id']);
+		$attendee->setAttendeeId((int)$row['attendee_id']);
+		$attendee->setNotificationLevel((int)$row['notification_level']);
+		$attendee->setActorType($row['actor_type']);
+		$attendee->setActorId($row['actor_id']);
+		return $attendee;
+	}
+
 	public static function createFromParticipant(int $threadId, Participant $participant): ThreadAttendee {
 		$attendee = new ThreadAttendee();
 		$attendee->setRoomId($participant->getRoom()->getId());

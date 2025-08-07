@@ -42,6 +42,17 @@ class Thread extends Entity {
 		$this->addType('name', Types::STRING);
 	}
 
+	public static function createFromRow(array $row): Thread {
+		$thread = new Thread();
+		$thread->setId((int)$row['t_id']);
+		$thread->setRoomId((int)$row['room_id']);
+		$thread->setLastMessageId((int)$row['last_message_id']);
+		$thread->setNumReplies((int)$row['num_replies']);
+		$thread->setLastActivity(new \DateTime($row['last_activity']));
+		$thread->setName($row['name']);
+		return $thread;
+	}
+
 	public function getName(): string {
 		if ($this->name !== '') {
 			return $this->name;
