@@ -536,6 +536,7 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Pārlūkā netiek atbalstīts WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome",
     "Error while accessing microphone & camera" : "Kļūda, piekļūstot mikrofonam un kamerai",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Mēs esam noteikuši vairākus nederīgus paroles mēģinājumus no šīs IP adreses, tādējādi nākamā pieteikšanās ir ierobežota līdz 30 sekundēm.",
     "The password is wrong. Try again." : "Nepareiza parole. Jāmēģina vēlreiz.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
