@@ -26,12 +26,12 @@ class SIPDialOutService {
 	) {
 	}
 
-	public function sendDialOutRequestToBackend(Room $room, Attendee $attendee): ?Response {
+	public function sendDialOutRequestToBackend(Room $room, Attendee $attendee, string|bool $callerNumber): ?Response {
 		if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
 			return null;
 		}
 
-		$response = $this->backendNotifier->dialOutToAttendee($room, $attendee);
+		$response = $this->backendNotifier->dialOutToAttendee($room, $attendee, $callerNumber);
 		if ($response === null) {
 			$this->logger->error('Received no response from signaling server on dialout request');
 			return null;
