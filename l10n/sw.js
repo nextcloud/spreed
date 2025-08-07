@@ -362,6 +362,7 @@ OC.L10N.register(
     "No search results" : "Hakuna matokeo ya utafutaji",
     "The meeting will start soon" : "Mkutano utaanza hivi karibuni",
     "This meeting is scheduled for {startTime}" : "Mkutano huu umepangwa kwa {startTime}",
+    "Select a device" : "Select a device",
     "Devices" : "Vifaa",
     "The call might be recorded." : "Simu inaweza kuwa imerekodiwa",
     "Invalid path selected" : "Njia iliyochaguliwa si halali",
