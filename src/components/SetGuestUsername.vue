@@ -24,11 +24,11 @@
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
 				:label="t('spreed', 'Display name (required)')"
-				:show-trailing-button="!!guestUserName"
+				:show-trailing-button="!!guestUserName && !compact"
 				trailing-button-icon="arrowEnd"
 				:trailing-button-label="t('spreed', 'Save name')"
-				@trailing-button-click="updateDisplayName"
-				@keydown.enter="updateDisplayName"
+				@trailing-button-click="!compact ? updateDisplayName() : null"
+				@keydown.enter="!compact ? updateDisplayName() : null"
 				@keydown.esc="toggleEdit" />
 		</div>
 
@@ -63,8 +63,10 @@ import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 const { compact = false } = defineProps<{
-	compact: boolean
+	compact?: boolean
 }>()
+
+const emit = defineEmits(['update:guest-username'])
 const loginUrl = `${generateUrl('/login')}?redirect_url=${encodeURIComponent(window.location.pathname)}`
 
 const actorStore = useActorStore()
@@ -104,6 +106,7 @@ EventBus.once('joined-conversation', () => {
 subscribe('user:info:changed', updateDisplayNameFromPublicEvent)
 onBeforeUnmount(() => {
 	unsubscribe('user:info:changed', updateDisplayNameFromPublicEvent)
+	updateDisplayName()
 })
 
 /** Update guest username from public page user menu */
@@ -129,6 +132,12 @@ function toggleEdit() {
 		})
 	}
 }
+
+// One-way binding to parent component
+watch(guestUserName, (newValue) => {
+	emit('update:guest-username', newValue)
+})
+emit('update:guest-username', guestUserName.value)
 </script>
 
 <style lang="scss" scoped>
