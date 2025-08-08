@@ -162,7 +162,7 @@ export default {
 
 	emits: ['avatarEdited'],
 
-	expose: ['saveAvatar'],
+	expose: ['saveAvatar', 'getPictureFormData', 'emojiAvatar', 'backgroundColor'],
 
 	setup() {
 		const isDarkTheme = useIsDarkTheme()
