@@ -600,6 +600,45 @@ class Manager {
 	}
 
 	/**
+	 * Does *not* return public rooms for participants that have not been invited
+	 *
+	 * @param list<int> $roomIds
+	 * @param string $userId
+	 * @return array<int, Room> Key is the roomId
+	 */
+	public function getRoomsByIdForUser(array $roomIds, string $userId): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->where($query->expr()->in('r.id', $query->createNamedParameter($roomIds, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->isNotNull('a.id'));
+
+		$result = $query->executeQuery();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				continue;
+			}
+
+			$room = $this->createRoomObject($row);
+			$participant = $this->createParticipantObject($room, $row);
+			$this->participantService->cacheParticipant($room, $participant);
+			$room->setParticipant($row['actor_id'], $participant);
+			$rooms[$room->getId()] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * Returns room object for a user by token.
 	 *
 	 * Also returns:

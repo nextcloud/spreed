@@ -14,6 +14,7 @@ use OCA\Talk\Model\Thread;
 use OCA\Talk\Model\ThreadAttendee;
 use OCA\Talk\Model\ThreadAttendeeMapper;
 use OCA\Talk\Model\ThreadMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -78,6 +79,47 @@ class ThreadService {
 	}
 
 	/**
+	 * @param int<1, 100> $limit
+	 * @param non-negative-int $offset
+	 */
+	public function getRecentByActor(string $actorType, string $actorId, int $limit, int $offset): array {
+		$limit = min(100, max(1, $limit));
+
+		$query = $this->connection->getQueryBuilder();
+		$query->select('a.*', 't.*')
+			->selectAlias('t.id', 't_id')
+			->from('talk_thread_attendees', 'a')
+			->leftJoin('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
+			// FIXME ORDER BY last_activity and subscription moment of the user for better sorting?
+			->orderBy('t.last_activity', 'DESC')
+			->setMaxResults($limit);
+
+		if ($offset > 0) {
+			$query->setFirstResult($offset);
+		}
+
+		$results = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			if ($row['t_id'] === null) {
+				// Thread was deleted and this entry is useless, should clean up
+				continue;
+			}
+
+			$roomId = (int)$row['room_id'];
+			$results[$roomId][] = [
+				'thread' => Thread::createFromRow($row),
+				'attendee' => ThreadAttendee::createFromRow($row),
+			];
+		}
+		$result->closeCursor();
+
+		return $results;
+	}
+
+	/**
 	 * @param list<int> $threadIds
 	 * @return array<int, ThreadAttendee> Key is the thread id
 	 */
@@ -122,6 +164,22 @@ class ThreadService {
 		}
 
 		return $threadAttendee;
+	}
+
+	public function ensureIsThreadAttendee(Attendee $attendee, int $threadId): void {
+		try {
+			$this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $threadId);
+		} catch (DoesNotExistException) {
+			$threadAttendee = new ThreadAttendee();
+			$threadAttendee->setThreadId($threadId);
+			$threadAttendee->setRoomId($attendee->getRoomId());
+
+			$threadAttendee->setAttendeeId($attendee->getId());
+			$threadAttendee->setActorType($attendee->getActorType());
+			$threadAttendee->setActorId($attendee->getActorId());
+			$threadAttendee->setNotificationLevel(Participant::NOTIFY_DEFAULT);
+			$this->threadAttendeeMapper->insert($threadAttendee);
+		}
 	}
 
 	/**

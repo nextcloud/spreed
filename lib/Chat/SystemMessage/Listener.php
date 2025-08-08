@@ -24,6 +24,7 @@ use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -420,6 +421,12 @@ class Listener implements IEventListener {
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
 			$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+			try {
+				// Add to subscribed threads list
+				$participant = $this->participantService->getParticipant($room, $this->getUserId());
+				$this->threadService->setNotificationLevel($participant->getAttendee(), $thread, Participant::NOTIFY_DEFAULT);
+			} catch (ParticipantNotFoundException) {
+			}
 
 			$this->sendSystemMessage(
 				$room,
