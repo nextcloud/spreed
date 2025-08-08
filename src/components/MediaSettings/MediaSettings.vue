@@ -171,7 +171,9 @@
 					</MediaSettingsTabs>
 
 					<!-- Guest display name setting-->
-					<SetGuestUsername v-if="isGuest" compact />
+					<SetGuestUsername v-if="isGuest"
+						compact
+						@update:guest-username="guestUserName = $event" />
 
 					<!-- Moderator options before starting a call-->
 					<NcCheckboxRadioSwitch v-if="showStartRecordingOption"
@@ -382,6 +384,7 @@ export default {
 			skipBlurVirtualBackground: false,
 			mediaLoading: false,
 			isDeviceCheck: false,
+			guestUserName: '',
 		}
 	},
 
@@ -557,7 +560,7 @@ export default {
 
 		disabledCallButton() {
 			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
-				|| (this.isGuest && !this.actorStore.displayName.length)
+				|| (this.isGuest && !this.guestUserName.length)
 		},
 
 		forceShowMediaSettings() {
