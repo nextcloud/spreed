@@ -1667,10 +1667,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$results = array_merge_recursive($exactMatches, $results);
 
 		$this->autoCompleteManager->registerSorter(Sorter::class);
+		/** @psalm-suppress InvalidArgument */
 		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
 			'itemType' => 'chat',
 			'itemId' => (string)$this->room->getId(),
 			'search' => $search,
+			'selfUserId' => $this->userId,
+			'selfCloudId' => $this->userId === null ? $this->federationAuthenticator->getCloudId() : null,
 		]);
 
 		$statuses = [];

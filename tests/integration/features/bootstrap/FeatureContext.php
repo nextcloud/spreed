@@ -1229,7 +1229,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\) session name "([^"]*)"$/')]
 	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
-		$this->setCurrentUser($user, $identifier);
+		$this->setCurrentUser($user);
 
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
