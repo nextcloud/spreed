@@ -138,12 +138,16 @@ export default {
 
 	setup(props) {
 		const {
+			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
+			isChatEndReached,
 
 			getOldMessages,
+			getNewMessages,
 		} = useGetMessages()
 
 		const isDocumentVisible = useDocumentVisibility()
@@ -158,12 +162,16 @@ export default {
 			isChatVisible,
 			threadId,
 
+			contextMessageId,
 			loadingOldMessages,
+			loadingNewMessages,
 			isInitialisingMessages,
 			stopFetchingOldMessages,
 			isChatBeginningReached,
+			isChatEndReached,
 
 			getOldMessages,
+			getNewMessages,
 		}
 	},
 
@@ -214,6 +222,7 @@ export default {
 		 */
 		messagesList() {
 			return this.chatStore.getMessagesList(this.token, {
+				messageId: this.contextMessageId,
 				threadId: this.threadId,
 			})
 		},
@@ -241,10 +250,6 @@ export default {
 		 */
 		isSticky() {
 			return this.isChatScrolledToBottom && !this.isInitialisingMessages
-		},
-
-		hasMoreMessagesToLoad() {
-			return this.$store.getters.hasMoreMessagesToLoad(this.token)
 		},
 
 		conversation() {
@@ -687,7 +692,7 @@ export default {
 			const scrollOffsetFromBottom = Math.abs(scrollOffsetFromTop - clientHeight)
 
 			// For chats that are scrolled to bottom and not fitted in one screen
-			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
+			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && this.isChatEndReached && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
@@ -711,6 +716,22 @@ export default {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
 						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+					})
+				}
+				this.setChatScrolledToBottom(false, { auto: true })
+			} else if ((scrollHeight > clientHeight && scrollOffsetFromBottom < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'down')
+				|| skipHeightCheck) {
+				if (this.loadingNewMessages || this.isChatEndReached) {
+					// already loading, don't do it twice
+					return
+				}
+				this.displayMessagesLoader = true
+				await this.getNewMessages(this.token, false)
+				this.displayMessagesLoader = false
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					// scroll to previous position + added height
+					this.$refs.scroller.scrollTo({
+						top: scrollTop,
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
@@ -841,7 +862,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
-			if (this.isSticky && !this.hasMoreMessagesToLoad) {
+			if (this.isSticky && this.isChatEndReached) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
@@ -1040,6 +1061,16 @@ export default {
 				}
 
 				this.isScrolling = 'up'
+				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else if (event.deltaY > 0) {
+				if (this.isChatEndReached) {
+					// Remove event listener as it needs to be triggered
+					// only when it's not confirmed that the chat end is reached
+					this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
+					return
+				}
+
+				this.isScrolling = 'down'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
