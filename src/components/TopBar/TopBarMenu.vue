@@ -133,7 +133,6 @@
 </template>
 
 <script>
-import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -156,8 +155,7 @@ import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 import {
-	disableFullscreen,
-	enableFullscreen,
+	toggleFullscreen,
 	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -214,12 +212,13 @@ export default {
 
 	emits: ['openBreakoutRoomsEditor'],
 
-	setup() {
+	setup(props) {
 		return {
 			IconFileDownload,
 			IconMicrophoneOffOutline,
-			isFullscreen: useDocumentFullscreen(),
+			isFullscreen: !props.isSidebar ? useDocumentFullscreen() : undefined,
 			isInCall: useIsInCall(),
+			toggleFullscreen,
 		}
 	},
 
@@ -309,29 +308,6 @@ export default {
 			callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 				callParticipantModel.forceMute()
 			})
-		},
-
-		toggleFullscreen() {
-			if (this.isSidebar) {
-				return
-			}
-
-			// Don't toggle fullscreen if there is an open modal
-			// FIXME won't be needed without Fulscreen API
-			if (Array.from(document.body.childNodes).filter((child) => {
-				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
-					&& window.getComputedStyle(child).display !== 'none'
-			}).length !== 0) {
-				showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
-				return
-			}
-
-			if (this.isFullscreen) {
-				disableFullscreen()
-			} else {
-				emit('toggle-navigation', { open: false })
-				enableFullscreen()
-			}
 		},
 
 		showMediaSettingsDialog() {
