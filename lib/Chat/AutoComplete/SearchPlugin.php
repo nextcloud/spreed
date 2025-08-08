@@ -122,11 +122,6 @@ class SearchPlugin implements ISearchPlugin {
 		$matches = $exactMatches = [];
 		foreach ($users as $userId => $displayName) {
 			$userId = (string)$userId;
-			if ($this->userId !== '' && $this->userId === $userId) {
-				// Do not suggest the current user
-				continue;
-			}
-
 			if ($searchResult->hasResult($type, $userId)) {
 				continue;
 			}
@@ -174,11 +169,6 @@ class SearchPlugin implements ISearchPlugin {
 
 		$matches = $exactMatches = [];
 		foreach ($cloudIds as $cloudId => $displayName) {
-			if ($this->federationAuthenticator->getCloudId() === $cloudId) {
-				// Do not suggest the current user
-				continue;
-			}
-
 			if ($searchResult->hasResult($type, $cloudId)) {
 				continue;
 			}

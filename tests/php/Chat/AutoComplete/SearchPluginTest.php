@@ -159,7 +159,7 @@ class SearchPluginTest extends TestCase {
 				'foo' => '',
 				'test' => 'Te st',
 				'test1' => 'Te st 1',
-			], [['test1' => 'Te st 1']], [['test' => 'Te st']]],
+			], [['test1' => 'Te st 1']], [['current' => 'test'], ['test' => 'Te st']]],
 			['test', [
 				'foo' => 'Test',
 				'bar' => 'test One',
