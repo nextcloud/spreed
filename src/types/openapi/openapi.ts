@@ -1613,6 +1613,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/subscribed-threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get subscribed threads for a user
+         * @description Required capability: `threads`
+         */
+        get: operations["thread-get-subscribed-threads"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/{threadId}": {
         parameters: {
             query?: never;
@@ -9717,6 +9737,41 @@ export interface operations {
             path: {
                 apiVersion: "v1";
                 token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of threads returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ThreadInfo"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "thread-get-subscribed-threads": {
+        parameters: {
+            query?: {
+                /** @description Number of threads to return */
+                limit?: number;
+                /** @description Offset in the threads list */
+                offset?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
             };
             cookie?: never;
         };
