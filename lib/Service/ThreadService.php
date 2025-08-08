@@ -14,6 +14,7 @@ use OCA\Talk\Model\Thread;
 use OCA\Talk\Model\ThreadAttendee;
 use OCA\Talk\Model\ThreadAttendeeMapper;
 use OCA\Talk\Model\ThreadMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -163,6 +164,22 @@ class ThreadService {
 		}
 
 		return $threadAttendee;
+	}
+
+	public function ensureIsThreadAttendee(Attendee $attendee, int $threadId): void {
+		try {
+			$this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $threadId);
+		} catch (DoesNotExistException) {
+			$threadAttendee = new ThreadAttendee();
+			$threadAttendee->setThreadId($threadId);
+			$threadAttendee->setRoomId($attendee->getRoomId());
+
+			$threadAttendee->setAttendeeId($attendee->getId());
+			$threadAttendee->setActorType($attendee->getActorType());
+			$threadAttendee->setActorId($attendee->getActorId());
+			$threadAttendee->setNotificationLevel(Participant::NOTIFY_DEFAULT);
+			$this->threadAttendeeMapper->insert($threadAttendee);
+		}
 	}
 
 	/**

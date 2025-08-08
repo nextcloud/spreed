@@ -123,10 +123,23 @@ Feature: chat-4/threads
       | roomName | room2 |
     And user "participant2" adds user "participant1" to room "room2" with 200 (v4)
     And user "participant2" sends thread "Thread 2" with message "Message 2" to room "room2" with 201
+    And user "participant2" sends thread "Thread 3" with message "Message 3" to room "room2" with 201
+    Then user "participant1" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 0            | 0             | 0                   | Message 1    | NULL        |
+    And user "participant1" subscribes to thread "Message 3" in room "room2" with notification level 1 with 200
+    Then user "participant1" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 3 | room2   | Thread 3 | 0            | 0             | 1                   | Message 3    | NULL        |
+      | Message 1 | room1   | Thread 1 | 0            | 0             | 0                   | Message 1    | NULL        |
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "room1" with 201
-    And user "participant1" subscribes to thread "Message 1" in room "room1" with notification level 0 with 200
-    And user "participant1" subscribes to thread "Message 2" in room "room2" with notification level 0 with 200
     Then user "participant1" sees the following subscribed threads
       | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
-      | Message 2 | room2   | Thread 2 | 0            | 0             | 0                   | Message 2    | NULL        |
+      | Message 3 | room2   | Thread 3 | 0            | 0             | 1                   | Message 3    | NULL        |
+    When user "participant1" sends reply "Message 2-1" on message "Message 2" to room "room2" with 201
+    Then user "participant1" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 2 | room2   | Thread 2 | 1            | Message 2-1   | 0                   | Message 2    | Message 2-1 |
+      | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
+      | Message 3 | room2   | Thread 3 | 0            | 0             | 1                   | Message 3    | NULL        |
