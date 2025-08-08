@@ -189,7 +189,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						<template #icon>
 							<IconVideo />
 						</template>
-						{{ t('spreed', 'Start meeting now') }}
+						{{ t('spreed', 'Start call now') }}
 					</NcButton>
 				</template>
 				<div role="dialog"
