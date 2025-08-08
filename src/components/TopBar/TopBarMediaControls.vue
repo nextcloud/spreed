@@ -459,7 +459,7 @@ export default {
 .buttons-bar {
 	display: flex;
 	align-items: center;
-	gap: 3px;
+	gap: var(--default-grid-baseline);
 }
 
 .buttons-bar #screensharing-menu button {

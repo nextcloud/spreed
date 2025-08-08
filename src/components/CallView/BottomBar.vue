@@ -266,7 +266,7 @@ useHotKey('f', toggleFullscreen)
 	flex-direction: row;
 	gap: var(--default-grid-baseline);
 
-	:deep(.button-vue) {
+	:deep(.button-vue:not(.button-vue--error)) {
 		background-color: var(--color-primary-light);
 	}
 }
