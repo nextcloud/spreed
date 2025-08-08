@@ -266,19 +266,8 @@ class SearchPlugin implements ISearchPlugin {
 		}
 
 		$search = strtolower($search);
-		$currentSessionHash = null;
-		if (!$this->userId) {
-			// Best effort: Might not work on guests that reloaded but not worth too much performance impact atm.
-			$currentSessionHash = sha1($this->talkSession->getSessionForRoom($this->room->getToken()));
-		}
-
 		$matches = $exactMatches = [];
 		foreach ($attendees as $attendee) {
-			if ($currentSessionHash === $attendee->getActorId()) {
-				// Do not suggest the current guest
-				continue;
-			}
-
 			$name = $attendee->getDisplayName() ?: $this->l->t('Guest');
 			if ($search === '') {
 				$matches[] = $this->createGuestResult($attendee->getActorId(), $name);

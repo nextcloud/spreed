@@ -1636,7 +1636,12 @@ class ParticipantService {
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
 		$query->from('talk_attendees', 'a')
-			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
+			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->orX(
+				$query->expr()->neq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_GUESTS)),
+				$query->expr()->isNotNull('s.id'),
+			));
 
 		return $this->getParticipantsFromQuery($query, $room);
 	}

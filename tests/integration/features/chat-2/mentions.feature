@@ -244,6 +244,10 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
+    And user "guest2" leaves room "public room" with 200 (v4)
+    Then user "participant1" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source | mentionId    |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
   Scenario: get matched named guest mentions in a public room
     When user "participant1" creates room "public room" (v4)
