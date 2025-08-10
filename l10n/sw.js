@@ -258,6 +258,7 @@ OC.L10N.register(
     "Disabled" : "Zima",
     "State" : "State",
     "Name" : "Jina",
+    "Beta" : "Beta",
     "Permissions" : "Ruhusa",
     "Off" : "Imezimwa",
     "Enable encryption" : "Enable encryption",
