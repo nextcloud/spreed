@@ -68,10 +68,12 @@ export const useChatStore = defineStore('chat', () => {
 
 		if (threadId) {
 			// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
-			return prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
-				.filter((message) => {
-					return message.threadId === threadId
-				})
+			const contextBlock = (messageId <= 0)
+				? chatBlocks[token][0]
+				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+			return prepareMessagesList(token, contextBlock).filter((message) => {
+				return message.threadId === threadId
+			})
 		}
 
 		// Look for a set containing given context id (return first block as fallback for not found / constants)
@@ -133,10 +135,13 @@ export const useChatStore = defineStore('chat', () => {
 				return threadId
 			}
 			// FIXME temporary check all messages for given thread from all chat blocks
-			return Math.min(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
-				.filter((message) => {
-					return message.threadId === threadId && Number.isInteger(message.id)
-				}).map((message) => message.id))
+			const contextBlock = (messageId <= 0)
+				? chatBlocks[token][0]
+				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
+				return message.threadId === threadId && Number.isInteger(message.id)
+			})
+			return Math.min(...threadMessagesList.map((message) => message.id))
 		}
 
 		const contextBlock = (messageId <= 0)
@@ -158,10 +163,13 @@ export const useChatStore = defineStore('chat', () => {
 
 		if (threadId) {
 			// FIXME temporary check all messages for given thread from all chat blocks
-			return Math.max(...prepareMessagesList(token, new Set(chatBlocks[token].flatMap((set) => Array.from(set))))
-				.filter((message) => {
-					return message.threadId === threadId && Number.isInteger(message.id)
-				}).map((message) => message.id))
+			const contextBlock = (messageId <= 0)
+				? chatBlocks[token][0]
+				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
+				return message.threadId === threadId && Number.isInteger(message.id)
+			})
+			return Math.max(...threadMessagesList.map((message) => message.id))
 		}
 
 		const contextBlock = (messageId <= 0)

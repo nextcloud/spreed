@@ -113,7 +113,8 @@ describe('chatStore', () => {
 			processMessages(TOKEN, chatBlockE)
 
 			// Assert
-			expect(chatStore.getMessagesList(TOKEN, { threadId: 101 })).toEqual([mockMessages[101], mockMessages[103], mockMessages[106]])
+			expect(chatStore.getMessagesList(TOKEN, { threadId: 101 })).toEqual([mockMessages[106]])
+			expect(chatStore.getMessagesList(TOKEN, { messageId: 101, threadId: 101 })).toEqual([mockMessages[101], mockMessages[103]])
 		})
 
 		it('returns an empty array if no messages or blocks present', () => {

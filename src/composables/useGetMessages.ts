@@ -23,6 +23,7 @@ import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
+import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -61,6 +62,7 @@ export function useGetMessagesProvider() {
 	const router = useRouter()
 	const route = useRoute()
 	const chatStore = useChatStore()
+	const chatExtrasStore = useChatExtrasStore()
 
 	const currentToken = useGetToken()
 	const contextThreadId = useGetThreadId()
@@ -94,6 +96,12 @@ export function useGetMessagesProvider() {
 			// Do not block attempts to fetch history inside each block
 			return false
 		}
+
+		if (contextThreadId.value) {
+			// If threadId is set, we should check if the first message is from the thread
+			return firstKnownMessage.id === contextThreadId.value
+		}
+
 		return firstKnownMessage.messageType === MESSAGE.TYPE.SYSTEM
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.systemMessage)
 	})
@@ -113,7 +121,18 @@ export function useGetMessagesProvider() {
 			// Do not block attempts to fetch new messages inside each block
 			return false
 		}
-		return chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value }) >= conversationLastMessageId.value
+
+		const lastKnownMessageId = chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+
+		if (contextThreadId.value) {
+			const threadInfo = chatExtrasStore.threads[currentToken.value]?.[contextThreadId.value]
+			// If threadId is set, we should compare with last message from the thread
+			if (threadInfo?.last) {
+				return lastKnownMessageId >= threadInfo.last.id
+			}
+		}
+
+		return lastKnownMessageId >= conversationLastMessageId.value
 	})
 
 	/** Initial check to ensure context is created once route is available */
