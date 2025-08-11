@@ -550,6 +550,8 @@ export type components = {
             subadmin: string[];
             twitter: string;
             twitterScope?: components["schemas"]["UserDetailsScope"];
+            bluesky: string;
+            blueskyScope?: components["schemas"]["UserDetailsScope"];
             website: string;
             websiteScope?: components["schemas"]["UserDetailsScope"];
         };
