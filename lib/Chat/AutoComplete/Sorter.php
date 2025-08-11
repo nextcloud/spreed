@@ -11,13 +11,11 @@ namespace OCA\Talk\Chat\AutoComplete;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
-use OCP\Comments\ICommentsManager;
 
 class Sorter implements ISorter {
-	protected ICommentsManager $commentsManager;
-
-	public function __construct(CommentsManager $commentsManager) {
-		$this->commentsManager = $commentsManager;
+	public function __construct(
+		protected CommentsManager $commentsManager,
+	) {
 	}
 
 	/**
@@ -33,7 +31,7 @@ class Sorter implements ISorter {
 	 * executes the sort action
 	 *
 	 * @param array $sortArray the array to be sorted, provided as reference
-	 * @param array{itemType: string, itemId: string, search?: string} $context carries key 'itemType' and 'itemId' of the source object (e.g. a file)
+	 * @param array{itemType: string, itemId: string, search?: string, selfUserId?: ?string, selfCloudId?: ?string} $context carries key 'itemType' and 'itemId' of the source object (e.g. a file)
 	 * @since 13.0.0
 	 */
 	#[\Override]
@@ -54,8 +52,16 @@ class Sorter implements ISorter {
 				}, $byType));
 
 			$search = $context['search'];
+			$selfUserId = $context['selfUserId'] ?? null;
 
-			usort($byType, function (array $a, array $b) use ($lastComments, $search) {
+			usort($byType, static function (array $a, array $b) use ($lastComments, $search, $selfUserId) {
+				if ($selfUserId === $a['value']['shareWith']) {
+					return 1;
+				}
+				if ($selfUserId === $b['value']['shareWith']) {
+					return -1;
+				}
+
 				if ($search) {
 					// If the user searched for "Dani" we make sure "Daniel" comes before "Madani"
 					if (stripos($a['label'], $search) === 0) {
