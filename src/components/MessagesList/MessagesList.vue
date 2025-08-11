@@ -12,56 +12,12 @@
 		}"
 		@scroll="onScroll"
 		@scrollend="endScroll">
-		<TransitionWrapper name="fade">
-			<div ref="scrollerLoader" class="scroller__loading">
-				<NcLoadingIcon v-if="displayMessagesLoader" class="scroller__loading-element" :size="32" />
-				<!-- FIXME return from threaded view during the call -->
-				<NcButton
-					v-else-if="threadId && isInCall"
-					:title="t('spreed', 'Back')"
-					:aria-label="t('spreed', 'Back')"
-					@click="threadId = 0">
-					<template #icon>
-						<IconArrowLeft :size="20" />
-					</template>
-				</NcButton>
-			</div>
-		</TransitionWrapper>
-
-		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
-			:key="`section_${dateTimestamp}`"
-			:ref="`dateGroup-${token}`"
-			:data-date-timestamp="dateTimestamp"
-			class="scroller__content"
-			:class="{ 'has-sticky': dateTimestamp === stickyDate }">
-			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-date">
-				<span class="messages-date__text" role="heading" aria-level="3">
-					{{ dateSeparatorLabels[dateTimestamp] }}
-				</span>
-			</li>
-			<component :is="messagesGroupComponent[group.type]"
-				v-for="group in list"
-				:key="group.id"
-				:token="token"
-				:messages="group.messages"
-				:previous-message-id="group.previousMessageId"
-				:next-message-id="group.nextMessageId" />
-		</ul>
-
-		<TransitionWrapper name="fade">
-			<span v-if="isMessagesListPopulated && loadingNewMessages" class="scroller__loading-new">
-				<span class="scroller__loading-new-wrapper">
-					<NcLoadingIcon :size="20" />
-					{{ t('spreed', 'Loading …') }}
-				</span>
-			</span>
-		</TransitionWrapper>
-
-		<template v-if="!isMessagesListPopulated">
+		<template v-if="isInitialisingMessages">
 			<LoadingPlaceholder type="messages"
 				class="messages-list__placeholder"
 				:count="15" />
 		</template>
+
 		<NcEmptyContent v-else-if="showEmptyContent"
 			class="messages-list__empty-content"
 			:name="t('spreed', 'No messages')"
@@ -70,6 +26,53 @@
 				<IconMessageOutline :size="64" />
 			</template>
 		</NcEmptyContent>
+
+		<template v-else>
+			<TransitionWrapper name="fade">
+				<div ref="scrollerLoader" class="scroller__loading">
+					<NcLoadingIcon v-if="loadingOldMessages" class="scroller__loading-element" :size="32" />
+					<!-- FIXME return from threaded view during the call -->
+					<NcButton
+						v-else-if="threadId && isInCall"
+						:title="t('spreed', 'Back')"
+						:aria-label="t('spreed', 'Back')"
+						@click="threadId = 0">
+						<template #icon>
+							<IconArrowLeft :size="20" />
+						</template>
+					</NcButton>
+				</div>
+			</TransitionWrapper>
+
+			<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
+				:key="`section_${dateTimestamp}`"
+				:ref="`dateGroup-${token}`"
+				:data-date-timestamp="dateTimestamp"
+				class="scroller__content"
+				:class="{ 'has-sticky': dateTimestamp === stickyDate }">
+				<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-date">
+					<span class="messages-date__text" role="heading" aria-level="3">
+						{{ dateSeparatorLabels[dateTimestamp] }}
+					</span>
+				</li>
+				<component :is="messagesGroupComponent[group.type]"
+					v-for="group in list"
+					:key="group.id"
+					:token="token"
+					:messages="group.messages"
+					:previous-message-id="group.previousMessageId"
+					:next-message-id="group.nextMessageId" />
+			</ul>
+
+			<TransitionWrapper name="fade">
+				<span v-if="loadingNewMessages" class="scroller__loading-new">
+					<span class="scroller__loading-new-wrapper">
+						<NcLoadingIcon :size="20" />
+						{{ t('spreed', 'Loading …') }}
+					</span>
+				</span>
+			</TransitionWrapper>
+		</template>
 	</div>
 </template>
 
@@ -151,7 +154,6 @@ export default {
 			loadingOldMessages,
 			loadingNewMessages,
 			isInitialisingMessages,
-			stopFetchingOldMessages,
 			isChatBeginningReached,
 			isChatEndReached,
 
@@ -175,7 +177,6 @@ export default {
 			loadingOldMessages,
 			loadingNewMessages,
 			isInitialisingMessages,
-			stopFetchingOldMessages,
 			isChatBeginningReached,
 			isChatEndReached,
 
@@ -191,11 +192,6 @@ export default {
 			 */
 			messagesGroupedByDateByAuthor: {},
 
-			/**
-			 * When scrolling to the top of the div .scroller we start loading previous
-			 * messages. This boolean allows us to show/hide the loader.
-			 */
-			displayMessagesLoader: false,
 			/**
 			 * We store this value in order to determine whether the user has scrolled up
 			 * or down at each iteration of the debounceHandleScroll method.
@@ -236,12 +232,8 @@ export default {
 			})
 		},
 
-		isMessagesListPopulated() {
-			return this.$store.getters.isMessagesListPopulated(this.token)
-		},
-
 		chatLoadedIdentifier() {
-			return this.token + ':' + this.isMessagesListPopulated
+			return this.token + ':' + this.contextMessageId + ':' + this.threadId + ':' + this.isInitialisingMessages
 		},
 
 		showEmptyContent() {
@@ -319,12 +311,11 @@ export default {
 		chatLoadedIdentifier() {
 			// resetting to default values
 			this.stickyDate = null
-			this.stopFetchingOldMessages = false
 			if (this.$refs.scroller) {
 				this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
 			}
 
-			if (this.isMessagesListPopulated) {
+			if (!this.isInitialisingMessages) {
 				this.$nextTick(() => {
 					this.checkSticky()
 					// setting wheel event for non-scrollable chat
@@ -703,7 +694,6 @@ export default {
 			// For chats that are scrolled to bottom and not fitted in one screen
 			if (scrollOffsetFromBottom < SCROLL_TOLERANCE && this.isChatEndReached && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
-				this.displayMessagesLoader = false
 				this.debounceUpdateReadMarkerPosition()
 				return
 			}
@@ -718,9 +708,7 @@ export default {
 					// already loading, don't do it twice
 					return
 				}
-				this.displayMessagesLoader = true
 				await this.getOldMessages(this.token, false)
-				this.displayMessagesLoader = false
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
@@ -734,9 +722,7 @@ export default {
 					// already loading, don't do it twice
 					return
 				}
-				this.displayMessagesLoader = true
 				await this.getNewMessages(this.token, false)
-				this.displayMessagesLoader = false
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({

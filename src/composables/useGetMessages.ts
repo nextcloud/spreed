@@ -33,7 +33,6 @@ type GetMessagesContext = {
 	loadingOldMessages: Ref<boolean>
 	loadingNewMessages: Ref<boolean>
 	isInitialisingMessages: Ref<boolean>
-	stopFetchingOldMessages: Ref<boolean>
 	isChatBeginningReached: ComputedRef<boolean>
 	isChatEndReached: ComputedRef<boolean>
 
@@ -213,10 +212,10 @@ export function useGetMessagesProvider() {
 	 * Handle route changes to initialize chat or thread, and focus given message
 	 */
 	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
+		// Reset blocker for fetching old messages
+		stopFetchingOldMessages.value = false
 		if (from.name !== 'conversation' || to.name !== 'conversation'
 			|| from.params.token !== to.params.token || typeof to.params.token !== 'string') {
-			// Do not block fetching old messages if conversation changed
-			stopFetchingOldMessages.value = false
 			// Only handle route changes within the same conversation
 			return
 		}
@@ -233,7 +232,6 @@ export function useGetMessagesProvider() {
 			// last known message in the most recent block store
 			contextMessageId.value = conversationLastMessageId.value
 		}
-		stopFetchingOldMessages.value = false
 
 		const hasMessageInStore = chatStore.hasMessage(to.params.token, { messageId: contextMessageId.value, threadId })
 		if (!hasMessageInStore) {
@@ -290,6 +288,7 @@ export function useGetMessagesProvider() {
 	 * @param threadId context thread id
 	 */
 	async function getMessageContext(token: string, messageId: number, threadId: number) {
+		isInitialisingMessages.value = true
 		loadingOldMessages.value = true
 		try {
 			debugTimer.start(`${token} | get context`)
@@ -304,7 +303,6 @@ export function useGetMessagesProvider() {
 				minimumVisible: CHAT.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
-			loadingOldMessages.value = false
 		} catch (exception) {
 			if (Axios.isCancel(exception)) {
 				console.debug('The request has been canceled', exception)
@@ -318,11 +316,11 @@ export function useGetMessagesProvider() {
 				// Empty chat, no messages to load
 				debugTimer.end(`${token} | get context`, 'status 304')
 				store.dispatch('loadedMessagesOfConversation', { token })
-
 				stopFetchingOldMessages.value = true
 			}
 		}
 		loadingOldMessages.value = false
+		isInitialisingMessages.value = false
 	}
 
 	/**
@@ -473,7 +471,6 @@ export function useGetMessagesProvider() {
 		loadingOldMessages,
 		loadingNewMessages,
 		isInitialisingMessages,
-		stopFetchingOldMessages,
 		isChatBeginningReached,
 		isChatEndReached,
 
