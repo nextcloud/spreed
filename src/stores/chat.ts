@@ -70,13 +70,13 @@ export const useChatStore = defineStore('chat', () => {
 		}
 
 		if (threadId) {
-			// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
-			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
-				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
-				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
-			return prepareMessagesList(token, contextBlock).filter((message) => {
-				return message.threadId === threadId
-			})
+			if (!threadBlocks[token]?.[threadId]) {
+				return []
+			}
+			const contextBlock = (messageId <= 0)
+				? threadBlocks[token][threadId][0]
+				: threadBlocks[token][threadId].find((set) => set.has(messageId)) ?? threadBlocks[token][threadId][0]
+			return prepareMessagesList(token, contextBlock, threadId)
 		}
 
 		// Look for a set containing given context id (return first block as fallback for not found / constants)
@@ -89,12 +89,16 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Returns list of messages from given set
 	 */
-	function prepareMessagesList(token: string, block: Set<number>): ChatMessage[] {
+	function prepareMessagesList(token: string, block: Set<number>, threadId?: number): ChatMessage[] {
 		return Array.from(block).sort((a, b) => a - b)
 			.reduce<ChatMessage[]>((acc, id) => {
 				const message = store.state.messagesStore.messages[token][id]
+				// Check for exceptions (message should not be added to the displayed list):
+				// - non-visible system message
+				// - completely deleted (expired) message
+				// - thread message in general view (apart from the topmost one)
 				if (message) {
-					// If message is not found in the store, it's an invisible system or expired message
+					// FIXME filter thread messages in general view (message.id === message.threadId)
 					acc.push(message)
 				}
 				return acc
@@ -108,14 +112,15 @@ export const useChatStore = defineStore('chat', () => {
 		token: string,
 		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
 	): boolean {
-		if (!chatBlocks[token]) {
-			return false
+		if (threadId) {
+			if (!threadBlocks[token]?.[threadId]) {
+				return false
+			}
+			return threadBlocks[token][threadId].findIndex((set) => set.has(messageId)) !== -1
 		}
 
-		if (threadId) {
-			// FIXME temporary check all messages for given thread from all chat blocks
-			return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
-				&& store.state.messagesStore.messages[token][messageId]?.threadId === threadId
+		if (!chatBlocks[token]) {
+			return false
 		}
 
 		return chatBlocks[token].findIndex((set) => set.has(messageId)) !== -1
@@ -137,14 +142,10 @@ export const useChatStore = defineStore('chat', () => {
 			if (hasMessage(token, { messageId: threadId, threadId })) {
 				return threadId
 			}
-			// FIXME temporary check all messages for given thread from all chat blocks
-			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
-				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
-				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
-			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
-				return message.threadId === threadId && Number.isInteger(message.id)
-			})
-			return Math.min(...threadMessagesList.map((message) => message.id))
+			const contextBlock = (messageId <= 0)
+				? threadBlocks[token][threadId][0]
+				: threadBlocks[token][threadId].find((set) => set.has(messageId)) ?? threadBlocks[token][threadId][0]
+			return Math.min(...filterNumericIds(contextBlock))
 		}
 
 		const contextBlock = (messageId <= 0)
@@ -165,14 +166,13 @@ export const useChatStore = defineStore('chat', () => {
 		}
 
 		if (threadId) {
-			// FIXME temporary check all messages for given thread from all chat blocks
-			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
-				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
-				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
-			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
-				return message.threadId === threadId && Number.isInteger(message.id)
-			})
-			return Math.max(...threadMessagesList.map((message) => message.id))
+			if (!threadBlocks[token]?.[threadId]) {
+				return threadId
+			}
+			const contextBlock = (messageId <= 0)
+				? threadBlocks[token][threadId][0]
+				: threadBlocks[token][threadId].find((set) => set.has(messageId)) ?? threadBlocks[token][threadId][0]
+			return Math.max(...filterNumericIds(contextBlock))
 		}
 
 		const contextBlock = (messageId <= 0)
