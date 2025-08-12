@@ -904,6 +904,7 @@ const actions = {
 				&& message.systemMessage !== 'reaction_deleted'
 				&& message.systemMessage !== 'reaction_revoked'
 				&& message.systemMessage !== 'poll_voted'
+				// FIXME filter thread messages in general view
 			) {
 				minimumVisible--
 			}
@@ -995,6 +996,7 @@ const actions = {
 				&& message.systemMessage !== 'reaction_deleted'
 				&& message.systemMessage !== 'reaction_revoked'
 				&& message.systemMessage !== 'poll_voted'
+				// FIXME filter thread messages in general view
 			) {
 				minimumVisible--
 			}
