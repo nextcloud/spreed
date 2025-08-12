@@ -5,6 +5,8 @@
 
 import type {
 	ChatMessage,
+	IdMap,
+	TokenIdMap,
 	TokenMap,
 } from '../types/index.ts'
 
@@ -54,6 +56,7 @@ export const useChatStore = defineStore('chat', () => {
 	const store = useStore()
 
 	const chatBlocks = reactive<TokenMap<Set<number>[]>>({})
+	const threadBlocks = reactive<TokenIdMap<Set<number>[]>>({})
 
 	/**
 	 * Returns list of messages, belonging to current context
@@ -320,10 +323,12 @@ export const useChatStore = defineStore('chat', () => {
 	 */
 	function purgeChatStore(token: string) {
 		delete chatBlocks[token]
+		delete threadBlocks[token]
 	}
 
 	return {
 		chatBlocks,
+		threadBlocks,
 
 		getMessagesList,
 		hasMessage,
