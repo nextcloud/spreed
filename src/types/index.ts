@@ -36,6 +36,8 @@ export type ApiErrorResponse<T = null> = AxiosError<{
 }>
 
 export type TokenMap<T> = Record<string, T>
+export type IdMap<T> = Record<number | string, T>
+export type TokenIdMap<T> = TokenMap<IdMap<T>>
 
 type SpreedCapabilities = components['schemas']['Capabilities']
 
