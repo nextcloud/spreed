@@ -23,7 +23,7 @@
 				:reference-limit="0" />
 
 			<!-- Additional controls -->
-			<CallButton v-if="showJoinCallButton" />
+			<CallButton v-if="showJoinCallButton" class="call-button" />
 			<ConversationActionsShortcut v-else-if="showConversationActionsShortcut"
 				:token="message.token"
 				:object-type="conversation.objectType"
@@ -585,6 +585,10 @@ export default {
 	&.retry-option {
 		cursor: pointer;
 	}
+}
+
+.call-button {
+	margin: 0 auto;
 }
 
 :deep(.rich-text--wrapper) {
