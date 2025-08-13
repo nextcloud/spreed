@@ -4,13 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
-import IconLockOpen from 'vue-material-design-icons/LockOpen.vue'
+import IconFileUploadOutline from 'vue-material-design-icons/FileUploadOutline.vue'
+import IconLockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue'
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
@@ -41,14 +40,14 @@ async function disableLobby() {
 	<div class="lobby-status">
 		<NcButton variant="success" @click="disableLobby">
 			<template #icon>
-				<IconLockOpen :size="20" />
+				<IconLockOpenOutline :size="20" />
 			</template>
 			{{ t('spreed', 'Disable lobby') }}
 		</NcButton>
 
 		<NcButton v-if="supportImportEmails" @click="isImportEmailsDialogOpen = true">
 			<template #icon>
-				<IconFileUpload :size="20" />
+				<IconFileUploadOutline :size="20" />
 			</template>
 			{{ t('spreed', 'Import email participants') }}
 		</NcButton>
