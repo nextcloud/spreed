@@ -87,3 +87,6 @@ Feature: chat/one-to-one
     Then user "participant2" set status to "away" with 200 (v1)
     Then user "participant1" gets room "one-to-one room" with 200 (v4)
       | status | away |
+    Then user "participant2" set status to "busy" with 200 (v1)
+    Then user "participant1" gets room "one-to-one room" with 200 (v4)
+      | status | busy |
