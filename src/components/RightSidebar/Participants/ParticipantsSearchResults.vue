@@ -44,7 +44,7 @@
 						@click="runIntegration(integration)">
 						<!-- FIXME: dynamically change the material design icon -->
 						<template #icon>
-							<AccountPlus :size="20" />
+							<IconAccountPlusOutline :size="20" />
 						</template>
 						{{ integration.label }}
 					</NcButton>
@@ -66,7 +66,7 @@
 		<template v-if="showSearchHints">
 			<NcEmptyContent v-if="noResults" :name="t('spreed', 'No results')">
 				<template #icon>
-					<AccountSearch />
+					<IconAccountSearchOutline />
 				</template>
 			</NcEmptyContent>
 			<NcButton v-else-if="displaySearchHint"
@@ -74,7 +74,7 @@
 				variant="tertiary"
 				@click="handleClickHint">
 				<template #icon>
-					<AccountSearch :size="20" />
+					<IconAccountSearchOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Search for more users') }}
 			</NcButton>
@@ -88,8 +88,8 @@ import { t } from '@nextcloud/l10n'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import AccountSearch from 'vue-material-design-icons/AccountSearch.vue'
+import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
+import IconAccountSearchOutline from 'vue-material-design-icons/AccountSearchOutline.vue'
 import Hint from '../../UIShared/Hint.vue'
 import ParticipantsList from './ParticipantsList.vue'
 import { ATTENDEE } from '../../../constants.ts'
@@ -101,8 +101,8 @@ export default {
 	name: 'ParticipantsSearchResults',
 
 	components: {
-		AccountPlus,
-		AccountSearch,
+		IconAccountPlusOutline,
+		IconAccountSearchOutline,
 		Hint,
 		NcAppNavigationCaption,
 		NcButton,
