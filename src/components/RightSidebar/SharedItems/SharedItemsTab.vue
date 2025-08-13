@@ -19,9 +19,8 @@ import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
 import ThreadItem from '../Threads/ThreadItem.vue'
@@ -157,7 +156,7 @@ function openPollDraftHandler() {
 						wide
 						@click="showMore(type)">
 						<template #icon>
-							<DotsHorizontal :size="20" />
+							<IconDotsHorizontal :size="20" />
 						</template>
 						{{ sharedItemButtonTitle[type] || sharedItemButtonTitle.default }}
 					</NcButton>
@@ -185,7 +184,7 @@ function openPollDraftHandler() {
 				class="shared-items-tab__empty-content"
 				:name="t('spreed', 'No shared items')">
 				<template #icon>
-					<FolderMultipleImage :size="20" />
+					<IconFolderMultipleImage :size="20" />
 				</template>
 			</NcEmptyContent>
 		</template>

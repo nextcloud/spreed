@@ -25,7 +25,7 @@
 			class="breakout-rooms__empty-content"
 			:name="t('spreed', 'Breakout rooms are not started')">
 			<template #icon>
-				<DotsCircle :size="20" />
+				<IconDotsCircle :size="20" />
 			</template>
 		</NcEmptyContent>
 	</div>
@@ -34,7 +34,7 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Participant from '../Participants/Participant.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
@@ -52,7 +52,7 @@ export default {
 		Participant,
 
 		// Icons
-		DotsCircle,
+		IconDotsCircle,
 	},
 
 	props: {

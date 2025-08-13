@@ -25,8 +25,8 @@ import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNa
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
-import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
-import IconFilter from 'vue-material-design-icons/Filter.vue'
+import IconCalendarRangeOutline from 'vue-material-design-icons/CalendarRangeOutline.vue'
+import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
@@ -256,7 +256,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 						:title="t('spreed', 'Search options')"
 						variant="tertiary-no-background">
 						<template #icon>
-							<IconFilter :size="15" />
+							<IconFilterOutline :size="15" />
 						</template>
 					</NcButton>
 				</div>
@@ -307,7 +307,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 							:text="t('spreed', 'Since') + ' ' + sinceDate?.toLocaleDateString()"
 							@close="sinceDate = null">
 							<template #icon>
-								<IconCalendarRange :size="15" />
+								<IconCalendarRangeOutline :size="15" />
 							</template>
 						</NcChip>
 						<NcChip v-if="untilDate"
@@ -315,7 +315,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 							:text="t('spreed', 'Until') + ' ' + untilDate?.toLocaleDateString()"
 							@close="untilDate = null">
 							<template #icon>
-								<IconCalendarRange :size="15" />
+								<IconCalendarRangeOutline :size="15" />
 							</template>
 						</NcChip>
 					</div>

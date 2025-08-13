@@ -21,11 +21,11 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconAccount from 'vue-material-design-icons/Account.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-import IconOfficeBuilding from 'vue-material-design-icons/OfficeBuilding.vue'
+import IconOfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -116,14 +116,14 @@ const profileInformation = computed(() => {
 	if (profileInfo.value.role || profileInfo.value.pronouns) {
 		fields.push({
 			key: 'person',
-			icon: IconAccount,
+			icon: IconAccountOutline,
 			label: joinFields(profileInfo.value.role, profileInfo.value.pronouns),
 		})
 	}
 	if (profileInfo.value.organisation || profileInfo.value.address) {
 		fields.push({
 			key: 'organisation',
-			icon: IconOfficeBuilding,
+			icon: IconOfficeBuildingOutline,
 			label: joinFields(profileInfo.value.organisation, profileInfo.value.address),
 		})
 	}

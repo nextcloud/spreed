@@ -18,7 +18,7 @@
 		@closed="handleClosed">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
-			<IconMessageText :size="20" />
+			<IconMessageTextOutline :size="20" />
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<template #info>
@@ -55,7 +55,7 @@
 				:order="1"
 				:name="t('spreed', 'Chat')">
 				<template #icon>
-					<IconMessage :size="20" />
+					<IconMessageOutline :size="20" />
 				</template>
 				<ChatView :is-visible="opened" is-sidebar />
 			</NcAppSidebarTab>
@@ -66,7 +66,7 @@
 				:order="2"
 				:name="participantsText">
 				<template #icon>
-					<IconAccountMultiple :size="20" />
+					<IconAccountMultipleOutline :size="20" />
 				</template>
 				<ParticipantsTab
 					:can-search="canSearchParticipants"
@@ -99,7 +99,7 @@
 					<div id="app-settings-header">
 						<NcButton variant="tertiary" @click="showSettings">
 							<template #icon>
-								<IconCog :size="20" />
+								<IconCogOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Settings') }}
 						</NcButton>
@@ -130,13 +130,13 @@ import { ref } from 'vue'
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
-import IconMessage from 'vue-material-design-icons/Message.vue'
-import IconMessageText from 'vue-material-design-icons/MessageText.vue'
+import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
+import IconMessageTextOutline from 'vue-material-design-icons/MessageTextOutline.vue'
 import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
@@ -178,13 +178,13 @@ export default {
 		ThreadsTab,
 		SipSettings,
 		// Icons
-		IconAccountMultiple,
-		IconCog,
+		IconAccountMultipleOutline,
+		IconCogOutline,
 		IconDotsCircle,
 		IconFolderMultipleImage,
 		IconInformationOutline,
-		IconMessage,
-		IconMessageText,
+		IconMessageOutline,
+		IconMessageTextOutline,
 	},
 
 	props: {

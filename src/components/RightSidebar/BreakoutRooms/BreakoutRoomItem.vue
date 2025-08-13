@@ -15,9 +15,9 @@
 				@blur="elementHoveredOrFocused = false"
 				@click="toggleParticipantsVisibility">
 				<template #icon>
-					<DotsCircle v-if="!elementHoveredOrFocused" :size="20" />
-					<MenuRight v-else-if="!showParticipants" :size="20" />
-					<MenuDown v-else :size="20" />
+					<IconDotsCircle v-if="!elementHoveredOrFocused" :size="20" />
+					<IconMenuRightOutline v-else-if="!showParticipants" :size="20" />
+					<IconMenuDownOutline v-else :size="20" />
 				</template>
 			</NcButton>
 			<span class="breakout-room-item__room-name">
@@ -33,13 +33,13 @@
 					<NcActionButton v-if="showAssistanceButton"
 						@click="dismissRequestAssistance">
 						<template #icon>
-							<HandBackLeft :size="16" />
+							<IconHandBackLeftOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Dismiss request for assistance') }}
 					</NcActionButton>
 					<NcActionButton @click="isDialogOpened = true">
 						<template #icon>
-							<Send :size="16" />
+							<IconSendOutline :size="16" />
 						</template>
 						{{ t('spreed', 'Send message to room') }}
 					</NcActionButton>
@@ -65,11 +65,11 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import MenuDown from 'vue-material-design-icons/MenuDown.vue'
-import MenuRight from 'vue-material-design-icons/MenuRight.vue'
-import Send from 'vue-material-design-icons/Send.vue'
+import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconMenuDownOutline from 'vue-material-design-icons/MenuDownOutline.vue'
+import IconMenuRightOutline from 'vue-material-design-icons/MenuRightOutline.vue'
+import IconSendOutline from 'vue-material-design-icons/SendOutline.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
@@ -87,11 +87,11 @@ export default {
 		SendMessageDialog,
 
 		// Icons
-		DotsCircle,
-		HandBackLeft,
-		MenuDown,
-		MenuRight,
-		Send,
+		IconDotsCircle,
+		IconHandBackLeftOutline,
+		IconMenuDownOutline,
+		IconMenuRightOutline,
+		IconSendOutline,
 	},
 
 	props: {
