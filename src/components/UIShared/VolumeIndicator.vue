@@ -11,6 +11,7 @@
 			:style="{ height: iconPrimaryHeight + 'px' }">
 			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 			<NcIconSvgWrapper v-else
+				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
 				:fill-color="primaryColor" />
@@ -22,6 +23,7 @@
 			:style="{ height: iconOverlayHeight + 'px' }">
 			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
 			<NcIconSvgWrapper v-else
+				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
 				:fill-color="overlayMutedColor" />
@@ -188,10 +190,5 @@ export default {
 	&-overlay {
 		color: var(--color-error);
 	}
-}
-
-:deep(.icon-vue) {
-	min-height: unset !important;
-	min-width: unset !important;
 }
 </style>
