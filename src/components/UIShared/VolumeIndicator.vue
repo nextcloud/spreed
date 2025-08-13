@@ -191,7 +191,7 @@ export default {
 }
 
 :deep(.icon-vue) {
-	min-height: unset;
-	min-width: unset;
+	min-height: unset !important;
+	min-width: unset !important;
 }
 </style>
