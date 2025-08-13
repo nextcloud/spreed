@@ -14,7 +14,7 @@
 				:disabled="!isInCall"
 				@click="startBreakoutRooms">
 				<template #icon>
-					<Play :size="20" />
+					<IconPlayOutline :size="20" />
 				</template>
 				{{ startLabel }}
 			</NcButton>
@@ -25,7 +25,7 @@
 				:wide="true"
 				@click="stopBreakoutRooms">
 				<template #icon>
-					<Check :size="20" />
+					<IconCheck :size="20" />
 				</template>
 				{{ stopLabel }}
 			</NcButton>
@@ -38,7 +38,7 @@
 				:wide="true"
 				@click="isSendMessageDialogOpened = true">
 				<template #icon>
-					<Send :size="18" />
+					<IconSendOutline :size="18" />
 				</template>
 				{{ sendMessageLabel }}
 			</NcButton>
@@ -60,7 +60,7 @@
 				variant="secondary"
 				@click="switchToBreakoutRoom">
 				<template #icon>
-					<ArrowRight class="bidirectional-icon" :size="20" />
+					<IconArrowRight class="bidirectional-icon" :size="20" />
 				</template>
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>
@@ -69,7 +69,7 @@
 					:aria-label="sendMessageLabel"
 					@click="isSendMessageDialogOpened = true">
 					<template #icon>
-						<Send :size="20" />
+						<IconSendOutline :size="20" />
 					</template>
 					{{ sendMessageLabel }}
 				</NcActionButton>
@@ -77,7 +77,7 @@
 					:aria-label="manageBreakoutRoomsTitle"
 					@click="openParticipantsEditor">
 					<template #icon>
-						<Cog :size="20" />
+						<IconCogOutline :size="20" />
 					</template>
 					{{ manageBreakoutRoomsTitle }}
 				</NcActionButton>
@@ -118,11 +118,11 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Play from 'vue-material-design-icons/Play.vue'
-import Send from 'vue-material-design-icons/Send.vue'
+import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
+import IconPlayOutline from 'vue-material-design-icons/PlayOutline.vue'
+import IconSendOutline from 'vue-material-design-icons/SendOutline.vue'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
@@ -145,12 +145,12 @@ export default {
 		NcActionButton,
 
 		// Icons
-		Play,
-		Cog,
-		Check,
+		IconPlayOutline,
+		IconCogOutline,
+		IconCheck,
 		IconArrowLeft,
-		ArrowRight,
-		Send,
+		IconArrowRight,
+		IconSendOutline,
 	},
 
 	props: {
