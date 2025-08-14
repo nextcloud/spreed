@@ -8,7 +8,7 @@ import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive } from 'vue'
 import Recording from './Recording.vue'
-import router from './router/router.ts'
+import { createTalkRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
@@ -38,6 +38,8 @@ window.store = store
 if (!window.OCA.Talk) {
 	window.OCA.Talk = reactive({})
 }
+
+const router = createTalkRouter()
 
 const instance = createApp(Recording)
 	.use(pinia)

@@ -25,7 +25,7 @@
 				<InternalSignalingHint />
 				<CallButton v-if="!isInCall" class="call-button" />
 				<CallFailedDialog v-if="connectionFailed" :token="token" />
-				<ChatView is-sidebar />
+				<RouterView />
 				<PollManager />
 				<PollViewer />
 				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
@@ -42,7 +42,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
 import CallView from './components/CallView/CallView.vue'
-import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollManager from './components/PollViewer/PollManager.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
@@ -73,7 +72,6 @@ export default {
 		CallButton,
 		CallFailedDialog,
 		CallView,
-		ChatView,
 		MediaSettings,
 		NcButton,
 		NcLoadingIcon,
@@ -173,6 +171,7 @@ export default {
 			try {
 				await this.getPublicShareConversationData()
 
+				await this.$router.push({ name: 'conversation', params: { token: this.token } })
 				await this.$store.dispatch('joinConversation', { token: this.token })
 			} catch (exception) {
 				this.joiningConversation = false

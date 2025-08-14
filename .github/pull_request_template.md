@@ -36,6 +36,7 @@ Screenshot before | Screenshot after
   - [ ] Firefox
   - [ ] Safari
   - [ ] Talk Desktop
+  - [ ] Integrations with Files sidebar and other apps
   - [ ] Not risky to browser differences / client
 - [ ] 🖌️ Design was reviewed, approved or inspired by the design team
 - [ ] ⛑️ Tests are included or not possible

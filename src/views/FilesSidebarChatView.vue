@@ -8,7 +8,7 @@
 		<InternalSignalingHint />
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
 		<CallFailedDialog v-if="connectionFailed" :token="token" />
-		<ChatView class="talk-tab__chat-view" is-sidebar />
+		<RouterView class="talk-tab__chat-view" />
 		<PollManager />
 		<PollViewer />
 		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
@@ -18,7 +18,6 @@
 <script>
 
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
-import ChatView from '../components/ChatView.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import PollManager from '../components/PollViewer/PollManager.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
@@ -36,7 +35,6 @@ export default {
 		InternalSignalingHint,
 		CallButton,
 		CallFailedDialog,
-		ChatView,
 		MediaSettings,
 		PollManager,
 		PollViewer,

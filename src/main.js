@@ -8,7 +8,7 @@ import { emit } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive, watch } from 'vue'
 import App from './App.vue'
-import router from './router/router.ts'
+import { createTalkRouter } from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
@@ -31,6 +31,8 @@ if (!IS_DESKTOP) {
 	// We do not want the index.php since we're loading files
 	__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 }
+
+const router = createTalkRouter()
 
 const instance = createApp(App, { fileInfo: null })
 	.use(store)
