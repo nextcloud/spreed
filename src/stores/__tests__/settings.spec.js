@@ -59,7 +59,6 @@ describe('settingsStore', () => {
 			// Arrange
 			BrowserStorage.setItem('showMediaSettings', 'false')
 			settingsStore.$reset()
-			console.log(BrowserStorage.getItem('showMediaSettings'))
 			// Assert
 			expect(settingsStore.showMediaSettings).toEqual(false)
 			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(1, 'showMediaSettings')
