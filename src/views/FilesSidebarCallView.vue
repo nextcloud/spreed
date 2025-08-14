@@ -3,6 +3,71 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import { onBeforeUnmount } from 'vue'
+import CallView from '../components/CallView/CallView.vue'
+import TopBar from '../components/TopBar/TopBar.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
+import { useHashCheck } from '../composables/useHashCheck.js'
+import { useSessionIssueHandler } from '../composables/useSessionIssueHandler.ts'
+
+useHashCheck()
+
+const isLeavingAfterSessionIssue = useSessionIssueHandler()
+const token = useGetToken()
+
+window.addEventListener('beforeunload', preventUnload)
+replaceSidebarHeaderContentsWithCallView()
+
+onBeforeUnmount(() => {
+	window.removeEventListener('beforeunload', preventUnload)
+	restoreSidebarHeaderContents()
+})
+
+/**
+ * Prevent unloading the page if the user is in ongoing call
+ *
+ * @param event
+ */
+function preventUnload(event: BeforeUnloadEvent) {
+	if (isLeavingAfterSessionIssue.value) {
+		return
+	}
+
+	event.preventDefault()
+}
+
+/**
+ * Hides the original sidebar header content (except the close button) and shows the call view instead.
+ */
+function replaceSidebarHeaderContentsWithCallView() {
+	const header = document.querySelector('header.app-sidebar-header')
+	if (!header) {
+		return
+	}
+	header.classList.add('hidden-by-call')
+
+	const sidebarCloseButton = document.querySelector('.app-sidebar__close')
+	sidebarCloseButton?.setAttribute('data-theme-dark', 'true')
+	sidebarCloseButton?.setAttribute('disabled', 'true')
+}
+
+/**
+ * Restores visibility of the original sidebar header content.
+ */
+function restoreSidebarHeaderContents() {
+	const header = document.querySelector('header.app-sidebar-header')
+	if (!header) {
+		return
+	}
+	header.classList.remove('hidden-by-call')
+
+	const sidebarCloseButton = document.querySelector('.app-sidebar__close')
+	sidebarCloseButton?.removeAttribute('data-theme-dark')
+	sidebarCloseButton?.removeAttribute('disabled')
+}
+</script>
+
 <template>
 	<Teleport to="header.app-sidebar-header">
 		<div class="talk-sidebar-callview">
@@ -11,84 +76,6 @@
 		</div>
 	</Teleport>
 </template>
-
-<script>
-import CallView from '../components/CallView/CallView.vue'
-import TopBar from '../components/TopBar/TopBar.vue'
-import { useGetToken } from '../composables/useGetToken.ts'
-import { useHashCheck } from '../composables/useHashCheck.js'
-import { useSessionIssueHandler } from '../composables/useSessionIssueHandler.ts'
-
-export default {
-	name: 'FilesSidebarCallView',
-
-	components: {
-		CallView,
-		TopBar,
-	},
-
-	setup() {
-		useHashCheck()
-
-		return {
-			isLeavingAfterSessionIssue: useSessionIssueHandler(),
-			token: useGetToken(),
-		}
-	},
-
-	created() {
-		window.addEventListener('beforeunload', this.preventUnload)
-		this.replaceSidebarHeaderContentsWithCallView()
-	},
-
-	beforeUnmount() {
-		window.removeEventListener('beforeunload', this.preventUnload)
-		this.restoreSidebarHeaderContents()
-	},
-
-	methods: {
-		preventUnload(event) {
-			if (this.isLeavingAfterSessionIssue) {
-				return
-			}
-
-			event.preventDefault()
-		},
-
-		/**
-		 * Hides the sidebar header contents (except the close button) and shows
-		 * the call view instead.
-		 */
-		replaceSidebarHeaderContentsWithCallView() {
-			const header = document.querySelector('header.app-sidebar-header')
-			if (!header) {
-				return
-			}
-			header.classList.add('hidden-by-call')
-
-			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
-			sidebarCloseButton?.setAttribute('data-theme-dark', 'true')
-			sidebarCloseButton?.setAttribute('disabled', 'true')
-		},
-
-		/**
-		 * Shows the sidebar header contents and moves the call view back to the
-		 * description.
-		 */
-		restoreSidebarHeaderContents() {
-			const header = document.querySelector('header.app-sidebar-header')
-			if (!header) {
-				return
-			}
-			header.classList.remove('hidden-by-call')
-
-			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
-			sidebarCloseButton?.removeAttribute('data-theme-dark')
-			sidebarCloseButton?.removeAttribute('disabled')
-		},
-	},
-}
-</script>
 
 <style lang="scss">
 header.app-sidebar-header.hidden-by-call > div:not(.talk-sidebar-callview), {
