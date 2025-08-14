@@ -27,6 +27,7 @@ class LiveTranscriptionService {
 		private ?string $userId,
 		private IAppManager $appManager,
 		private IUserManager $userManager,
+		private RoomService $roomService,
 		protected LoggerInterface $logger,
 	) {
 	}
@@ -112,6 +113,58 @@ class LiveTranscriptionService {
 		];
 
 		$this->requestToExAppLiveTranscription('POST', '/api/v1/call/transcribe', $parameters);
+	}
+
+	/**
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
+	public function getAvailableLanguages(): array {
+		$languages = $this->requestToExAppLiveTranscription('GET', '/api/v1/languages');
+		if ($languages === null) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: list of available languages is null');
+
+			throw new LiveTranscriptionAppAPIException('response-null-language-list');
+		}
+
+		return $languages;
+	}
+
+	/**
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
+	public function setLanguage(Room $room, string $languageId): void {
+		$parameters = [
+			'roomToken' => $room->getToken(),
+			'langId' => ! empty($languageId) ? $languageId : 'es',
+		];
+
+		try {
+			$this->requestToExAppLiveTranscription('POST', '/api/v1/call/set-language', $parameters);
+		} catch (LiveTranscriptionAppResponseException $e) {
+			// If there is no active transcription continue setting the language
+			// in the room. In any other case, abort.
+			if ($e->getResponse()->getStatusCode() !== 404) {
+				throw $e;
+			}
+		}
+
+		$this->roomService->setLiveTranscriptionLanguageId($room, $languageId);
 	}
 
 	/**

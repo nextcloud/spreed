@@ -1611,6 +1611,40 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/languages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get available languages for live transcriptions */
+        get: operations["live_transcription-get-available-languages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}/language": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set language for live transcriptions */
+        post: operations["live_transcription-set-language"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/threads/recent": {
         parameters: {
             query?: never;
@@ -1944,6 +1978,13 @@ export type components = {
             emails?: string[];
             phones?: string[];
             teams?: string[];
+        };
+        LiveTranscriptionLanguage: {
+            name: string;
+            metadata: {
+                separator: string;
+                rtl: boolean;
+            };
         };
         Matterbridge: {
             enabled: boolean;
@@ -9832,6 +9873,127 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "app" | "in-call";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-get-available-languages": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available languages got successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The external app "live_transcription" is not available */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-set-language": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the ID of the language to set */
+                    languageId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Language set successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The external app "live_transcription" is not available */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Participant is not a moderator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
                             };
                         };
                     };
