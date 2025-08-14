@@ -76,6 +76,9 @@ export const useGuestNameStore = defineStore('guestName', {
 		 * @param {string} name the new guest name
 		 */
 		async submitGuestUsername(token, name) {
+			if (!name) {
+				return
+			}
 			const actorStore = useActorStore()
 			const actorId = actorStore.actorId
 			const previousName = this.getGuestName(token, actorId)
@@ -90,7 +93,7 @@ export const useGuestNameStore = defineStore('guestName', {
 
 				await setGuestUserName(token, name)
 
-				setGuestNickname(name || t('spreed', 'Guest'))
+				setGuestNickname(name)
 			} catch (error) {
 				actorStore.setDisplayName(previousName)
 				this.addGuestName({

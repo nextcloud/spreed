@@ -24,11 +24,11 @@
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
 				:label="t('spreed', 'Display name (required)')"
-				:show-trailing-button="!!guestUserName"
+				:show-trailing-button="!!guestUserName && !compact"
 				trailing-button-icon="arrowEnd"
 				:trailing-button-label="t('spreed', 'Save name')"
-				@trailing-button-click="updateDisplayName"
-				@keydown.enter="updateDisplayName"
+				@trailing-button-click="!compact ? updateDisplayName() : null"
+				@keydown.enter="!compact ? updateDisplayName() : null"
 				@keydown.esc="toggleEdit" />
 		</div>
 
@@ -63,7 +63,11 @@ import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 const { compact = false } = defineProps<{
-	compact: boolean
+	compact?: boolean
+}>()
+
+const emit = defineEmits<{
+	(event: 'update', value: string): void
 }>()
 const loginUrl = `${generateUrl('/login')}?redirect_url=${encodeURIComponent(window.location.pathname)}`
 
@@ -76,7 +80,7 @@ const usernameInput = useTemplateRef('usernameInput')
 const guestUserName = ref(getGuestNickname() || '')
 const isEditingUsername = ref(false)
 
-const actorDisplayName = computed<string>(() => actorStore.displayName || guestUserName.value || t('spreed', 'Guest'))
+const actorDisplayName = computed<string>(() => actorStore.displayName || guestUserName.value)
 const displayNameLabel = computed(() => t('spreed', 'Display name: {name}', {
 	name: `<strong>${escapeHtml(actorDisplayName.value)}</strong>`,
 }, { escape: false }))
@@ -104,6 +108,7 @@ EventBus.once('joined-conversation', () => {
 subscribe('user:info:changed', updateDisplayNameFromPublicEvent)
 onBeforeUnmount(() => {
 	unsubscribe('user:info:changed', updateDisplayNameFromPublicEvent)
+	updateDisplayName()
 })
 
 /** Update guest username from public page user menu */
@@ -116,6 +121,9 @@ function updateDisplayNameFromPublicEvent(payload: NextcloudUser) {
 
 /** Set guest username locally and send request to server to update for other attendees */
 function updateDisplayName() {
+	if (!guestUserName.value) {
+		return
+	}
 	guestNameStore.submitGuestUsername(token.value, guestUserName.value)
 	isEditingUsername.value = false
 }
@@ -129,6 +137,11 @@ function toggleEdit() {
 		})
 	}
 }
+
+// One-way binding to parent component
+watch(guestUserName, (newValue) => {
+	emit('update', newValue)
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
