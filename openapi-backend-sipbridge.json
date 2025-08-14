@@ -629,6 +629,7 @@
                     "lastPing",
                     "lastReadMessage",
                     "listable",
+                    "liveTranscriptionLanguageId",
                     "lobbyState",
                     "lobbyTimer",
                     "mentionPermissions",
@@ -802,6 +803,10 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Listable scope for the room (only available with `listable-rooms` capability)"
+                    },
+                    "liveTranscriptionLanguageId": {
+                        "type": "string",
+                        "description": "ID of the language to use for live transcriptions in the room,"
                     },
                     "lobbyState": {
                         "type": "integer",

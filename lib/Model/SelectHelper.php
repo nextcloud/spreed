@@ -45,6 +45,7 @@ class SelectHelper {
 			->addSelect($alias . 'recording_consent')
 			->addSelect($alias . 'has_federation')
 			->addSelect($alias . 'mention_permissions')
+			->addSelect($alias . 'transcription_language')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 

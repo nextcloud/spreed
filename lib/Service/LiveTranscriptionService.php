@@ -85,6 +85,11 @@ class LiveTranscriptionService {
 			'enable' => true,
 		];
 
+		$languageId = $room->getLiveTranscriptionLanguageId();
+		if (!empty($languageId)) {
+			$parameters['langId'] = $languageId;
+		}
+
 		$this->requestToExAppLiveTranscription('POST', '/api/v1/call/transcribe', $parameters);
 	}
 
