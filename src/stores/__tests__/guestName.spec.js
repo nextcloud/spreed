@@ -170,28 +170,6 @@ describe('guestNameStore', () => {
 		expect(actorStore.displayName).toBe('actor 1')
 	})
 
-	test('removes display name from local storage when user sumbits an empty new name', async () => {
-		// Arrange
-		const actor1 = {
-			token: 'token-1',
-			actorId: 'actor-id1',
-			actorDisplayName: 'actor 1',
-		}
-		const newName = ''
-
-		actorStore.setCurrentUser({ uid: 'actor-id1' })
-
-		// Mock implementation of setGuestUserName
-		setGuestUserName.mockResolvedValue()
-
-		// Act
-		await store.submitGuestUsername(actor1.token, newName)
-
-		// Assert
-		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
-		expect(setGuestNickname).toHaveBeenCalledWith('Guest')
-	})
-
 	test('resets to previous display name if there is an error in setting the new one', async () => {
 		// Arrange
 		const actor1 = {

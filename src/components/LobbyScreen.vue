@@ -40,7 +40,6 @@ import moment from '@nextcloud/moment'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import RoomService from 'vue-material-design-icons/RoomService.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
-import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 

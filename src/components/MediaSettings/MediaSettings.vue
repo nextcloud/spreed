@@ -171,7 +171,9 @@
 					</MediaSettingsTabs>
 
 					<!-- Guest display name setting-->
-					<SetGuestUsername v-if="isGuest" compact />
+					<SetGuestUsername v-if="isGuest"
+						compact
+						@update="guestUserName = $event" />
 
 					<!-- Moderator options before starting a call-->
 					<NcCheckboxRadioSwitch v-if="showStartRecordingOption"
@@ -382,6 +384,7 @@ export default {
 			skipBlurVirtualBackground: false,
 			mediaLoading: false,
 			isDeviceCheck: false,
+			guestUserName: '',
 		}
 	},
 
@@ -557,11 +560,11 @@ export default {
 
 		disabledCallButton() {
 			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
-				|| (this.isGuest && !this.actorStore.displayName.length)
+				|| (this.isGuest && !this.guestUserName.length)
 		},
 
 		forceShowMediaSettings() {
-			return this.isGuest && this.hasCall && this.isDialog
+			return !this.isInCall && this.isGuest && this.isDialog
 		},
 	},
 
@@ -630,18 +633,15 @@ export default {
 			}
 		},
 
-		forceShowMediaSettings: {
-			intermediate: true,
-			handler(value) {
-				if (value) {
-					this.showMediaSettings()
-				}
-			},
-		},
-
 		connectionFailed(value) {
 			if (value) {
 				this.skipBlurVirtualBackground = false
+			}
+		},
+
+		hasCall(value) {
+			if (value && this.forceShowMediaSettings) {
+				this.showMediaSettings()
 			}
 		},
 	},
