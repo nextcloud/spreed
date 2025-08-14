@@ -852,6 +852,11 @@ class RoomService {
 	 * Set the ID of the language to use for live transcriptions in the given
 	 * room.
 	 *
+	 * This method is not meant to be directly used; use
+	 * "LiveTranscriptionService::setLanguage" instead, which only sets the
+	 * language in the room if the external app is available and the language is
+	 * valid.
+	 *
 	 * @param Room $room
 	 * @param string $newState ID of the language to set
 	 */

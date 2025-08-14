@@ -21,5 +21,9 @@ return [
 		['name' => 'LiveTranscription#enable', 'url' => '/api/{apiVersion}/live-transcription/{token}', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\LiveTranscriptionController::disable() */
 		['name' => 'LiveTranscription#disable', 'url' => '/api/{apiVersion}/live-transcription/{token}', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\LiveTranscriptionController::getAvailableLanguages() */
+		['name' => 'LiveTranscription#getAvailableLanguages', 'url' => '/api/{apiVersion}/live-transcription/languages', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\LiveTranscriptionController::setLanguage() */
+		['name' => 'LiveTranscription#setLanguage', 'url' => '/api/{apiVersion}/live-transcription/{token}/language', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 	],
 ];

@@ -25,3 +25,26 @@
         + `200 OK`
         + `400 Bad Request` Message: `app`. The external app `live_transcription` is not available.
         + `400 Bad Request` Message: `in-call`. Participant is not in the call.
+
+## Get available languages
+
+* Required capability: `config => call => live-transcription`
+* Method: `GET`
+* Endpoint: `/live-transcription/languages`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Message: `app`. The external app `live_transcription` is not available.
+
+## Set language
+
+* Required capability: `config => call => live-transcription`
+* Method: `POST`
+* Endpoint: `/live-transcription/{token}/set-language`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Message: `app`. The external app `live_transcription` is not available.
+        + `403 Forbidden` Participant is not a moderator.

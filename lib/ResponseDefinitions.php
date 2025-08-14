@@ -534,6 +534,14 @@ namespace OCA\Talk;
  *     config-local: array<string, non-empty-list<string>>,
  *     version: string,
  * }
+ *
+ * @psalm-type TalkLiveTranscriptionLanguage = array{
+ *     name: string,
+ *     metadata: array{
+ *         separator: string,
+ *         rtl: bool,
+ *     },
+ * }
  */
 class ResponseDefinitions {
 }
