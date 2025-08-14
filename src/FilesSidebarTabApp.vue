@@ -22,7 +22,10 @@
 				{{ t('spreed', 'Join conversation') }}
 			</NcButton>
 		</div>
-		<FilesSidebarChatView v-else />
+		<template v-else>
+			<FilesSidebarCallView />
+			<FilesSidebarChatView />
+		</template>
 	</div>
 </template>
 
@@ -53,6 +56,11 @@ export default {
 	components: {
 		FilesSidebarChatView: defineAsyncComponent({
 			loader: () => import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
+			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
+		}),
+
+		FilesSidebarCallView: defineAsyncComponent({
+			loader: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./views/FilesSidebarCallView.vue'),
 			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
 		}),
 

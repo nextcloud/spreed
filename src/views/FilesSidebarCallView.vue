@@ -17,24 +17,20 @@
 </template>
 
 <script>
-import { defineAsyncComponent, defineComponent, h } from 'vue'
-import LoadingComponent from './components/LoadingComponent.vue'
-import { useGetToken } from './composables/useGetToken.ts'
-import { useHashCheck } from './composables/useHashCheck.js'
-import { useIsInCall } from './composables/useIsInCall.js'
-import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
-import { useTokenStore } from './stores/token.ts'
+import CallView from '../components/CallView/CallView.vue'
+import TopBar from '../components/TopBar/TopBar.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
+import { useHashCheck } from '../composables/useHashCheck.js'
+import { useIsInCall } from '../composables/useIsInCall.js'
+import { useSessionIssueHandler } from '../composables/useSessionIssueHandler.ts'
+import { useTokenStore } from '../stores/token.ts'
 
 export default {
-	name: 'FilesSidebarCallViewApp',
+	name: 'FilesSidebarCallView',
 
 	components: {
-		CallView: defineAsyncComponent({
-			loader: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
-			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'call-loading' })),
-		}),
-
-		TopBar: defineAsyncComponent(() => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue')),
+		CallView,
+		TopBar,
 	},
 
 	setup() {
@@ -282,7 +278,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import './assets/variables';
+@import '../assets/variables';
 
 #call-container {
 	position: relative;
