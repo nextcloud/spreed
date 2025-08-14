@@ -71,7 +71,7 @@ export function useGetMessagesProvider() {
 	const contextMessageId = ref<number>(0)
 	const loadingOldMessages = ref(false)
 	const loadingNewMessages = ref(false)
-	const isInitialisingMessages = ref(false)
+	const isInitialisingMessages = ref(true)
 	const stopFetchingOldMessages = ref(false)
 
 	/**

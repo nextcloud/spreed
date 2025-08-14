@@ -118,7 +118,7 @@ export default {
 
 	data() {
 		return {
-			isChatScrolledToBottom: true,
+			isChatScrolledToBottom: false,
 			isDraggingOver: false,
 		}
 	},
