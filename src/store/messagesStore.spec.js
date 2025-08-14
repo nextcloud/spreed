@@ -341,8 +341,6 @@ describe('messagesStore', () => {
 				for (let id = oldFirst; id <= oldLast; id++) {
 					store.dispatch('processMessage', { token: TOKEN, message: { token: TOKEN, id } })
 				}
-				store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: oldFirst })
-				store.dispatch('setLastKnownMessageId', { token: TOKEN, id: oldLast })
 
 				// Act
 				store.dispatch('easeMessageList', { token: TOKEN })
@@ -351,8 +349,6 @@ describe('messagesStore', () => {
 				expect(store.getters.messagesList(TOKEN)).toHaveLength(length)
 				expect(store.getters.messagesList(TOKEN).at(0)).toStrictEqual({ token: TOKEN, id: newFirst })
 				expect(store.getters.messagesList(TOKEN).at(-1)).toStrictEqual({ token: TOKEN, id: newLast })
-				expect(store.getters.getFirstKnownMessageId(TOKEN)).toStrictEqual(newFirst)
-				expect(store.getters.getLastKnownMessageId(TOKEN)).toStrictEqual(newLast)
 				if (oldFirst < lastReadMessage && lastReadMessage < oldLast) {
 					expect(store.getters.message(TOKEN, lastReadMessage)).toBeDefined()
 				}
@@ -667,19 +663,6 @@ describe('messagesStore', () => {
 		})
 	})
 
-	test('stores first and last known message ids by token', () => {
-		store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: 1 })
-		store.dispatch('setFirstKnownMessageId', { token: 'token-2', id: 2 })
-		store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 3 })
-		store.dispatch('setLastKnownMessageId', { token: 'token-2', id: 4 })
-
-		expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
-		expect(store.getters.getFirstKnownMessageId('token-2')).toBe(2)
-
-		expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(3)
-		expect(store.getters.getLastKnownMessageId('token-2')).toBe(4)
-	})
-
 	describe('last read message markers', () => {
 		beforeEach(() => {
 			const response = generateOCSResponse({ payload: conversation })
@@ -898,22 +881,16 @@ describe('messagesStore', () => {
 
 			for (const index in originalMessagesList) {
 				store.commit('addMessage', { token: TOKEN, message: originalMessagesList[index] })
-				if (index === '0') {
-					store.dispatch('setFirstKnownMessageId', { token: TOKEN, id: originalMessagesList[index].id })
-				}
-				if (index === `${originalMessagesList.length - 1}`) {
-					store.dispatch('setLastKnownMessageId', { token: TOKEN, id: originalMessagesList[index].id })
-				}
 			}
 		})
 
 		const testCasesOld = [
-			[true, CHAT.FETCH_OLD, [...oldMessagesList, originalMessagesList.at(0)].reverse(), 98, 100],
-			[false, CHAT.FETCH_OLD, [...oldMessagesList].reverse(), 98, 100],
-			[true, CHAT.FETCH_NEW, [originalMessagesList.at(-1), ...newMessagesList], 100, 102],
-			[false, CHAT.FETCH_NEW, newMessagesList, 100, 102],
+			[true, CHAT.FETCH_OLD, [...oldMessagesList, originalMessagesList.at(0)].reverse()],
+			[false, CHAT.FETCH_OLD, [...oldMessagesList].reverse()],
+			[true, CHAT.FETCH_NEW, [originalMessagesList.at(-1), ...newMessagesList]],
+			[false, CHAT.FETCH_NEW, newMessagesList],
 		]
-		test.each(testCasesOld)('fetches messages from server: including last known - %s, look into future - %s', async (includeLastKnown, lookIntoFuture, payload, firstKnown, lastKnown) => {
+		test.each(testCasesOld)('fetches messages from server: including last known - %s, look into future - %s', async (includeLastKnown, lookIntoFuture, payload) => {
 			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
@@ -954,8 +931,6 @@ describe('messagesStore', () => {
 			expect(addGuestNameAction).toHaveBeenCalledWith(expectedMessageFromGuest, { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(expectedMessages)
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(firstKnown)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(lastKnown)
 		})
 
 		test('cancels fetching messages', () => {
@@ -1059,8 +1034,6 @@ describe('messagesStore', () => {
 			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(2)
 		})
 
 		test('fetch additional messages around context', async () => {
@@ -1131,8 +1104,6 @@ describe('messagesStore', () => {
 			expect(addGuestNameAction).toHaveBeenCalledWith(messagesContext[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([...messagesFetch, ...messagesContext])
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(4)
 		})
 	})
 
@@ -1227,10 +1198,6 @@ describe('messagesStore', () => {
 			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: false })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(100)
-
-			// not updated
-			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(null)
 		})
 
 		test('looks for new messages does not update last message if lower', async () => {
@@ -1264,8 +1231,6 @@ describe('messagesStore', () => {
 				.not.toHaveBeenCalled()
 			expect(updateLastCommonReadMessageAction)
 				.not.toHaveBeenCalled()
-
-			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(null)
 		})
 
 		test('does not look for new messages if lastKnownMessageId is falsy', async () => {
@@ -1858,34 +1823,6 @@ describe('messagesStore', () => {
 			jest.advanceTimersByTime(60000)
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
-		})
-	})
-
-	describe('hasMoreMessagesToLoad', () => {
-		/**
-		 * @param {number} lastKnownMessageId The last known/loaded message id
-		 * @param {number} lastConversationMessageId The last message id of the conversation
-		 */
-		function setupWithValues(lastKnownMessageId, lastConversationMessageId) {
-			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 123 })
-			conversationMock.mockReturnValue({
-				token: TOKEN,
-				lastMessage: { id: lastConversationMessageId },
-			})
-			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: lastKnownMessageId })
-		}
-
-		test('returns true if more messages are available on the server', () => {
-			setupWithValues(100, 123)
-			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(true)
-		})
-		test('returns false if no more messages are available on the server', () => {
-			setupWithValues(123, 123)
-			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(false)
-		})
-		test('returns false if known last message id is past the one from known conversation', () => {
-			setupWithValues(200, 123)
-			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(false)
 		})
 	})
 

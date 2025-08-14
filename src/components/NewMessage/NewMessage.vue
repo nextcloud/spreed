@@ -730,6 +730,8 @@ export default {
 				this.text = ''
 				this.chatExtrasStore.removeThreadTitle(this.token)
 
+				// Reset the hash from focused message id (but keep the thread id)
+				this.$router.replace({ query: this.$route.query, hash: '' })
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
