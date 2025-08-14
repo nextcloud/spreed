@@ -845,6 +845,7 @@ OC.L10N.register(
     "Talk settings" : "Impostazioni di Talk",
     "Users" : "Utenti",
     "Groups" : "Gruppi",
+    "Teams" : "Team",
     "Open conversations" : "Apri conversazioni",
     "No search results" : "Nessun risultato di ricerca",
     "Users and groups" : "Utenti e gruppi",
