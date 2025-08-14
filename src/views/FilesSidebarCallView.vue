@@ -4,15 +4,9 @@
 -->
 
 <template>
-	<div v-if="isInFile" class="talk-sidebar-callview">
-		<TopBar
-			v-if="showCallView"
-			:is-in-call="true"
-			:is-sidebar="true" />
-		<CallView
-			v-if="showCallView"
-			:token="token"
-			:is-sidebar="true" />
+	<div class="talk-sidebar-callview">
+		<TopBar is-in-call is-sidebar />
+		<CallView :token="token" is-sidebar />
 	</div>
 </template>
 
@@ -21,9 +15,7 @@ import CallView from '../components/CallView/CallView.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { useHashCheck } from '../composables/useHashCheck.js'
-import { useIsInCall } from '../composables/useIsInCall.js'
 import { useSessionIssueHandler } from '../composables/useSessionIssueHandler.ts'
-import { useTokenStore } from '../stores/token.ts'
 
 export default {
 	name: 'FilesSidebarCallView',
@@ -37,125 +29,28 @@ export default {
 		useHashCheck()
 
 		return {
-			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			token: useGetToken(),
-			tokenStore: useTokenStore(),
 		}
-	},
-
-	data() {
-		return {
-			Talk: OCA.Talk,
-		}
-	},
-
-	computed: {
-		fileInfo() {
-			// When changing files OCA.Talk.fileInfo is cleared as soon as the
-			// new file starts to be loaded; "setFileInfo()" is called once the
-			// new file has loaded, so fileInfo is got from OCA.Talk to hide the
-			// call view at the same time as the rest of the sidebar UI.
-			return this.Talk.fileInfo || {}
-		},
-
-		fileId() {
-			return this.fileInfo.id
-		},
-
-		fileIdForToken() {
-			return this.tokenStore.fileIdForToken
-		},
-
-		/**
-		 * Returns whether the sidebar is opened in the file of the current
-		 * conversation or not.
-		 *
-		 * Note that false is returned too when the sidebar is closed, even if
-		 * the conversation is active in the current file.
-		 *
-		 * @return {boolean} true if the sidebar is opened in the file, false
-		 *          otherwise.
-		 */
-		isInFile() {
-			return this.fileId === this.fileIdForToken
-		},
-
-		showCallView() {
-			// FIXME Remove participants as soon as the file changes so this
-			// condition is not needed.
-			if (!this.isInFile) {
-				return false
-			}
-
-			return this.isInCall
-		},
-
-		warnLeaving() {
-			return !this.isLeavingAfterSessionIssue && this.showCallView
-		},
-	},
-
-	watch: {
-		showCallView(showCallView) {
-			if (showCallView) {
-				this.replaceSidebarHeaderContentsWithCallView()
-			} else {
-				this.restoreSidebarHeaderContents()
-			}
-		},
-
-		/**
-		 * Force restoring the sidebar header contents on file changes.
-		 *
-		 * If the sidebar is opened in a different file during a call the
-		 * sidebar header contents may not be properly restored due to the order
-		 * in which the updates are handled, so it needs to be executed again
-		 * when the FileInfo has been set and it does not match the current
-		 * conversation.
-		 *
-		 * @param {object} fileInfo the watched FileInfo
-		 */
-		fileInfo(fileInfo) {
-			if (!fileInfo) {
-				return
-			}
-
-			if (this.isInFile) {
-				return
-			}
-
-			const headerDescription = document.querySelector('.app-sidebar-header__description')
-			if (!headerDescription) {
-				return
-			}
-
-			if (this.$el.parentElement === headerDescription) {
-				return
-			}
-
-			this.restoreSidebarHeaderContents()
-		},
 	},
 
 	created() {
 		window.addEventListener('beforeunload', this.preventUnload)
+		this.replaceSidebarHeaderContentsWithCallView()
 	},
 
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.preventUnload)
+		this.restoreSidebarHeaderContents()
 	},
 
 	methods: {
 		preventUnload(event) {
-			if (!this.warnLeaving) {
+			if (this.isLeavingAfterSessionIssue) {
 				return
 			}
 
 			event.preventDefault()
-		},
-
-		setFileInfo(fileInfo) {
 		},
 
 		/**
