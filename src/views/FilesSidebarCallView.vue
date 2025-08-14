@@ -68,6 +68,7 @@ export default {
 
 			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
 			sidebarCloseButton?.setAttribute('data-theme-dark', 'true')
+			sidebarCloseButton?.setAttribute('disabled', 'true')
 		},
 
 		/**
@@ -83,6 +84,7 @@ export default {
 
 			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
 			sidebarCloseButton?.removeAttribute('data-theme-dark')
+			sidebarCloseButton?.removeAttribute('disabled')
 		},
 	},
 }
