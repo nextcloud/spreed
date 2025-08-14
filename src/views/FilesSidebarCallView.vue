@@ -4,10 +4,12 @@
 -->
 
 <template>
-	<div class="talk-sidebar-callview">
-		<TopBar is-in-call is-sidebar />
-		<CallView :token="token" is-sidebar />
-	</div>
+	<Teleport to="header.app-sidebar-header">
+		<div class="talk-sidebar-callview">
+			<TopBar is-in-call is-sidebar />
+			<CallView :token="token" is-sidebar />
+		</div>
+	</Teleport>
 </template>
 
 <script>
@@ -54,93 +56,18 @@ export default {
 		},
 
 		/**
-		 * Adds a special style sheet to hide the sidebar header contents during
-		 * a call.
-		 *
-		 * The style sheet contains a rule to hide ".hidden-by-call" elements,
-		 * which is the CSS class set in the sidebar header contents during a
-		 * call.
-		 */
-		addCallInFilesSidebarStyleSheet() {
-			const isCallInFilesSidebarStyleSheet = (sheet) => {
-				try {
-					// cssRules may not be defined in Chromium if the stylesheet
-					// is loaded from a different domain.
-					if (!sheet.cssRules) {
-						return false
-					}
-
-					// None of the default properties of a style sheet can be used
-					// as an ID. Adding a "data-id" attribute would work in Firefox,
-					// but not in Chromium, as it does not provide a "dataset"
-					// property in styleSheet objects. Therefore it is necessary to
-					// check the rules themselves, but as the order is undefined a
-					// matching rule needs to be looked for in all of them.
-					if (sheet.cssRules.length !== 2) {
-						return false
-					}
-
-					for (const cssRule of sheet.cssRules) {
-						if (cssRule.cssText === '.app-sidebar-header .hidden-by-call { display: none !important; }') {
-							return true
-						}
-					}
-				} catch (exception) {
-					// Accessing cssRules may throw a SecurityError in Firefox
-					// if the style sheet is loaded from a different domain.
-					if (exception.name !== 'SecurityError') {
-						throw exception
-					}
-				}
-
-				return false
-			}
-
-			for (let i = 0; i < document.styleSheets.length; i++) {
-				if (isCallInFilesSidebarStyleSheet(document.styleSheets[i])) {
-					return
-				}
-			}
-
-			const style = document.createElement('style')
-
-			document.head.appendChild(style)
-
-			// "insertRule" calls below need to be kept in sync with the
-			// condition above.
-
-			// Shadow is added to forced white icons to ensure that they are
-			// visible even against a bright video background.
-			// White color of forced white icons needs to be set in "icons.scss"
-			// file to be able to use the SCSS functions.
-			style.sheet.insertRule('.app-sidebar-header .forced-white { filter: drop-shadow(1px 1px 4px var(--color-box-shadow)); }', 0)
-
-			style.sheet.insertRule('.app-sidebar-header .hidden-by-call { display: none !important; }', 0)
-		},
-
-		/**
 		 * Hides the sidebar header contents (except the close button) and shows
 		 * the call view instead.
 		 */
 		replaceSidebarHeaderContentsWithCallView() {
-			this.addCallInFilesSidebarStyleSheet()
-
-			const header = document.querySelector('.app-sidebar-header')
+			const header = document.querySelector('header.app-sidebar-header')
 			if (!header) {
 				return
 			}
+			header.classList.add('hidden-by-call')
 
-			for (let i = 0; i < header.children.length; i++) {
-				const headerChild = header.children[i]
-
-				if (headerChild.classList.contains('app-sidebar__close')) {
-					headerChild.classList.add('forced-white')
-				} else {
-					headerChild.classList.add('hidden-by-call')
-				}
-			}
-
-			header.appendChild(this.$el)
+			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
+			sidebarCloseButton?.setAttribute('data-theme-dark', 'true')
 		},
 
 		/**
@@ -148,29 +75,24 @@ export default {
 		 * description.
 		 */
 		restoreSidebarHeaderContents() {
-			const header = document.querySelector('.app-sidebar-header')
+			const header = document.querySelector('header.app-sidebar-header')
 			if (!header) {
 				return
 			}
+			header.classList.remove('hidden-by-call')
 
-			for (let i = 0; i < header.children.length; i++) {
-				const headerChild = header.children[i]
-
-				if (headerChild.classList.contains('app-sidebar__close')) {
-					headerChild.classList.remove('forced-white')
-				} else {
-					headerChild.classList.remove('hidden-by-call')
-				}
-			}
-
-			const headerDescription = document.querySelector('.app-sidebar-header__description')
-			if (headerDescription) {
-				headerDescription.appendChild(this.$el)
-			}
+			const sidebarCloseButton = document.querySelector('.app-sidebar__close')
+			sidebarCloseButton?.removeAttribute('data-theme-dark')
 		},
 	},
 }
 </script>
+
+<style lang="scss">
+header.app-sidebar-header.hidden-by-call > div:not(.talk-sidebar-callview), {
+	display: none !important;
+}
+</style>
 
 <style lang="scss" scoped>
 @import '../assets/variables';
