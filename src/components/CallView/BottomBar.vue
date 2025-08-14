@@ -4,11 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { showWarning } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-import { computed, watch } from 'vue'
+import { computed, toValue, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
@@ -20,8 +18,7 @@ import CallButton from '../TopBar/CallButton.vue'
 import ReactionMenu from '../TopBar/ReactionMenu.vue'
 import TopBarMediaControls from '../TopBar/TopBarMediaControls.vue'
 import {
-	disableFullscreen,
-	enableFullscreen,
+	toggleFullscreen,
 	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -42,7 +39,7 @@ const store = useStore()
 const token = useGetToken()
 const actorStore = useActorStore()
 const breakoutRoomsStore = useBreakoutRoomsStore()
-const isFullscreen = useDocumentFullscreen()
+const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
 
 const conversation = computed(() => {
@@ -70,7 +67,7 @@ const raiseHandButtonLabel = computed(() => {
 })
 
 const fullscreenLabel = computed(() => {
-	return isFullscreen.value
+	return toValue(isFullscreen)
 		? t('spreed', 'Exit full screen (F)')
 		: t('spreed', 'Full screen (F)')
 })
@@ -148,34 +145,6 @@ watch(() => localMediaModel.attributes.speaking, (speaking) => {
 })
 
 /**
- * Toggles the full screen mode of the call view.
- * If the sidebar is open, it does nothing.
- * If there is an open modal, it shows a warning.
- */
-function toggleFullscreen() {
-	if (isSidebar) {
-		return
-	}
-
-	// Don't toggle fullscreen if there is an open modal
-	// FIXME won't be needed without Fulscreen API
-	if (Array.from(document.body.children).filter((child) => {
-		return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
-			&& window.getComputedStyle(child).display !== 'none'
-	}).length !== 0) {
-		showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
-		return
-	}
-
-	if (isFullscreen.value) {
-		disableFullscreen()
-	} else {
-		emit('toggle-navigation', { open: false })
-		enableFullscreen()
-	}
-}
-
-/**
  * Switches the call view mode between grid and speaker view.
  */
 function changeView() {
@@ -185,7 +154,6 @@ function changeView() {
 
 // Keyboard shortcuts
 useHotKey('r', toggleHandRaised)
-useHotKey('f', toggleFullscreen)
 </script>
 
 <template>
