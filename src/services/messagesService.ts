@@ -70,6 +70,7 @@ async function fetchMessages({
 			lastKnownMessageId,
 			threadId,
 			limit,
+			timeout: 0,
 			includeLastKnown: includeLastKnown ? 1 : 0,
 		} as receiveMessagesParams,
 	})
