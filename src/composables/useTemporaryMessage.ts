@@ -29,7 +29,7 @@ export function useTemporaryMessage(context: Store<unknown>) {
 		const parentId = chatExtrasStore.getParentIdToReply(payload.token)
 		const parent = parentId
 			? store.getters.message(payload.token, parentId)
-			: (threadId.value ? store.getters.message(payload.token, threadId.value) : undefined)
+			: (threadId.value ? chatExtrasStore.getThread(payload.token, threadId.value)?.first : undefined)
 
 		return prepareTemporaryMessage({
 			...payload,

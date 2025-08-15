@@ -1240,6 +1240,7 @@ const actions = {
 				actorDisplayName: temporaryMessage.actorDisplayName,
 				referenceId: temporaryMessage.referenceId,
 				replyTo: temporaryMessage.parent?.id,
+				// FIXME threadId: temporaryMessage.threadId, PR #15645
 				silent: temporaryMessage.silent,
 				threadTitle,
 			}, options)
