@@ -13,6 +13,7 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "one-to-one room" for "" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "" with 404
     When user "participant2" creates room "one-to-one room" with 200 (v4)
       | roomType | 1 |
@@ -20,6 +21,7 @@ Feature: chat/mentions
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
 
   Scenario: get matched mentions in a one-to-one room
     When user "participant1" creates room "one-to-one room" (v4)
@@ -28,6 +30,7 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "one-to-one room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "part" with 404
     When user "participant2" creates room "one-to-one room" with 200 (v4)
       | roomType | 1 |
@@ -35,6 +38,7 @@ Feature: chat/mentions
     And user "participant2" gets the following candidate mentions in room "one-to-one room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
 
   Scenario: get unmatched mentions in a one-to-one room
     When user "participant1" creates room "one-to-one room" (v4)
@@ -53,8 +57,6 @@ Feature: chat/mentions
       | invite   | participant2 |
     Then user "participant3" gets the following candidate mentions in room "one-to-one room" for "" with 404
 
-
-
   Scenario: get mentions in a group room with no other participant
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
@@ -62,6 +64,7 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    | details           |
       | all          | room                     | calls  | all          |                   |
+      | participant1 | participant1-displayname | users  | participant1 |                   |
 
   Scenario: get mentions in a group room
     When user "participant1" creates room "group room" (v4)
@@ -74,16 +77,19 @@ Feature: chat/mentions
       | all          | room                     | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
     And user "participant3" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
 
   Scenario: get matched mentions in a group room
     Given team "1234" exists
@@ -98,14 +104,17 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "group room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
     And user "participant3" gets the following candidate mentions in room "group room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
     And user "participant1" gets the following candidate mentions in room "group room" for "1234" with 200
       | id           | label                    | source  | mentionId    |
       | 1234         | 1234                     | teams   | team/1234    |
@@ -134,8 +143,6 @@ Feature: chat/mentions
     And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
     Then user "participant4" gets the following candidate mentions in room "group room" for "" with 404
 
-
-
   Scenario: get mentions in a public room with no other participant
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
@@ -143,6 +150,7 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
+      | participant1 | participant1-displayname | users  | participant1 |
 
   Scenario: get mentions in a public room
     When user "participant1" creates room "public room" (v4)
@@ -156,18 +164,21 @@ Feature: chat/mentions
       | all          | room                     | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     And user "participant2" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     And user "participant3" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     And user "guest" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source | mentionId    |
@@ -175,6 +186,7 @@ Feature: chat/mentions
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
   Scenario: get matched mentions in a public room
     When user "participant1" creates room "public room" (v4)
@@ -187,14 +199,17 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "public room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
     And user "participant3" gets the following candidate mentions in room "public room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
     And user "guest" gets the following candidate mentions in room "public room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
@@ -224,7 +239,13 @@ Feature: chat/mentions
     And user "guest1" gets the following candidate mentions in room "public room" for "uest" with 200
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     And user "guest2" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source | mentionId    |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
+    And user "guest2" leaves room "public room" with 200 (v4)
+    Then user "participant1" gets the following candidate mentions in room "public room" for "uest" with 200
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
@@ -247,6 +268,8 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | FooBar                   | guests | GUEST_ID     |
     And user "guest1" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source | mentionId    |
+      | GUEST_ID     | FooBar                   | guests | GUEST_ID     |
     And user "guest2" gets the following candidate mentions in room "public room" for "oob" with 200
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | FooBar                   | guests | GUEST_ID     |
@@ -286,6 +309,7 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | all          | welcome.txt              | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "file welcome.txt room" for "" with 404
 
   Scenario: get mentions in a file room
@@ -300,10 +324,12 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | all          | welcome (2).txt          | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | welcome (2).txt          | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
 
   Scenario: get matched mentions in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -316,9 +342,11 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "file welcome (2).txt room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
 
   Scenario: get unmatched mentions in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -365,6 +393,7 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | all          | welcome.txt              | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "file last share room" for "" with 404
     And user "participant3" gets the following candidate mentions in room "file last share room" for "" with 404
     And user "guest" gets the following candidate mentions in room "file last share room" for "" with 404
@@ -398,6 +427,7 @@ Feature: chat/mentions
       | participant2 | participant2-displayname | users  | participant2 |
       | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     And user "participant2" gets the following candidate mentions in room "file last share room" for "" with 200
       | id           | label                    | source | mentionId    |
@@ -405,6 +435,7 @@ Feature: chat/mentions
       | participant1 | participant1-displayname | users  | participant1 |
       | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     # Self-joined users can not mention users with access to the file that have
     # not joined the room.
@@ -413,6 +444,7 @@ Feature: chat/mentions
       | all          | welcome.txt              | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     # Guests can not mention users with access to the file that have not joined
     # the room.
@@ -422,6 +454,7 @@ Feature: chat/mentions
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
   Scenario: get matched mentions in a room for a file shared by link
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -451,17 +484,20 @@ Feature: chat/mentions
       | participant2 | participant2-displayname | users  | participant2 |
       | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "file last share room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant2 | participant2-displayname | users  | participant2 |
     # Self-joined users can not mention users with access to the file that have
     # not joined the room.
     And user "participant3" gets the following candidate mentions in room "file last share room" for "part" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant3 | participant3-displayname | users  | participant3 |
     # Guests can not mention users with access to the file that have not joined
     # the room.
     And user "guest" gets the following candidate mentions in room "file last share room" for "part" with 200
@@ -666,15 +702,19 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
     When user "participant1" sets mention permissions for room "group room" to moderators with 200 (v4)
     Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    |
       | all          | room                     | calls  | all          |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant1 | participant1-displayname | users  | participant1 |
     And user "participant2" gets the following candidate mentions in room "group room" for "" with 200
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
+      | participant2 | participant2-displayname | users  | participant2 |
