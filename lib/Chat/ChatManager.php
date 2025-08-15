@@ -371,6 +371,7 @@ class ChatManager {
 		string $referenceId = '',
 		bool $silent = false,
 		bool $rateLimitGuestMentions = true,
+		int $threadId = 0,
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -387,6 +388,8 @@ class ChatManager {
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
+		} elseif ($threadId !== 0) {
+			$comment->setParentId((string)$threadId);
 		}
 
 		$referenceId = trim(substr($referenceId, 0, 64));
