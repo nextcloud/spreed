@@ -233,10 +233,21 @@ export function useGetMessagesProvider() {
 			contextMessageId.value = conversationLastMessageId.value
 		}
 
-		const hasMessageInStore = chatStore.hasMessage(to.params.token, { messageId: contextMessageId.value, threadId })
-		if (!hasMessageInStore) {
+		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, threadId)
+	}
+
+	/**
+	 * Update contextMessageId to the last message in the conversation
+	 */
+	async function checkContextAndFocusMessage(token: string, messageId: number, threadId: number) {
+		if (!chatStore.hasMessage(token, { messageId, threadId })) {
 			// message not found in the list, need to fetch it first
-			await getMessageContext(to.params.token, contextMessageId.value, threadId)
+			await getMessageContext(token, messageId, threadId)
+		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId) {
+			// message is the first one in the block, try to get some messages above
+			isInitialisingMessages.value = true
+			await getOldMessages(token, true)
+			isInitialisingMessages.value = false
 		}
 
 		// need some delay (next tick is too short) to be able to run
