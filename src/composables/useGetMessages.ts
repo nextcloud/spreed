@@ -105,6 +105,7 @@ export function useGetMessagesProvider() {
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.systemMessage)
 	})
 
+	// FIXME should be a function
 	const conversationLastMessageId = computed<number>(() => {
 		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
 			return conversation.value.lastMessage.id
@@ -227,6 +228,15 @@ export function useGetMessagesProvider() {
 		if (from.hash !== to.hash && focusMessageId !== null) {
 			// the hash changed, need to focus/highlight another message
 			contextMessageId.value = focusMessageId
+		} else if (threadId) {
+			if (conversation.value?.lastReadMessage && chatStore.hasMessage(to.params.token, { messageId: conversation.value.lastReadMessage, threadId })) {
+				// focus last read message first
+				contextMessageId.value = conversation.value.lastReadMessage
+			} else {
+				// last known message in the most recent block store
+				contextMessageId.value = chatExtrasStore.threads[threadId]?.last?.id
+					?? chatStore.getLastKnownId(to.params.token, { threadId })
+			}
 		} else if (conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value) {
 			// focus last read message first
 			contextMessageId.value = conversation.value.lastReadMessage
@@ -263,7 +273,18 @@ export function useGetMessagesProvider() {
 	 * Update contextMessageId to the last message in the conversation
 	 */
 	async function setContextIdToBottom() {
-		contextMessageId.value = conversationLastMessageId.value
+		if (contextThreadId.value) {
+			if (conversation.value?.lastReadMessage && chatStore.hasMessage(currentToken.value, { messageId: conversation.value.lastReadMessage, threadId: contextThreadId.value })) {
+				// focus last read message first
+				contextMessageId.value = conversation.value.lastReadMessage
+			} else {
+				// last known message in the most recent block store
+				contextMessageId.value = chatExtrasStore.threads[contextThreadId.value]?.last?.id
+					?? chatStore.getLastKnownId(currentToken.value, { threadId: contextThreadId.value })
+			}
+		} else {
+			contextMessageId.value = conversationLastMessageId.value
+		}
 		await checkContextAndFocusMessage(currentToken.value, contextMessageId.value, contextThreadId.value)
 	}
 
