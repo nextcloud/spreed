@@ -289,6 +289,14 @@ export function useGetMessagesProvider() {
 				}
 
 				await getMessageContext(token, contextMessageId.value, contextThreadId.value)
+
+				// If last message is not present in the initial context,
+				// add it as most recent chat block to start long polling from it
+				if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage
+					&& !chatStore.hasMessage(token, { messageId: conversation.value.lastMessage.id })) {
+					await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
+					chatStore.processChatBlocks(token, [conversation.value.lastMessage])
+				}
 			} catch (exception) {
 				console.debug(exception)
 				return
