@@ -36,6 +36,9 @@ class Attachment extends Entity {
 	public const TYPE_RECORDING = 'recording';
 	public const TYPE_VOICE = 'voice';
 
+	public const ATTACHMENTS_NONE = 0;
+	public const ATTACHMENTS_ATLEAST_ONE = 1;
+
 	/** @var int */
 	protected $roomId;
 

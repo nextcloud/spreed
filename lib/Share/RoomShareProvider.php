@@ -16,6 +16,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
@@ -60,6 +61,7 @@ class RoomShareProvider implements IShareProvider {
 		private IEventDispatcher $dispatcher,
 		private Manager $manager,
 		private ParticipantService $participantService,
+		protected RoomService $roomService,
 		protected ITimeFactory $timeFactory,
 		private IL10N $l,
 		private IMimeTypeLoader $mimeTypeLoader,
@@ -151,6 +153,8 @@ class RoomShareProvider implements IShareProvider {
 
 			return $this->getRawShare($shareId);
 		}, $this->dbConnection);
+
+		$this->roomService->setHasAttachments($room);
 
 		return $this->createShareObject($data);
 	}
@@ -787,20 +791,17 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomTokensForUser($userId);
+		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+
+		if (empty($allRooms)) {
+			return [];
+		}
 
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$start = 0;
-		while (true) {
-			$rooms = array_slice($allRooms, $start, 100);
-			$start += 100;
-
-			if ($rooms === []) {
-				break;
-			}
-
+		$chunks = array_chunk($allRooms, 100);
+		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
 				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
@@ -826,14 +827,14 @@ class RoomShareProvider implements IShareProvider {
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
 					$rooms,
 					IQueryBuilder::PARAM_STR_ARRAY
-				)))
-				->andWhere($qb->expr()->orX(
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('file')),
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('folder'))
-				));
+				)));
 
 			$cursor = $qb->executeQuery();
 			while ($data = $cursor->fetch()) {
+				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
+					continue;
+				}
+
 				if (!$this->isAccessibleResult($data)) {
 					continue;
 				}
