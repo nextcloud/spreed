@@ -2800,6 +2800,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareThreadsResponse($formData, $results);
 	}
 
+	#[Then('/^user "([^"]*)" sees the following subscribed threads(?: \((v1)\))?$/')]
+	public function userSeesTheFollowingSubscribedThreads(string $user, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/subscribed-threads');
+		$this->assertStatusCode($this->response, 200);
+
+		$results = $this->getDataFromResponse($this->response);
+		$this->compareThreadsResponse($formData, $results);
+	}
+
 	#[Then('/^user "([^"]*)" creates thread "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userCreatesThreadInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
@@ -2839,9 +2849,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $results, 'Result count does not match');
+		$tokenInResult = false;
 
-		$expected = array_map(static function (array $result) {
-			foreach (['t.id', 't.title', 't.lastMessage', 'a.notificationLevel', 'firstMessage', 'lastMessage'] as $field) {
+		$expected = array_map(static function (array $result) use (&$tokenInResult) {
+			foreach (['t.id', 't.token', 't.title', 't.lastMessage', 'a.notificationLevel', 'firstMessage', 'lastMessage'] as $field) {
 				if (isset($result[$field])) {
 					if ($field === 'a.notificationLevel') {
 						$result[$field] = (int)$result[$field];
@@ -2851,6 +2862,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 						$result[$field] = null;
 					} elseif ($field === 't.title') {
 						$result[$field] = trim($result[$field]);
+					} elseif ($field === 't.token') {
+						$tokenInResult = true;
+						$result[$field] = self::$identifierToToken[$result[$field]];
 					} else {
 						$result[$field] = self::$textToMessageId[$result[$field]];
 					}
@@ -2863,7 +2877,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $result;
 		}, $formData->getHash());
 
-		Assert::assertEquals($expected, array_map(static function ($actual) {
+		Assert::assertEquals($expected, array_map(static function ($actual) use ($tokenInResult) {
 			$compare = [
 				't.id' => $actual['thread']['id'],
 				't.title' => $actual['thread']['title'],
@@ -2873,6 +2887,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				'firstMessage' => $actual['first']['id'] ?? null,
 				'lastMessage' => $actual['last']['id'] ?? null,
 			];
+
+			if ($tokenInResult) {
+				$compare['t.token'] = $actual['thread']['roomToken'];
+			}
 			return $compare;
 		}, $results));
 	}
