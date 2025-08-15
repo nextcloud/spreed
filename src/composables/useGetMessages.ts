@@ -375,9 +375,15 @@ export function useGetMessagesProvider() {
 			return
 		}
 
+		const lastKnownMessageId = chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const pollingLastKnownMessageId = chatStore.getLastKnownId(token)
+		if (lastKnownMessageId === pollingLastKnownMessageId) {
+			// Do not make parallel request with polling
+			return
+		}
+
 		// Make the request
 		loadingNewMessages.value = true
-		const lastKnownMessageId = chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
 		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
 		try {
 			debugTimer.start(`${token} | fetch history (new)`)
