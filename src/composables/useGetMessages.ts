@@ -248,7 +248,7 @@ export function useGetMessagesProvider() {
 		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId) {
 			// message is the first one in the block, try to get some messages above
 			isInitialisingMessages.value = true
-			await getOldMessages(token, true)
+			await getOldMessages(token, true, { messageId, threadId })
 			isInitialisingMessages.value = false
 		}
 
@@ -357,16 +357,17 @@ export function useGetMessagesProvider() {
 	 *
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
+	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
 	 */
-	async function getOldMessages(token: string, includeLastKnown: boolean) {
+	async function getOldMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatBeginningReached.value) {
 			// Beginning of the chat reached, no more messages to load
 			return
 		}
 		// Make the request
 		loadingOldMessages.value = true
-		const lastKnownMessageId = chatStore.getFirstKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
-		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
+		const lastKnownMessageId = payload?.messageId ?? chatStore.getFirstKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const threadId = payload?.threadId ?? contextThreadId.value !== 0 ? contextThreadId.value : undefined
 		try {
 			debugTimer.start(`${token} | fetch history`)
 			await store.dispatch('fetchMessages', {
@@ -397,14 +398,15 @@ export function useGetMessagesProvider() {
 	 *
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
+	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
 	 */
-	async function getNewMessages(token: string, includeLastKnown: boolean) {
+	async function getNewMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatEndReached.value) {
 			// End of the chat reached, do not conflict with polling
 			return
 		}
 
-		const lastKnownMessageId = chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const lastKnownMessageId = payload?.messageId ?? chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
 		const pollingLastKnownMessageId = chatStore.getLastKnownId(token)
 		if (lastKnownMessageId === pollingLastKnownMessageId) {
 			// Do not make parallel request with polling
@@ -413,7 +415,7 @@ export function useGetMessagesProvider() {
 
 		// Make the request
 		loadingNewMessages.value = true
-		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
+		const threadId = payload?.threadId ?? contextThreadId.value !== 0 ? contextThreadId.value : undefined
 		try {
 			debugTimer.start(`${token} | fetch history (new)`)
 			await store.dispatch('fetchMessages', {
