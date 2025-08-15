@@ -1431,7 +1431,7 @@ class ParticipantService {
 	 * @throws DialOutFailedException
 	 * @throws ParticipantNotFoundException
 	 */
-	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId): void {
+	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId, string|bool $callerNumber): void {
 		try {
 			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
@@ -1446,7 +1446,7 @@ class ParticipantService {
 			throw new ParticipantNotFoundException();
 		}
 
-		$dialOutResponse = $dialOutService->sendDialOutRequestToBackend($room, $attendee);
+		$dialOutResponse = $dialOutService->sendDialOutRequestToBackend($room, $attendee, $callerNumber);
 
 		if (!$dialOutResponse) {
 			throw new \InvalidArgumentException('backend');

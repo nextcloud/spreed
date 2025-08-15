@@ -17,6 +17,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IURLGenerator;
@@ -27,6 +28,7 @@ class BackendNotifier {
 
 	public function __construct(
 		private Config $config,
+		private IAppConfig $appConfig,
 		private LoggerInterface $logger,
 		private IClientService $clientService,
 		private ISecureRandom $secureRandom,
@@ -472,11 +474,12 @@ class BackendNotifier {
 	/**
 	 * Send dial-out requests to the HPB
 	 *
+	 * @param string|bool $callerNumber Send the call anonymous when false, default number when true otherwise the string
 	 * @throws \Exception
 	 */
-	public function dialOutToAttendee(Room $room, Attendee $attendee): ?string {
+	public function dialOutToAttendee(Room $room, Attendee $attendee, string|bool $callerNumber): ?string {
 		$start = microtime(true);
-		$response = $this->backendRequest($room, [
+		$dialoutData = [
 			'type' => 'dialout',
 			'dialout' => [
 				'number' => $attendee->getPhoneNumber(),
@@ -486,7 +489,13 @@ class BackendNotifier {
 					'actorId' => $attendee->getActorId(),
 				]
 			],
-		]);
+		];
+		if ($callerNumber === false) {
+			$dialoutData['dialout']['options']['anonymous'] = true;
+		} elseif (is_string($callerNumber)) {
+			$dialoutData['dialout']['options']['caller'] = $callerNumber;
+		}
+		$response = $this->backendRequest($room, $dialoutData);
 
 		if ($response === null) {
 			$this->logger->debug('Room dial out response was NULL');
