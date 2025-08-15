@@ -165,6 +165,7 @@ export function useGetMessagesProvider() {
 	subscribe('networkOffline', handleNetworkOffline)
 	subscribe('networkOnline', handleNetworkOnline)
 	EventBus.on('route-change', onRouteChange)
+	EventBus.on('set-context-id-to-bottom', setContextIdToBottom)
 
 	/** Every 30 seconds we remove expired messages from the store */
 	expirationInterval = setInterval(() => {
@@ -175,6 +176,7 @@ export function useGetMessagesProvider() {
 		unsubscribe('networkOffline', handleNetworkOffline)
 		unsubscribe('networkOnline', handleNetworkOnline)
 		EventBus.off('route-change', onRouteChange)
+		EventBus.off('set-context-id-to-bottom', setContextIdToBottom)
 
 		store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		clearInterval(pollingTimeout)
@@ -255,6 +257,14 @@ export function useGetMessagesProvider() {
 		window.setTimeout(() => {
 			EventBus.emit('focus-message', contextMessageId.value)
 		}, 2)
+	}
+
+	/**
+	 * Update contextMessageId to the last message in the conversation
+	 */
+	async function setContextIdToBottom() {
+		contextMessageId.value = conversationLastMessageId.value
+		await checkContextAndFocusMessage(currentToken.value, contextMessageId.value, contextThreadId.value)
 	}
 
 	/**
