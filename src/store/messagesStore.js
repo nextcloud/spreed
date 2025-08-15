@@ -1262,7 +1262,6 @@ const actions = {
 				context.dispatch('processMessage', { token, message: response.data.ocs.data })
 				chatStore.processChatBlocks(token, [response.data.ocs.data], {
 					mergeBy: conversationLastMessageId,
-					threadId: response.data.ocs.data.threadId,
 				})
 			}
 
