@@ -5,7 +5,6 @@
 
 import pinia from './stores/pinia.ts'
 import { useTokenStore } from './stores/token.ts'
-import FilesSidebarCallView from './views/FilesSidebarCallView.js'
 
 import './init.js'
 
@@ -37,7 +36,6 @@ let tabInstance = null
 
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerSecondaryView(new FilesSidebarCallView())
 		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
 			id: 'chat',
 			name: t('spreed', 'Chat'),

@@ -6,7 +6,6 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive } from 'vue'
-import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
@@ -30,12 +29,6 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 const router = createMemoryRouter()
 
-const newCallView = () => createApp(FilesSidebarCallViewApp)
-	.use(store)
-	.use(pinia)
-	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
-
 const newTab = () => createApp(FilesSidebarTabApp)
 	.use(store)
 	.use(pinia)
@@ -47,7 +40,6 @@ if (!window.OCA.Talk) {
 }
 Object.assign(window.OCA.Talk, {
 	fileInfo: null,
-	newCallView,
 	newTab,
 	store,
 })
