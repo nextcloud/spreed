@@ -299,6 +299,9 @@ export default {
 				this.scrollToBottom({ smooth: false })
 
 				this.$nextTick(() => {
+					if (this.isInitialisingMessages) {
+						return
+					}
 					this.checkChatNotScrollable()
 
 					if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
@@ -1034,6 +1037,9 @@ export default {
 		},
 
 		checkChatNotScrollable() {
+			if (this.isInitialisingMessages) {
+				return
+			}
 			const isNotScrollable = this.$refs.scroller
 				? this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight
 				: false

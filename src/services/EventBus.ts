@@ -37,6 +37,7 @@ export type Events = {
 	'refresh-talk-dashboard': void
 	'retry-message': number
 	'route-change': { from: RouteLocation, to: RouteLocation }
+	'set-context-id-to-bottom': void
 	'scroll-chat-to-bottom': { smooth?: boolean, force?: boolean }
 	'should-refresh-chat-messages': void
 	'should-refresh-conversations': { token: string, properties: Partial<Conversation> } | { all: true } | void

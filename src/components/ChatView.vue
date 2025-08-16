@@ -118,7 +118,7 @@ export default {
 
 	data() {
 		return {
-			isChatScrolledToBottom: true,
+			isChatScrolledToBottom: false,
 			isDraggingOver: false,
 		}
 	},
@@ -217,6 +217,7 @@ export default {
 				this.$router.replace({ query: this.$route.query, hash: '' })
 			} else {
 				// If the hash is already empty, simply scroll to the bottom
+				EventBus.emit('set-context-id-to-bottom')
 				EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
 			}
 		},
