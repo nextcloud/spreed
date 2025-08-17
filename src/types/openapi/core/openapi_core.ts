@@ -1210,6 +1210,7 @@ export type components = {
             startedAt: number | null;
             /** Format: int64 */
             endedAt: number | null;
+            allowCleanup: boolean;
         };
         TaskProcessingTaskType: {
             name: string;
@@ -1312,6 +1313,7 @@ export type components = {
             icon: string;
             /** Format: int64 */
             order: number;
+            isExternalProvider: boolean;
             triggers: string[];
             filters: {
                 [key: string]: string;
