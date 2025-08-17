@@ -220,7 +220,7 @@ CallParticipantModel.prototype = {
 			this.get('peer').off('remoteVideoBlocked', this._handleRemoteVideoBlockedBound)
 		}
 
-		this.set('peer', markRaw(peer))
+		this.set('peer', peer ? markRaw(peer) : null)
 
 		// Special case when the participant has no streams.
 		if (!this.get('peer')) {
@@ -339,7 +339,7 @@ CallParticipantModel.prototype = {
 			console.warn('Mismatch between stored peer ID and ID of given screen peer: ', this.get('peerId'), screenPeer.id)
 		}
 
-		this.set('screenPeer', markRaw(screenPeer))
+		this.set('screenPeer', screenPeer ? markRaw(screenPeer) : null)
 
 		// Reset state that depends on the screen Peer object.
 		this._handlePeerStreamAdded(this.get('screenPeer'))
