@@ -10,9 +10,10 @@ import {
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-import { computed, toValue, watch } from 'vue'
+import { computed, ref, toValue, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
@@ -46,6 +47,8 @@ const actorStore = useActorStore()
 const breakoutRoomsStore = useBreakoutRoomsStore()
 const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
+
+const liveTranscriptionButtonBeingToggled = ref(false)
 
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
@@ -101,11 +104,19 @@ const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectTy
  * Toggle live transcriptions.
  */
 async function toggleLiveTranscription() {
-	if (!callViewStore.isLiveTranscriptionEnabled) {
-		enableLiveTranscription()
-	} else {
-		disableLiveTranscription()
+	if (liveTranscriptionButtonBeingToggled.value) {
+		return
 	}
+
+	liveTranscriptionButtonBeingToggled.value = true
+
+	if (!callViewStore.isLiveTranscriptionEnabled) {
+		await enableLiveTranscription()
+	} else {
+		await disableLiveTranscription()
+	}
+
+	liveTranscriptionButtonBeingToggled.value = false
 }
 
 /**
@@ -248,9 +259,13 @@ useHotKey('r', toggleHandRaised)
 				:title="liveTranscriptionButtonLabel"
 				:aria-label="liveTranscriptionButtonLabel"
 				:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+				:disabled="liveTranscriptionButtonBeingToggled"
 				@click="toggleLiveTranscription">
 				<template #icon>
-					<IconSubtitles :size="20" />
+					<IconSubtitles v-if="!liveTranscriptionButtonBeingToggled"
+						:size="20" />
+					<NcLoadingIcon v-else
+						:size="20" />
 				</template>
 			</NcButton>
 
