@@ -212,6 +212,10 @@ export default {
 		},
 
 		handleVideoInputIdChange(videoInputId) {
+			if (this.showDevices) {
+				// If device is changed from bottom bar, it should not be muted
+				this.model.set('resumeVideoAfterChange', true)
+			}
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
 		},

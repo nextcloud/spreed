@@ -285,6 +285,10 @@ export default {
 		},
 
 		handleAudioInputIdChange(audioInputId) {
+			if (this.showDevices) {
+				// If device is changed from bottom bar, it should not be muted
+				this.model.set('resumeAudioAfterChange', true)
+			}
 			this.audioInputId = audioInputId
 			this.updatePreferences('audioinput')
 		},
