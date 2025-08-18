@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { onBeforeUnmount, ref, watch } from 'vue'
@@ -91,7 +91,6 @@ import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
-import BrowserStorage from '../../../services/BrowserStorage.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
@@ -259,14 +258,6 @@ export default {
 		useHotKey(' ', this.toggleAudio, { push: true })
 	},
 
-	mounted() {
-		subscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
-	},
-
-	beforeUnmount() {
-		unsubscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
-	},
-
 	methods: {
 		t,
 		toggleAudio() {
@@ -276,14 +267,6 @@ export default {
 			}
 
 			if (this.model.attributes.audioEnabled) {
-				this.model.disableAudio()
-			} else {
-				this.model.enableAudio()
-			}
-		},
-
-		updateDeviceState() {
-			if (BrowserStorage.getItem('audioDisabled_' + this.token) === 'true') {
 				this.model.disableAudio()
 			} else {
 				this.model.enableAudio()
