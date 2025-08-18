@@ -431,9 +431,11 @@ export default {
 			this.loading = true
 
 			// Open navigation
-			emit('toggle-navigation', {
-				open: true,
-			})
+			if (!this.isMobile) {
+				emit('toggle-navigation', {
+					open: true,
+				})
+			}
 			await this.$store.dispatch('leaveCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
