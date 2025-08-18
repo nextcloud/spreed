@@ -6,6 +6,8 @@
 import type {
 	liveTranscriptionDisableResponse,
 	liveTranscriptionEnableResponse,
+	liveTranscriptionGetAvailableLanguagesResponse,
+	liveTranscriptionSetLanguageResponse,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -29,7 +31,28 @@ const disableLiveTranscription = async function(token: string): Promise<liveTran
 	return await axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
 }
 
+/**
+ * Get available languages for live transcriptions
+ */
+const getLiveTranscriptionLanguages = async function(): Promise<liveTranscriptionGetAvailableLanguagesResponse> {
+	return await axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/languages'))
+}
+
+/**
+ * Set language for live transcription
+ *
+ * @param {string} token conversation token
+ * @param {string} languageId the ID of the language
+ */
+const setLiveTranscriptionLanguage = async function(token: string, languageId: string): Promise<liveTranscriptionSetLanguageResponse> {
+	return await axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}/language', { token }), {
+		languageId,
+	})
+}
+
 export {
 	disableLiveTranscription,
 	enableLiveTranscription,
+	getLiveTranscriptionLanguages,
+	setLiveTranscriptionLanguage,
 }
