@@ -53,6 +53,7 @@ import {
 	unarchiveConversation,
 	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
+import { setLiveTranscriptionLanguage } from '../services/liveTranscriptionService.ts'
 import {
 	clearConversationHistory,
 	setConversationUnread,
@@ -97,6 +98,7 @@ const DUMMY_CONVERSATION = {
 	readOnly: CONVERSATION.STATE.READ_ONLY,
 	listable: CONVERSATION.LISTABLE.NONE,
 	mentions: CONVERSATION.MENTION_PERMISSIONS.EVERYONE,
+	liveTranscriptionLanguageId: '',
 	hasCall: false,
 	canStartCall: false,
 	lobbyState: WEBINAR.LOBBY.NONE,
@@ -265,6 +267,10 @@ const mutations = {
 
 	setMentionPermissions(state, { token, mentionPermissions }) {
 		state.conversations[token].mentionPermissions = mentionPermissions
+	},
+
+	setLiveTranscriptionLanguage(state, { token, languageId }) {
+		state.conversations[token].liveTranscriptionLanguageId = languageId
 	},
 
 	setCallRecording(state, { token, callRecording }) {
@@ -1211,6 +1217,17 @@ const actions = {
 			context.commit('setMentionPermissions', { token, mentionPermissions })
 		} catch (error) {
 			console.error('Error while updating mention permissions: ', error)
+		}
+	},
+
+	async setLiveTranscriptionLanguage(context, { token, languageId }) {
+		try {
+			await setLiveTranscriptionLanguage(token, languageId)
+			context.commit('setLiveTranscriptionLanguage', { token, languageId })
+		} catch (error) {
+			console.error('Error while updating live transcription language: ', error)
+
+			throw error
 		}
 	},
 
