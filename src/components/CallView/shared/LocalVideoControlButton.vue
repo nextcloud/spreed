@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -57,7 +57,6 @@ import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
 import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
-import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {
 	name: 'LocalVideoControlButton',
@@ -183,14 +182,6 @@ export default {
 		useHotKey('v', this.toggleVideo)
 	},
 
-	mounted() {
-		subscribe('local-video-control-button:toggle-video', this.updateDeviceState)
-	},
-
-	beforeUnmount() {
-		unsubscribe('local-video-control-button:toggle-video', this.updateDeviceState)
-	},
-
 	methods: {
 		t,
 		toggleVideo() {
@@ -200,14 +191,6 @@ export default {
 			}
 
 			if (this.model.attributes.videoEnabled) {
-				this.model.disableVideo()
-			} else {
-				this.model.enableVideo()
-			}
-		},
-
-		updateDeviceState() {
-			if (BrowserStorage.getItem('videoDisabled_' + this.token)) {
 				this.model.disableVideo()
 			} else {
 				this.model.enableVideo()
