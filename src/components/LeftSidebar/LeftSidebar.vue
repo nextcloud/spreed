@@ -146,6 +146,15 @@
 						<IconHomeOutline :size="20" />
 					</template>
 				</NcAppNavigationItem>
+				<NcAppNavigationItem v-if="!isSearching"
+					class="navigation-item"
+					:name="showThreadsList ? t('spreed', 'Back to conversations') : t('spreed', 'Followed threads')"
+					@click="showThreadsList = !showThreadsList">
+					<template #icon>
+						<IconArrowLeft v-if="showThreadsList" class="bidirectional-icon" :size="20" />
+						<IconForumOutline v-else :size="20" />
+					</template>
+				</NcAppNavigationItem>
 				<NcAppNavigationItem v-if="pendingInvitationsCount"
 					class="navigation-item"
 					:name="t('spreed', 'Pending invitations')"
@@ -170,6 +179,7 @@
 						<IconAt v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
 						<IconMessageBadgeOutline v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
 						<IconArchiveOutline v-else-if="showArchived" :size="64" />
+						<IconForumOutline v-else-if="showThreadsList" :size="64" />
 						<IconMessageOutline v-else :size="64" />
 					</template>
 					<template #action>
@@ -181,14 +191,22 @@
 						</NcButton>
 					</template>
 				</NcEmptyContent>
-				<ConversationsListVirtual v-show="filteredConversationsList.length > 0"
+				<ul v-if="showThreadsList" class="threads-tab__list">
+					<ThreadItem
+						v-for="thread of followedThreads"
+						:key="`thread_${thread.thread.id}`"
+						:thread="thread" />
+				</ul>
+				<ConversationsListVirtual
+					v-else
+					v-show="filteredConversationsList.length > 0"
 					ref="scroller"
 					:conversations="filteredConversationsList"
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
 					class="scroller"
 					@scroll="debounceHandleScroll" />
-				<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
+				<NcButton v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
@@ -275,6 +293,7 @@ import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
 import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
 import IconFormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconHomeOutline from 'vue-material-design-icons/HomeOutline.vue'
 import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -282,6 +301,7 @@ import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
@@ -303,6 +323,7 @@ import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -331,6 +352,7 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
+		ThreadItem,
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
@@ -357,6 +379,7 @@ export default {
 		IconArchiveOutline,
 		IconArrowLeft,
 		IconCalendarBlankOutline,
+		IconForumOutline,
 		IconHomeOutline,
 		IconPhoneOutline,
 		IconPlus,
@@ -373,6 +396,7 @@ export default {
 		const scroller = ref(null)
 
 		const showArchived = ref(false)
+		const showThreadsList = ref(false)
 		const filters = ref(BrowserStorage.getItem('filterEnabled')?.split(',') ?? [])
 
 		const federationStore = useFederationStore()
@@ -396,9 +420,11 @@ export default {
 			canNoteToSelf,
 			supportsArchive,
 			showArchived,
+			showThreadsList,
 			settingsStore,
 			FILTER_LABELS,
 			actorStore: useActorStore(),
+			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
 		}
 	},
@@ -447,6 +473,8 @@ export default {
 		emptyContentDescription() {
 			if (this.showArchived) {
 				return t('spreed', 'You have no archived conversations.')
+			} else if (this.showThreadsList) {
+				return t('spreed', 'You have no followed threads.')
 			}
 			if (this.filters.length === 1 && this.filters[0] === 'mentions') {
 				return t('spreed', 'You have no unread mentions.')
@@ -484,6 +512,10 @@ export default {
 			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 		},
 
+		followedThreads() {
+			return this.chatExtrasStore.getSubscribedThreadsList
+		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
@@ -515,6 +547,14 @@ export default {
 		token(value) {
 			if (value && this.isFiltered) {
 				this.isNavigating = true
+			}
+		},
+
+		showThreadsList(value) {
+			if (value) {
+				// Refresh a list
+				// FIXME requests should be paginated with offset
+				this.chatExtrasStore.fetchSubscribedThreadsList()
 			}
 		},
 	},
@@ -925,6 +965,7 @@ export default {
 				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
+				this.showThreadsList = false
 				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
