@@ -71,7 +71,7 @@ export function useGetMessagesProvider() {
 	const contextMessageId = ref<number>(0)
 	const loadingOldMessages = ref(false)
 	const loadingNewMessages = ref(false)
-	const isInitialisingMessages = ref(false)
+	const isInitialisingMessages = ref(true)
 	const stopFetchingOldMessages = ref(false)
 
 	/**
@@ -165,6 +165,7 @@ export function useGetMessagesProvider() {
 	subscribe('networkOffline', handleNetworkOffline)
 	subscribe('networkOnline', handleNetworkOnline)
 	EventBus.on('route-change', onRouteChange)
+	EventBus.on('set-context-id-to-bottom', setContextIdToBottom)
 
 	/** Every 30 seconds we remove expired messages from the store */
 	expirationInterval = setInterval(() => {
@@ -175,6 +176,7 @@ export function useGetMessagesProvider() {
 		unsubscribe('networkOffline', handleNetworkOffline)
 		unsubscribe('networkOnline', handleNetworkOnline)
 		EventBus.off('route-change', onRouteChange)
+		EventBus.off('set-context-id-to-bottom', setContextIdToBottom)
 
 		store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		clearInterval(pollingTimeout)
@@ -233,10 +235,21 @@ export function useGetMessagesProvider() {
 			contextMessageId.value = conversationLastMessageId.value
 		}
 
-		const hasMessageInStore = chatStore.hasMessage(to.params.token, { messageId: contextMessageId.value, threadId })
-		if (!hasMessageInStore) {
+		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, threadId)
+	}
+
+	/**
+	 * Update contextMessageId to the last message in the conversation
+	 */
+	async function checkContextAndFocusMessage(token: string, messageId: number, threadId: number) {
+		if (!chatStore.hasMessage(token, { messageId, threadId })) {
 			// message not found in the list, need to fetch it first
-			await getMessageContext(to.params.token, contextMessageId.value, threadId)
+			await getMessageContext(token, messageId, threadId)
+		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId) {
+			// message is the first one in the block, try to get some messages above
+			isInitialisingMessages.value = true
+			await getOldMessages(token, true, { messageId, threadId })
+			isInitialisingMessages.value = false
 		}
 
 		// need some delay (next tick is too short) to be able to run
@@ -244,6 +257,14 @@ export function useGetMessagesProvider() {
 		window.setTimeout(() => {
 			EventBus.emit('focus-message', contextMessageId.value)
 		}, 2)
+	}
+
+	/**
+	 * Update contextMessageId to the last message in the conversation
+	 */
+	async function setContextIdToBottom() {
+		contextMessageId.value = conversationLastMessageId.value
+		await checkContextAndFocusMessage(currentToken.value, contextMessageId.value, contextThreadId.value)
 	}
 
 	/**
@@ -268,6 +289,14 @@ export function useGetMessagesProvider() {
 				}
 
 				await getMessageContext(token, contextMessageId.value, contextThreadId.value)
+
+				// If last message is not present in the initial context,
+				// add it as most recent chat block to start long polling from it
+				if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage
+					&& !chatStore.hasMessage(token, { messageId: conversation.value.lastMessage.id })) {
+					await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
+					chatStore.processChatBlocks(token, [conversation.value.lastMessage])
+				}
 			} catch (exception) {
 				console.debug(exception)
 				return
@@ -328,16 +357,17 @@ export function useGetMessagesProvider() {
 	 *
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
+	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
 	 */
-	async function getOldMessages(token: string, includeLastKnown: boolean) {
+	async function getOldMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatBeginningReached.value) {
 			// Beginning of the chat reached, no more messages to load
 			return
 		}
 		// Make the request
 		loadingOldMessages.value = true
-		const lastKnownMessageId = chatStore.getFirstKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
-		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
+		const lastKnownMessageId = payload?.messageId ?? chatStore.getFirstKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const threadId = payload?.threadId ?? contextThreadId.value !== 0 ? contextThreadId.value : undefined
 		try {
 			debugTimer.start(`${token} | fetch history`)
 			await store.dispatch('fetchMessages', {
@@ -368,17 +398,24 @@ export function useGetMessagesProvider() {
 	 *
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
+	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
 	 */
-	async function getNewMessages(token: string, includeLastKnown: boolean) {
+	async function getNewMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatEndReached.value) {
 			// End of the chat reached, do not conflict with polling
 			return
 		}
 
+		const lastKnownMessageId = payload?.messageId ?? chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
+		const pollingLastKnownMessageId = chatStore.getLastKnownId(token)
+		if (lastKnownMessageId === pollingLastKnownMessageId) {
+			// Do not make parallel request with polling
+			return
+		}
+
 		// Make the request
 		loadingNewMessages.value = true
-		const lastKnownMessageId = chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
-		const threadId = contextThreadId.value !== 0 ? contextThreadId.value : undefined
+		const threadId = payload?.threadId ?? contextThreadId.value !== 0 ? contextThreadId.value : undefined
 		try {
 			debugTimer.start(`${token} | fetch history (new)`)
 			await store.dispatch('fetchMessages', {
