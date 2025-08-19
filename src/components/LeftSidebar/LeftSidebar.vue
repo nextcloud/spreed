@@ -7,19 +7,6 @@
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<template #search>
 			<div class="new-conversation">
-				<TransitionWrapper name="radial-reveal">
-					<NcButton v-show="searchText === ''"
-						:variant="isInDashboard ? 'primary' : 'tertiary'"
-						:class="{ 'hidden-visually': isSearching }"
-						class="talk-home-button"
-						:title="dashboardButtonLabel"
-						:aria-label="dashboardButtonLabel"
-						@click="refreshTalkDashboard">
-						<template #icon>
-							<IconHomeOutline :size="20" />
-						</template>
-					</NcButton>
-				</TransitionWrapper>
 				<div class="conversations-search"
 					:class="{ 'conversations-search--expanded': isSearching }">
 					<SearchBox ref="searchBox"
@@ -149,17 +136,28 @@
 					:text="FILTER_LABELS[filter]"
 					@close="handleFilter(filter)" />
 			</TransitionWrapper>
-			<NcAppNavigationItem v-if="pendingInvitationsCount"
-				class="invitation-button"
-				:name="t('spreed', 'Pending invitations')"
-				@click="showInvitationHandler">
-				<template #icon>
-					<IconAccountMultiplePlusOutline :size="20" />
-				</template>
-				<template #counter>
-					<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
-				</template>
-			</NcAppNavigationItem>
+			<template v-if="!isSearching">
+				<NcAppNavigationItem
+					class="navigation-item"
+					:to="{ name: 'root' }"
+					:name="t('spreed', 'Talk home')"
+					@click="refreshTalkDashboard">
+					<template #icon>
+						<IconHomeOutline :size="20" />
+					</template>
+				</NcAppNavigationItem>
+				<NcAppNavigationItem v-if="pendingInvitationsCount"
+					class="navigation-item"
+					:name="t('spreed', 'Pending invitations')"
+					@click="showInvitationHandler">
+					<template #icon>
+						<IconAccountMultiplePlusOutline :size="20" />
+					</template>
+					<template #counter>
+						<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
+					</template>
+				</NcAppNavigationItem>
+			</template>
 		</template>
 
 		<template #list>
@@ -510,16 +508,6 @@ export default {
 
 		conversationsInitialised() {
 			return this.$store.getters.conversationsInitialised
-		},
-
-		isInDashboard() {
-			return this.$route.name === 'root'
-		},
-
-		dashboardButtonLabel() {
-			return this.isInDashboard
-				? t('spreed', 'Reload Talk home')
-				: t('spreed', 'Talk home')
 		},
 	},
 
@@ -955,10 +943,8 @@ export default {
 				actualizeDataTimeout = null
 			}, 5_000)
 
-			if (this.isInDashboard) {
+			if (this.$route.name === 'root') {
 				EventBus.emit('refresh-talk-dashboard')
-			} else {
-				this.$router.push({ name: 'root' })
 			}
 		},
 	},
@@ -992,7 +978,7 @@ export default {
 	}
 }
 
-.invitation-button {
+.navigation-item {
 	padding-inline: calc(var(--default-grid-baseline) * 2);
 	margin-block: var(--default-grid-baseline);
 
@@ -1024,23 +1010,16 @@ export default {
 	transition: all 0.15s ease;
 	z-index: 1;
 	// TODO replace with NcAppNavigationSearch
-	width: calc(100% - var(--default-grid-baseline) * 3 - var(--default-clickable-area) * 3);
+	width: calc(100% - (var(--default-grid-baseline) + var(--default-clickable-area)) * 2);
 	display: flex;
-	margin-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 
 	&--expanded {
 		width: 100%;
-		margin-inline-start: 0;
 	}
 
 	:deep(.input-field) {
 		margin-block-start: 0;
 	}
-}
-
-.talk-home-button {
-	margin-inline-end: var(--default-grid-baseline);
-	position: absolute !important;
 }
 
 .conversations__filters {
