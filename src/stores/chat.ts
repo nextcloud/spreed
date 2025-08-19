@@ -206,15 +206,6 @@ export const useChatStore = defineStore('chat', () => {
 			return
 		}
 
-		if (!chatBlocks[token]) {
-			// If no blocks exist, create a new one with the first message. First in array will be considered main block
-			chatBlocks[token] = [newMessageIdsSet]
-			Object.entries(threadIdsSet).forEach(([threadId, threadMessageIdsSet]) => {
-				processThreadBlocks(token, threadId, threadMessageIdsSet)
-			})
-			return
-		}
-
 		if (options?.mergeBy) {
 			newMessageIdsSet.add(options.mergeBy)
 
@@ -223,21 +214,25 @@ export const useChatStore = defineStore('chat', () => {
 				const chatBlockWithMergeBy: Set<number> = chatBlocks[token].find((set) => set.has(options.mergeBy!))!
 				// Populate thread blocks from chat blocks
 				threadsToUpdate.forEach((threadId) => {
-					for (const messageId of chatBlockWithMergeBy) {
-						const message = store.state.messagesStore.messages[token][messageId]
-						if (message && message.threadId === +threadId) {
-							threadIdsSet[threadId].add(messageId)
-							break
-						}
+					const maxMessageId = Math.max(...Array.from(chatBlockWithMergeBy).filter((id) => {
+						const message = store.state.messagesStore.messages[token][id]
+						return message && message.threadId === +threadId
+					}))
+					if (maxMessageId) {
+						processThreadBlocks(token, threadId, threadIdsSet[threadId], {
+							mergeBy: maxMessageId,
+						})
 					}
 				})
 			}
 		}
 
 		chatBlocks[token] = mergeAndSortChatBlocks(chatBlocks[token], newMessageIdsSet)
-		Object.entries(threadIdsSet).forEach(([threadId, threadMessageIdsSet]) => {
-			processThreadBlocks(token, threadId, threadMessageIdsSet)
-		})
+		if (!options?.mergeBy) {
+			Object.entries(threadIdsSet).forEach(([threadId, threadMessageIdsSet]) => {
+				processThreadBlocks(token, threadId, threadMessageIdsSet)
+			})
+		}	
 	}
 
 	/**
@@ -266,6 +261,9 @@ export const useChatStore = defineStore('chat', () => {
 	 * Otherwise, sort them to expected position (sorted by max id in set)
 	 */
 	function mergeAndSortChatBlocks(blocks: Set<number>[], unsortedBlock: Set<number>): Set<number>[] {
+		if (blocks.length === 0) {
+			return [unsortedBlock]
+		}
 		let isUnsortedBlockUsed = false
 
 		const mergedBlocks = blocks.reduce<Set<number>[]>((acc, block) => {
