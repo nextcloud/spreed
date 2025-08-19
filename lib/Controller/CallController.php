@@ -22,6 +22,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\PhoneNumberMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
@@ -39,6 +40,7 @@ use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -55,10 +57,12 @@ class CallController extends AEnvironmentAwareOCSController {
 		protected Manager $manager,
 		private ConsentService $consentService,
 		private ParticipantService $participantService,
+		private PhoneNumberMapper $phoneNumberMapper,
 		private RoomService $roomService,
 		private IUserManager $userManager,
 		private ITimeFactory $timeFactory,
 		private IConfig $serverConfig,
+		private IAppConfig $appConfig,
 		private Config $talkConfig,
 		protected Authenticator $federationAuthenticator,
 		private SIPDialOutService $dialOutService,
@@ -399,8 +403,28 @@ class CallController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
+		$callerNumber = true;
+		if ($this->appConfig->getAppValueBool('sip_bridge_dialout_anonymous')) {
+			$callerNumber = false;
+		} elseif ($this->appConfig->getAppValueString('sip_bridge_dialout_number') !== '') {
+			$callerNumber = $this->appConfig->getAppValueString('sip_bridge_dialout_number');
+		}
+
+		// No elseif, so we have the fallback to sip_bridge_dialout_number when the caller is no user or doesn't have a number
+		if ($callerNumber !== false && $this->appConfig->getAppValueString('sip_bridge_dialout_prefix', '+') !== '') {
+			$attendee = $this->participant->getAttendee();
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+				$numbers = $this->phoneNumberMapper->findByUser($attendee->getActorId());
+				if (!empty($numbers)) {
+					$number = array_shift($numbers);
+					$callerNumber = $this->appConfig->getAppValueString('sip_bridge_dialout_prefix', '+');
+					$callerNumber .= $number->getPhoneNumber();
+				}
+			}
+		}
+
 		try {
-			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId);
+			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId, $callerNumber);
 		} catch (ParticipantNotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		} catch (DialOutFailedException $e) {
