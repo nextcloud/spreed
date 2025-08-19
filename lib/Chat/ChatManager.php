@@ -427,6 +427,10 @@ class ChatManager {
 			$threadId = (int)$comment->getTopmostParentId();
 			if ($threadId !== 0) {
 				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
+				if ($participant instanceof Participant) {
+					// Add to subscribed threads list
+					$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
+				}
 			}
 
 			if ($participant instanceof Participant) {

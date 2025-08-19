@@ -10,20 +10,24 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Model\ThreadAttendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
@@ -41,14 +45,17 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		protected Manager $manager,
 		protected ChatManager $chatManager,
 		protected Preloader $sharePreloader,
 		protected MessageParser $messageParser,
+		protected ParticipantService $participantService,
 		protected ThreadService $threadService,
 		protected ITimeFactory $timeFactory,
 		protected IL10N $l,
 		protected IEventDispatcher $eventDispatcher,
 		protected LoggerInterface $logger,
+		protected ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -82,6 +89,51 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		$threads = $this->threadService->getRecentByRoomId($this->room, $limit);
 		$list = $this->prepareListOfThreads($threads);
 		return new DataResponse($list);
+	}
+
+
+	/**
+	 * Get subscribed threads for a user
+	 *
+	 * Required capability: `threads`
+	 *
+	 * @param int<1, 100> $limit Number of threads to return
+	 * @param non-negative-int $offset Offset in the threads list
+	 * @return DataResponse<Http::STATUS_OK, list<TalkThreadInfo>, array{}>
+	 *
+	 * 200: List of threads returned
+	 */
+	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/subscribed-threads', requirements: [
+		'apiVersion' => '(v1)',
+	])]
+	public function getSubscribedThreads(int $limit = 100, int $offset = 0): DataResponse {
+		$results = $this->threadService->getRecentByActor(Attendee::ACTOR_USERS, $this->userId, $limit, $offset);
+
+		$roomIds = array_keys($results);
+		$rooms = $this->manager->getRoomsByIdForUser($roomIds, $this->userId);
+
+		$threads = $threadAttendees = [];
+		foreach ($results as $roomId => $data) {
+			if (!isset($rooms[$roomId])) {
+				continue;
+			}
+
+			foreach ($data as $threadData) {
+				$threads[] = $threadData['thread'];
+				$threadAttendees[$threadData['thread']->getId()] = $threadData['attendee'];
+			}
+		}
+
+		// Sort by last activity again
+		usort($threads, static function (Thread $a, Thread $b): int {
+			if ($b->getLastActivity() === $a->getLastActivity()) {
+				return $b->getId() <=> $a->getId();
+			}
+			return $b->getLastActivity() <=> $a->getLastActivity();
+		});
+
+		return new DataResponse($this->prepareListOfThreads($threads, $threadAttendees, $rooms));
 	}
 
 	/**
@@ -212,10 +264,14 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 * @param ?list<ThreadAttendee> $attendees
 	 * @return list<TalkThreadInfo>
 	 */
-	protected function prepareListOfThreads(array $threads, ?array $attendees = null): array {
+	protected function prepareListOfThreads(array $threads, ?array $attendees = null, ?array $rooms = null): array {
 		$threadIds = array_map(static fn (Thread $thread) => $thread->getId(), $threads);
 		if ($attendees === null) {
 			$attendees = $this->threadService->findAttendeeByThreadIds($this->participant->getAttendee(), $threadIds);
+		}
+		if ($rooms === null) {
+			$rooms = [$this->room->getId() => $this->room];
+			$participants = [$this->room->getId() => $this->participant];
 		}
 
 		$messageIds = [];
@@ -229,26 +285,34 @@ class ThreadController extends AEnvironmentAwareOCSController {
 
 		$list = [];
 		foreach ($threads as $thread) {
+			if (!isset($rooms[$thread->getRoomId()])) {
+				continue;
+			}
+
+			$room = $rooms[$thread->getRoomId()];
+			// The getParticipant here should read only from the cache, so it's no problem inside the loop
+			$participant = $participants[$thread->getRoomId()] ?? $this->participantService->getParticipant($room, $this->userId);
+
 			$firstMessage = $lastMessage = null;
 			$attendee = $attendees[$thread->getId()] ?? null;
 			if ($attendee === null) {
-				$attendee = ThreadAttendee::createFromParticipant($thread->getId(), $this->participant);
+				$attendee = ThreadAttendee::createFromParticipant($thread->getId(), $participant);
 			}
 
 			$first = $comments[$thread->getId()] ?? null;
 			if ($first !== null) {
-				$firstMessage = $this->messageParser->createMessage($this->room, $this->participant, $first, $this->l);
+				$firstMessage = $this->messageParser->createMessage($room, $participant, $first, $this->l);
 				$this->messageParser->parseMessage($firstMessage);
 			}
 
 			$last = $comments[$thread->getLastMessageId()] ?? null;
 			if ($last !== null) {
-				$lastMessage = $this->messageParser->createMessage($this->room, $this->participant, $last, $this->l);
+				$lastMessage = $this->messageParser->createMessage($room, $participant, $last, $this->l);
 				$this->messageParser->parseMessage($lastMessage);
 			}
 
 			$list[] = [
-				'thread' => $thread->toArray($this->room),
+				'thread' => $thread->toArray($room),
 				'attendee' => $attendee->jsonSerialize(),
 				'first' => $firstMessage?->toArray($this->getResponseFormat(), true),
 				'last' => $lastMessage?->toArray($this->getResponseFormat(), true),
