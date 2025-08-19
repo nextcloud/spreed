@@ -105,15 +105,6 @@ export function useGetMessagesProvider() {
 			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.systemMessage)
 	})
 
-	const conversationLastMessageId = computed<number>(() => {
-		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
-			return conversation.value.lastMessage.id
-		}
-
-		// Federated conversations do not provide lastMessage.id, fallback to last known message
-		return chatStore.getLastKnownId(currentToken.value, { threadId: contextThreadId.value })
-	})
-
 	const isChatEndReached = computed(() => {
 		const conversation = store.getters.conversation(currentToken.value) as Conversation | undefined
 		if (!conversation || !conversation.lastMessage) {
@@ -123,15 +114,7 @@ export function useGetMessagesProvider() {
 
 		const lastKnownMessageId = chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value })
 
-		if (contextThreadId.value) {
-			const threadInfo = chatExtrasStore.threads[currentToken.value]?.[contextThreadId.value]
-			// If threadId is set, we should compare with last message from the thread
-			if (threadInfo?.last) {
-				return lastKnownMessageId >= threadInfo.last.id
-			}
-		}
-
-		return lastKnownMessageId >= conversationLastMessageId.value
+		return lastKnownMessageId >= getConversationLastMessageId(contextThreadId.value)
 	})
 
 	/** Initial check to ensure context is created once route is available */
@@ -211,6 +194,26 @@ export function useGetMessagesProvider() {
 	}
 
 	/**
+	 * Returns  contextMessageId to the last message in the conversation
+	 */
+	function getConversationLastMessageId(threadId: number) {
+		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
+			return conversation.value.lastMessage.id
+		}
+
+		if (threadId) {
+			const threadInfo = chatExtrasStore.threads[currentToken.value]?.[threadId]
+			// If threadId is set, we should compare with last message from the thread
+			if (threadInfo?.last) {
+				return threadInfo.last.id
+			}
+		}
+
+		// Federated conversations do not provide lastMessage.id, fallback to last known message
+		return chatStore.getLastKnownId(currentToken.value, { threadId: threadId })
+	}
+
+	/**
 	 * Handle route changes to initialize chat or thread, and focus given message
 	 */
 	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
@@ -227,12 +230,13 @@ export function useGetMessagesProvider() {
 		if (from.hash !== to.hash && focusMessageId !== null) {
 			// the hash changed, need to focus/highlight another message
 			contextMessageId.value = focusMessageId
-		} else if (conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value) {
-			// focus last read message first
+		} else if (conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value
+			&& (!threadId || chatStore.hasMessage(to.params.token, { messageId: conversation.value.lastReadMessage, threadId }))) {
+			// focus last read message first (in thread view: if it's part of the thread)
 			contextMessageId.value = conversation.value.lastReadMessage
 		} else {
 			// last known message in the most recent block store
-			contextMessageId.value = conversationLastMessageId.value
+			contextMessageId.value = getConversationLastMessageId(threadId)
 		}
 
 		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, threadId)
@@ -263,7 +267,13 @@ export function useGetMessagesProvider() {
 	 * Update contextMessageId to the last message in the conversation
 	 */
 	async function setContextIdToBottom() {
-		contextMessageId.value = conversationLastMessageId.value
+		if (contextThreadId.value && conversation.value?.lastReadMessage
+			&& chatStore.hasMessage(currentToken.value, { messageId: conversation.value.lastReadMessage, threadId: contextThreadId.value })) {
+			// focus last read message first (in thread view: if it's part of the thread)
+			contextMessageId.value = conversation.value.lastReadMessage
+		} else {
+			contextMessageId.value = getConversationLastMessageId(contextThreadId.value)
+		}
 		await checkContextAndFocusMessage(currentToken.value, contextMessageId.value, contextThreadId.value)
 	}
 
