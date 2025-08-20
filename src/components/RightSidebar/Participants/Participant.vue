@@ -71,7 +71,7 @@
 					<DialpadPanel :disabled="disabled"
 						container="#tab-participants"
 						dialing
-						@dial:type="dialType" />
+						@dial-type="dialType" />
 				</template>
 			</template>
 
