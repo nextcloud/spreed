@@ -51,16 +51,15 @@ const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
 const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
 
 const isFocused = ref(false)
-const searchResults = ref<(UnifiedSearchResultEntry &
-	{
-		to: {
-			name: string
-			hash: string
-			params: {
-				token: string
-			}
+const searchResults = ref<(UnifiedSearchResultEntry & {
+	to: {
+		name: string
+		hash: string
+		params: {
+			token: string
 		}
-	})[]>([])
+	}
+})[]>([])
 const searchText = ref('')
 const fromUser = ref<IUserData | undefined>(undefined)
 const sinceDate = ref<Date | null>(null)

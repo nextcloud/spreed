@@ -5,8 +5,8 @@
 
 declare module 'vuex' {
 	export {
-		Store,
 		createStore,
+		Store,
 		useStore,
 	} from 'vuex/types/index.d.ts'
 }

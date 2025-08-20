@@ -14,6 +14,9 @@ export default [
 		ignores: [
 			// Generated files
 			'src/types/openapi/*',
+			'js/*',
+			// Vendor code
+			'src/utils/**/vendor/*',
 			// Temporary ignore code in documentation examples
 			'docs',
 			// TODO: upstream
@@ -47,6 +50,7 @@ export default [
 		name: 'talk/disabled-during-migration',
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
+			'@nextcloud-l10n/non-breaking-space-vue': 'off', // changes translation strings
 			'@stylistic/array-bracket-newline': 'off', // changes array formatting
 			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable

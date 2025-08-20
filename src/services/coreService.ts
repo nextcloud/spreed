@@ -23,8 +23,7 @@ const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
 	&& getTalkConfig('local', 'federation', 'outgoing-enabled')
 
 // Only explicit share types are allowed to use in autocompleteQuery
-type ShareType =
-	| typeof SHARE.TYPE.USER
+type ShareType = typeof SHARE.TYPE.USER
 	| typeof SHARE.TYPE.GROUP
 	| typeof SHARE.TYPE.EMAIL
 	| typeof SHARE.TYPE.REMOTE
