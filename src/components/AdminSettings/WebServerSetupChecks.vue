@@ -176,11 +176,11 @@ export default {
 	display: inline-block !important;
 
 	&.success-button {
-		color: var(--color-success);
+		color: var(--color-success-text);
 	}
 
 	&.error-button {
-		color: var(--color-error);
+		color: var(--color-error-text);
 	}
 }
 </style>

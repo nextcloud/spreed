@@ -177,7 +177,7 @@ export default {
 	}
 
 	/* Overlay icon inherits container color */
-	color: var(--color-success);
+	color: var(--color-border-success);
 
 	&-mute {
 		color: var(--color-loading-dark);
@@ -188,7 +188,7 @@ export default {
 	transition: height 0s linear;
 
 	&-overlay {
-		color: var(--color-error);
+		color: var(--color-border-error);
 	}
 }
 </style>

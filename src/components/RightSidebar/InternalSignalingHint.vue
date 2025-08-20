@@ -53,7 +53,7 @@ const showInternalWarning = () => {
 <template>
 	<NcNoteCard v-show="show" type="warning" class="internal-warning">
 		<template #icon>
-			<IconNetworkStrength2Alert fill-color="var(--color-warning)" :size="20" />
+			<IconNetworkStrength2Alert fill-color="var(--color-warning-text)" :size="20" />
 		</template>
 		<strong>{{ warningTitle }}</strong>
 		<!-- eslint-disable-next-line vue/no-v-html -->

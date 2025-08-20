@@ -315,7 +315,7 @@ export default {
 			height: 16px;
 			flex: 0 0 16px;
 			border-radius: 8px;
-			background-color: var(--color-error);
+			background-color: var(--color-border-error);
 			margin: 8px;
 		}
 	}

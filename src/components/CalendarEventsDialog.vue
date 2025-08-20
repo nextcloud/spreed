@@ -550,7 +550,7 @@ async function submitNewMeeting() {
 	}
 
 	&__invalid-hint {
-		color: var(--color-error);
+		color: var(--color-text-error);
 	}
 
 	&__flex-wrapper {
@@ -602,7 +602,7 @@ async function submitNewMeeting() {
 
 		&.invalid-time input {
 			--border-width-input: 2px;
-			border-color: var(--color-error);
+			border-color: var(--color-border-error);
 		}
 	}
 }

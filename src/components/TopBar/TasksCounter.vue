@@ -33,7 +33,7 @@ const tasksSummary = computed(() => {
 
 <template>
 	<div v-if="tasksCount" class="tasks-counter">
-		<NcProgressBar type="circular" :value="tasksRatio" :color="tasksRatio === 100 ? 'var(--color-success)' : null" />
+		<NcProgressBar type="circular" :value="tasksRatio" :color="tasksRatio === 100 ? 'var(--color-border-success)' : undefined" />
 		<div class="tasks-counter__count">
 			{{ tasksSummary }}
 		</div>

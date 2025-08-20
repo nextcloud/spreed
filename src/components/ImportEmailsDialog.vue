@@ -202,10 +202,10 @@ async function submitList(file: File | null) {
   &__caption {
     font-weight: bold;
     &--error {
-      color: var(--color-error);
+      color: var(--color-text-error);
     }
     &--success {
-      color: var(--color-success);
+      color: var(--color-success-text);
     }
   }
 
