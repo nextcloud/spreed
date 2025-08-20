@@ -144,8 +144,7 @@ export type StandaloneSignalingUpdateSession = {
 	virtual?: boolean
 }
 
-export type SignalingSessionPayload =
-	| InternalSignalingSession
+export type SignalingSessionPayload = InternalSignalingSession
 	| StandaloneSignalingJoinSession
 	| StandaloneSignalingUpdateSession
 
@@ -457,8 +456,7 @@ export type IUserData = {
 // SIP call message payload
 // TODO unify this type
 // hint: check TYPE_ENCRYPTION* in "encryption.js"
-export type CallSIPSendCallMessagePayload =
-	| { type: 'control' | 'hangup' }
+export type CallSIPSendCallMessagePayload = { type: 'control' | 'hangup' }
 	| { type: 'dtmf', digit: string }
 	| { type: 'mute', audio: number }
 
