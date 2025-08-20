@@ -527,15 +527,6 @@ export default {
 				this.isNavigating = true
 			}
 		},
-
-		isCompact(value) {
-			if (!value) {
-				// Last messages are likely missing from the store, need to fetch with modifiedSince=0
-				this.roomListModifiedBefore = 0
-				this.forceFullRoomListRefreshAfterXLoops = 10
-				this.fetchConversations()
-			}
-		},
 	},
 
 	beforeMount() {
@@ -853,7 +844,6 @@ export default {
 			try {
 				const response = await this.$store.dispatch('fetchConversations', {
 					modifiedSince: this.roomListModifiedBefore,
-					includeLastMessage: this.isCompact ? 0 : 1,
 				})
 
 				// We can only support this with the HPB as otherwise rooms,
