@@ -8,6 +8,7 @@
 		:title="startCallTitle"
 		:aria-label="startCallLabel"
 		:disabled="startCallButtonDisabled || loading || isJoiningCall"
+		class="join-call"
 		:variant="hasCall ? 'success' : 'primary'"
 		@click="handleClick">
 		<template #icon>
@@ -480,8 +481,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.join-call.button-vue--success {
+	// Overwrite default button colors for joining call
+	--join-call-background-color: var(--color-border-success);
+	--join-call-border-color: var(--color-success-text);
+	// Do not overwrite for dark theme
+	body[data-theme-dark] & {
+		--join-call-border-color: var(--color-success-hover);
+	}
+	@media (prefers-color-scheme: dark) {
+		body[data-theme-default] & {
+			--join-call-border-color: var(--color-success-hover);
+		}
+	}
+	border-color: var(--join-call-border-color);
+	background-color: var(--join-call-background-color);
+	color: var(--color-primary-element-text) !important;
+
+	&:hover:not(:disabled) {
+		background-color: var(--join-call-border-color);
+	}
+}
+
 .leave-call-actions--split {
 	gap: 1px;
+
+	& :deep(.button-vue--error) {
+		// Overwrite default button colors for leaving call
+		background-color: #FF3333 !important; // Nextcloud 31 --color-error
+		color: var(--color-primary-text) !important;
+	}
 }
 
 .leave-call-actions--split :deep(.action-item--single) {
