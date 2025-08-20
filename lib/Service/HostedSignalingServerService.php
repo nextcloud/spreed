@@ -62,11 +62,6 @@ class HostedSignalingServerService {
 				],
 				'timeout' => 10,
 			]);
-
-			// this is needed here because the deletion happens in a concurrent request
-			// and thus the cached value in the config object would trigger an UPDATE
-			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
 
@@ -182,6 +177,11 @@ class HostedSignalingServerService {
 			$this->logger->error('Failed to request hosted signaling server trial', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to request trial because the trial server is unreachable. Please try again later.');
 			throw new HostedSignalingServerAPIException($message, ($e instanceof ServerException ? $e->getResponse()?->getStatusCode() : null) ?? Http::STATUS_INTERNAL_SERVER_ERROR);
+		} finally {
+			// this is needed here because the deletion happens in a concurrent request
+			// and thus the cached value in the config object would trigger an UPDATE
+			// instead of an INSERT if there is another request to the API server
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		}
 
 		$status = $response->getStatusCode();
@@ -234,11 +234,6 @@ class HostedSignalingServerService {
 				],
 				'timeout' => 10,
 			]);
-
-			// this is needed here because the delete happens in a concurrent request
-			// and thus the cached value in the config object would trigger an UPDATE
-			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
 
@@ -317,6 +312,11 @@ class HostedSignalingServerService {
 			$this->logger->error('Failed to request hosted signaling server trial', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to fetch account information because the trial server is unreachable. Please check back later.');
 			throw new HostedSignalingServerAPIException($message, ($e instanceof ServerException ? $e->getResponse()?->getStatusCode() : null) ?? Http::STATUS_INTERNAL_SERVER_ERROR);
+		} finally {
+			// this is needed here because the delete happens in a concurrent request
+			// and thus the cached value in the config object would trigger an UPDATE
+			// instead of an INSERT if there is another request to the API server
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		}
 
 		$status = $response->getStatusCode();
@@ -388,11 +388,6 @@ class HostedSignalingServerService {
 				],
 				'timeout' => 10,
 			]);
-
-			// this is needed here because the delete happens in a concurrent request
-			// and thus the cached value in the config object would trigger an UPDATE
-			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
 
@@ -471,6 +466,11 @@ class HostedSignalingServerService {
 			$this->logger->error('Deleting the hosted signaling server account failed', ['exception' => $e]);
 			$message = $this->l10n->t('Failed to delete the account because the trial server is unreachable. Please check back later.');
 			throw new HostedSignalingServerAPIException($message, ($e instanceof ServerException ? $e->getResponse()?->getStatusCode() : null) ?? Http::STATUS_INTERNAL_SERVER_ERROR);
+		} finally {
+			// this is needed here because the delete happens in a concurrent request
+			// and thus the cached value in the config object would trigger an UPDATE
+			// instead of an INSERT if there is another request to the API server
+			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 		}
 
 		$status = $response->getStatusCode();
