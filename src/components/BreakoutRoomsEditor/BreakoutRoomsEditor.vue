@@ -175,7 +175,7 @@ export default {
 	}
 
 	&__error-hint {
-		color: var(--color-error);
+		color: var(--color-text-error);
 		font-size: 0.8rem;
 	}
 

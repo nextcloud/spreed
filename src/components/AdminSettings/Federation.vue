@@ -235,8 +235,8 @@ export default {
 
 <style scoped lang="scss">
 small {
-	color: var(--color-warning);
-	border: 1px solid var(--color-warning);
+	color: var(--color-favorite);
+	border: 1px solid var(--color-favorite);
 	border-radius: 16px;
 	padding: 0 9px;
 }

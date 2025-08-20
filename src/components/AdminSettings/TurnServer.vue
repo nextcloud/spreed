@@ -426,7 +426,7 @@ export default {
 
 	& &__textfield {
 		&.error :deep(.input-field__input) {
-			border: 2px solid var(--color-error);
+			border: 2px solid var(--color-border-error);
 		}
 	}
 

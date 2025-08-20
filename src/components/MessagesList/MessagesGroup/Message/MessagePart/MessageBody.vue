@@ -53,7 +53,7 @@
 				:use-extended-markdown="message.markdown"
 				:reference-limit="1"
 				reference-interactive-opt-in
-				@interact:todo="handleInteraction" />
+				@interact-todo="handleInteraction" />
 
 			<!-- Additional controls -->
 			<NcButton v-if="containsCodeBlocks"

@@ -71,7 +71,7 @@
 					<DialpadPanel :disabled="disabled"
 						container="#tab-participants"
 						dialing
-						@dial:type="dialType" />
+						@dial-type="dialType" />
 				</template>
 			</template>
 
@@ -1046,7 +1046,7 @@ export default {
 	}
 
 	:deep(.list-item-content__actions > .critical) {
-		color: var(--color-error);
+		color: var(--color-error-text);
 	}
 }
 
@@ -1057,7 +1057,7 @@ export default {
 }
 
 .critical > :deep(.action-button) {
-	color: var(--color-error);
+	color: var(--color-error-text);
 }
 
 </style>

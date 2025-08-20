@@ -31,9 +31,9 @@
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fill-color="var(--color-error)" />
-			<IconAlertCircleOutline v-else-if="warningMessage" :size="20" fill-color="var(--color-warning)" />
-			<IconCheck v-else :size="20" fill-color="var(--color-success)" />
+			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fill-color="var(--color-error-text)" />
+			<IconAlertCircleOutline v-else-if="warningMessage" :size="20" fill-color="var(--color-warning-text)" />
+			<IconCheck v-else :size="20" fill-color="var(--color-success-text)" />
 			{{ connectionState }}
 
 			<NcButton v-if="server && checked"

@@ -1097,7 +1097,7 @@ export default {
 
 	&__input-rich {
 		&--required :deep(.rich-contenteditable__input) {
-			border-color: var(--color-error) !important;
+			border-color: var(--color-border-error) !important;
 		}
 	}
 
