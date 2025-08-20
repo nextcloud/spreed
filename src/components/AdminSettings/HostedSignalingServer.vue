@@ -196,7 +196,7 @@ export default {
 		},
 
 		expiryDate() {
-			return moment(this.trialAccount.expires).format('L')
+			return this.trialAccount.expires ? moment(this.trialAccount.expires).format('L') : t('spreed', 'Never')
 		},
 
 		createdDate() {
