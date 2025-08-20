@@ -16,6 +16,7 @@ import { EventBus } from '../services/EventBus.ts'
 import {
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
+	getSubscribedThreads,
 	setThreadNotificationLevel,
 	summarizeChat,
 } from '../services/messagesService.ts'
@@ -23,6 +24,7 @@ import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
 	threads: Record<string, Record<number, ThreadInfo>>
+	subscribedThreads: Set<number>
 	threadTitle: Record<string, string>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
@@ -39,6 +41,7 @@ type State = {
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
 		threads: {},
+		subscribedThreads: new Set(),
 		threadTitle: {},
 		parentToReply: {},
 		chatInput: {},
@@ -62,6 +65,13 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			} else {
 				return []
 			}
+		},
+
+		getSubscribedThreadsList: (state): ThreadInfo[] => {
+			return Object.keys(state.threads)
+				.flatMap((token) => Object.values(state.threads[token] ?? {}))
+				.filter((threadInfo) => state.subscribedThreads.has(threadInfo.thread.id))
+				.sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
 		},
 
 		getThreadTitle: (state) => (token: string) => {
@@ -136,6 +146,22 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				const response = await getRecentThreadsForConversation({ token })
 				response.data.ocs.data.forEach((threadInfo) => {
 					this.addThread(token, threadInfo)
+				})
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
+		/**
+		 * Fetch list of subscribed threads from server
+		 * @param offset thread offset to start fetch with
+		 */
+		async fetchSubscribedThreadsList(offset?: number) {
+			try {
+				const response = await getSubscribedThreads({ offset })
+				response.data.ocs.data.forEach((threadInfo) => {
+					this.subscribedThreads.add(threadInfo.thread.id)
+					this.addThread(threadInfo.thread.roomToken, threadInfo)
 				})
 			} catch (error) {
 				console.error('Error fetching threads:', error)

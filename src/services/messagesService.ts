@@ -5,7 +5,6 @@
 
 import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
-	ChatMessage,
 	clearHistoryResponse,
 	deleteMessageResponse,
 	editMessageParams,
@@ -14,6 +13,8 @@ import type {
 	getMessageContextResponse,
 	getRecentThreadsParams,
 	getRecentThreadsResponse,
+	getSubscribedThreadsParams,
+	getSubscribedThreadsResponse,
 	getThreadResponse,
 	markUnreadResponse,
 	postNewMessageParams,
@@ -282,6 +283,24 @@ async function getSingleThreadForConversation(token: string, threadId: number, o
 }
 
 /**
+ * Fetch a list of threads user subscribed to
+ *
+ * @param data the wrapping object
+ * @param [data.limit=50] Number of threads to return
+ * @param [data.offset] Thread offset to fetch from
+ * @param [options] Axios request options
+ */
+async function getSubscribedThreads({ limit, offset }: getSubscribedThreadsParams = {}, options?: AxiosRequestConfig): getSubscribedThreadsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/subscribed-threads'), {
+		...options,
+		params: {
+			limit,
+			offset,
+		},
+	})
+}
+
+/**
  * Create a new thread for a conversation
  *
  * @param token The conversation token
@@ -303,6 +322,7 @@ export {
 	getMessageContext,
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
+	getSubscribedThreads,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
