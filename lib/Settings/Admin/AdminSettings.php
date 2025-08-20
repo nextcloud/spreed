@@ -463,8 +463,8 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
 		$this->initialState->provideInitialState('sip_bridge_dialout', $this->talkConfig->isSIPDialOutEnabled());
 		$this->initialState->provideInitialState('sip_bridge_dialout_anonymous', $this->appConfig->getAppValueBool('sip_bridge_dialout_anonymous'));
-		$this->initialState->provideInitialState('sip_bridge_dialout_number', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_anonymous', ''));
-		$this->initialState->provideInitialState('sip_bridge_dialout_prefix', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_anonymous', '+'));
+		$this->initialState->provideInitialState('sip_bridge_dialout_number', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_number', ''));
+		$this->initialState->provideInitialState('sip_bridge_dialout_prefix', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_prefix', '+'));
 	}
 
 	protected function getGroupDetailsArray(array $gids, string $configKey): array {
