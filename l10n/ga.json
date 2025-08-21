@@ -1331,8 +1331,6 @@
     "You have no archived conversations." : "Níl aon chomhráite sa chartlann agat.",
     "You have no unread mentions." : "Níl aon tagairtí neamhléite agat.",
     "You have no unread messages." : "Níl aon teachtaireachtaí neamhléite agat.",
-    "Reload Talk home" : "Athlódáil Comhrá baile",
-    "Talk home" : "Labhair abhaile",
     "An error occurred while performing the search" : "Tharla earráid agus an cuardach á dhéanamh",
     "Conversation list" : "Liosta comhráite",
     "Filter conversations by" : "Scag comhráite de réir",
@@ -1340,8 +1338,9 @@
     "Meeting conversations" : "Comhráite cruinnithe",
     "Clear filters" : "Glan na scagairí",
     "New personal note" : "Nóta pearsanta nua",
-    "Clear filter" : "Glan an scagaire",
+    "Talk home" : "Labhair abhaile",
     "Back to conversations" : "Ar ais chuig comhráite",
+    "Clear filter" : "Glan an scagaire",
     "Archived conversations" : "Comhráite cartlainne",
     "Talk settings" : "Socruithe cainte",
     "Users" : "Úsáideoirí",
@@ -2139,6 +2138,7 @@
     "An error happened when trying to share your file" : "Tharla earráid agus tú ag iarraidh do chomhad a roinnt",
     "Failed to join the conversation. Try to reload the page." : "Theip ar páirt a ghlacadh sa chomhrá. Déan iarracht an leathanach a athlódáil.",
     "Nextcloud is in maintenance mode, please reload the page" : "Tá Nextcloud i mód cothabhála, le do thoil athlódáil an leathanach",
-    "Lost connection to signaling server. Try to reload the page manually." : "Ceangal caillte leis an bhfreastalaí comharthaíochta. Déan iarracht an leathanach a athlódáil de láimh."
+    "Lost connection to signaling server. Try to reload the page manually." : "Ceangal caillte leis an bhfreastalaí comharthaíochta. Déan iarracht an leathanach a athlódáil de láimh.",
+    "Reload Talk home" : "Athlódáil Comhrá baile"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

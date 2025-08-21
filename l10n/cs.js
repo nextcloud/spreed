@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Nemáte žádné archivované konverzace.",
     "You have no unread mentions." : "Nemáte žádná nepřečtená zmínění.",
     "You have no unread messages." : "Nemáte žádné nepřečtené zprávy.",
-    "Reload Talk home" : "Znovunačíst domovské Talk",
-    "Talk home" : "Talk domovské",
     "An error occurred while performing the search" : "Došlo k chybě při provádění hledání",
     "Conversation list" : "Seznam konverzace",
     "Filter conversations by" : "Filtrovat konverzaci podle",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "Konverzace schůzky",
     "Clear filters" : "Vyčistit filtry",
     "New personal note" : "Nová osobní poznámka",
-    "Clear filter" : "Vyčistit filtr",
+    "Talk home" : "Talk domovské",
     "Back to conversations" : "Zpět na konverzace",
+    "Clear filter" : "Vyčistit filtr",
     "Archived conversations" : "Archivované konverzace",
     "Talk settings" : "Nastavení pro Talk",
     "Users" : "Uživatelé",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Při pokusu o sdílení vašeho souboru došlo k chybě",
     "Failed to join the conversation. Try to reload the page." : "Ke konverzaci se nepodařilo připojit. Zkuste stránku znovu načíst.",
     "Nextcloud is in maintenance mode, please reload the page" : "V Nexcloud probíhá údržba – načtěte stránku znovu",
-    "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu."
+    "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu.",
+    "Reload Talk home" : "Znovunačíst domovské Talk"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

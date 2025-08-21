@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "No tiene conversaciones archivadas.",
     "You have no unread mentions." : "No tiene menciones sin leer.",
     "You have no unread messages." : "No tiene mensajes sin leer.",
-    "Reload Talk home" : "Recargar la página de inicio de Talk",
-    "Talk home" : "Página de inicio de Talk",
     "An error occurred while performing the search" : "Ha ocurrido un error mientras se realizaba la búsqueda",
     "Conversation list" : "Lista de conversaciones",
     "Filter conversations by" : "Filtrar conversaciones por",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "Conversaciones de las reuniones",
     "Clear filters" : "Limpiar filtros",
     "New personal note" : "Nueva nota personal",
-    "Clear filter" : "Borrar filtro",
+    "Talk home" : "Página de inicio de Talk",
     "Back to conversations" : "Volver a conversaciones",
+    "Clear filter" : "Borrar filtro",
     "Archived conversations" : "Conversaciones archivadas",
     "Talk settings" : "Configuración de Talk",
     "Users" : "Usuarios",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Se ha producido un error al intentar compartir el archivo",
     "Failed to join the conversation. Try to reload the page." : "Error al unirte a la conversación. Prueba a recargar la página.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud está en modo mantenimiento. Por favor, vuelve a cargar la página",
-    "Lost connection to signaling server. Try to reload the page manually." : "Se ha perdido la conexión con el servidor de señalización. Prueba a recargar manualmente la página."
+    "Lost connection to signaling server. Try to reload the page manually." : "Se ha perdido la conexión con el servidor de señalización. Prueba a recargar manualmente la página.",
+    "Reload Talk home" : "Recargar la página de inicio de Talk"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
