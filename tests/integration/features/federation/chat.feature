@@ -30,16 +30,18 @@ Feature: federation/chat
       | LOCAL::room | 2    |
     And using server "LOCAL"
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                               | label                    | mentionId                                        |
-      | calls           | all                              | room                     | all                                              |
-      | federated_users | participant2@{$REMOTE_URL}       | participant2-displayname | federated_user/participant2@{$REMOTE_URL}  |
-      | users           | participant3                     | participant3-displayname | participant3                                     |
+      | source          | id                               | label                    | mentionId                                 |
+      | calls           | all                              | room                     | all                                       |
+      | federated_users | participant2@{$REMOTE_URL}       | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
+      | users           | participant1                     | participant1-displayname | participant1                              |
+      | users           | participant3                     | participant3-displayname | participant3                              |
     Given using server "REMOTE"
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
       | source          | id                        | label                    | mentionId    |
       | calls           | all                       | room                     | all          |
       | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1 |
       | federated_users | participant3@{$LOCAL_URL} | participant3-displayname | participant3 |
+      | users           | participant2              | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
 
   Scenario: Get mention suggestions (translating federated users of the same server to local users)
     Given user "participant1" creates room "room" (v4)
@@ -67,6 +69,7 @@ Feature: federation/chat
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
       | source          | id                         | label                    | mentionId                                 |
       | calls           | all                        | room                     | all                                       |
+      | users           | participant1               | participant1-displayname | participant1                              |
       | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
       | federated_users | participant3@{$REMOTE_URL} | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
     Given using server "REMOTE"
@@ -75,6 +78,7 @@ Feature: federation/chat
       | calls           | all                       | room                     | all                                       |
       | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1                              |
       | users           | participant3              | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
+      | users           | participant2              | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
 
   Scenario: Basic chatting including posting, getting, editing and deleting
     Given user "participant1" creates room "room" (v4)
