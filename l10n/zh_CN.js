@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "您没有已存档的对话。",
     "You have no unread mentions." : "无未读的提及",
     "You have no unread messages." : "无未读消息",
-    "Reload Talk home" : "重新加载 Talk 首页",
-    "Talk home" : "Talk 首页",
     "An error occurred while performing the search" : "执行搜索时出错",
     "Conversation list" : "对话列表",
     "Filter conversations by" : "按以下条件筛选对话",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "会议对话",
     "Clear filters" : "清除过滤器",
     "New personal note" : "新建个人笔记",
-    "Clear filter" : "清除筛选",
+    "Talk home" : "Talk 首页",
     "Back to conversations" : "返回对话",
+    "Clear filter" : "清除筛选",
     "Archived conversations" : "已存档的对话",
     "Talk settings" : "通话应用设置",
     "Users" : "用户",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "试图分享你的文件时发生错误",
     "Failed to join the conversation. Try to reload the page." : "加入对话失败。尝试重新加载页面。 ",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud处于维护模式，请重新加载页面",
-    "Lost connection to signaling server. Try to reload the page manually." : "与信令服务器失去连接。尝试手动重新加载页面。"
+    "Lost connection to signaling server. Try to reload the page manually." : "与信令服务器失去连接。尝试手动重新加载页面。",
+    "Reload Talk home" : "重新加载 Talk 首页"
 },
 "nplurals=1; plural=0;");

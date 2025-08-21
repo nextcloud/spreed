@@ -1281,8 +1281,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Sul pole arhiveeritud vestlusi.",
     "You have no unread mentions." : "Sul pole lugemata mainimisi.",
     "You have no unread messages." : "Sul pole lugemata sõnumeid.",
-    "Reload Talk home" : "Laadi kõnerakenduse avaleht uuesti",
-    "Talk home" : "Kõnerakenduse avaleht",
     "An error occurred while performing the search" : "Otsimisel tekkis viga",
     "Conversation list" : "Vestluste loend",
     "Filter conversations by" : "Filtreeri vestlusi",
@@ -1290,8 +1288,9 @@ OC.L10N.register(
     "Meeting conversations" : "Kohtumiste vestlused",
     "Clear filters" : "Eemalda filtrid",
     "New personal note" : "Uus isiklik märge",
-    "Clear filter" : "Tühjenda filter",
+    "Talk home" : "Kõnerakenduse avaleht",
     "Back to conversations" : "Tagasi vestluste juurde",
+    "Clear filter" : "Tühjenda filter",
     "Archived conversations" : "Arhiveeritud vestlused",
     "Talk settings" : "Kõnerakenduse seadistused",
     "Users" : "Kasutajad",
@@ -2086,6 +2085,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Sinu faili jagamisel tekkis viga",
     "Failed to join the conversation. Try to reload the page." : "Vestlusega ei õnnestunud liituda. Proovi lehte uuesti laadida.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloudi kõnerakendus on haldusrežiimis, palun laadi leht uuesti",
-    "Lost connection to signaling server. Try to reload the page manually." : "Kadus ühendus kõnehõlbustusserveriga. Proovi, kas lehe uuesti laadimine aitab."
+    "Lost connection to signaling server. Try to reload the page manually." : "Kadus ühendus kõnehõlbustusserveriga. Proovi, kas lehe uuesti laadimine aitab.",
+    "Reload Talk home" : "Laadi kõnerakenduse avaleht uuesti"
 },
 "nplurals=2; plural=(n != 1);");

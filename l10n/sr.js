@@ -1326,8 +1326,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Немате ниједан архивирани разговор.",
     "You have no unread mentions." : "Немате помињања која нисте прочитали.",
     "You have no unread messages." : "Немате порука која нисте прочитали.",
-    "Reload Talk home" : "Поново учитај Talk почетак",
-    "Talk home" : "Talk почетак",
     "An error occurred while performing the search" : "Грешка приликом претраге",
     "Conversation list" : "Листа разговора",
     "Filter conversations by" : "Филтрирај разговоре по",
@@ -1335,8 +1333,9 @@ OC.L10N.register(
     "Meeting conversations" : "Разговори у састанку",
     "Clear filters" : "Уклони филтере",
     "New personal note" : "Нова лична белешка",
-    "Clear filter" : "Очисти филтер",
+    "Talk home" : "Talk почетак",
     "Back to conversations" : "Назад на разговоре",
+    "Clear filter" : "Очисти филтер",
     "Archived conversations" : "Архивирани разговори",
     "Talk settings" : "Talk подешавања",
     "Users" : "Корисници",
@@ -2127,6 +2126,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Дошло је до грешке током покушавања да се подели ваш фајл",
     "Failed to join the conversation. Try to reload the page." : "Није успело приступање разговору. Покушајте да поново учитате страницу.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud је у режиму одржавања, молимо вас да поново учитате страницу",
-    "Lost connection to signaling server. Try to reload the page manually." : "Изгубљена је веза са сервером за сигнализирање. Покушајте да поново учитате страницу ручно."
+    "Lost connection to signaling server. Try to reload the page manually." : "Изгубљена је веза са сервером за сигнализирање. Покушајте да поново учитате страницу ручно.",
+    "Reload Talk home" : "Поново учитај Talk почетак"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

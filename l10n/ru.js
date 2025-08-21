@@ -1327,8 +1327,6 @@ OC.L10N.register(
     "You have no archived conversations." : "У Вас нет архивированных обсуждений.",
     "You have no unread mentions." : "У Вас нет непрочитанных упоминаний или личных сообщений.",
     "You have no unread messages." : "У Вас нет непрочитанных сообщений.",
-    "Reload Talk home" : "Перезагрузить домашнюю страницу Talk",
-    "Talk home" : "Домашняя страница Talk",
     "An error occurred while performing the search" : "Не удалось выполнить поиск",
     "Conversation list" : "Список обсуждений",
     "Filter conversations by" : "Фильтровать обсуждения",
@@ -1336,8 +1334,9 @@ OC.L10N.register(
     "Meeting conversations" : "Обсуждения - встречи",
     "Clear filters" : "Сбросить фильтры",
     "New personal note" : "Новая личная заметка",
-    "Clear filter" : "Сбросить фильтр",
+    "Talk home" : "Домашняя страница Talk",
     "Back to conversations" : "Обратно к обсуждениям",
+    "Clear filter" : "Сбросить фильтр",
     "Archived conversations" : "Архивированные обсуждения",
     "Talk settings" : "Настройки приложения",
     "Users" : "Пользователи",
@@ -2134,6 +2133,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Не удалось опубликовать файл",
     "Failed to join the conversation. Try to reload the page." : "Не удалось подключиться к обсуждению. Попробуйте обновить страницу.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud находится в режиме обслуживания, пожалуйста обновите страницу",
-    "Lost connection to signaling server. Try to reload the page manually." : "Потеряно соединение с сигнальным сервером. Попробуйте обновить страницу вручную."
+    "Lost connection to signaling server. Try to reload the page manually." : "Потеряно соединение с сигнальным сервером. Попробуйте обновить страницу вручную.",
+    "Reload Talk home" : "Перезагрузить домашнюю страницу Talk"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

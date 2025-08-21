@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Du hast keine archivierten Unterhaltungen",
     "You have no unread mentions." : "Du hast keine ungelesenen Erwähnungen.",
     "You have no unread messages." : "Du hast keine ungelesenen Nachrichten.",
-    "Reload Talk home" : "Talk Startseite neu laden",
-    "Talk home" : "Talk home",
     "An error occurred while performing the search" : "Es ist ein Fehler beim Suchen aufgetreten",
     "Conversation list" : "Unterhaltungsliste",
     "Filter conversations by" : "Unterhaltungen filtern nach",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "Besprechungsunterhaltungen",
     "Clear filters" : "Filter zurücksetzen",
     "New personal note" : "Neue persönliche Notiz",
-    "Clear filter" : "Filter zurücksetzen",
+    "Talk home" : "Talk home",
     "Back to conversations" : "Zurück zu den Unterhaltungen",
+    "Clear filter" : "Filter zurücksetzen",
     "Archived conversations" : "Archivierte Unterhaltungen",
     "Talk settings" : "Talk-Einstellungen",
     "Users" : "Benutzer",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Es ist ein Fehler beim Freigeben deiner Datei aufgetreten",
     "Failed to join the conversation. Try to reload the page." : "Beitritt zur Unterhaltung fehlgeschlagen. Lade die Seite neu.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud ist im Wartungsmodus, bitte lade die Seite neu.",
-    "Lost connection to signaling server. Try to reload the page manually." : "Verbindung zum Signaling-Server verloren. Versuche, die Seite selbst neu zu laden."
+    "Lost connection to signaling server. Try to reload the page manually." : "Verbindung zum Signaling-Server verloren. Versuche, die Seite selbst neu zu laden.",
+    "Reload Talk home" : "Talk Startseite neu laden"
 },
 "nplurals=2; plural=(n != 1);");
