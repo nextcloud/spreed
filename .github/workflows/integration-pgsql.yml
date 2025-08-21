@@ -53,7 +53,7 @@ jobs:
         php-versions: ['8.3']
         server-versions: ['stable31']
         guests-versions: ['main']
-        circles-versions: ['stable31']
+        circles-versions: ['d43707b0f6041b0f183cdd36b4a10b8da5fa5abd'] # v31.0.8 https://github.com/nextcloud/circles/commit/d43707b0f6041b0f183cdd36b4a10b8da5fa5abd
         notifications-versions: ['stable31']
 
     services:
