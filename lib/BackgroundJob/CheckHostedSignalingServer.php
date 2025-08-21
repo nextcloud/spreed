@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Config;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
@@ -32,6 +33,7 @@ class CheckHostedSignalingServer extends TimedJob {
 		private IGroupManager $groupManager,
 		private IURLGenerator $urlGenerator,
 		private LoggerInterface $logger,
+		private Config $talkConfig,
 	) {
 		parent::__construct($timeFactory);
 
@@ -39,6 +41,61 @@ class CheckHostedSignalingServer extends TimedJob {
 		$this->setInterval(3600);
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
+	}
+
+	private function formatTurnSchemes(array $schemes): string {
+		if (in_array('turn', $schemes) && in_array('turns', $schemes)) {
+			return 'turn,turns';
+		} elseif (in_array('turn', $schemes)) {
+			return 'turn';
+		} elseif (in_array('turns', $schemes)) {
+			return 'turns';
+		} else {
+			return 'turn';
+		}
+	}
+
+	private function formatTurnProtocols(array $protocols): string {
+		if (in_array('udp', $protocols) && in_array('tcp', $protocols)) {
+			return 'udp,tcp';
+		} elseif (in_array('udp', $protocols)) {
+			return 'udp';
+		} elseif (in_array('tcp', $protocols)) {
+			return 'tcp';
+		} else {
+			return 'udp';
+		}
+	}
+
+	private function updateStunTurnSettings(array $oldAccountInfo, array $accountInfo) {
+		if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
+			if ($accountInfo['stun']['servers']) {
+				// STUN servers were added / changed
+				$this->config->setAppValue('spreed', 'stun_servers', json_encode($accountInfo['stun']['servers']));
+			} elseif ($oldAccountInfo['stun']['servers']) {
+				// STUN servers are no longer available, reset to default.
+				$this->config->deleteAppValue('spreed', 'stun_servers');
+			}
+		}
+		if ($accountInfo['turn']['servers']) {
+			$newTurnServers = [];
+			foreach ($accountInfo['turn']['servers'] as $server) {
+				$newTurnServers[] = [
+					'server' => $server['server'],
+					'secret' => $server['secret'],
+					'schemes' => $this->formatTurnSchemes($server['schemes']),
+					'protocols' => $this->formatTurnProtocols($server['protocols']),
+				];
+			}
+
+			if ($this->talkConfig->getTurnServers() !== $newTurnServers) {
+				// TURN servers were added / changed
+				$this->config->setAppValue('spreed', 'turn_servers', json_encode($newTurnServers));
+			}
+		} elseif ($oldAccountInfo['turn']['servers']) {
+			// TURN servers are no longer available, reset to default.
+			$this->config->deleteAppValue('spreed', 'turn_servers');
+		}
 	}
 
 	#[\Override]
@@ -91,6 +148,7 @@ class CheckHostedSignalingServer extends TimedJob {
 					],
 					'secret' => $accountInfo['signaling']['secret'],
 				]));
+				$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 
 				$notificationSubject = 'added';
 			}
@@ -104,19 +162,20 @@ class CheckHostedSignalingServer extends TimedJob {
 			}
 
 			// only credentials have changed
-		} elseif ($newStatus === 'active' && (
-			$oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url']
-			|| $oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret'])
-		) {
-			$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
-				'servers' => [
-					[
-						'server' => $accountInfo['signaling']['url'],
-						'verify' => true,
-					]
-				],
-				'secret' => $accountInfo['signaling']['secret'],
-			]));
+		} elseif ($newStatus === 'active') {
+			if ($oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url']
+				|| $oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret']) {
+				$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
+					'servers' => [
+						[
+							'server' => $accountInfo['signaling']['url'],
+							'verify' => true,
+						]
+					],
+					'secret' => $accountInfo['signaling']['secret'],
+				]));
+			}
+			$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 		}
 
 		// store new account info

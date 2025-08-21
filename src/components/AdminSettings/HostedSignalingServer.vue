@@ -13,6 +13,7 @@
 
 		<p class="settings-hint">
 			{{ t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings.') }}
+			{{ t('spreed', 'If your high-performance backend account includes STUN and/or TURN functionality, the settings will be updated accordingly.') }}
 		</p>
 
 		<template v-if="!trialAccount.status">
@@ -102,6 +103,18 @@
 					<tr v-if="trialAccount.limits?.users">
 						<td>{{ t('spreed', 'Limits') }}</td>
 						<td>{{ n('spreed', '%n user', '%n users', trialAccount.limits.users) }}</td>
+					</tr>
+					<tr>
+						<td>{{ t('spreed', 'STUN included') }}</td>
+						<td>
+							{{ trialAccount.stun?.servers ? t('spreed', 'Yes') : t('spreed', 'No') }}
+						</td>
+					</tr>
+					<tr>
+						<td>{{ t('spreed', 'TURN included') }}</td>
+						<td>
+							{{ trialAccount.turn?.servers ? t('spreed', 'Yes') : t('spreed', 'No') }}
+						</td>
 					</tr>
 				</tbody>
 			</table>
