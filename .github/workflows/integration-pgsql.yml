@@ -54,7 +54,7 @@ jobs:
         php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['main']
-        circles-versions: ['master']
+        circles-versions: ['b6987af336aefb573d6d4e179b7e143e3c0fc5f3']
         notifications-versions: ['master']
 
     services:
