@@ -255,7 +255,7 @@ export function useGetMessagesProvider() {
 		// need some delay (next tick is too short) to be able to run
 		// after the browser's native "scroll to anchor" from the hash
 		window.setTimeout(() => {
-			EventBus.emit('focus-message', contextMessageId.value)
+			EventBus.emit('focus-message', messageId)
 		}, 2)
 	}
 
@@ -301,6 +301,8 @@ export function useGetMessagesProvider() {
 				console.debug(exception)
 				return
 			}
+		} else {
+			await checkContextAndFocusMessage(token, contextMessageId.value, contextThreadId.value)
 		}
 
 		isInitialisingMessages.value = false
