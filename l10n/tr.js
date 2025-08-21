@@ -1326,8 +1326,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Arşivlenmiş bir görüşmeniz yok.",
     "You have no unread mentions." : "Okunmamış bir anmanız yok.",
     "You have no unread messages." : "Okunmamış bir iletiniz yok.",
-    "Reload Talk home" : "Konuş girişini yeniden yükle",
-    "Talk home" : "Konuş girişi",
     "An error occurred while performing the search" : "Arama sırasında bir sorun çıktı",
     "Conversation list" : "Görüşme listesi",
     "Filter conversations by" : "Görüşmeleri şuna göre süz",
@@ -1335,8 +1333,9 @@ OC.L10N.register(
     "Meeting conversations" : "Toplantı görüşmeleri",
     "Clear filters" : "Süzgeçleri temizle",
     "New personal note" : "Yeni kişisel not",
-    "Clear filter" : "Süzgeci temizle",
+    "Talk home" : "Konuş girişi",
     "Back to conversations" : "Görüşmelere dön",
+    "Clear filter" : "Süzgeci temizle",
     "Archived conversations" : "Arşivlenmiş görüşmeler",
     "Talk settings" : "Konuş ayarları",
     "Users" : "Kullanıcılar",
@@ -2119,6 +2118,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Dosyanız paylaşılmaya çalışılırken bir sorun çıktı",
     "Failed to join the conversation. Try to reload the page." : "Görüşmeye girilemedi. Sayfayı yeniden yüklemeyi deneyin.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud bakım kipinde. Lütfen sayfayı yeniden yükleyin",
-    "Lost connection to signaling server. Try to reload the page manually." : "Signalling sunucusu ile bağlantı kesildi. Sayfayı el ile yeniden yüklemeyi deneyin."
+    "Lost connection to signaling server. Try to reload the page manually." : "Signalling sunucusu ile bağlantı kesildi. Sayfayı el ile yeniden yüklemeyi deneyin.",
+    "Reload Talk home" : "Konuş girişini yeniden yükle"
 },
 "nplurals=2; plural=(n > 1);");

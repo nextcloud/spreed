@@ -1326,8 +1326,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Du har inga arkiverade konversationer.",
     "You have no unread mentions." : "Du har inga olästa omnämnanden.",
     "You have no unread messages." : "Du har inga olästa meddelanden.",
-    "Reload Talk home" : "Ladda om startsidan för Talk",
-    "Talk home" : "Talk hem",
     "An error occurred while performing the search" : "Ett fel uppstod när sökningen utfördes",
     "Conversation list" : "Konversationslista",
     "Filter conversations by" : "Filtrera konversationer efter",
@@ -1335,8 +1333,9 @@ OC.L10N.register(
     "Meeting conversations" : "Möteskonversationer",
     "Clear filters" : "Rensa filter",
     "New personal note" : "Ny personlig anteckning",
-    "Clear filter" : "Rensa filter",
+    "Talk home" : "Talk hem",
     "Back to conversations" : "Tillbaka till konversationer",
+    "Clear filter" : "Rensa filter",
     "Archived conversations" : "Arkiverade konversationer",
     "Talk settings" : "Talk-inställningar",
     "Users" : "Användare",
@@ -2131,6 +2130,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Ett fel inträffade när du försökte dela din fil",
     "Failed to join the conversation. Try to reload the page." : "Det gick inte att gå med i konversationen. Försök att ladda om sidan.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud är i underhållsläge, ladda om sidan igen",
-    "Lost connection to signaling server. Try to reload the page manually." : "Förlorade anslutningen till signalservern. Försök att ladda om sidan manuellt."
+    "Lost connection to signaling server. Try to reload the page manually." : "Förlorade anslutningen till signalservern. Försök att ladda om sidan manuellt.",
+    "Reload Talk home" : "Ladda om startsidan för Talk"
 },
 "nplurals=2; plural=(n != 1);");

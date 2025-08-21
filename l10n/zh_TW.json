@@ -1331,8 +1331,6 @@
     "You have no archived conversations." : "您沒有已封存的對話。",
     "You have no unread mentions." : "您沒有未讀的提及。",
     "You have no unread messages." : "您沒有未讀的訊息。",
-    "Reload Talk home" : "重新載入 Talk 首頁",
-    "Talk home" : "Talk 首頁",
     "An error occurred while performing the search" : "搜尋時發生了錯誤",
     "Conversation list" : "對話清單",
     "Filter conversations by" : "按以下條件過濾對話",
@@ -1340,8 +1338,9 @@
     "Meeting conversations" : "會議對話",
     "Clear filters" : "清除過濾條件",
     "New personal note" : "新個人註記",
-    "Clear filter" : "清除過濾條件",
+    "Talk home" : "Talk 首頁",
     "Back to conversations" : "回到對話",
+    "Clear filter" : "清除過濾條件",
     "Archived conversations" : "已封存的對話",
     "Talk settings" : "Talk 設定",
     "Users" : "使用者",
@@ -2139,6 +2138,7 @@
     "An error happened when trying to share your file" : "嘗試分享您的檔案時發生錯誤",
     "Failed to join the conversation. Try to reload the page." : "加入對話失敗。請嘗試重新載入頁面。",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud 處於維護模式，請重新整理頁面",
-    "Lost connection to signaling server. Try to reload the page manually." : "遺失與訊號伺服器的連線。嘗試手動重新載入頁面。"
+    "Lost connection to signaling server. Try to reload the page manually." : "遺失與訊號伺服器的連線。嘗試手動重新載入頁面。",
+    "Reload Talk home" : "重新載入 Talk 首頁"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

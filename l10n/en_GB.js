@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "You have no archived conversations.",
     "You have no unread mentions." : "You have no unread mentions.",
     "You have no unread messages." : "You have no unread messages.",
-    "Reload Talk home" : "Reload Talk home",
-    "Talk home" : "Talk home",
     "An error occurred while performing the search" : "An error occurred while performing the search",
     "Conversation list" : "Conversation list",
     "Filter conversations by" : "Filter conversations by",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "Meeting conversations",
     "Clear filters" : "Clear filters",
     "New personal note" : "New personal note",
-    "Clear filter" : "Clear filter",
+    "Talk home" : "Talk home",
     "Back to conversations" : "Back to conversations",
+    "Clear filter" : "Clear filter",
     "Archived conversations" : "Archived conversations",
     "Talk settings" : "Talk settings",
     "Users" : "Users",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "An error happened when trying to share your file",
     "Failed to join the conversation. Try to reload the page." : "Failed to join the conversation. Try to reload the page.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud is in maintenance mode, please reload the page",
-    "Lost connection to signaling server. Try to reload the page manually." : "Lost connection to signaling server. Try to reload the page manually."
+    "Lost connection to signaling server. Try to reload the page manually." : "Lost connection to signaling server. Try to reload the page manually.",
+    "Reload Talk home" : "Reload Talk home"
 },
 "nplurals=2; plural=(n != 1);");

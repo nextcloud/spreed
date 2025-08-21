@@ -1333,8 +1333,6 @@ OC.L10N.register(
     "You have no archived conversations." : "Nie masz żadnych zarchiwizowanych rozmów.",
     "You have no unread mentions." : "Nie masz nieprzeczytanych wzmianek.",
     "You have no unread messages." : "Nie masz nieprzeczytanych wiadomości.",
-    "Reload Talk home" : "Załaduj ponownie stronę główną Talk",
-    "Talk home" : "Strona startowa Talk",
     "An error occurred while performing the search" : "Wystąpił błąd podczas wyszukiwania",
     "Conversation list" : "Lista rozmów",
     "Filter conversations by" : "Filtruj rozmowy po",
@@ -1342,8 +1340,9 @@ OC.L10N.register(
     "Meeting conversations" : "Rozmowy spotkań",
     "Clear filters" : "Wyczyść filtry",
     "New personal note" : "Nowa notatka osobista",
-    "Clear filter" : "Wyczyść filtr",
+    "Talk home" : "Strona startowa Talk",
     "Back to conversations" : "Powrót do rozmów",
+    "Clear filter" : "Wyczyść filtr",
     "Archived conversations" : "Zarchiwizowane rozmowy",
     "Talk settings" : "Ustawienia Talka",
     "Users" : "Użytkownicy",
@@ -2141,6 +2140,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Wystąpił błąd podczas udostępnienia tego pliku",
     "Failed to join the conversation. Try to reload the page." : "Nie udało się dołączyć do rozmowy. Spróbuj ponownie załadować stronę.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud jest w trybie konserwacji, przeładuj stronę",
-    "Lost connection to signaling server. Try to reload the page manually." : "Utracono połączenie z serwerem sygnalizacyjnym. Spróbuj ponownie załadować stronę ręcznie."
+    "Lost connection to signaling server. Try to reload the page manually." : "Utracono połączenie z serwerem sygnalizacyjnym. Spróbuj ponownie załadować stronę ręcznie.",
+    "Reload Talk home" : "Załaduj ponownie stronę główną Talk"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
