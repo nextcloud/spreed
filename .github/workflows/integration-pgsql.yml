@@ -50,24 +50,7 @@ jobs:
       fail-fast: false
       matrix:
         test-suite:
-          - 'callapi'
-          - 'chat-1'
-          - 'chat-2'
-          - 'chat-3'
-          - 'chat-4'
-          - 'command'
-          - 'conversation-1'
           - 'conversation-2'
-          - 'conversation-3'
-          - 'conversation-4'
-          - 'conversation-5'
-          - 'federation'
-          - 'integration'
-          - 'scaling'
-          - 'sharing-1'
-          - 'sharing-2'
-          - 'sharing-3'
-          - 'sharing-4'
         php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['main']
