@@ -113,7 +113,7 @@ describe('chatStore', () => {
 			processMessages(TOKEN, chatBlockE)
 
 			// Assert
-			expect(chatStore.getMessagesList(TOKEN, { threadId: 101 })).toEqual([mockMessages[106]])
+			expect(chatStore.getMessagesList(TOKEN, { messageId: 106, threadId: 101 })).toEqual([mockMessages[106]])
 			expect(chatStore.getMessagesList(TOKEN, { messageId: 101, threadId: 101 })).toEqual([mockMessages[101], mockMessages[103]])
 		})
 

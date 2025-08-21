@@ -68,8 +68,8 @@ export const useChatStore = defineStore('chat', () => {
 
 		if (threadId) {
 			// FIXME temporary show all messages for given thread from all chat blocks - no behaviour change
-			const contextBlock = (messageId <= 0)
-				? chatBlocks[token][0]
+			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
+				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
 				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 			return prepareMessagesList(token, contextBlock).filter((message) => {
 				return message.threadId === threadId
@@ -135,8 +135,8 @@ export const useChatStore = defineStore('chat', () => {
 				return threadId
 			}
 			// FIXME temporary check all messages for given thread from all chat blocks
-			const contextBlock = (messageId <= 0)
-				? chatBlocks[token][0]
+			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
+				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
 				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
 				return message.threadId === threadId && Number.isInteger(message.id)
@@ -163,8 +163,8 @@ export const useChatStore = defineStore('chat', () => {
 
 		if (threadId) {
 			// FIXME temporary check all messages for given thread from all chat blocks
-			const contextBlock = (messageId <= 0)
-				? chatBlocks[token][0]
+			const contextBlock = (messageId <= 0 || store.state.messagesStore.messages[token][messageId]?.threadId !== threadId)
+				? new Set([...chatBlocks[token].flatMap((set) => [...set])])
 				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 			const threadMessagesList = prepareMessagesList(token, contextBlock).filter((message) => {
 				return message.threadId === threadId && Number.isInteger(message.id)
