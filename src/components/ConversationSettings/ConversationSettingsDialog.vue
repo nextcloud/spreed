@@ -49,6 +49,13 @@
 				<ConversationPermissionsSettings :token="token" />
 			</NcAppSettingsSection>
 
+			<!-- Live transcription -->
+			<NcAppSettingsSection v-if="canConfigureLiveTranscription"
+				id="live-transcription"
+				:name="t('spreed', 'Live transcription')">
+				<LiveTranscriptionSettings :token="token" />
+			</NcAppSettingsSection>
+
 			<!-- Breakout rooms -->
 			<NcAppSettingsSection v-if="canConfigureBreakoutRooms"
 				id="breakout-rooms"
@@ -113,6 +120,7 @@ import DangerZone from './DangerZone.vue'
 import ExpirationSettings from './ExpirationSettings.vue'
 import LinkShareSettings from './LinkShareSettings.vue'
 import ListableSettings from './ListableSettings.vue'
+import LiveTranscriptionSettings from './LiveTranscriptionSettings.vue'
 import LobbySettings from './LobbySettings.vue'
 import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
@@ -140,6 +148,7 @@ export default {
 		ExpirationSettings,
 		LinkShareSettings,
 		ListableSettings,
+		LiveTranscriptionSettings,
 		LobbySettings,
 		LockingSettings,
 		MatterbridgeSettings,
@@ -231,6 +240,15 @@ export default {
 
 		supportBotsV1() {
 			return hasTalkFeature(this.token, 'bots-v1')
+		},
+
+		isLiveTranscriptionSupported() {
+			return getTalkConfig(this.token, 'call', 'live-transcription') || false
+		},
+
+		canConfigureLiveTranscription() {
+			return this.isLiveTranscriptionSupported
+				&& this.selfIsOwnerOrModerator
 		},
 
 		canConfigureBreakoutRooms() {

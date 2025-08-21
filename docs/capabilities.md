@@ -196,3 +196,4 @@
 
 ## 22
 * `threads` - Whether the chat supports threads
+* `config => call => live-transcription` - Whether live transcription is supported in calls

@@ -1,0 +1,296 @@
+<!--
+  - SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<template>
+	<div ref="transcript"
+		class="transcript">
+		<TranscriptBlock v-for="item in transcriptBlocks"
+			ref="transcriptBlocks"
+			:key="item.id"
+			:token="token"
+			:model="item.model"
+			:chunks="item.chunks" />
+	</div>
+</template>
+
+<script>
+import TranscriptBlock from './TranscriptBlock.vue'
+
+export default {
+	name: 'LiveTranscriptionRenderer',
+
+	components: {
+		TranscriptBlock,
+	},
+
+	props: {
+		/**
+		 * The conversation token
+		 */
+		token: {
+			type: String,
+			required: true,
+		},
+
+		callParticipantModels: {
+			type: Array,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			registeredModels: {},
+			resizeObserver: null,
+			transcriptBlocks: [],
+			lastScrolledToBlockAndLine: null,
+			pendingScrollToBottomLineByLine: null,
+		}
+	},
+
+	watch: {
+		callParticipantModels: {
+			immediate: true,
+			handler(models) {
+				// Subscribe connected models for transcript events
+				const addedModels = models.filter((model) => !this.registeredModels[model.attributes.peerId])
+				addedModels.forEach((addedModel) => {
+					this.registeredModels[addedModel.attributes.peerId] = addedModel
+					this.registeredModels[addedModel.attributes.peerId].on('transcript', this.handleTranscript)
+				})
+
+				// Unsubscribe disconnected models
+				const removedModelIds = Object.keys(this.registeredModels).filter((registeredModelId) => !models.find((model) => model.attributes.peerId === registeredModelId))
+				removedModelIds.forEach((removedModelId) => {
+					this.registeredModels[removedModelId].off('transcript', this.handleTranscript)
+					delete this.registeredModels[removedModelId]
+				})
+			},
+		},
+	},
+
+	mounted() {
+		this.resizeObserver = new ResizeObserver(this.handleResize)
+		this.resizeObserver.observe(this.$refs.transcript)
+	},
+
+	beforeUnmount() {
+		Object.keys(this.registeredModels).forEach((modelId) => {
+			this.registeredModels[modelId].off('transcript', this.handleTranscript)
+			delete this.registeredModels[modelId]
+		})
+	},
+
+	unmounted() {
+		this.resizeObserver.disconnect()
+	},
+
+	methods: {
+		/**
+		 * Handle resizings of the transcript element.
+		 *
+		 * After the transcript is resized the previous lines might have
+		 * changed. For simplicity, and given that it was probably at the bottom
+		 * or close to it already, rather than trying to keep the same visible
+		 * lines the transcript is just scrolled to the bottom; any pending
+		 * scroll to bottom is also cancelled.
+		 */
+		handleResize() {
+			if (!this.$refs.transcriptBlocks) {
+				return
+			}
+
+			for (let i = 0; i < this.$refs.transcriptBlocks.length; i++) {
+				this.$refs.transcriptBlocks[i].resetLines()
+			}
+
+			this.$refs.transcript.scrollTo({
+				top: this.$refs.transcript.scrollHeight,
+			})
+
+			this.lastScrolledToBlockAndLine.block = this.$refs.transcriptBlocks.length - 1
+
+			const lastTranscriptBlock = this.$refs.transcriptBlocks[this.lastScrolledToBlockAndLine.block]
+			const lastTranscriptBlockLineBoundaries = lastTranscriptBlock.getLineBoundaries()
+
+			this.lastScrolledToBlockAndLine.line = lastTranscriptBlockLineBoundaries.length - 1
+
+			if (this.pendingScrollToBottomLineByLine) {
+				clearTimeout(this.pendingScrollToBottomLineByLine)
+
+				this.pendingScrollToBottomLineByLine = null
+			}
+		},
+
+		/**
+		 * Handle a new received transcript.
+		 *
+		 * The transcript is added to the last block if it comes from the same
+		 * participant, or a new block is added if it comes from another one.
+		 *
+		 * @param model the CallParticipantModel for the participant that was
+		 *        transcribed.
+		 * @param message the transcribed message.
+		 */
+		handleTranscript(model, message) {
+			let lastTranscriptBlock = this.transcriptBlocks.at(-1)
+
+			if (lastTranscriptBlock?.model.attributes.peerId !== model.attributes.peerId) {
+				const transcriptBlock = {
+					id: lastTranscriptBlock ? lastTranscriptBlock.id + 1 : 0,
+					model,
+					chunks: [],
+				}
+
+				this.transcriptBlocks.push(transcriptBlock)
+
+				lastTranscriptBlock = transcriptBlock
+			}
+
+			lastTranscriptBlock.chunks.push(message)
+
+			this.$nextTick(() => {
+				this.scrollToBottomLineByLine()
+			})
+		},
+
+		/**
+		 * Scroll to the bottom, one line at a time, with a small pause at each
+		 * line.
+		 *
+		 * If there are no more lines the no longer visible blocks are removed.
+		 */
+		scrollToBottomLineByLine() {
+			if (this.pendingScrollToBottomLineByLine) {
+				return
+			}
+
+			if (!this.scrollToNextLine()) {
+				this.removeNoLongerVisibleTranscriptBlocks()
+
+				return
+			}
+
+			this.pendingScrollToBottomLineByLine = setTimeout(() => {
+				this.pendingScrollToBottomLineByLine = null
+
+				this.scrollToBottomLineByLine()
+			}, 1000)
+		},
+
+		/**
+		 * Scroll to the next line after the last visible one.
+		 *
+		 * @return true if there was a line to scroll to, false otherwise.
+		 */
+		scrollToNextLine() {
+			if (this.lastScrolledToBlockAndLine === null) {
+				this.scrollToBlockAndLine(0, 0)
+
+				return true
+			}
+
+			const lastScrolledToBlockLineBoundaries = this.$refs.transcriptBlocks[this.lastScrolledToBlockAndLine.block].getLineBoundaries()
+			if (this.lastScrolledToBlockAndLine.line < lastScrolledToBlockLineBoundaries.length - 1) {
+				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block, this.lastScrolledToBlockAndLine.line + 1)
+
+				return true
+			}
+
+			if (this.lastScrolledToBlockAndLine.block < this.$refs.transcriptBlocks.length - 1) {
+				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block + 1, 0)
+
+				return true
+			}
+		},
+
+		/**
+		 * Scroll to the given line in the given block.
+		 *
+		 * The bottom of the line will be aligned with the bottom of the
+		 * transcript element (unless the internal area of the transcript is not
+		 * large enough yet to be scrolled).
+		 *
+		 * @param block the index of the block in the current list of blocks.
+		 * @param line the index of the line in the current list of lines of the
+		 *        block.
+		 */
+		scrollToBlockAndLine(block, line) {
+			this.lastScrolledToBlockAndLine = {
+				block,
+				line,
+			}
+
+			const transcriptBoundaries = this.$refs.transcript.getBoundingClientRect()
+			const transcriptTop = transcriptBoundaries.top
+			const transcriptHeight = transcriptBoundaries.bottom - transcriptBoundaries.top
+
+			const scrollToBlockLineBoundaries = this.$refs.transcriptBlocks[block].getLineBoundaries()
+			const scrollToLineLineBoundaries = scrollToBlockLineBoundaries[line]
+			const scrollToLineHeight = scrollToLineLineBoundaries.bottom - scrollToLineLineBoundaries.top
+
+			const scrollToLineRelativeLineBoundaries = {
+				top: scrollToLineLineBoundaries.top - transcriptTop,
+				bottom: scrollToLineLineBoundaries.bottom - transcriptTop,
+			}
+
+			// Align bottom of line with bottom of transcript
+			const scrollToTop = this.$refs.transcript.scrollTop
+				+ (scrollToLineRelativeLineBoundaries.top - transcriptHeight)
+				+ scrollToLineHeight
+
+			this.$refs.transcript.scrollTo({
+				top: scrollToTop,
+				behavior: 'smooth',
+			})
+		},
+
+		removeNoLongerVisibleTranscriptBlocks() {
+			const count = this.getNoLongerVisibleTranscriptBlocksCount()
+			this.transcriptBlocks.splice(0, count)
+			this.lastScrolledToBlockAndLine.block = this.lastScrolledToBlockAndLine.block - count
+		},
+
+		getNoLongerVisibleTranscriptBlocksCount() {
+			const transcriptTop = this.$refs.transcript.getBoundingClientRect().top
+
+			let count = 0
+			for (let i = 0; i < this.lastScrolledToBlockAndLine.block; i++) {
+				if (this.$refs.transcriptBlocks[i].$el.getBoundingClientRect().bottom > transcriptTop) {
+					return count
+				}
+
+				count++
+			}
+
+			return count
+		},
+	},
+}
+</script>
+
+<style lang="scss" scoped>
+.transcript {
+	position: absolute;
+	bottom: 20px;
+	inset-inline: 20%;
+
+	line-height: 2em;
+	height: 8em;
+	overflow: hidden;
+
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	z-index: 1;
+}
+
+@media (height <= 16em) {
+	.transcript {
+		height: 4em;
+	}
+}
+</style>

@@ -308,6 +308,8 @@ namespace OCA\Talk;
  *     lastReadMessage: int,
  *     // Listable scope for the room (only available with `listable-rooms` capability)
  *     listable: int,
+ *     // ID of the language to use for live transcriptions in the room,
+ *     liveTranscriptionLanguageId: string,
  *     // Webinar lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability) (See [Webinar lobby states](https://nextcloud-talk.readthedocs.io/en/latest/constants#webinar-lobby-states))
  *     lobbyState: int,
  *     // Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
@@ -493,6 +495,7 @@ namespace OCA\Talk;
  *             max-duration: int,
  *             blur-virtual-background: bool,
  *             end-to-end-encryption: bool,
+ *             live-transcription: bool,
  *         },
  *         chat: array{
  *             max-length: int,
@@ -530,6 +533,14 @@ namespace OCA\Talk;
  *     },
  *     config-local: array<string, non-empty-list<string>>,
  *     version: string,
+ * }
+ *
+ * @psalm-type TalkLiveTranscriptionLanguage = array{
+ *     name: string,
+ *     metadata: array{
+ *         separator: string,
+ *         rtl: bool,
+ *     },
  * }
  */
 class ResponseDefinitions {

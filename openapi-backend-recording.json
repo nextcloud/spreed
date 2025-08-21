@@ -88,7 +88,8 @@
                                     "start-without-media",
                                     "max-duration",
                                     "blur-virtual-background",
-                                    "end-to-end-encryption"
+                                    "end-to-end-encryption",
+                                    "live-transcription"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -147,6 +148,9 @@
                                         "type": "boolean"
                                     },
                                     "end-to-end-encryption": {
+                                        "type": "boolean"
+                                    },
+                                    "live-transcription": {
                                         "type": "boolean"
                                     }
                                 }

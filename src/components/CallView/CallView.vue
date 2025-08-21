@@ -113,6 +113,10 @@
 					:supported-reactions="supportedReactions"
 					:call-participant-models="callParticipantModels" />
 
+				<LiveTranscriptionRenderer v-if="isLiveTranscriptionEnabled"
+					:token="token"
+					:call-participant-models="callParticipantModels" />
+
 				<!-- Local video if sidebar -->
 				<LocalVideo v-if="isSidebar && !showLocalVideo"
 					ref="localVideo"
@@ -143,6 +147,7 @@ import { provide, ref } from 'vue'
 import BottomBar from './BottomBar.vue'
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
+import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
 import LocalVideo from './shared/LocalVideo.vue'
 import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
@@ -173,6 +178,7 @@ export default {
 		BottomBar,
 		EmptyCallView,
 		Grid,
+		LiveTranscriptionRenderer,
 		LocalVideo,
 		PresenterOverlay,
 		ReactionToaster,
@@ -406,6 +412,10 @@ export default {
 			}
 
 			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
+		},
+
+		isLiveTranscriptionEnabled() {
+			return this.callViewStore.isLiveTranscriptionEnabled
 		},
 	},
 

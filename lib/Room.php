@@ -142,6 +142,7 @@ class Room {
 		private int $recordingConsent,
 		private int $hasFederation,
 		private int $mentionPermissions,
+		private string $liveTranscriptionLanguageId,
 	) {
 	}
 
@@ -607,5 +608,13 @@ class Room {
 
 	public function setObjectType(string $objectType): void {
 		$this->objectType = $objectType;
+	}
+
+	public function getLiveTranscriptionLanguageId(): string {
+		return $this->liveTranscriptionLanguageId;
+	}
+
+	public function setLiveTranscriptionLanguageId(string $liveTranscriptionLanguageId): void {
+		$this->liveTranscriptionLanguageId = $liveTranscriptionLanguageId;
 	}
 }
