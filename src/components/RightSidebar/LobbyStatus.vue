@@ -8,9 +8,10 @@ import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconFileUploadOutline from 'vue-material-design-icons/FileUploadOutline.vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconLockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue'
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
+import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const props = defineProps<{
@@ -47,7 +48,7 @@ async function disableLobby() {
 
 		<NcButton v-if="supportImportEmails" @click="isImportEmailsDialogOpen = true">
 			<template #icon>
-				<IconFileUploadOutline :size="20" />
+				<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 			</template>
 			{{ t('spreed', 'Import email participants') }}
 		</NcButton>

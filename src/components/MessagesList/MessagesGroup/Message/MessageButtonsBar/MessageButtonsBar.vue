@@ -21,7 +21,7 @@
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
 				<template #icon>
-					<IconReply :size="16" />
+					<IconArrowLeftTop :size="16" />
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
@@ -170,7 +170,7 @@
 						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
-							<IconShare :size="16" />
+							<IconArrowRightTop :size="16" />
 						</template>
 						{{ t('spreed', 'Forward message') }}
 					</NcActionButton>
@@ -321,6 +321,8 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
+import IconArrowRightTop from 'vue-material-design-icons/ArrowRightTop.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
@@ -338,8 +340,6 @@ import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconReply from 'vue-material-design-icons/Reply.vue'
-import IconShare from 'vue-material-design-icons/Share.vue'
 import IconTranslate from 'vue-material-design-icons/Translate.vue'
 import IconFileDownload from '../../../../../../img/material-icons/file-download.svg?raw'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
@@ -389,8 +389,8 @@ export default {
 		IconOpenInNew,
 		IconPencilOutline,
 		IconPlus,
-		IconReply,
-		IconShare,
+		IconArrowLeftTop,
+		IconArrowRightTop,
 		IconTranslate,
 	},
 
