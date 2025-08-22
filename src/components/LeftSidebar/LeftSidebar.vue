@@ -926,9 +926,6 @@ export default {
 			}
 			if (from.name === 'conversation') {
 				this.$store.dispatch('leaveConversation', { token: from.params.token })
-				if (to.name !== 'conversation') {
-					this.$store.dispatch('updateToken', '')
-				}
 			}
 			if (to.name === 'conversation') {
 				this.abortSearch()
