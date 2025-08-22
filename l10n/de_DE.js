@@ -1342,6 +1342,7 @@ OC.L10N.register(
     "New personal note" : "Neue persönliche Notiz",
     "Talk home" : "Talk home",
     "Back to conversations" : "Zurück zu den Unterhaltungen",
+    "Followed threads" : "Themen verschieben",
     "Clear filter" : "Filter zurücksetzen",
     "Archived conversations" : "Archivierte Unterhaltungen",
     "Talk settings" : "Talk-Einstellungen",
