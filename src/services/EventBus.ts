@@ -31,7 +31,6 @@ export type Events = {
 	'focus-message': number // TODO: listener method can receive ...[messageId, smooth, highlightAnimation]
 	'forbidden-route': { error: string }
 	'joined-conversation': { token: string }
-	'message-height-changed': { heightDiff: number }
 	'poll-drafts-open': { selector?: string }
 	'poll-editor-open': { id: number | null, fromDrafts: boolean, action?: string, selector?: string }
 	'refresh-peer-list': void

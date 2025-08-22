@@ -15,7 +15,7 @@
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<TransitionWrapper name="fade">
-			<div class="scroller__loading">
+			<div ref="scrollerLoader" class="scroller__loading">
 				<NcLoadingIcon v-if="displayMessagesLoader" class="scroller__loading-element" :size="32" />
 			</div>
 		</TransitionWrapper>
@@ -81,6 +81,7 @@ import { debugTimer } from '../../utils/debugTimer.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
+const LOAD_HISTORY_THRESHOLD = 800
 
 export default {
 	name: 'MessagesList',
@@ -335,7 +336,6 @@ export default {
 		EventBus.on('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.on('focus-message', this.focusMessage)
 		EventBus.on('route-change', this.onRouteChange)
-		EventBus.on('message-height-changed', this.onMessageHeightChanged)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -359,7 +359,6 @@ export default {
 		EventBus.off('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
-		EventBus.off('message-height-changed', this.onMessageHeightChanged)
 		this.$store.dispatch('cancelPollNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
@@ -908,7 +907,7 @@ export default {
 				this.setChatScrolledToBottom(false)
 			}
 
-			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
+			if ((scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'up')
 				|| skipHeightCheck) {
 				if (this.loadingOldMessages || this.isChatBeginningReached) {
 					// already loading, don't do it twice
@@ -1112,6 +1111,14 @@ export default {
 					newTop = this.$refs.scroller.scrollHeight
 					this.setChatScrolledToBottom(true)
 				}
+
+				if (options?.smooth && this.$refs.scroller.scrollTop < newTop - 1.5 * window.innerHeight) {
+					// Imitate scrolling the whole distance to the element
+					this.$refs.scroller.scrollTo({
+						top: newTop - 1.5 * window.innerHeight,
+						behavior: 'instant',
+					})
+				}
 				this.$refs.scroller.scrollTo({
 					top: newTop,
 					behavior: options?.smooth ? 'smooth' : 'auto',
@@ -1151,6 +1158,17 @@ export default {
 			// FIXME: because scrollToBottom is also triggered and it is wrapped in $nextTick
 			// We need to trigger this at the same time (nextTick) to avoid focusing and then scrolling to bottom
 			this.$nextTick(() => {
+				if (smooth) {
+					const newTop = scrollElement.getBoundingClientRect().top - this.$refs.scrollerLoader.getBoundingClientRect().top
+					if (this.$refs.scroller.scrollTop > newTop) {
+						// Imitate scrolling the whole distance to the element
+						// If this goes to scrollTop < LOAD_HISTORY_THRESHOLD, might initiate loading of old messages
+						this.$refs.scroller.scrollTo({
+							top: Math.max(LOAD_HISTORY_THRESHOLD, newTop),
+							behavior: 'instant',
+						})
+					}
+				}
 				scrollElement.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
 					block: 'center',
@@ -1269,11 +1287,6 @@ export default {
 
 		messagesGroupComponent(group) {
 			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
-		},
-
-		onMessageHeightChanged({ heightDiff }) {
-			// scroll down by the height difference
-			this.$refs.scroller.scrollTop += heightDiff
 		},
 
 		updateTasksCount() {
