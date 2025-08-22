@@ -49,7 +49,7 @@ const conversation = computed<ConversationFromEvent>(() => {
 
 const hasCall = computed(() => {
 	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
-		&& props.eventRoom.start * 1000 <= (Date.now() - 600_000) // 10 minutes buffer
+		&& props.eventRoom.start * 1000 >= (Date.now() - 600_000) // 10 minutes buffer
 })
 
 const elapsedTime = computed(() => {
