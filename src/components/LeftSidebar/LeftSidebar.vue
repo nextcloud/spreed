@@ -140,7 +140,7 @@
 				<NcAppNavigationItem
 					class="navigation-item"
 					:to="{ name: 'root' }"
-					:name="t('spreed', 'Talk home')"
+					:name="HOME_BUTTON_LABEL"
 					@click="refreshTalkDashboard">
 					<template #icon>
 						<IconHomeOutline :size="20" />
@@ -339,6 +339,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const HOME_BUTTON_LABEL = t('spreed', 'Home') // TRANSLATORS: The main home view
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
 	mentions: t('spreed', 'Mentions'),
@@ -422,6 +423,7 @@ export default {
 			showArchived,
 			showThreadsList,
 			settingsStore,
+			HOME_BUTTON_LABEL,
 			FILTER_LABELS,
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
