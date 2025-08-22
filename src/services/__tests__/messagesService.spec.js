@@ -57,6 +57,7 @@ describe('messagesService', () => {
 					lastKnownMessageId: 1234,
 					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 0,
+					timeout: 0,
 				},
 			},
 		)
@@ -67,6 +68,7 @@ describe('messagesService', () => {
 			token: 'XXTOKENXX',
 			lastKnownMessageId: 1234,
 			includeLastKnown: 1,
+			threadId: 1111,
 		}, {
 			dummyOption: true,
 		})
@@ -81,6 +83,8 @@ describe('messagesService', () => {
 					lastKnownMessageId: 1234,
 					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 1,
+					threadId: 1111,
+					timeout: 0,
 				},
 			},
 		)

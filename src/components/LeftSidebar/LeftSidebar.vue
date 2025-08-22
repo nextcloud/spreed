@@ -149,7 +149,7 @@
 				<NcAppNavigationItem v-if="!isSearching"
 					class="navigation-item"
 					:name="showThreadsList ? t('spreed', 'Back to conversations') : t('spreed', 'Followed threads')"
-					@click="showThreadsList = !showThreadsList">
+					@click.prevent="showThreadsList = !showThreadsList">
 					<template #icon>
 						<IconArrowLeft v-if="showThreadsList" class="bidirectional-icon" :size="20" />
 						<IconForumOutline v-else :size="20" />
@@ -158,7 +158,7 @@
 				<NcAppNavigationItem v-if="pendingInvitationsCount"
 					class="navigation-item"
 					:name="t('spreed', 'Pending invitations')"
-					@click="showInvitationHandler">
+					@click.prevent="showInvitationHandler">
 					<template #icon>
 						<IconAccountMultiplePlusOutline :size="20" />
 					</template>
@@ -975,7 +975,7 @@ export default {
 			}
 		},
 
-		refreshTalkDashboard() {
+		refreshTalkDashboard(event) {
 			// Throttle click and keyboard events
 			if (actualizeDataTimeout) {
 				return
@@ -985,6 +985,7 @@ export default {
 			}, 5_000)
 
 			if (this.$route.name === 'root') {
+				event.preventDefault()
 				EventBus.emit('refresh-talk-dashboard')
 			}
 		},
