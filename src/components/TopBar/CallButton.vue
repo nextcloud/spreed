@@ -24,6 +24,7 @@
 
 	<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 		:aria-label="endCallLabel"
+		class="leave-call"
 		variant="error"
 		:disabled="loading"
 		@click="leaveCall(true)">
@@ -37,6 +38,7 @@
 	</NcButton>
 	<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 		:aria-label="leaveCallLabel"
+		class="leave-call"
 		:variant="isScreensharing ? 'tertiary' : 'error'"
 		:disabled="loading"
 		@click="leaveCall(false)">
@@ -49,7 +51,7 @@
 		</template>
 	</NcButton>
 	<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
-		class="leave-call-actions--split"
+		class="leave-call leave-call-actions--split"
 		:disabled="loading"
 		force-name
 		placement="top-end"
@@ -485,6 +487,10 @@ export default {
 	// Overwrite default button colors for joining call
 	--join-call-background-color: var(--color-border-success);
 	--join-call-border-color: var(--color-success-text);
+	border-color: var(--join-call-border-color);
+	background-color: var(--join-call-background-color);
+	color: var(--color-primary-element-text) !important;
+
 	// Do not overwrite for dark theme
 	body[data-theme-dark] & {
 		--join-call-border-color: var(--color-success-hover);
@@ -494,23 +500,25 @@ export default {
 			--join-call-border-color: var(--color-success-hover);
 		}
 	}
-	border-color: var(--join-call-border-color);
-	background-color: var(--join-call-background-color);
-	color: var(--color-primary-element-text) !important;
 
 	&:hover:not(:disabled) {
 		background-color: var(--join-call-border-color);
 	}
 }
 
-.leave-call-actions--split {
-	gap: 1px;
+.leave-call.button-vue--error,
+.leave-call :deep(.button-vue--error) {
+	// Overwrite default button colors for leaving call
+	background-color: #FF3333 !important; // Nextcloud 31 --color-error
+	color: var(--color-primary-text) !important;
 
-	& :deep(.button-vue--error) {
-		// Overwrite default button colors for leaving call
-		background-color: #FF3333 !important; // Nextcloud 31 --color-error
-		color: var(--color-primary-text) !important;
+	&:hover:not(:disabled) {
+		background-color: var(--color-error-hover) !important;
 	}
+}
+
+.leave-call-actions--split {
+	gap: 1px !important;
 }
 
 .leave-call-actions--split :deep(.action-item--single) {

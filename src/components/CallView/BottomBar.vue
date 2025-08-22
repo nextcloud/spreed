@@ -209,7 +209,7 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 		</div>
 
-		<CallButton shrink-on-mobile
+		<CallButton
 			:hide-text="isSidebar"
 			:is-screensharing="!!localMediaModel.attributes.localScreen" />
 	</div>
