@@ -340,22 +340,20 @@ export default {
 				return
 			}
 
-			/**
-			 * This runs whenever the new route is a conversation.
-			 */
-			if (to.name === 'conversation') {
-				// Update current token in the token store
-				this.$store.dispatch('updateToken', to.params.token)
-			}
+			next()
+		}
 
+		this.$router.afterEach((to, from) => {
+			/**
+			 * Update current token in the token store
+			 */
+			this.$store.dispatch('updateToken', to.params.token ?? '')
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
 			 */
 			EventBus.emit('route-change', { from, to })
-
-			next()
-		}
+		})
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
