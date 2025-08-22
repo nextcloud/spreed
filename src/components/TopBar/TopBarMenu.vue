@@ -64,7 +64,7 @@
 				rel="noopener noreferrer"
 				:href="linkToFile">
 				<template #icon>
-					<IconFile :size="20" />
+					<IconFileOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Go to file') }}
 			</NcActionLink>
@@ -146,7 +146,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import IconFile from 'vue-material-design-icons/File.vue'
+import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconRecordCircleOutline from 'vue-material-design-icons/RecordCircleOutline.vue'
@@ -179,7 +179,7 @@ export default {
 		IconCogOutline,
 		IconDotsCircle,
 		IconDotsHorizontal,
-		IconFile,
+		IconFileOutline,
 		IconFullscreen,
 		IconFullscreenExit,
 		IconRecordCircleOutline,

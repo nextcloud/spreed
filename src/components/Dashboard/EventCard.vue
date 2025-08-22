@@ -17,8 +17,9 @@ import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -172,7 +173,7 @@ function handleJoin({ call }: { call: boolean }) {
 		<p class="event-card__date secondary_text">
 			<span>{{ eventDateLabel }}</span>
 			<template v-if="hasCall">
-				<IconVideo :size="20" fill-color="#E9322D" />
+				<IconVideo :size="20" fill-color="var(--color-border-error)" />
 				<span>{{ elapsedTime }}</span>
 			</template>
 		</p>
@@ -211,7 +212,7 @@ function handleJoin({ call }: { call: boolean }) {
 				variant="primary"
 				@click="handleJoin({ call: true })">
 				<template #icon>
-					<IconVideo :size="20" />
+					<IconVideoOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Join') }}
 			</NcButton>
@@ -230,7 +231,7 @@ function handleJoin({ call }: { call: boolean }) {
 				:title="t('spreed', 'View event on Calendar')"
 				:aria-label="t('spreed', 'View event on Calendar')">
 				<template #icon>
-					<IconCalendarBlank :size="20" />
+					<IconCalendarBlankOutline :size="20" />
 				</template>
 			</NcButton>
 		</span>

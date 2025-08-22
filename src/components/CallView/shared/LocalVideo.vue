@@ -24,7 +24,7 @@
 				:class="fitVideo ? 'video--fit' : 'video--fill'"
 				class="video"
 				@playing="updateVideoAspectRatio" />
-			<AccountOff v-if="isPresenterOverlay && mouseover"
+			<IconAccountOffOutline v-if="isPresenterOverlay && mouseover"
 				class="presenter-icon__hide"
 				:aria-label="t('spreed', 'Hide presenter video')"
 				:title="t('spreed', 'Hide presenter video')"
@@ -65,7 +65,7 @@ import { t } from '@nextcloud/l10n'
 import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import AccountOff from 'vue-material-design-icons/AccountOff.vue'
+import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
 import { AVATAR } from '../../../constants.ts'
@@ -81,7 +81,7 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		AccountOff,
+		IconAccountOffOutline,
 		NcButton,
 		VideoBackground,
 		NcLoadingIcon,

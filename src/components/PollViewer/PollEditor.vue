@@ -33,7 +33,7 @@
 			<NcActions v-if="supportPollDrafts" force-menu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" close-after-click @click="openPollDraftHandler">
 					<template #icon>
-						<IconFileEdit :size="20" />
+						<IconFileEditOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Browse poll drafts') }}
 				</NcActionButton>
@@ -90,7 +90,7 @@
 			<NcActions v-if="supportPollDrafts" force-menu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !editingDraftId" :disabled="!isFilled" @click="createPollDraft">
 					<template #icon>
-						<IconFileEdit :size="20" />
+						<IconFileEditOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
@@ -125,7 +125,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
+import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'

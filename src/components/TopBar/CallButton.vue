@@ -95,7 +95,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import IconPhone from 'vue-material-design-icons/Phone.vue'
+import IconPhone from 'vue-material-design-icons/Phone.vue' // Filled used for non-silent calls
 import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
 import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
 import IconPhoneOffOutline from 'vue-material-design-icons/PhoneOffOutline.vue'

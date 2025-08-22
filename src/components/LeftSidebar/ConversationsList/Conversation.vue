@@ -283,8 +283,8 @@ import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutline.vue'
 import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
-import IconStar from 'vue-material-design-icons/Star.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 import ConversationIcon from './../../ConversationIcon.vue'

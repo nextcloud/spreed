@@ -4,7 +4,7 @@
 -->
 <script lang="ts" setup>
 import { t } from '@nextcloud/l10n'
-import Octagon from 'vue-material-design-icons/Octagon.vue'
+import IconOctagonOutline from 'vue-material-design-icons/OctagonOutline.vue'
 import EmptyView from '../components/EmptyView.vue'
 </script>
 
@@ -12,7 +12,7 @@ import EmptyView from '../components/EmptyView.vue'
 	<EmptyView :name="t('spreed', 'You do not have permissions to access this conversation.')"
 		:description="t('spreed', 'Join a different conversation or start a new one.')">
 		<template #icon>
-			<Octagon />
+			<IconOctagonOutline />
 		</template>
 	</EmptyView>
 </template>

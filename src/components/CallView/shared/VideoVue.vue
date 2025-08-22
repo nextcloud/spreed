@@ -22,7 +22,7 @@
 					:class="fitVideo ? 'video--fit' : 'video--fill'"
 					class="video"
 					@playing="updateVideoAspectRatio" />
-				<AccountOff v-if="isPresenterOverlay && mouseover"
+				<IconAccountOffOutline v-if="isPresenterOverlay && mouseover"
 					class="presenter-icon__hide"
 					:aria-label="t('spreed', 'Hide presenter video')"
 					:title="t('spreed', 'Hide presenter video')"
@@ -62,7 +62,7 @@
 		<TransitionWrapper name="fade">
 			<div v-if="showPlaceholderForPromoted"
 				class="placeholder-for-promoted">
-				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
+				<IconAccountCircleOutline v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
 			</div>
 		</TransitionWrapper>
 		<div v-if="connectionMessage"
@@ -85,8 +85,8 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { inject, ref } from 'vue'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
-import AccountOff from 'vue-material-design-icons/AccountOff.vue'
+import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOutline.vue'
+import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import Screen from './Screen.vue'
@@ -113,8 +113,8 @@ export default {
 		VideoBottomBar,
 		NcLoadingIcon,
 		// icons
-		AccountCircle,
-		AccountOff,
+		IconAccountCircleOutline,
+		IconAccountOffOutline,
 	},
 
 	props: {

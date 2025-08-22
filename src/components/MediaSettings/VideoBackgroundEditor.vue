@@ -71,7 +71,7 @@ import { generateUrl, imagePath } from '@nextcloud/router'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import IconCheckBold from 'vue-material-design-icons/CheckBold.vue'
-import IconFolder from 'vue-material-design-icons/Folder.vue'
+import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
 import IconUpload from 'vue-material-design-icons/Upload.vue'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'

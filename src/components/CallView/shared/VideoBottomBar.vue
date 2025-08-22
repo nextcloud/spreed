@@ -10,7 +10,7 @@
 		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-				<HandBackLeft :size="18" fill-color="#ffffff" />
+				<IconHandBackLeftOutline :size="18" fill-color="#ffffff" />
 			</div>
 		</TransitionWrapper>
 
@@ -64,13 +64,13 @@
 					variant="tertiary-no-background"
 					@click.stop="switchToScreen">
 					<template #icon>
-						<Monitor :size="20" fill-color="#ffffff" />
+						<IconMonitor :size="20" fill-color="#ffffff" />
 					</template>
 				</NcButton>
 
 				<div v-if="connectionStateFailedNoRestart"
 					class="status-indicator iceFailedIndicator">
-					<AlertCircle :size="20" fill-color="#ffffff" />
+					<IconAlertCircleOutline :size="20" fill-color="#ffffff" />
 				</div>
 			</TransitionWrapper>
 
@@ -88,11 +88,11 @@
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import Monitor from 'vue-material-design-icons/Monitor.vue'
+import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
@@ -105,11 +105,11 @@ export default {
 	name: 'VideoBottomBar',
 
 	components: {
-		AlertCircle,
-		HandBackLeft,
+		IconAlertCircleOutline,
+		IconHandBackLeftOutline,
 		Microphone,
 		MicrophoneOff,
-		Monitor,
+		IconMonitor,
 		NcButton,
 		TransitionWrapper,
 		VideoIcon,

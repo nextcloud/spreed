@@ -18,12 +18,12 @@ import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
 import IconList from 'vue-material-design-icons/FormatListBulleted.vue'
-import IconMicrophone from 'vue-material-design-icons/Microphone.vue'
-import IconPhone from 'vue-material-design-icons/Phone.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
 import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
@@ -187,7 +187,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				<template #trigger>
 					<NcButton variant="primary">
 						<template #icon>
-							<IconVideo />
+							<IconVideoOutline />
 						</template>
 						{{ t('spreed', 'Start meeting now') }}
 					</NcButton>
@@ -224,14 +224,14 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			<NcButton v-if="canModerateSipDialOut"
 				@click="EventBus.emit('call-phone-dialog:show')">
 				<template #icon>
-					<IconPhone :size="20" />
+					<IconPhoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Call a phone number') }}
 			</NcButton>
 			<NcButton variant="tertiary"
 				@click="emit('talk:media-settings:show', 'device-check')">
 				<template #icon>
-					<IconMicrophone :size="20" />
+					<IconMicrophoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
@@ -285,7 +285,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				:href="generateUrl('apps/calendar')"
 				target="_blank">
 				<template #icon>
-					<IconCalendarBlank :size="20" />
+					<IconCalendarBlankOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Open calendar') }}
 			</NcButton>

@@ -76,7 +76,7 @@
 				<NcActions v-if="canEndPoll" force-menu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
-							<IconFileEdit :size="20" />
+							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
@@ -89,7 +89,7 @@
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
-							<IconFileLock :size="20" />
+							<IconFileLockOutline :size="20" />
 						</template>
 					</NcActionButton>
 				</NcActions>
@@ -98,7 +98,7 @@
 				<NcActions force-menu>
 					<NcActionButton v-if="isModerator" @click="createPollDraft">
 						<template #icon>
-							<IconFileEdit :size="20" />
+							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
@@ -128,8 +128,8 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileLock from 'vue-material-design-icons/FileLock.vue'
+import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
+import IconFileLockOutline from 'vue-material-design-icons/FileLockOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import PollVotersDetails from './PollVotersDetails.vue'
 import { useId } from '../../composables/useId.ts'
@@ -157,9 +157,9 @@ export default {
 		PollVotersDetails,
 		// icons
 		IconCheck,
-		IconFileLock,
+		IconFileLockOutline,
 		IconFileDownload,
-		IconFileEdit,
+		IconFileEditOutline,
 		IconPoll,
 	},
 

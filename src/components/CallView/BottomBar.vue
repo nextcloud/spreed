@@ -12,8 +12,8 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
-import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
-import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
+import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
+import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import ReactionMenu from '../TopBar/ReactionMenu.vue'
 import TopBarMediaControls from '../TopBar/TopBarMediaControls.vue'
@@ -176,8 +176,8 @@ useHotKey('r', toggleHandRaised)
 				:title="changeViewLabel"
 				@click="changeView">
 				<template #icon>
-					<IconViewGrid v-if="!isGrid" :size="20" />
-					<IconViewGallery v-else :size="20" />
+					<IconViewGridOutline v-if="!isGrid" :size="20" />
+					<IconViewGalleryOutline v-else :size="20" />
 				</template>
 			</NcButton>
 		</div>

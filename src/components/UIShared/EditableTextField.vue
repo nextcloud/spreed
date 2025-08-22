@@ -53,7 +53,7 @@
 				:aria-label="editButtonAriaLabel"
 				@click="handleEditText">
 				<template #icon>
-					<IconPencil :size="20" />
+					<IconPencilOutline :size="20" />
 				</template>
 			</NcButton>
 		</template>
@@ -68,7 +68,7 @@ import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditab
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {
@@ -76,7 +76,7 @@ export default {
 	components: {
 		IconCheck,
 		IconClose,
-		IconPencil,
+		IconPencilOutline,
 		NcButton,
 		NcRichContenteditable,
 		NcRichText,
