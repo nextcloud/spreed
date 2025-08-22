@@ -12,6 +12,7 @@ const ignorePatterns = [
 	'@nextcloud/vue',
 	'@mdi/svg',
 	'@vueuse/core',
+	'@vueuse/router',
 	'@vueuse/shared',
 	'bail',
 	'ccount', // ESM dependency of remark-gfm

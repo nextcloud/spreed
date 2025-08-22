@@ -3,25 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { RouteParamValueRaw } from 'vue-router'
+
 import { createSharedComposable } from '@vueuse/core'
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouteQuery } from '@vueuse/router'
 
 /**
  * Shared composable to get threadId of current thread in conversation
  */
 export const useGetThreadId = createSharedComposable(function() {
-	const router = useRouter()
-	const route = useRoute()
-
-	if (router) {
-		return computed<number>({
-			get: () => route.query.threadId ? Number(route.query.threadId) : 0,
-			set: (value: number) => {
-				router.push({ query: { ...route.query, threadId: value !== 0 ? value : undefined } })
-			},
-		})
-	} else {
-		return ref(0)
-	}
+	return useRouteQuery<RouteParamValueRaw, number>('threadId', '0', {
+		transform: {
+			get: (value: RouteParamValueRaw | undefined) => value ? Number(value) : 0,
+			set: (value: number) => value !== 0 ? String(value) : undefined,
+		},
+	})
 })
