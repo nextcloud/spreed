@@ -14,7 +14,7 @@
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
-				:fill-color="primaryColor" />
+				:style="{ color: primaryColor }" />
 		</span>
 
 		<span v-if="audioPreviewAvailable"
@@ -26,7 +26,7 @@
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
-				:fill-color="overlayMutedColor" />
+				:style="{ color: overlayMutedColor }" />
 		</span>
 	</span>
 </template>
@@ -168,6 +168,7 @@ export default {
 }
 
 .volume-indicator-overlay {
+	display: inline-flex;
 	bottom: 0;
 	pointer-events: none;
 
