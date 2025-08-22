@@ -223,7 +223,6 @@ export function useGetMessagesProvider() {
 		}
 
 		const focusMessageId = getMessageIdFromHash(to.hash)
-		const threadId = +(to.query.threadId ?? 0)
 		if (from.hash !== to.hash && focusMessageId !== null) {
 			// the hash changed, need to focus/highlight another message
 			contextMessageId.value = focusMessageId
@@ -235,7 +234,7 @@ export function useGetMessagesProvider() {
 			contextMessageId.value = conversationLastMessageId.value
 		}
 
-		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, threadId)
+		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, contextThreadId.value)
 	}
 
 	/**
