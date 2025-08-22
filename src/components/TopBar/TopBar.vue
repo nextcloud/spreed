@@ -17,7 +17,7 @@
 			:tabindex="0"
 			:title="t('spreed', 'Back')"
 			:aria-label="t('spreed', 'Back')"
-			@click="currentThread ? threadId = 0 : openConversationSettings()">
+			@click="handleClickAvatar">
 			<IconArrowLeft
 				v-show="currentThread"
 				class="top-bar__icon-back bidirectional-icon"
@@ -396,6 +396,14 @@ export default {
 		n,
 		openSidebar(activeTab) {
 			this.sidebarStore.showSidebar({ activeTab })
+		},
+
+		handleClickAvatar() {
+			if (this.currentThread) {
+				this.$router.replace({ query: {}, hash: '' })
+			} else {
+				this.openConversationSettings()
+			}
 		},
 
 		openConversationSettings() {
