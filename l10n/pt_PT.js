@@ -311,6 +311,7 @@ OC.L10N.register(
     "Log in" : "Iniciar sessão",
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
+    "Home" : "Início",
     "Clear filter" : "Limpar filtro",
     "Talk settings" : "Definições do Falar",
     "Users" : "Utilizadores",

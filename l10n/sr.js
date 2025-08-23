@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "Decline invitation" : "Одбиј позивницу",
     "Accept invitation" : "Прихвати позивницу",
     "No pending invitations" : "Нема позивница на чекању",
+    "Home" : "Почетна",
     "Unread" : "Непрочитано",
     "Mentions" : "Помињања",
     "Meetings" : "Састанци",
@@ -1333,7 +1334,6 @@ OC.L10N.register(
     "Meeting conversations" : "Разговори у састанку",
     "Clear filters" : "Уклони филтере",
     "New personal note" : "Нова лична белешка",
-    "Talk home" : "Talk почетак",
     "Back to conversations" : "Назад на разговоре",
     "Clear filter" : "Очисти филтер",
     "Archived conversations" : "Архивирани разговори",
@@ -2127,6 +2127,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Није успело приступање разговору. Покушајте да поново учитате страницу.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud је у режиму одржавања, молимо вас да поново учитате страницу",
     "Lost connection to signaling server. Try to reload the page manually." : "Изгубљена је веза са сервером за сигнализирање. Покушајте да поново учитате страницу ручно.",
-    "Reload Talk home" : "Поново учитај Talk почетак"
+    "Reload Talk home" : "Поново учитај Talk почетак",
+    "Talk home" : "Talk почетак"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

@@ -455,6 +455,7 @@ OC.L10N.register(
     "Remove from favorites" : "Fjarlægja úr eftirlætum",
     "Add to favorites" : "Bæta í eftirlæti",
     "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
+    "Home" : "Heim",
     "Unread" : "Ólesið",
     "No matches found" : "Engar samsvaranir fundust",
     "Unread messages" : "Ólesin skilaboð",

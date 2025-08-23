@@ -84,6 +84,7 @@ OC.L10N.register(
     "Log in" : "Logg inn",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
+    "Home" : "Heim",
     "Unread messages" : "Meldingar er ikkje lest",
     "Users" : "Brukarare",
     "Groups" : "Grupper",

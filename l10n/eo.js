@@ -314,6 +314,7 @@ OC.L10N.register(
     "Log in" : "Ensaluti",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
+    "Home" : "Hejmo",
     "Users" : "Uzantoj",
     "Groups" : "Grupoj",
     "Devices" : "Aparatoj",

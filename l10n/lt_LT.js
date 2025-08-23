@@ -657,6 +657,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
     "Decline invitation" : "Atmesti pakvietimą",
     "Accept invitation" : "Priimti pakvietimą",
+    "Home" : "Namai",
     "No matches found" : "Nerasta jokių atitikmenų",
     "You have no unread messages." : "Jūs neturite neskaitytų žinučių.",
     "An error occurred while performing the search" : "Atliekant paiešką, įvyko klaida",

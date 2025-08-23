@@ -1325,6 +1325,7 @@ OC.L10N.register(
     "Decline invitation" : "Відхилити запрошення",
     "Accept invitation" : "Прийняти запрошення",
     "No pending invitations" : "Немає очікуваних запрошень",
+    "Home" : "Домівка",
     "Unread" : "Непрочитане",
     "Mentions" : "Згадки",
     "Meetings" : "Зустрічі",
@@ -1340,7 +1341,6 @@ OC.L10N.register(
     "Meeting conversations" : "Розмови на зустрічах",
     "Clear filters" : "Очистити фільтри",
     "New personal note" : "Нова особиста нотатка",
-    "Talk home" : "Поговоримо вдома.",
     "Back to conversations" : "Повернемося до розмов",
     "Clear filter" : "Очистити фільтр",
     "Archived conversations" : "Архівні розмови",
@@ -2141,6 +2141,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Не вдалося приєднатися до розмови. Спробуйте перезавантажити сторінку.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud знаходиться в режимі технічного обслуговування, будь ласка, перезавантажте сторінку",
     "Lost connection to signaling server. Try to reload the page manually." : "Втрачено зв'язок із сервером сигналізації. Спробуйте перезавантажити сторінку вручну.",
-    "Reload Talk home" : "Перезавантажити Поговорити вдома"
+    "Reload Talk home" : "Перезавантажити Поговорити вдома",
+    "Talk home" : "Поговоримо вдома."
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

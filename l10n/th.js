@@ -64,6 +64,7 @@ OC.L10N.register(
     "Log in" : "เข้าสู่ระบบ",
     "Remove from favorites" : "เอาออกจากรายการโปรด",
     "Add to favorites" : "เพิ่มในรายการโปรด",
+    "Home" : "หน้าหลัก",
     "Users" : "ผู้ใช้",
     "Groups" : "กลุ่ม",
     "Devices" : "อุปกรณ์",

@@ -67,6 +67,7 @@ OC.L10N.register(
     "Log in" : "Kirish",
     "Remove from favorites" : "Sevimlilardan olib tashlang",
     "Add to favorites" : "Sevimlilarga qo'shing",
+    "Home" : "Uy",
     "Users" : "Users",
     "Groups" : "Groups",
     "No search results" : "Qidiruv natijalari yo‘q",

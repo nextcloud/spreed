@@ -1325,6 +1325,7 @@ OC.L10N.register(
     "Decline invitation" : "Declinar invitación",
     "Accept invitation" : "Aceptar invitación",
     "No pending invitations" : "No hay invitaciones pendientes",
+    "Home" : "Inicio",
     "Unread" : "No leído",
     "Mentions" : "Menciones",
     "Meetings" : "Reuniones",
@@ -1340,7 +1341,6 @@ OC.L10N.register(
     "Meeting conversations" : "Conversaciones de las reuniones",
     "Clear filters" : "Limpiar filtros",
     "New personal note" : "Nueva nota personal",
-    "Talk home" : "Página de inicio de Talk",
     "Back to conversations" : "Volver a conversaciones",
     "Clear filter" : "Borrar filtro",
     "Archived conversations" : "Conversaciones archivadas",
@@ -2141,6 +2141,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Error al unirte a la conversación. Prueba a recargar la página.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud está en modo mantenimiento. Por favor, vuelve a cargar la página",
     "Lost connection to signaling server. Try to reload the page manually." : "Se ha perdido la conexión con el servidor de señalización. Prueba a recargar manualmente la página.",
-    "Reload Talk home" : "Recargar la página de inicio de Talk"
+    "Reload Talk home" : "Recargar la página de inicio de Talk",
+    "Talk home" : "Página de inicio de Talk"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

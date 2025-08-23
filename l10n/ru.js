@@ -1319,6 +1319,7 @@ OC.L10N.register(
     "Decline invitation" : "Отклонить приглашение",
     "Accept invitation" : "Принять приглашение",
     "No pending invitations" : "Нет ожидающих приглашений",
+    "Home" : "Дом",
     "Unread" : "Непрочитанное",
     "Mentions" : "Упоминания",
     "Meetings" : "Встречи",
@@ -1334,7 +1335,6 @@ OC.L10N.register(
     "Meeting conversations" : "Обсуждения - встречи",
     "Clear filters" : "Сбросить фильтры",
     "New personal note" : "Новая личная заметка",
-    "Talk home" : "Домашняя страница Talk",
     "Back to conversations" : "Обратно к обсуждениям",
     "Clear filter" : "Сбросить фильтр",
     "Archived conversations" : "Архивированные обсуждения",
@@ -2134,6 +2134,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Не удалось подключиться к обсуждению. Попробуйте обновить страницу.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud находится в режиме обслуживания, пожалуйста обновите страницу",
     "Lost connection to signaling server. Try to reload the page manually." : "Потеряно соединение с сигнальным сервером. Попробуйте обновить страницу вручную.",
-    "Reload Talk home" : "Перезагрузить домашнюю страницу Talk"
+    "Reload Talk home" : "Перезагрузить домашнюю страницу Talk",
+    "Talk home" : "Домашняя страница Talk"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

@@ -217,6 +217,7 @@ OC.L10N.register(
     "Mark as unread" : "Shënoje si të palexuar",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Shtoje tek të parapëlqyerat",
+    "Home" : "Kryefaqja",
     "Users" : "Përdoruesit",
     "Groups" : "Grupet",
     "Devices" : "Pajisjet",

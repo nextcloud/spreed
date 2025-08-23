@@ -94,6 +94,7 @@ OC.L10N.register(
     "Mark as unread" : "წაუკითხავად მონიშვნა",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add to favorites" : "რჩეულებში დამატება",
+    "Home" : "სახლი",
     "Users" : "მომხმარებლები",
     "Groups" : "ჯგუფები",
     "Devices" : "მოწყობილობები",

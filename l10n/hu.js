@@ -1019,6 +1019,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Új moderátort kell kineveznie, mielőtt elhagyhatja a beszélgetést.",
     "Conversation actions" : "Beszélgetési műveletek",
     "No pending invitations" : "Nincs függőben lévő meghívás",
+    "Home" : "Kezdőlap",
     "Unread" : "Olvasatlan",
     "Mentions" : "Megemlítések",
     "Meetings" : "Találkozók",
@@ -1033,7 +1034,6 @@ OC.L10N.register(
     "Unread messages" : "Olvasatlan üzenetek",
     "Clear filters" : "Szűrők törlése",
     "New personal note" : "Új személyes jegyzet",
-    "Talk home" : "A Beszélgetés kezdőlapja",
     "Back to conversations" : "Vissza a beszélgetésekhez",
     "Clear filter" : "Szűrő törlése",
     "Archived conversations" : "Archivált beszélgetések",
@@ -1671,6 +1671,7 @@ OC.L10N.register(
     "An error happened when trying to share your file" : "Hiba történt a fájl megosztása során",
     "Failed to join the conversation. Try to reload the page." : "Nem sikerült csatlakozni a beszélgetéshez. Próbálja meg újratölteni az oldalt.",
     "Nextcloud is in maintenance mode, please reload the page" : "A Nextcloud karbantartási módban van, töltse újra az oldalt",
-    "Lost connection to signaling server. Try to reload the page manually." : "Megszakadt a kapcsolat a jelzőkiszolgálóval. Próbálja meg kézzel újratölteni az oldalt."
+    "Lost connection to signaling server. Try to reload the page manually." : "Megszakadt a kapcsolat a jelzőkiszolgálóval. Próbálja meg kézzel újratölteni az oldalt.",
+    "Talk home" : "A Beszélgetés kezdőlapja"
 },
 "nplurals=2; plural=(n != 1);");
