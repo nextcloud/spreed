@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "Decline invitation" : "Daveti reddet",
     "Accept invitation" : "Daveti kabul et",
     "No pending invitations" : "Bekleyen bir davet yok",
+    "Home" : "Giriş",
     "Unread" : "Okunmamış",
     "Mentions" : "Anmalar",
     "Meetings" : "Toplantılar",
@@ -1333,7 +1334,6 @@ OC.L10N.register(
     "Meeting conversations" : "Toplantı görüşmeleri",
     "Clear filters" : "Süzgeçleri temizle",
     "New personal note" : "Yeni kişisel not",
-    "Talk home" : "Konuş girişi",
     "Back to conversations" : "Görüşmelere dön",
     "Clear filter" : "Süzgeci temizle",
     "Archived conversations" : "Arşivlenmiş görüşmeler",
@@ -2119,6 +2119,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Görüşmeye girilemedi. Sayfayı yeniden yüklemeyi deneyin.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud bakım kipinde. Lütfen sayfayı yeniden yükleyin",
     "Lost connection to signaling server. Try to reload the page manually." : "Signalling sunucusu ile bağlantı kesildi. Sayfayı el ile yeniden yüklemeyi deneyin.",
-    "Reload Talk home" : "Konuş girişini yeniden yükle"
+    "Reload Talk home" : "Konuş girişini yeniden yükle",
+    "Talk home" : "Konuş girişi"
 },
 "nplurals=2; plural=(n > 1);");
