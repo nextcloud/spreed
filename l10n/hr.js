@@ -745,6 +745,7 @@ OC.L10N.register(
     "Add to favorites" : "Dodaj u favorite",
     "You need to promote a new moderator before you can leave the conversation." : "Morate odabrati novog moderatora prije nego što napustite razgovor.",
     "Conversation actions" : "Radnje razgovora",
+    "Home" : "Doma",
     "No matches found" : "Nema pronađenih podudaranja",
     "No conversations found" : "Nije pronađen nijedan razgovor",
     "An error occurred while performing the search" : "Došlo je do pogreške pri pretraživanju",

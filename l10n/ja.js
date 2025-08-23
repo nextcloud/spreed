@@ -1069,6 +1069,7 @@ OC.L10N.register(
     "Decline invitation" : "招待を拒否",
     "Accept invitation" : "招待を承諾",
     "No pending invitations" : "保留中の招待はありません",
+    "Home" : "ホーム",
     "Unread" : "未読",
     "No matches found" : "一致するものが見つかりません。",
     "No conversations found" : "会話が見つかりません",

@@ -1331,6 +1331,7 @@ OC.L10N.register(
     "Decline invitation" : "Diúltaigh cuireadh",
     "Accept invitation" : "Glac le cuireadh",
     "No pending invitations" : "Níl aon chuirí ar feitheamh",
+    "Home" : "Baile",
     "Unread" : "Neamhléite",
     "Mentions" : "Luann",
     "Meetings" : "Cruinnithe",
@@ -1347,7 +1348,6 @@ OC.L10N.register(
     "Meeting conversations" : "Comhráite cruinnithe",
     "Clear filters" : "Glan na scagairí",
     "New personal note" : "Nóta pearsanta nua",
-    "Talk home" : "Labhair abhaile",
     "Back to conversations" : "Ar ais chuig comhráite",
     "Followed threads" : "Snáitheanna leanta",
     "Clear filter" : "Glan an scagaire",
@@ -2149,6 +2149,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Theip ar páirt a ghlacadh sa chomhrá. Déan iarracht an leathanach a athlódáil.",
     "Nextcloud is in maintenance mode, please reload the page" : "Tá Nextcloud i mód cothabhála, le do thoil athlódáil an leathanach",
     "Lost connection to signaling server. Try to reload the page manually." : "Ceangal caillte leis an bhfreastalaí comharthaíochta. Déan iarracht an leathanach a athlódáil de láimh.",
-    "Reload Talk home" : "Athlódáil Comhrá baile"
+    "Reload Talk home" : "Athlódáil Comhrá baile",
+    "Talk home" : "Labhair abhaile"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

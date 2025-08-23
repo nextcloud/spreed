@@ -907,6 +907,12 @@
     "SIP configuration is only possible with a High-performance backend." : "SIP-Einrichtung ist nur in Verbindung mit einem Hochleistungs-Backend möglich.",
     "Enable SIP Dial-out option" : "SIP-Anrufen-Option aktivieren",
     "Signaling server needs to be updated to supported SIP Dial-out feature." : "Der Signalisierungsserver muss auf die unterstützte SIP-Anrufen-Funktion aktualisiert werden.",
+    "Do not show SIP Dial-out caller number" : "Abgehend die eigene Rufnummer nicht anzeigen",
+    "Anonymous number should appear as \"unknown\" or \"withheld number\" to call recipient" : "Die anonyme Nummer sollte als „unbekannte“ oder „unterdrückte Nummer“ angezeigt werden, um den Empfänger anzurufen",
+    "Dial-out number" : "Abgehende Telefonnummer",
+    "E164 formatted number used as a fallback caller number for outgoing calls" : "E164-formatierte Nummer, die als Fallback-Rufnummer für ausgehende Anrufe verwendet wird",
+    "Dial-out prefix" : "Vorwahl für ausgehende Anrufe",
+    "Prefix to configured user number for outgoing calls (default is `+`)" : "Präfix zur eingestellten Rufnummer für ausgehende Anrufe (Standard ist „+“)",
     "Restrict SIP configuration" : "SIP-Konfiguration einschränken",
     "Enable SIP configuration" : "SIP-Konfiguration aktivieren",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Nur Benutzer der folgenden Gruppen können SIP in von ihnen moderierten Unterhaltungen aktivieren",
@@ -1329,6 +1335,7 @@
     "No matches found" : "Keine Übereinstimmungen gefunden",
     "No conversations found" : "Keine Unterhaltungen gefunden",
     "You have no archived conversations." : "Du hast keine archivierten Unterhaltungen",
+    "You have no followed threads." : "Sie verfolgen keine Themen",
     "You have no unread mentions." : "Du hast keine ungelesenen Erwähnungen.",
     "You have no unread messages." : "Du hast keine ungelesenen Nachrichten.",
     "An error occurred while performing the search" : "Es ist ein Fehler beim Suchen aufgetreten",
@@ -1338,8 +1345,8 @@
     "Meeting conversations" : "Besprechungsunterhaltungen",
     "Clear filters" : "Filter zurücksetzen",
     "New personal note" : "Neue persönliche Notiz",
-    "Talk home" : "Talk home",
     "Back to conversations" : "Zurück zu den Unterhaltungen",
+    "Followed threads" : "Nachverfolgte Themen",
     "Clear filter" : "Filter zurücksetzen",
     "Archived conversations" : "Archivierte Unterhaltungen",
     "Talk settings" : "Talk-Einstellungen",
@@ -2139,6 +2146,7 @@
     "Failed to join the conversation. Try to reload the page." : "Beitritt zur Unterhaltung fehlgeschlagen. Lade die Seite neu.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud ist im Wartungsmodus, bitte lade die Seite neu.",
     "Lost connection to signaling server. Try to reload the page manually." : "Verbindung zum Signaling-Server verloren. Versuche, die Seite selbst neu zu laden.",
-    "Reload Talk home" : "Talk Startseite neu laden"
+    "Reload Talk home" : "Talk Startseite neu laden",
+    "Talk home" : "Talk home"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

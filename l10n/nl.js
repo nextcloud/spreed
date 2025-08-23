@@ -1125,6 +1125,7 @@ OC.L10N.register(
     "Decline invitation" : "Uitnodiging afwijzen",
     "Accept invitation" : "Uitnodiging accepteren",
     "No pending invitations" : "Geen wachtende uitnodigingen",
+    "Home" : "Startpagina",
     "Unread" : "Ongelezen",
     "No matches found" : "Geen overeenkomsten gevonden.",
     "No conversations found" : "Geen gesprekken gevonden",

@@ -1331,6 +1331,7 @@ OC.L10N.register(
     "Decline invitation" : "Decline invitation",
     "Accept invitation" : "Accept invitation",
     "No pending invitations" : "No pending invitations",
+    "Home" : "Home",
     "Unread" : "Unread",
     "Mentions" : "Mentions",
     "Meetings" : "Meetings",
@@ -1347,7 +1348,6 @@ OC.L10N.register(
     "Meeting conversations" : "Meeting conversations",
     "Clear filters" : "Clear filters",
     "New personal note" : "New personal note",
-    "Talk home" : "Talk home",
     "Back to conversations" : "Back to conversations",
     "Followed threads" : "Followed threads",
     "Clear filter" : "Clear filter",
@@ -2149,6 +2149,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Failed to join the conversation. Try to reload the page.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud is in maintenance mode, please reload the page",
     "Lost connection to signaling server. Try to reload the page manually." : "Lost connection to signaling server. Try to reload the page manually.",
-    "Reload Talk home" : "Reload Talk home"
+    "Reload Talk home" : "Reload Talk home",
+    "Talk home" : "Talk home"
 },
 "nplurals=2; plural=(n != 1);");

@@ -313,6 +313,7 @@ OC.L10N.register(
     "Mark as unread" : "Tandai belum dibaca",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Tambah ke favorit",
+    "Home" : "Beranda",
     "Unread messages" : "Pesan belum dibaca",
     "Clear filter" : "Bersihkan filter",
     "Users" : "Pengguna",

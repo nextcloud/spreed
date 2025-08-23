@@ -679,6 +679,7 @@ OC.L10N.register(
     "Add to favorites" : "Додади во фаворити",
     "You need to promote a new moderator before you can leave the conversation." : "Треба да промовирате нов модератор пред да го напуштите разговорот.",
     "Conversation actions" : "Дејства за разговорот",
+    "Home" : "Дома",
     "Unread" : "Непрочитана",
     "No matches found" : "Не се пронајдени совпаѓања",
     "No conversations found" : "Нема пронајдено разговори",

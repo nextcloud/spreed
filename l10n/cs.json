@@ -1338,7 +1338,6 @@
     "Meeting conversations" : "Konverzace schůzky",
     "Clear filters" : "Vyčistit filtry",
     "New personal note" : "Nová osobní poznámka",
-    "Talk home" : "Talk domovské",
     "Back to conversations" : "Zpět na konverzace",
     "Clear filter" : "Vyčistit filtr",
     "Archived conversations" : "Archivované konverzace",
@@ -2139,6 +2138,7 @@
     "Failed to join the conversation. Try to reload the page." : "Ke konverzaci se nepodařilo připojit. Zkuste stránku znovu načíst.",
     "Nextcloud is in maintenance mode, please reload the page" : "V Nexcloud probíhá údržba – načtěte stránku znovu",
     "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu.",
-    "Reload Talk home" : "Znovunačíst domovské Talk"
+    "Reload Talk home" : "Znovunačíst domovské Talk",
+    "Talk home" : "Talk domovské"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

@@ -1248,6 +1248,7 @@ OC.L10N.register(
     "Decline invitation" : "Declinar o convite",
     "Accept invitation" : "Aceptar o convite",
     "No pending invitations" : "Non hai convites pendentes",
+    "Home" : "Inicio",
     "Unread" : "Sen ler",
     "No matches found" : "Non se atopou ningunha coincidencia",
     "No conversations found" : "Non se atopou ningunha conversa",

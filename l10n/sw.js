@@ -1325,6 +1325,7 @@ OC.L10N.register(
     "Decline invitation" : "Kataa mwaliko",
     "Accept invitation" : "Kubali mwaliko",
     "No pending invitations" : "Hakuna mialiko inayosubiri",
+    "Home" : "Nyumbani",
     "Unread" : "Haijasomwa",
     "Mentions" : "Mitajo",
     "Meetings" : "Mikutano",
@@ -1340,7 +1341,6 @@ OC.L10N.register(
     "Meeting conversations" : "Mazungumzo ya mkutano",
     "Clear filters" : "Futa vichujio",
     "New personal note" : "Ujumbe mpya wa kibinafsi",
-    "Talk home" : "Talk home",
     "Back to conversations" : "Rudi kwenye mazungumzo",
     "Clear filter" : "Futa kichujio",
     "Archived conversations" : "Mazungumzo yaliyowekwa kwenye kumbukumbu",
@@ -2141,6 +2141,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Imeshindwa kujiunga kwenye mazungumzo. Jaribu kupakia upya ukurasa.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud iko katika hali ya matengenezo, tafadhali pakia upya ukurasa",
     "Lost connection to signaling server. Try to reload the page manually." : "Muunganisho umepoteza kwa seva ya kuashiria. Jaribu kupakia upya ukurasa mwenyewe.",
-    "Reload Talk home" : "Pakia upya Talk home"
+    "Reload Talk home" : "Pakia upya Talk home",
+    "Talk home" : "Talk home"
 },
 "nplurals=2; plural=(n != 1);");

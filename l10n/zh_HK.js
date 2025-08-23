@@ -1331,6 +1331,7 @@ OC.L10N.register(
     "Decline invitation" : "婉拒邀請",
     "Accept invitation" : "接受邀請",
     "No pending invitations" : "沒有待處理的邀請",
+    "Home" : "主頁",
     "Unread" : "未讀",
     "Mentions" : "提及",
     "Meetings" : "會議",
@@ -1347,7 +1348,6 @@ OC.L10N.register(
     "Meeting conversations" : "會議對話",
     "Clear filters" : "清除過濾器",
     "New personal note" : "新個人筆記",
-    "Talk home" : "Talk 首頁",
     "Back to conversations" : "回到對話",
     "Followed threads" : "關注的討論串",
     "Clear filter" : "清空過濾器",
@@ -2149,6 +2149,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "無法加入對話。嘗試重新加載頁面。",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud 處於維護模式，請重新加載頁面",
     "Lost connection to signaling server. Try to reload the page manually." : "與信令伺服器的連接斷開。嘗試手動重新加載頁面。",
-    "Reload Talk home" : "重新加載 Talk 首頁"
+    "Reload Talk home" : "重新加載 Talk 首頁",
+    "Talk home" : "Talk 首頁"
 },
 "nplurals=1; plural=0;");

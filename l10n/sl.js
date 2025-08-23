@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Pending invitations" : "Čakajoča vabila",
     "Decline invitation" : "Zavrni povabilo",
     "Accept invitation" : "Sprejmi povabilo",
+    "Home" : "Začetna stran",
     "Unread" : "Neprebrano",
     "Mentions" : "Omembe",
     "Meetings" : "Srečanja",

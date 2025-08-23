@@ -89,6 +89,7 @@ OC.L10N.register(
     "Log in" : "Ingresar",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a tus favoritos",
+    "Home" : "Inicio",
     "Users" : "Ususarios",
     "Groups" : "Grupos",
     "Devices" : "Dispositivos",

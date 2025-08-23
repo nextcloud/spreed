@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "Decline invitation" : "Avböj inbjudan",
     "Accept invitation" : "Acceptera inbjudan",
     "No pending invitations" : "Inga väntande inbjudningar",
+    "Home" : "Hem",
     "Unread" : "Oläst",
     "Mentions" : "Omnämnanden",
     "Meetings" : "Möten",
@@ -1333,7 +1334,6 @@ OC.L10N.register(
     "Meeting conversations" : "Möteskonversationer",
     "Clear filters" : "Rensa filter",
     "New personal note" : "Ny personlig anteckning",
-    "Talk home" : "Talk hem",
     "Back to conversations" : "Tillbaka till konversationer",
     "Clear filter" : "Rensa filter",
     "Archived conversations" : "Arkiverade konversationer",
@@ -2131,6 +2131,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Det gick inte att gå med i konversationen. Försök att ladda om sidan.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud är i underhållsläge, ladda om sidan igen",
     "Lost connection to signaling server. Try to reload the page manually." : "Förlorade anslutningen till signalservern. Försök att ladda om sidan manuellt.",
-    "Reload Talk home" : "Ladda om startsidan för Talk"
+    "Reload Talk home" : "Ladda om startsidan för Talk",
+    "Talk home" : "Talk hem"
 },
 "nplurals=2; plural=(n != 1);");

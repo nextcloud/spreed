@@ -1273,6 +1273,7 @@ OC.L10N.register(
     "Decline invitation" : "Lükka kutse tagasi",
     "Accept invitation" : "Võta kutse vastu",
     "No pending invitations" : "Ootel kutseid pole",
+    "Home" : "Avaleht",
     "Unread" : "Lugemata",
     "Mentions" : "Mainimised",
     "Meetings" : "Kohtumised",
@@ -1289,7 +1290,6 @@ OC.L10N.register(
     "Meeting conversations" : "Kohtumiste vestlused",
     "Clear filters" : "Eemalda filtrid",
     "New personal note" : "Uus isiklik märge",
-    "Talk home" : "Kõnerakenduse avaleht",
     "Back to conversations" : "Tagasi vestluste juurde",
     "Followed threads" : "Jutulõngad, mida sa jälgid",
     "Clear filter" : "Tühjenda filter",
@@ -2088,6 +2088,7 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Vestlusega ei õnnestunud liituda. Proovi lehte uuesti laadida.",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloudi kõnerakendus on haldusrežiimis, palun laadi leht uuesti",
     "Lost connection to signaling server. Try to reload the page manually." : "Kadus ühendus kõnehõlbustusserveriga. Proovi, kas lehe uuesti laadimine aitab.",
-    "Reload Talk home" : "Laadi kõnerakenduse avaleht uuesti"
+    "Reload Talk home" : "Laadi kõnerakenduse avaleht uuesti",
+    "Talk home" : "Kõnerakenduse avaleht"
 },
 "nplurals=2; plural=(n != 1);");
