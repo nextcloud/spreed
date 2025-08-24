@@ -1325,6 +1325,7 @@ OC.L10N.register(
     "Decline invitation" : "Odmítnout pozvání",
     "Accept invitation" : "Přijmout pozvání",
     "No pending invitations" : "Žádné čekající pozvánky",
+    "Home" : "Domů",
     "Unread" : "Nastavit jako nepřečtené",
     "Mentions" : "Zmínění",
     "Meetings" : "Schůze",
