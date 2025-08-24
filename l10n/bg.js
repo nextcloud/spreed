@@ -915,6 +915,7 @@ OC.L10N.register(
     "Add to favorites" : "Добави към любимите",
     "You need to promote a new moderator before you can leave the conversation." : "Трябва да повишите нов модератор, преди да можете да напуснете разговора.",
     "Conversation actions" : "Действия при разговор",
+    "Home" : "Начало",
     "Unread" : "Непрочетено",
     "No matches found" : "Няма намерени съвпадения",
     "No conversations found" : "Няма намерени разговори",

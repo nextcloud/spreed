@@ -646,6 +646,7 @@ OC.L10N.register(
     "Decline invitation" : "Refugar la invitación",
     "Accept invitation" : "Aceptar la invitación",
     "No pending invitations" : "Nun hai nenguna invitación pendiente",
+    "Home" : "Aniciu",
     "Unread" : "Ensin lleer",
     "No matches found" : "Nun s'atopó nenguna coincidencia",
     "No conversations found" : "Nun s'atopó nenguna conversación",
