@@ -569,6 +569,7 @@ OC.L10N.register(
     "Remove from favorites" : "Diverkañañ eus ar pennrolloù",
     "Add to favorites" : "Ouzhpennañ er pennrolloù",
     "You need to promote a new moderator before you can leave the conversation." : "Ret eo deoc'h lakaat unan bennak da moderatour a-rao kuitaat an diviz.",
+    "Home" : "Degemer",
     "An error occurred while performing the search" : "Ur fazi a zo bet en ur ober an enklask",
     "Users" : "Implijer",
     "Groups" : "Strolladoù",
