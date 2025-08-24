@@ -291,6 +291,7 @@ OC.L10N.register(
     "Log in" : "Teken Aan",
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
+    "Home" : "Tuis",
     "Users" : "Gebruikers",
     "Groups" : "Groepe",
     "You are currently waiting in the lobby" : "U wag tans in die voorportaal",

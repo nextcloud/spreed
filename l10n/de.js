@@ -1331,6 +1331,7 @@ OC.L10N.register(
     "Decline invitation" : "Einladung ablehnen",
     "Accept invitation" : "Einladung annehmen",
     "No pending invitations" : "Keine ausstehenden Einladungen",
+    "Home" : "Startseite",
     "Unread" : "Ungelesen",
     "Mentions" : "Erwähnungen",
     "Meetings" : "Besprechungen",

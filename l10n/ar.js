@@ -1254,6 +1254,7 @@ OC.L10N.register(
     "Decline invitation" : "رفض الدعوة",
     "Accept invitation" : "قبول الدعوة",
     "No pending invitations" : "لا توجد دعوات معلقة",
+    "Home" : "الرئيسية",
     "Unread" : "غير مقروء",
     "No matches found" : "لم يٌمكن إيجاد أي تطابقات",
     "No conversations found" : "لم يتم العثور على المحادثات ",
