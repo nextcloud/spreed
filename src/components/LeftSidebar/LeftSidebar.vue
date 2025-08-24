@@ -339,7 +339,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
-// TRANSLATORS: The main home view
+// TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
