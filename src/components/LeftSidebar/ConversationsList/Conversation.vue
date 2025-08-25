@@ -261,12 +261,13 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import { ref, toRefs } from 'vue'
+import { h, ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArchiveOffOutline from 'vue-material-design-icons/ArchiveOffOutline.vue'
@@ -285,9 +286,9 @@ import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
+import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
+import IconVolumeOffOutline from '../../../../img/material-icons/volume-off-outline.svg?raw'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
@@ -324,13 +325,12 @@ export default {
 		IconPhoneRingOutline,
 		IconShieldLockOutline,
 		IconStar,
-		IconVolumeHigh,
-		IconVolumeOff,
 		IconVideo,
 		NcActionButton,
 		NcActionSeparator,
 		NcButton,
 		NcDialog,
+		NcIconSvgWrapper,
 		NcListItem,
 	},
 
@@ -541,12 +541,12 @@ export default {
 		notificationLevelIcon(value) {
 			switch (value) {
 				case PARTICIPANT.NOTIFY.ALWAYS:
-					return IconVolumeHigh
+					return h(NcIconSvgWrapper, { svg: IconVolumeHighOutline })
 				case PARTICIPANT.NOTIFY.MENTION:
 					return IconAccountOutline
 				case PARTICIPANT.NOTIFY.NEVER:
 				default:
-					return IconVolumeOff
+					return h(NcIconSvgWrapper, { svg: IconVolumeOffOutline })
 			}
 		},
 

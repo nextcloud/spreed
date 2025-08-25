@@ -7,12 +7,13 @@
 import type { Conversation } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed, reactive } from 'vue'
+import { computed, h, reactive } from 'vue'
 import { useStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
-import IconVolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
-import IconVolumeOff from 'vue-material-design-icons/VolumeOff.vue'
+import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
+import IconVolumeOffOutline from '../../../img/material-icons/volume-off-outline.svg?raw'
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
@@ -24,9 +25,21 @@ const supportImportantConversations = hasTalkFeature('local', 'important-convers
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
 const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, icon: IconVolumeHigh, label: t('spreed', 'All messages') },
-	{ value: PARTICIPANT.NOTIFY.MENTION, icon: IconAccountOutline, label: t('spreed', '@-mentions only') },
-	{ value: PARTICIPANT.NOTIFY.NEVER, icon: IconVolumeOff, label: t('spreed', 'Off') },
+	{
+		value: PARTICIPANT.NOTIFY.ALWAYS,
+		icon: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true }),
+		label: t('spreed', 'All messages'),
+	},
+	{
+		value: PARTICIPANT.NOTIFY.MENTION,
+		icon: IconAccountOutline,
+		label: t('spreed', '@-mentions only'),
+	},
+	{
+		value: PARTICIPANT.NOTIFY.NEVER,
+		icon: h(NcIconSvgWrapper, { svg: IconVolumeOffOutline, inline: true }),
+		label: t('spreed', 'Off'),
+	},
 ]
 
 const store = useStore()
@@ -111,7 +124,7 @@ const isSensitive = computed({
 			type="radio"
 			@update:model-value="setNotificationLevel">
 			<span class="radio-button">
-				<component :is="level.icon" />
+				<component :is="level.icon" :size="20" />
 				{{ level.label }}
 			</span>
 		</NcCheckboxRadioSwitch>
