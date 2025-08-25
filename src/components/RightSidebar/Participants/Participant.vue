@@ -328,7 +328,7 @@ import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
 import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconEmailOutline from 'vue-material-design-icons/EmailOutline.vue'
-import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconLockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
 import IconLockOutline from 'vue-material-design-icons/LockOutline.vue'
 import IconLockReset from 'vue-material-design-icons/LockReset.vue'
@@ -387,7 +387,7 @@ export default {
 		IconCrownOutline,
 		IconDeleteOutline,
 		IconEmailOutline,
-		IconHandBackLeftOutline,
+		IconHandBackLeft,
 		IconLockOutline,
 		IconLockOpenVariantOutline,
 		IconLockReset,
@@ -577,7 +577,7 @@ export default {
 			if (this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return null
 			} else if (this.isHandRaised) {
-				return { icon: IconHandBackLeftOutline, size: 18, title: t('spreed', 'Raised their hand') }
+				return { icon: IconHandBackLeft, size: 18, title: t('spreed', 'Raised their hand') }
 			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
 				return { icon: IconVideoOutline, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {

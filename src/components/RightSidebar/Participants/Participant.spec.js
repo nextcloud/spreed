@@ -15,10 +15,10 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import Phone from 'vue-material-design-icons/Phone.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Participant from './Participant.vue'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
@@ -280,7 +280,7 @@ describe('Participant.vue', () => {
 
 	describe('call icons', () => {
 		let getParticipantRaisedHandMock
-		const components = [VideoIcon, Phone, Microphone, HandBackLeft]
+		const components = [IconVideoOutline, IconPhoneOutline, IconMicrophoneOutline, IconHandBackLeftOutline]
 
 		/**
 		 * Check which icons are currently rendered
@@ -315,26 +315,26 @@ describe('Participant.vue', () => {
 		})
 		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			checkStateIconsRendered(participant, VideoIcon)
+			checkStateIconsRendered(participant, IconVideoOutline)
 		})
 		test('renders audio call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_AUDIO
-			checkStateIconsRendered(participant, Microphone)
+			checkStateIconsRendered(participant, IconMicrophoneOutline)
 		})
 		test('renders phone call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_PHONE
-			checkStateIconsRendered(participant, Phone)
+			checkStateIconsRendered(participant, IconPhoneOutline)
 		})
 		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
-			checkStateIconsRendered(participant, HandBackLeft)
+			checkStateIconsRendered(participant, IconHandBackLeftOutline)
 			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
 		})
 		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
-			checkStateIconsRendered(participant, VideoIcon)
+			checkStateIconsRendered(participant, IconVideoOutline)
 		})
 	})
 

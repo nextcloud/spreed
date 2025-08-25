@@ -9,38 +9,38 @@
 		:class="{ overload: hasOverload }">
 		<span class="volume-indicator volume-indicator-primary"
 			:style="{ height: iconPrimaryHeight + 'px' }">
-			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 			<NcIconSvgWrapper v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
-				:fill-color="primaryColor" />
+				:style="{ color: primaryColor }" />
 		</span>
 
 		<span v-if="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
-			<IconMicrophoneOutline v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
 			<NcIconSvgWrapper v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
-				:fill-color="overlayMutedColor" />
+				:style="{ color: overlayMutedColor }" />
 		</span>
 	</span>
 </template>
 
 <script>
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue' // Filled for better indication
 import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 
 export default {
 	name: 'VolumeIndicator',
 
 	components: {
-		IconMicrophoneOutline,
+		IconMicrophone,
 		NcIconSvgWrapper,
 	},
 
@@ -168,6 +168,7 @@ export default {
 }
 
 .volume-indicator-overlay {
+	display: inline-flex;
 	bottom: 0;
 	pointer-events: none;
 

@@ -112,7 +112,7 @@
 							:disabled="!videoPreviewAvailable"
 							@click="toggleVideo">
 							<template #icon>
-								<IconVideoOutline v-if="videoOn" :size="20" />
+								<IconVideo v-if="videoOn" :size="20" />
 								<IconVideoOffOutline v-else :size="20" />
 							</template>
 						</NcButton>
@@ -224,8 +224,8 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
-import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
@@ -275,7 +275,7 @@ export default {
 		SetGuestUsername,
 		// Icons
 		IconReflectHorizontal,
-		IconVideoOutline,
+		IconVideo,
 		IconVideoOffOutline,
 	},
 

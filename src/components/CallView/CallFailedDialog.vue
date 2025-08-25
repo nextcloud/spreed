@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
-import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
+import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 
 const props = defineProps({
@@ -60,7 +60,7 @@ function clearConnectionFailedError() {
 		<NcEmptyContent :name="t('spreed', 'Connection failed')"
 			:description="message">
 			<template #icon>
-				<IconAlertOctagon />
+				<IconAlertOctagonOutline />
 			</template>
 		</NcEmptyContent>
 	</NcModal>

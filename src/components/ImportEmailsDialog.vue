@@ -11,9 +11,10 @@ import { n, t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
 import { importEmails } from '../services/participantsService.js'
 
 const props = defineProps<{
@@ -126,7 +127,7 @@ async function submitList(file: File | null) {
 			<NcButton class="import-list__button" @click="triggerImport">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<IconFileUpload v-else :size="20" />
+					<NcIconSvgWrapper v-else :svg="IconFileUpload" :size="20" />
 				</template>
 				{{ t('spreed', 'Browse') }}
 			</NcButton>

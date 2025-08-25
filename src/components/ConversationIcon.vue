@@ -58,8 +58,8 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import IconLink from 'vue-material-design-icons/Link.vue'
-import IconStar from 'vue-material-design-icons/Star.vue'
-import IconVideo from 'vue-material-design-icons/Video.vue'
+import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconWeb from 'vue-material-design-icons/Web.vue'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'

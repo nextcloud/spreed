@@ -194,7 +194,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
-import IconSend from 'vue-material-design-icons/Send.vue'
+import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
 import Quote from '../Quote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'

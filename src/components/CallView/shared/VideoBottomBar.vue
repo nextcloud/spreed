@@ -10,7 +10,7 @@
 		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-				<HandBackLeft :size="18" fill-color="#ffffff" />
+				<IconHandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
 		</TransitionWrapper>
 
@@ -39,8 +39,8 @@
 					:disabled="isAudioButtonDisabled"
 					@click.stop="forceMute">
 					<template #icon>
-						<Microphone v-if="model.attributes.audioAvailable" :size="20" fill-color="#ffffff" />
-						<MicrophoneOff v-else :size="20" fill-color="#ffffff" />
+						<IconMicrophone v-if="model.attributes.audioAvailable" :size="20" />
+						<NcIconSvgWrapper v-else :svg="IconMicrophoneOffOutline" :size="20" />
 					</template>
 				</NcButton>
 
@@ -51,8 +51,8 @@
 					variant="tertiary-no-background"
 					@click.stop="toggleVideo">
 					<template #icon>
-						<VideoIcon v-if="isRemoteVideoEnabled" :size="20" fill-color="#ffffff" />
-						<VideoOff v-else :size="20" fill-color="#ffffff" />
+						<IconVideo v-if="isRemoteVideoEnabled" :size="20" />
+						<IconVideoOffOutline v-else :size="20" />
 					</template>
 				</NcButton>
 
@@ -64,13 +64,13 @@
 					variant="tertiary-no-background"
 					@click.stop="switchToScreen">
 					<template #icon>
-						<Monitor :size="20" fill-color="#ffffff" />
+						<IconMonitor :size="20" />
 					</template>
 				</NcButton>
 
 				<div v-if="connectionStateFailedNoRestart"
 					class="status-indicator iceFailedIndicator">
-					<AlertCircle :size="20" fill-color="#ffffff" />
+					<IconAlertCircleOutline :size="20" />
 				</div>
 			</TransitionWrapper>
 
@@ -88,14 +88,15 @@
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import Monitor from 'vue-material-design-icons/Monitor.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue' // Filled for better indication
+import IconMonitor from 'vue-material-design-icons/Monitor.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
+import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
+import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-off-outline.svg?raw'
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
@@ -105,15 +106,15 @@ export default {
 	name: 'VideoBottomBar',
 
 	components: {
-		AlertCircle,
-		HandBackLeft,
-		Microphone,
-		MicrophoneOff,
-		Monitor,
+		IconAlertCircleOutline,
+		IconHandBackLeft,
+		IconMicrophone,
+		IconMonitor,
+		IconVideo,
+		IconVideoOffOutline,
 		NcButton,
+		NcIconSvgWrapper,
 		TransitionWrapper,
-		VideoIcon,
-		VideoOff,
 	},
 
 	inheritAttrs: false,
@@ -182,6 +183,7 @@ export default {
 
 	setup() {
 		return {
+			IconMicrophoneOffOutline,
 			callViewStore: useCallViewStore(),
 			actorStore: useActorStore(),
 		}
@@ -386,6 +388,13 @@ export default {
 	opacity: .8 !important;
 }
 
+.audioIndicator,
+.videoIndicator,
+.screenSharingIndicator,
+.iceFailedIndicator {
+	color: #ffffff !important;
+}
+
 .audioIndicator[disabled],
 .videoIndicator {
 	opacity: .7;
@@ -397,5 +406,4 @@ export default {
 		opacity: 1;
 	}
 }
-
 </style>

@@ -23,12 +23,11 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import IconAccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import IconAccountSearch from 'vue-material-design-icons/AccountSearch.vue'
-import IconCalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
+import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
+import IconAccountSearchOutline from 'vue-material-design-icons/AccountSearchOutline.vue'
+import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
-import IconReload from 'vue-material-design-icons/Reload.vue'
 import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.vue'
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
@@ -321,7 +320,7 @@ async function submitNewMeeting() {
 					:title="t('spreed', 'Upcoming meetings')"
 					:aria-label="t('spreed', 'Upcoming meetings')">
 					<template #icon>
-						<IconCalendarBlank :size="20" />
+						<IconCalendarBlankOutline :size="20" />
 					</template>
 					<template v-if="upcomingEvents[0] && !isMobile" #default>
 						<span class="upcoming-meeting__header">
@@ -346,7 +345,7 @@ async function submitNewMeeting() {
 				<NcEmptyContent v-else class="calendar-events__empty-content">
 					<template #icon>
 						<NcLoadingIcon v-if="loading" />
-						<IconCalendarBlank v-else />
+						<IconCalendarBlankOutline v-else />
 					</template>
 
 					<template #description>
@@ -425,7 +424,7 @@ async function submitNewMeeting() {
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">
 						<template #icon>
-							<IconAccountPlus :size="20" />
+							<IconAccountPlusOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Add attendees') }}
 					</NcButton>
@@ -483,7 +482,7 @@ async function submitNewMeeting() {
 					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
 					<template #icon>
 						<NcLoadingIcon v-if="!participantsInitialised" />
-						<IconAccountSearch v-else />
+						<IconAccountSearchOutline v-else />
 					</template>
 				</NcEmptyContent>
 				<template #actions>

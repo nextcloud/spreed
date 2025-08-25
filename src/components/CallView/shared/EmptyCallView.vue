@@ -29,9 +29,9 @@
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconLink from 'vue-material-design-icons/Link.vue'
-import IconPhone from 'vue-material-design-icons/Phone.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
@@ -43,9 +43,9 @@ export default {
 	components: {
 		NcButton,
 		NcLoadingIcon,
-		IconAccountMultiple,
+		IconAccountMultipleOutline,
 		IconLink,
-		IconPhone,
+		IconPhoneOutline,
 	},
 
 	props: {
@@ -127,9 +127,9 @@ export default {
 			if (this.isConnecting) {
 				return NcLoadingIcon
 			} else if (this.isPhoneConversation) {
-				return IconPhone
+				return IconPhoneOutline
 			} else {
-				return this.isPublicConversation ? IconLink : IconAccountMultiple
+				return this.isPublicConversation ? IconLink : IconAccountMultipleOutline
 			}
 		},
 

@@ -26,7 +26,7 @@
 			<template v-if="canUploadBackgrounds">
 				<button class="background-editor__element"
 					@click="clickImportInput">
-					<IconUpload :size="20" />
+					<NcIconSvgWrapper :svg="IconFileUpload" :size="20" inline />
 					{{ t('spreed', 'Upload') }}
 				</button>
 				<button class="background-editor__element"
@@ -68,11 +68,12 @@ import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl, imagePath } from '@nextcloud/router'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconBlur from 'vue-material-design-icons/Blur.vue'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import IconCheckBold from 'vue-material-design-icons/CheckBold.vue'
-import IconFolder from 'vue-material-design-icons/Folder.vue'
-import IconUpload from 'vue-material-design-icons/Upload.vue'
+import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
+import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -100,7 +101,7 @@ export default {
 		IconCancel,
 		IconCheckBold,
 		IconFolder,
-		IconUpload,
+		NcIconSvgWrapper,
 	},
 
 	props: {
@@ -119,6 +120,7 @@ export default {
 
 	setup() {
 		return {
+			IconFileUpload,
 			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
 			predefinedBackgroundsV2: getTalkConfig('local', 'call', 'predefined-backgrounds-v2'),
