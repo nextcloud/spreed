@@ -907,7 +907,7 @@
     "SIP configuration is only possible with a High-performance backend." : "SIP-Einrichtung ist nur in Verbindung mit einem Hochleistungs-Backend möglich.",
     "Enable SIP Dial-out option" : "SIP-Anrufen-Option aktivieren",
     "Signaling server needs to be updated to supported SIP Dial-out feature." : "Der Signalisierungsserver muss auf die unterstützte SIP-Anrufen-Funktion aktualisiert werden.",
-    "Do not show SIP Dial-out caller number" : "Abgehend die eigene Rufnummer nicht anzeigen",
+    "Do not show SIP Dial-out caller number" : "Abgehend die eigene SIP-Rufnummer nicht anzeigen",
     "Anonymous number should appear as \"unknown\" or \"withheld number\" to call recipient" : "Die anonyme Nummer sollte als „unbekannte“ oder „unterdrückte Nummer“ angezeigt werden, um den Empfänger anzurufen",
     "Dial-out number" : "Abgehende Telefonnummer",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "E164-formatierte Nummer, die als Fallback-Rufnummer für ausgehende Anrufe verwendet wird",
