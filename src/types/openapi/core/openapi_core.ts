@@ -1055,6 +1055,11 @@ export type components = {
                 "reference-api": boolean;
                 "reference-regex": string;
                 "mod-rewrite-working": boolean;
+                user?: {
+                    language: string;
+                    locale: string;
+                    timezone: string;
+                };
             };
         };
         Collection: {

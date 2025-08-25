@@ -548,6 +548,7 @@ export type components = {
             roleScope?: components["schemas"]["UserDetailsScope"];
             storageLocation?: string;
             subadmin: string[];
+            timezone: string;
             twitter: string;
             twitterScope?: components["schemas"]["UserDetailsScope"];
             bluesky: string;
