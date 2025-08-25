@@ -10,7 +10,7 @@
 		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-				<IconHandBackLeftOutline :size="18" fill-color="#ffffff" />
+				<IconHandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
 		</TransitionWrapper>
 
@@ -39,7 +39,7 @@
 					:disabled="isAudioButtonDisabled"
 					@click.stop="forceMute">
 					<template #icon>
-						<IconMicrophoneOutline v-if="model.attributes.audioAvailable" :size="20" />
+						<IconMicrophone v-if="model.attributes.audioAvailable" :size="20" />
 						<NcIconSvgWrapper v-else :svg="IconMicrophoneOffOutline" :size="20" />
 					</template>
 				</NcButton>
@@ -51,7 +51,7 @@
 					variant="tertiary-no-background"
 					@click.stop="toggleVideo">
 					<template #icon>
-						<IconVideoOutline v-if="isRemoteVideoEnabled" :size="20" />
+						<IconVideo v-if="isRemoteVideoEnabled" :size="20" />
 						<IconVideoOffOutline v-else :size="20" />
 					</template>
 				</NcButton>
@@ -90,11 +90,11 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
-import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
+import IconMicrophone from 'vue-material-design-icons/Microphone.vue' // Filled for better indication
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
-import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-off-outline.svg?raw'
 import { PARTICIPANT } from '../../../constants.ts'
@@ -107,10 +107,10 @@ export default {
 
 	components: {
 		IconAlertCircleOutline,
-		IconHandBackLeftOutline,
-		IconMicrophoneOutline,
+		IconHandBackLeft,
+		IconMicrophone,
 		IconMonitor,
-		IconVideoOutline,
+		IconVideo,
 		IconVideoOffOutline,
 		NcButton,
 		NcIconSvgWrapper,
