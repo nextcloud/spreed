@@ -76,20 +76,20 @@
 				<NcActions v-if="canEndPoll" force-menu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
-							<IconFileEdit :size="20" />
+							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
 					<NcActionLink v-if="supportPollDrafts" :href="exportPollURI" :download="exportPollFileName">
 						<template #icon>
-							<IconFileDownload :size="20" />
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 						</template>
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
-							<IconFileLock :size="20" />
+							<IconFileLockOutline :size="20" />
 						</template>
 					</NcActionButton>
 				</NcActions>
@@ -98,13 +98,13 @@
 				<NcActions force-menu>
 					<NcActionButton v-if="isModerator" @click="createPollDraft">
 						<template #icon>
-							<IconFileEdit :size="20" />
+							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
 					<NcActionLink :href="exportPollURI" :download="exportPollFileName">
 						<template #icon>
-							<IconFileDownload :size="20" />
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 						</template>
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
@@ -123,15 +123,16 @@ import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileLock from 'vue-material-design-icons/FileLock.vue'
+import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
+import IconFileLockOutline from 'vue-material-design-icons/FileLockOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import PollVotersDetails from './PollVotersDetails.vue'
+import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.ts'
@@ -153,13 +154,13 @@ export default {
 		NcLoadingIcon,
 		NcModal,
 		NcButton,
+		NcIconSvgWrapper,
 		NcProgressBar,
 		PollVotersDetails,
 		// icons
 		IconCheck,
-		IconFileLock,
-		IconFileDownload,
-		IconFileEdit,
+		IconFileLockOutline,
+		IconFileEditOutline,
 		IconPoll,
 	},
 
@@ -187,6 +188,7 @@ export default {
 		const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
 		return {
+			IconFileDownload,
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
 			pollsStore,

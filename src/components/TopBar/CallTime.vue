@@ -16,12 +16,9 @@
 				variant="tertiary"
 				@click="showPopover = !showPopover">
 				<template v-if="isRecording || isStartingRecording" #icon>
-					<IconRecordCircle v-if="isRecording"
+					<IconRecordCircleOutline
 						:size="20"
-						fill-color="#e9322d" />
-					<IconRecordCircle v-else
-						:size="20"
-						fill-color="var(--color-loading-light)" />
+						:fill-color="isRecording ? 'var(--color-border-error)' : 'var(--color-loading-light)'" />
 				</template>
 				<span class="call-time__text">
 					<span class="call-time__placeholder">{{ placeholderCallTime }}</span>
@@ -65,7 +62,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconRecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import IconRecordCircleOutline from 'vue-material-design-icons/RecordCircleOutline.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
@@ -81,7 +78,7 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcPopover,
-		IconRecordCircle,
+		IconRecordCircleOutline,
 		IconStop,
 	},
 

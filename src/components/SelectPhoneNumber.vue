@@ -10,7 +10,7 @@
 		<template v-if="libPhoneNumber">
 			<NcListItem :name="name" @click="selectPhoneNumber">
 				<template #icon>
-					<Phone :size="AVATAR.SIZE.DEFAULT" />
+					<IconPhoneOutline :size="AVATAR.SIZE.DEFAULT" />
 				</template>
 				<template #subname>
 					{{ participantPhoneItem.phoneNumber }}
@@ -24,7 +24,7 @@
 import { t } from '@nextcloud/l10n'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-import Phone from 'vue-material-design-icons/Phone.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import Hint from './UIShared/Hint.vue'
 import { useLibphonenumber } from '../composables/useLibphonenumber.ts'
 import { ATTENDEE, AVATAR } from '../constants.ts'
@@ -36,7 +36,7 @@ export default {
 		Hint,
 		NcAppNavigationCaption,
 		NcListItem,
-		Phone,
+		IconPhoneOutline,
 	},
 
 	props: {

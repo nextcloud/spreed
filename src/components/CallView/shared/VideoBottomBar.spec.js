@@ -9,10 +9,10 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
+import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -214,10 +214,10 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
+					const iceFailedIndicator = wrapper.findComponent(IconAlertCircleOutline)
 					expect(iceFailedIndicator.exists()).toBeFalsy()
 
-					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
@@ -236,10 +236,10 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
+					const iceFailedIndicator = wrapper.findComponent(IconAlertCircleOutline)
 					expect(iceFailedIndicator.exists()).toBeTruthy()
 
-					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
@@ -258,7 +258,7 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 				})
 
@@ -271,7 +271,7 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 				})
 			})
@@ -420,7 +420,7 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const videoOnIcon = wrapper.findComponent(VideoIcon)
+					const videoOnIcon = wrapper.findComponent(IconVideoOutline)
 					expect(videoOnIcon.exists()).toBeTruthy()
 				})
 
@@ -437,7 +437,7 @@ describe('VideoBottomBar.vue', () => {
 						props: componentProps,
 					})
 
-					const videoOffIcon = wrapper.findComponent(VideoOff)
+					const videoOffIcon = wrapper.findComponent(IconVideoOffOutline)
 					expect(videoOffIcon.exists()).toBeTruthy()
 				})
 

@@ -34,7 +34,7 @@
 				variant="error"
 				@click="toggleShowDialog">
 				<template #icon>
-					<Delete :size="20" />
+					<IconDeleteOutline :size="20" />
 				</template>
 				{{ deleteButtonLabel }}
 			</NcButton>
@@ -97,7 +97,7 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
@@ -117,7 +117,7 @@ export default {
 		SelectableParticipant,
 		NcButton,
 		IconArrowLeft,
-		Delete,
+		IconDeleteOutline,
 		NcDialog,
 	},
 

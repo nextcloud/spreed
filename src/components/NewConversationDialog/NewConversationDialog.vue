@@ -73,7 +73,7 @@
 			<NcEmptyContent>
 				<template #icon>
 					<LoadingComponent v-if="isLoading" />
-					<AlertCircle v-else-if="error" :size="64" />
+					<IconAlertCircleOutline v-else-if="error" :size="64" />
 					<Check v-else-if="success && isPublic" :size="64" />
 				</template>
 
@@ -110,7 +110,7 @@ import { provide, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import LoadingComponent from '../LoadingComponent.vue'
 import NewConversationContactsPage from './NewConversationContactsPage.vue'
@@ -141,7 +141,7 @@ export default {
 		NcModal,
 		NewConversationContactsPage,
 		Check,
-		AlertCircle,
+		IconAlertCircleOutline,
 	},
 
 	props: {

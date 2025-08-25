@@ -11,9 +11,10 @@ import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
-import IconViewGallery from 'vue-material-design-icons/ViewGallery.vue'
-import IconViewGrid from 'vue-material-design-icons/ViewGrid.vue'
+import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
+import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import ReactionMenu from '../TopBar/ReactionMenu.vue'
 import TopBarMediaControls from '../TopBar/TopBarMediaControls.vue'
@@ -176,8 +177,8 @@ useHotKey('r', toggleHandRaised)
 				:title="changeViewLabel"
 				@click="changeView">
 				<template #icon>
-					<IconViewGrid v-if="!isGrid" :size="20" />
-					<IconViewGallery v-else :size="20" />
+					<IconViewGridOutline v-if="!isGrid" :size="20" />
+					<IconViewGalleryOutline v-else :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -204,12 +205,13 @@ useHotKey('r', toggleHandRaised)
 				<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
 				<template #icon>
-					<IconHandBackLeftOutline :size="16" />
+					<IconHandBackLeft v-if="isHandRaised" :size="16" />
+					<IconHandBackLeftOutline v-else :size="16" />
 				</template>
 			</NcButton>
 		</div>
 
-		<CallButton shrink-on-mobile
+		<CallButton
 			:hide-text="isSidebar"
 			:is-screensharing="!!localMediaModel.attributes.localScreen" />
 	</div>

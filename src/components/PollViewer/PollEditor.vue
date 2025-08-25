@@ -33,13 +33,13 @@
 			<NcActions v-if="supportPollDrafts" force-menu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" close-after-click @click="openPollDraftHandler">
 					<template #icon>
-						<IconFileEdit :size="20" />
+						<IconFileEditOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Browse poll drafts') }}
 				</NcActionButton>
 				<NcActionButton close-after-click @click="triggerImport">
 					<template #icon>
-						<IconFileUpload :size="20" />
+						<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 					</template>
 					{{ t('spreed', 'Import draft from file') }}
 				</NcActionButton>
@@ -90,13 +90,13 @@
 			<NcActions v-if="supportPollDrafts" force-menu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !editingDraftId" :disabled="!isFilled" @click="createPollDraft">
 					<template #icon>
-						<IconFileEdit :size="20" />
+						<IconFileEditOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
 				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
 					<template #icon>
-						<IconFileDownload :size="20" />
+						<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 					</template>
 					{{ t('spreed', 'Export draft to file') }}
 				</NcActionLink>
@@ -121,13 +121,14 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
-import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
-import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
-import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
+import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
+import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'

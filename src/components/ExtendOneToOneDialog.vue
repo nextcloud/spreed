@@ -13,7 +13,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import NewConversationContactsPage from './NewConversationDialog/NewConversationContactsPage.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 
@@ -78,7 +78,7 @@ async function extendOneToOneConversation() {
 				:title="t('spreed', 'Start a group conversation')"
 				:aria-label="t('spreed', 'Start a group conversation')">
 				<template #icon>
-					<IconAccountMultiplePlus :size="20" />
+					<IconAccountMultiplePlusOutline :size="20" />
 				</template>
 			</NcButton>
 		</template>

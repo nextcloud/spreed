@@ -14,7 +14,7 @@
 				:aria-label="t('spreed', 'Edit poll draft')"
 				@click.stop="editDraft">
 				<template #icon>
-					<IconPencil :size="20" />
+					<IconPencilOutline :size="20" />
 				</template>
 			</NcButton>
 			<NcButton variant="tertiary"
@@ -22,7 +22,7 @@
 				:aria-label="t('spreed', 'Delete poll draft')"
 				@click.stop="deleteDraft">
 				<template #icon>
-					<IconDelete :size="20" />
+					<IconDeleteOutline :size="20" />
 				</template>
 			</NcButton>
 		</span>
@@ -58,8 +58,8 @@
 import { n, t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconDelete from 'vue-material-design-icons/Delete.vue'
-import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import { POLL } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
@@ -70,8 +70,8 @@ export default {
 
 	components: {
 		NcButton,
-		IconDelete,
-		IconPencil,
+		IconDeleteOutline,
+		IconPencilOutline,
 		IconPoll,
 	},
 

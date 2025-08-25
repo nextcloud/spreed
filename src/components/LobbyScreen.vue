@@ -6,7 +6,7 @@
 <template>
 	<div class="lobby">
 		<div class="lobby__header">
-			<RoomService :size="64" />
+			<IconRoomServiceOutline :size="64" />
 			<h2>{{ currentConversationName }}</h2>
 
 			<p class="lobby__timer">
@@ -38,7 +38,7 @@
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
-import RoomService from 'vue-material-design-icons/RoomService.vue'
+import IconRoomServiceOutline from 'vue-material-design-icons/RoomServiceOutline.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
@@ -49,7 +49,7 @@ export default {
 
 	components: {
 		NcRichText,
-		RoomService,
+		IconRoomServiceOutline,
 		MediaSettings,
 	},
 

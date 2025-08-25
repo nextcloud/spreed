@@ -9,7 +9,7 @@
 		:aria-label="ariaLabel"
 		@click="emit('click')">
 		<template #icon>
-			<MessageText :size="20" />
+			<IconMessageTextOutline :size="20" />
 		</template>
 	</NcHeaderButton>
 </template>
@@ -20,7 +20,7 @@ import type { UnwrapNestedRefs } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
 import NcHeaderButton from '@nextcloud/vue/components/NcHeaderButton'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
+import IconMessageTextOutline from 'vue-material-design-icons/MessageTextOutline.vue'
 
 const props = defineProps<{
 	sidebarState: UnwrapNestedRefs<{ isOpen: boolean }>

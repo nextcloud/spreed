@@ -12,7 +12,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
-import IconVolumeOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
+import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
 
 type NcSelectOption = { id: string | null, label: string }
 type MediaDeviceInfoWithFallbackLabel = MediaDeviceInfo & { fallbackLabel: string }
@@ -48,10 +48,7 @@ const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 const deviceIcon = computed<ComponentPublicInstance | null>(() => {
 	switch (props.kind) {
 		case 'audioinput': return IconMicrophoneOutline
-		case 'audiooutput': return h(NcIconSvgWrapper, {
-			svg: IconVolumeOutline,
-			size: 20,
-		})
+		case 'audiooutput': return h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, size: 20 })
 		case 'videoinput': return IconVideoOutline
 		default: return null
 	}
