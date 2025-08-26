@@ -20,8 +20,9 @@
 			<p class="transcript-block__chunks">
 				<span v-for="(item, index) in chunksWithSeparator"
 					ref="chunks"
-					:key="index">
-					{{ item }}
+					:key="index"
+					:lang="item.languageId">
+					{{ item.message }}
 				</span>
 			</p>
 		</div>
@@ -55,6 +56,11 @@ interface CallParticipantModel {
 	}
 }
 
+interface Chunk {
+	message: string
+	languageId: string
+}
+
 export default {
 	name: 'TranscriptBlock',
 
@@ -83,7 +89,7 @@ export default {
 		 * The transcript chunks.
 		 */
 		chunks: {
-			type: Array as PropType<Array<string>>,
+			type: Array as PropType<Array<Chunk>>,
 			required: true,
 		},
 	},
@@ -124,16 +130,27 @@ export default {
 		},
 
 		chunksWithSeparator() {
-			const chunksWithSeparator = [] as Array<string>
+			const chunksWithSeparator = [] as Array<Chunk>
 
 			if (!this.chunks.length) {
 				return chunksWithSeparator
 			}
 
-			chunksWithSeparator.push(this.chunks[0])
+			// The returned languageId is a BCP 47 language tag (to be used in
+			// the HTML "lang" attribute), but the language and region may be
+			// separated by "_" in the language metadata, so it needs to be
+			// replaced by "-".
+
+			chunksWithSeparator.push({
+				message: this.chunks[0].message,
+				languageId: this.chunks[0].languageId.replace('_', '-'),
+			})
 
 			for (let i = 1; i < this.chunks.length; i++) {
-				chunksWithSeparator.push(' ' + this.chunks[i])
+				chunksWithSeparator.push({
+					message: ' ' + this.chunks[i].message,
+					languageId: this.chunks[i].languageId.replace('_', '-'),
+				})
 			}
 
 			return chunksWithSeparator

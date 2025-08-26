@@ -45,10 +45,15 @@ interface CallParticipantModel {
 	off: (event: string, handler: (model: CallParticipantModel, ...args: any[]) => void) => void
 }
 
+interface Chunk {
+	message: string
+	languageId: string
+}
+
 interface TranscriptBlockData {
 	id: number
 	model: CallParticipantModel
-	chunks: Array<string>
+	chunks: Array<Chunk>
 }
 
 interface BlockAndLine {
@@ -181,8 +186,10 @@ export default {
 		 * @param {object} model the CallParticipantModel for the participant
 		 *        that was transcribed.
 		 * @param {string} message the transcribed message.
+		 * @param {string} languageId the ID of the language of the transcribed
+		 *        message.
 		 */
-		handleTranscript(model: CallParticipantModel, message: string) {
+		handleTranscript(model: CallParticipantModel, message: string, languageId: string) {
 			let lastTranscriptBlock = this.transcriptBlocks.at(-1)
 
 			if (lastTranscriptBlock?.model.attributes.peerId !== model.attributes.peerId) {
@@ -197,7 +204,10 @@ export default {
 				lastTranscriptBlock = transcriptBlock
 			}
 
-			lastTranscriptBlock.chunks.push(message)
+			lastTranscriptBlock.chunks.push({
+				message,
+				languageId,
+			})
 
 			this.$nextTick(() => {
 				this.scrollToBottomLineByLine()
