@@ -17,15 +17,16 @@ import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCap
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
 import ThreadItem from '../Threads/ThreadItem.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
+import IconPermMediaOutline from '../../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
@@ -184,7 +185,7 @@ function openPollDraftHandler() {
 				class="shared-items-tab__empty-content"
 				:name="t('spreed', 'No shared items')">
 				<template #icon>
-					<IconFolderMultipleImage :size="20" />
+					<NcIconSvgWrapper :svg="IconPermMediaOutline" />
 				</template>
 			</NcEmptyContent>
 		</template>

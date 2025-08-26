@@ -113,7 +113,7 @@
 				:order="5"
 				:name="t('spreed', 'Shared items')">
 				<template #icon>
-					<IconFolderMultipleImage :size="20" />
+					<NcIconSvgWrapper :svg="IconPermMediaOutline" :size="20" />
 				</template>
 				<SharedItemsTab :active="activeTab === 'shared-items'" @update:state="handleUpdateState" />
 			</NcAppSidebarTab>
@@ -130,10 +130,10 @@ import { ref } from 'vue'
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import IconFolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import IconMessageTextOutline from 'vue-material-design-icons/MessageTextOutline.vue'
@@ -148,6 +148,7 @@ import SearchMessagesTab from './SearchMessages/SearchMessagesTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 import ThreadsTab from './Threads/ThreadsTab.vue'
+import IconPermMediaOutline from '../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetParticipants } from '../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
@@ -170,6 +171,7 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcButton,
+		NcIconSvgWrapper,
 		ParticipantsTab,
 		RightSidebarContent,
 		SearchMessagesTab,
@@ -181,7 +183,6 @@ export default {
 		IconAccountMultipleOutline,
 		IconCogOutline,
 		IconDotsCircle,
-		IconFolderMultipleImage,
 		IconInformationOutline,
 		IconMessageOutline,
 		IconMessageTextOutline,
@@ -244,6 +245,7 @@ export default {
 		}
 
 		return {
+			IconPermMediaOutline,
 			activeTab,
 			CONTENT_MODES,
 			contentModeIndex,
