@@ -46,7 +46,7 @@ Packages for installing the High-performance backend for Ubuntu, Debian und Red 
 ### "How to" from the Nextcloud snap team / Docker Stack
 
 * **Requirements:** Docker
-* **Link:** [github.com/nextcloud-snap/nextcloud-snap/wiki/How-to-configure-talk-HPB-with-Docker](https://github.com/nextcloud-snap/nextcloud-snap/wiki/How-to-configure-talk-HPB-with-Docker)
+* **Link:** [help.nextcloud.com/t/high-performance-backend-for-talk-on-nextcloud-with-docker/215828](https://help.nextcloud.com/t/high-performance-backend-for-talk-on-nextcloud-with-docker/215828)
 
 Thanks to the Nextcloud snap team, who created a [how to](https://github.com/nextcloud-snap/nextcloud-snap/wiki/How-to-configure-talk-HPB-with-Docker) for installing the High-performance backend using the Talk container from Nextcloud AIO in a Docker Stack. While provided "as-is" it might help you to setup the High-performance backend for your use-case. Please note that it does not require a Nextcloud snap installation! 
 
