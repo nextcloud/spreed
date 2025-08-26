@@ -246,7 +246,7 @@ function handleJoin({ call }: { call: boolean }) {
 	flex-direction: column;
 	flex: 0 0 100%;
 	max-width: 300px;
-	border: 3px solid var(--color-border);
+	border: 2px solid var(--color-border);
 	padding: calc(var(--default-grid-baseline) * 2);
 	border-radius: var(--border-radius-large);
 	background-color: var(--color-main-background);
@@ -255,7 +255,7 @@ function handleJoin({ call }: { call: boolean }) {
 		background-color: var(--color-primary-light);
 
 		&:not(.event-card--in-call) {
-			border-color: var(--color-primary-light) !important;
+			border-color: var(--color-primary-element-light-hover) !important;
 		}
 	}
 

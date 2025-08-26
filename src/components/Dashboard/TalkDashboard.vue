@@ -6,8 +6,8 @@
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { isRTL, t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { generateUrl, imagePath } from '@nextcloud/router'
+import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -25,8 +25,8 @@ import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
 import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
+import DashboardSection from './DashboardSection.vue'
 import EventCard from './EventCard.vue'
-import Section from './Section.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -43,6 +43,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isDirectionRTL = isRTL()
 const isMobile = useIsMobile()
+const isSmallMobile = useIsSmallMobile()
 
 const store = useStore()
 const router = useRouter()
@@ -178,49 +179,53 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 <template>
 	<div class="talk-dashboard-wrapper"
-		:class="{ 'talk-dashboard-wrapper--mobile': isMobile }">
-		<h2 class="talk-dashboard__header">
-			{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
-		</h2>
-		<div class="talk-dashboard__actions">
-			<NcPopover v-if="canStartConversations"
-				popup-role="dialog">
-				<template #trigger>
-					<NcButton variant="primary">
-						<template #icon>
-							<IconVideoOutline />
-						</template>
-						{{ t('spreed', 'Start meeting now') }}
-					</NcButton>
-				</template>
-				<div role="dialog"
-					aria-labelledby="instant_meeting_dialog"
-					class="instant-meeting__dialog"
-					aria-modal="true">
-					<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
-					<NcInputField id="room-name"
-						v-model="conversationName"
-						:placeholder="t('spreed', 'Meeting')" />
-					<NcButton variant="primary"
-						@click="startMeeting">
-						{{ t('spreed', 'Create and copy link') }}
-					</NcButton>
-				</div>
-			</NcPopover>
-			<NcButton v-if="canStartConversations"
-				@click="EventBus.emit('new-conversation-dialog:show')">
-				<template #icon>
-					<IconPlus :size="20" />
-				</template>
-				{{ t('spreed', 'Create a new conversation') }}
-			</NcButton>
+		:class="{
+			'talk-dashboard-wrapper--mobile': isMobile,
+			'talk-dashboard-wrapper--small-mobile': isSmallMobile,
+		}">
+		<div class="talk-dashboard__menu">
+			<h2 class="talk-dashboard__header">
+				{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
+			</h2>
+			<div class="talk-dashboard__actions">
+				<NcPopover v-if="canStartConversations"
+					popup-role="dialog">
+					<template #trigger>
+						<NcButton variant="primary">
+							<template #icon>
+								<IconVideoOutline />
+							</template>
+							{{ t('spreed', 'Start meeting now') }}
+						</NcButton>
+					</template>
+					<div role="dialog"
+						aria-labelledby="instant_meeting_dialog"
+						class="instant-meeting__dialog"
+						aria-modal="true">
+						<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
+						<NcInputField id="room-name"
+							v-model="conversationName"
+							:placeholder="t('spreed', 'Meeting')" />
+						<NcButton variant="primary"
+							@click="startMeeting">
+							{{ t('spreed', 'Create and copy link') }}
+						</NcButton>
+					</div>
+				</NcPopover>
+				<NcButton v-if="canStartConversations"
+					@click="EventBus.emit('new-conversation-dialog:show')">
+					<template #icon>
+						<IconPlus :size="20" />
+					</template>
+					{{ t('spreed', 'Create a new conversation') }}
+				</NcButton>
 
-			<NcButton @click="EventBus.emit('open-conversations-list:show')">
-				<template #icon>
-					<IconList :size="20" />
-				</template>
-				{{ t('spreed', 'Join open conversations') }}
-			</NcButton>
+				<NcButton @click="EventBus.emit('open-conversations-list:show')">
+					<template #icon>
+						<IconList :size="20" />
+					</template>
+					{{ t('spreed', 'Join open conversations') }}
+				</NcButton>
 
 				<NcButton v-if="canModerateSipDialOut"
 					@click="EventBus.emit('call-phone-dialog:show')">
@@ -315,7 +320,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					</DashboardSection>
 					<DashboardSection v-else
 						:title="t('spreed', 'Unread mentions')"
-						:description="t('spreed', 'Messages where you were mentioned will show up here\. You can mention people by typing @ followed by their name')">
+						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')">
 						<template #image>
 							<img :src="imagePath('spreed', 'dashboard/mentions.png')">
 						</template>
@@ -366,25 +371,38 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @import '../../assets/variables';
 
 .talk-dashboard-wrapper {
-	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 3); // '.title' height
-	--section-width: 300px;
-	--section-height: 300px;
-	--content-height: calc(100% - var(--title-height));
-	padding: 0 calc(var(--default-grid-baseline) * 3);
-	max-width: calc(100vw - 300px - var(--body-container-margin) * 2); // 300px for the left sidebar and body container margins
+	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
+	width: calc(100vw - 300px - var(--body-container-margin) * 2); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-height: 800px;
+	max-width: 1200px;
 
 	&--mobile {
-		max-width: 100%;
+		width: 100%;
 	}
+
+	&--small-mobile {
+		width: 100%;
+		height: auto;
+
+		.talk-dashboard__chats {
+			grid-template-columns: 1fr;
+			gap: calc(var(--default-grid-baseline) * 6);
+		}
+	}
+}
+
+.talk-dashboard__menu {
+	margin-bottom: calc(var(--default-grid-baseline) * 5);
 }
 
 .talk-dashboard__header {
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
-	height: 51px; // top bar height
-	line-height: 51px;
-	margin: 0 auto;
+	margin: 0 auto calc(var(--default-grid-baseline) * 2);
 	padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
 }
 
@@ -393,6 +411,15 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
 	flex-wrap: wrap;
+	justify-content: space-evenly;
+
+	:deep(.button-vue),
+	:deep(.v-popper--theme-dropdown) {
+		height: var(--header-menu-item-height);
+		border-radius: var(--border-radius-large);
+		flex: 1;
+		width: 100%;
+	}
 
 	:deep(.button-vue) {
 		padding-inline: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 4);
@@ -400,7 +427,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .event-section {
-	margin-block: calc(var(--default-grid-baseline) * 8);
+	margin-block-end: calc(var(--default-grid-baseline) * 6);
 
 	&--empty {
 		height: 225px;
@@ -460,15 +487,22 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	inset-inline-start: calc(var(--default-grid-baseline) * 2);
 }
 
-.talk-dashboard__chats {
+.talk-dashboard__items {
 	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	min-width: 0;
+	flex-grow: 3;
+}
+
+.talk-dashboard__chats {
+	display: grid;
 	gap: calc(var(--default-grid-baseline) * 8);
-	justify-content: space-between;
-	flex-direction: row;
-	height: 300px;
+	grid-template-columns: 1fr 1fr;
+	flex-grow: 1;
 
 	&> div {
-		width: calc(50% - calc(var(--default-grid-baseline) * 4));
+		max-height: 360px;
 	}
 }
 
@@ -479,33 +513,26 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 	&__loading-placeholder {
 		overflow: hidden;
-		height: var(--content-height);
 	}
 }
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	height: var(--content-height);
+	height: 225px;
 	line-height: 20px;
 }
 
 .title {
-	font-weight: bold;
-	font-size: inherit;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: block;
-	height: var(--default-clickable-area);
-	margin-block: calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
-	margin-inline: var(--default-grid-baseline);
+	font-size: 1.25rem;
+    font-weight: bold;
+	margin-block: 0 calc(var(--default-grid-baseline) * 2);
 }
 
 .instant-meeting__dialog {
-	padding: 8px;
+	padding: calc(var(--default-grid-baseline) * 2);
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--default-grid-baseline) ;
 	align-items: center;
 }
 
@@ -514,7 +541,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	.talk-dashboard__actions {
 		:deep(.button-vue),
 		:deep(.v-popper--theme-dropdown) {
-			width: 100%;
+			flex: initial;
+		}
+
+		:deep(.button-vue) {
+			padding-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
 }
