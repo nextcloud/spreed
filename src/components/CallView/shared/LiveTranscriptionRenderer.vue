@@ -11,7 +11,8 @@
 			:key="item.id"
 			:token="token"
 			:model="item.model"
-			:chunks="item.chunks" />
+			:chunks="item.chunks"
+			:right-to-left="item.rightToLeft" />
 	</div>
 </template>
 
@@ -19,6 +20,7 @@
 import type { PropType } from 'vue'
 
 import TranscriptBlock from './TranscriptBlock.vue'
+import { useLiveTranscriptionStore } from '../../../stores/liveTranscription.ts'
 
 declare module 'vue' {
 	interface TypeRefs {
@@ -54,6 +56,7 @@ interface TranscriptBlockData {
 	id: number
 	model: CallParticipantModel
 	chunks: Array<Chunk>
+	rightToLeft: boolean
 }
 
 interface BlockAndLine {
@@ -85,6 +88,14 @@ export default {
 		},
 	},
 
+	setup() {
+		const liveTranscriptionStore = useLiveTranscriptionStore()
+
+		return {
+			liveTranscriptionStore,
+		}
+	},
+
 	data() {
 		return {
 			registeredModels: {} as { [key: string]: CallParticipantModel },
@@ -93,6 +104,17 @@ export default {
 			lastScrolledToBlockAndLine: null as null | BlockAndLine,
 			pendingScrollToBottomLineByLine: undefined as undefined | ReturnType<typeof setTimeout>,
 		}
+	},
+
+	computed: {
+		liveTranscriptionLanguages() {
+			const liveTranscriptionLanguages = this.liveTranscriptionStore.getLiveTranscriptionLanguages()
+			if (!liveTranscriptionLanguages) {
+				return {}
+			}
+
+			return liveTranscriptionLanguages
+		},
 	},
 
 	watch: {
@@ -181,7 +203,9 @@ export default {
 		 * Handle a new received transcript.
 		 *
 		 * The transcript is added to the last block if it comes from the same
-		 * participant, or a new block is added if it comes from another one.
+		 * participant, or a new block is added if it comes from another one. A
+		 * new block will be used even for the same participant if the text
+		 * direction changed.
 		 *
 		 * @param {object} model the CallParticipantModel for the participant
 		 *        that was transcribed.
@@ -192,11 +216,15 @@ export default {
 		handleTranscript(model: CallParticipantModel, message: string, languageId: string) {
 			let lastTranscriptBlock = this.transcriptBlocks.at(-1)
 
-			if (lastTranscriptBlock?.model.attributes.peerId !== model.attributes.peerId) {
+			const messageIsRightToLeft = this.liveTranscriptionLanguages[languageId]?.metadata.rtl || false
+
+			if (lastTranscriptBlock?.model.attributes.peerId !== model.attributes.peerId
+				|| lastTranscriptBlock?.rightToLeft !== messageIsRightToLeft) {
 				const transcriptBlock = {
 					id: lastTranscriptBlock ? lastTranscriptBlock.id + 1 : 0,
 					model,
 					chunks: [],
+					rightToLeft: messageIsRightToLeft,
 				}
 
 				this.transcriptBlocks.push(transcriptBlock)

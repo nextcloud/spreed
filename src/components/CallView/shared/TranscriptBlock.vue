@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div class="transcript-block">
+	<div class="transcript-block"
+		:style="transcriptBlockStyle">
 		<div class="transcript-block__avatar">
 			<AvatarWrapper :id="actorId"
 				:token="token"
@@ -93,6 +94,15 @@ export default {
 			type: Array as PropType<Array<Chunk>>,
 			required: true,
 		},
+
+		/**
+		 * Whether the transcript is written right to left.
+		 */
+		rightToLeft: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
 	},
 
 	setup() {
@@ -111,6 +121,12 @@ export default {
 	},
 
 	computed: {
+		transcriptBlockStyle() {
+			return {
+				direction: this.rightToLeft ? 'rtl' : 'ltr',
+			} as StyleValue
+		},
+
 		actorId() {
 			return this.model.attributes.actorId || ''
 		},
