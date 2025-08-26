@@ -137,6 +137,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 
 	:deep(.v-select.select) {
 		width: 100%;
+		min-width: 0;
 		margin: 0;
 	}
 
