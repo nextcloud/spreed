@@ -201,7 +201,7 @@ describe('MediaDevicesSource', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Video could not be got')
 				})
 
@@ -220,10 +220,10 @@ describe('MediaDevicesSource', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Audio and video could not be got')
 				})
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Audio could not be got')
 				})
 
@@ -254,7 +254,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are audio but no video devices and audio could not be got', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					constraints.video = false
 
 					throw new Error('Audio could not be got')
@@ -286,7 +286,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are video but no audio devices and video could not be got', () => {
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					constraints.audio = false
 
 					throw new Error('Video could not be got')
@@ -337,7 +337,7 @@ describe('MediaDevicesSource', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Audio could not be got')
 				})
 
@@ -367,7 +367,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are audio but no video devices and audio could not be got', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Audio could not be got')
 				})
 
@@ -429,7 +429,7 @@ describe('MediaDevicesSource', () => {
 				getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Video could not be got')
 				})
 
@@ -472,7 +472,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are video but no audio devices and video could not be got', () => {
 				getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-				vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+				mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 					throw new Error('Video could not be got')
 				})
 
@@ -605,7 +605,7 @@ describe('MediaDevicesSource', () => {
 		test('from a device to another device but track could not be got', async () => {
 			await mediaDevicesSource.start(retryNoVideoCallback)
 
-			vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+			mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 				throw new Error('Audio could not be got')
 			})
 
@@ -666,7 +666,7 @@ describe('MediaDevicesSource', () => {
 				// expected Error: Audio and/or video is required
 			}
 
-			vi.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
+			mediaDevicesManager.getUserMedia.mockImplementationOnce(async (constraints) => {
 				throw new Error('Audio could not be got')
 			})
 
