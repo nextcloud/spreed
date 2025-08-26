@@ -2150,6 +2150,6 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud ist im Wartungsmodus, bitte laden Sie die Seite neu",
     "Lost connection to signaling server. Try to reload the page manually." : "Verbindung zum Signaling-Server verloren. Versuchen Sie, die Seite selbst neu zu laden.",
     "Reload Talk home" : "Talk-Startseite neu laden",
-    "Talk home" : "Talk home"
+    "Talk home" : "Startseite"
 },
 "nplurals=2; plural=(n != 1);");
