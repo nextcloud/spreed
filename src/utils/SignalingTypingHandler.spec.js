@@ -79,7 +79,11 @@ describe('SignalingTypingHandler', () => {
 	}
 
 	beforeEach(() => {
-		const testStoreConfig = cloneDeep(storeConfig)
+		const testStoreConfig = cloneDeep({
+			...storeConfig,
+			// We have some invalid mutations that throw errors in the strict mode
+			strict: false,
+		})
 		store = new Vuex.Store(testStoreConfig)
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
