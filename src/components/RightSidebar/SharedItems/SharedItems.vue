@@ -4,7 +4,12 @@
 -->
 
 <template>
-	<div class="shared-items" :class="{ 'shared-items__list': hasListLayout }">
+	<div
+		class="shared-items"
+		:class="{
+			'shared-items__media': isMedia,
+			'shared-items__list': hasListLayout,
+		}">
 		<template v-for="item in itemsToDisplay" :key="item.id">
 			<div v-if="isLocation" class="shared-items__location">
 				<Location wide v-bind="item.messageParameters.object" />
@@ -122,9 +127,13 @@ export default {
 <style lang="scss" scoped>
 .shared-items {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-gap: 6px;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: var(--default-grid-baseline);
 	margin: auto;
+
+	&__media {
+		grid-template-columns: repeat(5, 1fr);
+	}
 
 	&__list {
 		grid-template-columns: 1fr;
@@ -132,11 +141,11 @@ export default {
 
 	&__location {
 		height: 150px;
-		margin: 4px 0;
+		margin-block: var(--default-grid-baseline);
 	}
 
 	&__other {
-		padding-inline-start: 8px;
+		padding-inline-start: calc(var(--default-grid-baseline) * 2);
 
 		a {
 			text-decoration: underline;

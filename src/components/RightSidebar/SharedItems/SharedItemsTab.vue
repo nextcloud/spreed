@@ -18,7 +18,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCollectionList from '@nextcloud/vue/components/NcCollectionList'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcRelatedResourcesPanel from '@nextcloud/vue/components/NcRelatedResourcesPanel'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
@@ -28,7 +27,7 @@ import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
 import IconPermMediaOutline from '../../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetToken } from '../../../composables/useGetToken.ts'
-import { CONVERSATION } from '../../../constants.ts'
+import { CONVERSATION, SHARED_ITEM } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useActorStore } from '../../../stores/actor.ts'
@@ -100,7 +99,7 @@ function showMore(type: string) {
  * Get the limit for the number of items displayed based on the type.
  */
 function limit(type: string) {
-	return sharedItemsWithPreviewLimit.includes(type) ? 2 : 6
+	return sharedItemsWithPreviewLimit.includes(type) ? 2 : 5
 }
 
 /**
@@ -117,14 +116,6 @@ function openPollDraftHandler() {
 		<LoadingComponent v-if="!sharedItemsStore.overviewLoaded[token]" class="shared-items-tab__loading" />
 
 		<template v-else>
-			<NcButton v-if="canCreatePollDrafts"
-				wide
-				@click="openPollDraftHandler">
-				<template #icon>
-					<IconPoll :size="20" />
-				</template>
-				{{ t('spreed', 'Browse poll drafts') }}
-			</NcButton>
 			<!-- Threads overview -->
 			<template v-if="supportThreads && threadsInformation.length">
 				<NcAppNavigationCaption :name="t('spreed', 'Recent threads')" />
@@ -132,29 +123,38 @@ function openPollDraftHandler() {
 					<ThreadItem v-for="thread of threadsInformation"
 						:key="`thread_${thread.thread.id}`"
 						:thread="thread" />
-					<NcListItem v-if="hasMoreThreads"
-						:name="t('spreed', 'Show more threads')"
-						one-line
+					<NcButton v-if="hasMoreThreads"
+						variant="tertiary"
+						class="shared-items-tab__more-button shared-items-tab__more-button--threads"
 						@click="emit('update:state', 'threads')">
 						<template #icon>
-							<IconDotsHorizontal class="threads-icon" :size="20" />
+							<IconDotsHorizontal :size="24" />
 						</template>
-					</NcListItem>
+						{{ t('spreed', 'Show more threads') }}
+					</NcButton>
 				</ul>
 			</template>
 			<!-- Shared items grouped by type -->
 			<template v-for="type in sharedItemsOrder" :key="type">
-				<div v-if="sharedItems[type]">
+				<div v-if="sharedItems[type]" class="shared-items-tab__section">
 					<NcAppNavigationCaption :name="sharedItemTitle[type] || sharedItemTitle.default" />
+					<NcButton v-if="type === SHARED_ITEM.TYPES.POLL && canCreatePollDrafts"
+						class="shared-items-tab__poll-button"
+						wide
+						@click="openPollDraftHandler">
+						<template #icon>
+							<IconPoll :size="20" />
+						</template>
+						{{ t('spreed', 'Browse poll drafts') }}
+					</NcButton>
 					<SharedItems :type="type"
 						:token="token"
 						tab-view
 						:limit="limit(type)"
 						:items="sharedItems[type]" />
 					<NcButton v-if="hasMore(type, sharedItems[type])"
-						variant="tertiary-no-background"
-						class="more"
-						wide
+						variant="tertiary"
+						class="shared-items-tab__more-button"
 						@click="showMore(type)">
 						<template #icon>
 							<IconDotsHorizontal :size="20" />
@@ -200,15 +200,11 @@ function openPollDraftHandler() {
 </template>
 
 <style lang="scss" scoped>
-.more {
-	margin-top: 8px;
-}
-
 // Override default NcRelatedResourcesPanel styles
 .related-resources {
 	&:deep(.related-resources__header) {
 		margin: 14px 0 !important;
-		padding: 0 calc(var(--default-grid-baseline, 4px) * 2) 0 calc(var(--default-grid-baseline, 4px) * 3);
+		padding: 0 calc(var(--default-grid-baseline) * 2) 0 calc(var(--default-grid-baseline) * 3);
 
 		h5 {
 			opacity: .7 !important;
@@ -222,19 +218,40 @@ function openPollDraftHandler() {
 	flex-direction: column;
 	height: 100%;
 
+	&__section {
+		margin-top: calc(var(--default-grid-baseline) * 6);
+	}
+
 	&__loading,
 	&__empty-content {
 		flex: 1;
+	}
+
+	&__more-button {
+		margin-top: var(--default-grid-baseline);
+		margin-inline-start: var(--default-grid-baseline);
+
+		// Override NcButton styles to align mdi icons and mimetype icons
+		:deep(.button-vue__icon) {
+			margin-inline-end: calc(var(--default-grid-baseline) * 2);
+			width: 24px;
+			min-width: 24px;
+		}
+
+		&--threads :deep(.button-vue__icon) {
+			width: 40px;
+		}
+	}
+
+	&__poll-button {
+		max-width: 300px;
+		margin-bottom: var(--default-grid-baseline);
 	}
 }
 
 .threads {
 	&-list {
 		line-height: 20px;
-	}
-
-	&-icon {
-		width: 40px; // AVATAR.SIZE.DEFAULT
 	}
 }
 </style>

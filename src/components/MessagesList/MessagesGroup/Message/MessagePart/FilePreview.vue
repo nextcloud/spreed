@@ -677,6 +677,7 @@ export default {
 
 		.name-container {
 			padding: 0 4px;
+			font-weight: normal;
 		}
 
 		.loading {
