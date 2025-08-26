@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import SignalingParticipantList from './SignalingParticipantList.js'
 
 describe('SignalingParticipantList', () => {
@@ -62,7 +63,7 @@ describe('SignalingParticipantList', () => {
 		signaling = new function() {
 			this._handlers = {}
 
-			this.on = jest.fn((event, handler) => {
+			this.on = vi.fn((event, handler) => {
 				if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
 					this._handlers[event] = [handler]
 				} else {
@@ -81,7 +82,7 @@ describe('SignalingParticipantList', () => {
 				}
 			}
 
-			this.off = jest.fn((event, handler) => {
+			this.off = vi.fn((event, handler) => {
 				const handlers = this._handlers[event]
 				if (!handlers) {
 					return
@@ -93,14 +94,14 @@ describe('SignalingParticipantList', () => {
 				}
 			})
 
-			this.emit = jest.fn()
+			this.emit = vi.fn()
 		}()
 
 		signalingParticipantList = new SignalingParticipantList()
 		signalingParticipantList.setSignaling(signaling)
 
-		participantsJoinedHandler = jest.fn()
-		participantsLeftHandler = jest.fn()
+		participantsJoinedHandler = vi.fn()
+		participantsLeftHandler = vi.fn()
 
 		signalingParticipantList.on('participantsJoined', participantsJoinedHandler)
 		signalingParticipantList.on('participantsLeft', participantsLeftHandler)

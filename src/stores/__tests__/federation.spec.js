@@ -1,18 +1,20 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { mockedCapabilities } from '../../__mocks__/capabilities.ts'
 import { acceptShare, getRemoteCapabilities, getShares, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useFederationStore } from '../federation.ts'
 
-jest.mock('../../services/federationService', () => ({
-	getShares: jest.fn(),
-	acceptShare: jest.fn(),
-	rejectShare: jest.fn(),
-	getRemoteCapabilities: jest.fn(),
+vi.mock('../../services/federationService', () => ({
+	getShares: vi.fn(),
+	acceptShare: vi.fn(),
+	rejectShare: vi.fn(),
+	getRemoteCapabilities: vi.fn(),
 }))
 
 describe('federationStore', () => {
@@ -92,7 +94,7 @@ describe('federationStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	it('returns an empty objects when invitations are not loaded yet', async () => {
@@ -146,7 +148,7 @@ describe('federationStore', () => {
 		// Arrange
 		const response = generateOCSErrorResponse({ status: 404, payload: [] })
 		getShares.mockRejectedValueOnce(response)
-		console.error = jest.fn()
+		console.error = vi.fn()
 
 		// Act
 		await federationStore.getShares()
@@ -227,7 +229,7 @@ describe('federationStore', () => {
 		await federationStore.getShares()
 		const errorResponse = generateOCSErrorResponse({ status: 404, payload: [] })
 		acceptShare.mockRejectedValueOnce(errorResponse)
-		console.error = jest.fn()
+		console.error = vi.fn()
 
 		// Act
 		await federationStore.acceptShare(invites[0].id)
@@ -278,7 +280,7 @@ describe('federationStore', () => {
 		await federationStore.getShares()
 		const errorResponse = generateOCSErrorResponse({ status: 404, payload: [] })
 		rejectShare.mockRejectedValueOnce(errorResponse)
-		console.error = jest.fn()
+		console.error = vi.fn()
 
 		// Act
 		await federationStore.rejectShare(invites[0].id)

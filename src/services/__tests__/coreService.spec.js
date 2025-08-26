@@ -1,19 +1,23 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { vi } from 'vitest'
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../coreService.ts'
 
-jest.mock('@nextcloud/axios', () => ({
-	get: jest.fn(),
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		get: vi.fn(),
+	},
 }))
 
 // Test requests when federations invite are enabled
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(() => ({
+vi.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: vi.fn(() => ({
 		spreed: {
 			features: ['federation-v1'],
 			'features-local': [],
@@ -26,7 +30,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 describe('coreService', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	/**

@@ -1,11 +1,13 @@
-import { emit } from '@nextcloud/event-bus'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { emit } from '@nextcloud/event-bus'
 import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { createStore } from 'vuex'
 import {
 	ATTENDEE,
@@ -39,38 +41,40 @@ import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import storeConfig from './storeConfig.js'
 
-jest.mock('../services/conversationsService', () => ({
-	makeConversationPublic: jest.fn(),
-	makeConversationPrivate: jest.fn(),
-	addToFavorites: jest.fn(),
-	removeFromFavorites: jest.fn(),
-	changeLobbyState: jest.fn(),
-	changeReadOnlyState: jest.fn(),
-	changeListable: jest.fn(),
-	createLegacyConversation: jest.fn(),
-	createConversation: jest.fn(),
-	setConversationName: jest.fn(),
-	setConversationDescription: jest.fn(),
-	setNotificationLevel: jest.fn(),
-	setSIPEnabled: jest.fn(),
-	fetchConversation: jest.fn(),
-	fetchConversations: jest.fn(),
-	deleteConversation: jest.fn(),
-	setConversationPermissions: jest.fn(),
-	setCallPermissions: jest.fn(),
+vi.mock('../services/conversationsService', () => ({
+	makeConversationPublic: vi.fn(),
+	makeConversationPrivate: vi.fn(),
+	addToFavorites: vi.fn(),
+	removeFromFavorites: vi.fn(),
+	changeLobbyState: vi.fn(),
+	changeReadOnlyState: vi.fn(),
+	changeListable: vi.fn(),
+	createLegacyConversation: vi.fn(),
+	createConversation: vi.fn(),
+	setConversationName: vi.fn(),
+	setConversationDescription: vi.fn(),
+	setNotificationLevel: vi.fn(),
+	setSIPEnabled: vi.fn(),
+	fetchConversation: vi.fn(),
+	fetchConversations: vi.fn(),
+	deleteConversation: vi.fn(),
+	setConversationPermissions: vi.fn(),
+	setCallPermissions: vi.fn(),
 }))
 
-jest.mock('../services/messagesService', () => ({
-	updateLastReadMessage: jest.fn(),
-	setConversationUnread: jest.fn(),
+vi.mock('../services/messagesService', () => ({
+	updateLastReadMessage: vi.fn(),
+	setConversationUnread: vi.fn(),
 }))
 
-jest.mock('@nextcloud/event-bus')
+vi.mock('@nextcloud/event-bus')
 
-jest.mock('../services/BrowserStorage.js', () => ({
-	getItem: jest.fn().mockReturnValue(null),
-	setItem: jest.fn(),
-	removeItem: jest.fn(),
+vi.mock('../services/BrowserStorage.js', () => ({
+	default: {
+		getItem: vi.fn().mockReturnValue(null),
+		setItem: vi.fn(),
+		removeItem: vi.fn(),
+	},
 }))
 
 describe('conversationsStore', () => {
@@ -111,14 +115,14 @@ describe('conversationsStore', () => {
 
 		testStoreConfig = cloneDeep(storeConfig)
 
-		addParticipantOnceAction = jest.fn()
+		addParticipantOnceAction = vi.fn()
 		testStoreConfig.modules.participantsStore.actions.addParticipantOnce = addParticipantOnceAction
 
-		console.debug = jest.fn()
+		console.debug = vi.fn()
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('conversation list', () => {
@@ -129,12 +133,12 @@ describe('conversationsStore', () => {
 		let updateTalkVersionHashAction
 
 		beforeEach(() => {
-			purgeMessagesStoreAction = jest.fn()
+			purgeMessagesStoreAction = vi.fn()
 			testStoreConfig.modules.messagesStore.actions.purgeMessagesStore = purgeMessagesStoreAction
 			talkHashStore = useTalkHashStore()
-			checkMaintenanceModeAction = jest.spyOn(talkHashStore, 'checkMaintenanceMode')
-			clearMaintenanceModeAction = jest.spyOn(talkHashStore, 'clearMaintenanceMode')
-			updateTalkVersionHashAction = jest.spyOn(talkHashStore, 'updateTalkVersionHash')
+			checkMaintenanceModeAction = vi.spyOn(talkHashStore, 'checkMaintenanceMode')
+			clearMaintenanceModeAction = vi.spyOn(talkHashStore, 'clearMaintenanceMode')
+			updateTalkVersionHashAction = vi.spyOn(talkHashStore, 'updateTalkVersionHash')
 			store = createStore(testStoreConfig)
 		})
 
@@ -997,7 +1001,7 @@ describe('conversationsStore', () => {
 
 		test('updates last activity', () => {
 			const mockDate = new Date('2020-01-01')
-			jest.useFakeTimers().setSystemTime(mockDate)
+			vi.useFakeTimers().setSystemTime(mockDate)
 
 			testConversation.lastActivity = 1200300
 
@@ -1005,7 +1009,7 @@ describe('conversationsStore', () => {
 
 			store.dispatch('updateConversationLastActive', testToken)
 
-			jest.useRealTimers()
+			vi.useRealTimers()
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.lastActivity).toBe(mockDate.getTime() / 1000)

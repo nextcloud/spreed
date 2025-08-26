@@ -1,7 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { vi } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import { prepareTemporaryMessage } from '../prepareTemporaryMessage.ts'
 
@@ -9,11 +11,11 @@ describe('prepareTemporaryMessage', () => {
 	const TOKEN = 'XXTOKENXX'
 
 	beforeEach(() => {
-		jest.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
+		vi.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
 	})
 
 	afterEach(() => {
-		jest.useRealTimers()
+		vi.useRealTimers()
 	})
 
 	const defaultPayload = {

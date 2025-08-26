@@ -1,7 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { vi } from 'vitest'
 import {
 	convertToUnix,
 	formattedTime,
@@ -37,11 +39,11 @@ describe('formattedTime', () => {
 
 describe('futureRelativeTime', () => {
 	beforeEach(() => {
-		jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00Z'))
+		vi.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00Z'))
 	})
 
 	afterEach(() => {
-		jest.useRealTimers()
+		vi.useRealTimers()
 	})
 
 	it('should return the correct string for time in hours', () => {

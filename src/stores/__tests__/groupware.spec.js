@@ -1,14 +1,16 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { getUserAbsence } from '../../services/groupwareService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useGroupwareStore } from '../groupware.ts'
 
-jest.mock('../../services/groupwareService', () => ({
-	getUserAbsence: jest.fn(),
+vi.mock('../../services/groupwareService', () => ({
+	getUserAbsence: vi.fn(),
 }))
 
 describe('groupwareStore', () => {
@@ -23,7 +25,7 @@ describe('groupwareStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('absence status', () => {
@@ -47,7 +49,7 @@ describe('groupwareStore', () => {
 			getUserAbsence
 				.mockRejectedValueOnce(errorNotFound)
 				.mockRejectedValueOnce(errorOther)
-			console.error = jest.fn()
+			console.error = vi.fn()
 
 			// Act
 			await groupwareStore.getUserAbsence({ token, userId })

@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import BlackVideoEnforcer from './BlackVideoEnforcer.js'
 
 /**
@@ -21,14 +22,14 @@ function newMediaStreamTrackMock(id) {
 		this._height = 540
 		this.id = id
 		this.enabled = true
-		this.addEventListener = jest.fn((eventName, eventHandler) => {
+		this.addEventListener = vi.fn((eventName, eventHandler) => {
 			if (eventName !== 'ended') {
 				return
 			}
 
 			this._endedEventHandlers.push(eventHandler)
 		})
-		this.removeEventListener = jest.fn((eventName, eventHandler) => {
+		this.removeEventListener = vi.fn((eventName, eventHandler) => {
 			if (eventName !== 'ended') {
 				return
 			}
@@ -38,13 +39,13 @@ function newMediaStreamTrackMock(id) {
 				this._endedEventHandlers.splice(index, 1)
 			}
 		})
-		this.stop = jest.fn(() => {
+		this.stop = vi.fn(() => {
 			for (let i = 0; i < this._endedEventHandlers.length; i++) {
 				const handler = this._endedEventHandlers[i]
 				handler.apply(handler)
 			}
 		})
-		this.getSettings = jest.fn(() => {
+		this.getSettings = vi.fn(() => {
 			return {
 				width: this._width,
 				height: this._height,
@@ -64,18 +65,18 @@ describe('BlackVideoEnforcer', () => {
 
 	beforeAll(() => {
 		const originalCreateElement = document.createElement
-		jest.spyOn(document, 'createElement').mockImplementation((tagName, options) => {
+		vi.spyOn(document, 'createElement').mockImplementation((tagName, options) => {
 			if (tagName !== 'canvas') {
 				return originalCreateElement(tagName, options)
 			}
 
 			return new function() {
-				this.getContext = jest.fn(() => {
+				this.getContext = vi.fn(() => {
 					return {
-						fillRect: jest.fn(),
+						fillRect: vi.fn(),
 					}
 				})
-				this.captureStream = jest.fn(() => {
+				this.captureStream = vi.fn(() => {
 					const blackVideoTrackLocal = newMediaStreamTrackMock('blackVideoTrack' + blackVideoTrackCount)
 					blackVideoTracks[blackVideoTrackCount] = blackVideoTrackLocal
 					blackVideoTrackCount++
@@ -84,10 +85,10 @@ describe('BlackVideoEnforcer', () => {
 					blackVideoTrackLocal._height = this.height
 
 					return {
-						getVideoTracks: jest.fn(() => {
+						getVideoTracks: vi.fn(() => {
 							return [blackVideoTrackLocal]
 						}),
-						getTracks: jest.fn(() => {
+						getTracks: vi.fn(() => {
 							return [blackVideoTrackLocal]
 						}),
 					}
@@ -97,7 +98,7 @@ describe('BlackVideoEnforcer', () => {
 	})
 
 	beforeEach(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 
 		blackVideoTrackCount = 0
 		blackVideoTracks = []
@@ -106,12 +107,12 @@ describe('BlackVideoEnforcer', () => {
 
 		expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-		outputTrackSetHandler = jest.fn((blackVideoEnforcer, trackId, track) => {
+		outputTrackSetHandler = vi.fn((blackVideoEnforcer, trackId, track) => {
 			if (expectedTrackEnabledStateInOutputTrackSetEvent !== undefined) {
 				expect(track.enabled).toBe(expectedTrackEnabledStateInOutputTrackSetEvent)
 			}
 		})
-		outputTrackEnabledHandler = jest.fn()
+		outputTrackEnabledHandler = vi.fn()
 
 		blackVideoEnforcer.on('outputTrackSet', outputTrackSetHandler)
 		blackVideoEnforcer.on('outputTrackEnabled', outputTrackEnabledHandler)
@@ -123,7 +124,7 @@ describe('BlackVideoEnforcer', () => {
 	})
 
 	afterAll(() => {
-		jest.restoreAllMocks()
+		vi.restoreAllMocks()
 	})
 
 	const DISABLE_OR_REMOVE_TIMEOUT = 5000
@@ -161,7 +162,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -185,12 +186,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -206,7 +207,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -225,12 +226,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -245,7 +246,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -264,7 +265,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -278,7 +279,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -297,7 +298,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -310,7 +311,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -324,7 +325,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -337,7 +338,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -352,12 +353,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -373,7 +374,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -391,7 +392,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -399,7 +400,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -416,7 +417,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -436,7 +437,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -452,7 +453,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -474,12 +475,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -495,7 +496,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -514,7 +515,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -522,7 +523,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -538,7 +539,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -557,7 +558,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -565,7 +566,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -589,7 +590,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -597,7 +598,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -613,7 +614,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -632,7 +633,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -640,7 +641,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -657,7 +658,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -675,12 +676,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -695,11 +696,11 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			blackVideoEnforcer._setInputTrackEnabled('default', true)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -718,12 +719,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -739,7 +740,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -754,12 +755,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -773,11 +774,11 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			blackVideoEnforcer._setInputTrackEnabled('default', false)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -792,12 +793,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 3 / 4 - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 3 / 4 - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -813,7 +814,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -832,7 +833,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -840,7 +841,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -858,7 +859,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -877,7 +878,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -885,7 +886,7 @@ describe('BlackVideoEnforcer', () => {
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
@@ -903,7 +904,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -923,7 +924,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -939,7 +940,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -961,12 +962,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -985,7 +986,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1005,7 +1006,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -1022,7 +1023,7 @@ describe('BlackVideoEnforcer', () => {
 
 			inputTrack.stop()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1044,12 +1045,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1066,7 +1067,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1087,7 +1088,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1111,7 +1112,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack2._height = 180
 			blackVideoEnforcer._setInputTrack('default', inputTrack2)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1134,7 +1135,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack2._height = 180
 			blackVideoEnforcer._setInputTrack('default', inputTrack2)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1152,13 +1153,13 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			inputTrack._width = 320
 			inputTrack._height = 180
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 4)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1174,12 +1175,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1195,7 +1196,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1214,7 +1215,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -1227,7 +1228,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1247,12 +1248,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1267,7 +1268,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1288,12 +1289,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1308,7 +1309,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1329,7 +1330,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -1343,7 +1344,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1360,7 +1361,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -1374,7 +1375,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1396,12 +1397,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1417,7 +1418,7 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1438,12 +1439,12 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1)
+			vi.advanceTimersByTime(1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
@@ -1459,7 +1460,7 @@ describe('BlackVideoEnforcer', () => {
 			inputTrack.enabled = false
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
@@ -1478,7 +1479,7 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+			vi.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)

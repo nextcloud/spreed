@@ -1,16 +1,18 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { vi } from 'vitest'
 import { EventBus } from '../EventBus.ts'
 
 describe('EventBus', () => {
-	const customEvent1 = jest.fn()
-	const customEvent2 = jest.fn()
-	const customEvent3 = jest.fn()
-	const customEventOnce1 = jest.fn()
-	const customEventOnce2 = jest.fn()
-	const customEventOnce3 = jest.fn()
+	const customEvent1 = vi.fn()
+	const customEvent2 = vi.fn()
+	const customEvent3 = vi.fn()
+	const customEventOnce1 = vi.fn()
+	const customEventOnce2 = vi.fn()
+	const customEventOnce3 = vi.fn()
 
 	const testEventBus = (type, handlers, onceHandlers) => {
 		expect(EventBus.all.get(type).length).toBe(handlers)
@@ -23,7 +25,7 @@ describe('EventBus', () => {
 
 	afterEach(() => {
 		EventBus.all.clear()
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('on and off', () => {

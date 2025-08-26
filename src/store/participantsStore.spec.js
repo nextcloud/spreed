@@ -1,12 +1,14 @@
-import { emit } from '@nextcloud/event-bus'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { emit } from '@nextcloud/event-bus'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { createStore } from 'vuex'
 import { PARTICIPANT } from '../constants.ts'
 import {
@@ -36,37 +38,37 @@ import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.j
 import participantsStore from './participantsStore.js'
 import storeConfig from './storeConfig.js'
 
-jest.mock('../services/participantsService', () => ({
-	promoteToModerator: jest.fn(),
-	demoteFromModerator: jest.fn(),
-	removeAttendeeFromConversation: jest.fn(),
-	resendInvitations: jest.fn(),
-	joinConversation: jest.fn(),
-	leaveConversation: jest.fn(),
-	fetchParticipants: jest.fn(),
-	removeCurrentUserFromConversation: jest.fn(),
-	grantAllPermissionsToParticipant: jest.fn(),
-	removeAllPermissionsFromParticipant: jest.fn(),
+vi.mock('../services/participantsService', () => ({
+	promoteToModerator: vi.fn(),
+	demoteFromModerator: vi.fn(),
+	removeAttendeeFromConversation: vi.fn(),
+	resendInvitations: vi.fn(),
+	joinConversation: vi.fn(),
+	leaveConversation: vi.fn(),
+	fetchParticipants: vi.fn(),
+	removeCurrentUserFromConversation: vi.fn(),
+	grantAllPermissionsToParticipant: vi.fn(),
+	removeAllPermissionsFromParticipant: vi.fn(),
 }))
-jest.mock('../services/callsService', () => ({
-	joinCall: jest.fn(),
-	leaveCall: jest.fn(),
+vi.mock('../services/callsService', () => ({
+	joinCall: vi.fn(),
+	leaveCall: vi.fn(),
 }))
-jest.mock('../services/conversationsService', () => ({
-	fetchConversation: jest.fn(),
+vi.mock('../services/conversationsService', () => ({
+	fetchConversation: vi.fn(),
 }))
-jest.mock('../stores/callView', () => ({
-	useCallViewStore: jest.fn(() => ({
-		handleJoinCall: jest.fn(),
+vi.mock('../stores/callView', () => ({
+	useCallViewStore: vi.fn(() => ({
+		handleJoinCall: vi.fn(),
 	})),
 }))
 
-jest.mock('@nextcloud/event-bus', () => ({
-	emit: jest.fn(),
-	subscribe: jest.fn(),
+vi.mock('@nextcloud/event-bus', () => ({
+	emit: vi.fn(),
+	subscribe: vi.fn(),
 }))
 
-jest.spyOn(EventBus, 'emit')
+vi.spyOn(EventBus, 'emit')
 
 describe('participantsStore', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -88,7 +90,7 @@ describe('participantsStore', () => {
 
 	afterEach(() => {
 		store = null
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('participant list', () => {
@@ -556,8 +558,8 @@ describe('participantsStore', () => {
 		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
 		beforeEach(async () => {
-			jest.useFakeTimers()
-			testStoreConfig.getters.conversation = () => jest.fn().mockReturnValue({
+			vi.useFakeTimers()
+			testStoreConfig.getters.conversation = () => vi.fn().mockReturnValue({
 				token: TOKEN,
 				type: 3,
 			})
@@ -589,7 +591,7 @@ describe('participantsStore', () => {
 		})
 
 		afterEach(() => {
-			jest.clearAllTimers()
+			vi.clearAllTimers()
 		})
 
 		const assertInitialCallState = () => {
@@ -669,7 +671,7 @@ describe('participantsStore', () => {
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 
 			// Trigger fallback after delay
-			jest.advanceTimersByTime(10000)
+			vi.advanceTimersByTime(10000)
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
 		})
@@ -804,7 +806,7 @@ describe('participantsStore', () => {
 
 			tokenStore.token = TOKEN
 
-			joinedConversationEventMock = jest.fn()
+			joinedConversationEventMock = vi.fn()
 			EventBus.once('joined-conversation', joinedConversationEventMock)
 
 			participantData = {
@@ -819,7 +821,7 @@ describe('participantsStore', () => {
 				attendeeId: 1,
 			}))
 
-			testStoreConfig.actions.addConversation = jest.fn().mockImplementation((context) => {
+			testStoreConfig.actions.addConversation = vi.fn().mockImplementation((context) => {
 				// needed for the updateSessionId call which requires this
 				context.dispatch('addParticipantOnce', {
 					token: TOKEN, participant: participantData,
@@ -873,7 +875,7 @@ describe('participantsStore', () => {
 
 		describe('force join on error', () => {
 			afterEach(() => {
-				jest.useRealTimers()
+				vi.useRealTimers()
 				expect(SessionStorage.getItem('joined_conversation')).toBe(null)
 				expect(joinedConversationEventMock).not.toHaveBeenCalled()
 			})
@@ -887,7 +889,7 @@ describe('participantsStore', () => {
 				participantData.lastPing = mockDate.getTime() / 1000 - lastPingAge
 				participantData.inCall = inCall
 
-				jest.useFakeTimers().setSystemTime(mockDate)
+				vi.useFakeTimers().setSystemTime(mockDate)
 
 				const error = generateOCSErrorResponse({ payload: participantData, status: 409 })
 				joinConversation.mockRejectedValue(error)
@@ -897,7 +899,7 @@ describe('participantsStore', () => {
 				test('forces join when max ping age > 40s', async () => {
 					prepareTestJoinWithMaxPingAge(41, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
-					testStoreConfig.actions.forceJoinConversation = jest.fn()
+					testStoreConfig.actions.forceJoinConversation = vi.fn()
 
 					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
@@ -909,7 +911,7 @@ describe('participantsStore', () => {
 				test('shows force when max ping age <= 40s', async () => {
 					prepareTestJoinWithMaxPingAge(40, PARTICIPANT.CALL_FLAG.DISCONNECTED)
 
-					testStoreConfig.actions.forceJoinConversation = jest.fn()
+					testStoreConfig.actions.forceJoinConversation = vi.fn()
 
 					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
@@ -923,7 +925,7 @@ describe('participantsStore', () => {
 				test('forces join when max ping age > 60s', async () => {
 					prepareTestJoinWithMaxPingAge(61, PARTICIPANT.CALL_FLAG.IN_CALL)
 
-					testStoreConfig.actions.forceJoinConversation = jest.fn()
+					testStoreConfig.actions.forceJoinConversation = vi.fn()
 
 					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
@@ -935,7 +937,7 @@ describe('participantsStore', () => {
 				test('shows force when max ping age <= 60s', async () => {
 					prepareTestJoinWithMaxPingAge(60, PARTICIPANT.CALL_FLAG.IN_CALL)
 
-					testStoreConfig.actions.forceJoinConversation = jest.fn()
+					testStoreConfig.actions.forceJoinConversation = vi.fn()
 
 					store = createStore(testStoreConfig)
 					await store.dispatch('joinConversation', { token: TOKEN })
@@ -962,7 +964,7 @@ describe('participantsStore', () => {
 				attendeeId: 1,
 				sessionId: 'session-id-1',
 			})
-			testStoreConfig.getters.conversation = () => jest.fn().mockReturnValue({
+			testStoreConfig.getters.conversation = () => vi.fn().mockReturnValue({
 				token: TOKEN,
 				type: 3,
 			})
@@ -1004,7 +1006,7 @@ describe('participantsStore', () => {
 			removeCurrentUserFromConversation.mockResolvedValue()
 
 			testStoreConfig = cloneDeep(participantsStore)
-			testStoreConfig.actions.deleteConversation = jest.fn()
+			testStoreConfig.actions.deleteConversation = vi.fn()
 			store = createStore(testStoreConfig)
 
 			await store.dispatch('removeCurrentUserFromConversation', { token: TOKEN })

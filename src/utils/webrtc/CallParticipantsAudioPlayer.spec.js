@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import { reactive } from 'vue'
 import EmitterMixin from '../EmitterMixin.js'
 import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
@@ -109,7 +110,7 @@ describe('CallParticipantsAudioPlayer', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('constructor', () => {

@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import {
 	disableBotForConversation,
 	enableBotForConversation,
@@ -11,10 +13,10 @@ import {
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useBotsStore } from '../bots.ts'
 
-jest.mock('../../services/botsService.ts', () => ({
-	getConversationBots: jest.fn(),
-	disableBotForConversation: jest.fn(),
-	enableBotForConversation: jest.fn(),
+vi.mock('../../services/botsService.ts', () => ({
+	getConversationBots: vi.fn(),
+	disableBotForConversation: vi.fn(),
+	enableBotForConversation: vi.fn(),
 }))
 
 describe('botsStore', () => {
@@ -31,7 +33,7 @@ describe('botsStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	it('returns an empty array when bots are not loaded yet for conversation', async () => {

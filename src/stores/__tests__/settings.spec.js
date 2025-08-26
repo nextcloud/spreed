@@ -1,22 +1,24 @@
-import { loadState } from '@nextcloud/initial-state'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useSettingsStore } from '../settings.js'
 
-jest.mock('../../services/settingsService', () => ({
-	setReadStatusPrivacy: jest.fn(),
-	setTypingStatusPrivacy: jest.fn(),
+vi.mock('../../services/settingsService', () => ({
+	setReadStatusPrivacy: vi.fn(),
+	setTypingStatusPrivacy: vi.fn(),
 }))
 
-jest.spyOn(BrowserStorage, 'getItem')
-jest.spyOn(BrowserStorage, 'setItem')
+vi.spyOn(BrowserStorage, 'getItem')
+vi.spyOn(BrowserStorage, 'setItem')
 
 describe('settingsStore', () => {
 	let settingsStore
@@ -28,7 +30,7 @@ describe('settingsStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('reading and typing statuses', () => {

@@ -1,9 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 import { cloneDeep } from 'lodash'
+import { vi } from 'vitest'
 import Vuex from 'vuex'
 import storeConfig from '../store/storeConfig.js'
 import { useActorStore } from '../stores/actor.ts'
@@ -86,7 +87,7 @@ describe('SignalingTypingHandler', () => {
 		signaling = new function() {
 			this._handlers = {}
 
-			this.on = jest.fn((event, handler) => {
+			this.on = vi.fn((event, handler) => {
 				if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
 					this._handlers[event] = [handler]
 				} else {
@@ -105,7 +106,7 @@ describe('SignalingTypingHandler', () => {
 				}
 			}
 
-			this.off = jest.fn((event, handler) => {
+			this.off = vi.fn((event, handler) => {
 				const handlers = this._handlers[event]
 				if (!handlers) {
 					return
@@ -117,11 +118,11 @@ describe('SignalingTypingHandler', () => {
 				}
 			})
 
-			this.emit = jest.fn()
+			this.emit = vi.fn()
 		}()
 
 		signalingTypingHandler = new SignalingTypingHandler(store)
-		signalingTypingHandler._signalingParticipantList.getParticipants = jest.fn()
+		signalingTypingHandler._signalingParticipantList.getParticipants = vi.fn()
 
 		actorStore.setCurrentParticipant({
 			sessionId: 'localNextcloudSessionId',
@@ -130,7 +131,7 @@ describe('SignalingTypingHandler', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		tokenStore.token = ''
 		tokenStore.lastJoinedConversationToken = null
 	})

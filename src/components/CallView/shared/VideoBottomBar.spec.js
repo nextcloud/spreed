@@ -1,12 +1,14 @@
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
@@ -21,9 +23,9 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
-jest.mock('@nextcloud/event-bus', () => ({
-	emit: jest.fn(),
-	subscribe: jest.fn(),
+vi.mock('@nextcloud/event-bus', () => ({
+	emit: vi.fn(),
+	subscribe: vi.fn(),
 }))
 
 describe('VideoBottomBar.vue', () => {
@@ -70,25 +72,25 @@ describe('VideoBottomBar.vue', () => {
 					speaking: false,
 					peerId: PEER_ID,
 				},
-				forceMute: jest.fn(),
+				forceMute: vi.fn(),
 			},
 			participantName: PARTICIPANT_NAME,
 			sharedData: {
 				remoteVideoBlocker: {
-					isVideoEnabled: jest.fn().mockReturnValue(true),
-					setVideoEnabled: jest.fn(),
+					isVideoEnabled: vi.fn().mockReturnValue(true),
+					setVideoEnabled: vi.fn(),
 				},
 			},
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue((token) => conversationProps)
+		testStoreConfig.modules.conversationsStore.getters.conversation = vi.fn().mockReturnValue((token) => conversationProps)
 		actorStore.userId = USER_ID
 		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('unit tests', () => {

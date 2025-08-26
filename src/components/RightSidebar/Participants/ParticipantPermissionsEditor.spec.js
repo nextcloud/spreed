@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -55,17 +56,17 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		}
 
 		tokenStore.token = 'XXTOKENXX'
-		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
+		const conversationGetterMock = vi.fn().mockReturnValue(conversation)
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		// Add a mock function for the action and see if its called and with which arguments
-		testStoreConfig.modules.participantsStore.actions.setPermissions = jest.fn()
+		testStoreConfig.modules.participantsStore.actions.setPermissions = vi.fn()
 		store = createStore(testStoreConfig)
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	/**

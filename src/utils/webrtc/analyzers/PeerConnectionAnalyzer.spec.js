@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import {
 	CONNECTION_QUALITY,
 	PEER_DIRECTION,
@@ -22,8 +23,8 @@ function newRTCPeerConnection() {
 		this._listeners = []
 		this.iceConnectionState = 'new'
 		this.connectionState = 'new'
-		this.getStats = jest.fn()
-		this.addEventListener = jest.fn((type, listener) => {
+		this.getStats = vi.fn()
+		this.addEventListener = vi.fn((type, listener) => {
 			if (type !== 'iceconnectionstatechange' || type !== 'connectionstatechange') {
 				return
 			}
@@ -46,7 +47,7 @@ function newRTCPeerConnection() {
 				listener.apply(listener, event)
 			}
 		}
-		this.removeEventListener = jest.fn((type, listener) => {
+		this.removeEventListener = vi.fn((type, listener) => {
 			if (type !== 'iceconnectionstatechange' || type !== 'connectionstatechange') {
 				return
 			}
@@ -100,14 +101,14 @@ describe('PeerConnectionAnalyzer', () => {
 	let peerConnection
 
 	beforeEach(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 
 		peerConnectionAnalyzer = new PeerConnectionAnalyzer()
 
-		changeConnectionQualityAudioHandler = jest.fn()
+		changeConnectionQualityAudioHandler = vi.fn()
 		peerConnectionAnalyzer.on('change:connectionQualityAudio', changeConnectionQualityAudioHandler)
 
-		changeConnectionQualityVideoHandler = jest.fn()
+		changeConnectionQualityVideoHandler = vi.fn()
 		peerConnectionAnalyzer.on('change:connectionQualityVideo', changeConnectionQualityVideoHandler)
 
 		peerConnection = newRTCPeerConnection()
@@ -116,7 +117,7 @@ describe('PeerConnectionAnalyzer', () => {
 	afterEach(() => {
 		peerConnectionAnalyzer.setPeerConnection(null)
 
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('analyze sender connection', () => {
@@ -125,7 +126,7 @@ describe('PeerConnectionAnalyzer', () => {
 		let expectLogStatsToHaveBeenCalled
 
 		beforeEach(() => {
-			logStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logStats').mockImplementation(() => {})
+			logStatsMock = vi.spyOn(peerConnectionAnalyzer, '_logStats').mockImplementation(() => {})
 
 			expectLogStatsToHaveBeenCalled = false
 
@@ -174,7 +175,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -185,7 +186,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -241,7 +242,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -252,7 +253,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -308,7 +309,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -319,7 +320,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -375,7 +376,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -386,7 +387,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -442,7 +443,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -453,7 +454,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -509,7 +510,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -520,7 +521,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -576,7 +577,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -588,7 +589,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -647,7 +648,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -659,7 +660,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -718,7 +719,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -730,7 +731,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -790,7 +791,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -802,7 +803,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -862,7 +863,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -874,7 +875,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -933,7 +934,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -945,7 +946,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1004,7 +1005,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1016,7 +1017,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1075,7 +1076,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1087,7 +1088,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1146,7 +1147,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1158,7 +1159,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1217,7 +1218,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1229,7 +1230,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1296,7 +1297,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1308,7 +1309,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1375,7 +1376,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1387,7 +1388,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1454,7 +1455,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1465,7 +1466,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1529,7 +1530,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1540,7 +1541,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1605,7 +1606,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-				jest.advanceTimersByTime(6000)
+				vi.advanceTimersByTime(6000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1616,7 +1617,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-				jest.advanceTimersByTime(1000)
+				vi.advanceTimersByTime(1000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1684,7 +1685,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-				jest.advanceTimersByTime(6000)
+				vi.advanceTimersByTime(6000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1704,7 +1705,7 @@ describe('PeerConnectionAnalyzer', () => {
 					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 				}
 
-				jest.advanceTimersByTime(2000)
+				vi.advanceTimersByTime(2000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1772,7 +1773,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-				jest.advanceTimersByTime(6000)
+				vi.advanceTimersByTime(6000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1792,7 +1793,7 @@ describe('PeerConnectionAnalyzer', () => {
 					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 				}
 
-				jest.advanceTimersByTime(2000)
+				vi.advanceTimersByTime(2000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1872,7 +1873,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-				jest.advanceTimersByTime(6000)
+				vi.advanceTimersByTime(6000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1883,7 +1884,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-				jest.advanceTimersByTime(1000)
+				vi.advanceTimersByTime(1000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1903,7 +1904,7 @@ describe('PeerConnectionAnalyzer', () => {
 					expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 				}
 
-				jest.advanceTimersByTime(4000)
+				vi.advanceTimersByTime(4000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -1970,7 +1971,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -1982,7 +1983,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2051,7 +2052,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2063,7 +2064,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2128,7 +2129,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2139,7 +2140,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2201,7 +2202,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(6000)
+			vi.advanceTimersByTime(6000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2212,7 +2213,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2297,7 +2298,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2308,7 +2309,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2328,7 +2329,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2350,7 +2351,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 			}
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2372,7 +2373,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2461,7 +2462,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2472,7 +2473,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2492,7 +2493,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2514,7 +2515,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 			}
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2536,7 +2537,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2694,7 +2695,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2705,7 +2706,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2718,7 +2719,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(1)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledWith(peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2732,7 +2733,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(1, peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2746,7 +2747,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(1, peerConnectionAnalyzer, CONNECTION_QUALITY.GOOD)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenNthCalledWith(2, peerConnectionAnalyzer, CONNECTION_QUALITY.UNKNOWN)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2813,7 +2814,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2824,7 +2825,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityAudioHandler).toHaveBeenCalledTimes(0)
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2838,7 +2839,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2852,7 +2853,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.GOOD)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2866,7 +2867,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.MEDIUM)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2881,7 +2882,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2950,7 +2951,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2962,7 +2963,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2977,7 +2978,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -2992,7 +2993,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3007,7 +3008,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3022,7 +3023,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3091,7 +3092,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3103,7 +3104,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3120,7 +3121,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(logStatsMock).toHaveBeenCalledTimes(1)
 			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3136,7 +3137,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(logStatsMock).toHaveBeenCalledTimes(2)
 			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.325')
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3151,7 +3152,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3166,7 +3167,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3233,7 +3234,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3245,7 +3246,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3262,7 +3263,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(logStatsMock).toHaveBeenCalledTimes(1)
 			expect(logStatsMock).toHaveBeenCalledWith(kind, 'High packet lost ratio: 0.31')
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3276,7 +3277,7 @@ describe('PeerConnectionAnalyzer', () => {
 				expect(peerConnectionAnalyzer.getConnectionQualityVideo()).toBe(CONNECTION_QUALITY.VERY_BAD)
 			}
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3292,7 +3293,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(logStatsMock).toHaveBeenCalledTimes(2)
 			expect(logStatsMock).toHaveBeenNthCalledWith(2, kind, 'High packet lost ratio: 0.325')
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3307,7 +3308,7 @@ describe('PeerConnectionAnalyzer', () => {
 			}
 			expect(logStatsMock).toHaveBeenCalledTimes(2)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3367,7 +3368,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3379,7 +3380,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3440,7 +3441,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3452,7 +3453,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(changeConnectionQualityVideoHandler).toHaveBeenCalledTimes(0)
 			expect(logStatsMock).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 			// Force the promises returning the stats to be executed.
 			await null
 
@@ -3764,14 +3765,14 @@ describe('PeerConnectionAnalyzer', () => {
 		let consoleDebugMock
 
 		beforeEach(() => {
-			consoleDebugMock = jest.spyOn(console, 'debug')
+			consoleDebugMock = vi.spyOn(console, 'debug')
 		})
 
 		test.each([
 			['video peer', 'audio'],
 			['video peer', 'video'],
 		])('%s, %s', (name, kind) => {
-			const logRtcStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
+			const logRtcStatsMock = vi.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
@@ -3799,7 +3800,7 @@ describe('PeerConnectionAnalyzer', () => {
 			['screen peer', 'audio'],
 			['screen peer', 'video'],
 		])('%s, %s', (name, kind) => {
-			const logRtcStatsMock = jest.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
+			const logRtcStatsMock = vi.spyOn(peerConnectionAnalyzer, '_logRtcStats').mockImplementation(() => {})
 
 			peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER, PEER_TYPE.SCREEN)
 
@@ -3881,7 +3882,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.SENDER)
 
-				jest.advanceTimersByTime(9000)
+				vi.advanceTimersByTime(9000)
 				// Force the promises returning the stats to be executed.
 				await null
 
@@ -3956,7 +3957,7 @@ describe('PeerConnectionAnalyzer', () => {
 
 				peerConnectionAnalyzer.setPeerConnection(peerConnection, PEER_DIRECTION.RECEIVER)
 
-				jest.advanceTimersByTime(9000)
+				vi.advanceTimersByTime(9000)
 				// Force the promises returning the stats to be executed.
 				await null
 

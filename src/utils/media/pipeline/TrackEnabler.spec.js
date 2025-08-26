@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import TrackEnabler from './TrackEnabler.js'
 
 /**
@@ -20,8 +21,8 @@ function newMediaStreamTrackMock(id) {
 		this.enabled = true
 		// "ended" event is not being tested, so there is no need to add even a
 		// stub for the event listener methods.
-		this.addEventListener = jest.fn()
-		this.removeEventListener = jest.fn()
+		this.addEventListener = vi.fn()
+		this.removeEventListener = vi.fn()
 	}
 	return new MediaStreamTrackMock()
 }
@@ -37,12 +38,12 @@ describe('TrackToStream', () => {
 
 		expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
-		outputTrackSetHandler = jest.fn((trackEnabler, trackId, track) => {
+		outputTrackSetHandler = vi.fn((trackEnabler, trackId, track) => {
 			if (expectedTrackEnabledStateInOutputTrackSetEvent !== undefined) {
 				expect(track.enabled).toBe(expectedTrackEnabledStateInOutputTrackSetEvent)
 			}
 		})
-		outputTrackEnabledHandler = jest.fn()
+		outputTrackEnabledHandler = vi.fn()
 
 		trackEnabler.on('outputTrackSet', outputTrackSetHandler)
 		trackEnabler.on('outputTrackEnabled', outputTrackEnabledHandler)

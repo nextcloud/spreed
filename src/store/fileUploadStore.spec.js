@@ -1,11 +1,13 @@
-import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
+import { getUploader } from '@nextcloud/upload'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { createStore } from 'vuex'
 import { getDavClient } from '../services/DavClient.ts'
 import { shareFile } from '../services/filesSharingServices.ts'
@@ -14,18 +16,21 @@ import { useActorStore } from '../stores/actor.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
 
-jest.mock('../services/DavClient', () => ({
-	getDavClient: jest.fn(),
+vi.mock('../services/DavClient.ts', () => ({
+	getDavClient: vi.fn(),
 }))
-jest.mock('../utils/fileUpload', () => ({
-	...jest.requireActual('../utils/fileUpload'),
-	findUniquePath: jest.fn(),
+vi.mock('../utils/fileUpload.js', async () => {
+	const fileUpload = await vi.importActual('../utils/fileUpload.js')
+	return {
+		...fileUpload,
+		findUniquePath: vi.fn(),
+	}
+})
+vi.mock('../services/filesSharingServices.ts', () => ({
+	shareFile: vi.fn(),
 }))
-jest.mock('../services/filesSharingServices', () => ({
-	shareFile: jest.fn(),
-}))
-jest.mock('../services/settingsService', () => ({
-	setAttachmentFolder: jest.fn(),
+vi.mock('../services/settingsService.ts', () => ({
+	setAttachmentFolder: vi.fn(),
 }))
 
 describe('fileUploadStore', () => {
@@ -39,11 +44,11 @@ describe('fileUploadStore', () => {
 		actorStore = useActorStore()
 
 		mockedActions = {
-			addTemporaryMessage: jest.fn(),
-			markTemporaryMessageAsFailed: jest.fn(),
+			addTemporaryMessage: vi.fn(),
+			markTemporaryMessageAsFailed: vi.fn(),
 		}
 
-		global.URL.createObjectURL = jest.fn().mockImplementation((file) => 'local-url:' + file.name)
+		global.URL.createObjectURL = vi.fn().mockImplementation((file) => 'local-url:' + file.name)
 
 		storeConfig = cloneDeep(fileUploadStore)
 		storeConfig.actions = Object.assign(storeConfig.actions, mockedActions)
@@ -54,25 +59,25 @@ describe('fileUploadStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('uploading', () => {
-		const uploadMock = jest.fn()
+		const uploadMock = vi.fn()
 		const client = {
-			exists: jest.fn(),
+			exists: vi.fn(),
 		}
 
 		beforeEach(() => {
-			storeConfig.getters.getAttachmentFolder = jest.fn().mockReturnValue(() => '/Talk')
+			storeConfig.getters.getAttachmentFolder = vi.fn().mockReturnValue(() => '/Talk')
 			store = createStore(storeConfig)
 			getDavClient.mockReturnValue(client)
 			// getUploader.mockReturnValue({ upload: uploadMock })
-			console.error = jest.fn()
+			console.error = vi.fn()
 		})
 
 		afterEach(() => {
-			jest.clearAllMocks()
+			vi.clearAllMocks()
 		})
 
 		test('initialises upload for given files', () => {

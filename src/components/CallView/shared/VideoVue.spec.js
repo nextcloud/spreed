@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { createStore } from 'vuex'
 import VideoVue from './VideoVue.vue'
 import storeConfig from '../../../store/storeConfig.js'
@@ -67,8 +68,8 @@ describe('VideoVue.vue', () => {
 		store = createStore(testStoreConfig)
 
 		const webRtcMock = {
-			on: jest.fn(),
-			off: jest.fn(),
+			on: vi.fn(),
+			off: vi.fn(),
 		}
 		callParticipantModel = new CallParticipantModel({
 			peerId: 'theId',
@@ -103,7 +104,7 @@ describe('VideoVue.vue', () => {
 					token: 'theToken',
 					sharedData: {
 						remoteVideoBlocker: {
-							increaseVisibleCounter: jest.fn(),
+							increaseVisibleCounter: vi.fn(),
 						},
 						promoted: false,
 					},

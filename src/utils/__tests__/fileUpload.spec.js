@@ -1,7 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { vi } from 'vitest'
 import {
 	extractFileName,
 	findUniquePath,
@@ -13,7 +15,7 @@ import {
 } from '../fileUpload.js'
 
 const client = {
-	exists: jest.fn(),
+	exists: vi.fn(),
 }
 
 describe('fileUpload', () => {
@@ -84,7 +86,7 @@ describe('fileUpload', () => {
 		const path = 'file.txt'
 
 		afterEach(() => {
-			jest.clearAllMocks()
+			vi.clearAllMocks()
 		})
 
 		it('should return the input path if it does not exist in the destination folder', async () => {

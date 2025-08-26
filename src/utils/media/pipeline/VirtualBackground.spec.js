@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { vi } from 'vitest'
 import VirtualBackground from './VirtualBackground.js'
 
 /**
@@ -19,14 +20,14 @@ function newMediaStreamTrackMock(id) {
 		this._endedEventHandlers = []
 		this.id = id
 		this.enabled = true
-		this.addEventListener = jest.fn((eventName, eventHandler) => {
+		this.addEventListener = vi.fn((eventName, eventHandler) => {
 			if (eventName !== 'ended') {
 				return
 			}
 
 			this._endedEventHandlers.push(eventHandler)
 		})
-		this.removeEventListener = jest.fn((eventName, eventHandler) => {
+		this.removeEventListener = vi.fn((eventName, eventHandler) => {
 			if (eventName !== 'ended') {
 				return
 			}
@@ -36,7 +37,7 @@ function newMediaStreamTrackMock(id) {
 				this._endedEventHandlers.splice(index, 1)
 			}
 		})
-		this.stop = jest.fn(() => {
+		this.stop = vi.fn(() => {
 			for (let i = 0; i < this._endedEventHandlers.length; i++) {
 				const handler = this._endedEventHandlers[i]
 				handler.apply(handler)
@@ -56,37 +57,37 @@ describe('VirtualBackground', () => {
 		// MediaStream is used in VirtualBackground but not implemented in
 		// jsdom, so a stub is needed.
 		window.MediaStream = function() {
-			this.addTrack = jest.fn()
+			this.addTrack = vi.fn()
 		}
 
-		jest.spyOn(VirtualBackground.prototype, '_initJitsiStreamBackgroundEffect').mockImplementation(function() {
+		vi.spyOn(VirtualBackground.prototype, '_initJitsiStreamBackgroundEffect').mockImplementation(function() {
 			this._jitsiStreamBackgroundEffect = {
-				getVirtualBackground: jest.fn(() => {
+				getVirtualBackground: vi.fn(() => {
 					return this._jitsiStreamBackgroundEffect.virtualBackground
 				}),
-				setVirtualBackground: jest.fn(() => {
+				setVirtualBackground: vi.fn(() => {
 				}),
-				startEffect: jest.fn((inputStream) => {
+				startEffect: vi.fn((inputStream) => {
 					effectOutputTrackCount++
 					const effectOutputTrackLocal = newMediaStreamTrackMock('output' + effectOutputTrackCount)
 					effectOutputTrack = effectOutputTrackLocal
 
 					return {
-						getVideoTracks: jest.fn(() => {
+						getVideoTracks: vi.fn(() => {
 							return [effectOutputTrackLocal]
 						}),
-						getTracks: jest.fn(() => {
+						getTracks: vi.fn(() => {
 							return [effectOutputTrackLocal]
 						}),
 					}
 				}),
-				updateInputStream: jest.fn(() => {
+				updateInputStream: vi.fn(() => {
 				}),
-				stopEffect: jest.fn(() => {
+				stopEffect: vi.fn(() => {
 				}),
 			}
 		})
-		jest.spyOn(VirtualBackground.prototype, 'isAvailable').mockImplementation(function() {
+		vi.spyOn(VirtualBackground.prototype, 'isAvailable').mockImplementation(function() {
 			return available
 		})
 	})
@@ -98,11 +99,11 @@ describe('VirtualBackground', () => {
 
 		virtualBackground = new VirtualBackground()
 
-		jest.spyOn(virtualBackground, '_setOutputTrack')
+		vi.spyOn(virtualBackground, '_setOutputTrack')
 	})
 
 	afterAll(() => {
-		jest.restoreAllMocks()
+		vi.restoreAllMocks()
 	})
 
 	describe('get virtual background', () => {
