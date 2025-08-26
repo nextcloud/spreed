@@ -1046,7 +1046,7 @@ export default {
 	}
 
 	:deep(.list-item-content__actions > .critical) {
-		color: var(--color-error-text);
+		color: var(--color-text-error);
 	}
 }
 
@@ -1057,7 +1057,7 @@ export default {
 }
 
 .critical > :deep(.action-button) {
-	color: var(--color-error-text);
+	color: var(--color-text-error);
 }
 
 </style>
