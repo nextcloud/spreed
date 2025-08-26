@@ -18,7 +18,7 @@ import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
-import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
+import IconSubtitlesOutline from 'vue-material-design-icons/SubtitlesOutline.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
 import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -34,6 +34,7 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
+import { useLiveTranscriptionStore } from '../../stores/liveTranscription.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 const { isSidebar = false } = defineProps<{
@@ -48,6 +49,7 @@ const actorStore = useActorStore()
 const breakoutRoomsStore = useBreakoutRoomsStore()
 const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
+const liveTranscriptionStore = useLiveTranscriptionStore()
 
 const isLiveTranscriptionLoading = ref(false)
 
@@ -124,6 +126,18 @@ async function toggleLiveTranscription() {
  * Enable live transcriptions.
  */
 async function enableLiveTranscription() {
+	// Strictly speaking it would be the responsibility of the components using
+	// the language metadata to ensure that it is loaded before using it, but
+	// for simplicity it is done here and enabling the live transcription is
+	// tied to having said metadata.
+	try {
+		await liveTranscriptionStore.loadLiveTranscriptionLanguages()
+	} catch (exception) {
+		showError(t('spreed', 'Error when trying to load the available live transcription languages'))
+
+		return
+	}
+
 	try {
 		await callViewStore.enableLiveTranscription(token.value)
 	} catch (error) {
@@ -265,7 +279,7 @@ useHotKey('r', toggleHandRaised)
 				:disabled="isLiveTranscriptionLoading"
 				@click="toggleLiveTranscription">
 				<template #icon>
-					<IconSubtitles v-if="!isLiveTranscriptionLoading"
+					<IconSubtitlesOutline v-if="!isLiveTranscriptionLoading"
 						:size="20" />
 					<NcLoadingIcon v-else
 						:size="20" />

@@ -34,6 +34,7 @@ import type { PropType, StyleValue } from 'vue'
 
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
+import { useLiveTranscriptionStore } from '../../../stores/liveTranscription.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 
 declare module 'vue' {
@@ -94,6 +95,14 @@ export default {
 		},
 	},
 
+	setup() {
+		const liveTranscriptionStore = useLiveTranscriptionStore()
+
+		return {
+			liveTranscriptionStore,
+		}
+	},
+
 	data() {
 		return {
 			AVATAR,
@@ -129,6 +138,15 @@ export default {
 				.filter((value) => value).join(' ')
 		},
 
+		liveTranscriptionLanguages() {
+			const liveTranscriptionLanguages = this.liveTranscriptionStore.getLiveTranscriptionLanguages()
+			if (!liveTranscriptionLanguages) {
+				return {}
+			}
+
+			return liveTranscriptionLanguages
+		},
+
 		chunksWithSeparator() {
 			const chunksWithSeparator = [] as Array<Chunk>
 
@@ -147,8 +165,10 @@ export default {
 			})
 
 			for (let i = 1; i < this.chunks.length; i++) {
+				const separator = this.getSeparatorBetweenChunks(this.chunks[i - 1], this.chunks[i])
+
 				chunksWithSeparator.push({
-					message: ' ' + this.chunks[i].message,
+					message: separator + this.chunks[i].message,
 					languageId: this.chunks[i].languageId.replace('_', '-'),
 				})
 			}
@@ -254,6 +274,18 @@ export default {
 					bottom: currentClientRectsOfLastChunkInLine.bottom + (chunkToLineHeightDifference / 2),
 				}
 			})
+		},
+
+		getSeparatorBetweenChunks(chunk1: Chunk, chunk2: Chunk) {
+			if (chunk1.languageId !== chunk2.languageId) {
+				return ' '
+			}
+
+			if (this.liveTranscriptionLanguages[chunk1.languageId]?.metadata) {
+				return this.liveTranscriptionLanguages[chunk1.languageId].metadata.separator
+			}
+
+			return ' '
 		},
 	},
 }
