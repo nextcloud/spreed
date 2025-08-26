@@ -2148,6 +2148,6 @@
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud ist im Wartungsmodus, bitte lade die Seite neu.",
     "Lost connection to signaling server. Try to reload the page manually." : "Verbindung zum Signaling-Server verloren. Versuche, die Seite selbst neu zu laden.",
     "Reload Talk home" : "Talk Startseite neu laden",
-    "Talk home" : "Talk home"
+    "Talk home" : "Startseite"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
