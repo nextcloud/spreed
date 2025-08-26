@@ -33,7 +33,6 @@ export default defineConfig({
 			{ find: './vendor/tflite/tflite-simd.wasm', replacement: resolve(import.meta.dirname, 'src/utils/media/effects/virtual-background/vendor/tflite/tflite-simd.js') },
 			{ find: '@matrix-org/olm/olm.wasm', replacement: '@matrix-org/olm/olm.js' },
 		],
-		globals: true,
 		environment: 'jsdom',
 		environmentOptions: {
 			jsdom: {

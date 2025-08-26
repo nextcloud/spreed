@@ -5,7 +5,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../coreService.ts'
 

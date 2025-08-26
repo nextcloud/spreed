@@ -6,7 +6,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { computed } from 'vue'
 import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'

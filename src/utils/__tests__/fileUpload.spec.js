@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
 	extractFileName,
 	findUniquePath,

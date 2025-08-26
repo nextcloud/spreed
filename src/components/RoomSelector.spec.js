@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { flushPromises, shallowMount } from '@vue/test-utils'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'

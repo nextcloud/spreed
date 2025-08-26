@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { beforeEach, describe, expect, test } from 'vitest'
 import { AverageStatValue, STAT_VALUE_TYPE } from './AverageStatValue.js'
 
 describe('AverageStatValue', () => {

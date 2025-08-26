@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createStore, useStore } from 'vuex'
 import storeConfig from '../../store/storeConfig.js'
 import { useChatStore } from '../chat.ts'

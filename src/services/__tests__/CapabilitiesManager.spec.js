@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockedCapabilities, mockedRemotes } from '../../__mocks__/capabilities.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { generateOCSResponse } from '../../test-helpers.js'

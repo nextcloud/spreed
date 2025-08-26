@@ -4,7 +4,7 @@
  */
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
 	copyConversationLinkToClipboard,
 	generateAbsoluteUrl,

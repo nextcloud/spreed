@@ -7,7 +7,7 @@ import { showError } from '@nextcloud/dialogs'
 import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import {
 	ATTENDEE,

@@ -5,7 +5,7 @@
 
 import { flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import {
 	createPoll,

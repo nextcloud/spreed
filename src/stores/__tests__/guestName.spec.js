@@ -6,7 +6,7 @@
 import { setGuestNickname } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { setGuestUserName } from '../../services/participantsService.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'

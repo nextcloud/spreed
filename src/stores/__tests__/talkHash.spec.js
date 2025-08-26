@@ -5,7 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { useTalkHashStore } from '../talkHash.js'
 
 describe('talkHashStore', () => {

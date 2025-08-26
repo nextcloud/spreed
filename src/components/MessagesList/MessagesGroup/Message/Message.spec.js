@@ -6,7 +6,7 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconCheck from 'vue-material-design-icons/Check.vue'

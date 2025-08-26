@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getUserAbsence } from '../../services/groupwareService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useGroupwareStore } from '../groupware.ts'

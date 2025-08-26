@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../chatExtras.ts'

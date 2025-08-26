@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import vuexStore from '../../store/index.js'

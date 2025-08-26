@@ -5,7 +5,7 @@
 
 import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'

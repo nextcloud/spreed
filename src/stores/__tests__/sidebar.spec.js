@@ -5,7 +5,7 @@
 
 import { emit } from '@nextcloud/event-bus'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useSidebarStore } from '../sidebar.ts'
 

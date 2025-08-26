@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.ts'
 import { SHARED_ITEM } from '../../constants.ts'
 import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.ts'

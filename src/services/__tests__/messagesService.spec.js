@@ -5,7 +5,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { CHAT } from '../../constants.ts'
 import {
 	deleteMessage,

@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'

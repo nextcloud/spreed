@@ -5,7 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addReactionToMessage, getReactionsDetails, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'

@@ -6,7 +6,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
 import { getTeams } from '../../services/teamsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'

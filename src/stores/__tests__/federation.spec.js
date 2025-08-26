@@ -4,7 +4,7 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockedCapabilities } from '../../__mocks__/capabilities.ts'
 import { acceptShare, getRemoteCapabilities, getShares, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'

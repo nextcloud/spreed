@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import TrackEnabler from './TrackEnabler.js'
 
 /**
