@@ -23,7 +23,7 @@
 		<IconAlertCircleOutline v-show="!isValidServer"
 			class="stun-server__alert"
 			:title="t('spreed', 'The server address is invalid')"
-			fill-color="#E9322D" />
+			fill-color="var(--color-border-error)" />
 
 		<NcButton v-show="!loading"
 			variant="tertiary"

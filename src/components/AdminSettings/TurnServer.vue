@@ -55,8 +55,8 @@
 			@click="testServer">
 			<template #icon>
 				<NcLoadingIcon v-if="testing" :size="20" />
-				<IconAlertCircleOutline v-else-if="testingError" fill-color="#E9322D" />
-				<IconCheck v-else-if="testingSuccess" fill-color="#46BA61" />
+				<IconAlertCircleOutline v-else-if="testingError" fill-color="var(--color-border-error)" />
+				<IconCheck v-else-if="testingSuccess" fill-color="var(--color-border-success)" />
 				<IconPulse v-else />
 			</template>
 		</NcButton>

@@ -490,6 +490,6 @@ export default {
 }
 
 .critical :deep(.action-button) {
-	color: var(--color-error-text) !important;
+	color: var(--color-text-error) !important;
 }
 </style>

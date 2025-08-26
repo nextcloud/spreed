@@ -612,7 +612,7 @@ export default {
 
 <style lang="scss" scoped>
 .critical > :deep(.action-button) {
-	color: var(--color-error-text);
+	color: var(--color-text-error);
 }
 
 .conversation {

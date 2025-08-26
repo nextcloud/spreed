@@ -16,13 +16,12 @@
 				{{ t('spreed', 'Files required for virtual background can be loaded') }}
 				<NcButton variant="tertiary"
 					class="vue-button-inline"
-					:class="{ 'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false }"
 					:title="virtualBackgroundAvailableTitle"
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">
 					<template #icon>
-						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" />
-						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" />
+						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" fill-color="var(--color-border-error)" />
+						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" fill-color="var(--color-border-success)" />
 						<NcLoadingIcon v-else :size="20" />
 					</template>
 				</NcButton>
@@ -174,13 +173,5 @@ export default {
 <style lang="scss" scoped>
 .vue-button-inline {
 	display: inline-block !important;
-
-	&.success-button {
-		color: var(--color-success-text);
-	}
-
-	&.error-button {
-		color: var(--color-error-text);
-	}
 }
 </style>
