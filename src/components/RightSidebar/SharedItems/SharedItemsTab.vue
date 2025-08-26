@@ -229,17 +229,25 @@ function openPollDraftHandler() {
 
 	&__more-button {
 		margin-top: var(--default-grid-baseline);
-		margin-inline-start: var(--default-grid-baseline);
 
 		// Override NcButton styles to align mdi icons and mimetype icons
+		&.button-vue--tertiary {
+			border-width: 0;
+		}
+
 		:deep(.button-vue__icon) {
-			margin-inline-end: calc(var(--default-grid-baseline) * 2);
+			margin-inline-end: var(--default-grid-baseline);
 			width: 24px;
 			min-width: 24px;
 		}
 
-		&--threads :deep(.button-vue__icon) {
-			width: 40px;
+		&--threads {
+			margin-inline-start: var(--default-grid-baseline);
+
+			:deep(.button-vue__icon) {
+				margin-inline-end: calc(var(--default-grid-baseline) * 2);
+				width: 40px;
+			}
 		}
 	}
 

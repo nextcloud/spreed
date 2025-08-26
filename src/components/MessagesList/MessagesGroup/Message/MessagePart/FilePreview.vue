@@ -279,16 +279,21 @@ export default {
 				return {}
 			}
 
+			// Used in shared items grid (square container)
+			if (this.isSharedItems && !this.rowLayout) {
+				return {}
+			}
+
 			// Fallback for loading mimeicons (preview for audio files is not provided)
 			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/') || this.failed) {
 				return {
-					width: this.smallPreview ? '32px' : '128px',
-					height: this.smallPreview ? '32px' : '128px',
+					width: this.smallPreview ? '24px' : '128px',
+					height: this.smallPreview ? '24px' : '128px',
 				}
 			}
 
-			const widthConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 600)
-			const heightConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 384)
+			const widthConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 600)
+			const heightConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 384)
 
 			// Actual size when no metadata available
 			if (!this.file.width || !this.file.height) {
@@ -352,7 +357,7 @@ export default {
 			// use preview provider URL to render a smaller preview
 			let previewSize = 384
 			if (this.smallPreview) {
-				previewSize = 32
+				previewSize = 24
 			}
 			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
 			if (userId === null) {
@@ -527,7 +532,7 @@ export default {
 	max-width: 100%;
 	display: inline-block;
 
-	border-radius: 16px;
+	border-radius: var(--border-radius);
 
 	box-sizing: content-box !important;
 
@@ -564,7 +569,7 @@ export default {
 
 	.mimeicon.preview-small {
 		min-height: auto;
-		height: 32px;
+		max-height: 24px;
 	}
 
 	.preview {
@@ -582,7 +587,7 @@ export default {
 	.preview-small {
 		border-radius: var(--border-radius);
 		max-width: 100%;
-		max-height: 32px;
+		max-height: 24px;
 	}
 
 	.preview-loading {
@@ -656,38 +661,28 @@ export default {
 			width: 128px;
 			height: 128px;
 		}
-
-		.loading {
-			width: 100%;
-		}
 	}
 
 	&--row-layout {
 		display: flex;
 		align-items: center;
-		height: 32px;
 		border-radius: var(--border-radius);
 		padding: 2px 4px;
 
 		.image-container {
 			flex-shrink: 0;
-			height: 32px;
-			width: 32px;
+			width: 24px;
 		}
 
 		.name-container {
 			padding: 0 4px;
 			font-weight: normal;
 		}
-
-		.loading {
-			width: 32px;
-			height: 32px;
-		}
 	}
 
 	&--shared-items-grid {
 		aspect-ratio: 1;
+		line-height: 0;
 
 		.preview {
 			width: 100%;
