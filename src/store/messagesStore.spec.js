@@ -8,7 +8,7 @@ import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { createStore } from 'vuex'
+import { createStore, useStore } from 'vuex'
 import {
 	ATTENDEE,
 	CHAT,
@@ -64,6 +64,14 @@ vi.mock('@nextcloud/capabilities', () => ({
 	})),
 }))
 
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
+
 describe('messagesStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	const conversation = {
@@ -84,8 +92,6 @@ describe('messagesStore', () => {
 	let chatStore
 
 	beforeEach(() => {
-		vi.spyOn(require('vuex'), 'useStore').mockReturnValue(store)
-
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		actorStore = useActorStore()
@@ -109,6 +115,7 @@ describe('messagesStore', () => {
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
 
 		store = createStore(testStoreConfig)
+		useStore.mockReturnValue(store)
 	})
 
 	afterEach(() => {

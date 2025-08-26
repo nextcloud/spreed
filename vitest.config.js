@@ -20,7 +20,6 @@ export default defineConfig({
 			// FIXME: broken after Vitest migration
 			'src/utils/SignalingTypingHandler.spec.js',
 			'src/utils/media/pipeline/MediaDevicesSource.spec.js',
-			'src/store/messagesStore.spec.js',
 		],
 		server: {
 			deps: {
