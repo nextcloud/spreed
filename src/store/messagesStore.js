@@ -464,10 +464,12 @@ const actions = {
 					pollId: message.messageParameters.poll.id,
 				})
 				// Quit processing
+				context.commit('addMessage', { token, message })
 				return
 			}
 
 			if (!message.parent) {
+				context.commit('addMessage', { token, message })
 				return
 			}
 
@@ -539,6 +541,7 @@ const actions = {
 			}
 
 			// Quit processing
+			context.commit('addMessage', { token, message })
 			return
 		}
 
@@ -887,8 +890,8 @@ const actions = {
 					: Math.min(lastGivenMessageId, message.id)
 			}
 
-			// FIXME filter thread messages in general view
-			if (!isHiddenSystemMessage(message)) {
+			if (!isHiddenSystemMessage(message)
+				&& (threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})
@@ -974,8 +977,8 @@ const actions = {
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 			oldestKnownMessageId = oldestKnownMessageId === 0 ? message.id : Math.min(oldestKnownMessageId, message.id)
 
-			// FIXME filter thread messages in general view
-			if (!isHiddenSystemMessage(message)) {
+			if (!isHiddenSystemMessage(message)
+				&& (threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})

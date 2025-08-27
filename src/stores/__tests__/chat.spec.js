@@ -108,12 +108,12 @@ describe('chatStore', () => {
 	})
 
 	describe('get a list of messages', () => {
-		it('returns an array if both messages and blocks present', () => {
+		it('returns an array if both messages and blocks present (skipping thread messages)', () => {
 			// Arrange
-			processMessages(TOKEN, [mockMessages[110], mockMessages[109]])
+			processMessages(TOKEN, [mockMessages[110], mockMessages[109], mockMessages[108]])
 
 			// Assert
-			expect(chatStore.getMessagesList(TOKEN)).toEqual([mockMessages[109], mockMessages[110]])
+			expect(chatStore.getMessagesList(TOKEN)).toEqual([mockMessages[108], mockMessages[110]])
 		})
 
 		it('returns an array of thread messages only', () => {
