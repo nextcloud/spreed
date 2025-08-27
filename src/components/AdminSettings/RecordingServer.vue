@@ -26,7 +26,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<IconDeleteOutline :size="20" />
+				<IconTrashCanOutline :size="20" />
 			</template>
 		</NcButton>
 
@@ -57,8 +57,8 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import { getWelcomeMessage } from '../../services/recordingService.js'
 
 export default {
@@ -67,7 +67,7 @@ export default {
 	components: {
 		IconAlertCircleOutline,
 		IconCheck,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconReload,
 		NcButton,
 		NcCheckboxRadioSwitch,

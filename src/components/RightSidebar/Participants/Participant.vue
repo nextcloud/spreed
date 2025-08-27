@@ -261,7 +261,7 @@
 				close-after-click
 				@click="isRemoveDialogOpen = true">
 				<template #icon>
-					<IconDeleteOutline :size="20" />
+					<IconTrashCanOutline :size="20" />
 				</template>
 				{{ removeParticipantLabel }}
 			</NcActionButton>
@@ -326,7 +326,6 @@ import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconEmailOutline from 'vue-material-design-icons/EmailOutline.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconLockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
@@ -338,6 +337,7 @@ import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue
 import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
 import IconPhoneInTalkOutline from 'vue-material-design-icons/PhoneInTalkOutline.vue'
 import IconPhonePausedOutline from 'vue-material-design-icons/PhonePausedOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
@@ -385,7 +385,7 @@ export default {
 		IconBellOutline,
 		IconContentCopy,
 		IconCrownOutline,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconEmailOutline,
 		IconHandBackLeft,
 		IconLockOutline,

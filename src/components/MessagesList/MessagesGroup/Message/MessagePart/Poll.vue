@@ -22,7 +22,7 @@
 				:aria-label="t('spreed', 'Delete poll draft')"
 				@click.stop="deleteDraft">
 				<template #icon>
-					<IconDeleteOutline :size="20" />
+					<IconTrashCanOutline :size="20" />
 				</template>
 			</NcButton>
 		</span>
@@ -58,9 +58,9 @@
 import { n, t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import { POLL } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
@@ -70,7 +70,7 @@ export default {
 
 	components: {
 		NcButton,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconPencilOutline,
 		IconPoll,
 	},

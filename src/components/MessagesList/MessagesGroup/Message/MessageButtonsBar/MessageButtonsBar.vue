@@ -201,7 +201,7 @@
 							close-after-click
 							@click.stop="handleDelete">
 							<template #icon>
-								<IconDeleteOutline :size="16" />
+								<IconTrashCanOutline :size="16" />
 							</template>
 							{{ t('spreed', 'Delete') }}
 						</NcActionButton>
@@ -331,7 +331,6 @@ import IconClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -341,6 +340,7 @@ import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconTranslate from 'vue-material-design-icons/Translate.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconFileDownload from '../../../../../../img/material-icons/file-download.svg?raw'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
@@ -380,7 +380,7 @@ export default {
 		IconClockEditOutline,
 		IconClockOutline,
 		IconContentCopy,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconEmoticonOutline,
 		IconEyeOffOutline,
 		IconFileOutline,

@@ -34,7 +34,7 @@
 				variant="error"
 				@click="toggleShowDialog">
 				<template #icon>
-					<IconDeleteOutline :size="20" />
+					<IconTrashCanOutline :size="20" />
 				</template>
 				{{ deleteButtonLabel }}
 			</NcButton>
@@ -97,9 +97,9 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 import SelectableParticipant from './SelectableParticipant.vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
@@ -117,7 +117,7 @@ export default {
 		SelectableParticipant,
 		NcButton,
 		IconArrowLeft,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		NcDialog,
 	},
 
