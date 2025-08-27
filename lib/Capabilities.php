@@ -256,7 +256,7 @@ class Capabilities implements IPublicCapability {
 					'has-translation-providers' => $this->translationManager->hasProviders(),
 					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
-					'summary-threshold' => 100,
+					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
