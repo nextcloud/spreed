@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest'
 import TrackToStream from './TrackToStream.js'
 
 /**
@@ -34,14 +35,14 @@ describe('TrackToStream', () => {
 		window.MediaStream = function() {
 			this._tracks = []
 
-			this.addTrack = jest.fn((track) => {
+			this.addTrack = vi.fn((track) => {
 				if (this._tracks.includes(track)) {
 					console.error('Tried to add again track already added to stream')
 					return
 				}
 				this._tracks.push(track)
 			})
-			this.removeTrack = jest.fn((track) => {
+			this.removeTrack = vi.fn((track) => {
 				const index = this._tracks.indexOf(track)
 				if (index < 0) {
 					console.error('Tried to delete track not added to stream')
@@ -49,7 +50,7 @@ describe('TrackToStream', () => {
 				}
 				this._tracks.splice(index, 1)
 			})
-			this.getTracks = jest.fn(() => {
+			this.getTracks = vi.fn(() => {
 				return this._tracks
 			})
 		}
@@ -60,9 +61,9 @@ describe('TrackToStream', () => {
 		trackToStream.addInputTrackSlot('audio')
 		trackToStream.addInputTrackSlot('video')
 
-		streamSetHandler = jest.fn()
-		trackReplacedHandler = jest.fn()
-		trackEnabledHandler = jest.fn()
+		streamSetHandler = vi.fn()
+		trackReplacedHandler = vi.fn()
+		trackEnabledHandler = vi.fn()
 
 		trackToStream.on('streamSet', streamSetHandler)
 		trackToStream.on('trackReplaced', trackReplacedHandler)

@@ -1,7 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
 	getFirstAvailableMediaDevice,
 	listMediaDevices,
@@ -12,7 +14,7 @@ import {
 describe('mediaDevicePreferences', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	// navigator.enumerateDevices() will list 'default' capture device first
@@ -111,7 +113,7 @@ describe('mediaDevicePreferences', () => {
 
 	describe('populateMediaDevicesPreferences', () => {
 		beforeEach(() => {
-			console.debug = jest.fn()
+			console.debug = vi.fn()
 		})
 
 		it('returns preference lists with all available devices', () => {

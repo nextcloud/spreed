@@ -1,21 +1,23 @@
-import { setGuestNickname } from '@nextcloud/auth'
-import { t } from '@nextcloud/l10n'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+*/
+
+import { setGuestNickname } from '@nextcloud/auth'
+import { t } from '@nextcloud/l10n'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { setGuestUserName } from '../../services/participantsService.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'
 import { useGuestNameStore } from '../guestName.js'
 
-jest.mock('../../services/participantsService', () => ({
-	setGuestUserName: jest.fn(),
+vi.mock('../../services/participantsService', () => ({
+	setGuestUserName: vi.fn(),
 }))
-jest.mock('@nextcloud/auth', () => ({
-	...jest.requireActual('@nextcloud/auth'),
-	setGuestNickname: jest.fn(),
+vi.mock('@nextcloud/auth', () => ({
+	getCurrentUser: vi.fn(),
+	setGuestNickname: vi.fn(),
 }))
 
 describe('guestNameStore', () => {
@@ -29,7 +31,7 @@ describe('guestNameStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('sets guest name if empty', () => {
@@ -177,7 +179,7 @@ describe('guestNameStore', () => {
 			actorId: 'actor-id1',
 			actorDisplayName: 'old actor 1',
 		}
-		console.error = jest.fn()
+		console.error = vi.fn()
 
 		actorStore.setCurrentUser({ uid: 'actor-id1' })
 		store.addGuestName(actor1, { noUpdate: false })

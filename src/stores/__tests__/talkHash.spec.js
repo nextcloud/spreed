@@ -1,9 +1,11 @@
-import { showError } from '@nextcloud/dialogs'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { useTalkHashStore } from '../talkHash.js'
 
 describe('talkHashStore', () => {
@@ -18,7 +20,7 @@ describe('talkHashStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('talk hash handling', () => {
@@ -83,7 +85,7 @@ describe('talkHashStore', () => {
 
 	describe('maintenance mode warning', () => {
 		test('displays and clears maintenance mode warning if response contains a 503 status', () => {
-			const hideToast = jest.fn()
+			const hideToast = vi.fn()
 
 			showError.mockImplementation(() => ({
 				hideToast,

@@ -1,12 +1,14 @@
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import LeftSidebar from './LeftSidebar.vue'
 import router from '../../__mocks__/router.js'
@@ -18,28 +20,33 @@ import { useActorStore } from '../../stores/actor.ts'
 import { findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
-jest.mock('../../services/conversationsService', () => ({
-	searchListedConversations: jest.fn(),
+vi.mock('../../services/conversationsService', () => ({
+	searchListedConversations: vi.fn(),
 }))
-jest.mock('../../services/coreService', () => ({
-	autocompleteQuery: jest.fn(),
+vi.mock('../../services/coreService', () => ({
+	autocompleteQuery: vi.fn(),
 }))
 
 // Test actions with 'can-create' config
 let mockCanCreateConversations = true
-jest.mock('../../services/CapabilitiesManager', () => ({
-	...jest.requireActual('../../services/CapabilitiesManager'),
-	getTalkConfig: jest.fn((...args) => {
-		if (args[0] === 'local' && args[1] === 'conversations' && args[2] === 'can-create') {
-			return mockCanCreateConversations
-		} else {
-			return jest.requireActual('../../services/CapabilitiesManager').getTalkConfig(...args)
-		}
-	}),
-}))
+vi.mock('../../services/CapabilitiesManager', async () => {
+	const CapabilitiesManager = await vi.importActual('../../services/CapabilitiesManager')
+	return {
+		...CapabilitiesManager,
+		getTalkConfig: vi.fn((...args) => {
+			if (args[0] === 'local' && args[1] === 'conversations' && args[2] === 'can-create') {
+				return mockCanCreateConversations
+			} else {
+				return CapabilitiesManager.getTalkConfig(...args)
+			}
+		}),
+	}
+})
 
 // short-circuit debounce
-jest.mock('debounce', () => jest.fn().mockImplementation((fn) => fn))
+vi.mock('debounce', () => ({
+	default: vi.fn().mockImplementation((fn) => fn),
+}))
 
 describe('LeftSidebar.vue', () => {
 	let store
@@ -82,7 +89,7 @@ describe('LeftSidebar.vue', () => {
 	}
 
 	beforeEach(() => {
-		jest.useFakeTimers()
+		vi.useFakeTimers()
 
 		setActivePinia(createPinia())
 		const actorStore = useActorStore()
@@ -101,10 +108,10 @@ describe('LeftSidebar.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 
 		// note: need a copy because the Vue modifies it when sorting
-		conversationsListMock = jest.fn()
-		fetchConversationsAction = jest.fn().mockReturnValue({ headers: {} })
-		addConversationAction = jest.fn()
-		createOneToOneConversationAction = jest.fn()
+		conversationsListMock = vi.fn()
+		fetchConversationsAction = vi.fn().mockReturnValue({ headers: {} })
+		addConversationAction = vi.fn()
+		createOneToOneConversationAction = vi.fn()
 		actorStore.setCurrentUser({ uid: 'current-user' })
 		testStoreConfig.modules.conversationsStore.getters.conversationsList = conversationsListMock
 		testStoreConfig.modules.conversationsStore.actions.fetchConversations = fetchConversationsAction
@@ -116,7 +123,7 @@ describe('LeftSidebar.vue', () => {
 
 	afterEach(() => {
 		mockCanCreateConversations = true
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('conversation list', () => {
@@ -154,7 +161,7 @@ describe('LeftSidebar.vue', () => {
 		})
 
 		test('fetches and renders conversation list initially', async () => {
-			const conversationsReceivedEvent = jest.fn()
+			const conversationsReceivedEvent = vi.fn()
 			EventBus.once('conversations-received', conversationsReceivedEvent)
 			fetchConversationsAction.mockResolvedValueOnce()
 
@@ -196,10 +203,10 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
-			jest.advanceTimersByTime(15000)
+			vi.advanceTimersByTime(15000)
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
-			jest.advanceTimersByTime(20000)
+			vi.advanceTimersByTime(20000)
 			expect(fetchConversationsAction).toHaveBeenCalled()
 		})
 
@@ -604,7 +611,7 @@ describe('LeftSidebar.vue', () => {
 
 	test('shows settings when clicking the settings button', async () => {
 		conversationsListMock.mockImplementation(() => [])
-		const eventHandler = jest.fn()
+		const eventHandler = vi.fn()
 		subscribe('show-settings', eventHandler)
 		const wrapper = mountComponent()
 

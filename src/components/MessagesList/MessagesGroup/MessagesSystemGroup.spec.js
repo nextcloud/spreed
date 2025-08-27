@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import MessagesSystemGroup from './MessagesSystemGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
@@ -24,7 +25,7 @@ describe('MessagesSystemGroup.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('renders grouped system messages', () => {

@@ -2,11 +2,12 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { describe, expect, it, jest } from '@jest/globals'
+
 import { emit } from '@nextcloud/event-bus'
+import { describe, expect, it, vi } from 'vitest'
 import { SettingsAPI, useCustomSettings } from '../SettingsAPI.ts'
 
-jest.mock('@nextcloud/event-bus')
+vi.mock('@nextcloud/event-bus')
 
 describe('SettingsAPI', () => {
 	it('should have open method to open settings', () => {

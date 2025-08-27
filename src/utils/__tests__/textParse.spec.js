@@ -1,11 +1,13 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { describe, expect, it, vi } from 'vitest'
 import { parseMentions, parseSpecialSymbols } from '../textParse.ts'
 
-jest.mock('@nextcloud/router', () => ({
-	getBaseUrl: jest.fn().mockReturnValue('https://server2.com'),
+vi.mock('@nextcloud/router', () => ({
+	getBaseUrl: vi.fn().mockReturnValue('https://server2.com'),
 }))
 
 describe('textParse', () => {

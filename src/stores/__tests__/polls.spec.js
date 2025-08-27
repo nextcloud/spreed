@@ -1,10 +1,11 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 import { flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import {
 	createPoll,
@@ -17,23 +18,24 @@ import {
 import { generateOCSResponse } from '../../test-helpers.js'
 import { usePollsStore } from '../polls.ts'
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showError: jest.fn(),
-	showInfo: jest.fn(() => ({
-		onClick: jest.fn(),
-		hideToast: jest.fn(),
+vi.mock('@nextcloud/dialogs', () => ({
+	showError: vi.fn(),
+	showInfo: vi.fn(() => ({
+		onClick: vi.fn(),
+		hideToast: vi.fn(),
 	})),
-	showSuccess: jest.fn(),
+	showSuccess: vi.fn(),
+	TOAST_PERMANENT_TIMEOUT: -1,
 }))
 
-jest.mock('../../services/pollService', () => ({
-	createPoll: jest.fn(),
-	createPollDraft: jest.fn(),
-	getPollData: jest.fn(),
-	getPollDrafts: jest.fn(),
-	submitVote: jest.fn(),
-	endPoll: jest.fn(),
-	deletePollDraft: jest.fn(),
+vi.mock('../../services/pollService', () => ({
+	createPoll: vi.fn(),
+	createPollDraft: vi.fn(),
+	getPollData: vi.fn(),
+	getPollDrafts: vi.fn(),
+	submitVote: vi.fn(),
+	endPoll: vi.fn(),
+	deletePollDraft: vi.fn(),
 }))
 
 describe('pollsStore', () => {
@@ -124,13 +126,13 @@ describe('pollsStore', () => {
 
 		it('debounces a function to get a poll from server', async () => {
 			// Arrange
-			jest.useFakeTimers()
+			vi.useFakeTimers()
 			const response = generateOCSResponse({ payload: poll })
 			getPollData.mockResolvedValue(response)
 
 			// Act
 			pollsStore.debounceGetPollData({ token: TOKEN, pollId: poll.id })
-			jest.advanceTimersByTime(5000)
+			vi.advanceTimersByTime(5000)
 			await flushPromises()
 
 			// Assert

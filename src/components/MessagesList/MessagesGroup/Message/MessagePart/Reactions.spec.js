@@ -1,11 +1,13 @@
-import { showError } from '@nextcloud/dialogs'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
@@ -23,10 +25,10 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generateOCSResponse } from '../../../../../test-helpers.js'
 
-jest.mock('../../../../../services/reactionsService', () => ({
-	getReactionsDetails: jest.fn(),
-	addReactionToMessage: jest.fn(),
-	removeReactionFromMessage: jest.fn(),
+vi.mock('../../../../../services/reactionsService', () => ({
+	getReactionsDetails: vi.fn(),
+	addReactionToMessage: vi.fn(),
+	removeReactionFromMessage: vi.fn(),
 }))
 
 describe('Reactions.vue', () => {
@@ -59,7 +61,7 @@ describe('Reactions.vue', () => {
 			timestamp: 1703668230,
 			token,
 		}
-		messageMock = jest.fn().mockReturnValue(message)
+		messageMock = vi.fn().mockReturnValue(message)
 		testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 
 		actorStore.setCurrentUser({ uid: 'admin' })
@@ -97,7 +99,7 @@ describe('Reactions.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		reactionsStore.resetReactions(token, messageId)
 	})
 
@@ -156,7 +158,7 @@ describe('Reactions.vue', () => {
 		test('doesn\'t mount emoji picker when there are no reactions', () => {
 			// Arrange
 			reactionsStore.resetReactions(token, messageId)
-			messageMock = jest.fn().mockReturnValue({
+			messageMock = vi.fn().mockReturnValue({
 				actorId: 'admin',
 				actorType: 'users',
 				id: messageId,
@@ -191,7 +193,7 @@ describe('Reactions.vue', () => {
 
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
 			// Arrange
-			jest.spyOn(reactionsStore, 'addReactionToMessage')
+			vi.spyOn(reactionsStore, 'addReactionToMessage')
 			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
@@ -225,8 +227,8 @@ describe('Reactions.vue', () => {
 
 		test('dispatches store actions upon clicking a reaction buttons', async () => {
 			// Arrange
-			jest.spyOn(reactionsStore, 'addReactionToMessage')
-			jest.spyOn(reactionsStore, 'removeReactionFromMessage')
+			vi.spyOn(reactionsStore, 'addReactionToMessage')
+			vi.spyOn(reactionsStore, 'removeReactionFromMessage')
 
 			vuexStore.dispatch('processMessage', { token, message })
 
@@ -277,8 +279,8 @@ describe('Reactions.vue', () => {
 		test('fetches reactions details when they are not available', async () => {
 			// Arrange
 			reactionsStore.resetReactions(token, messageId)
-			console.debug = jest.fn()
-			jest.spyOn(reactionsStore, 'fetchReactions')
+			console.debug = vi.fn()
+			vi.spyOn(reactionsStore, 'fetchReactions')
 
 			const wrapper = shallowMount(Reactions, {
 				props: reactionsProps,

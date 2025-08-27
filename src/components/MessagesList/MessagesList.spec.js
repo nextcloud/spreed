@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import MessagesList from './MessagesList.vue'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
@@ -17,13 +18,13 @@ describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let testStoreConfig
-	const getVisualLastReadMessageIdMock = jest.fn()
+	const getVisualLastReadMessageIdMock = vi.fn()
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
-			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
+			= vi.fn().mockReturnValue(getVisualLastReadMessageIdMock)
 		store = createStore(testStoreConfig)
 
 		// scrollTo isn't implemented in JSDOM
@@ -31,7 +32,7 @@ describe('MessagesList.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	const messagesGroup1 = [{
@@ -194,7 +195,7 @@ describe('MessagesList.vue', () => {
 		})
 
 		test('displays a date separator between days', () => {
-			jest.useFakeTimers().setSystemTime(new Date('2020-05-11T13:00:00'))
+			vi.useFakeTimers().setSystemTime(new Date('2020-05-11T13:00:00'))
 
 			const { wrapper } = testNotGrouped([{
 				id: 100,
@@ -387,7 +388,7 @@ describe('MessagesList.vue', () => {
 	})
 
 	describe('message rendering', () => {
-		jest.useFakeTimers().setSystemTime(new Date('2024-05-01T17:00:00'))
+		vi.useFakeTimers().setSystemTime(new Date('2024-05-01T17:00:00'))
 		/**
 		 *
 		 * @param {Array} messagesGroups initial messages groups

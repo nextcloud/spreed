@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { describe, expect, it, vi } from 'vitest'
 import {
 	copyConversationLinkToClipboard,
 	generateAbsoluteUrl,
@@ -36,7 +38,7 @@ describe('handleUrl', () => {
 
 	describe('copyConversationLinkToClipboard', () => {
 		it('should copy the conversation link and show success message', async () => {
-			Object.assign(navigator, { clipboard: { writeText: jest.fn().mockResolvedValueOnce() } })
+			Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValueOnce() } })
 
 			await copyConversationLinkToClipboard('TOKEN', '123')
 
@@ -45,7 +47,7 @@ describe('handleUrl', () => {
 		})
 
 		it('should show error message when copying fails', async () => {
-			Object.assign(navigator, { clipboard: { writeText: jest.fn().mockRejectedValueOnce() } })
+			Object.assign(navigator, { clipboard: { writeText: vi.fn().mockRejectedValueOnce() } })
 
 			await copyConversationLinkToClipboard('TOKEN', '123')
 

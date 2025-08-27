@@ -1,12 +1,21 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 import { createPinia, setActivePinia } from 'pinia'
-import { createStore } from 'vuex'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createStore, useStore } from 'vuex'
 import storeConfig from '../../store/storeConfig.js'
 import { useChatStore } from '../chat.ts'
+
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
 
 describe('chatStore', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -60,7 +69,7 @@ describe('chatStore', () => {
 
 	beforeEach(() => {
 		vuexStore = createStore(storeConfig)
-		jest.spyOn(require('vuex'), 'useStore').mockReturnValue(vuexStore)
+		useStore.mockReturnValue(vuexStore)
 
 		setActivePinia(createPinia())
 		chatStore = useChatStore()
@@ -70,7 +79,7 @@ describe('chatStore', () => {
 		Object.keys(chatStore.chatBlocks).forEach((key) => {
 			delete chatStore.chatBlocks[key]
 		})
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('check for existence', () => {

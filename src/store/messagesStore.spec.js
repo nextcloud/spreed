@@ -1,12 +1,14 @@
-import { showError } from '@nextcloud/dialogs'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
 import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import { createStore } from 'vuex'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { createStore, useStore } from 'vuex'
 import {
 	ATTENDEE,
 	CHAT,
@@ -34,26 +36,26 @@ import CancelableRequest from '../utils/cancelableRequest.js'
 import messagesStore from './messagesStore.js'
 import storeConfig from './storeConfig.js'
 
-jest.mock('../services/messagesService', () => ({
-	deleteMessage: jest.fn(),
-	editMessage: jest.fn(),
-	updateLastReadMessage: jest.fn(),
-	fetchMessages: jest.fn(),
-	getMessageContext: jest.fn(),
-	pollNewMessages: jest.fn(),
-	postNewMessage: jest.fn(),
-	postRichObjectToConversation: jest.fn(),
+vi.mock('../services/messagesService', () => ({
+	deleteMessage: vi.fn(),
+	editMessage: vi.fn(),
+	updateLastReadMessage: vi.fn(),
+	fetchMessages: vi.fn(),
+	getMessageContext: vi.fn(),
+	pollNewMessages: vi.fn(),
+	postNewMessage: vi.fn(),
+	postRichObjectToConversation: vi.fn(),
 }))
 
-jest.mock('../services/conversationsService', () => ({
-	fetchNoteToSelfConversation: jest.fn(),
+vi.mock('../services/conversationsService', () => ({
+	fetchNoteToSelfConversation: vi.fn(),
 }))
 
-jest.mock('../utils/cancelableRequest')
+vi.mock('../utils/cancelableRequest')
 
 // Test actions with 'chat-read-last' feature
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(() => ({
+vi.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: vi.fn(() => ({
 		spreed: {
 			features: ['chat-read-last'],
 			'features-local': [],
@@ -61,6 +63,14 @@ jest.mock('@nextcloud/capabilities', () => ({
 		},
 	})),
 }))
+
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
 
 describe('messagesStore', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -82,8 +92,6 @@ describe('messagesStore', () => {
 	let chatStore
 
 	beforeEach(() => {
-		jest.spyOn(require('vuex'), 'useStore').mockReturnValue(store)
-
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 		actorStore = useActorStore()
@@ -96,21 +104,22 @@ describe('messagesStore', () => {
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		actorStore.displayName = 'actor-display-name-1'
 
-		conversationMock = jest.fn().mockReturnValue(conversation)
-		updateConversationLastMessageMock = jest.fn()
-		updateConversationLastReadMessageMock = jest.fn()
-		updateConversationLastActiveAction = jest.fn()
+		conversationMock = vi.fn().mockReturnValue(conversation)
+		updateConversationLastMessageMock = vi.fn()
+		updateConversationLastReadMessageMock = vi.fn()
+		updateConversationLastActiveAction = vi.fn()
 
-		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+		testStoreConfig.modules.conversationsStore.getters.conversation = vi.fn().mockReturnValue(conversationMock)
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastMessage = updateConversationLastMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
 
 		store = createStore(testStoreConfig)
+		useStore.mockReturnValue(store)
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('processMessage', () => {
@@ -125,8 +134,8 @@ describe('messagesStore', () => {
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
-			reactionsStore.resetReactions = jest.fn()
-			reactionsStore.processReaction = jest.fn()
+			reactionsStore.resetReactions = vi.fn()
+			reactionsStore.processReaction = vi.fn()
 
 			const messages = [{
 				id: 2,
@@ -360,7 +369,7 @@ describe('messagesStore', () => {
 		let message
 
 		beforeEach(() => {
-			reactionsStore.resetReactions = jest.fn()
+			reactionsStore.resetReactions = vi.fn()
 
 			message = {
 				id: 10,
@@ -583,11 +592,11 @@ describe('messagesStore', () => {
 
 	describe('temporary messages', () => {
 		beforeEach(() => {
-			jest.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
+			vi.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
 		})
 
 		afterEach(() => {
-			jest.useRealTimers()
+			vi.useRealTimers()
 		})
 
 		test('adds temporary message to the list', () => {
@@ -864,12 +873,12 @@ describe('messagesStore', () => {
 			testStoreConfig = cloneDeep(messagesStore)
 			const guestNameStore = useGuestNameStore()
 
-			updateLastCommonReadMessageAction = jest.fn()
-			addGuestNameAction = jest.fn()
+			updateLastCommonReadMessageAction = vi.fn()
+			addGuestNameAction = vi.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
 
-			cancelFunctionMock = jest.fn()
+			cancelFunctionMock = vi.fn()
 			CancelableRequest.mockImplementation((request) => {
 				return {
 					request,
@@ -976,12 +985,12 @@ describe('messagesStore', () => {
 			testStoreConfig = cloneDeep(messagesStore)
 			const guestNameStore = useGuestNameStore()
 
-			updateLastCommonReadMessageAction = jest.fn()
-			addGuestNameAction = jest.fn()
+			updateLastCommonReadMessageAction = vi.fn()
+			addGuestNameAction = vi.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
 
-			cancelFunctionMock = jest.fn()
+			cancelFunctionMock = vi.fn()
 			CancelableRequest.mockImplementation((request) => {
 				return {
 					request,
@@ -1119,13 +1128,13 @@ describe('messagesStore', () => {
 			testStoreConfig = cloneDeep(messagesStore)
 			const guestNameStore = useGuestNameStore()
 
-			conversationMock = jest.fn()
-			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			conversationMock = vi.fn()
+			testStoreConfig.getters.conversation = vi.fn().mockReturnValue(conversationMock)
 
-			updateConversationLastMessageAction = jest.fn()
-			updateLastCommonReadMessageAction = jest.fn()
-			updateUnreadMessagesMutation = jest.fn()
-			addGuestNameAction = jest.fn()
+			updateConversationLastMessageAction = vi.fn()
+			updateLastCommonReadMessageAction = vi.fn()
+			updateUnreadMessagesMutation = vi.fn()
+			addGuestNameAction = vi.fn()
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
@@ -1133,7 +1142,7 @@ describe('messagesStore', () => {
 
 			cancelFunctionMocks = []
 			CancelableRequest.mockImplementation((request) => {
-				const cancelFunctionMock = jest.fn()
+				const cancelFunctionMock = vi.fn()
 				cancelFunctionMocks.push(cancelFunctionMock)
 				return {
 					request,
@@ -1145,7 +1154,7 @@ describe('messagesStore', () => {
 		})
 
 		afterEach(() => {
-			jest.clearAllMocks()
+			vi.clearAllMocks()
 		})
 
 		test('looks for new messages', async () => {
@@ -1235,10 +1244,10 @@ describe('messagesStore', () => {
 
 		test('does not look for new messages if lastKnownMessageId is falsy', async () => {
 			// Arrange: prepare cancelable request from previous call of the function
-			const cancelFunctionMock = jest.fn()
+			const cancelFunctionMock = vi.fn()
 			cancelFunctionMocks.push(cancelFunctionMock)
 			store.commit('setCancelPollNewMessages', { cancelFunction: cancelFunctionMock, requestId: 'request1' })
-			console.warn = jest.fn()
+			console.warn = vi.fn()
 
 			// Act
 			store.dispatch('pollNewMessages', {
@@ -1578,26 +1587,26 @@ describe('messagesStore', () => {
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(messagesStore)
 
-			jest.useFakeTimers()
+			vi.useFakeTimers()
 
-			console.error = jest.fn()
+			console.error = vi.fn()
 
-			conversationMock = jest.fn()
+			conversationMock = vi.fn()
 			actorStore.actorId = 'actor-id-1'
 			actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
-			updateConversationLastMessageAction = jest.fn()
-			updateLastCommonReadMessageAction = jest.fn()
-			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			updateConversationLastMessageAction = vi.fn()
+			updateLastCommonReadMessageAction = vi.fn()
+			testStoreConfig.getters.conversation = vi.fn().mockReturnValue(conversationMock)
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			// mock this complex local action as we already tested it elsewhere
 			testStoreConfig.actions.updateConversationLastActive = updateConversationLastActiveAction
-			testStoreConfig.actions.updateConversationLastReadMessage = jest.fn()
-			testStoreConfig.actions.addConversation = jest.fn()
+			testStoreConfig.actions.updateConversationLastReadMessage = vi.fn()
+			testStoreConfig.actions.addConversation = vi.fn()
 
 			cancelFunctionMocks = []
 			CancelableRequest.mockImplementation((request) => {
-				const cancelFunctionMock = jest.fn()
+				const cancelFunctionMock = vi.fn()
 				cancelFunctionMocks.push(cancelFunctionMock)
 				return {
 					request,
@@ -1616,7 +1625,7 @@ describe('messagesStore', () => {
 		})
 
 		afterEach(() => {
-			jest.clearAllMocks()
+			vi.clearAllMocks()
 		})
 
 		test('posts new message', async () => {
@@ -1744,7 +1753,7 @@ describe('messagesStore', () => {
 				status: statusCode,
 			}
 
-			console.error = jest.fn()
+			console.error = vi.fn()
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })).rejects.toMatchObject({ response })
@@ -1787,7 +1796,7 @@ describe('messagesStore', () => {
 
 			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {})
 
-			jest.advanceTimersByTime(60000)
+			vi.advanceTimersByTime(60000)
 
 			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
 
@@ -1820,7 +1829,7 @@ describe('messagesStore', () => {
 
 			await store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })
 
-			jest.advanceTimersByTime(60000)
+			vi.advanceTimersByTime(60000)
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 		})

@@ -1,16 +1,20 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import vuexStore from '../../store/index.js'
 import { useCallViewStore } from '../callView.ts'
 
-jest.mock('../../services/BrowserStorage.js', () => ({
-	getItem: jest.fn().mockReturnValue(null),
-	setItem: jest.fn(),
+vi.mock('../../services/BrowserStorage.js', () => ({
+	default: {
+		getItem: vi.fn().mockReturnValue(null),
+		setItem: vi.fn(),
+	},
 }))
 
 describe('callViewStore', () => {
@@ -25,7 +29,7 @@ describe('callViewStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('call view mode and presentation', () => {
@@ -255,14 +259,14 @@ describe('callViewStore', () => {
 
 		it('resets callHasJustEnded after passed time', () => {
 			// Arrange
-			jest.useFakeTimers()
+			vi.useFakeTimers()
 			callViewStore.setCallHasJustEnded(Date.now() / 1000 - 2)
 			expect(callViewStore.callHasJustEnded).toBeTruthy()
 			// Skip 4 seconds
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 			expect(callViewStore.callHasJustEnded).toBeTruthy()
 			// Skip remaining 4 seconds
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 			expect(callViewStore.callHasJustEnded).toBeFalsy()
 		})
 	})

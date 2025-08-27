@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionText from '@nextcloud/vue/components/NcActionText'
@@ -70,7 +71,7 @@ describe('Participant.vue', () => {
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		tokenStore.token = TOKEN
 
-		const conversationGetterMock = jest.fn().mockReturnValue(conversation)
+		const conversationGetterMock = vi.fn().mockReturnValue(conversation)
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
@@ -78,7 +79,7 @@ describe('Participant.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	/**
@@ -299,7 +300,7 @@ describe('Participant.vue', () => {
 		}
 
 		beforeEach(() => {
-			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: false })
+			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: false })
 
 			testStoreConfig = cloneDeep(storeConfig)
 			testStoreConfig.modules.participantsStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
@@ -308,7 +309,7 @@ describe('Participant.vue', () => {
 
 		test('does not renders call icon and hand raised icon when disconnected', () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
-			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
+			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: true })
 
 			checkStateIconsRendered(participant, null)
 			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
@@ -327,7 +328,7 @@ describe('Participant.vue', () => {
 		})
 		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
+			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: true })
 
 			checkStateIconsRendered(participant, IconHandBackLeftOutline)
 			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
@@ -343,7 +344,7 @@ describe('Participant.vue', () => {
 			let demoteFromModeratorAction
 
 			beforeEach(() => {
-				demoteFromModeratorAction = jest.fn()
+				demoteFromModeratorAction = vi.fn()
 
 				testStoreConfig.modules.participantsStore.actions.demoteFromModerator = demoteFromModeratorAction
 				store = createStore(testStoreConfig)
@@ -435,7 +436,7 @@ describe('Participant.vue', () => {
 			let promoteToModeratorAction
 
 			beforeEach(() => {
-				promoteToModeratorAction = jest.fn()
+				promoteToModeratorAction = vi.fn()
 
 				testStoreConfig.modules.participantsStore.actions.promoteToModerator = promoteToModeratorAction
 				store = createStore(testStoreConfig)
@@ -528,7 +529,7 @@ describe('Participant.vue', () => {
 			let resendInvitationsAction
 
 			beforeEach(() => {
-				resendInvitationsAction = jest.fn()
+				resendInvitationsAction = vi.fn()
 
 				testStoreConfig.modules.participantsStore.actions.resendInvitations = resendInvitationsAction
 				store = createStore(testStoreConfig)
@@ -569,7 +570,7 @@ describe('Participant.vue', () => {
 			let removeAction
 
 			beforeEach(() => {
-				removeAction = jest.fn()
+				removeAction = vi.fn()
 
 				testStoreConfig.modules.participantsStore.actions.removeParticipant = removeAction
 				store = createStore(testStoreConfig)

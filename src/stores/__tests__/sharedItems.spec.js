@@ -1,17 +1,19 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.ts'
 import { SHARED_ITEM } from '../../constants.ts'
 import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useSharedItemsStore } from '../sharedItems.ts'
 
-jest.mock('../../services/sharedItemsService', () => ({
-	getSharedItems: jest.fn(),
-	getSharedItemsOverview: jest.fn(),
+vi.mock('../../services/sharedItemsService', () => ({
+	getSharedItems: vi.fn(),
+	getSharedItemsOverview: vi.fn(),
 }))
 
 describe('sharedItemsStore', () => {
@@ -32,7 +34,7 @@ describe('sharedItemsStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('read/write operations', () => {
@@ -181,7 +183,7 @@ describe('sharedItemsStore', () => {
 
 	describe('handle exceptions', () => {
 		beforeEach(() => {
-			console.error = jest.fn()
+			console.error = vi.fn()
 		})
 
 		it('handles error in server request for getSharedItemsOverview', async () => {

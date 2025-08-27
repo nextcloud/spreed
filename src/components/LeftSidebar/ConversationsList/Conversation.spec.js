@@ -1,10 +1,12 @@
-import { showError, showSuccess } from '@nextcloud/dialogs'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { flushPromises, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -16,8 +18,8 @@ import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcButton } from '../../../test-helpers.js'
 
-jest.mock('../../../services/participantsService', () => ({
-	leaveConversation: jest.fn(),
+vi.mock('../../../services/participantsService', () => ({
+	leaveConversation: vi.fn(),
 }))
 
 // TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
@@ -32,7 +34,7 @@ describe('Conversation.vue', () => {
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
-		messagesMock = jest.fn().mockReturnValue({})
+		messagesMock = vi.fn().mockReturnValue({})
 		testStoreConfig.modules.messagesStore.getters.messages = () => messagesMock
 		store = createStore(testStoreConfig)
 
@@ -67,7 +69,7 @@ describe('Conversation.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('renders conversation entry', () => {
@@ -315,7 +317,7 @@ describe('Conversation.vue', () => {
 		let $router
 
 		beforeEach(() => {
-			$router = { push: jest.fn() }
+			$router = { push: vi.fn() }
 		})
 
 		/**
@@ -404,7 +406,7 @@ describe('Conversation.vue', () => {
 
 			beforeEach(() => {
 				leaveConversation.mockResolvedValue()
-				actionHandler = jest.fn().mockResolvedValueOnce()
+				actionHandler = vi.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
 				testStoreConfig.modules.conversationsStore.actions.toggleArchive = actionHandler
 				store = createStore(testStoreConfig)
@@ -430,7 +432,7 @@ describe('Conversation.vue', () => {
 
 			test('errors with notification when a new moderator is required before leaving', async () => {
 				// Arrange
-				actionHandler = jest.fn().mockRejectedValueOnce({ response: { status: 400 } })
+				actionHandler = vi.fn().mockRejectedValueOnce({ response: { status: 400 } })
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
 				store = createStore(testStoreConfig)
 
@@ -472,7 +474,7 @@ describe('Conversation.vue', () => {
 			let actionHandler
 
 			beforeEach(() => {
-				actionHandler = jest.fn().mockResolvedValueOnce()
+				actionHandler = vi.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
 				store = createStore(testStoreConfig)
 			})
@@ -511,7 +513,7 @@ describe('Conversation.vue', () => {
 
 		test('copies link conversation', async () => {
 			store = createStore(testStoreConfig)
-			const copyTextMock = jest.fn().mockResolvedValueOnce()
+			const copyTextMock = vi.fn().mockResolvedValueOnce()
 			const wrapper = shallowMount(Conversation, {
 				global: {
 					plugins: [store],
@@ -546,7 +548,7 @@ describe('Conversation.vue', () => {
 			expect(showSuccess).toHaveBeenCalled()
 		})
 		test('sets favorite', async () => {
-			const toggleFavoriteAction = jest.fn().mockResolvedValueOnce()
+			const toggleFavoriteAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 			store = createStore(testStoreConfig)
 
@@ -578,7 +580,7 @@ describe('Conversation.vue', () => {
 		})
 
 		test('unsets favorite', async () => {
-			const toggleFavoriteAction = jest.fn().mockResolvedValueOnce()
+			const toggleFavoriteAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 
 			item.isFavorite = true
@@ -611,7 +613,7 @@ describe('Conversation.vue', () => {
 			expect(toggleFavoriteAction).toHaveBeenCalledWith(expect.anything(), item)
 		})
 		test('marks conversation as unread', async () => {
-			const markConversationUnreadAction = jest.fn().mockResolvedValueOnce()
+			const markConversationUnreadAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.markConversationUnread = markConversationUnreadAction
 
 			const action = shallowMountAndGetAction('Mark as unread')
@@ -622,7 +624,7 @@ describe('Conversation.vue', () => {
 			expect(markConversationUnreadAction).toHaveBeenCalledWith(expect.anything(), { token: item.token })
 		})
 		test('marks conversation as read', async () => {
-			const clearLastReadMessageAction = jest.fn().mockResolvedValueOnce()
+			const clearLastReadMessageAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.clearLastReadMessage = clearLastReadMessageAction
 
 			item.unreadMessages = 1

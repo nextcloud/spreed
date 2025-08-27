@@ -37,16 +37,6 @@ export default [
 	},
 
 	{
-		name: 'talk/jest',
-		files: ['src/__mocks__/*.js', '**/*.spec.js', 'src/test-setup.js'],
-		languageOptions: {
-			globals: {
-				...globals.jest,
-			},
-		},
-	},
-
-	{
 		name: 'talk/disabled-during-migration',
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings

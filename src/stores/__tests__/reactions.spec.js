@@ -1,18 +1,20 @@
-import { showError } from '@nextcloud/dialogs'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+*/
+
+import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addReactionToMessage, getReactionsDetails, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'
 
-jest.mock('../../services/reactionsService', () => ({
-	getReactionsDetails: jest.fn(),
-	addReactionToMessage: jest.fn(),
-	removeReactionFromMessage: jest.fn(),
+vi.mock('../../services/reactionsService', () => ({
+	getReactionsDetails: vi.fn(),
+	addReactionToMessage: vi.fn(),
+	removeReactionFromMessage: vi.fn(),
 }))
 
 describe('reactionsStore', () => {
@@ -50,7 +52,7 @@ describe('reactionsStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		reactionsStore.resetReactions(token, messageId)
 	})
 
@@ -58,7 +60,7 @@ describe('reactionsStore', () => {
 		// Arrange
 		const response = generateOCSResponse({ payload: reactions })
 		getReactionsDetails.mockResolvedValue(response)
-		console.debug = jest.fn()
+		console.debug = vi.fn()
 
 		// Act
 		reactionsStore.fetchReactions()
@@ -99,7 +101,7 @@ describe('reactionsStore', () => {
 	it('resets the store when there is no reaction', () => {
 		// Arrange
 		const emptyReactions = {}
-		jest.spyOn(reactionsStore, 'resetReactions')
+		vi.spyOn(reactionsStore, 'resetReactions')
 		// Act
 		reactionsStore.updateReactions({
 			token,
@@ -178,9 +180,9 @@ describe('reactionsStore', () => {
 		}
 		const response = generateOCSResponse({ payload: actualReactions })
 		getReactionsDetails.mockResolvedValue(response)
-		jest.spyOn(reactionsStore, 'removeReaction')
-		jest.spyOn(reactionsStore, 'fetchReactions')
-		console.debug = jest.fn()
+		vi.spyOn(reactionsStore, 'removeReaction')
+		vi.spyOn(reactionsStore, 'fetchReactions')
+		console.debug = vi.fn()
 
 		// Act
 		await reactionsStore.processReaction(token, message)
@@ -222,7 +224,7 @@ describe('reactionsStore', () => {
 			// Arrange
 			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
 			addReactionToMessage.mockResolvedValue(errorResponse)
-			jest.spyOn(vuexStore, 'commit')
+			vi.spyOn(vuexStore, 'commit')
 
 			const message = {
 				actorId: 'admin',
@@ -258,8 +260,8 @@ describe('reactionsStore', () => {
 			// Arrange
 			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
 			removeReactionFromMessage.mockResolvedValue(errorResponse)
-			jest.spyOn(vuexStore, 'commit')
-			console.error = jest.fn()
+			vi.spyOn(vuexStore, 'commit')
+			console.error = vi.fn()
 
 			const message = {
 				actorId: 'admin',
@@ -296,7 +298,7 @@ describe('reactionsStore', () => {
 			// Arrange
 			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
 			getReactionsDetails.mockResolvedValue(errorResponse)
-			console.debug = jest.fn()
+			console.debug = vi.fn()
 
 			// Act
 			await reactionsStore.fetchReactions({ token, messageId })

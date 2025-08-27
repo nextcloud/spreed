@@ -1,16 +1,18 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { vi } from 'vitest'
+
 // https://github.com/focus-trap/tabbable#testing-in-jsdom
-const lib = jest.requireActual('tabbable')
-
-const tabbable = {
-	...lib,
-	tabbable: (node, options) => lib.tabbable(node, { ...options, displayCheck: 'none' }),
-	focusable: (node, options) => lib.focusable(node, { ...options, displayCheck: 'none' }),
-	isFocusable: (node, options) => lib.isFocusable(node, { ...options, displayCheck: 'none' }),
-	isTabbable: (node, options) => lib.isTabbable(node, { ...options, displayCheck: 'none' }),
+export default async () => {
+	const tabbable = await vi.importActual('tabbable')
+	return {
+		...tabbable,
+		tabbable: vi.fn(),
+		focusable: vi.fn(),
+		isFocusable: vi.fn(),
+		isTabbable: vi.fn(),
+	}
 }
-
-module.exports = tabbable

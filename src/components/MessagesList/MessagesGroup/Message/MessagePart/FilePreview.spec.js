@@ -1,12 +1,14 @@
-import { generateRemoteUrl, imagePath } from '@nextcloud/router'
-import { getUploader } from '@nextcloud/upload'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { generateRemoteUrl, imagePath } from '@nextcloud/router'
+import { getUploader } from '@nextcloud/upload'
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
@@ -48,7 +50,7 @@ describe('FilePreview.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		window.devicePixelRatio = oldPixelRatio
 	})
 
@@ -136,7 +138,7 @@ describe('FilePreview.vue', () => {
 			let getUploadFileMock
 
 			beforeEach(() => {
-				getUploadFileMock = jest.fn(() => ({
+				getUploadFileMock = vi.fn(() => ({
 					sharePath: path,
 					status: 'uploading',
 				}))
@@ -326,7 +328,7 @@ describe('FilePreview.vue', () => {
 
 			test('opens viewer when clicking if viewer available', async () => {
 				OCA.Viewer = {
-					open: jest.fn(),
+					open: vi.fn(),
 					availableHandlers: [{
 						mimes: ['image/png', 'image/jpeg'],
 					}],
@@ -360,7 +362,7 @@ describe('FilePreview.vue', () => {
 
 			test('does not open viewer when clicking if no mime handler available', async () => {
 				OCA.Viewer = {
-					open: jest.fn(),
+					open: vi.fn(),
 					availableHandlers: [{
 						mimes: ['image/png'],
 					}],
@@ -399,7 +401,7 @@ describe('FilePreview.vue', () => {
 
 					// viewer needs to be available
 					OCA.Viewer = {
-						open: jest.fn(),
+						open: vi.fn(),
 						availableHandlers: [{
 							mimes: ['video/mp4', 'image/jpeg', 'image/png', 'image/gif'],
 						}],

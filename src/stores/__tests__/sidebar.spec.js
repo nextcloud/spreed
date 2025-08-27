@@ -1,19 +1,23 @@
-import { emit } from '@nextcloud/event-bus'
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { emit } from '@nextcloud/event-bus'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useSidebarStore } from '../sidebar.ts'
 
-jest.mock('@nextcloud/event-bus', () => ({
-	emit: jest.fn(),
+vi.mock('@nextcloud/event-bus', () => ({
+	emit: vi.fn(),
 }))
 
-jest.mock('../../services/BrowserStorage.js', () => ({
-	getItem: jest.fn(),
-	setItem: jest.fn(),
+vi.mock('../../services/BrowserStorage.js', () => ({
+	default: {
+		getItem: vi.fn(),
+		setItem: vi.fn(),
+	},
 }))
 
 describe('sidebarStore', () => {
@@ -25,7 +29,7 @@ describe('sidebarStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	it('shows the sidebar on selected tab with caching the value', () => {

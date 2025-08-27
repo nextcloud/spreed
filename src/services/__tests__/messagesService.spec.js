@@ -1,9 +1,11 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { CHAT } from '../../constants.ts'
 import {
 	deleteMessage,
@@ -25,17 +27,19 @@ import {
 	translateText,
 } from '../translationService.js'
 
-jest.mock('@nextcloud/axios', () => ({
-	get: jest.fn(),
-	post: jest.fn(),
-	put: jest.fn(),
-	delete: jest.fn(),
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		get: vi.fn(),
+		post: vi.fn(),
+		put: vi.fn(),
+		delete: vi.fn(),
+	},
 }))
 
 describe('messagesService', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('fetchMessages calls the chat API endpoint excluding last known', () => {

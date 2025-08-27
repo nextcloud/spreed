@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
 import vuexStore from '../../store/index.js'
 import { useGuestNameStore } from '../guestName.js'
@@ -57,12 +59,12 @@ describe('sessionStore', () => {
 		setActivePinia(createPinia())
 		sessionStore = useSessionStore()
 		guestNameStore = useGuestNameStore()
-		jest.spyOn(vuexStore, 'commit')
-		jest.spyOn(guestNameStore, 'addGuestName')
+		vi.spyOn(vuexStore, 'commit')
+		vi.spyOn(guestNameStore, 'addGuestName')
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		vuexStore.dispatch('purgeParticipantsStore', TOKEN)
 	})
 
@@ -92,7 +94,7 @@ describe('sessionStore', () => {
 		})
 
 		it('should handle correctly if sessionId is not defined', () => {
-			console.error = jest.fn()
+			console.error = vi.fn()
 			// Assert
 			expect(sessionStore.findOrCreateSession(TOKEN, {})).toBe(null)
 		})

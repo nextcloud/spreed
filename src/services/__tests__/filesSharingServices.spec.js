@@ -1,19 +1,23 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { shareFile } from '../filesSharingServices.ts'
 
-jest.mock('@nextcloud/axios', () => ({
-	post: jest.fn(),
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		post: vi.fn(),
+	},
 }))
 
 describe('filesSharingServices', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('shareFile calls the sharing API endpoint', () => {

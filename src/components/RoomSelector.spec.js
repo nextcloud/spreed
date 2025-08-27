@@ -1,10 +1,12 @@
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 import { flushPromises, shallowMount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
@@ -13,8 +15,10 @@ import { CONVERSATION } from '../constants.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSResponse } from '../test-helpers.js'
 
-jest.mock('@nextcloud/axios', () => ({
-	get: jest.fn(),
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		get: vi.fn(),
+	},
 }))
 
 const ConversationsSearchListVirtualStub = {
@@ -87,7 +91,7 @@ describe('RoomSelector', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	const mountRoomSelector = async (props) => {
@@ -232,7 +236,7 @@ describe('RoomSelector', () => {
 		it('emits select event on select', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
-			const eventHandler = jest.fn()
+			const eventHandler = vi.fn()
 			wrapper.vm.$on('select', eventHandler)
 
 			// Act: click on second item, then click 'Select conversation'
@@ -250,7 +254,7 @@ describe('RoomSelector', () => {
 		it('emits close event', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
-			const eventHandler = jest.fn()
+			const eventHandler = vi.fn()
 			wrapper.vm.$on('close', eventHandler)
 
 			// Act: close dialog
@@ -264,7 +268,7 @@ describe('RoomSelector', () => {
 		it('emits close event on $root as plugin', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector({ isPlugin: true })
-			const eventHandler = jest.fn()
+			const eventHandler = vi.fn()
 			wrapper.vm.$root.$on('close', eventHandler)
 
 			// Act: close dialog

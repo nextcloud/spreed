@@ -1,8 +1,9 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import RemoteVideoBlocker from './RemoteVideoBlocker.js'
 
 describe('RemoteVideoBlocker', () => {
@@ -10,26 +11,26 @@ describe('RemoteVideoBlocker', () => {
 	let remoteVideoBlocker
 
 	beforeEach(() => {
-		jest.useFakeTimers()
-		console.error = jest.fn()
+		vi.useFakeTimers()
+		console.error = vi.fn()
 
 		callParticipantModel = {
-			setVideoBlocked: jest.fn(),
+			setVideoBlocked: vi.fn(),
 		}
 
 		remoteVideoBlocker = new RemoteVideoBlocker(callParticipantModel)
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	test('blocks the video by default if not shown in some seconds', () => {
-		jest.advanceTimersByTime(4000)
+		vi.advanceTimersByTime(4000)
 
 		expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
-		jest.advanceTimersByTime(1000)
+		vi.advanceTimersByTime(1000)
 
 		expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 		expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -65,7 +66,7 @@ describe('RemoteVideoBlocker', () => {
 		test('does nothing if shown', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 			expect(remoteVideoBlocker._visibleCounter).toBe(1)
@@ -74,14 +75,14 @@ describe('RemoteVideoBlocker', () => {
 		})
 
 		test('does nothing if hidden without showing first', () => {
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
 
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(remoteVideoBlocker._visibleCounter).toBe(0)
@@ -93,11 +94,11 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -110,11 +111,11 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			remoteVideoBlocker.increaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 			expect(remoteVideoBlocker._visibleCounter).toBe(1)
@@ -126,7 +127,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			remoteVideoBlocker.increaseVisibleCounter()
 
@@ -147,7 +148,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 			expect(remoteVideoBlocker._visibleCounter).toBe(2)
@@ -167,7 +168,7 @@ describe('RemoteVideoBlocker', () => {
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 
@@ -178,14 +179,14 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			remoteVideoBlocker.setVideoEnabled(false)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 
@@ -198,11 +199,11 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -214,7 +215,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -230,7 +231,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -252,7 +253,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 
@@ -269,7 +270,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.decreaseVisibleCounter()
 			remoteVideoBlocker.increaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 
@@ -288,7 +289,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.increaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 
@@ -304,7 +305,7 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.runAllTimers()
+			vi.runAllTimers()
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(1)
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledWith(true)
@@ -325,13 +326,13 @@ describe('RemoteVideoBlocker', () => {
 
 	describe('destroy', () => {
 		test('prevents the video from being blocked by default if not shown in some seconds', () => {
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
 			remoteVideoBlocker.destroy()
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 		})
@@ -351,13 +352,13 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
 			remoteVideoBlocker.destroy()
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 		})
@@ -368,11 +369,11 @@ describe('RemoteVideoBlocker', () => {
 			remoteVideoBlocker.increaseVisibleCounter()
 			remoteVideoBlocker.decreaseVisibleCounter()
 
-			jest.advanceTimersByTime(4000)
+			vi.advanceTimersByTime(4000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 
-			jest.advanceTimersByTime(1000)
+			vi.advanceTimersByTime(1000)
 
 			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
 		})

@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,6 +6,7 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconCheck from 'vue-material-design-icons/Check.vue'
@@ -46,7 +47,7 @@ describe('Message.vue', () => {
 	let messageProps
 	let conversationProps
 	let injected
-	const getVisualLastReadMessageIdMock = jest.fn()
+	const getVisualLastReadMessageIdMock = vi.fn()
 
 	let actorStore
 	let tokenStore
@@ -65,7 +66,7 @@ describe('Message.vue', () => {
 		}
 
 		injected = {
-			getMessagesListScroller: jest.fn(),
+			getMessagesListScroller: vi.fn(),
 		}
 
 		actorStore.actorId = 'user-id-1'
@@ -73,9 +74,9 @@ describe('Message.vue', () => {
 		tokenStore.token = TOKEN
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation
-			= jest.fn().mockReturnValue((token) => conversationProps)
+			= vi.fn().mockReturnValue((token) => conversationProps)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
-			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
+			= vi.fn().mockReturnValue(getVisualLastReadMessageIdMock)
 
 		messageProps = {
 			message: {
@@ -96,7 +97,7 @@ describe('Message.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('message rendering', () => {
@@ -141,7 +142,7 @@ describe('Message.vue', () => {
 
 		describe('call button', () => {
 			beforeEach(() => {
-				testStoreConfig.modules.messagesStore.getters.messagesList = jest.fn().mockReturnValue((token) => {
+				testStoreConfig.modules.messagesStore.getters.messagesList = vi.fn().mockReturnValue((token) => {
 					return [{
 						id: 1,
 						systemMessage: 'call_started',
@@ -227,7 +228,7 @@ describe('Message.vue', () => {
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
-				jest.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
+				vi.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
 
 				const wrapper = shallowMount(Message, {
 					global: {
@@ -295,8 +296,8 @@ describe('Message.vue', () => {
 			}
 			messageProps.message.parent = parentMessage
 
-			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
-			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
+			const messageGetterMock = vi.fn().mockReturnValue(parentMessage)
+			testStoreConfig.modules.messagesStore.getters.message = vi.fn(() => messageGetterMock)
 			store = createStore(testStoreConfig)
 
 			const wrapper = shallowMount(Message, {
@@ -518,7 +519,7 @@ describe('Message.vue', () => {
 		test('displays unread message marker that marks the message seen when visible', () => {
 			getVisualLastReadMessageIdMock.mockReturnValue(123)
 			messageProps.nextMessageId = 333
-			const IntersectionObserver = jest.fn()
+			const IntersectionObserver = vi.fn()
 
 			const wrapper = shallowMount(Message, {
 				global: {
@@ -556,7 +557,7 @@ describe('Message.vue', () => {
 		test('does not display read marker on the very last message', () => {
 			messageProps.lastReadMessageId = 123
 			messageProps.nextMessageId = null // last message
-			const IntersectionObserver = jest.fn()
+			const IntersectionObserver = vi.fn()
 
 			const wrapper = shallowMount(Message, {
 				global: {
@@ -669,12 +670,12 @@ describe('Message.vue', () => {
 	describe('delete action', () => {
 		test('deletes message', async () => {
 			let resolveDeleteMessage
-			const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
+			const deleteMessage = vi.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
 			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
 			store = createStore(testStoreConfig)
 
 			// need to mock the date to be within 6h
-			jest.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
+			vi.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
 
 			const wrapper = shallowMount(Message, {
 				global: {
@@ -710,7 +711,7 @@ describe('Message.vue', () => {
 			expect(wrapper.vm.isDeleting).toBe(false)
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
 
-			jest.useRealTimers()
+			vi.useRealTimers()
 		})
 	})
 
@@ -743,7 +744,7 @@ describe('Message.vue', () => {
 			const reloadNcButton = wrapper.findComponent(NcButton)
 			expect(reloadNcButton.exists()).toBe(true)
 
-			const retryEvent = jest.fn()
+			const retryEvent = vi.fn()
 			EventBus.on('retry-message', retryEvent)
 
 			await reloadNcButton.vm.$emit('click')

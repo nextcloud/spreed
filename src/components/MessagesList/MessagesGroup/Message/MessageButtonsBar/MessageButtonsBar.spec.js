@@ -1,10 +1,12 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { computed } from 'vue'
 import { createStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -43,7 +45,7 @@ describe('MessageButtonsBar.vue', () => {
 
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation
-			= jest.fn().mockReturnValue((token) => conversationProps)
+			= vi.fn().mockReturnValue((token) => conversationProps)
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		actorStore.actorId = 'user-id-1'
 		tokenStore.token = TOKEN
@@ -79,7 +81,7 @@ describe('MessageButtonsBar.vue', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('actions', () => {
@@ -89,10 +91,10 @@ describe('MessageButtonsBar.vue', () => {
 			store = createStore(testStoreConfig)
 
 			injected = {
-				getMessagesListScroller: jest.fn(),
+				getMessagesListScroller: vi.fn(),
 			}
 
-			useMessageInfoSpy = jest.spyOn(useMessageInfoModule, 'useMessageInfo')
+			useMessageInfoSpy = vi.spyOn(useMessageInfoModule, 'useMessageInfo')
 		})
 
 		afterEach(() => {
@@ -166,8 +168,8 @@ describe('MessageButtonsBar.vue', () => {
 
 		describe('private reply action', () => {
 			test('creates a new conversation when replying to message privately', async () => {
-				const routerPushMock = jest.fn().mockResolvedValue()
-				const createOneToOneConversation = jest.fn()
+				const routerPushMock = vi.fn().mockResolvedValue()
+				const createOneToOneConversation = vi.fn()
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
 				store = createStore(testStoreConfig)
 
@@ -260,7 +262,7 @@ describe('MessageButtonsBar.vue', () => {
 		describe('delete action', () => {
 			test('emits delete event', async () => {
 				// need to mock the date to be within 6h
-				jest.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
+				vi.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
 
 				useMessageInfoSpy.mockReturnValue({
 					isDeleteable: computed(() => true),
@@ -283,7 +285,7 @@ describe('MessageButtonsBar.vue', () => {
 
 				expect(wrapper.emitted().delete).toBeTruthy()
 
-				jest.useRealTimers()
+				vi.useRealTimers()
 			})
 
 			/**
@@ -321,8 +323,8 @@ describe('MessageButtonsBar.vue', () => {
 		})
 
 		test('marks message as unread', async () => {
-			const updateLastReadMessageAction = jest.fn().mockResolvedValueOnce()
-			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
+			const updateLastReadMessageAction = vi.fn().mockResolvedValueOnce()
+			const fetchConversationAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.messagesStore.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.modules.conversationsStore.actions.fetchConversation = fetchConversationAction
 			store = createStore(testStoreConfig)
@@ -360,7 +362,7 @@ describe('MessageButtonsBar.vue', () => {
 		})
 
 		test('copies message link', async () => {
-			const copyTextMock = jest.fn()
+			const copyTextMock = vi.fn()
 
 			// appears even with more restrictive conditions
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
@@ -392,15 +394,15 @@ describe('MessageButtonsBar.vue', () => {
 		})
 
 		test('renders clickable custom actions', async () => {
-			const handler = jest.fn()
-			const handler2 = jest.fn()
+			const handler = vi.fn()
+			const handler2 = vi.fn()
 			const actionsGetterMock = [
 				{ label: 'first action', icon: 'some-icon', callback: handler },
 				{ label: 'second action', icon: 'some-icon2', callback: handler2 },
 			]
 			const integrationsStore = useIntegrationsStore()
 			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
-			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
+			testStoreConfig.modules.messagesStore.getters.message = vi.fn(() => () => messageProps)
 			store = createStore(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {
 				global: {

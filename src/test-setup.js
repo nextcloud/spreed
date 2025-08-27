@@ -4,46 +4,48 @@
  */
 
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 import { mockedCapabilities } from './__mocks__/capabilities.ts'
 
 import 'regenerator-runtime/runtime'
 
-jest.mock('extendable-media-recorder', () => ({
-	MediaRecorder: jest.fn(),
-	register: jest.fn(),
+vi.mock('extendable-media-recorder', () => ({
+	MediaRecorder: vi.fn(),
+	register: vi.fn(),
 }))
 
-jest.mock('extendable-media-recorder-wav-encoder', () => ({
-	connect: jest.fn(),
+vi.mock('extendable-media-recorder-wav-encoder', () => ({
+	connect: vi.fn(),
 }))
 
-jest.mock('@nextcloud/dialogs', () => ({
-	showInfo: jest.fn(),
-	showSuccess: jest.fn(),
-	showError: jest.fn(),
-	showWarning: jest.fn(),
+vi.mock('@nextcloud/dialogs', () => ({
+	showInfo: vi.fn(),
+	showSuccess: vi.fn(),
+	showError: vi.fn(),
+	showWarning: vi.fn(),
+	TOAST_PERMANENT_TIMEOUT: -1,
 }))
 
-jest.mock('@nextcloud/initial-state', () => ({
-	loadState: jest.fn().mockImplementation((app, key, fallback) => {
+vi.mock('@nextcloud/initial-state', () => ({
+	loadState: vi.fn().mockImplementation((app, key, fallback) => {
 		return fallback
 	}),
 }))
 
-jest.mock('@nextcloud/upload', () => ({
-	getUploader: jest.fn(),
+vi.mock('@nextcloud/upload', () => ({
+	getUploader: vi.fn(),
 }))
 
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(() => mockedCapabilities),
+vi.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: vi.fn(() => mockedCapabilities),
 }))
 
-HTMLAudioElement.prototype.setSinkId = jest.fn()
+HTMLAudioElement.prototype.setSinkId = vi.fn()
 
-window.IntersectionObserver = jest.fn(() => ({
-	observe: jest.fn(),
-	unobserve: jest.fn(),
-	disconnect: jest.fn(),
+window.IntersectionObserver = vi.fn(() => ({
+	observe: vi.fn(),
+	unobserve: vi.fn(),
+	disconnect: vi.fn(),
 }))
 
 window._oc_webroot = '/nc-webroot' // used by getRootUrl() | since @nextcloud/router 2.2.1
@@ -71,7 +73,7 @@ global.OC = {
 	},
 
 	MimeType: {
-		getIconUrl: jest.fn(),
+		getIconUrl: vi.fn(),
 	},
 
 	PERMISSION_NONE: 0,
@@ -112,25 +114,25 @@ function myArrayBuffer() {
 
 global.Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || myArrayBuffer
 
-global.BroadcastChannel = jest.fn(() => ({
-	postMessage: jest.fn(),
-	addEventListener: jest.fn(),
+global.BroadcastChannel = vi.fn(() => ({
+	postMessage: vi.fn(),
+	addEventListener: vi.fn(),
 }))
 
-global.ResizeObserver = jest.fn(() => ({
-	observe: jest.fn(),
-	unobserve: jest.fn(),
-	disconnect: jest.fn(),
+global.ResizeObserver = vi.fn(() => ({
+	observe: vi.fn(),
+	unobserve: vi.fn(),
+	disconnect: vi.fn(),
 }))
 
-global.structuredClone = jest.fn((val) => JSON.parse(JSON.stringify(val)))
+global.structuredClone = vi.fn((val) => JSON.parse(JSON.stringify(val)))
 
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721
-window.URL.createObjectURL = jest.fn()
-window.URL.revokeObjectURL = jest.fn()
+window.URL.createObjectURL = vi.fn()
+window.URL.revokeObjectURL = vi.fn()
 
-// Make Jest fail on errors or warnings (like a11y warning from nextcloud/vue library)
+// Make test fail on errors or warnings (like a11y warning from nextcloud/vue library)
 const originalWarn = global.console.warn
 console.warn = function(message) {
 	originalWarn.apply(console, arguments)
@@ -145,7 +147,7 @@ console.error = function(message) {
 
 // Disable console.debug messages for the sake of cleaner test output
 // Comment this line if required to see debug messages locally
-console.debug = jest.fn()
+console.debug = vi.fn()
 
 // Set up Pinia for state management in tests
 setActivePinia(createPinia())

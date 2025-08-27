@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockedCapabilities, mockedRemotes } from '../../__mocks__/capabilities.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { generateOCSResponse } from '../../test-helpers.js'
@@ -15,30 +17,32 @@ import {
 } from '../CapabilitiesManager.ts'
 import { getRemoteCapabilities } from '../federationService.ts'
 
-jest.mock('../BrowserStorage', () => ({
-	getItem: jest.fn((key) => {
-		const mockedConversations = [
-			{ token: 'TOKEN1', remoteServer: undefined },
-			{ token: 'TOKEN2', remoteServer: undefined },
-			{ token: 'TOKEN3FED1', remoteServer: 'https://nextcloud1.local' },
-			{ token: 'TOKEN4FED1', remoteServer: 'https://nextcloud1.local' },
-			{ token: 'TOKEN5FED2', remoteServer: 'https://nextcloud2.local' },
-			{ token: 'TOKEN6FED2', remoteServer: 'https://nextcloud2.local' },
-		]
+vi.mock('../BrowserStorage.js', () => ({
+	default: {
+		getItem: vi.fn((key) => {
+			const mockedConversations = [
+				{ token: 'TOKEN1', remoteServer: undefined },
+				{ token: 'TOKEN2', remoteServer: undefined },
+				{ token: 'TOKEN3FED1', remoteServer: 'https://nextcloud1.local' },
+				{ token: 'TOKEN4FED1', remoteServer: 'https://nextcloud1.local' },
+				{ token: 'TOKEN5FED2', remoteServer: 'https://nextcloud2.local' },
+				{ token: 'TOKEN6FED2', remoteServer: 'https://nextcloud2.local' },
+			]
 
-		if (key === 'remoteCapabilities') {
-			return JSON.stringify(mockedRemotes)
-		} else if (key === 'cachedConversations') {
-			return JSON.stringify(mockedConversations)
-		}
-		return null
-	}),
-	setItem: jest.fn(),
-	removeItem: jest.fn(),
+			if (key === 'remoteCapabilities') {
+				return JSON.stringify(mockedRemotes)
+			} else if (key === 'cachedConversations') {
+				return JSON.stringify(mockedConversations)
+			}
+			return null
+		}),
+		setItem: vi.fn(),
+		removeItem: vi.fn(),
+	},
 }))
 
-jest.mock('../federationService', () => ({
-	getRemoteCapabilities: jest.fn(),
+vi.mock('../federationService', () => ({
+	getRemoteCapabilities: vi.fn(),
 }))
 
 describe('CapabilitiesManager', () => {
@@ -50,7 +54,7 @@ describe('CapabilitiesManager', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('hasTalkFeature - local conversation', () => {

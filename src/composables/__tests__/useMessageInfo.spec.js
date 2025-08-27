@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
@@ -12,16 +14,16 @@ import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.ts'
 
 // Test messages with 'edit-messages' and without 'delete-messages-unlimited' feature
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(() => ({
+vi.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: vi.fn(() => ({
 		spreed: {
 			features: ['edit-messages', 'edit-messages-note-to-self'],
 			'features-local': [],
 		},
 	})),
 }))
-jest.mock('vuex')
-jest.mock('../useConversationInfo.ts')
+vi.mock('vuex')
+vi.mock('../useConversationInfo.ts')
 
 describe('message actions', () => {
 	let message
@@ -30,7 +32,7 @@ describe('message actions', () => {
 	let actorStore
 	const TOKEN = 'XXTOKENXX'
 
-	jest.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
+	vi.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
 
 	beforeEach(() => {
 		setActivePinia(createPinia())

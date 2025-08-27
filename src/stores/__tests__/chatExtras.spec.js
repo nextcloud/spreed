@@ -1,8 +1,10 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../chatExtras.ts'
@@ -17,7 +19,7 @@ describe('chatExtrasStore', () => {
 	})
 
 	afterEach(async () => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 	})
 
 	describe('reply message', () => {
@@ -167,7 +169,7 @@ describe('chatExtrasStore', () => {
 				message: 'Hello, world!',
 				messageParameters: {},
 			}
-			const emitSpy = jest.spyOn(EventBus, 'emit')
+			const emitSpy = vi.spyOn(EventBus, 'emit')
 
 			// Act
 			chatExtrasStore.initiateEditingMessage(payload)

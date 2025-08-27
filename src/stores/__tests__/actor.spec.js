@@ -1,4 +1,4 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -6,16 +6,17 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
 import { getTeams } from '../../services/teamsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'
 
-jest.mock('@nextcloud/initial-state', () => ({
-	loadState: jest.fn(() => false),
+vi.mock('@nextcloud/initial-state', () => ({
+	loadState: vi.fn(() => false),
 }))
-jest.mock('../../services/teamsService.ts', () => ({
-	getTeams: jest.fn(() => Promise.resolve({
+vi.mock('../../services/teamsService.ts', () => ({
+	getTeams: vi.fn(() => Promise.resolve({
 		data: {
 			ocs: {
 				data: [],
@@ -24,8 +25,8 @@ jest.mock('../../services/teamsService.ts', () => ({
 	})),
 }))
 
-jest.mock('@nextcloud/auth', () => ({
-	getCurrentUser: jest.fn(),
+vi.mock('@nextcloud/auth', () => ({
+	getCurrentUser: vi.fn(),
 }))
 
 describe('actorStore', () => {
@@ -37,7 +38,7 @@ describe('actorStore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		vi.clearAllMocks()
 		actorStore.userId = null
 		actorStore.sessionId = null
 		actorStore.attendeeId = null
@@ -190,7 +191,7 @@ describe('actorStore', () => {
 			loadState.mockReturnValue(true)
 			const error = new Error('fail')
 			getTeams.mockRejectedValue(error)
-			const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+			const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 			await actorStore.getCurrentUserTeams()
 			expect(consoleSpy).toHaveBeenCalledWith(error)
 			consoleSpy.mockRestore()
