@@ -1134,7 +1134,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
-	private function getFileIdForPath(string $user, string $path): int {
+	#[Then('/^user "([^"]*)" propfinds path "([^"]*)"$/')]
+	public function getFileIdForPath(string $user, string $path): int {
 		$this->setCurrentUser($user);
 
 		$url = "/$user/$path";
