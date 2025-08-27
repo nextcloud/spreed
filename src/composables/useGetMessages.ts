@@ -106,6 +106,14 @@ export function useGetMessagesProvider() {
 	})
 
 	const conversationLastMessageId = computed<number>(() => {
+		if (contextThreadId.value) {
+			const threadInfo = chatExtrasStore.threads[currentToken.value]?.[contextThreadId.value]
+			// If threadId is set, we should compare with last message from the thread
+			if (threadInfo) {
+				return threadInfo.last?.id ?? contextThreadId.value
+			}
+		}
+
 		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
 			return conversation.value.lastMessage.id
 		}
@@ -122,14 +130,6 @@ export function useGetMessagesProvider() {
 		}
 
 		const lastKnownMessageId = chatStore.getLastKnownId(currentToken.value, { messageId: contextMessageId.value, threadId: contextThreadId.value })
-
-		if (contextThreadId.value) {
-			const threadInfo = chatExtrasStore.threads[currentToken.value]?.[contextThreadId.value]
-			// If threadId is set, we should compare with last message from the thread
-			if (threadInfo?.last) {
-				return lastKnownMessageId >= threadInfo.last.id
-			}
-		}
 
 		return lastKnownMessageId >= conversationLastMessageId.value
 	})
@@ -223,15 +223,17 @@ export function useGetMessagesProvider() {
 		}
 
 		const focusMessageId = getMessageIdFromHash(to.hash)
-		if (from.hash !== to.hash && focusMessageId !== null) {
-			// the hash changed, need to focus/highlight another message
+		if (focusMessageId !== null) {
+			// the hash is non-empty, need to focus/highlight another message
 			contextMessageId.value = focusMessageId
-		} else if (conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value) {
-			// focus last read message first
-			contextMessageId.value = conversation.value.lastReadMessage
 		} else {
-			// last known message in the most recent block store
-			contextMessageId.value = conversationLastMessageId.value
+			// try to focus last read message first, otherwise scroll to last known message in the most recent block store
+			const hasLastReadMessageInContextBelow = conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value
+				&& (!contextThreadId.value || chatStore.hasMessage(to.params.token, { messageId: conversation.value.lastReadMessage, threadId: contextThreadId.value }))
+
+			contextMessageId.value = hasLastReadMessageInContextBelow
+				? conversation.value.lastReadMessage
+				: conversationLastMessageId.value
 		}
 
 		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, contextThreadId.value)
