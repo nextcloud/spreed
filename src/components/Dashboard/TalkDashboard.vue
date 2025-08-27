@@ -6,18 +6,16 @@
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { isRTL, t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { generateUrl, imagePath } from '@nextcloud/router'
+import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconAlarm from 'vue-material-design-icons/Alarm.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
 import IconList from 'vue-material-design-icons/FormatListBulleted.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
@@ -27,6 +25,7 @@ import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
 import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
+import DashboardSection from './DashboardSection.vue'
 import EventCard from './EventCard.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -43,6 +42,8 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isDirectionRTL = isRTL()
+const isMobile = useIsMobile()
+const isSmallMobile = useIsSmallMobile()
 
 const store = useStore()
 const router = useRouter()
@@ -177,171 +178,190 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 </script>
 
 <template>
-	<div class="talk-dashboard-wrapper">
-		<h2 class="talk-dashboard__header">
-			{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
-		</h2>
-		<div class="talk-dashboard__actions">
-			<NcPopover v-if="canStartConversations"
-				popup-role="dialog">
-				<template #trigger>
-					<NcButton variant="primary">
-						<template #icon>
-							<IconVideoOutline />
+	<div class="talk-dashboard-wrapper"
+		:class="{
+			'talk-dashboard-wrapper--mobile': isMobile,
+			'talk-dashboard-wrapper--small-mobile': isSmallMobile,
+		}">
+		<div class="talk-dashboard__menu">
+			<h2 class="talk-dashboard__header">
+				{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
+			</h2>
+			<div class="talk-dashboard__actions">
+				<NcPopover v-if="canStartConversations"
+					popup-role="dialog">
+					<template #trigger>
+						<NcButton variant="primary">
+							<template #icon>
+								<IconVideoOutline />
+							</template>
+							{{ t('spreed', 'Start meeting now') }}
+						</NcButton>
+					</template>
+					<div role="dialog"
+						aria-labelledby="instant_meeting_dialog"
+						class="instant-meeting__dialog"
+						aria-modal="true">
+						<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
+						<NcInputField id="room-name"
+							v-model="conversationName"
+							:placeholder="t('spreed', 'Meeting')" />
+						<NcButton variant="primary"
+							@click="startMeeting">
+							{{ t('spreed', 'Create and copy link') }}
+						</NcButton>
+					</div>
+				</NcPopover>
+				<NcButton v-if="canStartConversations"
+					@click="EventBus.emit('new-conversation-dialog:show')">
+					<template #icon>
+						<IconPlus :size="20" />
+					</template>
+					{{ t('spreed', 'Create a new conversation') }}
+				</NcButton>
+
+				<NcButton @click="EventBus.emit('open-conversations-list:show')">
+					<template #icon>
+						<IconList :size="20" />
+					</template>
+					{{ t('spreed', 'Join open conversations') }}
+				</NcButton>
+
+				<NcButton v-if="canModerateSipDialOut"
+					@click="EventBus.emit('call-phone-dialog:show')">
+					<template #icon>
+						<IconPhoneOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Call a phone number') }}
+				</NcButton>
+				<NcButton variant="secondary"
+					@click="emit('talk:media-settings:show', 'device-check')">
+					<template #icon>
+						<IconMicrophoneOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Check devices') }}
+				</NcButton>
+			</div>
+		</div>
+		<div class="talk-dashboard__items">
+			<div class="event-section">
+				<template v-if="eventsInitialised && eventRooms.length > 0">
+					<h3 class="title">
+						{{ t('spreed', 'Upcoming meetings') }}
+					</h3>
+					<div class="talk-dashboard__event-cards-wrapper"
+						:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
+						<div ref="eventCardsWrapper"
+							class="talk-dashboard__event-cards"
+							@scroll.passive="updateScrollableFlags">
+							<EventCard v-for="eventRoom in eventRooms"
+								:key="eventRoom.eventLink"
+								:event-room="eventRoom"
+								class="talk-dashboard__event-card" />
+						</div>
+						<div class="talk-dashboard__event-cards__scroll-indicator">
+							<NcButton v-show="backwardScrollable"
+								class="button-slide backward"
+								variant="tertiary"
+								:title="t('spreed', 'Scroll backward')"
+								:aria-label="t('spreed', 'Scroll backward')"
+								@click="scrollEventCards({ direction: 'backward' })">
+								<template #icon>
+									<IconArrowLeft class="bidirectional-icon" />
+								</template>
+							</NcButton>
+							<NcButton v-show="forwardScrollable"
+								class="button-slide forward"
+								variant="tertiary"
+								:title="t('spreed', 'Scroll forward')"
+								:aria-label="t('spreed', 'Scroll forward')"
+								@click="scrollEventCards({ direction: 'forward' })">
+								<template #icon>
+									<IconArrowRight class="bidirectional-icon" />
+								</template>
+							</NcButton>
+						</div>
+					</div>
+				</template>
+				<LoadingPlaceholder v-else-if="!eventsInitialised"
+					type="event-cards" />
+				<DashboardSection v-else
+					class="event-section--empty"
+					wide
+					:title="t('spreed', 'Schedule meetings')"
+					:subtitle="t('spreed', 'You don\'t have any upcoming meetings')"
+					:description="t('spreed', 'Schedule a meeting from your calendar. A Talk conversation needs to be set as location to show up here')">
+					<template #image>
+						<img :src="imagePath('spreed', 'dashboard/meetings.png')">
+					</template>
+					<template #action>
+						<NcButton
+							variant="secondary"
+							:href="generateUrl('apps/calendar')"
+							target="_blank">
+							<template #icon>
+								<IconCalendarBlankOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Open calendar') }}
+						</NcButton>
+					</template>
+				</DashboardSection>
+			</div>
+			<div class="talk-dashboard__chats">
+				<div class="talk-dashboard__unread-mentions">
+					<DashboardSection v-if="filteredConversations.length > 0 || !conversationsInitialised"
+						:title="t('spreed', 'Unread mentions')">
+						<template #list>
+							<ConversationsListVirtual
+								class="talk-dashboard__conversations-list"
+								:conversations="filteredConversations"
+								:loading="!conversationsInitialised" />
 						</template>
-						{{ t('spreed', 'Start meeting now') }}
-					</NcButton>
-				</template>
-				<div role="dialog"
-					aria-labelledby="instant_meeting_dialog"
-					class="instant-meeting__dialog"
-					aria-modal="true">
-					<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
-					<NcInputField id="room-name"
-						v-model="conversationName"
-						:placeholder="t('spreed', 'Meeting')" />
-					<NcButton variant="primary"
-						@click="startMeeting">
-						{{ t('spreed', 'Create and copy link') }}
-					</NcButton>
+					</DashboardSection>
+					<DashboardSection v-else
+						:title="t('spreed', 'Unread mentions')"
+						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')">
+						<template #image>
+							<img :src="imagePath('spreed', 'dashboard/mentions.png')">
+						</template>
+					</DashboardSection>
 				</div>
-			</NcPopover>
-			<NcButton v-if="canStartConversations"
-				@click="EventBus.emit('new-conversation-dialog:show')">
-				<template #icon>
-					<IconPlus :size="20" />
-				</template>
-				{{ t('spreed', 'Create a new conversation') }}
-			</NcButton>
-
-			<NcButton @click="EventBus.emit('open-conversations-list:show')">
-				<template #icon>
-					<IconList :size="20" />
-				</template>
-				{{ t('spreed', 'Join open conversations') }}
-			</NcButton>
-
-			<NcButton v-if="canModerateSipDialOut"
-				@click="EventBus.emit('call-phone-dialog:show')">
-				<template #icon>
-					<IconPhoneOutline :size="20" />
-				</template>
-				{{ t('spreed', 'Call a phone number') }}
-			</NcButton>
-			<NcButton variant="tertiary"
-				@click="emit('talk:media-settings:show', 'device-check')">
-				<template #icon>
-					<IconMicrophoneOutline :size="20" />
-				</template>
-				{{ t('spreed', 'Check devices') }}
-			</NcButton>
-		</div>
-		<h3 class="title">
-			{{ t('spreed', 'Upcoming meetings') }}
-		</h3>
-		<div v-if="eventsInitialised && eventRooms.length > 0"
-			class="talk-dashboard__event-cards-wrapper"
-			:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
-			<div ref="eventCardsWrapper"
-				class="talk-dashboard__event-cards"
-				@scroll.passive="updateScrollableFlags">
-				<EventCard v-for="eventRoom in eventRooms"
-					:key="eventRoom.eventLink"
-					:event-room="eventRoom"
-					class="talk-dashboard__event-card" />
-			</div>
-			<div class="talk-dashboard__event-cards__scroll-indicator">
-				<NcButton v-show="backwardScrollable"
-					class="button-slide backward"
-					variant="tertiary"
-					:title="t('spreed', 'Scroll backward')"
-					:aria-label="t('spreed', 'Scroll backward')"
-					@click="scrollEventCards({ direction: 'backward' })">
-					<template #icon>
-						<IconArrowLeft class="bidirectional-icon" />
-					</template>
-				</NcButton>
-				<NcButton v-show="forwardScrollable"
-					class="button-slide forward"
-					variant="tertiary"
-					:title="t('spreed', 'Scroll forward')"
-					:aria-label="t('spreed', 'Scroll forward')"
-					@click="scrollEventCards({ direction: 'forward' })">
-					<template #icon>
-						<IconArrowRight class="bidirectional-icon" />
-					</template>
-				</NcButton>
-			</div>
-		</div>
-		<LoadingPlaceholder v-else-if="!eventsInitialised"
-			type="event-cards" />
-		<div v-else class="talk-dashboard__empty-event-card">
-			<span class="title"> {{ t('spreed', 'You have no upcoming meetings') }}</span>
-			<span class="secondary_text">
-				{{ t('spreed', 'Schedule a meeting with a colleague from your calendar') }}
-			</span>
-			<NcButton class="talk-dashboard__calendar-button"
-				variant="secondary"
-				:href="generateUrl('apps/calendar')"
-				target="_blank">
-				<template #icon>
-					<IconCalendarBlankOutline :size="20" />
-				</template>
-				{{ t('spreed', 'Open calendar') }}
-			</NcButton>
-		</div>
-		<div class="talk-dashboard__chats">
-			<div class="talk-dashboard__unread-mentions">
-				<h3 class="title">
-					{{ t('spreed', 'Unread mentions') }}
-				</h3>
-				<ConversationsListVirtual v-if="filteredConversations.length > 0 || !conversationsInitialised"
-					class="talk-dashboard__conversations-list"
-					:conversations="filteredConversations"
-					:loading="!conversationsInitialised" />
-				<NcEmptyContent v-else
-					class="talk-dashboard__empty-content"
-					:name="t('spreed', 'All caught up!')"
-					:description="t('spreed', 'You have no unread mentions')">
-					<template #icon>
-						<IconAt :size="40" />
-					</template>
-				</NcEmptyContent>
-			</div>
-			<div v-if="supportsUpcomingReminders"
-				class="talk-dashboard__upcoming-reminders">
-				<h3 class="title">
-					{{ t('spreed', 'Upcoming reminders') }}
-				</h3>
-				<div v-if="upcomingReminders.length > 0" class="upcoming-reminders-list">
-					<SearchMessageItem v-for="reminder in upcomingReminders"
-						:key="reminder.messageId"
-						:message-id="reminder.messageId"
-						:title="reminder.actorDisplayName"
-						:subline="reminder.message"
-						:message-parameters="reminder.messageParameters"
-						:token="reminder.roomToken"
-						:to="{
-							name: 'conversation',
-							params: { token: reminder.roomToken },
-							hash: `#message_${reminder.messageId}`,
-						}"
-						:actor-id="reminder.actorId"
-						:actor-type="reminder.actorType"
-						:timestamp="reminder.reminderTimestamp"
-						is-reminder />
+				<div v-if="supportsUpcomingReminders"
+					class="talk-dashboard__upcoming-reminders">
+					<DashboardSection v-if="upcomingReminders.length > 0 || !remindersInitialised"
+						:title="t('spreed', 'Upcoming reminders')">
+						<template #list>
+							<ul v-if="remindersInitialised" class="upcoming-reminders-list">
+								<SearchMessageItem v-for="reminder in upcomingReminders"
+									:key="reminder.messageId"
+									:message-id="reminder.messageId"
+									:title="reminder.actorDisplayName"
+									:subline="reminder.message"
+									:message-parameters="reminder.messageParameters"
+									:token="reminder.roomToken"
+									:to="{
+										name: 'conversation',
+										params: { token: reminder.roomToken },
+										hash: `#message_${reminder.messageId}`,
+									}"
+									:actor-id="reminder.actorId"
+									:actor-type="reminder.actorType"
+									:timestamp="reminder.reminderTimestamp"
+									is-reminder />
+							</ul>
+							<LoadingPlaceholder v-else
+								class="upcoming-reminders__loading-placeholder"
+								type="conversations" />
+						</template>
+					</DashboardSection>
+					<DashboardSection v-else
+						:title="t('spreed', 'Message reminders')"
+						:description="t('spreed', 'Set a reminder on a message to be notified')">
+						<template #image>
+							<img :src="imagePath('spreed', 'dashboard/reminders.png')">
+						</template>
+					</DashboardSection>
 				</div>
-				<LoadingPlaceholder v-else-if="!remindersInitialised"
-					class="upcoming-reminders__loading-placeholder"
-					type="conversations" />
-				<NcEmptyContent v-else
-					class="talk-dashboard__empty-content"
-					:name="t('spreed', 'No reminders scheduled')"
-					:description="t('spreed', 'You have no reminders scheduled')">
-					<template #icon>
-						<IconAlarm :size="40" />
-					</template>
-				</NcEmptyContent>
 			</div>
 		</div>
 	</div>
@@ -351,21 +371,38 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @import '../../assets/variables';
 
 .talk-dashboard-wrapper {
-	--title-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 3); // '.title' height
-	--section-width: 300px;
-	--section-height: 300px;
-	--content-height: calc(100% - var(--title-height));
-	padding: 0 calc(var(--default-grid-baseline) * 3);
-	max-width: calc($messages-list-max-width + 400px); // FIXME: to change to a readable value
+	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
+	width: calc(100vw - 300px - var(--body-container-margin) * 2); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-height: 800px;
+	max-width: 1200px;
+
+	&--mobile {
+		width: 100%;
+	}
+
+	&--small-mobile {
+		width: 100%;
+		height: auto;
+
+		.talk-dashboard__chats {
+			grid-template-columns: 1fr;
+			gap: calc(var(--default-grid-baseline) * 6);
+		}
+	}
+}
+
+.talk-dashboard__menu {
+	margin-bottom: calc(var(--default-grid-baseline) * 5);
 }
 
 .talk-dashboard__header {
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
-	height: 51px; // top bar height
-	line-height: 51px;
-	margin: 0 auto;
+	margin: 0 auto calc(var(--default-grid-baseline) * 2);
 	padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
 }
 
@@ -374,10 +411,26 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
 	flex-wrap: wrap;
+	justify-content: space-evenly;
+
+	:deep(.button-vue),
+	:deep(.v-popper--theme-dropdown) {
+		height: var(--header-menu-item-height);
+		border-radius: var(--border-radius-large);
+		flex: 1;
+		width: 100%;
+	}
 
 	:deep(.button-vue) {
-		height: var(--header-menu-item-height);
 		padding-inline: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 4);
+	}
+}
+
+.event-section {
+	margin-block-end: calc(var(--default-grid-baseline) * 6);
+
+	&--empty {
+		height: 225px;
 	}
 }
 
@@ -434,92 +487,52 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	inset-inline-start: calc(var(--default-grid-baseline) * 2);
 }
 
-.talk-dashboard__chats {
+.talk-dashboard__items {
 	display: flex;
-	gap: calc(var(--default-grid-baseline) * 2);
-	padding-block-end: calc(var(--default-grid-baseline) * 2);
-	flex-wrap: wrap;
+	flex-direction: column;
+	justify-content: space-around;
+	min-width: 0;
+	flex-grow: 3;
 }
 
-.talk-dashboard__unread-mentions {
-	height: var(--section-height);
-	width: var(--section-width);
-	flex-shrink: 0;
-}
+.talk-dashboard__chats {
+	display: grid;
+	gap: calc(var(--default-grid-baseline) * 8);
+	grid-template-columns: 1fr 1fr;
+	flex-grow: 1;
 
-.talk-dashboard__upcoming-reminders {
-	height: var(--section-height);
-	width: var(--section-width);
-	flex-shrink: 0;
-
-	&-list {
-		overflow-y: auto;
-		height: var(--content-height);
+	&> div {
+		max-height: 360px;
 	}
 }
 
 .upcoming-reminders {
 	&-list {
 		overflow-y: auto;
-		height: var(--content-height);
 	}
 
 	&__loading-placeholder {
 		overflow: hidden;
-		height: var(--content-height);
 	}
-}
-
-.talk-dashboard__empty-content {
-	border-radius: var(--border-radius-large);
-	padding: calc(var(--default-grid-baseline) * 2);
-	margin: var(--default-grid-baseline) 0;
-	border: 3px solid var(--color-border);
-	height: var(--content-height);
-}
-
-.talk-dashboard__empty-event-card {
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	height: 225px;
-	width: var(--section-width);
-	border-radius: var(--border-radius-large);
-	border: 3px solid var(--color-border);
-	padding: calc(var(--default-grid-baseline) * 2);
-	margin-bottom: calc(var(--default-grid-baseline) * 2);
 }
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	height: var(--content-height);
+	height: 225px;
 	line-height: 20px;
 }
 
 .title {
-	font-weight: bold;
-	font-size: inherit;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: block;
-	height: var(--default-clickable-area);
-	margin-block: calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
-	margin-inline: var(--default-grid-baseline);
-}
-
-.secondary_text {
-	color: var(--color-text-maxcontrast);
-	font-size: var(--font-size-small);
-	overflow: hidden;
-	text-overflow: ellipsis;
+	font-size: 1.25rem;
+    font-weight: bold;
+	margin-block: 0 calc(var(--default-grid-baseline) * 2);
 }
 
 .instant-meeting__dialog {
-	padding: 8px;
+	padding: calc(var(--default-grid-baseline) * 2);
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--default-grid-baseline) ;
 	align-items: center;
 }
 
@@ -528,7 +541,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	.talk-dashboard__actions {
 		:deep(.button-vue),
 		:deep(.v-popper--theme-dropdown) {
-			width: 100%;
+			flex: initial;
+		}
+
+		:deep(.button-vue) {
+			padding-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
 }
