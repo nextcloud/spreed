@@ -14,6 +14,7 @@
 			@after-show="fetchReactions">
 			<template #trigger>
 				<NcButton :variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
+					class="reaction-button--trigger"
 					size="small"
 					@click="handleReactionClick(reaction)">
 					<span class="reaction-emoji">{{ reaction }}</span> {{ reactionsCount(reaction) }}
@@ -56,11 +57,10 @@
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">
 			<NcButton size="small"
+				class="reaction-button--trigger"
 				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
-				<template #icon>
-					<IconEmoticonPlusOutline :size="15" />
-				</template>
+				<IconEmoticonPlusOutline :size="15" />
 			</NcButton>
 		</NcEmojiPicker>
 		<span v-else-if="canReact" class="reaction-button--thumbnail" />
@@ -276,24 +276,23 @@ export default {
 .reactions-wrapper {
 	--minimal-button-width: 48px;
 	--font-family-emoji: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Twemoji Mozilla', 'Noto Color Emoji', 'EmojiOne Color', 'Android Emoji';
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--default-grid-baseline);
+	display: contents;
 
 	// Overwrite NcButton styles
 	:deep(.button-vue) {
 		min-width: var(--minimal-button-width);
-	}
-	:deep(.button-vue__text) {
-		font-weight: normal;
 	}
 
 	.reaction-emoji {
 		font-family: var(--font-family-emoji);
 	}
 
+	.reaction-button--trigger {
+		height: 100%;
+	}
+
 	.reaction-button--thumbnail {
-		height: var(--clickable-area-small);
+		height: 100%;
 		width: var(--minimal-button-width);
 		pointer-events: none;
 	}

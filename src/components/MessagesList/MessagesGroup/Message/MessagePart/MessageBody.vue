@@ -6,6 +6,12 @@
 <template>
 	<div ref="messageMain"
 		class="message-main">
+		<p
+			v-if="isThreadStarterMessage"
+			class="message-main__thread-title">
+			<IconForumOutline :size="16" />
+			{{ threadTitle }}
+		</p>
 		<!-- System or deleted message body content -->
 		<div v-if="isSystemMessage || isDeletedMessage"
 			class="message-main__text"
@@ -119,25 +125,39 @@
 			</div>
 		</div>
 
-		<!-- Reactions slot -->
-		<slot v-if="!isDeletedMessage" />
+		<!-- Actions and reactions slot -->
+		<div v-if="!isDeletedMessage" class="message-actions">
+			<NcButton
+				v-if="isThreadStarterMessage"
+				class="message-actions__thread"
+				size="small"
+				@click="handleThreadClick">
+				<template #icon>
+					<IconArrowLeftTop :size="16" />
+				</template>
+				{{ threadNumReplies }}
+			</NcButton>
+			<slot name="default" />
+		</div>
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import emojiRegex from 'emoji-regex'
 import { inject, toRefs } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
@@ -149,6 +169,7 @@ import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
+import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -170,11 +191,13 @@ export default {
 		ConversationActionsShortcut,
 		// Icons
 		IconAlertCircleOutline,
+		IconArrowLeftTop,
 		IconBellOffOutline,
 		IconCancel,
 		IconCheck,
 		IconCheckAll,
 		IconContentCopy,
+		IconForumOutline,
 		IconReload,
 	},
 
@@ -216,6 +239,7 @@ export default {
 
 		return {
 			isInCall: useIsInCall(),
+			chatExtrasStore: useChatExtrasStore(),
 			pollsStore: usePollsStore(),
 			threadId,
 			isEditable,
@@ -265,6 +289,24 @@ export default {
 
 		isCallEndedMessage() {
 			return [MESSAGE.SYSTEM_TYPE.CALL_ENDED, MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE].includes(this.message.systemMessage)
+		},
+
+		isThreadStarterMessage() {
+			return !this.threadId && this.message.isThread && this.message.id === this.message.threadId
+		},
+
+		threadInfo() {
+			return this.chatExtrasStore.getThread(this.message.token, this.message.threadId)
+		},
+
+		threadTitle() {
+			return this.threadInfo?.thread.title ?? this.message.message
+		},
+
+		threadNumReplies() {
+			return this.threadInfo?.thread.numReplies
+				? n('spreed', '%n reply', '%n replies', this.threadInfo.thread.numReplies)
+				: t('spreed', 'Reply')
 		},
 
 		conversation() {
@@ -476,6 +518,10 @@ export default {
 			}
 		},
 
+		handleThreadClick() {
+			this.$router.replace({ query: { threadId: this.message.threadId }, hash: '' })
+		},
+
 		setIsEditing({ messageId, value }) {
 			if (messageId === this.message.id) {
 				this.isEditing = value
@@ -573,6 +619,14 @@ export default {
 			}
 		}
 	}
+
+	&__thread-title {
+		grid-column: 1 / -1;
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		font-weight: 500;
+	}
 }
 
 .message-status {
@@ -584,6 +638,21 @@ export default {
 
 	&.retry-option {
 		cursor: pointer;
+	}
+}
+
+.message-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
+
+	// Overwrite NcButton styles
+	:deep(.button-vue__text) {
+		font-weight: normal;
+	}
+
+	&__thread :deep(.button-vue__text) {
+		margin-inline-start: calc(var(--default-grid-baseline) / 2);
 	}
 }
 
