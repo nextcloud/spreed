@@ -145,7 +145,7 @@
 					<NcActionSeparator />
 					<template v-if="supportThreads && !threadId">
 						<NcActionButton
-							v-if="message.isThread"
+							v-if="message.isThread && message.id === message.threadId"
 							close-after-click
 							@click="threadId = message.threadId">
 							<template #icon>
