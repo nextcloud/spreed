@@ -123,7 +123,7 @@
 					class="critical"
 					@click="isDeleteDialogOpen = true">
 					<template #icon>
-						<IconDeleteOutline :size="16" />
+						<IconTrashCanOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Delete conversation') }}
 				</NcActionButton>
@@ -277,7 +277,6 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
@@ -285,6 +284,7 @@ import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutli
 import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConversationIcon from './../../ConversationIcon.vue'
 import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
@@ -317,7 +317,7 @@ export default {
 		IconBellOutline,
 		IconCogOutline,
 		IconContentCopy,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconExitToApp,
 		IconEyeOutline,
 		IconEyeOffOutline,

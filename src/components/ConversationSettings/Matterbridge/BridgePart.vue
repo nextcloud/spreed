@@ -29,7 +29,7 @@
 				</NcActionLink>
 				<NcActionButton v-if="editable" close-after-click @click="$emit('deletePart')">
 					<template #icon>
-						<IconDeleteOutline :size="20" />
+						<IconTrashCanOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Delete') }}
 				</NcActionButton>
@@ -77,15 +77,15 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 
 export default {
 	name: 'BridgePart',
 	components: {
 		IconCheck,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconInformationOutline,
 		IconPencilOutline,
 		NcActionButton,

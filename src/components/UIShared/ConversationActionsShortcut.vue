@@ -13,7 +13,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconCheckUnderline from 'vue-material-design-icons/CheckUnderline.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConfirmDialog from '../../components/UIShared/ConfirmDialog.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -113,7 +113,7 @@ async function showConfirmationDialog() {
 			<NcButton variant="error"
 				@click="showConfirmationDialog">
 				<template #icon>
-					<IconDeleteOutline />
+					<IconTrashCanOutline />
 				</template>
 				{{ t('spreed', 'Delete now') }}
 			</NcButton>

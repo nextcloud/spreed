@@ -30,7 +30,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<IconDeleteOutline :size="20" />
+				<IconTrashCanOutline :size="20" />
 			</template>
 		</NcButton>
 	</li>
@@ -41,14 +41,14 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 
 export default {
 	name: 'StunServer',
 
 	components: {
 		IconAlertCircleOutline,
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		NcButton,
 		NcTextField,
 	},

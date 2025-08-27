@@ -70,7 +70,7 @@
 						:aria-label="t('spreed', 'Remove conversation picture')"
 						@click="removeAvatar">
 						<template #icon>
-							<IconDeleteOutline :size="20" />
+							<IconTrashCanOutline :size="20" />
 						</template>
 					</NcButton>
 				</div>
@@ -108,10 +108,10 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Files app icon
 import IconPaletteOutline from 'vue-material-design-icons/PaletteOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
@@ -131,7 +131,7 @@ export default {
 		NcIconSvgWrapper,
 		VueCropper,
 		// Icons
-		IconDeleteOutline,
+		IconTrashCanOutline,
 		IconEmoticonOutline,
 		IconFolder,
 		IconPaletteOutline,
