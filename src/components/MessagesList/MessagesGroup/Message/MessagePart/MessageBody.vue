@@ -264,7 +264,7 @@ export default {
 		},
 
 		isCallEndedMessage() {
-			return this.message.systemMessage === 'call_ended' || this.message.systemMessage === 'call_ended_everyone'
+			return [MESSAGE.SYSTEM_TYPE.CALL_ENDED, MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE].includes(this.message.systemMessage)
 		},
 
 		conversation() {
@@ -314,7 +314,7 @@ export default {
 		},
 
 		isLastCallStartedMessage() {
-			return this.message.systemMessage === 'call_started' && this.message.id === this.lastCallStartedMessageId
+			return this.message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED && this.message.id === this.lastCallStartedMessageId
 		},
 
 		showJoinCallButton() {
@@ -322,7 +322,7 @@ export default {
 		},
 
 		showResultsButton() {
-			return this.message.systemMessage === 'poll_closed'
+			return this.message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED
 		},
 
 		isSingleEmoji() {

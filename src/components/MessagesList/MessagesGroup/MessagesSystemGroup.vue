@@ -35,6 +35,7 @@
 <script>
 import Message from './Message/Message.vue'
 import { useCombinedSystemMessage } from '../../../composables/useCombinedSystemMessage.js'
+import { MESSAGE } from '../../../constants.ts'
 
 export default {
 	name: 'MessagesSystemGroup',
@@ -131,15 +132,15 @@ export default {
 			}
 
 			// Group users joined call
-			if (message1.systemMessage === 'call_joined'
+			if (message1.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_JOINED
 				&& message1.systemMessage === message2.systemMessage) {
-				return 'call_joined'
+				return MESSAGE.SYSTEM_TYPE.CALL_JOINED
 			}
 
 			// Group users left call
-			if (message1.systemMessage === 'call_left'
+			if (message1.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_LEFT
 				&& message1.systemMessage === message2.systemMessage) {
-				return 'call_left'
+				return MESSAGE.SYSTEM_TYPE.CALL_LEFT
 			}
 
 			if (message1.actorId !== message2.actorId
@@ -148,34 +149,34 @@ export default {
 			}
 
 			// Group users reconnected in a minute
-			if (message1.systemMessage === 'call_joined'
-				&& message2.systemMessage === 'call_left'
+			if (message1.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_JOINED
+				&& message2.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_LEFT
 				&& message1.timestamp - message2.timestamp < 60 * 1000) {
 				return 'call_reconnected'
 			}
 
 			// Group users added by one actor
-			if (message1.systemMessage === 'user_added'
+			if (message1.systemMessage === MESSAGE.SYSTEM_TYPE.USER_ADDED
 				&& message1.systemMessage === message2.systemMessage) {
-				return 'user_added'
+				return MESSAGE.SYSTEM_TYPE.USER_ADDED
 			}
 
 			// Group users removed by one actor
-			if (message1.systemMessage === 'user_removed'
+			if (message1.systemMessage === MESSAGE.SYSTEM_TYPE.USER_REMOVED
 				&& message1.systemMessage === message2.systemMessage) {
-				return 'user_removed'
+				return MESSAGE.SYSTEM_TYPE.USER_REMOVED
 			}
 
 			// Group users promoted by one actor
-			if ((message1.systemMessage === 'moderator_promoted' || message1.systemMessage === 'guest_moderator_promoted')
-				&& (message2.systemMessage === 'moderator_promoted' || message2.systemMessage === 'guest_moderator_promoted')) {
-				return 'moderator_promoted'
+			if ((message1.systemMessage === MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED || message1.systemMessage === MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED)
+				&& (message2.systemMessage === MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED || message2.systemMessage === MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED)) {
+				return MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED
 			}
 
 			// Group users demoted by one actor
-			if ((message1.systemMessage === 'moderator_demoted' || message1.systemMessage === 'guest_moderator_demoted')
-				&& (message2.systemMessage === 'moderator_demoted' || message2.systemMessage === 'guest_moderator_demoted')) {
-				return 'moderator_demoted'
+			if ((message1.systemMessage === MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED || message1.systemMessage === MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED)
+				&& (message2.systemMessage === MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED || message2.systemMessage === MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED)) {
+				return MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED
 			}
 
 			return ''
