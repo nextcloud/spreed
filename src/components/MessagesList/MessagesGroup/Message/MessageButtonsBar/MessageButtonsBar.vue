@@ -659,7 +659,11 @@ export default {
 	methods: {
 		t,
 		handleReply() {
-			this.$emit('reply')
+			if (!this.threadId && this.message.isThread && this.message.id === this.message.threadId) {
+				this.threadId = this.message.threadId
+			} else {
+				this.$emit('reply')
+			}
 		},
 
 		async handlePrivateReply() {
