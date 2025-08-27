@@ -212,6 +212,21 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		/**
+		 * Update a thread name from a known information
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to update
+		 * @param newValue - updated information
+		 */
+		async updateThreadName(token: string, threadId: number, newValue: string) {
+			if (!this.threads[token] || !this.threads[token][threadId]) {
+				return
+			}
+
+			this.threads[token][threadId].thread.title = newValue
+		},
+
+		/**
 		 * Remove a thread from the store
 		 *
 		 * @param token - conversation token

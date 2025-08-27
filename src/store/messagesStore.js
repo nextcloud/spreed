@@ -524,20 +524,12 @@ const actions = {
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
-					chatExtrasStore.addThread(token, {
-						thread: {
-							id: message.threadId,
-							roomToken: token,
-							title: message.messageParameters.title.name,
-							lastMessageId: message.threadId,
-							lastActivity: message.timestamp,
-							numReplies: 0,
-						},
-						attendee: { notificationLevel: 0 },
-						first: message.parent,
-						last: null,
-					})
+					chatExtrasStore.fetchSingleThread(token, message.threadId)
 				}
+			}
+
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
+				chatExtrasStore.updateThreadName(token, message.threadId, message.messageParameters.title.name)
 			}
 
 			// Quit processing
