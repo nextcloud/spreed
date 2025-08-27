@@ -91,6 +91,11 @@ class CalendarIntegrationService {
 				$dashboardEvent = new Event();
 
 				foreach ($calendarEvent['objects'] as $object) {
+					if (!isset($object['DTEND'][0])) {
+						// Don't show events without end since they should not take up any time
+						// @link https://www.kanzaki.com/docs/ical/vevent.html
+						continue;
+					}
 					$dashboardEvent->setStart(\DateTime::createFromImmutable($object['DTSTART'][0])->setTimezone($userTimezone)->getTimestamp());
 					$dashboardEvent->setEnd(\DateTime::createFromImmutable($object['DTEND'][0])->setTimezone($userTimezone)->getTimestamp());
 					// Filter out events in the past
