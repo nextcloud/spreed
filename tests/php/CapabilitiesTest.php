@@ -117,6 +117,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
 				['experiments_guests', 0, 0],
+				['summary_threshold', 100, 100],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -284,6 +285,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
 				['experiments_users', 0, 0],
+				['summary_threshold', 100, 100],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
