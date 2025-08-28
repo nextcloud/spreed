@@ -229,6 +229,7 @@ class ListenerTest extends TestCase {
 		foreach ($expectedMessages as $expectedMessage) {
 			$consecutive[] = [
 				$room,
+				null,
 				$expectedMessage['actorType'],
 				$expectedMessage['actorId'],
 				json_encode($expectedMessage['message']),
@@ -330,6 +331,7 @@ class ListenerTest extends TestCase {
 		foreach ($expectedMessages as $expectedMessage) {
 			$consecutive[] = [
 				$room,
+				null,
 				Attendee::ACTOR_USERS,
 				'alice_actor',
 				json_encode($expectedMessage),
@@ -621,6 +623,7 @@ class ListenerTest extends TestCase {
 				->method('addSystemMessage')
 				->with(
 					$room,
+					$participant,
 					$expectedActorType,
 					$expectedActorId,
 					json_encode($expectedMessage),

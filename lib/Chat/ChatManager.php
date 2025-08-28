@@ -138,6 +138,7 @@ class ChatManager {
 	 */
 	public function addSystemMessage(
 		Room $chat,
+		?Participant $participant,
 		string $actorType,
 		string $actorId,
 		string $message,
@@ -176,11 +177,14 @@ class ChatManager {
 			$comment->setVerb(self::VERB_SYSTEM);
 		}
 
+		$metadata = [];
 		if ($silent) {
-			$comment->setMetaData([
-				Message::METADATA_SILENT => true,
-			]);
+			$metadata[Message::METADATA_SILENT] = true;
 		}
+		if ($chat->getMentionPermissions() === Room::MENTION_PERMISSIONS_EVERYONE || $participant?->hasModeratorPermissions()) {
+			$metadata[Message::METADATA_CAN_MENTION_ALL] = true;
+		}
+		$comment->setMetaData($metadata);
 
 		$this->setMessageExpiration($chat, $comment);
 
@@ -585,6 +589,7 @@ class ChatManager {
 
 		return $this->addSystemMessage(
 			$chat,
+			$participant,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
 			json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $comment->getId()]]),
@@ -674,6 +679,7 @@ class ChatManager {
 
 		return $this->addSystemMessage(
 			$chat,
+			$participant,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
 			json_encode(['message' => 'message_edited', 'parameters' => ['message' => $comment->getId()]]),
@@ -705,6 +711,7 @@ class ChatManager {
 
 		return $this->addSystemMessage(
 			$chat,
+			null,
 			$actorType,
 			$actorId,
 			json_encode(['message' => 'history_cleared', 'parameters' => []]),

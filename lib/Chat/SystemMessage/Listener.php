@@ -479,7 +479,7 @@ class Listener implements IEventListener {
 		}
 
 		return $this->chatManager->addSystemMessage(
-			$room, $actorType, $actorId,
+			$room, $participant, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
 			$message === 'file_shared',

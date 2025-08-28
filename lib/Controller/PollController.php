@@ -125,7 +125,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		], JSON_THROW_ON_ERROR);
 
 		try {
-			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+			$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
 		} catch (\Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
@@ -332,7 +332,7 @@ class PollController extends AEnvironmentAwareOCSController {
 						],
 					],
 				], JSON_THROW_ON_ERROR);
-				$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), false);
+				$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), false);
 			} catch (\Exception $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
@@ -403,7 +403,7 @@ class PollController extends AEnvironmentAwareOCSController {
 					],
 				],
 			], JSON_THROW_ON_ERROR);
-			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+			$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
 		} catch (\Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}

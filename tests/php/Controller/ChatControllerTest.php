@@ -675,6 +675,7 @@ class ChatControllerTest extends TestCase {
 		$this->chatManager->expects($this->once())
 			->method('addSystemMessage')
 			->with($this->room,
+				$participant,
 				'users',
 				$this->userId,
 				json_encode([
