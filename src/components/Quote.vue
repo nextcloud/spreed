@@ -13,10 +13,8 @@ import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
-import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
-import { useGetThreadId } from '../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -39,7 +37,6 @@ const { message, canCancel = false, editMessage = false } = defineProps<{
 const route = useRoute()
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
-const threadId = useGetThreadId()
 
 const {
 	isFileShare,
@@ -52,12 +49,11 @@ const {
 
 const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
-const query = computed(() => ({ threadId: (isExistingMessage(message) && threadId.value === message.threadId) ? message.threadId : undefined }))
 const hash = computed(() => '#message_' + message.id)
 
 const component = computed(() => canCancel
 	? { tag: 'div', link: undefined }
-	: { tag: 'router-link', link: { query: query.value, hash: hash.value } })
+	: { tag: 'router-link', link: { query: route.query, hash: hash.value } })
 
 const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 
@@ -105,25 +101,12 @@ const shortenedQuoteMessage = computed(() => {
 	return simpleQuotedMessage.value.length >= 250 ? simpleQuotedMessage.value.substring(0, 250) + '…' : simpleQuotedMessage.value
 })
 
-const showThreadShortcut = computed(() => {
-	return !threadId.value && isExistingMessage(message) && message.isThread && message.threadId
-})
-
 /**
  * Check whether message to quote (parent) existing on server
  * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
  */
 function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
 	return 'messageType' in message
-}
-
-/**
- * Go to thread if it exists
- */
-function goToThread() {
-	if (isExistingMessage(message) && message.threadId) {
-		threadId.value = message.threadId
-	}
 }
 
 /**
@@ -219,16 +202,6 @@ function handleQuoteClick() {
 				<IconClose :size="20" />
 			</template>
 		</NcButton>
-		<NcButton v-else-if="showThreadShortcut"
-			class="quote__button"
-			variant="tertiary"
-			:title="t('spreed', 'Go to thread')"
-			:aria-label="t('spreed', 'Go to thread')"
-			@click.stop.prevent="goToThread">
-			<template #icon>
-				<IconForumOutline :size="20" />
-			</template>
-		</NcButton>
 	</component>
 </template>
 
@@ -238,7 +211,7 @@ function handleQuoteClick() {
 .quote {
 	position: relative;
 	padding-block: var(--default-grid-baseline);
-	padding-inline: calc(2 * var(--default-grid-baseline)) var(--default-clickable-area);
+	padding-inline: calc(2 * var(--default-grid-baseline)) var(--default-grid-baseline);
 	margin-bottom: var(--default-grid-baseline);
 	display: flex;
 	gap: var(--default-grid-baseline);
@@ -249,6 +222,10 @@ function handleQuoteClick() {
 	color: var(--color-text-maxcontrast);
 	background-color: var(--color-main-background);
 	overflow: hidden;
+
+	&:has(.quote__button) {
+		padding-inline-end: var(--default-clickable-area);
+	}
 
 	&::before {
 		content: ' ';
@@ -299,6 +276,7 @@ function handleQuoteClick() {
 		align-items: center;
 		gap: calc(2 * var(--default-grid-baseline));
 		min-width: 0;
+		overflow: hidden;
 
 		&-author {
 			display: flex;

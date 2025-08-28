@@ -145,7 +145,7 @@
 					<NcActionSeparator />
 					<template v-if="supportThreads && !threadId">
 						<NcActionButton
-							v-if="message.isThread"
+							v-if="message.isThread && message.id === message.threadId"
 							close-after-click
 							@click="threadId = message.threadId">
 							<template #icon>
@@ -659,7 +659,11 @@ export default {
 	methods: {
 		t,
 		handleReply() {
-			this.$emit('reply')
+			if (!this.threadId && this.message.isThread && this.message.id === this.message.threadId) {
+				this.threadId = this.message.threadId
+			} else {
+				this.$emit('reply')
+			}
 		},
 
 		async handlePrivateReply() {

@@ -6,6 +6,7 @@
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
+import { MESSAGE } from '../constants.ts'
 import {
 	addReactionToMessage,
 	getReactionsDetails,
@@ -184,7 +185,7 @@ export const useReactionsStore = defineStore('reactions', {
 		processReaction(token, message) {
 			// 'reaction_deleted' is not handled because it is a message replacement
 			// for 'reaction' when the reaction is revoked, thus it doesn't exist anymore
-			if (message.systemMessage === 'reaction') {
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
 				const actorObject = {
 					actorDisplayName: message.actorDisplayName,
 					actorId: message.actorId,
@@ -197,7 +198,7 @@ export const useReactionsStore = defineStore('reactions', {
 					reaction: message.message,
 					actor: actorObject,
 				})
-			} else if (message.systemMessage === 'reaction_revoked') {
+			} else if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION_REVOKED) {
 				this.fetchReactions(token, message.parent.id)
 			}
 		},

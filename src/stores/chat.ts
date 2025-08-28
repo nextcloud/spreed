@@ -13,6 +13,7 @@ import type {
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
+import { isHiddenSystemMessage } from '../utils/message.ts'
 
 type GetMessagesListOptions = {
 	/** if given, look for Set that has it */
@@ -97,8 +98,8 @@ export const useChatStore = defineStore('chat', () => {
 				// - non-visible system message
 				// - completely deleted (expired) message
 				// - thread message in general view (apart from the topmost one)
-				if (message) {
-					// FIXME filter thread messages in general view (message.id === message.threadId)
+				if (message && !isHiddenSystemMessage(message)
+					&& (threadId ?? message.id) === message.threadId) {
 					acc.push(message)
 				}
 				return acc

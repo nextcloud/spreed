@@ -76,6 +76,7 @@
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 				<NcTextField
 					v-if="threadCreating"
+					ref="threadTitleInputRef"
 					v-model="threadTitle"
 					class="new-message-form__thread-title"
 					:label="t('spreed', 'Thread title')"
@@ -181,7 +182,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
-import { nextTick, toRefs } from 'vue'
+import { nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -308,6 +309,9 @@ export default {
 		const { autoComplete, userData } = useChatMentions(token)
 		const threadId = useGetThreadId()
 		const { createTemporaryMessage } = useTemporaryMessage()
+
+		const threadTitleInputRef = useTemplateRef('threadTitleInputRef')
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -319,6 +323,7 @@ export default {
 			autoComplete,
 			userData,
 			threadId,
+			threadTitleInputRef,
 			createTemporaryMessage,
 		}
 	},
@@ -561,6 +566,7 @@ export default {
 		threadId(newValue) {
 			if (newValue) {
 				this.setCreateThread(false)
+				this.focusInput()
 			}
 		},
 
@@ -816,6 +822,9 @@ export default {
 				this.chatExtrasStore.setThreadTitle(this.token, '')
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.$nextTick(() => {
+					this.threadTitleInputRef.focus()
+				})
 			} else {
 				this.chatExtrasStore.removeThreadTitle(this.token)
 			}

@@ -1,9 +1,10 @@
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-/**
+/*
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
 import {
 	ATTENDEE,
@@ -35,6 +36,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
+import { isHiddenSystemMessage } from '../utils/message.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -172,7 +174,7 @@ const getters = {
 	},
 
 	getLastCallStartedMessageId: (state, getters) => (token) => {
-		return getters.messagesList(token).findLast((message) => message.systemMessage === 'call_started')?.id
+		return getters.messagesList(token).findLast((message) => message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED)?.id
 	},
 
 	getFirstDisplayableMessageIdAfterReadMarker: (state, getters) => (token, readMessageId) => {
@@ -183,12 +185,7 @@ const getters = {
 		return getters.messagesList(token).find((message) => {
 			return message.id >= readMessageId
 				&& !String(message.id).startsWith('temp-')
-				&& message.systemMessage !== 'reaction'
-				&& message.systemMessage !== 'reaction_deleted'
-				&& message.systemMessage !== 'reaction_revoked'
-				&& message.systemMessage !== 'poll_voted'
-				&& message.systemMessage !== 'message_deleted'
-				&& message.systemMessage !== 'message_edited'
+				&& !isHiddenSystemMessage(message)
 		})?.id
 	},
 
@@ -201,12 +198,7 @@ const getters = {
 			return message.id < readMessageId
 				&& isMessageVisible(message.id)
 				&& !String(message.id).startsWith('temp-')
-				&& message.systemMessage !== 'reaction'
-				&& message.systemMessage !== 'reaction_deleted'
-				&& message.systemMessage !== 'reaction_revoked'
-				&& message.systemMessage !== 'poll_voted'
-				&& message.systemMessage !== 'message_deleted'
-				&& message.systemMessage !== 'message_edited'
+				&& !isHiddenSystemMessage(message)
 		})?.id
 	},
 
@@ -464,13 +456,20 @@ const actions = {
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
 
-		if (message.systemMessage === 'message_deleted'
-			|| message.systemMessage === 'reaction'
-			|| message.systemMessage === 'reaction_deleted'
-			|| message.systemMessage === 'reaction_revoked'
-			|| message.systemMessage === 'thread_created'
-			|| message.systemMessage === 'message_edited') {
+		if (isHiddenSystemMessage(message)) {
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_VOTED) {
+				const pollsStore = usePollsStore()
+				pollsStore.debounceGetPollData({
+					token,
+					pollId: message.messageParameters.poll.id,
+				})
+				// Quit processing
+				context.commit('addMessage', { token, message })
+				return
+			}
+
 			if (!message.parent) {
+				context.commit('addMessage', { token, message })
 				return
 			}
 
@@ -481,14 +480,14 @@ const actions = {
 			}
 
 			const reactionsStore = useReactionsStore()
-			if (message.systemMessage === 'message_deleted') {
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED) {
 				reactionsStore.resetReactions(token, message.parent.id)
 				sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id)
 			} else {
 				reactionsStore.processReaction(token, message)
 			}
 
-			if (message.systemMessage === 'message_edited' || message.systemMessage === 'message_deleted') {
+			if ([MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED].includes(message.systemMessage)) {
 				// update conversation lastMessage, if it was edited or deleted
 				if (message.parent.id === context.getters.conversation(token).lastMessage?.id) {
 					context.dispatch('updateConversationLastMessage', { token, lastMessage: message.parent })
@@ -516,7 +515,7 @@ const actions = {
 					})
 			}
 
-			if (message.systemMessage === 'thread_created') {
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_CREATED) {
 				// Check existing messages for having a threadId flag, and update them
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.threadId === message.threadId)
@@ -525,23 +524,16 @@ const actions = {
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
-					chatExtrasStore.addThread(token, {
-						thread: {
-							id: message.threadId,
-							roomToken: token,
-							title: message.messageParameters.title.name,
-							lastMessageId: message.threadId,
-							lastActivity: message.timestamp,
-							numReplies: 0,
-						},
-						attendee: { notificationLevel: 0 },
-						first: message.parent,
-						last: null,
-					})
+					chatExtrasStore.fetchSingleThread(token, message.threadId)
 				}
 			}
 
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
+				chatExtrasStore.updateThreadName(token, message.threadId, message.messageParameters.title.name)
+			}
+
 			// Quit processing
+			context.commit('addMessage', { token, message })
 			return
 		}
 
@@ -569,17 +561,7 @@ const actions = {
 			}
 		}
 
-		if (message.systemMessage === 'poll_voted') {
-			const pollsStore = usePollsStore()
-			pollsStore.debounceGetPollData({
-				token,
-				pollId: message.messageParameters.poll.id,
-			})
-			// Quit processing
-			return
-		}
-
-		if (message.systemMessage === 'poll_closed') {
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
 			const pollsStore = usePollsStore()
 			pollsStore.getPollData({
 				token,
@@ -587,7 +569,7 @@ const actions = {
 			})
 		}
 
-		if (message.systemMessage === 'history_cleared') {
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED) {
 			sharedItemsStore.purgeSharedItemsStore(token, message.id)
 			chatExtrasStore.clearThreads(token, message.id)
 			context.commit('clearMessagesHistory', {
@@ -900,12 +882,8 @@ const actions = {
 					: Math.min(lastGivenMessageId, message.id)
 			}
 
-			if (message.systemMessage !== 'reaction'
-				&& message.systemMessage !== 'reaction_deleted'
-				&& message.systemMessage !== 'reaction_revoked'
-				&& message.systemMessage !== 'poll_voted'
-				// FIXME filter thread messages in general view
-			) {
+			if (!isHiddenSystemMessage(message)
+				&& (threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})
@@ -991,13 +969,8 @@ const actions = {
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 			oldestKnownMessageId = oldestKnownMessageId === 0 ? message.id : Math.min(oldestKnownMessageId, message.id)
 
-			if (message.id <= messageId
-				&& message.systemMessage !== 'reaction'
-				&& message.systemMessage !== 'reaction_deleted'
-				&& message.systemMessage !== 'reaction_revoked'
-				&& message.systemMessage !== 'poll_voted'
-				// FIXME filter thread messages in general view
-			) {
+			if (!isHiddenSystemMessage(message)
+				&& (threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})
@@ -1130,14 +1103,19 @@ const actions = {
 			// Overwrite the conversation.hasCall property so people can join
 			// after seeing the message in the chat.
 			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
-				if (['call_started', 'call_ended', 'call_ended_everyone', 'call_missed'].includes(message.systemMessage)) {
+				if ([
+					MESSAGE.SYSTEM_TYPE.CALL_STARTED,
+					MESSAGE.SYSTEM_TYPE.CALL_MISSED,
+					MESSAGE.SYSTEM_TYPE.CALL_ENDED,
+					MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE,
+				].includes(message.systemMessage)) {
 					context.dispatch('overwriteHasCallByChat', {
 						token,
-						hasCall: message.systemMessage === 'call_started',
+						hasCall: message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 						lastActivity: message.timestamp,
 					})
 				}
-				if (message.systemMessage === 'call_ended_everyone'
+				if (message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE
 					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 					&& !actorStore.checkIfSelfIsActor(message)) {
 					const callViewStore = useCallViewStore()

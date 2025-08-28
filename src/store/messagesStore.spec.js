@@ -133,46 +133,6 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 		})
 
-		test('doesn\'t add specific messages to the store', () => {
-			reactionsStore.resetReactions = vi.fn()
-			reactionsStore.processReaction = vi.fn()
-
-			const messages = [{
-				id: 2,
-				token: TOKEN,
-				systemMessage: 'message_deleted',
-				parent: { id: 1 },
-			}, {
-				id: 3,
-				token: TOKEN,
-				systemMessage: 'reaction',
-				parent: { id: 1 },
-			}, {
-				id: 4,
-				token: TOKEN,
-				systemMessage: 'reaction_deleted',
-				parent: { id: 1 },
-			}, {
-				id: 5,
-				token: TOKEN,
-				systemMessage: 'reaction_revoked',
-				parent: { id: 1 },
-			}, {
-				id: 6,
-				token: TOKEN,
-				systemMessage: 'poll_voted',
-				messageParameters: {
-					poll: { id: 1 },
-				},
-			}]
-
-			messages.forEach((message) => {
-				store.dispatch('processMessage', { token: TOKEN, message })
-			})
-
-			expect(store.getters.messagesList(TOKEN)).toHaveLength(0)
-		})
-
 		test('adds user\'s message with included parent to the store', () => {
 			const parentMessage = {
 				id: 1,
@@ -263,6 +223,7 @@ describe('messagesStore', () => {
 					message: 'hello',
 					timestamp: 100,
 				},
+				isThread: false,
 				timestamp: 200,
 			}
 			const message2 = {
@@ -276,9 +237,11 @@ describe('messagesStore', () => {
 					token: TOKEN,
 					message: 'hello-hello',
 					lastEditTimestamp: 300,
+					isThread: false,
 					timestamp: 200,
 					reactions: { '👍': 1 },
 				},
+				isThread: false,
 				timestamp: 400,
 			}
 
@@ -287,7 +250,7 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
 				...message2.parent,
 				parent: message1.parent,
-			}])
+			}, message2])
 		})
 	})
 
@@ -406,7 +369,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'parent message deleted',
 				messageType: MESSAGE.TYPE.COMMENT_DELETED,
-			}])
+			}, payload])
 		})
 
 		test('deletes from server and replaces deleted message as parent with response', async () => {
@@ -442,7 +405,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'reply to hello',
 				parent: deletedParent,
-			}])
+			}, payload])
 		})
 
 		test('deletes from server but doesn\'t replace if deleted message is not in the store', async () => {
@@ -466,7 +429,7 @@ describe('messagesStore', () => {
 			expect(deleteMessage).toHaveBeenCalledWith({ token: TOKEN, id: 9 })
 			expect(status).toBe(200)
 
-			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([message, payload])
 		})
 
 		test('keeps message in list if an error status comes from server', async () => {
@@ -535,7 +498,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'hello edited',
 				messageType: MESSAGE.TYPE.COMMENT,
-			}])
+			}, payload])
 		})
 
 		test('edits at server and replaces edited message as parent with response', async () => {
@@ -571,7 +534,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'reply to hello',
 				parent: editedParent,
-			}])
+			}, payload])
 		})
 	})
 
@@ -1048,19 +1011,23 @@ describe('messagesStore', () => {
 		test('fetch additional messages around context', async () => {
 			const messagesContext = [{
 				id: 3,
+				threadId: 3,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			}, {
 				id: 4,
+				threadId: 3,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
 			const messagesFetch = [{
 				id: 1,
+				threadId: 1,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			}, {
 				id: 2,
+				threadId: 2,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
