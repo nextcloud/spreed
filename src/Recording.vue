@@ -51,13 +51,6 @@ export default {
 }
 </script>
 
-<style>
-/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
-body .modal-wrapper * {
-	box-sizing: border-box;
-}
-</style>
-
 <style lang="scss" scoped>
 /* The CallView descendants expect border-box to be set, as in the normal UI the
  * CallView is a descendant of NcContent, which applies the border-box to all

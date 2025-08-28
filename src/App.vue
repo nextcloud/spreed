@@ -671,11 +671,6 @@ export default {
 	z-index: 10001 !important;
 }
 
-/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
-body .modal-wrapper * {
-	box-sizing: border-box;
-}
-
 /* FIXME: Align styles of NcModal header with NcDialog header. Remove if all are migrated */
 .modal-wrapper h2.nc-dialog-alike-header {
 	font-size: 21px;

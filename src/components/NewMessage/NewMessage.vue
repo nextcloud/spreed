@@ -1085,11 +1085,6 @@ export default {
 	&__thread-title {
 		margin-bottom: var(--default-grid-baseline);
 
-		// Override input style to match NcRichContenteditable
-		:deep(.input-field__input) {
-			border: 2px solid var(--color-border-maxcontrast);
-		}
-
 		& + :deep(.rich-contenteditable > .rich-contenteditable__input) {
 			min-height: calc(2lh + 2 * var(--contenteditable-block-offset) + 4px);
 		}

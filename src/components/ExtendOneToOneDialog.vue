@@ -111,16 +111,6 @@ async function extendOneToOneConversation() {
 		gap: calc(2 * var(--default-grid-baseline));
 		width: 350px;
 		padding: calc(2 * var(--default-grid-baseline));
-
-		/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
-		&,
-		& :deep(*) {
-			box-sizing: border-box;
-		}
-		/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/6669 is released */
-		& :deep(.avatardiv:has(img)) {
-			line-height: 0 !important;
-		}
 	}
 
 	&__header {
