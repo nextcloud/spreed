@@ -59,7 +59,7 @@ Feature: conversation/files
     And user "participant2" accepts last share
     And user "participant1" deletes last share
     # FIXME Temporary workaround, should be removed when possible. See https://github.com/nextcloud/spreed/pull/15726 for details
-    When user "participant2" propfinds path "welcome.txt"
+    # When user "participant2" propfinds path "welcome.txt"
     When user "participant1" gets the room for path "welcome.txt" with 404 (v1)
 
 
