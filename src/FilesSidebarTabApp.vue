@@ -34,7 +34,6 @@ import { t } from '@nextcloud/l10n'
 import { defineAsyncComponent, defineComponent, h } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import LoadingComponent from './components/LoadingComponent.vue'
-import { useGetToken } from './composables/useGetToken.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getFileConversation } from './services/filesIntegrationServices.ts'
@@ -64,7 +63,6 @@ export default {
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			actorStore: useActorStore(),
-			token: useGetToken(),
 			tokenStore: useTokenStore(),
 		}
 	},
@@ -83,6 +81,10 @@ export default {
 	},
 
 	computed: {
+		token() {
+			return this.tokenStore.token
+		},
+
 		fileInfo() {
 			return this.Talk.fileInfo || {}
 		},
