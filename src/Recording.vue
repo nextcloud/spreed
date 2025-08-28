@@ -4,8 +4,7 @@
 -->
 
 <template>
-	<CallView :token="token"
-		:is-recording="true" />
+	<CallView :token="token" is-recording />
 </template>
 
 <script>
@@ -66,6 +65,11 @@ body .modal-wrapper * {
 #call-container {
 	:deep(*) {
 		box-sizing: border-box;
+	}
+
+	:deep(#videos) {
+		inset: 0;
+		height: 100%;
 	}
 }
 </style>

@@ -128,7 +128,7 @@
 					@click-video="handleClickLocalVideo" />
 			</div>
 
-			<BottomBar :is-sidebar="isSidebar" />
+			<BottomBar v-if="!isRecording" :is-sidebar="isSidebar" />
 		</template>
 	</div>
 </template>
