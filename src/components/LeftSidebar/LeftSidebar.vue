@@ -146,16 +146,28 @@
 						<IconHomeOutline :size="20" />
 					</template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem v-if="!isSearching"
+				<template v-if="showArchived || showThreadsList">
+					<NcAppNavigationItem
+						class="navigation-item"
+						:name="t('spreed', 'Back to conversations')"
+						@click.prevent="showThreadsList = false; showArchived = false">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" :size="20" />
+						</template>
+					</NcAppNavigationItem>
+					<NcAppNavigationCaption
+						class="navigation-caption"
+						:name="showArchived ? t('spreed', 'Archived conversations') : t('spreed', 'Followed threads')" />
+				</template>
+				<NcAppNavigationItem v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
 					class="navigation-item"
-					:name="showThreadsList ? t('spreed', 'Back to conversations') : t('spreed', 'Followed threads')"
-					@click.prevent="showThreadsList = !showThreadsList">
+					:name="t('spreed', 'Followed threads')"
+					@click.prevent="showThreadsList = true; showArchived = false">
 					<template #icon>
-						<IconArrowLeft v-if="showThreadsList" class="bidirectional-icon" :size="20" />
-						<IconForumOutline v-else :size="20" />
+						<IconForumOutline :size="20" />
 					</template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem v-if="pendingInvitationsCount"
+				<NcAppNavigationItem v-if="pendingInvitationsCount && !isSearching && !showArchived && !showThreadsList"
 					class="navigation-item"
 					:name="t('spreed', 'Pending invitations')"
 					@click.prevent="showInvitationHandler">
@@ -191,7 +203,7 @@
 						</NcButton>
 					</template>
 				</NcEmptyContent>
-				<ul v-if="showThreadsList" class="threads-tab__list">
+				<ul v-if="supportThreads && showThreadsList" class="threads-tab__list">
 					<ThreadItem
 						v-for="thread of followedThreads"
 						:key="`thread_${thread.thread.id}`"
@@ -230,29 +242,19 @@
 
 		<template #footer>
 			<div class="left-sidebar__settings-button-container">
-				<template v-if="!isSearching && supportsArchive">
-					<NcButton v-if="showArchived"
-						variant="tertiary"
-						wide
-						@click="showArchived = false">
-						<template #icon>
-							<IconArrowLeft class="bidirectional-icon" :size="20" />
-						</template>
-						{{ t('spreed', 'Back to conversations') }}
-					</NcButton>
-					<NcButton v-else-if="archivedConversationsList.length"
-						variant="tertiary"
-						wide
-						@click="showArchived = true">
-						<template #icon>
-							<IconArchiveOutline :size="20" />
-						</template>
-						{{ t('spreed', 'Archived conversations') }}
-						<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
-							⬤
-						</span>
-					</NcButton>
-				</template>
+				<NcButton
+					v-if="supportsArchive && !isSearching && !showArchived && !showThreadsList && archivedConversationsList.length"
+					variant="tertiary"
+					wide
+					@click="showArchived = true; showThreadsList = false">
+					<template #icon>
+						<IconArchiveOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Archived conversations') }}
+					<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
+						⬤
+					</span>
+				</NcButton>
 
 				<NcButton variant="tertiary" wide @click="showSettings">
 					<template #icon>
@@ -278,6 +280,7 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
@@ -339,6 +342,8 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const supportThreads = hasTalkFeature('local', 'threads')
+
 // TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
 const FILTER_LABELS = {
@@ -358,6 +363,7 @@ export default {
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
+		NcAppNavigationCaption,
 		NcAppNavigationItem,
 		NcButton,
 		NcCounterBubble,
@@ -421,6 +427,7 @@ export default {
 			canModerateSipDialOut,
 			canNoteToSelf,
 			supportsArchive,
+			supportThreads,
 			showArchived,
 			showThreadsList,
 			settingsStore,
@@ -677,6 +684,7 @@ export default {
 			}
 
 			if (this.filters.length) {
+				this.showThreadsList = false
 				BrowserStorage.setItem('filterEnabled', this.filters)
 			} else {
 				BrowserStorage.removeItem('filterEnabled')
@@ -758,6 +766,11 @@ export default {
 			if (!this.isSearching) {
 				return
 			}
+
+			// Reset modes
+			this.showArchived = false
+			this.showThreadsList = false
+
 			this.resetNavigation()
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
 			this.initializeNavigation()
@@ -984,6 +997,10 @@ export default {
 				actualizeDataTimeout = null
 			}, 5_000)
 
+			// Reset modes
+			this.showArchived = false
+			this.showThreadsList = false
+
 			if (this.$route.name === 'root') {
 				event.preventDefault()
 				EventBus.emit('refresh-talk-dashboard')
@@ -1017,6 +1034,15 @@ export default {
 		position: absolute;
 		top: 0;
 		inset-inline-end: 0;
+	}
+}
+
+.navigation-caption {
+	margin-block: var(--default-grid-baseline) !important;
+	margin-inline-start: calc(var(--default-grid-baseline) * 2);
+
+	:deep(.app-navigation-caption__name) {
+		margin: 0;
 	}
 }
 
