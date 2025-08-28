@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.4 – 2025-08-28
+### Added
+- feat(sip): Allow to send the direct dial-in number of users on out-going calls
+  [#15701](https://github.com/nextcloud/spreed/issues/15701)
+- feat(settings): Add a config for the unread message threshold for the AI summary
+  [#15734](https://github.com/nextcloud/spreed/issues/15734)
+
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(dashboard): Fix events without an end date
+  [#15732](https://github.com/nextcloud/spreed/issues/15732)
+- fix(chat): Suggest mentioning yourself, it's useful with bots and todos
+  [#15656](https://github.com/nextcloud/spreed/issues/15656)
+- fix(chat): Fix search interaction when scrolling away and clicking on a result again
+  [#15706](https://github.com/nextcloud/spreed/issues/15706)
+- fix(chat): Fix support for at-all in captions when sharing a file
+  [#15744](https://github.com/nextcloud/spreed/issues/15744)
+
 ## 21.1.3 – 2025-08-06
 ### Changed
 - Update translations
