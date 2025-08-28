@@ -52,6 +52,10 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement getNumberOfCommentsForObject() method.
 	}
 
+	public function getNumberOfCommentsForObjects(string $objectType, array $objectIds, ?\DateTime $notOlderThan = null, string $verb = ''): array {
+		// TODO: Implement getNumberOfCommentsForObjects() method.
+	}
+
 	public function getNumberOfUnreadCommentsForObjects(string $objectType, array $objectIds, IUser $user, $verb = ''): array {
 		// TODO: Implement getNumberOfUnreadCommentsForObjects() method.
 	}
