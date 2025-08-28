@@ -57,8 +57,8 @@
 			</span>
 
 			<NcActions
-				:aria-label="t('spreed', 'Subscribe to thread')"
-				:title="t('spreed', 'Subscribe to thread')"
+				:aria-label="t('spreed', 'Thread notifications')"
+				:title="t('spreed', 'Thread notifications')"
 				:variant="threadNotificationVariant">
 				<template #icon>
 					<component :is="notificationLevelIcons[threadNotification]" :size="20" />

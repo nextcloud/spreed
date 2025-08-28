@@ -22,7 +22,8 @@
 		:counter-type="counterType"
 		force-menu
 		:compact="compact"
-		@click="onClick">
+		@click="onClick"
+		@update:menu-open="handleActionsMenuOpen">
 		<template #icon>
 			<ConversationIcon :item="item"
 				:hide-favorite="compact"
@@ -605,6 +606,12 @@ export default {
 			// NcActionButton is not a RouterLink, so we should route user manually
 			this.$router.push(this.to)
 				.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+
+		handleActionsMenuOpen(open) {
+			if (!open) {
+				this.submenu = null
+			}
 		},
 	},
 }
