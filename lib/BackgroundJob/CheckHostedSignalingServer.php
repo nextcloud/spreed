@@ -68,16 +68,17 @@ class CheckHostedSignalingServer extends TimedJob {
 	}
 
 	private function updateStunTurnSettings(array $oldAccountInfo, array $accountInfo) {
-		if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
-			if ($accountInfo['stun']['servers']) {
+		if (!empty($accountInfo['stun']['servers'])) {
+			if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
 				// STUN servers were added / changed
 				$this->config->setAppValue('spreed', 'stun_servers', json_encode($accountInfo['stun']['servers']));
-			} elseif ($oldAccountInfo['stun']['servers']) {
-				// STUN servers are no longer available, reset to default.
-				$this->config->deleteAppValue('spreed', 'stun_servers');
 			}
+		} elseif (!empty($oldAccountInfo['stun']['servers'])) {
+			// STUN servers are no longer available, reset to default.
+			$this->config->deleteAppValue('spreed', 'stun_servers');
 		}
-		if ($accountInfo['turn']['servers']) {
+
+		if (!empty($accountInfo['turn']['servers'])) {
 			$newTurnServers = [];
 			foreach ($accountInfo['turn']['servers'] as $server) {
 				$newTurnServers[] = [
@@ -92,7 +93,7 @@ class CheckHostedSignalingServer extends TimedJob {
 				// TURN servers were added / changed
 				$this->config->setAppValue('spreed', 'turn_servers', json_encode($newTurnServers));
 			}
-		} elseif ($oldAccountInfo['turn']['servers']) {
+		} elseif (!empty($oldAccountInfo['turn']['servers'])) {
 			// TURN servers are no longer available, reset to default.
 			$this->config->deleteAppValue('spreed', 'turn_servers');
 		}
