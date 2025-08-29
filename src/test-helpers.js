@@ -10,15 +10,32 @@ import { cloneDeep } from 'lodash'
  *
  * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionButton
  * @param {string | Array<string>} text or array of possible texts to look for NcButtons
- * @return {import('@vue/test-utils').Wrapper}
+ * @return {import('@vue/test-utils').Wrapper | import('@vue/test-utils').ErrorWrapper}
  */
 function findNcActionButton(wrapper, text) {
 	const actionButtons = wrapper.findAllComponents({ name: 'NcActionButton' })
 	const items = (Array.isArray(text))
 		? actionButtons.filter((actionButton) => text.includes(actionButton.text()))
 		: actionButtons.filter((actionButton) => actionButton.text() === text)
-	if (!items.exists()) {
-		return items
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
+	}
+	return items[0]
+}
+
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionText
+ * @param {string | Array<string>} text or array of possible texts to look for
+ * @return {import('@vue/test-utils').Wrapper | import('@vue/test-utils').ErrorWrapper}
+ */
+function findNcActionText(wrapper, text) {
+	const actionTexts = wrapper.findAllComponents({ name: 'NcActionText' })
+	const items = (Array.isArray(text))
+		? actionTexts.filter((actionText) => text.includes(actionText.text()))
+		: actionTexts.filter((actionText) => actionText.text() === text || actionText.text().includes(text))
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
 	}
 	return items[0]
 }
@@ -34,8 +51,8 @@ function findNcButton(wrapper, text) {
 	const items = (Array.isArray(text))
 		? buttons.filter((button) => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
 		: buttons.filter((button) => button.text() === text || button.vm.ariaLabel === text)
-	if (!items.exists()) {
-		return items
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
 	}
 	return items[0]
 }
@@ -114,6 +131,7 @@ function generateOCSErrorResponse({ headers = {}, payload = {}, status }) {
 
 export {
 	findNcActionButton,
+	findNcActionText,
 	findNcButton,
 	findNcListItems,
 	generateOCSErrorResponse,
