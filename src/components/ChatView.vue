@@ -15,7 +15,7 @@
 					:name="dropHintText"
 					class="dragover">
 					<template #icon>
-						<IconTrayArrowUp v-if="!isGuest && !isReadOnly" />
+						<NcIconSvgWrapper v-if="!isGuest && !isReadOnly" :svg="IconFileUpload" />
 						<IconAccountOutline v-else-if="isGuest" />
 						<IconAlertOctagonOutline v-else-if="isReadOnly" />
 					</template>
@@ -60,15 +60,16 @@ import { t } from '@nextcloud/l10n'
 import { provide } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
-import IconTrayArrowUp from 'vue-material-design-icons/TrayArrowUp.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
+import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
@@ -83,6 +84,7 @@ export default {
 	components: {
 		NcButton,
 		NcEmptyContent,
+		NcIconSvgWrapper,
 		MessagesList,
 		NewMessage,
 		NewMessageUploadEditor,
@@ -92,7 +94,6 @@ export default {
 		IconAccountOutline,
 		IconAlertOctagonOutline,
 		IconChevronDoubleDown,
-		IconTrayArrowUp,
 	},
 
 	props: {
@@ -110,6 +111,7 @@ export default {
 	setup(props) {
 		provide('chatView:isSidebar', props.isSidebar)
 		return {
+			IconFileUpload,
 			token: useGetToken(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
