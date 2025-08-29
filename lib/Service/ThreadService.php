@@ -213,14 +213,15 @@ class ThreadService {
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());
 	}
 
-	public function validateThreadIds(array $potentialThreadIds): array {
+	public function validateThreadIds(int $roomId, array $potentialThreadIds): array {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('id')
 			->from('talk_threads')
 			->where($query->expr()->in(
 				'id',
 				$query->createNamedParameter($potentialThreadIds, IQueryBuilder::PARAM_INT_ARRAY),
-			));
+			))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$ids = [];
 
@@ -233,7 +234,7 @@ class ThreadService {
 		return $ids;
 	}
 
-	public function validateThread(int $potentialThreadId): bool {
+	public function validateThread(int $roomId, int $potentialThreadId): bool {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('id')
 			->from('talk_threads')
@@ -241,7 +242,8 @@ class ThreadService {
 				'id',
 				$query->createNamedParameter($potentialThreadId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT)
-			);
+			)
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
 		$row = $result->fetch();

@@ -17894,6 +17894,12 @@
                                         "type": "string",
                                         "default": "",
                                         "description": "Only supported when not replying, when given will create a thread (requires `threads` capability)"
+                                    },
+                                    "threadId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)"
                                     }
                                 }
                             }

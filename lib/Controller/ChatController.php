@@ -181,7 +181,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_CREATED, $headers);
 		}
 
-		$isThread = $this->threadService->validateThread((int)$comment->getTopmostParentId());
+		$isThread = $this->threadService->validateThread($this->room->getId(), (int)$comment->getTopmostParentId());
 		$data = $chatMessage->toArray($this->getResponseFormat(), $isThread);
 		if ($parentMessage instanceof Message) {
 			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $isThread);
@@ -207,6 +207,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
 	 * 201: Message sent successfully
@@ -226,11 +227,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = ''): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
-			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent, $threadTitle);
+			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent, $threadTitle, $threadId);
 		}
 
 		if (trim($message) === '') {
@@ -256,13 +257,17 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if (!$parentMessage->isReplyable()) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($threadId !== 0) {
+			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent);
+			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, threadId: $threadId);
 			if ($replyTo === 0 && $threadTitle !== '') {
 				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
 				// Add to subscribed threads list
@@ -674,7 +679,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$this->sharePreloader->preloadShares($comments);
 		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
-		$threadMap = array_flip($this->threadService->validateThreadIds($potentialThreadIds));
+		$threadMap = array_flip($this->threadService->validateThreadIds($this->room->getId(), $potentialThreadIds));
 
 		$i = 0;
 		$now = $this->timeFactory->getDateTime();

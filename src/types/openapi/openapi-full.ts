@@ -9301,6 +9301,12 @@ export interface operations {
                      * @default
                      */
                     threadTitle?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
                 };
             };
         };

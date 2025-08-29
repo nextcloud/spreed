@@ -47,6 +47,20 @@ Feature: chat-4/threads
       | room | users         | participant1 | user_added           | {actor} added you              | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
+  Scenario: Responding without replying does not trigger a notification
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room" with 201
+    And user "participant2" sends reply "Message 1-1" on thread "Thread 1" to room "room" with 201
+    And user "participant1" has the following notifications
+      | app | object_type | object_id | subject |
+    And user "participant2" sends reply "Message 1-2" on message "Message 1" to room "room" with 201
+    And user "participant1" has the following notifications
+      | app    | object_type | object_id        | subject                                                               |
+      | spreed | chat        | room/Message 1-2 | participant2-displayname replied to your message in conversation room |
+
   Scenario: Thread titles are trimmed
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
