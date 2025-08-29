@@ -5,6 +5,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0-beta.2 – 2025-08-29
+### Added
+- feat(calls): Implement live-transcriptions when the ExApp is available
+  [#15696](https://github.com/nextcloud/spreed/issues/15696)
+- feat(dashboard): Improve empty content view of the dashboard sections
+  [#15697](https://github.com/nextcloud/spreed/issues/15697)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(UI): Further design adjustments to outlined icons
+- fix(chat): Many improvements for threads
+  [#15616](https://github.com/nextcloud/spreed/issues/15616)
+  [#15703](https://github.com/nextcloud/spreed/issues/15703)
+  [#15704](https://github.com/nextcloud/spreed/issues/15704)
+  [#15722](https://github.com/nextcloud/spreed/issues/15722)
+  [#15735](https://github.com/nextcloud/spreed/issues/15735)
+
 ## 21.1.4 – 2025-08-28
 ### Added
 - feat(sip): Allow to send the direct dial-in number of users on out-going calls
@@ -28,18 +48,23 @@ All notable changes to this project will be documented in this file.
 
 ## 22.0.0-beta.1 – 2025-08-21
 ### Added
-- Implement threads feature [#15313](https://github.com/nextcloud/spreed/issues/15313)
-- Implement 'Busy' status in calls [#15465](https://github.com/nextcloud/spreed/issues/15465)
-- Update call interface design [#15025](https://github.com/nextcloud/spreed/issues/15025)
-
-### Fixed
-- Improve chat history browsing performance [#6046](https://github.com/nextcloud/spreed/issues/6046)
+- Implement threads feature
+  [#15313](https://github.com/nextcloud/spreed/issues/15313)
+- Implement 'Busy' status in calls
+  [#15465](https://github.com/nextcloud/spreed/issues/15465)
+- Update call interface design
+  [#15025](https://github.com/nextcloud/spreed/issues/15025)
 
 ### Changed
-- Migrate app to Vue3 [#9448](https://github.com/nextcloud/spreed/issues/9448)
+- Migrate app to Vue3
+  [#9448](https://github.com/nextcloud/spreed/issues/9448)
 - Update dependencies
 - Update translations
 - Require Nextcloud 32 / Hub 25 Autumn
+
+### Fixed
+- Improve chat history browsing performance
+  [#6046](https://github.com/nextcloud/spreed/issues/6046)
 
 ## 21.1.3 – 2025-08-06
 ### Changed
