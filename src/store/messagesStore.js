@@ -883,7 +883,7 @@ const actions = {
 			}
 
 			if (!isHiddenSystemMessage(message)
-				&& (threadId || message.id === message.threadId)) {
+				&& (!message.isThread || threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})
@@ -970,7 +970,7 @@ const actions = {
 			oldestKnownMessageId = oldestKnownMessageId === 0 ? message.id : Math.min(oldestKnownMessageId, message.id)
 
 			if (!isHiddenSystemMessage(message)
-				&& (threadId || message.id === message.threadId)) {
+				&& (!message.isThread || threadId || message.id === message.threadId)) {
 				minimumVisible--
 			}
 		})

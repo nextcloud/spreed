@@ -1012,22 +1012,26 @@ describe('messagesStore', () => {
 			const messagesContext = [{
 				id: 3,
 				threadId: 3,
+				isThread: true,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			}, {
 				id: 4,
 				threadId: 3,
+				isThread: true,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
 			const messagesFetch = [{
 				id: 1,
 				threadId: 1,
+				isThread: false,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			}, {
 				id: 2,
 				threadId: 2,
+				isThread: false,
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
