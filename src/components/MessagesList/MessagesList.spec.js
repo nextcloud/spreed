@@ -8,6 +8,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
+import StaticDateTime from '../UIShared/StaticDateTime.vue'
 import MessagesList from './MessagesList.vue'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
@@ -163,7 +164,12 @@ describe('MessagesList.vue', () => {
 			messages.forEach((message) => store.commit('addMessage', { token: TOKEN, message }))
 
 			const wrapper = shallowMount(MessagesList, {
-				global: { plugins: [store] },
+				global: {
+					plugins: [store],
+					stubs: {
+						StaticDateTime,
+					},
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
@@ -207,7 +213,7 @@ describe('MessagesList.vue', () => {
 				messageType: MESSAGE.TYPE.COMMENT,
 				messageParameters: [],
 				systemMessage: '',
-				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
+				timestamp: fakeTimestamp('2019-09-14T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
@@ -237,9 +243,9 @@ describe('MessagesList.vue', () => {
 
 			const dateSeparators = wrapper.findAll('.messages-date')
 			expect(dateSeparators).toHaveLength(3)
-			expect(dateSeparators.at(0).text()).toBe('2 days ago, May 9, 2020')
-			expect(dateSeparators.at(1).text()).toBe('Yesterday, May 10, 2020')
-			expect(dateSeparators.at(2).text()).toBe('Today, May 11, 2020')
+			expect(dateSeparators.at(0).text()).toBe('September 14, 2019')
+			expect(dateSeparators.at(1).text()).toBe('yesterday, May 10')
+			expect(dateSeparators.at(2).text()).toBe('today, May 11')
 		})
 
 		test('groups system messages with each other', () => {
