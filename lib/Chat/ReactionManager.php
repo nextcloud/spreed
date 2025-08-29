@@ -113,6 +113,7 @@ class ReactionManager {
 
 		$this->chatManager->addSystemMessage(
 			$chat,
+			null,
 			$actorType,
 			$actorId,
 			json_encode(['message' => 'reaction_revoked', 'parameters' => ['message' => (int)$comment->getId()]]),

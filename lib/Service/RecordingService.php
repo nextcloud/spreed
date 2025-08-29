@@ -549,6 +549,7 @@ class RecordingService {
 		try {
 			$this->chatManager->addSystemMessage(
 				$room,
+				$participant,
 				$participant->getAttendee()->getActorType(),
 				$participant->getAttendee()->getActorId(),
 				$message,
