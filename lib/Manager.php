@@ -122,6 +122,7 @@ class Manager {
 			'recording_consent' => 0,
 			'has_federation' => 0,
 			'mention_permissions' => 0,
+			'transcription_language' => '',
 		], $data));
 	}
 
@@ -191,6 +192,7 @@ class Manager {
 			(int)$row['recording_consent'],
 			(int)$row['has_federation'],
 			(int)$row['mention_permissions'],
+			(string)$row['transcription_language'],
 		);
 	}
 

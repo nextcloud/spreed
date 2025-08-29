@@ -961,6 +961,15 @@ const actions = {
 			return
 		}
 
+		const callViewStore = useCallViewStore()
+		if (callViewStore.isLiveTranscriptionEnabled) {
+			// It is not awaited as it is not needed to guarantee that the
+			// transcription was disabled (the live_transcription app should
+			// detect it when the participant leaves) and thus it would
+			// unnecesarily delay leaving the call.
+			callViewStore.disableLiveTranscription(token)
+		}
+
 		await leaveCall(token, all)
 
 		const updatedData = {

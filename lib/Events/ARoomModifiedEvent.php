@@ -24,6 +24,7 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_IN_CALL = 'inCall';
 	public const PROPERTY_LISTABLE = 'listable';
 	public const PROPERTY_LOBBY = 'lobby';
+	public const PROPERTY_LIVE_TRANSCRIPTION_LANGUAGE_ID = 'liveTranscriptionLanguageId';
 	public const PROPERTY_MESSAGE_EXPIRATION = 'messageExpiration';
 	public const PROPERTY_MENTION_PERMISSIONS = 'mentionPermissions';
 	public const PROPERTY_NAME = 'name';

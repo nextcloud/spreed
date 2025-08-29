@@ -36,6 +36,7 @@
 				<referencedClass name="GuzzleHttp\Exception\ServerException" />
 				<referencedClass name="GuzzleHttp\Exception\ConnectException" />
 				<referencedClass name="OC" />
+				<referencedClass name="OCA\AppAPI\PublicFunctions" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\CirclesManager" />
 				<referencedClass name="OCA\Circles\Events\AddingCircleMemberEvent" />
@@ -61,6 +62,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
 				<referencedClass name="OC\User\NoUserException" />
+				<referencedClass name="OCA\AppAPI\PublicFunctions" />
 				<referencedClass name="OCA\Circles\CirclesManager" />
 				<referencedClass name="OCA\Circles\Model\Circle" />
 				<referencedClass name="OCA\Circles\Model\Member" />

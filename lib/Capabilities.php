@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
@@ -208,6 +209,7 @@ class Capabilities implements IPublicCapability {
 		protected IAppManager $appManager,
 		protected ITranslationManager $translationManager,
 		protected ITaskProcessingManager $taskProcessingManager,
+		protected LiveTranscriptionService $liveTranscriptionService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -249,6 +251,8 @@ class Capabilities implements IPublicCapability {
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
+					'live-transcription' => $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
+						&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,

@@ -182,6 +182,7 @@ export type components = {
                     "max-duration": number;
                     "blur-virtual-background": boolean;
                     "end-to-end-encryption": boolean;
+                    "live-transcription": boolean;
                 };
                 chat: {
                     /** Format: int64 */
@@ -431,6 +432,8 @@ export type components = {
              * @description Listable scope for the room (only available with `listable-rooms` capability)
              */
             listable: number;
+            /** @description ID of the language to use for live transcriptions in the room, */
+            liveTranscriptionLanguageId: string;
             /**
              * Format: int64
              * @description Webinar lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability) (See [Webinar lobby states](https://nextcloud-talk.readthedocs.io/en/latest/constants#webinar-lobby-states))
