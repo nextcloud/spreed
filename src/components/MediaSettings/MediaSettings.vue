@@ -677,6 +677,9 @@ export default {
 			if (page === 'device-check') {
 				this.isDeviceCheck = true
 				this.tabContent = 'devices'
+			} else if (page === 'backgrounds') {
+				this.isDeviceCheck = true
+				this.tabContent = 'backgrounds'
 			}
 		},
 
@@ -994,8 +997,9 @@ export default {
 	max-width: 450px;
 }
 
+// Override NcModal styles for large horizontal layout
 :deep(.modal-wrapper--large > .modal-container) {
-	width: unset;
+	width: unset !important;
 }
 
 </style>

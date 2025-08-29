@@ -55,6 +55,16 @@
 			:show-devices="!isSidebar"
 			variant="tertiary" />
 
+		<NcButton
+			:aria-label="t('spreed', 'Select virtual background')"
+			:title="t('spreed', 'Select virtual background')"
+			variant="tertiary"
+			@click.stop="emit('talk:media-settings:show', 'backgrounds')">
+			<template #icon>
+				<NcIconSvgWrapper :svg="IconBackground" :size="20" />
+			</template>
+		</NcButton>
+
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
 			v-model:open="screenSharingMenuOpen"
@@ -103,6 +113,7 @@ import escapeHtml from 'escape-html'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconMonitorOff from 'vue-material-design-icons/MonitorOff.vue'
@@ -110,6 +121,7 @@ import IconMonitorShare from 'vue-material-design-icons/MonitorShare.vue'
 import IconNetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
+import IconBackground from '../../../img/material-icons/replace-background.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../constants.ts'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
@@ -125,6 +137,7 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcButton,
+		NcIconSvgWrapper,
 		NcPopover,
 		// Icons
 		IconMonitor,
@@ -157,6 +170,7 @@ export default {
 
 	setup() {
 		return {
+			IconBackground,
 			isInCall: useIsInCall(),
 			callAnalyzer,
 		}
@@ -361,6 +375,8 @@ export default {
 	},
 
 	methods: {
+		emit,
+
 		t,
 
 		toggleScreenSharingMenu() {
