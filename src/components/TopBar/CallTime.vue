@@ -16,9 +16,11 @@
 				variant="tertiary"
 				@click="showPopover = !showPopover">
 				<template v-if="isRecording || isStartingRecording" #icon>
-					<IconRecordCircleOutline
-						:size="20"
-						:fill-color="isRecording ? 'var(--color-border-error)' : 'var(--color-loading-light)'" />
+					<NcIconSvgWrapper
+						class="call-time__recording-icon"
+						:class="{ 'call-time__recording-icon--start': isStartingRecording }"
+						:svg="IconScreenRecordOutline"
+						:size="20" />
 				</template>
 				<span class="call-time__text">
 					<span class="call-time__placeholder">{{ placeholderCallTime }}</span>
@@ -60,10 +62,11 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import IconRecordCircleOutline from 'vue-material-design-icons/RecordCircleOutline.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
+import IconScreenRecordOutline from '../../../img/material-icons/screen-record-outline.svg?raw'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CALL } from '../../constants.ts'
@@ -76,9 +79,9 @@ export default {
 
 	components: {
 		NcButton,
+		NcIconSvgWrapper,
 		NcLoadingIcon,
 		NcPopover,
-		IconRecordCircleOutline,
 		IconStop,
 	},
 
@@ -94,6 +97,7 @@ export default {
 
 	setup() {
 		return {
+			IconScreenRecordOutline,
 			isDocumentVisible: useDocumentVisibility(),
 			token: useGetToken(),
 		}
@@ -241,6 +245,15 @@ export default {
 		height: 0;
 		overflow: hidden;
 	}
+
+	&__recording-icon {
+		animation: pulse 2s infinite;
+		color: var(--color-element-error, var(--color-error));
+
+		&--start {
+			color: var(--color-loading-light);
+		}
+	}
 }
 
 :deep(.button-vue) {
@@ -250,6 +263,18 @@ export default {
 	&:disabled {
 		opacity: 1 !important;
 		pointer-events: none;
+	}
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
+	}
+	100% {
+		opacity: 1;
 	}
 }
 
