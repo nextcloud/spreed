@@ -8,7 +8,7 @@
 	<NcNoteCard type="info" class="chat-summary">
 		<template #icon>
 			<NcLoadingIcon v-if="loading" />
-			<IconMessageBulleted v-else />
+			<IconCreation v-else />
 		</template>
 		<NcButton v-if="isTextMoreThanOneLine"
 			class="chat-summary__button"
@@ -60,13 +60,13 @@ import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import IconMessageBulleted from 'vue-material-design-icons/MessageBulleted.vue'
+import IconCreation from 'vue-material-design-icons/Creation.vue' // Filled as in Assistant app icon
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'

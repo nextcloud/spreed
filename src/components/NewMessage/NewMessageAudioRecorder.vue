@@ -12,7 +12,7 @@
 			:disabled="!canStartRecording"
 			@click="start">
 			<template #icon>
-				<IconMicrophoneOutline :size="16" />
+				<IconMicrophoneOutline :size="20" />
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
@@ -21,7 +21,7 @@
 				:aria-label="abortRecordingTitle"
 				@click="abortRecording">
 				<template #icon>
-					<IconClose :size="16" />
+					<IconClose :size="20" />
 				</template>
 			</NcButton>
 			<div class="audio-recorder__info">
@@ -35,7 +35,7 @@
 				:class="{ 'audio-recorder__trigger--recording': isRecording }"
 				@click="stop">
 				<template #icon>
-					<IconCheck :size="16" />
+					<IconCheck :size="20" />
 				</template>
 			</NcButton>
 		</div>

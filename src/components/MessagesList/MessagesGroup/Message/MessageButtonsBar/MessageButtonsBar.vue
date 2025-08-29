@@ -21,7 +21,7 @@
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
 				<template #icon>
-					<IconArrowLeftTop :size="16" />
+					<IconArrowLeftTop :size="20" />
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
@@ -43,7 +43,7 @@
 								:aria-label="readInfo.sentIconTitle">
 								<IconCheck :size="16" />
 							</span>
-							<IconClockOutline v-else :size="16" />
+							<IconClockOutline v-else :size="20" />
 						</template>
 						{{ messageDateTime }}
 					</NcActionText>
@@ -52,7 +52,7 @@
 						class="edit-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
-							<IconClockEditOutline :size="16" />
+							<IconClockEditOutline :size="20" />
 						</template>
 						{{ editedDateTime }}
 					</NcActionText>
@@ -120,7 +120,7 @@
 						close-after-click
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
-							<IconEyeOffOutline :size="16" />
+							<IconEyeOffOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Mark as unread') }}
 					</NcActionButton>
@@ -149,7 +149,7 @@
 							close-after-click
 							@click="threadId = message.threadId">
 							<template #icon>
-								<IconForumOutline :size="16" />
+								<IconForumOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Go to thread') }}
 						</NcActionButton>
@@ -160,7 +160,7 @@
 						close-after-click
 						@click="forwardToNote">
 						<template #icon>
-							<IconNoteEditOutline :size="16" />
+							<IconNoteEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Note to self') }}
 					</NcActionButton>
@@ -170,7 +170,7 @@
 						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
-							<IconArrowRightTop :size="16" />
+							<IconArrowRightTop :size="20" />
 						</template>
 						{{ t('spreed', 'Forward message') }}
 					</NcActionButton>
@@ -190,7 +190,7 @@
 						@click.stop="$emit('showTranslateDialog', true)"
 						@close="$emit('showTranslateDialog', false)">
 						<template #icon>
-							<IconTranslate :size="16" />
+							<IconTranslate :size="20" />
 						</template>
 						{{ t('spreed', 'Translate') }}
 					</NcActionButton>
@@ -201,7 +201,7 @@
 							close-after-click
 							@click.stop="handleDelete">
 							<template #icon>
-								<IconTrashCanOutline :size="16" />
+								<IconTrashCanOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Delete') }}
 						</NcActionButton>

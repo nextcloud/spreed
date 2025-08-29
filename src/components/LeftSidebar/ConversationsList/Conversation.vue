@@ -61,22 +61,22 @@
 					close-after-click
 					@click="toggleFavoriteConversation">
 					<template #icon>
-						<IconStar :size="16" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
+						<IconStar :size="20" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
 					</template>
 					{{ labelFavorite }}
 				</NcActionButton>
 
 				<NcActionButton key="copy-link" @click.stop="handleCopyLink">
 					<template #icon>
-						<IconContentCopy :size="16" />
+						<IconContentCopy :size="20" />
 					</template>
 					{{ t('spreed', 'Copy link') }}
 				</NcActionButton>
 
 				<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
 					<template #icon>
-						<IconEyeOutline v-if="item.unreadMessages" :size="16" />
-						<IconEyeOffOutline v-else :size="16" />
+						<IconEyeOutline v-if="item.unreadMessages" :size="20" />
+						<IconEyeOffOutline v-else :size="20" />
 					</template>
 					{{ labelRead }}
 				</NcActionButton>
@@ -85,14 +85,14 @@
 					is-menu
 					@click="submenu = 'notifications'">
 					<template #icon>
-						<IconBellOutline :size="16" />
+						<IconBellOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Notifications') }}
 				</NcActionButton>
 
 				<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
 					<template #icon>
-						<IconCogOutline :size="16" />
+						<IconCogOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Conversation settings') }}
 				</NcActionButton>
@@ -102,8 +102,8 @@
 					close-after-click
 					@click="toggleArchiveConversation">
 					<template #icon>
-						<IconArchiveOutline v-if="!item.isArchived" :size="16" />
-						<IconArchiveOffOutline v-else :size="16" />
+						<IconArchiveOutline v-if="!item.isArchived" :size="20" />
+						<IconArchiveOffOutline v-else :size="20" />
 					</template>
 					{{ labelArchive }}
 				</NcActionButton>
@@ -113,7 +113,7 @@
 					close-after-click
 					@click="isLeaveDialogOpen = true">
 					<template #icon>
-						<IconExitToApp :size="16" />
+						<IconExitToApp :size="20" />
 					</template>
 					{{ t('spreed', 'Leave conversation') }}
 				</NcActionButton>
@@ -124,7 +124,7 @@
 					class="critical"
 					@click="isDeleteDialogOpen = true">
 					<template #icon>
-						<IconTrashCanOutline :size="16" />
+						<IconTrashCanOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Delete conversation') }}
 				</NcActionButton>
@@ -135,7 +135,7 @@
 					:aria-label="t('spreed', 'Back')"
 					@click.stop="submenu = null">
 					<template #icon>
-						<IconArrowLeft class="bidirectional-icon" :size="16" />
+						<IconArrowLeft class="bidirectional-icon" :size="20" />
 					</template>
 					{{ t('spreed', 'Back') }}
 				</NcActionButton>
@@ -149,7 +149,7 @@
 					type="radio"
 					@click="setNotificationLevel(level.value)">
 					<template #icon>
-						<component :is="level.icon" :size="16" />
+						<component :is="level.icon" :size="20" />
 					</template>
 					{{ level.label }}
 				</NcActionButton>
@@ -163,7 +163,7 @@
 						:model-value="notificationCalls"
 						@click="setNotificationCalls(!notificationCalls)">
 						<template #icon>
-							<IconPhoneRingOutline :size="16" />
+							<IconPhoneRingOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Notify about calls') }}
 					</NcActionButton>
@@ -180,7 +180,7 @@
 						:model-value="item.isImportant"
 						@click="toggleImportant(!item.isImportant)">
 						<template #icon>
-							<IconMessageAlertOutline :size="16" />
+							<IconMessageAlertOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Important conversation') }}
 					</NcActionButton>
@@ -192,7 +192,7 @@
 						:model-value="item.isSensitive"
 						@click="toggleSensitive(!item.isSensitive)">
 						<template #icon>
-							<IconShieldLockOutline :size="16" />
+							<IconShieldLockOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Sensitive conversation') }}
 					</NcActionButton>
@@ -203,14 +203,14 @@
 		<template v-else-if="item.token" #actions>
 			<NcActionButton key="join-conversation" close-after-click @click="onActionClick">
 				<template #icon>
-					<IconArrowRight class="bidirectional-icon" :size="16" />
+					<IconArrowRight class="bidirectional-icon" :size="20" />
 				</template>
 				{{ t('spreed', 'Join conversation') }}
 			</NcActionButton>
 
 			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
 				<template #icon>
-					<IconContentCopy :size="16" />
+					<IconContentCopy :size="20" />
 				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>

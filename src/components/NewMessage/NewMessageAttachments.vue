@@ -10,7 +10,7 @@
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">
 		<template #icon>
-			<IconPlus :size="16" />
+			<IconPlus :size="20" />
 		</template>
 
 		<NcActionButton v-if="canUploadFiles"
@@ -57,7 +57,7 @@
 			close-after-click
 			@click="$emit('createThread', true)">
 			<template #icon>
-				<IconForumOutline :size="16" />
+				<IconForumOutline :size="20" />
 			</template>
 			{{ t('spreed', 'Create a thread') }}
 		</NcActionButton>

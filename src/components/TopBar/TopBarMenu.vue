@@ -33,7 +33,9 @@
 						close-after-click
 						@click="startRecording">
 						<template #icon>
-							<IconRecordCircleOutline :size="20" />
+							<NcIconSvgWrapper
+								:svg="IconScreenRecordOutline"
+								:size="20" />
 						</template>
 						{{ t('spreed', 'Start recording') }}
 					</NcActionButton>
@@ -149,11 +151,11 @@ import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import IconRecordCircleOutline from 'vue-material-design-icons/RecordCircleOutline.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
+import IconScreenRecordOutline from '../../../img/material-icons/screen-record-outline.svg?raw'
 import {
 	toggleFullscreen,
 	useDocumentFullscreen,
@@ -182,7 +184,6 @@ export default {
 		IconFileOutline,
 		IconFullscreen,
 		IconFullscreenExit,
-		IconRecordCircleOutline,
 		IconStop,
 		IconVideoOutline,
 	},
@@ -216,6 +217,7 @@ export default {
 		return {
 			IconFileDownload,
 			IconMicrophoneOffOutline,
+			IconScreenRecordOutline,
 			isFullscreen: !props.isSidebar ? useDocumentFullscreen() : undefined,
 			isInCall: useIsInCall(),
 			toggleFullscreen,
