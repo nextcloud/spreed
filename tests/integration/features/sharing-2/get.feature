@@ -1194,7 +1194,6 @@ Feature: get
     When user "participant1" gets the share-type DAV property for "/welcome.txt"
     Then the response contains a share-types DAV property with
       | 0  |
-      | 10 |
     When user "participant2" gets the share-type DAV property for "welcome (2).txt"
     Then the response contains a share-types DAV property with
       | 0  |
@@ -1233,7 +1232,6 @@ Feature: get
     When user "participant1" gets the share-type DAV property for "welcome.txt"
     Then the response contains a share-types DAV property with
       | 0  |
-      | 10 |
     When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
     Then the response contains a share-types DAV property with
       | 0  |

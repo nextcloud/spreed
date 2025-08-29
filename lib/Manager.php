@@ -14,6 +14,7 @@ use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\Authenticator;
+use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SelectHelper;
@@ -479,13 +480,14 @@ class Manager {
 	 * @param string $userId
 	 * @return string[]
 	 */
-	public function getRoomTokensForUser(string $userId): array {
+	public function getRoomTokensWithAttachmentsForUser(string $userId): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.token')
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
 			->where($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
-			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)));
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('r.has_attachments', $query->createNamedParameter(Attachment::ATTACHMENTS_ATLEAST_ONE)));
 
 		$result = $query->executeQuery();
 		$roomTokens = [];
