@@ -677,6 +677,9 @@ export default {
 			if (page === 'device-check') {
 				this.isDeviceCheck = true
 				this.tabContent = 'devices'
+			} else if (page === 'backgrounds') {
+				this.isDeviceCheck = true
+				this.tabContent = 'backgrounds'
 			}
 		},
 
