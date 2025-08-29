@@ -66,6 +66,7 @@
 				v-show="currentCodeBlock !== null"
 				class="message-copy-code"
 				variant="tertiary"
+				size="small"
 				:aria-label="t('spreed', 'Copy code block')"
 				:title="t('spreed', 'Copy code block')"
 				:style="{ top: copyButtonOffset }"

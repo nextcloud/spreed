@@ -114,9 +114,9 @@
 				</template>
 				<NcActionButton close-after-click
 					:model-value="silentChat"
-					:name="silentSendLabel"
+					:description="silentSendInfo"
 					@click="toggleSilentChat">
-					{{ silentSendInfo }}
+					{{ silentSendLabel }}
 					<template #icon>
 						<IconBellOffOutline :size="20" />
 					</template>
