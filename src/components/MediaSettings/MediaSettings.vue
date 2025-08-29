@@ -994,8 +994,9 @@ export default {
 	max-width: 450px;
 }
 
+// Override NcModal styles for large horizontal layout
 :deep(.modal-wrapper--large > .modal-container) {
-	width: unset;
+	width: unset !important;
 }
 
 </style>
