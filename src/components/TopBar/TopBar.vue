@@ -72,7 +72,7 @@
 					close-after-click
 					@click="chatExtrasStore.setThreadNotificationLevel(token, threadId, level.value)">
 					<template #icon>
-						<component :is="notificationLevelIcons[level.value]" :size="16" />
+						<component :is="notificationLevelIcons[level.value]" :size="20" />
 					</template>
 					{{ level.label }}
 				</NcActionButton>

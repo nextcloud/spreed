@@ -205,8 +205,8 @@ useHotKey('r', toggleHandRaised)
 				<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
 				<template #icon>
-					<IconHandBackLeft v-if="isHandRaised" :size="16" />
-					<IconHandBackLeftOutline v-else :size="16" />
+					<IconHandBackLeft v-if="isHandRaised" :size="18" />
+					<IconHandBackLeftOutline v-else :size="18" />
 				</template>
 			</NcButton>
 		</div>

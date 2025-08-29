@@ -33,13 +33,13 @@
 					<NcActionButton v-if="showAssistanceButton"
 						@click="dismissRequestAssistance">
 						<template #icon>
-							<IconHandBackLeftOutline :size="16" />
+							<IconHandBackLeftOutline :size="18" />
 						</template>
 						{{ t('spreed', 'Dismiss request for assistance') }}
 					</NcActionButton>
 					<NcActionButton @click="isDialogOpened = true">
 						<template #icon>
-							<IconSendOutline :size="16" />
+							<IconSendOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Send message to room') }}
 					</NcActionButton>

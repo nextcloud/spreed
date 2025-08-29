@@ -18,7 +18,7 @@
 				@trailing-button-click="abortSearch"
 				@input="handleInput">
 				<template #icon>
-					<Magnify :size="16" />
+					<Magnify :size="20" />
 				</template>
 				<template #trailing-button-icon>
 					<Close :size="20" />

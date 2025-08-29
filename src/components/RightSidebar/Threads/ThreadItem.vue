@@ -144,7 +144,7 @@ function handleActionsMenuOpen(open: boolean) {
 					:aria-label="t('spreed', 'Back')"
 					@click.stop="submenu = null">
 					<template #icon>
-						<IconArrowLeft class="bidirectional-icon" :size="16" />
+						<IconArrowLeft class="bidirectional-icon" :size="20" />
 					</template>
 					{{ t('spreed', 'Back') }}
 				</NcActionButton>
@@ -159,7 +159,7 @@ function handleActionsMenuOpen(open: boolean) {
 					type="radio"
 					@click="chatExtrasStore.setThreadNotificationLevel(thread.thread.roomToken, thread.thread.id, level.value)">
 					<template #icon>
-						<component :is="notificationLevelIcons[level.value]" :size="16" />
+						<component :is="notificationLevelIcons[level.value]" :size="20" />
 					</template>
 					{{ level.label }}
 				</NcActionButton>

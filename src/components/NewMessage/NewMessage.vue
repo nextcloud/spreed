@@ -51,7 +51,7 @@
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
 							<template #icon>
-								<IconEmoticonOutline :size="16" />
+								<IconEmoticonOutline :size="20" />
 							</template>
 						</NcButton>
 					</NcEmojiPicker>
@@ -61,7 +61,7 @@
 						:aria-label="t('spreed', 'Add emoji')"
 						:disabled="true">
 						<template #icon>
-							<IconEmoticonOutline :size="16" />
+							<IconEmoticonOutline :size="20" />
 						</template>
 					</NcButton>
 				</div>
@@ -110,7 +110,7 @@
 				force-menu
 				:primary="silentChat">
 				<template #icon>
-					<IconBellOffOutline v-if="silentChat" :size="16" />
+					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
 				<NcActionButton close-after-click
 					:model-value="silentChat"
@@ -118,7 +118,7 @@
 					@click="toggleSilentChat">
 					{{ silentSendInfo }}
 					<template #icon>
-						<IconBellOffOutline :size="16" />
+						<IconBellOffOutline :size="20" />
 					</template>
 				</NcActionButton>
 			</NcActions>
@@ -161,8 +161,8 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<IconForumOutline v-if="threadCreating" :size="16" />
-						<IconSend v-else class="bidirectional-icon" :size="16" />
+						<IconForumOutline v-if="threadCreating" :size="20" />
+						<IconSend v-else class="bidirectional-icon" :size="20" />
 					</template>
 				</NcButton>
 			</template>

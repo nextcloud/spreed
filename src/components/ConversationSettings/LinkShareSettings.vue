@@ -70,7 +70,7 @@
 						class="password-form__button"
 						@click="copyPassword">
 						<template #icon>
-							<IconContentCopy :size="16" />
+							<IconContentCopy :size="20" />
 						</template>
 					</NcButton>
 				</form>
