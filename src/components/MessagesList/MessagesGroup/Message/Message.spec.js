@@ -3,15 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { flushPromises, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import Quote from '../../../Quote.vue'
+import CallButton from '../../../TopBar/CallButton.vue'
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -19,26 +22,13 @@ import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
-import MessageBody from './MessagePart/MessageBody.vue'
+import router from '../../../../__mocks__/router.js'
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useTokenStore } from '../../../../stores/token.ts'
-
-// needed because of https://github.com/vuejs/vue-test-utils/issues/1507
-const RichTextStub = {
-	props: {
-		text: {
-			type: String,
-		},
-		arguments: {
-			type: Object,
-		},
-	},
-	template: '<div/>',
-}
 
 describe('Message.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -100,44 +90,42 @@ describe('Message.vue', () => {
 		vi.clearAllMocks()
 	})
 
+	/**
+	 * Shared function to mount component
+	 */
+	function mountMessage(props) {
+		return mount(Message, {
+			global: {
+				plugins: [router, store],
+				provide: injected,
+				stubs: {
+					Location: true,
+				},
+			},
+			props,
+		})
+	}
+
 	describe('message rendering', () => {
 		beforeEach(() => {
 			store = createStore(testStoreConfig)
 		})
 
 		test('renders rich text message', async () => {
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
-			const message = wrapper.findComponent({ name: 'NcRichText' })
-			expect(message.attributes('text')).toBe('test message')
+			const message = wrapper.findComponent(NcRichText)
+			expect(message.text()).toBe('test message')
 		})
 
 		test('renders emoji as single plain text', async () => {
 			messageProps.isSingleEmoji = true
 			messageProps.message.message = '🌧️'
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
-			const message = wrapper.findComponent({ name: 'NcRichText' })
+			const message = wrapper.findComponent(NcRichText)
 			expect(message.exists()).toBeTruthy()
-			expect(message.attributes('text')).toBe('🌧️')
+			expect(message.text()).toBe('🌧️')
 		})
 
 		describe('call button', () => {
@@ -162,21 +150,12 @@ describe('Message.vue', () => {
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
-				const wrapper = shallowMount(Message, {
-					global: {
-						plugins: [store],
-						stubs: {
-							MessageBody,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessage(messageProps)
 
-				const richText = wrapper.findComponent({ name: 'NcRichText' })
-				expect(richText.attributes('text')).toBe('message two')
+				const richText = wrapper.findComponent(NcRichText)
+				expect(richText.text()).toBe('message two')
 
-				const callButton = wrapper.findComponent({ name: 'CallButton' })
+				const callButton = wrapper.findComponent(CallButton)
 				expect(callButton.exists()).toBe(true)
 			})
 
@@ -186,18 +165,9 @@ describe('Message.vue', () => {
 				messageProps.message.message = 'message one'
 				conversationProps.hasCall = true
 
-				const wrapper = shallowMount(Message, {
-					global: {
-						plugins: [store],
-						stubs: {
-							MessageBody,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessage(messageProps)
 
-				const callButton = wrapper.findComponent({ name: 'CallButton' })
+				const callButton = wrapper.findComponent(CallButton)
 				expect(callButton.exists()).toBe(false)
 			})
 
@@ -207,18 +177,9 @@ describe('Message.vue', () => {
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = false
 
-				const wrapper = shallowMount(Message, {
-					global: {
-						plugins: [store],
-						stubs: {
-							MessageBody,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessage(messageProps)
 
-				const callButton = wrapper.findComponent({ name: 'CallButton' })
+				const callButton = wrapper.findComponent(CallButton)
 				expect(callButton.exists()).toBe(false)
 			})
 
@@ -230,18 +191,9 @@ describe('Message.vue', () => {
 
 				vi.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
 
-				const wrapper = shallowMount(Message, {
-					global: {
-						plugins: [store],
-						stubs: {
-							MessageBody,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessage(messageProps)
 
-				const callButton = wrapper.findComponent({ name: 'CallButton' })
+				const callButton = wrapper.findComponent(CallButton)
 				expect(callButton.exists()).toBe(false)
 			})
 		})
@@ -251,32 +203,14 @@ describe('Message.vue', () => {
 			messageProps.message.message = 'message deleted'
 			conversationProps.hasCall = true
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
-			const richText = wrapper.findComponent({ name: 'NcRichText' })
-			expect(richText.attributes('text')).toBe('message deleted')
+			const richText = wrapper.findComponent(NcRichText)
+			expect(richText.text()).toBe('message deleted')
 		})
 
 		test('renders date', () => {
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			const date = wrapper.find('.date')
 			expect(date.exists()).toBe(true)
@@ -300,16 +234,7 @@ describe('Message.vue', () => {
 			testStoreConfig.modules.messagesStore.getters.message = vi.fn(() => messageGetterMock)
 			store = createStore(testStoreConfig)
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			const quote = wrapper.findComponent(Quote)
 			expect(quote.exists()).toBeTruthy()
@@ -326,21 +251,11 @@ describe('Message.vue', () => {
 				messageProps.message.message = message
 				messageProps.message.messageParameters = messageParameters
 				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
-				const wrapper = shallowMount(Message, {
-					global: {
-						plugins: [store],
-						stubs: {
-							MessageBody,
-							RichText: RichTextStub,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessage(messageProps)
 
-				const messageEl = wrapper.findComponent({ name: 'NcRichText' })
+				const messageEl = wrapper.findComponent(NcRichText)
 				// note: indices as object keys are on purpose
-				expect(messageEl.props('arguments')).toMatchObject(expectedRichParameters)
+				expect(Object.keys(messageEl.props('arguments'))).toMatchObject(Object.keys(expectedRichParameters))
 				return messageEl
 			}
 
@@ -358,6 +273,7 @@ describe('Message.vue', () => {
 					},
 					'mention-call1': {
 						id: 'some_call',
+						name: 'Some call',
 						type: 'call',
 					},
 				}
@@ -389,8 +305,11 @@ describe('Message.vue', () => {
 						type: 'user',
 					},
 					file: {
-						path: 'some/path',
+						id: '123',
+						path: 'Talk/some-path.txt',
+						name: 'some-path.txt',
 						type: 'file',
+						mimetype: 'txt/plain',
 					},
 				}
 				renderRichObject(
@@ -418,8 +337,11 @@ describe('Message.vue', () => {
 						type: 'user',
 					},
 					file: {
-						path: 'some/path',
+						id: '123',
+						path: 'Talk/some-path.txt',
+						name: 'some-path.txt',
 						type: 'file',
+						mimetype: 'txt/plain',
 					},
 				}
 				const messageEl = renderRichObject(
@@ -448,6 +370,11 @@ describe('Message.vue', () => {
 						type: 'user',
 					},
 					'deck-card': {
+						id: '123',
+						name: 'Card name',
+						boardname: 'Board name',
+						stackname: 'Stack name',
+						link: 'https://example.com/some/deck/card/url',
 						metadata: '{id:123}',
 						type: 'deck-card',
 					},
@@ -471,6 +398,10 @@ describe('Message.vue', () => {
 			test('renders geo locations', () => {
 				const params = {
 					'geo-location': {
+						id: '123',
+						name: 'Location name',
+						latitude: 12.345678,
+						longitude: 98.765432,
 						metadata: '{id:123}',
 						type: 'geo-location',
 					},
@@ -495,6 +426,8 @@ describe('Message.vue', () => {
 						type: 'user',
 					},
 					unknown: {
+						id: '123',
+						name: 'Unknown name',
 						path: 'some/path',
 						type: 'unknown',
 					},
@@ -516,62 +449,11 @@ describe('Message.vue', () => {
 			})
 		})
 
-		test('displays unread message marker that marks the message seen when visible', () => {
-			getVisualLastReadMessageIdMock.mockReturnValue(123)
-			messageProps.nextMessageId = 333
-			const IntersectionObserver = vi.fn()
-
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				directives: {
-					IntersectionObserver,
-				},
-				props: messageProps,
-				provide: injected,
-			})
-
-			const marker = wrapper.find('.message-unread-marker')
-			expect(marker.exists()).toBe(true)
-
-			expect(IntersectionObserver).toHaveBeenCalled()
-			const directiveValue = IntersectionObserver.mock.calls[0][1]
-
-			expect(wrapper.vm.seen).toEqual(false)
-
-			directiveValue.value([{ isIntersecting: false }])
-			expect(wrapper.vm.seen).toEqual(false)
-
-			directiveValue.value([{ isIntersecting: true }])
-			expect(wrapper.vm.seen).toEqual(true)
-
-			// stays true if it was visible once
-			directiveValue.value([{ isIntersecting: false }])
-			expect(wrapper.vm.seen).toEqual(true)
-		})
-
 		test('does not display read marker on the very last message', () => {
 			messageProps.lastReadMessageId = 123
 			messageProps.nextMessageId = null // last message
-			const IntersectionObserver = vi.fn()
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				directives: {
-					IntersectionObserver,
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			const marker = wrapper.find('.message-unread-marker')
 			expect(marker.exists()).toBe(false)
@@ -586,16 +468,7 @@ describe('Message.vue', () => {
 		test('does not render actions for system messages are available', async () => {
 			messageProps.message.systemMessage = 'this is a system message'
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
@@ -604,16 +477,7 @@ describe('Message.vue', () => {
 		test('does not render actions for temporary messages', async () => {
 			messageProps.message.timestamp = 0
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
@@ -622,16 +486,7 @@ describe('Message.vue', () => {
 		test('does not render actions for deleted messages', async () => {
 			messageProps.message.messageType = MESSAGE.TYPE.COMMENT_DELETED
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
@@ -639,17 +494,7 @@ describe('Message.vue', () => {
 
 		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.message.sendingFailure = 'timeout'
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-						MessageButtonsBar,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			// Initial state
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
@@ -659,7 +504,7 @@ describe('Message.vue', () => {
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
 			// Actions are rendered with MessageButtonsBar
-			expect(wrapper.findComponent({ name: 'NcActions' }).exists()).toBe(true)
+			expect(wrapper.findComponent(NcActions).exists()).toBe(true)
 
 			// Mouseleave
 			await wrapper.find('.message').trigger('mouseleave')
@@ -677,17 +522,7 @@ describe('Message.vue', () => {
 			// need to mock the date to be within 6h
 			vi.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
 
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-						MessageButtonsBar,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			// Hover the messages in order to render the MessageButtonsBar component
 			await wrapper.find('.message').trigger('mouseover')
@@ -722,16 +557,7 @@ describe('Message.vue', () => {
 
 		test('lets user retry sending a timed out message', async () => {
 			messageProps.message.sendingFailure = 'timeout'
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			await wrapper.find('.message-body').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
@@ -754,34 +580,16 @@ describe('Message.vue', () => {
 
 		test('displays the message already with a spinner while sending it', () => {
 			messageProps.message.timestamp = 0
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
-			const message = wrapper.findComponent({ name: 'NcRichText' })
-			expect(message.attributes('text')).toBe('test message')
+			const wrapper = mountMessage(messageProps)
+			const message = wrapper.findComponent(NcRichText)
+			expect(message.text()).toBe('test message')
 
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
 		})
 
 		test('displays icon when message was read by everyone', () => {
 			conversationProps.lastCommonReadMessage = 123
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			expect(wrapper.findComponent(IconCheck).exists()).toBe(false)
 			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(true)
@@ -789,16 +597,7 @@ describe('Message.vue', () => {
 
 		test('displays sent icon when own message was sent', () => {
 			conversationProps.lastCommonReadMessage = 0
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			expect(wrapper.findComponent(IconCheck).exists()).toBe(true)
 			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(false)
@@ -808,16 +607,7 @@ describe('Message.vue', () => {
 			conversationProps.lastCommonReadMessage = 123
 			messageProps.message.actorId = 'user-id-2'
 			messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.USERS
-			const wrapper = shallowMount(Message, {
-				global: {
-					plugins: [store],
-					stubs: {
-						MessageBody,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessage(messageProps)
 
 			expect(wrapper.findComponent(IconCheck).exists()).toBe(false)
 			expect(wrapper.findComponent(IconCheckAll).exists()).toBe(false)

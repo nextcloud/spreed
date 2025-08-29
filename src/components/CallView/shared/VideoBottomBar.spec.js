@@ -5,16 +5,16 @@
 
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
-import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
-import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -93,82 +93,60 @@ describe('VideoBottomBar.vue', () => {
 		vi.clearAllMocks()
 	})
 
+	/**
+	 * Shared function to mount component
+	 */
+	function mountVideoBottomBar(props) {
+		return mount(VideoBottomBar, {
+			global: {
+				plugins: [store],
+			},
+			props,
+		})
+	}
+
 	describe('unit tests', () => {
 		describe('render component', () => {
 			test('component renders properly', async () => {
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
+				const wrapper = mountVideoBottomBar(componentProps)
 				expect(wrapper.exists()).toBeTruthy()
 				expect(wrapper.classes('wrapper')).toBeDefined()
 			})
 
 			test('component has class "wrapper--big" for main view', async () => {
 				componentProps.isBig = true
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
+				const wrapper = mountVideoBottomBar(componentProps)
 				expect(wrapper.exists()).toBeTruthy()
 				expect(wrapper.classes('wrapper--big')).toBeDefined()
 			})
 
 			test('component renders all indicators by default', async () => {
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				const indicators = wrapper.findAllComponents(NcButton)
 				expect(indicators).toHaveLength(3)
 			})
 
 			test('component does not render indicators for Screen.vue component', async () => {
 				componentProps.isScreen = true
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				const indicators = wrapper.findAllComponents(NcButton)
 				expect(indicators).toHaveLength(0)
 			})
 
 			test('component does not show indicators after video overlay is off', async () => {
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				componentProps.showVideoOverlay = false
 				await wrapper.setProps(cloneDeep(componentProps))
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				indicators.wrappers.forEach((indicator) => {
+				indicators.forEach((indicator) => {
 					expect(indicator.isVisible()).toBeFalsy()
 				})
 			})
 
 			test('component does not render anything when used in sidebar', async () => {
 				componentProps.isSidebar = true
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				const participantName = wrapper.find('.participant-name')
 				expect(participantName.exists()).toBeFalsy()
 
@@ -179,13 +157,7 @@ describe('VideoBottomBar.vue', () => {
 
 		describe('render participant name', () => {
 			test('name is shown by default', () => {
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				const participantName = wrapper.find('.participant-name')
 				expect(participantName.isVisible()).toBeTruthy()
 				expect(participantName.text()).toBe(PARTICIPANT_NAME)
@@ -193,13 +165,7 @@ describe('VideoBottomBar.vue', () => {
 
 			test('name is not shown if all checks are falsy', () => {
 				componentProps.showVideoOverlay = false
-				const wrapper = shallowMount(VideoBottomBar, {
-					global: {
-						plugins: [store],
-					},
-					props: componentProps,
-				})
-
+				const wrapper = mountVideoBottomBar(componentProps)
 				const participantName = wrapper.find('.participant-name')
 				expect(participantName.isVisible()).toBeFalsy()
 			})
@@ -209,21 +175,16 @@ describe('VideoBottomBar.vue', () => {
 			describe('connection failed indicator', () => {
 				test('indicator is not shown by default, other indicators are visible', () => {
 					componentProps.model.attributes.raisedHand.state = true
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 
 					const iceFailedIndicator = wrapper.findComponent(IconAlertCircleOutline)
 					expect(iceFailedIndicator.exists()).toBeFalsy()
 
-					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
-					indicators.wrappers.forEach((indicator) => {
+					indicators.forEach((indicator) => {
 						expect(indicator.isVisible()).toBeTruthy()
 					})
 				})
@@ -231,21 +192,16 @@ describe('VideoBottomBar.vue', () => {
 				test('indicator is shown when model prop is true, other indicators are hidden', () => {
 					componentProps.model.attributes.raisedHand.state = true
 					componentProps.model.attributes.connectionState = ConnectionState.FAILED_NO_RESTART
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 
 					const iceFailedIndicator = wrapper.findComponent(IconAlertCircleOutline)
 					expect(iceFailedIndicator.exists()).toBeTruthy()
 
-					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
-					indicators.wrappers.forEach((indicator) => {
+					indicators.forEach((indicator) => {
 						expect(indicator.isVisible()).toBeFalsy()
 					})
 				})
@@ -253,27 +209,17 @@ describe('VideoBottomBar.vue', () => {
 
 			describe('raise hand indicator', () => {
 				test('indicator is not shown by default', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 
-					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 				})
 
 				test('indicator is shown when model prop is true', () => {
 					componentProps.model.attributes.raisedHand.state = true
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 
-					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeftOutline)
+					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 				})
 			})
@@ -282,37 +228,20 @@ describe('VideoBottomBar.vue', () => {
 		describe('render buttons', () => {
 			describe('audio indicator', () => {
 				test('button is rendered properly', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible for moderators when audio is available', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
 				test('button is not rendered for non-moderators when audio is available', () => {
 					conversationProps.participantType = PARTICIPANT.TYPE.USER
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.exists()).toBeFalsy()
 				})
@@ -320,52 +249,26 @@ describe('VideoBottomBar.vue', () => {
 				test('button is visible for everyone when audio is unavailable', () => {
 					conversationProps.participantType = PARTICIPANT.TYPE.USER
 					componentProps.model.attributes.audioAvailable = false
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
 				test('button is enabled for moderators', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
-					expect(audioIndicator.attributes('disabled')).toBeFalsy()
+					expect(audioIndicator.attributes('disabled')).toBeUndefined()
 				})
 
 				test('button is disabled when audio is unavailable', () => {
 					componentProps.model.attributes.audioAvailable = false
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
-					expect(audioIndicator.attributes('disabled')).toBeTruthy()
+					expect(audioIndicator.attributes('disabled')).toBeDefined()
 				})
 
 				test('method is called after click', async () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					await audioIndicator.trigger('click')
 
@@ -375,86 +278,39 @@ describe('VideoBottomBar.vue', () => {
 
 			describe('video indicator', () => {
 				test('button is rendered properly', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible when video is available', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.isVisible()).toBeTruthy()
 				})
 
 				test('button is not rendered when video is unavailable', () => {
 					componentProps.model.attributes.videoAvailable = false
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.exists()).toBeFalsy()
 				})
 
 				test('button shows proper icon if video is enabled', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-
-						props: componentProps,
-					})
-
-					const videoOnIcon = wrapper.findComponent(IconVideoOutline)
+					const wrapper = mountVideoBottomBar(componentProps)
+					const videoOnIcon = wrapper.findComponent(IconVideo)
 					expect(videoOnIcon.exists()).toBeTruthy()
 				})
 
 				test('button shows proper icon if video is blocked', () => {
 					componentProps.sharedData.remoteVideoBlocker.isVideoEnabled.mockReturnValue(false)
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const videoOffIcon = wrapper.findComponent(IconVideoOffOutline)
 					expect(videoOffIcon.exists()).toBeTruthy()
 				})
 
 				test('method is called after click', async () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					await videoIndicator.trigger('click')
 
@@ -465,54 +321,26 @@ describe('VideoBottomBar.vue', () => {
 
 			describe('screen sharing indicator', () => {
 				test('button is rendered properly', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible when screen is available', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.isVisible()).toBeTruthy()
 				})
 
 				test('button is not rendered when screen is unavailable', () => {
 					componentProps.model.attributes.screen = false
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.exists()).toBeFalsy()
 				})
 
 				test('component emits peer id after click', async () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					await screenSharingIndicator.trigger('click')
 
@@ -522,24 +350,14 @@ describe('VideoBottomBar.vue', () => {
 
 			describe('following button', () => {
 				test('button is not rendered for participants by default', () => {
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
 				})
 
 				test('button is not rendered for main speaker by default', () => {
 					componentProps.isBig = true
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
 				})
@@ -547,13 +365,7 @@ describe('VideoBottomBar.vue', () => {
 				test('button is rendered when source is selected', () => {
 					callViewStore.setSelectedVideoPeerId(PEER_ID)
 					componentProps.isBig = true
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-						},
-						props: componentProps,
-					})
-
+					const wrapper = mountVideoBottomBar(componentProps)
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeTruthy()
 				})
@@ -565,16 +377,7 @@ describe('VideoBottomBar.vue', () => {
 					expect(callViewStore.presentationStarted).toBeTruthy()
 
 					componentProps.isBig = true
-					const wrapper = shallowMount(VideoBottomBar, {
-						global: {
-							plugins: [store],
-							stubs: {
-								NcButton,
-							},
-						},
-
-						props: componentProps,
-					})
+					const wrapper = mountVideoBottomBar(componentProps)
 
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					await followingButton.trigger('click')

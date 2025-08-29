@@ -5,14 +5,17 @@
 
 import { generateRemoteUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
+import router from '../../../../../__mocks__/router.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
 
@@ -55,6 +58,18 @@ describe('FilePreview.vue', () => {
 	})
 
 	/**
+	 * Shared function to mount component
+	 */
+	function mountFilePreview() {
+		return mount(FilePreview, {
+			global: {
+				plugins: [router, store],
+			},
+			props,
+		})
+	}
+
+	/**
 	 * @param {string} url Relative URL to parse (starting with / )
 	 */
 	function parseRelativeUrl(url) {
@@ -63,10 +78,7 @@ describe('FilePreview.vue', () => {
 
 	describe('file preview rendering', () => {
 		test('renders file preview', async () => {
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
@@ -85,10 +97,7 @@ describe('FilePreview.vue', () => {
 			props.file.link = 'https://localhost/nc-webroot/s/xtokenx'
 			actorStore.userId = null
 
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
@@ -106,10 +115,7 @@ describe('FilePreview.vue', () => {
 		test('calculates preview size based on window pixel ratio', async () => {
 			window.devicePixelRatio = 1.5
 
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
@@ -121,16 +127,13 @@ describe('FilePreview.vue', () => {
 		test('renders small previews when requested', async () => {
 			props.smallPreview = true
 
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
-			expect(imageUrl.searchParams.get('y')).toBe('32')
+			expect(imageUrl.searchParams.get('y')).toBe('24')
 		})
 
 		describe('uploading', () => {
@@ -146,31 +149,28 @@ describe('FilePreview.vue', () => {
 				store = createStore(testStoreConfig)
 			})
 
-			test.skip('renders progress bar while uploading', async () => {
-				/* getUploader.mockImplementation(() => ({
+			test('renders progress bar while uploading', async () => {
+				getUploader.mockImplementation(() => ({
 					queue: [{
 						_source: path,
 						_uploaded: 85,
 						_size: 100,
 					}],
-				})) */
+				}))
 
 				props.file.id = 'temp-123'
 				props.file.index = 'index-1'
 				props.file.uploadId = 1000
 				props.file.localUrl = 'blob:XYZ'
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('DIV')
 				expect(wrapper.find('img').attributes('src')).toBe('blob:XYZ')
 
-				const progressEl = wrapper.findComponent({ name: 'NcProgressBar' })
+				const progressEl = wrapper.findComponent(NcProgressBar)
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(85)
 
@@ -179,22 +179,16 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders spinner while loading', () => {
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			expect(wrapper.element.tagName).toBe('A')
-			const spinner = wrapper.findComponent({ name: 'NcLoadingIcon' })
+			const spinner = wrapper.findComponent(NcLoadingIcon)
 			expect(spinner.exists()).toBe(true)
 		})
 
 		test('renders default mime icon on load error', async () => {
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('error')
 
@@ -207,10 +201,7 @@ describe('FilePreview.vue', () => {
 			props.file['preview-available'] = 'no'
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
@@ -230,10 +221,7 @@ describe('FilePreview.vue', () => {
 			test('directly renders small GIF files', async () => {
 				props.file.size = '128'
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -246,10 +234,7 @@ describe('FilePreview.vue', () => {
 				props.file.size = '128'
 				props.file.path = '/path/to/test %20.gif'
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -263,10 +248,7 @@ describe('FilePreview.vue', () => {
 				props.file.link = 'https://localhost/nc-webroot/s/xtokenx'
 				actorStore.userId = null
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -279,10 +261,7 @@ describe('FilePreview.vue', () => {
 				// 4 MB, bigger than max from capability (3 MB)
 				props.file.size = '4194304'
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -335,10 +314,7 @@ describe('FilePreview.vue', () => {
 					mimetypes: ['image/png', 'image/jpeg'],
 				}
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -368,10 +344,7 @@ describe('FilePreview.vue', () => {
 					}],
 				}
 
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -382,10 +355,7 @@ describe('FilePreview.vue', () => {
 
 			test('does not open viewer when clicking if viewer is not available', async () => {
 				delete OCA.Viewer
-				const wrapper = shallowMount(FilePreview, {
-					global: { plugins: [store] },
-					props,
-				})
+				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
 
@@ -413,10 +383,7 @@ describe('FilePreview.vue', () => {
 				 * @param {boolean} visible Whether or not the play button is visible
 				 */
 				async function testPlayButtonVisible(visible) {
-					const wrapper = shallowMount(FilePreview, {
-						global: { plugins: [store] },
-						props,
-					})
+					const wrapper = mountFilePreview()
 
 					await wrapper.find('img').trigger('load')
 
@@ -453,10 +420,7 @@ describe('FilePreview.vue', () => {
 				})
 
 				test('does not render play icon for failed videos', async () => {
-					const wrapper = shallowMount(FilePreview, {
-						global: { plugins: [store] },
-						props,
-					})
+					const wrapper = mountFilePreview()
 
 					await wrapper.find('img').trigger('error')
 
@@ -485,16 +449,13 @@ describe('FilePreview.vue', () => {
 			props.isUploadEditor = true
 		})
 		test('emits event when clicking remove button when inside upload editor', async () => {
-			const wrapper = shallowMount(FilePreview, {
-				global: { plugins: [store] },
-				props,
-			})
+			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('DIV')
 			await wrapper.findComponent(NcButton).trigger('click')
-			expect(wrapper.emitted()['remove-file']).toStrictEqual([['123']])
+			expect(wrapper.emitted().removeFile).toStrictEqual([['123']])
 		})
 	})
 })

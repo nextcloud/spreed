@@ -3,15 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { computed } from 'vue'
 import { createStore } from 'vuex'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
+import router from '../../../../../__mocks__/router.js'
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.ts'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import storeConfig from '../../../../../store/storeConfig.js'
@@ -29,11 +28,17 @@ describe('MessageButtonsBar.vue', () => {
 	let conversationProps
 	let actorStore
 	let tokenStore
+	let useMessageInfoSpy
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
+
+		injected = {
+			getMessagesListScroller: vi.fn(),
+		}
+		useMessageInfoSpy = vi.spyOn(useMessageInfoModule, 'useMessageInfo')
 
 		conversationProps = {
 			token: TOKEN,
@@ -84,38 +89,32 @@ describe('MessageButtonsBar.vue', () => {
 		vi.clearAllMocks()
 	})
 
+	const ComponentStub = {
+		template: '<div><slot /></div>',
+	}
+
+	/**
+	 * Shared function to mount component
+	 */
+	function mountMessageButtonsBar(props) {
+		return mount(MessageButtonsBar, {
+			global: {
+				plugins: [router, store],
+				stubs: {
+					NcPopover: ComponentStub,
+				},
+				provide: injected,
+			},
+			props,
+		})
+	}
+
 	describe('actions', () => {
-		let useMessageInfoSpy
-
-		beforeEach(() => {
-			store = createStore(testStoreConfig)
-
-			injected = {
-				getMessagesListScroller: vi.fn(),
-			}
-
-			useMessageInfoSpy = vi.spyOn(useMessageInfoModule, 'useMessageInfo')
-		})
-
-		afterEach(() => {
-			useMessageInfoSpy.mockRestore()
-		})
-
 		describe('reply action', () => {
 			test('replies to message', async () => {
 				store = createStore(testStoreConfig)
 
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-							NcButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const replyButton = findNcButton(wrapper, 'Reply')
 				expect(replyButton.exists()).toBe(true)
@@ -129,17 +128,7 @@ describe('MessageButtonsBar.vue', () => {
 				messageProps.message.isReplyable = false
 				store = createStore(testStoreConfig)
 
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-							NcButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const replyButton = findNcButton(wrapper, 'Reply')
 				expect(replyButton.exists()).toBe(false)
@@ -149,17 +138,7 @@ describe('MessageButtonsBar.vue', () => {
 				conversationProps.permissions = 0
 				store = createStore(testStoreConfig)
 
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-							NcButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const replyButton = findNcButton(wrapper, 'Reply')
 				expect(replyButton.exists()).toBe(false)
@@ -168,28 +147,15 @@ describe('MessageButtonsBar.vue', () => {
 
 		describe('private reply action', () => {
 			test('creates a new conversation when replying to message privately', async () => {
-				const routerPushMock = vi.fn().mockResolvedValue()
+				vi.spyOn(router, 'push')
+
 				const createOneToOneConversation = vi.fn()
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
 				store = createStore(testStoreConfig)
 
 				messageProps.message.actorId = 'another-user'
 
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-						},
-						mocks: {
-							$router: {
-								push: routerPushMock,
-							},
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
 				expect(actionButton.exists()).toBe(true)
@@ -202,7 +168,7 @@ describe('MessageButtonsBar.vue', () => {
 
 				expect(createOneToOneConversation).toHaveBeenCalledWith(expect.anything(), 'another-user')
 
-				expect(routerPushMock).toHaveBeenCalledWith({
+				expect(router.push).toHaveBeenCalledWith({
 					name: 'conversation',
 					params: {
 						token: 'new-token',
@@ -216,16 +182,7 @@ describe('MessageButtonsBar.vue', () => {
 			function testPrivateReplyActionVisible(visible) {
 				store = createStore(testStoreConfig)
 
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
 				expect(actionButton.exists()).toBe(visible)
@@ -267,16 +224,7 @@ describe('MessageButtonsBar.vue', () => {
 				useMessageInfoSpy.mockReturnValue({
 					isDeleteable: computed(() => true),
 				})
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(true)
@@ -292,16 +240,7 @@ describe('MessageButtonsBar.vue', () => {
 			 * @param {boolean} visible Whether or not the delete action is visible
 			 */
 			function testDeleteMessageVisible(visible) {
-				const wrapper = shallowMount(MessageButtonsBar, {
-					global: {
-						plugins: [store],
-						stubs: {
-							NcActionButton,
-						},
-					},
-					props: messageProps,
-					provide: injected,
-				})
+				const wrapper = mountMessageButtonsBar(messageProps)
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(visible)
@@ -335,16 +274,7 @@ describe('MessageButtonsBar.vue', () => {
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.message.actorId = 'another-user'
 
-			const wrapper = shallowMount(MessageButtonsBar, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessageButtonsBar(messageProps)
 
 			const actionButton = findNcActionButton(wrapper, 'Mark as unread')
 			expect(actionButton.exists()).toBe(true)
@@ -368,16 +298,7 @@ describe('MessageButtonsBar.vue', () => {
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.message.actorId = 'another-user'
 
-			const wrapper = shallowMount(MessageButtonsBar, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessageButtonsBar(messageProps)
 
 			Object.assign(navigator, {
 				clipboard: {
@@ -404,16 +325,7 @@ describe('MessageButtonsBar.vue', () => {
 			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = vi.fn(() => () => messageProps)
 			store = createStore(testStoreConfig)
-			const wrapper = shallowMount(MessageButtonsBar, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
-				props: messageProps,
-				provide: injected,
-			})
+			const wrapper = mountMessageButtonsBar(messageProps)
 
 			const actionButton = findNcActionButton(wrapper, 'first action')
 			expect(actionButton.exists()).toBeTruthy()

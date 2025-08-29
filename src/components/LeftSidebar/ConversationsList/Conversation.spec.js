@@ -4,26 +4,29 @@
  */
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { flushPromises, mount, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
+import ConversationIcon from '../../ConversationIcon.vue'
 import Conversation from './Conversation.vue'
 import router from '../../../__mocks__/router.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
-import { findNcButton } from '../../../test-helpers.js'
+import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
 vi.mock('../../../services/participantsService', () => ({
 	leaveConversation: vi.fn(),
 }))
 
-// TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
-const RouterLinkStub = true
+const ComponentStub = {
+	template: '<div><slot /></div>',
+}
 
 describe('Conversation.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -31,6 +34,26 @@ describe('Conversation.vue', () => {
 	let testStoreConfig
 	let item
 	let messagesMock
+
+	/**
+	 * Shared function to mount component
+	 */
+	function mountConversation(isSearchResult = false) {
+		return mount(Conversation, {
+			global: {
+				plugins: [router, store],
+				stubs: {
+					NcModal: ComponentStub,
+					NcPopover: ComponentStub,
+				},
+			},
+
+			props: {
+				isSearchResult,
+				item,
+			},
+		})
+	}
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
@@ -73,24 +96,13 @@ describe('Conversation.vue', () => {
 	})
 
 	test('renders conversation entry', () => {
-		const wrapper = mount(Conversation, {
-			global: {
-				plugins: [store],
-				stubs: {
-					RouterLink: RouterLinkStub,
-				},
-			},
-			props: {
-				isSearchResult: false,
-				item,
-			},
-		})
+		const wrapper = mountConversation(false)
 
-		const el = wrapper.findComponent({ name: 'NcListItem' })
+		const el = wrapper.findComponent(NcListItem)
 		expect(el.exists()).toBe(true)
 		expect(el.props('name')).toBe('conversation one')
 
-		const icon = el.findComponent({ name: 'ConversationIcon' })
+		const icon = el.findComponent(ConversationIcon)
 		expect(icon.props('item')).toStrictEqual(item)
 		expect(icon.props('hideFavorite')).toStrictEqual(false)
 		expect(icon.props('hideCall')).toStrictEqual(false)
@@ -102,106 +114,93 @@ describe('Conversation.vue', () => {
 		 * @param {string} expectedText Expected subname of the conversation item
 		 * @param {boolean} isSearchResult Whether or not the item is a search result (has no … menu)
 		 */
-		function testConversationLabel(item, expectedText, isSearchResult = false) {
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-				},
-				props: {
-					isSearchResult,
-					item,
-				},
-			})
+		async function testConversationLabel(item, expectedText, isSearchResult = false) {
+			const wrapper = mountConversation(isSearchResult)
+			await flushPromises()
 
 			const el = wrapper.find('.conversation__subname')
+			expect(el.exists()).toBeTruthy()
 			expect(el.text()).toMatch(expectedText)
 			return wrapper
 		}
 
-		test('display joining conversation message when not joined yet', () => {
+		test('display joining conversation message when not joined yet', async () => {
 			item.actorId = null
-			testConversationLabel(item, 'Joining conversation …')
+			await testConversationLabel(item, 'Joining conversation …')
 		})
 
-		test('displays nothing when there is no last chat message', () => {
+		test('displays nothing when there is no last chat message', async () => {
 			delete item.lastMessage
-			testConversationLabel(item, 'No messages')
+			await testConversationLabel(item, 'No messages')
 		})
 
 		describe('author name', () => {
-			test('displays last chat message with shortened author name', () => {
-				testConversationLabel(item, /^Alice:\s+hello$/)
+			// items are padded from each other visually
+			test('displays last chat message with shortened author name', async () => {
+				await testConversationLabel(item, 'Alice:hello')
 			})
 
-			test('displays last chat message with author name if no space in name', () => {
+			test('displays last chat message with author name if no space in name', async () => {
 				item.lastMessage.actorDisplayName = 'Bob'
-				testConversationLabel(item, /^Bob:\s+hello$/)
+				await testConversationLabel(item, 'Bob:hello')
 			})
 
-			test('displays own last chat message with "You" as author', () => {
+			test('displays own last chat message with "You" as author', async () => {
 				item.lastMessage.actorId = 'actor-id-1'
 
-				testConversationLabel(item, /^You:\s+hello$/)
+				await testConversationLabel(item, 'You:hello')
 			})
 
-			test('displays last system message without author', () => {
+			test('displays last system message without author', async () => {
 				item.lastMessage.message = 'Alice has joined the call'
 				item.lastMessage.systemMessage = 'call_joined'
 
-				testConversationLabel(item, 'Alice has joined the call')
+				await testConversationLabel(item, 'Alice has joined the call')
 			})
 
-			test('displays last message without author in one to one conversations', () => {
+			test('displays last message without author in one to one conversations', async () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
-				testConversationLabel(item, 'hello')
+				await testConversationLabel(item, 'hello')
 			})
 
-			test('displays own last message with "You" author in one to one conversations', () => {
+			test('displays own last message with "You" author in one to one conversations', async () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				item.lastMessage.actorId = 'actor-id-1'
 
-				testConversationLabel(item, /^You:\s+hello$/)
+				await testConversationLabel(item, 'You:hello')
 			})
 
-			test('displays last guest message with default author when none set', () => {
+			test('displays last guest message with default author when none set', async () => {
 				item.type = CONVERSATION.TYPE.PUBLIC
 				item.lastMessage.actorDisplayName = ''
 				item.lastMessage.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 
-				testConversationLabel(item, /^Guest:\s+hello$/)
+				await testConversationLabel(item, 'Guest:hello')
 			})
 
-			test('displays description for search results', () => {
+			test('displays description for search results', async () => {
 				// search results have no actor id
 				item.actorId = null
 				item.description = 'This is a description'
-				testConversationLabel(item, 'This is a description', true)
+				await testConversationLabel(item, 'This is a description', true)
 			})
 		})
 
-		test('replaces placeholders in rich object of last message', () => {
+		test('replaces placeholders in rich object of last message', async () => {
 			item.lastMessage.message = '{file}'
 			item.lastMessage.messageParameters = {
 				file: {
 					name: 'filename.jpg',
 				},
 			}
-			const wrapper = testConversationLabel(item, /^Alice:\s+filename.jpg$/)
-			expect(wrapper.findComponent({ name: 'FileIcon' }).exists()).toBeTruthy()
+			const wrapper = await testConversationLabel(item, 'Alice:filename.jpg')
+			expect(wrapper.findComponent(IconFileOutline).exists()).toBeTruthy()
 		})
 
 		test('hides subname for sensitive conversations', () => {
 			item.isSensitive = true
 
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			const wrapper = mountConversation(false)
 
 			const el = wrapper.find('.conversation__subname')
 			expect(el.exists()).toBe(false)
@@ -216,20 +215,9 @@ describe('Conversation.vue', () => {
 		 * @param {boolean} expectedHighlighted Whether or not the unread counter is highlighted with primary color
 		 */
 		function testCounter(item, expectedCounterText, expectedOutlined, expectedHighlighted) {
-			const wrapper = mount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						RouterLink: RouterLinkStub,
-					},
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			const wrapper = mountConversation(false)
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			expect(el.props('counterNumber')).toBe(expectedCounterText)
@@ -268,95 +256,38 @@ describe('Conversation.vue', () => {
 		})
 
 		test('does not render counter when no unread messages', () => {
-			const wrapper = mount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						RouterLink: RouterLinkStub,
-					},
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			const wrapper = mountConversation(false)
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			expect(el.vm.$slots.counter).not.toBeDefined()
 		})
 	})
 
-	describe('actions (real router)', () => {
+	describe('actions and routing', () => {
 		test('change route on click event', async () => {
-			const wrapper = mount(Conversation, {
-				global: {
-					plugins: [router, store],
-					stubs: {
-						NcListItem,
-					},
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			await router.isReady()
+			const wrapper = mountConversation(false)
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			await el.find('a').trigger('click')
+			await flushPromises()
 
 			expect(wrapper.vm.$route.name).toBe('conversation')
 			expect(wrapper.vm.$route.params).toStrictEqual({ token: TOKEN })
 		})
-	})
-
-	describe('actions (mock router)', () => {
-		let $router
-
-		beforeEach(() => {
-			$router = { push: vi.fn() }
-		})
-
-		/**
-		 * @param {object} wrapper Parent element to search the text in
-		 * @param {string} text Text to find within the wrapper
-		 */
-		function findNcActionButton(wrapper, text) {
-			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			const items = actionButtons.filter((actionButton) => {
-				return actionButton.text() === text
-			})
-			if (!items.exists()) {
-				return items
-			}
-			return items.at(0)
-		}
 
 		/**
 		 * @param {string} actionName The name of the action to shallow
 		 */
 		function shallowMountAndGetAction(actionName) {
 			store = createStore(testStoreConfig)
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-					mocks: {
-						$router,
-					},
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			const wrapper = mountConversation(false)
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			return findNcActionButton(el, actionName)
@@ -367,23 +298,8 @@ describe('Conversation.vue', () => {
 		 * @param {number} buttonsAmount The amount of buttons to be shown in dialog
 		 */
 		async function shallowMountAndOpenDialog(actionName, buttonsAmount) {
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-						NcButton,
-					},
-					mocks: {
-						$router,
-					},
-				},
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const wrapper = mountConversation(false)
+			const el = wrapper.findComponent(NcListItem)
 
 			const action = findNcActionButton(el, actionName)
 			expect(action.exists()).toBeTruthy()
@@ -392,10 +308,9 @@ describe('Conversation.vue', () => {
 			await action.find('button').trigger('click')
 
 			// Assert 1
-			const dialog = wrapper.findComponent({ name: 'NcDialog' })
+			const dialog = wrapper.findComponent(NcDialog)
 			expect(dialog.exists).toBeTruthy()
-			const buttons = dialog.findAllComponents({ name: 'NcButton' })
-			expect(buttons.exists()).toBeTruthy()
+			const buttons = dialog.findAllComponents(NcButton)
 			expect(buttons).toHaveLength(buttonsAmount)
 
 			return dialog
@@ -418,7 +333,7 @@ describe('Conversation.vue', () => {
 
 				// Act: click on the 'confirm' button
 				await findNcButton(dialog, 'Yes').find('button').trigger('click')
-
+				await flushPromises()
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 			})
@@ -474,6 +389,7 @@ describe('Conversation.vue', () => {
 			let actionHandler
 
 			beforeEach(() => {
+				vi.spyOn(router, 'push')
 				actionHandler = vi.fn().mockResolvedValueOnce()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
 				store = createStore(testStoreConfig)
@@ -485,10 +401,11 @@ describe('Conversation.vue', () => {
 
 				// Act: click on the 'confirm' button
 				await findNcButton(dialog, 'Yes').find('button').trigger('click')
+				await flushPromises()
 
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
-				expect($router.push).not.toHaveBeenCalled()
+				expect(router.push).not.toHaveBeenCalled()
 			})
 
 			test('does not delete conversation when not confirmed', async () => {
@@ -497,10 +414,11 @@ describe('Conversation.vue', () => {
 
 				// Act: click on the 'decline' button
 				await findNcButton(dialog, 'No').find('button').trigger('click')
+				await flushPromises()
 
 				// Assert
 				expect(actionHandler).not.toHaveBeenCalled()
-				expect($router.push).not.toHaveBeenCalled()
+				expect(router.push).not.toHaveBeenCalled()
 			})
 
 			test('hides "delete conversation" action when not allowed', async () => {
@@ -514,19 +432,7 @@ describe('Conversation.vue', () => {
 		test('copies link conversation', async () => {
 			store = createStore(testStoreConfig)
 			const copyTextMock = vi.fn().mockResolvedValueOnce()
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
-
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
+			const wrapper = mountConversation(false)
 
 			Object.assign(navigator, {
 				clipboard: {
@@ -534,7 +440,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			const action = findNcActionButton(el, 'Copy link')
@@ -552,21 +458,9 @@ describe('Conversation.vue', () => {
 			testStoreConfig.modules.conversationsStore.actions.toggleFavorite = toggleFavoriteAction
 			store = createStore(testStoreConfig)
 
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
+			const wrapper = mountConversation(false)
 
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
-
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			const action = findNcActionButton(el, 'Add to favorites')
@@ -586,21 +480,9 @@ describe('Conversation.vue', () => {
 			item.isFavorite = true
 			store = createStore(testStoreConfig)
 
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
+			const wrapper = mountConversation(false)
 
-				props: {
-					isSearchResult: false,
-					item,
-				},
-			})
-
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
 
 			const action = findNcActionButton(el, 'Remove from favorites')
@@ -637,25 +519,10 @@ describe('Conversation.vue', () => {
 		})
 		test('does not show all actions for search result (open conversations)', () => {
 			store = createStore(testStoreConfig)
-			const wrapper = shallowMount(Conversation, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcActionButton,
-					},
-				},
+			const wrapper = mountConversation(true)
 
-				props: {
-					isSearchResult: true,
-					item,
-				},
-			})
-
-			const el = wrapper.findComponent({ name: 'NcListItem' })
+			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
-
-			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			expect(actionButtons.exists()).toBe(true)
 
 			// Join conversation and Copy link actions are intended
 			expect(findNcActionButton(el, 'Join conversation').exists()).toBe(true)

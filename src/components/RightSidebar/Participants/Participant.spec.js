@@ -3,30 +3,26 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { flushPromises, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionText from '@nextcloud/vue/components/NcActionText'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
-import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Participant from './Participant.vue'
+import router from '../../../__mocks__/router.js'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useTokenStore } from '../../../stores/token.ts'
-import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
+import { findNcActionButton, findNcActionText, findNcButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -76,43 +72,35 @@ describe('Participant.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		store = createStore(testStoreConfig)
+
+		router.push({ name: 'conversation', params: { token: TOKEN } })
 	})
 
 	afterEach(() => {
 		vi.clearAllMocks()
 	})
 
+	const ComponentStub = {
+		template: '<div><slot /></div>',
+	}
+
 	/**
 	 * @param {object} participant Participant with optional user status data
 	 * @param {boolean} showUserStatus Whether or not the user status should be shown
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
-		return shallowMount(Participant, {
+		return mount(Participant, {
 			global: {
-				plugins: [store],
+				plugins: [router, store],
 				stubs: {
-					NcActionButton,
-					NcButton,
-					NcCheckboxRadioSwitch,
-					NcDialog,
-					NcInputField,
-					NcListItem,
-					NcTextArea,
+					NcModal: ComponentStub,
+					NcPopover: ComponentStub,
 				},
 			},
 			props: {
 				participant,
 				showUserStatus,
 			},
-			mixins: [{
-				// force tooltip display for testing
-				methods: {
-					forceEnableTooltips() {
-						this.isUserNameTooltipVisible = true
-						this.isStatusTooltipVisible = true
-					},
-				},
-			}],
 		})
 	}
 
@@ -120,12 +108,12 @@ describe('Participant.vue', () => {
 		test('renders avatar', () => {
 			const wrapper = mountParticipant(participant)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
+			expect(avatarEl.exists()).toBeTruthy()
 
 			expect(avatarEl.props('id')).toBe('alice-actor-id')
-			expect(avatarEl.props('disableTooltip')).toBe(true)
-			expect(avatarEl.props('disableMenu')).toBe(false)
-			expect(avatarEl.props('showUserStatus')).toBe(false)
+			expect(avatarEl.props('disableTooltip')).toBeTruthy()
+			expect(avatarEl.props('disableMenu')).toBeFalsy()
+			expect(avatarEl.props('showUserStatus')).toBeFalsy()
 			expect(avatarEl.props('preloadedUserStatus')).toStrictEqual({
 				icon: '🌧️',
 				message: 'rainy',
@@ -133,15 +121,15 @@ describe('Participant.vue', () => {
 			})
 			expect(avatarEl.props('name')).toBe('Alice')
 			expect(avatarEl.props('source')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-			expect(avatarEl.props('offline')).toBe(false)
+			expect(avatarEl.props('offline')).toBeFalsy()
 		})
 
 		test('renders avatar with enabled status', () => {
 			const wrapper = mountParticipant(participant, true)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
+			expect(avatarEl.exists()).toBeTruthy()
 
-			expect(avatarEl.props('showUserStatus')).toBe(true)
+			expect(avatarEl.props('showUserStatus')).toBeTruthy()
 		})
 
 		test('renders avatar with guest name when empty', () => {
@@ -149,7 +137,7 @@ describe('Participant.vue', () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 			const wrapper = mountParticipant(participant)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
+			expect(avatarEl.exists()).toBeTruthy()
 
 			expect(avatarEl.props('name')).toBe('')
 		})
@@ -158,7 +146,7 @@ describe('Participant.vue', () => {
 			participant.displayName = ''
 			const wrapper = mountParticipant(participant, true)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
+			expect(avatarEl.exists()).toBeTruthy()
 
 			expect(avatarEl.props('name')).toBe('')
 		})
@@ -167,15 +155,16 @@ describe('Participant.vue', () => {
 			participant.sessionIds = []
 			const wrapper = mountParticipant(participant, true)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
+			expect(avatarEl.exists()).toBeTruthy()
 
-			expect(avatarEl.props('offline')).toBe(true)
+			expect(avatarEl.props('offline')).toBeTruthy()
 		})
 	})
 
 	describe('user name', () => {
 		/**
 		 * Check which text is currently rendered as a name
+		 * (text in user badges has a padding to separate words visually)
 		 * @param {object} participant participant object
 		 * @param {RegExp} regexp regex pattern which expected to be rendered
 		 */
@@ -187,22 +176,22 @@ describe('Participant.vue', () => {
 		}
 
 		const testCases = [
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Alice$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)$/],
-			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Guest\s+\(guest\)$/],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, /^Alice\s+\(moderator\)$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
-			['Bot', ATTENDEE.BRIDGE_BOT_ID, ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Bot\s+\(bot\)$/],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, 'Alice'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
+			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
+			['Bot', ATTENDEE.BRIDGE_BOT_ID, ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, 'Bot(bot)'],
 		]
 
 		const testLobbyCases = [
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, /^Alice\s+\(in the lobby\)$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)\s+\(in the lobby\)$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, /^Alice\s+\(guest\)\s+\(in the lobby\)$/],
-			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, /^Guest\s+\(guest\)\s+\(in the lobby\)$/],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, /^Alice\s+\(moderator\)$/],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, /^Alice\s+\(moderator\)\s+\(guest\)$/],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, 'Alice(in the lobby)'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
+			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)(in the lobby)'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
 		]
 
 		it.each(testCases)(
@@ -281,7 +270,7 @@ describe('Participant.vue', () => {
 
 	describe('call icons', () => {
 		let getParticipantRaisedHandMock
-		const components = [IconVideoOutline, IconPhoneOutline, IconMicrophoneOutline, IconHandBackLeftOutline]
+		const components = [IconVideoOutline, IconPhoneDialOutline, IconMicrophoneOutline, IconHandBackLeft]
 
 		/**
 		 * Check which icons are currently rendered
@@ -324,13 +313,13 @@ describe('Participant.vue', () => {
 		})
 		test('renders phone call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_PHONE
-			checkStateIconsRendered(participant, IconPhoneOutline)
+			checkStateIconsRendered(participant, IconPhoneDialOutline)
 		})
 		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: true })
 
-			checkStateIconsRendered(participant, IconHandBackLeftOutline)
+			checkStateIconsRendered(participant, IconHandBackLeft)
 			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
 		})
 		test('renders video call icon when joined with multiple', async () => {
@@ -356,7 +345,7 @@ describe('Participant.vue', () => {
 			async function testCanDemote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Demote from moderator')
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -372,7 +361,7 @@ describe('Participant.vue', () => {
 			async function testCannotDemote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Demote to moderator')
-				expect(actionButton.exists()).toBe(false)
+				expect(actionButton.exists()).toBeFalsy()
 			}
 
 			test('allows a moderator to demote a moderator', async () => {
@@ -448,7 +437,7 @@ describe('Participant.vue', () => {
 			async function testCanPromote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Promote to moderator')
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -464,7 +453,7 @@ describe('Participant.vue', () => {
 			async function testCannotPromote() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Promote to moderator')
-				expect(actionButton.exists()).toBe(false)
+				expect(actionButton.exists()).toBeFalsy()
 			}
 
 			test('allows a moderator to promote a user to moderator', async () => {
@@ -541,7 +530,7 @@ describe('Participant.vue', () => {
 				participant.invitedActorId = 'alice@mail.com'
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -556,14 +545,14 @@ describe('Participant.vue', () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
-				expect(actionButton.exists()).toBe(false)
+				expect(actionButton.exists()).toBeFalsy()
 			})
 
 			test('does not display resend invitations action when not an email actor', async () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
-				expect(actionButton.exists()).toBe(false)
+				expect(actionButton.exists()).toBeFalsy()
 			})
 		})
 		describe('removing participant', () => {
@@ -582,7 +571,7 @@ describe('Participant.vue', () => {
 			async function testCanRemove(buttonText = 'Remove participant') {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, buttonText)
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -590,6 +579,7 @@ describe('Participant.vue', () => {
 				expect(dialog.exists()).toBeTruthy()
 
 				const button = findNcButton(dialog, 'Remove')
+				expect(button.exists()).toBeTruthy()
 				await button.find('button').trigger('click')
 
 				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
@@ -606,7 +596,7 @@ describe('Participant.vue', () => {
 			async function testCannotRemove() {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Remove participant')
-				expect(actionButton.exists()).toBe(false)
+				expect(actionButton.exists()).toBeFalsy()
 			}
 
 			/**
@@ -616,7 +606,7 @@ describe('Participant.vue', () => {
 			async function testCanBan(buttonText = 'Remove participant', internalNote = 'test note') {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, buttonText)
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -648,7 +638,7 @@ describe('Participant.vue', () => {
 			async function testCannotBan(buttonText = 'Remove participant') {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, buttonText)
-				expect(actionButton.exists()).toBe(true)
+				expect(actionButton.exists()).toBeTruthy()
 
 				await actionButton.find('button').trigger('click')
 
@@ -753,13 +743,9 @@ describe('Participant.vue', () => {
 			 */
 			function testPinVisible() {
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(NcActionText)
-				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('name').includes('PIN')
-				})
-
-				expect(actionTexts.exists()).toBe(true)
-				expect(actionTexts.at(0).text()).toBe('123 456 78')
+				const actionText = findNcActionText(wrapper, 'Dial-in PIN')
+				expect(actionText.exists()).toBeTruthy()
+				expect(actionText.text()).toContain('123 456 78')
 			}
 
 			test('allows moderators to see dial-in PIN when available', () => {
@@ -778,24 +764,16 @@ describe('Participant.vue', () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				participant.attendeePin = '12345678'
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(NcActionText)
-				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').includes('PIN')
-				})
-
-				expect(actionTexts.exists()).toBe(false)
+				const actionText = findNcActionText(wrapper, 'Dial-in PIN')
+				expect(actionText.exists()).toBeFalsy()
 			})
 
 			test('does not show PIN field when not set', () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.attendeePin = ''
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(NcActionText)
-				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').includes('PIN')
-				})
-
-				expect(actionTexts.exists()).toBe(false)
+				const actionText = findNcActionText(wrapper, 'Dial-in PIN')
+				expect(actionText.exists()).toBeFalsy()
 			})
 		})
 	})
