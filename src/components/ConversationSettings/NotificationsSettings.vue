@@ -7,13 +7,12 @@
 import type { Conversation } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed, h, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
-import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
-import IconVolumeOffOutline from '../../../img/material-icons/volume-off-outline.svg?raw'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import { PARTICIPANT } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
@@ -27,17 +26,17 @@ const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-convers
 const notificationLevels = [
 	{
 		value: PARTICIPANT.NOTIFY.ALWAYS,
-		icon: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true }),
+		icon: IconBellRingOutline,
 		label: t('spreed', 'All messages'),
 	},
 	{
 		value: PARTICIPANT.NOTIFY.MENTION,
-		icon: IconAccountOutline,
+		icon: IconBellOutline,
 		label: t('spreed', '@-mentions only'),
 	},
 	{
 		value: PARTICIPANT.NOTIFY.NEVER,
-		icon: h(NcIconSvgWrapper, { svg: IconVolumeOffOutline, inline: true }),
+		icon: IconBellOffOutline,
 		label: t('spreed', 'Off'),
 	},
 ]

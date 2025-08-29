@@ -149,7 +149,7 @@
 					type="radio"
 					@click="setNotificationLevel(level.value)">
 					<template #icon>
-						<component :is="notificationLevelIcon(level.value)" :size="16" />
+						<component :is="level.icon" :size="16" />
 					</template>
 					{{ level.label }}
 				</NcActionButton>
@@ -262,20 +262,20 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import { h, ref, toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
-import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArchiveOffOutline from 'vue-material-design-icons/ArchiveOffOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
+import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
@@ -288,8 +288,6 @@ import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better i
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConversationIcon from './../../ConversationIcon.vue'
-import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
-import IconVolumeOffOutline from '../../../../img/material-icons/volume-off-outline.svg?raw'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
@@ -300,9 +298,9 @@ const supportImportantConversations = hasTalkFeature('local', 'important-convers
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
 const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
-	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
-	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
+	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
+	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only'), icon: IconBellOutline },
+	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off'), icon: IconBellOffOutline },
 ]
 
 export default {
@@ -310,7 +308,6 @@ export default {
 
 	components: {
 		ConversationIcon,
-		IconAccountOutline,
 		IconArchiveOutline,
 		IconArchiveOffOutline,
 		IconArrowLeft,
@@ -331,7 +328,6 @@ export default {
 		NcActionSeparator,
 		NcButton,
 		NcDialog,
-		NcIconSvgWrapper,
 		NcListItem,
 	},
 
@@ -537,18 +533,6 @@ export default {
 		async toggleArchiveConversation() {
 			this.isLeaveDialogOpen = false
 			this.$store.dispatch('toggleArchive', this.item)
-		},
-
-		notificationLevelIcon(value) {
-			switch (value) {
-				case PARTICIPANT.NOTIFY.ALWAYS:
-					return h(NcIconSvgWrapper, { svg: IconVolumeHighOutline })
-				case PARTICIPANT.NOTIFY.MENTION:
-					return IconAccountOutline
-				case PARTICIPANT.NOTIFY.NEVER:
-				default:
-					return h(NcIconSvgWrapper, { svg: IconVolumeOffOutline })
-			}
 		},
 
 		/**
