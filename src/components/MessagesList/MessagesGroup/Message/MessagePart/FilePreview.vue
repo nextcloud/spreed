@@ -52,7 +52,7 @@
 			tabindex="1"
 			variant="primary"
 			:aria-label="removeAriaLabel"
-			@click="$emit('removeFile', file.id)">
+			@click.stop.prevent="handleClick">
 			<template #icon>
 				<IconClose />
 			</template>
@@ -458,7 +458,7 @@ export default {
 
 	mounted() {
 		if (this.isTemporaryUpload && !this.isUploadEditor) {
-			// this.uploadManager = getUploader()
+			this.uploadManager = getUploader()
 		}
 
 		if (this.file.blurhash && this.file.width && this.file.height) {
