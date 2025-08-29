@@ -92,6 +92,7 @@ OC.L10N.register(
     "No results found" : "Hech qanday natija topilmadi",
     "Load more results" : "Ko'proq natijalarni yuklang",
     "Projects" : "Loyihalar",
+    "Default" : "Standart",
     "Select conversation" : "Suhbatni tanlang",
     "Appearance" : "Tashqi ko'rinish",
     "Search" : "Qidirish",
