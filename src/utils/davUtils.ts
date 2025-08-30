@@ -4,7 +4,7 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { davRemoteURL } from '@nextcloud/files'
+import { defaultRemoteURL } from '@nextcloud/files/dav'
 
 /**
  * Generate a WebDAV url to a user files
@@ -16,7 +16,7 @@ export function generateUserFileUrl(filepath: string, userid: string | undefined
 	if (!userid) {
 		throw new TypeError('Cannot generate /files/<user>/ URL without a user')
 	}
-	return davRemoteURL + '/files/' + encodeURI(userid) + '/' + encodeURI(filepath)
+	return defaultRemoteURL + '/files/' + encodeURI(userid) + '/' + encodeURI(filepath)
 }
 
 /**
