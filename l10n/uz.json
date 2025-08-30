@@ -23,8 +23,11 @@
     "Enable encryption" : "Enable encryption",
     "Pending" : "Pending",
     "Error" : "Xatolik",
+    "Never" : "Hech qachon",
     "Language" : "Language",
     "Status" : "Status",
+    "Yes" : "Yes",
+    "No" : "No",
     "OK" : "Yaxshi",
     "Checking …" : "Checking …",
     "Federated user" : "Korporativ foydalanuvchi",
@@ -51,8 +54,6 @@
     "Restricted" : "Cheklangan",
     "Meeting" : "Uchrashuv",
     "Personal" : "Personal",
-    "No" : "No",
-    "Yes" : "Yes",
     "Delete conversation" : "Delete conversation",
     "_%n hour_::_%n hours_" : ["%n soat"],
     "_%n day_::_%n days_" : ["%n kun"],
@@ -77,8 +78,6 @@
     "Dismiss" : "Dismiss",
     "Contact" : "Aloqa",
     "Remove {fileName}" : " {fileName} ni o'chirish",
-    "Today" : "Today",
-    "Yesterday" : "Kecha",
     "Add emoji" : "Emoji qo'shing",
     "Upload from device" : "Qurilmadan yuklash",
     "Send" : "Send",
@@ -110,6 +109,8 @@
     "Tasks" : "Tasks",
     "Notes" : "Notes",
     "Reports" : "Hisobotlar",
+    "Today" : "Today",
+    "Yesterday" : "Kecha",
     "Close" : "Yopish"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

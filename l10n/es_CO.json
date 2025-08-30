@@ -51,6 +51,7 @@
     "Error" : "Error",
     "Blocked" : "Bloqueado",
     "Expired" : "Expirado",
+    "Never" : "Nunca",
     "Language" : "Idioma",
     "Country" : "País",
     "Status" : "Estatus",
@@ -111,10 +112,6 @@
     "Translate" : "Traducir",
     "Dismiss" : "Descartar",
     "Contact" : "Contacto",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Crear nueva encuesta",
     "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
@@ -143,6 +140,7 @@
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Keep" : "Mantener",
     "Submit" : "Enviar",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "User" : "Ususario",
     "Password" : "Contraseña",
@@ -170,6 +168,9 @@
     "__language_name__" : "Español (Colombia)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Close" : "Cerrar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -396,6 +396,7 @@
     "_%n day_::_%n days_" : ["%n día","%n días","%n días"],
     "Password protection" : "Protección con contraseña",
     "Set a password" : "Establecer una contraseña",
+    "Invalid language" : "Idioma inválido",
     "Edit" : "Editar",
     "Delete" : "Eliminar",
     "Log content" : "Contenido de bitácoras",
@@ -430,10 +431,6 @@
     "Translate from" : "Traducir desde",
     "Contact" : "Contacto",
     "Copy code block" : "Copiar bloque de código",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "No messages" : "Sin mensajes",
     "Share from Files" : "Compartir desde Archivos",
     "Upload from device" : "Cargar desde el dispositivo",
@@ -478,6 +475,7 @@
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Keep" : "Mantener",
     "Submit" : "Enviar",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "Talk conversation" : "Conversación de Talk",
     "User" : "Usuario",
@@ -518,6 +516,9 @@
     "Click the button below to join." : "Haz click en el botón de abajo para unirte.",
     "Join »%s«" : "Unirse »%s«",
     "{user} invited you to a private conversation" : " {user} te invitó a una conversación privada",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Close" : "Cerrar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

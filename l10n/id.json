@@ -266,6 +266,7 @@
     "Enable encryption" : "Aktifkan enkripsi",
     "Pending" : "Tunggu",
     "Error" : "Kesalahan",
+    "Never" : "Tidak pernah",
     "Language" : "Bahasa",
     "Country" : "Negara",
     "Status" : "Status",
@@ -325,9 +326,6 @@
     "Translate" : "Terjemahkan",
     "Dismiss" : "Batal",
     "Contact" : "Kontak",
-    "Today" : "Hari ini",
-    "Yesterday" : "Kemarin",
-    "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
     "Add participants" : "Tambahkan peserta",
     "Allow guests to join via link" : "Izinkan tamu untuk bergabung melalui tautan",
     "New file" : "File baru",
@@ -379,6 +377,9 @@
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
+    "Today" : "Hari ini",
+    "Yesterday" : "Kemarin",
+    "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
     "Close" : "Tutup",
     "Choose devices" : "Pilih perangkat"
 },"pluralForm" :"nplurals=1; plural=0;"

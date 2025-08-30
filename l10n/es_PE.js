@@ -43,6 +43,7 @@ OC.L10N.register(
     "Pending" : "Pendiente",
     "Error" : "Error",
     "Blocked" : "Bloqueado",
+    "Never" : "Nunca",
     "Language" : "Idioma",
     "Country" : "País",
     "Status" : "Estatus",
@@ -98,9 +99,6 @@ OC.L10N.register(
     "Translate" : "Traducir",
     "Dismiss" : "Descartar",
     "Contact" : "Contacto",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Create new poll" : "Crear nueva encuesta",
     "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
@@ -150,6 +148,9 @@ OC.L10N.register(
     "__language_name__" : "Español (Peru)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Close" : "Cerrar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
