@@ -274,6 +274,8 @@
     "Country" : "Lando",
     "Status" : "Stato",
     "Created at" : "Kreita je",
+    "Yes" : "Jes",
+    "No" : "Ne",
     "OK" : "Bone",
     "Confirm" : "Konfirmi",
     "Reset" : "Restarigi",
@@ -301,8 +303,6 @@
     "Choose" : "Elekti",
     "Restricted" : "Limigita",
     "Personal" : "Persona",
-    "No" : "Ne",
-    "Yes" : "Jes",
     "Password protection" : "Protektita per pasvorto",
     "Edit" : "Modifi",
     "Delete" : "Forigi",
@@ -322,9 +322,6 @@
     "Translate" : "Traduku",
     "Dismiss" : "Preterpasi",
     "Contact" : "Kontakto",
-    "Today" : "Hodiaŭ",
-    "Yesterday" : "Hieraŭ",
-    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
     "Create new poll" : "Krei novan enketon",
     "Send" : "Sendi",
     "Settings" : "Agordoj",
@@ -359,6 +356,9 @@
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
+    "Today" : "Hodiaŭ",
+    "Yesterday" : "Hieraŭ",
+    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
     "Close" : "Malfermi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

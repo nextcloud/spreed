@@ -41,6 +41,7 @@
     "Country" : "País",
     "Status" : "Estatus",
     "Created at" : "Creado en",
+    "Yes" : "Sí",
     "_%n user_::_%n users_" : ["%n usuario","%n usuarios","%n usuarios"],
     "TURN server protocols" : "Protocolos del servidor TURN",
     "Failed" : "Error",
@@ -73,7 +74,6 @@
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Leave conversation" : "Dejar la conversación",
-    "Yes" : "Sí",
     "Delete conversation" : "Eliminar conversación",
     "Password protection" : "Protección con contraseña",
     "Set a password" : "Establecer una contraseña",
@@ -95,9 +95,6 @@
     "Translate" : "Traducir",
     "Dismiss" : "Despedir",
     "Contact" : "Contacto",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Send message" : "Enviar mensaje",
     "New file" : "Nuevo archivo",
     "Send" : "Enviar",
@@ -148,6 +145,9 @@
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Close" : "Cerrar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

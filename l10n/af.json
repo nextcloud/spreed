@@ -299,8 +299,6 @@
     "Reply" : "Antwoord",
     "Dismiss" : "Ontslaan",
     "Contact" : "Kontak",
-    "Today" : "Vandag",
-    "Yesterday" : "Gister",
     "Add participants" : "Voeg deelnemers toe",
     "Enter password" : "Voer wagwoord in",
     "Send" : "Stuur",
@@ -334,6 +332,8 @@
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
+    "Today" : "Vandag",
+    "Yesterday" : "Gister",
     "Close" : "Sluit"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
