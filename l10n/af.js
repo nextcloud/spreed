@@ -301,8 +301,6 @@ OC.L10N.register(
     "Reply" : "Antwoord",
     "Dismiss" : "Ontslaan",
     "Contact" : "Kontak",
-    "Today" : "Vandag",
-    "Yesterday" : "Gister",
     "Add participants" : "Voeg deelnemers toe",
     "Enter password" : "Voer wagwoord in",
     "Send" : "Stuur",
@@ -336,6 +334,8 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
+    "Today" : "Vandag",
+    "Yesterday" : "Gister",
     "Close" : "Sluit"
 },
 "nplurals=2; plural=(n != 1);");

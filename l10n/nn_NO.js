@@ -95,9 +95,6 @@ OC.L10N.register(
     "Reply privately" : "Svar privat",
     "Dismiss" : "Forkast",
     "Contact" : "Kontakt",
-    "Today" : "I dag",
-    "Yesterday" : "i går",
-    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
     "Add participants" : "Legg til deltakarar",
     "Send message" : "Send melding",
     "Record voice message" : "Ta opp lyd melding ",
@@ -130,6 +127,9 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
+    "Today" : "I dag",
+    "Yesterday" : "i går",
+    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
     "Close" : "Lukk"
 },
 "nplurals=2; plural=(n != 1);");
