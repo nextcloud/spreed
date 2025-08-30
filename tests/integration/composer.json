@@ -7,7 +7,7 @@
 	},
 	"require-dev": {
 		"behat/behat": "^3.23.0",
-		"guzzlehttp/guzzle": "^7.9.3",
+		"guzzlehttp/guzzle": "^7.10.0",
 		"phpunit/phpunit": "^10.5.38"
 	}
 }
