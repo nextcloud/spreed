@@ -18,6 +18,7 @@ import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
+import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
 import IconSubtitlesOutline from 'vue-material-design-icons/SubtitlesOutline.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
 import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
@@ -280,6 +281,8 @@ useHotKey('r', toggleHandRaised)
 				@click="toggleLiveTranscription">
 				<template #icon>
 					<NcLoadingIcon v-if="isLiveTranscriptionLoading"
+						:size="20" />
+					<IconSubtitles v-else-if="callViewStore.isLiveTranscriptionEnabled"
 						:size="20" />
 					<IconSubtitlesOutline v-else
 						:size="20" />
