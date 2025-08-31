@@ -636,6 +636,7 @@
     "Blocked" : "Блокира",
     "Active" : "Активен",
     "Expired" : "Изтекъл",
+    "Never" : "Никога",
     "The trial could not be requested. Please try again later." : "Не можа да се поиска изпробване. Моля, опитайте отново по-късно.",
     "The account could not be deleted. Please try again later." : "Профилът не можа да бъде изтрит. Моля, опитайте отново по-късно.",
     "Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings." : "Нашият партньор Struktur AG предоставя услуга, при която може да бъде заявен хостван сървър за сигнализация. За това трябва само да попълните формуляра по-долу и вашият Nextcloud ще го заяви След като сървърът е настроен за вас, вашите идентификационни данни ще бъдат попълнени автоматично. Това ще презапише съществуващите настройки на сървъра за сигнализация.",

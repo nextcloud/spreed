@@ -481,6 +481,7 @@ OC.L10N.register(
     "Blocked" : "Stanket",
     "Active" : "O labourat",
     "Expired" : "Termenet",
+    "Never" : "James",
     "The trial could not be requested. Please try again later." : "An amprouadenn na c'hell ket bezhañ goulennet. Klaskit en dro goude.",
     "The account could not be deleted. Please try again later." : "Neo ket posupl lemel ar c'hont. Klaskit en dro goude",
     "URL of this Nextcloud instance" : "URL an azgoulenn Nextcloud",

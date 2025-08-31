@@ -521,6 +521,7 @@ OC.L10N.register(
     "Blocked" : "Αποκλεισμένος",
     "Active" : "Ενεργό",
     "Expired" : "Έληξε",
+    "Never" : "Ποτέ",
     "The trial could not be requested. Please try again later." : "Δεν ήταν δυνατή η αίτηση της δοκιμής. Παρακαλούμε δοκιμάστε ξανά αργότερα.",
     "The account could not be deleted. Please try again later." : "Δεν ήταν δυνατή η διαγραφή του λογαριασμού. Παρακαλούμε δοκιμάστε ξανά αργότερα.",
     "Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings." : "Ο συνεργάτης μας Struktur AG παρέχει μια υπηρεσία όπου μπορεί να ζητηθεί ένας φιλοξενούμενος διακομιστής σηματοδότησης. Για αυτό πρέπει να συμπληρώσετε μόνο την παρακάτω φόρμα και το Nextcloud θα το ζητήσει. Μόλις ο διακομιστής ρυθμιστεί για εσάς, τα διαπιστευτήρια θα συμπληρωθούν αυτόματα. Αυτό θα αντικαταστήσει τις υπάρχουσες ρυθμίσεις διακομιστή σηματοδότησης.",
