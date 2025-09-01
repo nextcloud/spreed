@@ -111,7 +111,7 @@ export default {
 		},
 
 		/**
-		 * Whether component is used as plugin and should emit on $root.
+		 * Whether component is used as plugin and should not check conversation token.
 		 */
 		isPlugin: {
 			type: Boolean,
@@ -197,11 +197,7 @@ export default {
 		},
 
 		close() {
-			if (this.isPlugin) {
-				this.$root.$emit('close')
-			} else {
-				this.$emit('close')
-			}
+			this.$emit('close')
 		},
 
 		onSelect(item) {
@@ -209,11 +205,7 @@ export default {
 		},
 
 		onSubmit() {
-			if (this.isPlugin) {
-				this.$root.$emit('select', this.selectedRoom)
-			} else {
-				this.$emit('select', this.selectedRoom)
-			}
+			this.$emit('select', this.selectedRoom)
 		},
 	},
 }
