@@ -136,7 +136,7 @@ export default class E2EEcontext {
 	 *
 	 * @param {string} participantId - the ID of the participant who's key we are setting.
 	 * @param {Uint8Array | boolean} key - they key for the given participant.
-	 * @param {Number} keyIndex - the key index.
+	 * @param {number} keyIndex - the key index.
 	 */
 	setKey(participantId, key, keyIndex) {
 		this._worker.postMessage({

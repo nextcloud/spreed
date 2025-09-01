@@ -41,7 +41,7 @@ const RATCHET_WINDOW_SIZE = 8
  */
 export class Context {
 	/**
-	 * @param {Object} options
+	 * @param {object} options
 	 * @param options.sharedKey
 	 */
 	constructor({ sharedKey = false } = {}) {
@@ -61,7 +61,7 @@ export class Context {
 	 * decryption.
 	 *
 	 * @param {Uint8Array|false} key bytes. Pass false to disable.
-	 * @param {Number} keyIndex
+	 * @param {number} keyIndex
 	 */
 	async setKey(key, keyIndex = -1) {
 		let newKey = false
@@ -83,8 +83,8 @@ export class Context {
 	 * Sets a set of keys and resets the sendCount.
 	 * decryption.
 	 *
-	 * @param {Object} keys set of keys.
-	 * @param {Number} keyIndex optional
+	 * @param {object} keys set of keys.
+	 * @param {number} keyIndex optional
 	 * @private
 	 */
 	_setKeys(keys, keyIndex = -1) {
@@ -211,7 +211,7 @@ export class Context {
 	 * @param {number} keyIndex - the index of the decryption data in _cryptoKeyRing array.
 	 * @param initialKey
 	 * @param {number} ratchetCount - the number of retries after ratcheting the key.
-	 * @returns {Promise<RTCEncodedVideoFrame|RTCEncodedAudioFrame>} - The decrypted frame.
+	 * @return {Promise<RTCEncodedVideoFrame|RTCEncodedAudioFrame>} - The decrypted frame.
 	 * @private
 	 */
 	async _decryptFrame(
