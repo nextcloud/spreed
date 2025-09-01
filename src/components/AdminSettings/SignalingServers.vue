@@ -152,6 +152,7 @@ onBeforeUnmount(() => {
 
 /**
  * Removes HPB server from the list
+ *
  * @param index index of server (remnant from clustered setup, should be always 0)
  */
 function removeServer(index: number) {
@@ -168,6 +169,7 @@ function newServer() {
 
 /**
  * Update hideWarning value on server
+ *
  * @param showWarning new value
  */
 function updateHideWarning(showWarning: boolean) {

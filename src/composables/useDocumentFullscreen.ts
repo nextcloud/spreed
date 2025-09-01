@@ -11,6 +11,7 @@ const isFullscreen = ref<boolean>(document.fullscreenElement !== null)
 
 /**
  * Composable to check whether the page is displayed at fullscreen
+ *
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is displayed at fullscreen
  */
 function useDocumentFullscreenComposable() {
@@ -74,6 +75,7 @@ export function toggleFullscreen() {
 
 /**
  * Shared composable to check whether the page is displayed at fullscreen
+ *
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is displayed at fullscreen
  */
 export const useDocumentFullscreen = createSharedComposable(useDocumentFullscreenComposable)

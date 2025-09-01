@@ -43,6 +43,7 @@ onBeforeUnmount(() => {
 
 /**
  * Opens PollDraftHandler dialog
+ *
  * @param payload event payload
  * @param payload.token conversation token
  * @param [payload.selector] selector to mount dialog to (body by default)
@@ -55,6 +56,7 @@ function openPollDraftHandler(payload: Events['poll-drafts-open']) {
 
 /**
  * Opens PollEditor dialog
+ *
  * @param payload event payload
  * @param payload.token conversation token
  * @param payload.id poll draft ID to fill form with (null for empty form)

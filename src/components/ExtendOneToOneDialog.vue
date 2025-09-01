@@ -41,6 +41,7 @@ watch(() => props.token, (newValue) => {
 
 /**
  * Returns second attendee of 1-1 conversation as SelectableParticipant-compatible object
+ *
  * @param token - conversation token
  */
 function getArrayWithSecondAttendee(token: string) {

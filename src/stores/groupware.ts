@@ -73,6 +73,7 @@ export const useGroupwareStore = defineStore('groupware', {
 	actions: {
 		/**
 		 * Fetch an absence status for user and save to store
+		 *
 		 * @param payload action payload
 		 * @param payload.token The conversation token
 		 * @param payload.userId The id of user
@@ -93,6 +94,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Fetch upcoming events for conversation and save to store
+		 *
 		 * @param token The conversation token
 		 */
 		async getUpcomingEvents(token: string) {
@@ -140,6 +142,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Drop an absence status from the store
+		 *
 		 * @param token The conversation token
 		 */
 		removeUserAbsence(token: string) {
@@ -150,6 +153,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Drop upcoming events from the store
+		 *
 		 * @param token The conversation token
 		 */
 		removeUpcomingEvents(token: string) {
@@ -160,6 +164,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Request and parse profile information
+		 *
 		 * @param conversation The conversation object
 		 */
 		async getUserProfileInformation(conversation: Conversation) {
@@ -186,6 +191,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Request and parse profile information
+		 *
 		 * @param conversation The conversation object
 		 */
 		async getUserMutualEvents(conversation: Conversation) {
@@ -205,6 +211,7 @@ export const useGroupwareStore = defineStore('groupware', {
 
 		/**
 		 * Clears store for a deleted conversation
+		 *
 		 * @param token The conversation token
 		 */
 		purgeGroupwareStore(token: string) {

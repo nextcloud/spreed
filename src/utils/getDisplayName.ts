@@ -7,6 +7,7 @@ import { ATTENDEE } from '../constants.ts'
 
 /**
  * Returns display name with 'Guest' or 'Deleted user' fallback if not provided
+ *
  * @param displayName possible name of participant
  * @param source actor type of participant
  * @param firstNameOnly whether to return only the first name of display name
@@ -30,6 +31,7 @@ export function getDisplayNameWithFallback(displayName: string, source: string, 
 
 /**
  * Returns concatenated display names with comma divider
+ *
  * @param {Array} displayNames list of display name
  * @param {number} [maxLength] max allowed length
  */

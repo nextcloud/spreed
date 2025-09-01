@@ -154,6 +154,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		/**
 		 * Fetch list of subscribed threads from server
+		 *
 		 * @param offset thread offset to start fetch with
 		 */
 		async fetchSubscribedThreadsList(offset?: number) {

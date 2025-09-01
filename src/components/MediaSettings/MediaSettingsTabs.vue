@@ -46,6 +46,7 @@ const tabStyles = computed<CSSProperties | undefined>(() => {
 
 /**
  * Whether the tab is active
+ *
  * @param tabId - Tab ID
  */
 function isActive(tabId: string) {
@@ -54,6 +55,7 @@ function isActive(tabId: string) {
 
 /**
  * Whether the tab is selected on UI
+ *
  * @param tabId - Tab ID
  */
 function isSelected(tabId: string) {
@@ -64,6 +66,7 @@ function isSelected(tabId: string) {
  * Toggle the tab:
  * - Toggle the tab on the current tab click
  * - Switch and open tab on a new tab click
+ *
  * @param tabId - New selected tabId
  */
 function handleTabClick(tabId: string) {

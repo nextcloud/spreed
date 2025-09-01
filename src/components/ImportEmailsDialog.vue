@@ -55,6 +55,7 @@ function triggerImport() {
 
 /**
  * Validate imported file and insert data into form fields
+ *
  * @param event import event
  */
 function importList(event: Event) {
@@ -69,6 +70,7 @@ function importList(event: Event) {
 
 /**
  * Verify imported file and show results
+ *
  * @param file file to upload
  */
 async function testList(file: File) {
@@ -86,6 +88,7 @@ async function testList(file: File) {
 
 /**
  * Verify imported file and add participants
+ *
  * @param file file to upload
  */
 async function submitList(file: File | null) {

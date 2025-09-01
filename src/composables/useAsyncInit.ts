@@ -25,6 +25,7 @@ const cache = new Map<() => Promise<unknown>, ResultContainer<unknown>>()
  * Use lazy/async initialization.
  * Allows to use something requiring asynchronous load/initialization with reactivity, such as dynamically imported modules or heavy initialized modules.
  * Make sure that the same initiator function reference is used for the same initialization.
+ *
  * @param initiator - Initialization function
  * @param immediate - Whether to call the initiator immediately
  */

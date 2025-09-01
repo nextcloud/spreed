@@ -934,6 +934,7 @@ export default {
 
 		/**
 		 * Add selected emoji to the cursor position
+		 *
 		 * @param {string} emoji - Selected emoji
 		 */
 		addEmoji(emoji) {

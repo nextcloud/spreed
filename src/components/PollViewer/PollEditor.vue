@@ -204,6 +204,7 @@ const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
 /**
  * Remove a previously added option
+ *
  * @param index option index
  */
 function deleteOption(index: number) {
@@ -250,6 +251,7 @@ async function handleSubmit() {
 
 /**
  * Pre-fills form from the draft
+ *
  * @param id poll draft ID
  * @param fromDrafts whether editor was opened from drafts handler
  * @param action required action ('fill' from draft or 'edit' draft)
@@ -288,6 +290,7 @@ function triggerImport() {
 
 /**
  * Validate imported file and insert data into form fields
+ *
  * @param event import event
  */
 function importPoll(event: Event) {
@@ -312,6 +315,7 @@ function importPoll(event: Event) {
 
 /**
  * Insert data into form fields
+ *
  * @param payload data to fill with
  */
 function fillPollForm(payload: requiredPollParams) {

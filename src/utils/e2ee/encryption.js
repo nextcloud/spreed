@@ -365,6 +365,7 @@ class Encryption {
 
 	/**
 	 * Updates the current participant key.
+	 *
 	 * @param {Uint8Array|boolean} key - The new key.
 	 * @return {number} The current key index.
 	 * @private

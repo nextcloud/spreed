@@ -58,6 +58,7 @@ export class Context {
 	/**
 	 * Derives the different subkeys and starts using them for encryption or
 	 * decryption.
+	 *
 	 * @param {Uint8Array|false} key bytes. Pass false to disable.
 	 * @param {Number} keyIndex
 	 */
@@ -80,6 +81,7 @@ export class Context {
 	/**
 	 * Sets a set of keys and resets the sendCount.
 	 * decryption.
+	 *
 	 * @param {Object} keys set of keys.
 	 * @param {Number} keyIndex optional
 	 * @private

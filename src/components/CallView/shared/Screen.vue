@@ -117,6 +117,7 @@ export default {
 
 		/**
 		 * Overriding method to handle double click event on screen share
+		 *
 		 * @param event Double click event
 		 */
 		function onDoubleClick(event) {

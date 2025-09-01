@@ -73,6 +73,7 @@ const deviceSelectedOption = computed<NcSelectOption | null>({
 
 /**
  * Update deviceId if passes required checks
+ *
  * @param deviceId selected NcSelect option to update with
  */
 function updateDeviceId(deviceId: NcSelectOption['id']) {

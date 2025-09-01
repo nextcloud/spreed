@@ -10,6 +10,7 @@ import { onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 
 /**
  * Composable to check whether the page is visible.
+ *
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
  */
 function useDocumentVisibilityComposable() {
@@ -32,6 +33,7 @@ function useDocumentVisibilityComposable() {
 
 /**
  * Shared composable to check whether the page is visible.
+ *
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
  */
 export const useDocumentVisibility = createSharedComposable(useDocumentVisibilityComposable)

@@ -270,6 +270,7 @@ export function useGetMessagesProvider() {
 
 	/**
 	 * Initialize chat context borders and start fetching messages
+	 *
 	 * @param token token of conversation where a method was called
 	 */
 	async function handleStartGettingMessagesPreconditions(token: string) {
@@ -315,6 +316,7 @@ export function useGetMessagesProvider() {
 	/**
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
+	 *
 	 * @param token token of conversation where a method was called
 	 * @param messageId context messageId
 	 * @param threadId context thread id
@@ -446,6 +448,7 @@ export function useGetMessagesProvider() {
 	/**
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
+	 *
 	 * @param token token of conversation where a method was called
 	 */
 	async function pollNewMessages(token: string) {

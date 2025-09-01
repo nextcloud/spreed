@@ -623,9 +623,9 @@ export default {
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
+		 *
 		 * @param {object} data the wrapping object
 		 * @param {boolean} data.skipHeightCheck whether to fetch messages without checking the height
-		 *
 		 */
 		async handleScroll({ skipHeightCheck = false } = {}) {
 			if (!this.$refs.scroller) {
@@ -851,6 +851,7 @@ export default {
 
 		/**
 		 * Scrolls to the bottom of the list.
+		 *
 		 * @param {object} options Options for scrolling
 		 * @param {boolean} [options.smooth] 'smooth' scrolling to the bottom ('auto' by default)
 		 * @param {boolean} [options.force] force scrolling to the bottom (otherwise check for current position)

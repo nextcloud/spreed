@@ -55,7 +55,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * Remove reactions from the store for a given conversation.
 		 *
 		 * @param {string} token The conversation token
-		 *
 		 */
 		purgeReactionsStore(token) {
 			delete this.reactions[token]
@@ -79,7 +78,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {number} payload.messageId The id of message
 		 * @param {string} payload.reaction The reaction to add
 		 * @param {object} payload.actors The users who reacted
-		 *
 		 */
 		addReaction({ token, messageId, reaction, actors }) {
 			this.reactions[token][messageId][reaction] = actors
@@ -92,7 +90,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {string} payload.token The conversation token
 		 * @param {number} payload.messageId The id of message
 		 * @param {string} payload.reaction The reaction to remove
-		 *
 		 */
 		removeReaction({ token, messageId, reaction }) {
 			delete this.reactions[token][messageId][reaction]
@@ -106,7 +103,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {number} payload.messageId The id of message
 		 * @param {string} payload.reaction The reaction emoji
 		 * @param {object} payload.actor The user who reacted
-		 *
 		 */
 		addActorToReaction({ token, messageId, reaction, actor }) {
 			this.checkForExistence(token, messageId)
@@ -126,7 +122,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 * @param {string} token The conversation token
 		 * @param {number} messageId The id of message
-		 *
 		 */
 		resetReactions(token, messageId) {
 			if (!this.reactions[token]?.[messageId]) {
@@ -142,7 +137,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {string} payload.token The conversation token
 		 * @param {number} payload.messageId The id of message
 		 * @param {object} payload.reactionsDetails The list of reactions with details for a given message
-		 *
 		 */
 		updateReactions({ token, messageId, reactionsDetails }) {
 			this.checkForExistence(token, messageId)
@@ -210,7 +204,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {string} payload.token The conversation token
 		 * @param {number} payload.messageId The id of message
 		 * @param {string} payload.selectedEmoji The selected emoji
-		 *
 		 */
 		async addReactionToMessage({ token, messageId, selectedEmoji }) {
 			try {
@@ -244,7 +237,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {string} payload.token The conversation token
 		 * @param {number} payload.messageId The id of message
 		 * @param {string} payload.selectedEmoji The selected emoji
-		 *
 		 */
 		async removeReactionFromMessage({ token, messageId, selectedEmoji }) {
 			try {
@@ -277,7 +269,6 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 * @param {string} token The conversation token
 		 * @param {number} messageId The id of message
-		 *
 		 */
 		async fetchReactions(token, messageId) {
 			console.debug('getting reactions details')

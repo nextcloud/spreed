@@ -162,6 +162,7 @@ watch(token, async () => {
 
 /**
  * Concatenates profile strings
+ *
  * @param firstSubstring first part of string
  * @param secondSubstring second part of string
  */

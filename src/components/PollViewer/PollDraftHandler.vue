@@ -67,6 +67,7 @@ const pollDraftsLoaded = computed(() => pollsStore.draftsLoaded(props.token))
 
 /**
  * Opens poll editor pre-filled from the draft
+ *
  * @param payload method payload
  * @param payload.id poll draft ID
  * @param payload.action required action ('fill' from draft or 'edit' draft)

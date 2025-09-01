@@ -172,6 +172,7 @@ export default {
 
 		/**
 		 * Check if component is visible and not obstructed by others
+		 *
 		 * @param element HTML element
 		 */
 		function isVisible(element) {

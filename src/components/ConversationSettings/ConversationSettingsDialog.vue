@@ -283,6 +283,7 @@ export default {
 
 		/**
 		 * Opens ConversationSettingsDialog
+		 *
 		 * @param payload event payload
 		 * @param payload.token conversation token
 		 */

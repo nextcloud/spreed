@@ -141,6 +141,7 @@ const searchResultsVirtual = computed(() => {
 
 /**
  * Generate the props for the AvatarWrapper component
+ *
  * @param item conversation item
  */
 function iconData(item: ParticipantSearchResult) {
@@ -172,6 +173,7 @@ const hasSourcesWithoutResults = computed(() => {
 
 /**
  * Generate the message for the "No results" section
+ *
  * @param list search results
  */
 function sourcesWithoutResults(list: SubListType): string {

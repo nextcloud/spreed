@@ -17,6 +17,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Get upcoming events for a given conversation within the next 31 days.
+ *
  * @param location conversation's absolute URL
  */
 async function getUpcomingEvents(location: string): UpcomingEventsResponse {
@@ -29,6 +30,7 @@ async function getUpcomingEvents(location: string): UpcomingEventsResponse {
 
 /**
  * Get absence information for a user (in a given 1-1 conversation).
+ *
  * @param userId user id
  */
 async function getUserAbsence(userId: string): OutOfOfficeResponse {

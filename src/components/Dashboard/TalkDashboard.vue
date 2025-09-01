@@ -149,6 +149,7 @@ async function startMeeting() {
 
 /**
  * Scrolls the event cards wrapper in the specified direction.
+ *
  * @param {string} direction - The direction to scroll ('backward' or 'forward').
  */
 function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) {

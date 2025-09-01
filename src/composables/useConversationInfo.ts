@@ -28,6 +28,7 @@ const TITLE_MAX_LENGTH = 1000
 
 /**
  * Reusable properties for Conversation... items
+ *
  * @param payload - function payload
  * @param payload.item - conversation item
  * @param payload.isSearchResult - whether conversation item appears as search result

@@ -10,6 +10,7 @@ import { onUnmounted, readonly, ref } from 'vue'
 
 /**
  * Composable to get current time (as Date object)
+ *
  * @param [precision] - precision in milliseconds (defaults to one minute)
  * @return Date reactive object with current time
  */
@@ -42,6 +43,7 @@ export function useCurrentTimeComposable(precision: number = 60_000): DeepReadon
 
 /**
  * Composable to get current time (as Date object)
+ *
  * @return Date reactive object with current time (with 60 seconds precision)
  */
 function useCurrentTimeMinuteComposable(): DeepReadonly<Ref<Date>> {
@@ -50,6 +52,7 @@ function useCurrentTimeMinuteComposable(): DeepReadonly<Ref<Date>> {
 
 /**
  * Shared composable to get current time (as Date object)
+ *
  * @return Date reactive object with current time (with 60 seconds precision)
  */
 export const useCurrentTime = createSharedComposable(useCurrentTimeMinuteComposable)

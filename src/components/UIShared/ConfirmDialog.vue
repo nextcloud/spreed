@@ -43,6 +43,7 @@ const emit = defineEmits<{
 
 /**
  * Emit result, if any (for spawnDialog callback)
+ *
  * @param result callback result
  */
 function onClosing(result: unknown) {

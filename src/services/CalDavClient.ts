@@ -57,6 +57,7 @@ function getDavCurrentUserPrincipal(): DavPrincipal {
 
 /**
  * Returns calendar home
+ *
  * @param headers optional request headers
  */
 const getDavCalendarHome = (headers?: object): DavCalendarHome => getClient(headers).calendarHomes[0]

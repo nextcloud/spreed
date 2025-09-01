@@ -14,6 +14,7 @@ import { useGetThreadId } from './useGetThreadId.ts'
 
 /**
  * Composable to generate temporary messages using defined in store information
+ *
  * @param context Vuex Store (to be used inside Vuex modules)
  */
 export function useTemporaryMessage(context: Store<unknown>) {

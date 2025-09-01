@@ -90,6 +90,7 @@ const threadNotificationLabel = computed(() => notificationLevels.find((l) => l.
 
 /**
  * Resets the submenu when the actions menu is closed
+ *
  * @param open - actions menu state
  */
 function handleActionsMenuOpen(open: boolean) {

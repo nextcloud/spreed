@@ -230,6 +230,7 @@ watch(participants, (value) => {
 
 /**
  * Returns Date object with N hours from now at the start of hour
+ *
  * @param hours amount of hours to add
  */
 function getCurrentDateInStartOfNthHour(hours: number) {
@@ -240,6 +241,7 @@ function getCurrentDateInStartOfNthHour(hours: number) {
 
 /**
  * Toggle selected attendees
+ *
  * @param value switch value
  */
 function toggleAll(value: boolean) {
@@ -248,6 +250,7 @@ function toggleAll(value: boolean) {
 
 /**
  * Remove selected attendee from contact bubble
+ *
  * @param value switch value
  */
 function removeSelectedParticipant(value: Participant) {
@@ -256,6 +259,7 @@ function removeSelectedParticipant(value: Participant) {
 
 /**
  * Check selected attendees
+ *
  * @param value array of ids
  */
 function checkSelection(value: number[]) {

@@ -220,6 +220,7 @@ export default {
 
 		/**
 		 * Listen to wheel event on sidebar to switch between header info appearances
+		 *
 		 * @param {Event} event Wheel event
 		 */
 		function handleWheelEvent(event) {

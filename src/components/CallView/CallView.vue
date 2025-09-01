@@ -810,6 +810,7 @@ export default {
 
 		/**
 		 * Fallback method for versions before v29.0.4
+		 *
 		 * @param {boolean} value whether background should be blurred
 		 */
 		setBackgroundBlurred(value) {
