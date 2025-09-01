@@ -51,8 +51,8 @@ type EditMessagePayload = { token: string, messageId: number, updatedMessage: ed
  * @param data.lastKnownMessageId last known message id;
  * @param data.includeLastKnown whether to include the last known message in the response;
  * @param data.threadId The thread id to retrieve data
- * @param [data.lookIntoFuture=0] direction of message fetch
- * @param [data.limit=100] Number of messages to load
+ * @param [data.lookIntoFuture] direction of message fetch
+ * @param [data.limit] Number of messages to load
  * @param [options] Axios request options
  */
 async function fetchMessages({
@@ -84,7 +84,7 @@ async function fetchMessages({
  * @param data the wrapping object;
  * @param data.lastKnownMessageId The id of the last message in the store.
  * @param data.token The conversation token;
- * @param [data.limit=100] Number of messages to load
+ * @param [data.limit] Number of messages to load
  * @param [options] Axios request options
  */
 async function pollNewMessages({
@@ -114,7 +114,7 @@ async function pollNewMessages({
  * @param data.token the conversation token;
  * @param data.messageId last known message id;
  * @param data.threadId The thread id to retrieve data
- * @param [data.limit=50] Number of messages to load
+ * @param [data.limit] Number of messages to load
  * @param [options] Axios request options
  */
 async function getMessageContext({ token, messageId, threadId, limit = 50 }: GetMessageContextPayload, options?: AxiosRequestConfig): getMessageContextResponse {
@@ -260,7 +260,7 @@ async function summarizeChat(token: string, fromMessageId: summarizeChatParams['
  *
  * @param data the wrapping object
  * @param data.token the conversation token
- * @param [data.limit=50] Number of threads to return
+ * @param [data.limit] Number of threads to return
  * @param [options] Axios request options
  */
 async function getRecentThreadsForConversation({ token, limit }: { token: string } & getRecentThreadsParams, options?: AxiosRequestConfig): getRecentThreadsResponse {
@@ -287,7 +287,7 @@ async function getSingleThreadForConversation(token: string, threadId: number, o
  * Fetch a list of threads user subscribed to
  *
  * @param data the wrapping object
- * @param [data.limit=50] Number of threads to return
+ * @param [data.limit] Number of threads to return
  * @param [data.offset] Thread offset to fetch from
  * @param [options] Axios request options
  */

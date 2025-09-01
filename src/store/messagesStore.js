@@ -830,7 +830,7 @@ const actions = {
 	 * @param {number} data.threadId Thread id to fetch messages for;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
-	 * @param {number} [data.lookIntoFuture=0] direction of message fetch
+	 * @param {number} [data.lookIntoFuture] direction of message fetch
 	 */
 	async fetchMessages(context, {
 		token,

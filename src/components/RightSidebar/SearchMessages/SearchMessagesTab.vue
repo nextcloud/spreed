@@ -160,7 +160,7 @@ type SearchMessageCancelableRequest = {
 }
 
 /**
- * @param [isNew=true] Is it a new search (search parameters changed)?
+ * @param [isNew] Is it a new search (search parameters changed)?
  * Fetch the search results from the server
  */
 async function fetchSearchResults(isNew = true): Promise<void> {
