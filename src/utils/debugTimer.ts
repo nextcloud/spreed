@@ -8,6 +8,7 @@ const timersPool: Record<string, number> = {}
 
 /**
  *
+ * @param time
  */
 function getReadable(time: number) {
 	if (isNaN(time)) {

@@ -111,7 +111,11 @@ onBeforeUnmount(() => {
 	updateDisplayName()
 })
 
-/** Update guest username from public page user menu */
+/**
+ * Update guest username from public page user menu
+ *
+ * @param payload
+ */
 function updateDisplayNameFromPublicEvent(payload: NextcloudUser) {
 	if (payload.displayName && payload.displayName !== guestUserName.value) {
 		guestUserName.value = payload.displayName

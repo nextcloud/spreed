@@ -175,6 +175,7 @@ export const useCallViewStore = defineStore('callView', {
 		},
 
 		/**
+		 * @param token
 		 * @throws error if live transcription could not be enabled.
 		 */
 		async enableLiveTranscription(token: string) {
@@ -190,6 +191,7 @@ export const useCallViewStore = defineStore('callView', {
 		},
 
 		/**
+		 * @param token
 		 * @throws error if live transcription could not be enabled.
 		 */
 		async disableLiveTranscription(token: string) {

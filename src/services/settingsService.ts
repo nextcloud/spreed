@@ -70,6 +70,8 @@ async function setSIPSettings({ sipGroups, sharedSecret, dialInInfo }: setSipSet
 
 /**
  *
+ * @param hasUserAccount
+ * @param value
  */
 async function setPlaySounds(hasUserAccount: boolean, value: 'yes' | 'no') {
 	if (hasUserAccount) {
@@ -84,6 +86,7 @@ async function setPlaySounds(hasUserAccount: boolean, value: 'yes' | 'no') {
 
 /**
  *
+ * @param value
  */
 async function setStartWithoutMedia(value: boolean) {
 	return setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
@@ -91,6 +94,7 @@ async function setStartWithoutMedia(value: boolean) {
 
 /**
  *
+ * @param value
  */
 async function setBlurVirtualBackground(value: boolean) {
 	return setUserConfig('spreed', 'blur_virtual_background', value ? 'yes' : 'no')
@@ -98,6 +102,7 @@ async function setBlurVirtualBackground(value: boolean) {
 
 /**
  *
+ * @param value
  */
 async function setConversationsListStyle(value: string) {
 	return setUserConfig('spreed', 'conversations_list_style', value)

@@ -36,6 +36,7 @@ import { generateUrl } from '@nextcloud/router'
 
 /**
  *
+ * @param path
  */
 function encodeFilePath(path) {
 	const pathSections = (path.startsWith('/') ? path : `/${path}`).split('/')

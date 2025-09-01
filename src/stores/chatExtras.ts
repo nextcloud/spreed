@@ -288,9 +288,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Add a thread title to the store
 		 *
-		 * @param payload action payload
-		 * @param payload.token - conversation token
-		 * @param payload.title - title from input
+		 * @param token - conversation token
+		 * @param title - title from input
 		 */
 		setThreadTitle(token: string, title: string) {
 			this.threadTitle[token] = title

@@ -22,6 +22,8 @@ async function fetchSignalingSettings({ token }, options) {
 
 /**
  *
+ * @param token
+ * @param options
  */
 async function pullSignalingMessages(token, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v3/signaling/{token}', { token }), options)
@@ -29,6 +31,7 @@ async function pullSignalingMessages(token, options) {
 
 /**
  *
+ * @param serverId
  */
 async function getWelcomeMessage(serverId) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v3/signaling/welcome/{serverId}', { serverId }))

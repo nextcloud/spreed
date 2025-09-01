@@ -17,6 +17,10 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  *
+ * @param token
+ * @param messageId
+ * @param selectedEmoji
+ * @param options
  */
 async function addReactionToMessage(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options?: AxiosRequestConfig): addReactionResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
@@ -26,6 +30,10 @@ async function addReactionToMessage(token: string, messageId: number, selectedEm
 
 /**
  *
+ * @param token
+ * @param messageId
+ * @param selectedEmoji
+ * @param options
  */
 async function removeReactionFromMessage(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig): deleteReactionResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
@@ -38,6 +46,9 @@ async function removeReactionFromMessage(token: string, messageId: number, selec
 
 /**
  *
+ * @param token
+ * @param messageId
+ * @param options
  */
 async function getReactionsDetails(token: string, messageId: number, options?: AxiosRequestConfig): getReactionsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), options)

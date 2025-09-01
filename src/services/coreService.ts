@@ -74,6 +74,8 @@ async function autocompleteQuery({
 
 /**
  *
+ * @param userId
+ * @param options
  */
 async function getUserProfile(userId: string, options?: AxiosRequestConfig): UserProfileResponse {
 	return axios.get(generateOcsUrl('profile/{userId}', { userId }), options)
@@ -81,6 +83,8 @@ async function getUserProfile(userId: string, options?: AxiosRequestConfig): Use
 
 /**
  *
+ * @param id
+ * @param options
  */
 async function getTaskById(id: number, options?: AxiosRequestConfig): TaskProcessingResponse {
 	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
@@ -88,6 +92,8 @@ async function getTaskById(id: number, options?: AxiosRequestConfig): TaskProces
 
 /**
  *
+ * @param id
+ * @param options
  */
 async function deleteTaskById(id: number, options?: AxiosRequestConfig): Promise<null> {
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
@@ -95,6 +101,8 @@ async function deleteTaskById(id: number, options?: AxiosRequestConfig): Promise
 
 /**
  *
+ * @param params
+ * @param options
  */
 async function searchMessages(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
 	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {

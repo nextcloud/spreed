@@ -8,6 +8,8 @@
 // getScreenMedia helper by @HenrikJoreteg
 /**
  *
+ * @param constraints
+ * @param callback
  */
 function getUserMedia(constraints, callback) {
 	if (!window.navigator || !window.navigator.mediaDevices || !window.navigator.mediaDevices.getUserMedia) {

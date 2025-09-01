@@ -63,6 +63,8 @@ function Sidebar() {
 
 /**
  *
+ * @param sidebarElement
+ * @param resolve
  */
 function waitForSidebarToBeOpen(sidebarElement, resolve) {
 	if ('ontransitionend' in sidebarElement) {

@@ -15,6 +15,9 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  *
+ * @param token
+ * @param isDarkTheme
+ * @param avatarVersion
  */
 function getConversationAvatarOcsUrl(token: string, isDarkTheme: boolean, avatarVersion?: string): string {
 	return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '') + (avatarVersion ? '?v={avatarVersion}' : ''), { token, avatarVersion })
@@ -22,6 +25,10 @@ function getConversationAvatarOcsUrl(token: string, isDarkTheme: boolean, avatar
 
 /**
  *
+ * @param token
+ * @param cloudId
+ * @param isDarkTheme
+ * @param size
  */
 function getUserProxyAvatarOcsUrl(token: string, cloudId: string, isDarkTheme: boolean, size: 64 | 512 = 512): string {
 	return generateOcsUrl('apps/spreed/api/v1/proxy/{token}/user-avatar/{size}' + (isDarkTheme ? '/dark' : '') + '?cloudId={cloudId}', { token, cloudId, size })
@@ -29,6 +36,8 @@ function getUserProxyAvatarOcsUrl(token: string, cloudId: string, isDarkTheme: b
 
 /**
  *
+ * @param token
+ * @param file
  */
 async function setConversationAvatar(token: string, file: File): setFileAvatarResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file)
@@ -36,6 +45,9 @@ async function setConversationAvatar(token: string, file: File): setFileAvatarRe
 
 /**
  *
+ * @param token
+ * @param emoji
+ * @param color
  */
 async function setConversationEmojiAvatar(token: string, emoji: string, color?: string | null): setEmojiAvatarResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar/emoji', { token }), {
@@ -46,6 +58,7 @@ async function setConversationEmojiAvatar(token: string, emoji: string, color?: 
 
 /**
  *
+ * @param token
  */
 async function deleteConversationAvatar(token: string): deleteAvatarResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))

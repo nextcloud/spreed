@@ -11,6 +11,7 @@ import './init.js'
 
 /**
  *
+ * @param fileInfo
  */
 function isEnabled(fileInfo) {
 	if (fileInfo && !fileInfo.isDirectory()) {

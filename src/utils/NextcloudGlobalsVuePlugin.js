@@ -5,6 +5,7 @@
 
 /**
  *
+ * @param app
  */
 export function NextcloudGlobalsVuePlugin(app) {
 	app.config.globalProperties.OC = window.OC

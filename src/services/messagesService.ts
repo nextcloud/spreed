@@ -137,6 +137,7 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
  * @param payload.referenceId A reference id to identify the message later again
  * @param payload.replyTo The message id to be replied to
  * @param payload.silent whether the message should trigger a notifications
+ * @param payload.threadTitle
  * @param [options] Axios request options
  */
 async function postNewMessage({

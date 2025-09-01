@@ -114,6 +114,8 @@ async function removeCurrentUserFromConversation(token) {
 
 /**
  *
+ * @param token
+ * @param attendeeId
  */
 async function removeAttendeeFromConversation(token, attendeeId) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees', { token }), {
@@ -126,6 +128,8 @@ async function removeAttendeeFromConversation(token, attendeeId) {
 
 /**
  *
+ * @param token
+ * @param options
  */
 async function promoteToModerator(token, options) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), options)
@@ -134,6 +138,8 @@ async function promoteToModerator(token, options) {
 
 /**
  *
+ * @param token
+ * @param options
  */
 async function demoteFromModerator(token, options) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), {
@@ -144,6 +150,8 @@ async function demoteFromModerator(token, options) {
 
 /**
  *
+ * @param token
+ * @param options
  */
 async function fetchParticipants(token, options) {
 	options = options || {}
@@ -155,6 +163,8 @@ async function fetchParticipants(token, options) {
 
 /**
  *
+ * @param token
+ * @param userName
  */
 async function setGuestUserName(token, userName) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest/{token}/name', { token }), {

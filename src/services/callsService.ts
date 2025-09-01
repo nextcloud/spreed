@@ -57,6 +57,8 @@ async function leaveCall(token: string, all: boolean = false) {
 
 /**
  *
+ * @param token
+ * @param options
  */
 async function fetchPeers(token: string, options: object): fetchPeersResponse {
 	return await axios.get(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), options)

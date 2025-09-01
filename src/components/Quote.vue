@@ -104,6 +104,8 @@ const shortenedQuoteMessage = computed(() => {
 /**
  * Check whether message to quote (parent) existing on server
  * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
+ *
+ * @param message
  */
 function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
 	return 'messageType' in message

@@ -82,6 +82,9 @@ watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, i
 
 /**
  * Check if there are more items of a specific type than the limit allows.
+ *
+ * @param type
+ * @param items
  */
 function hasMore(type: string, items: ShareItemsType) {
 	return Object.values(items).length > limit(type)
@@ -89,6 +92,8 @@ function hasMore(type: string, items: ShareItemsType) {
 
 /**
  * Open the SharedItemsBrowser dialog for a specific type of shared items.
+ *
+ * @param type
  */
 function showMore(type: string) {
 	browserActiveTab.value = type
@@ -97,6 +102,8 @@ function showMore(type: string) {
 
 /**
  * Get the limit for the number of items displayed based on the type.
+ *
+ * @param type
  */
 function limit(type: string) {
 	return sharedItemsWithPreviewLimit.includes(type) ? 2 : 5

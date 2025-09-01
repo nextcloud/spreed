@@ -1133,9 +1133,9 @@ const actions = {
 	 * Grant all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
 	 */
 	async grantAllPermissionsToParticipant(context, { token, attendeeId }) {
 		await grantAllPermissionsToParticipant(token, attendeeId)
@@ -1150,9 +1150,9 @@ const actions = {
 	 * Remove all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
 	 */
 	async removeAllPermissionsFromParticipant(context, { token, attendeeId }) {
 		await removeAllPermissionsFromParticipant(token, attendeeId)
@@ -1168,11 +1168,11 @@ const actions = {
 	 * participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
-	 * @param {'set'|'add'|'remove'} [root0.method] permissions update method
-	 * @param {number} root0.permissions - bitwise combination of the permissions.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
+	 * @param {'set'|'add'|'remove'} [payload.method] permissions update method
+	 * @param {number} payload.permissions - bitwise combination of the permissions.
 	 */
 	async setPermissions(context, { token, attendeeId, method, permissions }) {
 		await setPermissions(token, attendeeId, method, permissions)

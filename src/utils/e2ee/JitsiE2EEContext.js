@@ -28,7 +28,8 @@ export default class E2EEcontext {
 	/**
 	 * Build a new E2EE context instance, which will be used in a given conference.
 	 *
-	 * @param {boolean} [options.sharedKey] - whether there is a uniques key shared amoung all participants.
+	 * @param payload
+	 * @param [payload.sharedKey] - whether there is a uniques key shared amoung all participants.
 	 */
 	constructor({ sharedKey } = {}) {
 		this._worker = new Worker()

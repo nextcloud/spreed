@@ -18,6 +18,7 @@ import { MESSAGE } from '../constants.ts'
 
 /**
  *
+ * @param lastMessage
  */
 export function getMessageIcon(lastMessage: Conversation['lastMessage']): ComponentPublicInstance | null {
 	if (!lastMessage || Array.isArray(lastMessage)) {

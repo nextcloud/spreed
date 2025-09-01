@@ -8,6 +8,7 @@ import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 
 /**
  *
+ * @param message
  */
 export function getItemTypeFromMessage(message: ChatMessage): string {
 	if (message.messageParameters?.object) {

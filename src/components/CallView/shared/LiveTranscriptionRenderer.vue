@@ -163,6 +163,9 @@ export default {
 		 * or close to it already, rather than trying to keep the same visible
 		 * lines the transcript is just scrolled to the bottom; any pending
 		 * scroll to bottom is also cancelled.
+		 *
+		 * @param entries
+		 * @param observer
 		 */
 		handleResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
 			if (!this.$refs.transcriptBlocks) {

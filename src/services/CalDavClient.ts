@@ -23,6 +23,7 @@ const getClientKey = (headers: object) => JSON.stringify(headers)
 
 /**
  *
+ * @param headers
  */
 function getClient(headers: object = {}) {
 	const clientKey = getClientKey(headers)
@@ -71,6 +72,7 @@ async function getPersonalCalendars(): Promise<DavCalendar[]> {
 
 /**
  *
+ * @param url
  */
 function convertUrlToUri(url: string): string {
 	return url.replace(/\/$/gi, '').split('/').pop() || url
