@@ -184,7 +184,7 @@
 		<template #list>
 			<!-- Conversations List -->
 			<template v-if="!isSearching">
-				<NcEmptyContent v-if="conversationsInitialised && filteredConversationsList.length === 0"
+				<NcEmptyContent v-if="showEmptyContent"
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
@@ -473,7 +473,9 @@ export default {
 		},
 
 		emptyContentLabel() {
-			if (this.isFiltered) {
+			if (this.showThreadsList) {
+				return t('spreed', 'No followed threads')
+			} else if (this.isFiltered) {
 				return t('spreed', 'No matches found')
 			} else {
 				return t('spreed', 'No conversations found')
@@ -484,7 +486,7 @@ export default {
 			if (this.showArchived) {
 				return t('spreed', 'You have no archived conversations.')
 			} else if (this.showThreadsList) {
-				return t('spreed', 'You have no followed threads.')
+				return t('spreed', 'Subscribe to an existing thread or start your own.')
 			}
 			if (this.filters.length === 1 && this.filters[0] === 'mentions') {
 				return t('spreed', 'You have no unread mentions.')
@@ -550,6 +552,11 @@ export default {
 
 		conversationsInitialised() {
 			return this.$store.getters.conversationsInitialised
+		},
+
+		showEmptyContent() {
+			return (this.conversationsInitialised && !this.filteredConversationsList.length)
+				|| (this.showThreadsList && !this.followedThreads.length)
 		},
 	},
 

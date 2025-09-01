@@ -17,7 +17,7 @@ const absoluteDateOptions = computed(() => {
 	const isSameYear = new Date(+props.time).getFullYear() === new Date().getFullYear()
 	const format: Intl.DateTimeFormatOptions = {
 		dateStyle: undefined,
-		year: isSameYear ? 'numeric' : undefined,
+		year: !isSameYear ? 'numeric' : undefined,
 		month: 'long',
 		day: 'numeric',
 	}

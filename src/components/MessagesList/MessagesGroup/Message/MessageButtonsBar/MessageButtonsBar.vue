@@ -142,10 +142,9 @@
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
-					<NcActionSeparator />
-					<template v-if="supportThreads && !threadId">
+					<template v-if="showThreadControls">
+						<NcActionSeparator />
 						<NcActionButton
-							v-if="message.isThread && message.id === message.threadId"
 							close-after-click
 							@click="threadId = message.threadId">
 							<template #icon>
@@ -645,6 +644,13 @@ export default {
 
 		canReply() {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+		},
+
+		showThreadControls() {
+			return this.supportThreads
+				&& !this.threadId
+				&& this.message.isThread
+				&& this.message.id !== this.message.threadId
 		},
 	},
 
