@@ -91,7 +91,7 @@ liveTranscriptionStore.loadLiveTranscriptionLanguages().catch(() => {
 /**
  * Set the live transcription language from the given option
  *
- * @param {object} language the option with the language to set
+ * @param language the option with the language to set
  */
 async function changeLanguage(language: LanguageOption) {
 	languageBeingChanged.value = true

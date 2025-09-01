@@ -207,10 +207,10 @@ export default {
 		 * new block will be used even for the same participant if the text
 		 * direction changed.
 		 *
-		 * @param {object} model the CallParticipantModel for the participant
+		 * @param model the CallParticipantModel for the participant
 		 *        that was transcribed.
-		 * @param {string} message the transcribed message.
-		 * @param {string} languageId the ID of the language of the transcribed
+		 * @param message the transcribed message.
+		 * @param languageId the ID of the language of the transcribed
 		 *        message.
 		 */
 		handleTranscript(model: CallParticipantModel, message: string, languageId: string) {
@@ -302,9 +302,9 @@ export default {
 		 * transcript element (unless the internal area of the transcript is not
 		 * large enough yet to be scrolled).
 		 *
-		 * @param {number} block the index of the block in the current list of
+		 * @param block the index of the block in the current list of
 		 *        blocks.
-		 * @param {number} line the index of the line in the current list of
+		 * @param line the index of the line in the current list of
 		 *        lines of the block.
 		 */
 		scrollToBlockAndLine(block: number, line: number) {

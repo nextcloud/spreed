@@ -11,7 +11,7 @@ import { onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 /**
  * Composable to check whether the page is visible.
  *
- * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
+ * @return - computed boolean whether the page is visible
  */
 function useDocumentVisibilityComposable() {
 	const isDocumentVisible = ref<boolean>(!document.hidden)

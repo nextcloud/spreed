@@ -11,7 +11,7 @@ import { defaultRemoteURL } from '@nextcloud/files/dav'
  *
  * @param filepath - The path to the user's file, e.g., Talk/20240101-000102.png
  * @param userid - The user id, e.g., 'admin'. Defaults to the current user id
- * @return {string} The WebDAV URL to the file, e.g., https://nextcloud.ltd/remote.php/dav/files/admin/Talk/20240101-000102.png
+ * @return The WebDAV URL to the file, e.g., https://nextcloud.ltd/remote.php/dav/files/admin/Talk/20240101-000102.png
  */
 export function generateUserFileUrl(filepath: string, userid: string | undefined = getCurrentUser()?.uid) {
 	if (!userid) {
@@ -24,7 +24,7 @@ export function generateUserFileUrl(filepath: string, userid: string | undefined
  * Generate a download link for a public share
  *
  * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/
- * @return {string} The download link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/download
+ * @return The download link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/download
  */
 export function generatePublicShareDownloadUrl(shareLink: string) {
 	return shareLink + '/download'

@@ -16,7 +16,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Enable live transcription
  *
- * @param {string} token conversation token
+ * @param token conversation token
  */
 async function enableLiveTranscription(token: string): liveTranscriptionEnableResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
@@ -25,7 +25,7 @@ async function enableLiveTranscription(token: string): liveTranscriptionEnableRe
 /**
  * Disable live transcription
  *
- * @param {string} token conversation token
+ * @param token conversation token
  */
 async function disableLiveTranscription(token: string): liveTranscriptionDisableResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
@@ -41,8 +41,8 @@ async function getLiveTranscriptionLanguages(): liveTranscriptionGetAvailableLan
 /**
  * Set language for live transcription
  *
- * @param {string} token conversation token
- * @param {string} languageId the ID of the language
+ * @param token conversation token
+ * @param languageId the ID of the language
  */
 async function setLiveTranscriptionLanguage(token: string, languageId: string): liveTranscriptionSetLanguageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}/language', { token }), {

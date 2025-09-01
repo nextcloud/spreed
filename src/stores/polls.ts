@@ -111,9 +111,9 @@ export const usePollsStore = defineStore('polls', {
 		 * poll data every time someone votes, so we create a debounce
 		 * function for each poll and store it in the pollStore
 		 *
-		 * @param { object } root0 The arguments passed to the action
-		 * @param { string } root0.token The token of the conversation
-		 * @param { number } root0.pollId The id of the poll
+		 * @param root0 The arguments passed to the action
+		 * @param root0.token The token of the conversation
+		 * @param root0.pollId The id of the poll
 		 */
 		debounceGetPollData({ token, pollId }: { token: string, pollId: string }) {
 			if (!this.debouncedFunctions[token]) {

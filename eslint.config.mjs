@@ -49,7 +49,6 @@ export default [
 			'jsdoc/check-param-names': 'off', // need to respect JS
 			'jsdoc/check-tag-names': 'off', // need to respect JS
 			'jsdoc/check-types': 'off', // need to respect JS
-			'jsdoc/no-types': 'off', // need to respect JS
 			'jsdoc/require-param': 'off', // need to respect JS
 			'jsdoc/require-param-type': 'off', // need to respect JS
 			'jsdoc/require-param-description': 'off', // need to respect JS

@@ -32,8 +32,8 @@ export function getDisplayNameWithFallback(displayName: string, source: string, 
 /**
  * Returns concatenated display names with comma divider
  *
- * @param {Array} displayNames list of display name
- * @param {number} [maxLength] max allowed length
+ * @param displayNames list of display name
+ * @param [maxLength] max allowed length
  */
 export function getDisplayNamesList(displayNames: string[], maxLength?: number): string {
 	const sanitizedList = displayNames.map((name) => name.trim()).filter(Boolean)

@@ -38,7 +38,7 @@ type PromotePayload = {
  * @param audioInputList list of registered audio devices in order of preference
  * @param audioOutputList list of registered speaker devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
- * @return {string} preference list in readable format
+ * @return preference list in readable format
  */
 function listMediaDevices(
 	attributes: Attributes,
@@ -81,7 +81,7 @@ ${videoInputList.map(getDeviceString).join('\n')}
  *
  * @param devices list of available devices
  * @param inputList list of registered audio/video devices in order of preference
- * @return {string|undefined} first available (plugged) device id
+ * @return first available (plugged) device id
  */
 function getFirstAvailableMediaDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[]): string | undefined {
 	return inputList.find((device) => devices.some((d) => d.kind === device.kind && d.deviceId === device.deviceId))?.deviceId
@@ -92,7 +92,7 @@ function getFirstAvailableMediaDevice(devices: MediaDeviceInfo[], inputList: Med
  *
  * @param device device
  * @param devicesList list of registered devices in order of preference
- * @return {MediaDeviceInfo[]} updated devices list
+ * @return updated devices list
  */
 function registerNewMediaDevice(device: MediaDeviceInfo, devicesList: MediaDeviceInfo[]): MediaDeviceInfo[] {
 	console.debug('Registering new device:', device)
@@ -115,7 +115,7 @@ function registerNewMediaDevice(device: MediaDeviceInfo, devicesList: MediaDevic
  * @param data.devices list of available devices
  * @param data.inputList list of registered audio/video devices in order of preference
  * @param data.inputId id of currently selected input
- * @return {InputListUpdated} updated devices list (null, if it has not been changed)
+ * @return updated devices list (null, if it has not been changed)
  */
 function promoteMediaDevice({ kind, devices, inputList, inputId }: PromotePayload): InputListUpdated {
 	if (!inputId) {
@@ -160,7 +160,7 @@ function promoteMediaDevice({ kind, devices, inputList, inputId }: PromotePayloa
  * @param audioInputList list of registered audio devices in order of preference
  * @param audioOutputList list of registered speaker devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
- * @return {InputLists} object with updated devices lists (null, if they have not been changed)
+ * @return object with updated devices lists (null, if they have not been changed)
  */
 function populateMediaDevicesPreferences(
 	devices: MediaDeviceInfo[],

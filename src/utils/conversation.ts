@@ -55,7 +55,7 @@ export function isEvent(conversation: Conversation): boolean {
 /**
  * check if the conversation is archived
  *
- * @param {object} conversation conversation object
+ * @param conversation conversation object
  * @param showArchived whether current filtered list is of archived conversation
  */
 export function shouldIncludeArchived(conversation: Conversation, showArchived: boolean): boolean {
@@ -88,7 +88,7 @@ export function getEventTimeRange(conversation: Conversation): EventTimeRange {
 /**
  * check if the conversation is not an event conversation or if it is, check if it is happening in 16 hours
  *
- * @param {object} conversation conversation object
+ * @param conversation conversation object
  */
 export function shouldIncludeEvents(conversation: Conversation): boolean {
 	return !isEvent(conversation)
@@ -98,7 +98,7 @@ export function shouldIncludeEvents(conversation: Conversation): boolean {
 /**
  * check if the conversation is happening in 16 hours
  *
- * @param {object} conversation conversation object
+ * @param conversation conversation object
  */
 export function shouldEventBeVisible(conversation: Conversation): boolean {
 	const startTime = getEventTimeRange(conversation).start

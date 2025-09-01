@@ -24,7 +24,7 @@ async function initAudioEncoder() {
 /**
  * Composable to use audio encoder for voice messages feature
  *
- * @return {DeepReadonly<Ref<boolean>>} - whether the encoder is ready
+ * @return - whether the encoder is ready
  */
 export function useAudioEncoder(): DeepReadonly<Ref<boolean>> {
 	if (requiresInit) {

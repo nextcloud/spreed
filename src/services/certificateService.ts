@@ -24,7 +24,7 @@ async function getCertificateExpiration(host: certificateExpirationParams['host'
  * Checks if the certificate of a host is valid
  *
  * @param host The host to check the certificate
- * @return {boolean} true if the certificate is valid, false otherwise
+ * @return true if the certificate is valid, false otherwise
  */
 async function isCertificateValid(host: certificateExpirationParams['host']): Promise<boolean> {
 	try {

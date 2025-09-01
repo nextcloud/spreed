@@ -12,7 +12,7 @@ const isFullscreen = ref<boolean>(document.fullscreenElement !== null)
 /**
  * Composable to check whether the page is displayed at fullscreen
  *
- * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is displayed at fullscreen
+ * @return - computed boolean whether the page is displayed at fullscreen
  */
 function useDocumentFullscreenComposable() {
 	const changeIsFullscreen = () => {

@@ -24,7 +24,7 @@ import { EventBus } from '../services/EventBus.ts'
 /**
  * Generate base url for Talk Web app based on server's root
  *
- * @return {string} Vue Router base url
+ * @return Vue Router base url
  */
 function generateTalkWebBasePath(): string {
 	// if index.php is in the url AND we got this far, then it's working:
