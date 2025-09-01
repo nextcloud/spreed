@@ -573,7 +573,7 @@ export default {
 
 	watch: {
 		// If the video array size changes, rebuild the grid
-		'videos.length'() {
+		'videos.length': function() {
 			this.makeGrid()
 		},
 

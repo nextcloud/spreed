@@ -544,7 +544,7 @@ export default {
 	},
 
 	watch: {
-		'model.attributes.stream'(stream) {
+		'model.attributes.stream': function(stream) {
 			this._setStream(stream)
 		},
 

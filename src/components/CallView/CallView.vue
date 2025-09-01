@@ -420,7 +420,7 @@ export default {
 	},
 
 	watch: {
-		'localCallParticipantModel.attributes.peerId'(newValue, previousValue) {
+		'localCallParticipantModel.attributes.peerId': function(newValue, previousValue) {
 			const index = this.screens.indexOf(previousValue)
 			if (index !== -1) {
 				this.screens[index] = newValue

@@ -263,7 +263,7 @@ export default {
 			},
 		},
 
-		'localMediaModel.attributes.localStream'(localStream) {
+		'localMediaModel.attributes.localStream': function(localStream) {
 			this._setLocalStream(localStream)
 		},
 

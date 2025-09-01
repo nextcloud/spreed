@@ -51,7 +51,6 @@ export default [
 			'no-console': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
-			'object-shorthand': 'off', // changes Vue watchers
 			'prefer-object-has-own': 'off', // changes Objet.prototype.hasOwnProperty
 			'prefer-object-spread': 'off', // changes Object.assign
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
