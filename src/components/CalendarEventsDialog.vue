@@ -314,7 +314,8 @@ async function submitNewMeeting() {
 		<NcPopover :container="container"
 			:popper-hide-triggers="hideTriggers"
 			:no-focus-trap="!canScheduleMeeting && upcomingEvents.length === 0"
-			popup-role="dialog">
+			popup-role="dialog"
+			close-on-click-outside>
 			<template #trigger>
 				<NcButton class="upcoming-meeting"
 					:title="t('spreed', 'Upcoming meetings')"
