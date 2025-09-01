@@ -178,7 +178,7 @@ export default {
 	data() {
 		return {
 			modal: false,
-			newConversation: Object.assign({}, NEW_CONVERSATION),
+			newConversation: { ...NEW_CONVERSATION },
 			page: 0,
 			isLoading: true,
 			success: false,
@@ -266,7 +266,7 @@ export default {
 		 */
 		closeModal() {
 			this.modal = false
-			this.newConversation = Object.assign({}, NEW_CONVERSATION)
+			this.newConversation = { ...NEW_CONVERSATION }
 			this.page = 0
 			this.isLoading = true
 			this.success = false

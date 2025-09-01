@@ -30,7 +30,7 @@ function CancelableRequest(request) {
 	const fetch = async function(data, options) {
 		return request(
 			data,
-			Object.assign({ cancelToken: source.token }, options),
+			{ cancelToken: source.token, ...options },
 		)
 	}
 	return {

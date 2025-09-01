@@ -320,7 +320,7 @@ const mutations = {
 
 	updateParticipant(state, { token, attendeeId, updatedData }) {
 		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			state.attendees[token][attendeeId] = Object.assign({}, state.attendees[token][attendeeId], updatedData)
+			state.attendees[token][attendeeId] = { ...state.attendees[token][attendeeId], ...updatedData }
 		} else {
 			console.error('Error while updating the participant')
 		}

@@ -51,7 +51,6 @@ export default [
 			'no-console': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
-			'prefer-object-spread': 'off', // changes Object.assign
 			'vue/first-attribute-linebreak': 'off', // changes all Vue files
 			'vue/multi-word-component-names': 'off', // non-fixable
 			'vue/no-boolean-default': 'off', // non-fixable

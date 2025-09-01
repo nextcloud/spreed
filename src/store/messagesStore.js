@@ -516,7 +516,7 @@ const actions = {
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
+						context.commit('addMessage', { token, message: { ...storedMessage, parent: message.parent } })
 					})
 			}
 
@@ -525,7 +525,7 @@ const actions = {
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.threadId === message.threadId)
 					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
+						context.commit('addMessage', { token, message: { ...storedMessage, isThread: true } })
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
@@ -624,7 +624,7 @@ const actions = {
 	 * @param {string} payload.placeholder Placeholder message until deleting finished
 	 */
 	async deleteMessage(context, { token, id, placeholder }) {
-		const message = Object.assign({}, context.getters.message(token, id))
+		const message = { ...context.getters.message(token, id) }
 		context.commit('markMessageAsDeleting', { token, id, placeholder })
 
 		try {
@@ -649,7 +649,7 @@ const actions = {
 	 */
 	async editMessage(context, { token, messageId, updatedMessage }) {
 		EventBus.emit('editing-message-processing', { messageId, value: true })
-		const message = Object.assign({}, context.getters.message(token, messageId))
+		const message = { ...context.getters.message(token, messageId) }
 		context.commit('addMessage', {
 			token,
 			message: { ...message, message: updatedMessage },

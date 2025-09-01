@@ -325,7 +325,7 @@ export default {
 						props: this.message.messageParameters[p],
 					}
 				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
-					const props = Object.assign({}, this.message.messageParameters[p])
+					const props = { ...this.message.messageParameters[p] }
 					// Add the token to the component props
 					props.token = this.message.token
 					richParameters[p] = {

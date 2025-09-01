@@ -204,7 +204,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'hello',
 			}
-			const message2 = Object.assign({}, message1, { message: 'replaced' })
+			const message2 = { ...message1, message: 'replaced' }
 
 			store.dispatch('processMessage', { token: TOKEN, message: message1 })
 			store.dispatch('processMessage', { token: TOKEN, message: message2 })

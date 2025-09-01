@@ -207,7 +207,7 @@ export default {
 		t,
 		// Inner method to update parent object
 		updateNewConversation(data) {
-			this.$emit('update:newConversation', Object.assign({}, this.newConversation, data))
+			this.$emit('update:newConversation', { ...this.newConversation, ...data })
 		},
 	},
 }
