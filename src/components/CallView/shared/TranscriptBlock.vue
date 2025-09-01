@@ -4,10 +4,12 @@
 -->
 
 <template>
-	<div class="transcript-block"
+	<div
+		class="transcript-block"
 		:style="transcriptBlockStyle">
 		<div class="transcript-block__avatar">
-			<AvatarWrapper :id="actorId"
+			<AvatarWrapper
+				:id="actorId"
 				:token="token"
 				:name="actorDisplayName"
 				:source="actorType"
@@ -19,7 +21,8 @@
 				{{ actorInfo }}
 			</p>
 			<p class="transcript-block__chunks">
-				<span v-for="(item, index) in chunksWithSeparator"
+				<span
+					v-for="(item, index) in chunksWithSeparator"
 					ref="chunks"
 					:key="index"
 					:lang="item.languageId">

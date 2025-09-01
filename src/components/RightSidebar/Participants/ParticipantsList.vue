@@ -5,7 +5,8 @@
 
 <template>
 	<ul>
-		<component :is="component"
+		<component
+			:is="component"
 			v-for="item in items"
 			:key="generateKey(item)"
 			v-model:checked="selectedParticipants"

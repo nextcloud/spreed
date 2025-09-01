@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div v-show="!placeholderForPromoted || sharedData.promoted"
+	<div
+		v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		ref="videoContainer"
 		class="video-container"
@@ -13,43 +14,51 @@
 		@mouseleave="mouseover = false"
 		@click="$emit('clickVideo')">
 		<TransitionWrapper name="fade">
-			<div v-show="showVideo"
+			<div
+				v-show="showVideo"
 				:class="videoWrapperClass"
 				class="videoWrapper"
 				:style="videoWrapperStyle">
-				<video ref="video"
+				<video
+					ref="video"
 					:disablePictureInPicture="!isBig"
 					:class="fitVideo ? 'video--fit' : 'video--fill'"
 					class="video"
 					@playing="updateVideoAspectRatio" />
-				<IconAccountOffOutline v-if="isPresenterOverlay && mouseover"
+				<IconAccountOffOutline
+					v-if="isPresenterOverlay && mouseover"
 					class="presenter-icon__hide"
 					:aria-label="t('spreed', 'Hide presenter video')"
 					:title="t('spreed', 'Hide presenter video')"
 					:size="32"
 					@click="$emit('clickPresenter')" />
-				<NcLoadingIcon v-if="isLoading"
+				<NcLoadingIcon
+					v-if="isLoading"
 					:size="avatarSize / 2"
 					class="video-loading" />
 
-				<img v-if="screenshotModeUrl && isPresenterOverlay"
+				<img
+					v-if="screenshotModeUrl && isPresenterOverlay"
 					class="dev-mode-video--presenter"
 					alt="dev-mode-video--presenter"
 					:src="screenshotModeUrl">
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
-			<Screen v-if="showSharedScreen"
+			<Screen
+				v-if="showSharedScreen"
 				:is-big="isBig"
 				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
-			<div v-if="showBackgroundAndAvatar"
+			<div
+				v-if="showBackgroundAndAvatar"
 				class="avatar-container">
 				<VideoBackground :display-name="displayName" :user="participantUserId" />
-				<AvatarWrapper :id="participantUserId"
+				<AvatarWrapper
+					:id="participantUserId"
 					:token="token"
 					:name="displayName"
 					:source="participantActorType"
@@ -60,18 +69,21 @@
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
-			<div v-if="showPlaceholderForPromoted"
+			<div
+				v-if="showPlaceholderForPromoted"
 				class="placeholder-for-promoted">
 				<IconAccountCircleOutline v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
 			</div>
 		</TransitionWrapper>
-		<div v-if="connectionMessage"
+		<div
+			v-if="connectionMessage"
 			:class="connectionMessageClass"
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
 		<slot v-if="!hideBottomBar" name="bottom-bar">
-			<VideoBottomBar :has-shadow="hasVideo"
+			<VideoBottomBar
+				:has-shadow="hasVideo"
 				:participant-name="participantName"
 				v-bind="$props"
 				@bottom-bar-hover="handleHoverEvent" />

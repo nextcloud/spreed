@@ -4,15 +4,18 @@
 -->
 
 <template>
-	<NcDialog :name="t('spreed', 'Create and share a new file')"
+	<NcDialog
+		:name="t('spreed', 'Create and share a new file')"
 		size="large"
 		class="templates-picker"
 		close-on-click-outside
 		@update:open="closeModal">
-		<form class="templates-picker__form"
+		<form
+			class="templates-picker__form"
 			:style="style"
 			@submit.prevent="handleCreateNewFile">
-			<NcTextField id="new-file-form-name"
+			<NcTextField
+				id="new-file-form-name"
 				ref="textField"
 				v-model="newFileTitle"
 				:error="!!newFileError"
@@ -21,7 +24,8 @@
 				:placeholder="newFileTitle" />
 
 			<ul v-if="templates.length > 1" class="templates-picker__list">
-				<NewMessageTemplatePreview v-for="template in templates"
+				<NewMessageTemplatePreview
+					v-for="template in templates"
 					:key="template.fileid"
 					:basename="template.basename"
 					:checked="checked === template.fileid"
@@ -36,7 +40,8 @@
 		</form>
 
 		<template #actions>
-			<NcButton variant="primary"
+			<NcButton
+				variant="primary"
 				:disabled="loading"
 				@click="handleCreateNewFile">
 				<template v-if="loading" #icon>

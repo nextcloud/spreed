@@ -127,10 +127,12 @@ function openPollDraftHandler() {
 			<template v-if="supportThreads && threadsInformation.length">
 				<NcAppNavigationCaption :name="t('spreed', 'Recent threads')" />
 				<ul class="threads-list">
-					<ThreadItem v-for="thread of threadsInformation"
+					<ThreadItem
+						v-for="thread of threadsInformation"
 						:key="`thread_${thread.thread.id}`"
 						:thread="thread" />
-					<NcButton v-if="hasMoreThreads"
+					<NcButton
+						v-if="hasMoreThreads"
 						variant="tertiary"
 						class="shared-items-tab__more-button shared-items-tab__more-button--threads"
 						@click="emit('update:state', 'threads')">
@@ -145,7 +147,8 @@ function openPollDraftHandler() {
 			<template v-for="type in sharedItemsOrder" :key="type">
 				<div v-if="sharedItems[type]" class="shared-items-tab__section">
 					<NcAppNavigationCaption :name="sharedItemTitle[type] || sharedItemTitle.default" />
-					<NcButton v-if="type === SHARED_ITEM.TYPES.POLL && canCreatePollDrafts"
+					<NcButton
+						v-if="type === SHARED_ITEM.TYPES.POLL && canCreatePollDrafts"
 						class="shared-items-tab__poll-button"
 						wide
 						@click="openPollDraftHandler">
@@ -154,12 +157,14 @@ function openPollDraftHandler() {
 						</template>
 						{{ t('spreed', 'Browse poll drafts') }}
 					</NcButton>
-					<SharedItems :type="type"
+					<SharedItems
+						:type="type"
 						:token="token"
 						tab-view
 						:limit="limit(type)"
 						:items="sharedItems[type]" />
-					<NcButton v-if="hasMore(type, sharedItems[type])"
+					<NcButton
+						v-if="hasMore(type, sharedItems[type])"
 						variant="tertiary"
 						class="shared-items-tab__more-button"
 						@click="showMore(type)">
@@ -172,7 +177,8 @@ function openPollDraftHandler() {
 			</template>
 
 			<!-- Shared from "Related Resources" app -->
-			<NcRelatedResourcesPanel class="related-resources"
+			<NcRelatedResourcesPanel
+				class="related-resources"
 				provider-id="talk"
 				:item-id="conversation.token"
 				@has-resources="(value: boolean) => hasRelatedResources = value" />
@@ -180,7 +186,8 @@ function openPollDraftHandler() {
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">
 				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
-				<NcCollectionList v-if="actorStore.userId && token"
+				<NcCollectionList
+					v-if="actorStore.userId && token"
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
@@ -188,7 +195,8 @@ function openPollDraftHandler() {
 			</template>
 
 			<!-- No shared content -->
-			<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
+			<NcEmptyContent
+				v-else-if="!hasSharedItems && !hasRelatedResources"
 				class="shared-items-tab__empty-content"
 				:name="t('spreed', 'No shared items')">
 				<template #icon>
@@ -198,7 +206,8 @@ function openPollDraftHandler() {
 		</template>
 
 		<!-- Dialog window -->
-		<SharedItemsBrowser v-if="showSharedItemsBrowser"
+		<SharedItemsBrowser
+			v-if="showSharedItemsBrowser"
 			v-model:active-tab="browserActiveTab"
 			:token="token"
 			:shared-items="sharedItems"

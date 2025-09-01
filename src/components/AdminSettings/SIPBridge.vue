@@ -7,17 +7,20 @@
 	<div id="sip-bridge" class="sip-bridge section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<NcNoteCard v-if="!hasSignalingServers"
+		<NcNoteCard
+			v-if="!hasSignalingServers"
 			type="warning"
 			:text="t('spreed', 'SIP configuration is only possible with a High-performance backend.')" />
 
 		<template v-else>
-			<NcCheckboxRadioSwitch v-model="dialOutEnabled"
+			<NcCheckboxRadioSwitch
+				v-model="dialOutEnabled"
 				type="switch"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>
-			<NcNoteCard v-if="!dialOutSupported"
+			<NcNoteCard
+				v-if="!dialOutSupported"
 				type="warning"
 				:text="t('spreed', 'Signaling server needs to be updated to supported SIP Dial-out feature.')" />
 
@@ -64,7 +67,8 @@
 				</p>
 			</template>
 
-			<NcSelect v-model="sipGroups"
+			<NcSelect
+				v-model="sipGroups"
 				input-id="sip-group-enabled"
 				:input-label="t('spreed', 'Restrict SIP configuration')"
 				class="form form__select"
@@ -88,7 +92,8 @@
 			<label for="sip-shared-secret" class="form__label additional-top-margin">
 				{{ t('spreed', 'Shared secret') }}
 			</label>
-			<NcPasswordField id="sip-shared-secret"
+			<NcPasswordField
+				id="sip-shared-secret"
 				v-model="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
@@ -100,7 +105,8 @@
 			<label for="dial-in-info" class="form__label additional-top-margin">
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
-			<NcTextArea id="dial-in-info"
+			<NcTextArea
+				id="dial-in-info"
 				v-model="dialInInfo"
 				name="message"
 				class="form form__textarea"
@@ -111,7 +117,8 @@
 				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
 			</p>
 
-			<NcButton variant="primary"
+			<NcButton
+				variant="primary"
 				class="additional-top-margin"
 				:disabled="loading || !isEdited"
 				@click="saveSIPSettings">

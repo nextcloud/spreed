@@ -5,13 +5,15 @@
 
 <template>
 	<div ref="editable-text-field" class="editable-text-field">
-		<NcRichText v-if="!editing"
+		<NcRichText
+			v-if="!editing"
 			class="editable-text-field__output"
 			dir="auto"
 			:text="text"
 			autolink
 			:use-extended-markdown="useMarkdown" />
-		<NcRichContenteditable v-else
+		<NcRichContenteditable
+			v-else
 			ref="richContenteditable"
 			v-model="text"
 			dir="auto"
@@ -24,14 +26,16 @@
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">
 			<template v-if="editing">
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleCancelEditing">
 					<template #icon>
 						<IconClose :size="20" />
 					</template>
 				</NcButton>
-				<NcButton variant="primary"
+				<NcButton
+					variant="primary"
 					:aria-label="t('spreed', 'Submit')"
 					:disabled="!canSubmit"
 					@click="handleSubmitText">
@@ -39,7 +43,8 @@
 						<IconCheck :size="20" />
 					</template>
 				</NcButton>
-				<div v-if="showCountDown"
+				<div
+					v-if="showCountDown"
 					class="counter"
 					tabindex="0"
 					:title="countDownWarningText"
@@ -47,7 +52,8 @@
 					<span class="counter__numeric">{{ charactersCountDown }}</span>
 				</div>
 			</template>
-			<NcButton v-if="!editing && editable"
+			<NcButton
+				v-if="!editing && editable"
 				variant="tertiary"
 				class="editable-text-field__edit"
 				:aria-label="editButtonAriaLabel"

@@ -4,19 +4,22 @@
 -->
 
 <template>
-	<component :is="isDialog ? 'NcModal' : 'div'"
+	<component
+		:is="isDialog ? 'NcModal' : 'div'"
 		v-if="show"
 		:size="isDialog ? 'large' : undefined"
 		:label-id="isDialog ? dialogHeaderId : undefined"
 		@close="close">
 		<div class="media-settings">
-			<h2 v-if="isDialog"
+			<h2
+				v-if="isDialog"
 				:id="dialogHeaderId"
 				class="media-settings__title nc-dialog-alike-header">
 				{{ t('spreed', 'Check devices') }}
 			</h2>
 			<!-- Recording warning -->
-			<NcNoteCard v-if="showRecordingWarning"
+			<NcNoteCard
+				v-if="showRecordingWarning"
 				:class="{ 'media-settings__recording-warning--mobile': isMobile }"
 				type="warning">
 				<p v-if="isCurrentlyRecording">
@@ -29,7 +32,8 @@
 					<p>
 						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
 					</p>
-					<NcCheckboxRadioSwitch class="checkbox--warning"
+					<NcCheckboxRadioSwitch
+						class="checkbox--warning"
 						:model-value="recordingConsentGiven"
 						@update:model-value="setRecordingConsentGiven">
 						{{ t('spreed', 'Give consent to the recording of this call') }}
@@ -39,13 +43,15 @@
 			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
 				<!-- Preview -->
 				<div class="media-settings__preview">
-					<video v-show="showVideo"
+					<video
+						v-show="showVideo"
 						ref="video"
 						class="preview__video"
 						:class="{ 'preview__video--mirrored': isMirrored }"
 						disablePictureInPicture
 						tabindex="-1" />
-					<NcButton v-if="showVideo"
+					<NcButton
+						v-if="showVideo"
 						variant="secondary"
 						class="media-settings__preview-mirror"
 						:title="mirrorToggleLabel"
@@ -55,11 +61,14 @@
 							<IconReflectHorizontal :size="20" />
 						</template>
 					</NcButton>
-					<div v-show="!showVideo"
+					<div
+						v-show="!showVideo"
 						class="preview__novideo">
-						<VideoBackground :display-name="displayName"
+						<VideoBackground
+							:display-name="displayName"
 							:user="userId" />
-						<AvatarWrapper :id="userId"
+						<AvatarWrapper
+							:id="userId"
 							:token="token"
 							:name="displayName"
 							:source="actorStore.actorType"
@@ -71,26 +80,30 @@
 					<!-- Audio and video toggles -->
 					<div class="media-settings__toggles">
 						<!-- Audio toggle -->
-						<NcButton v-if="!audioStreamError"
+						<NcButton
+							v-if="!audioStreamError"
 							variant="tertiary"
 							:title="audioButtonTitle"
 							:aria-label="audioButtonTitle"
 							:disabled="!audioPreviewAvailable"
 							@click="toggleAudio">
 							<template #icon>
-								<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+								<VolumeIndicator
+									:audio-preview-available="audioPreviewAvailable"
 									:audio-enabled="audioOn"
 									:current-volume="currentVolume"
 									:volume-threshold="currentThreshold"
 									overlay-muted-color="#888888" />
 							</template>
 						</NcButton>
-						<NcPopover v-else
+						<NcPopover
+							v-else
 							:title="t('spreed', 'Show more info')"
 							close-on-click-outside
 							no-focus-trap>
 							<template #trigger>
-								<NcButton variant="error"
+								<NcButton
+									variant="error"
 									:aria-label="t('spreed', 'Audio is not available')">
 									<template #icon>
 										<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
@@ -105,7 +118,8 @@
 						</NcPopover>
 
 						<!-- Video toggle -->
-						<NcButton v-if="!videoStreamError"
+						<NcButton
+							v-if="!videoStreamError"
 							variant="tertiary"
 							:title="videoButtonTitle"
 							:aria-label="videoButtonTitle"
@@ -116,12 +130,14 @@
 								<IconVideoOffOutline v-else :size="20" />
 							</template>
 						</NcButton>
-						<NcPopover v-else
+						<NcPopover
+							v-else
 							:title="t('spreed', 'Show more info')"
 							close-on-click-outside
 							no-focus-trap>
 							<template #trigger>
-								<NcButton variant="error"
+								<NcButton
+									variant="error"
 									:aria-label="t('spreed', 'Video is not available')">
 									<template #icon>
 										<IconVideoOffOutline :size="20" />
@@ -140,17 +156,20 @@
 					<!-- Tab panels -->
 					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
 						<template #tab-panel:devices>
-							<MediaDevicesSelector kind="audioinput"
+							<MediaDevicesSelector
+								kind="audioinput"
 								:devices="devices"
 								:device-id="audioInputId"
 								@refresh="updateDevices"
 								@update:device-id="handleAudioInputIdChange" />
-							<MediaDevicesSelector kind="videoinput"
+							<MediaDevicesSelector
+								kind="videoinput"
 								:devices="devices"
 								:device-id="videoInputId"
 								@refresh="updateDevices"
 								@update:device-id="handleVideoInputIdChange" />
-							<MediaDevicesSelector v-if="audioOutputSupported"
+							<MediaDevicesSelector
+								v-if="audioOutputSupported"
 								kind="audiooutput"
 								:devices="devices"
 								:device-id="audioOutputId"
@@ -163,7 +182,8 @@
 						</template>
 
 						<template #tab-panel:backgrounds>
-							<VideoBackgroundEditor class="media-settings__tab"
+							<VideoBackgroundEditor
+								class="media-settings__tab"
 								:token="token"
 								:skip-blur-virtual-background="skipBlurVirtualBackground"
 								@update-background="handleUpdateVirtualBackground" />
@@ -171,31 +191,36 @@
 					</MediaSettingsTabs>
 
 					<!-- Guest display name setting-->
-					<SetGuestUsername v-if="isGuest"
+					<SetGuestUsername
+						v-if="isGuest"
 						compact
 						@update="guestUserName = $event" />
 
 					<!-- Moderator options before starting a call-->
-					<NcCheckboxRadioSwitch v-if="showStartRecordingOption"
+					<NcCheckboxRadioSwitch
+						v-if="showStartRecordingOption"
 						v-model="isRecordingFromStart"
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
 					<!-- Notify call option-->
-					<NcCheckboxRadioSwitch v-if="showNotifyCallOption"
+					<NcCheckboxRadioSwitch
+						v-if="showNotifyCallOption"
 						v-model="notifyCall"
 						class="checkbox"
 						@update:model-value="setNotifyCall">
 						{{ t('spreed', 'Notify all participants about this call') }}
 					</NcCheckboxRadioSwitch>
 
-					<NcButton v-if="showUpdateChangesButton"
+					<NcButton
+						v-if="showUpdateChangesButton"
 						class="action-button"
 						@click="closeModalAndApplySettings">
 						{{ isDeviceCheck ? t('spreed', 'Save') : t('spreed', 'Apply settings') }}
 					</NcButton>
 					<!-- Join call -->
-					<CallButton v-else-if="isBeforeJoinCall"
+					<CallButton
+						v-else-if="isBeforeJoinCall"
 						class="action-button"
 						is-media-settings
 						:is-recording-from-start="isRecordingFromStart"

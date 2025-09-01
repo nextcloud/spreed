@@ -6,7 +6,8 @@
 <template>
 	<ul :class="'placeholder-list placeholder-list--' + type">
 		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
-			<div v-if="type !== 'event-cards'"
+			<div
+				v-if="type !== 'event-cards'"
 				class="placeholder-item__avatar"
 				:style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />

@@ -12,11 +12,13 @@
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p class="settings-hint" v-html="documentationHint" />
 
-		<TransitionWrapper class="turn-servers"
+		<TransitionWrapper
+			class="turn-servers"
 			name="fade"
 			tag="ul"
 			group>
-			<TurnServer v-for="(server, index) in servers"
+			<TurnServer
+				v-for="(server, index) in servers"
 				:key="`server${index}`"
 				v-model:schemes="servers[index].schemes"
 				v-model:server="servers[index].server"
@@ -31,7 +33,8 @@
 				@update:protocols="debounceUpdateServers" />
 		</TransitionWrapper>
 
-		<NcButton class="additional-top-margin"
+		<NcButton
+			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
 			<template #icon>

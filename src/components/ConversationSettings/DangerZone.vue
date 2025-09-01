@@ -48,7 +48,8 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
-				<NcButton variant="error"
+				<NcButton
+					variant="error"
 					@click="toggleShowDeleteConversationDialog">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
@@ -75,7 +76,8 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
-				<NcButton variant="error"
+				<NcButton
+					variant="error"
 					@click="toggleShowDeleteChatDialog">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>

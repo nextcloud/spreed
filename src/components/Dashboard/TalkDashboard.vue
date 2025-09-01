@@ -180,7 +180,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 </script>
 
 <template>
-	<div class="talk-dashboard-wrapper"
+	<div
+		class="talk-dashboard-wrapper"
 		:class="{
 			'talk-dashboard-wrapper--mobile': isMobile,
 			'talk-dashboard-wrapper--small-mobile': isSmallMobile,
@@ -190,7 +191,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				{{ t('spreed', 'Hello, {displayName}', { displayName: actorStore.displayName }, { escape: false }) }}
 			</h2>
 			<div class="talk-dashboard__actions">
-				<NcPopover v-if="canStartConversations"
+				<NcPopover
+					v-if="canStartConversations"
 					popup-role="dialog">
 					<template #trigger>
 						<NcButton variant="primary">
@@ -200,21 +202,25 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 							{{ t('spreed', 'Start meeting now') }}
 						</NcButton>
 					</template>
-					<div role="dialog"
+					<div
+						role="dialog"
 						aria-labelledby="instant_meeting_dialog"
 						class="instant-meeting__dialog"
 						aria-modal="true">
 						<strong>{{ t('spreed', 'Give your meeting a title') }}</strong>
-						<NcInputField id="room-name"
+						<NcInputField
+							id="room-name"
 							v-model="conversationName"
 							:placeholder="t('spreed', 'Meeting')" />
-						<NcButton variant="primary"
+						<NcButton
+							variant="primary"
 							@click="startMeeting">
 							{{ t('spreed', 'Create and copy link') }}
 						</NcButton>
 					</div>
 				</NcPopover>
-				<NcButton v-if="canStartConversations"
+				<NcButton
+					v-if="canStartConversations"
 					@click="EventBus.emit('new-conversation-dialog:show')">
 					<template #icon>
 						<IconPlus :size="20" />
@@ -229,14 +235,16 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					{{ t('spreed', 'Join open conversations') }}
 				</NcButton>
 
-				<NcButton v-if="canModerateSipDialOut"
+				<NcButton
+					v-if="canModerateSipDialOut"
 					@click="EventBus.emit('call-phone-dialog:show')">
 					<template #icon>
 						<IconPhoneOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Call a phone number') }}
 				</NcButton>
-				<NcButton variant="secondary"
+				<NcButton
+					variant="secondary"
 					@click="emit('talk:media-settings:show', 'device-check')">
 					<template #icon>
 						<IconMicrophoneOutline :size="20" />
@@ -251,18 +259,22 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<h3 class="title">
 						{{ t('spreed', 'Upcoming meetings') }}
 					</h3>
-					<div class="talk-dashboard__event-cards-wrapper"
+					<div
+						class="talk-dashboard__event-cards-wrapper"
 						:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
-						<div ref="eventCardsWrapper"
+						<div
+							ref="eventCardsWrapper"
 							class="talk-dashboard__event-cards"
 							@scroll.passive="updateScrollableFlags">
-							<EventCard v-for="eventRoom in eventRooms"
+							<EventCard
+								v-for="eventRoom in eventRooms"
 								:key="eventRoom.eventLink"
 								:event-room="eventRoom"
 								class="talk-dashboard__event-card" />
 						</div>
 						<div class="talk-dashboard__event-cards__scroll-indicator">
-							<NcButton v-show="backwardScrollable"
+							<NcButton
+								v-show="backwardScrollable"
 								class="button-slide backward"
 								variant="tertiary"
 								:title="t('spreed', 'Scroll backward')"
@@ -272,7 +284,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 									<IconArrowLeft class="bidirectional-icon" />
 								</template>
 							</NcButton>
-							<NcButton v-show="forwardScrollable"
+							<NcButton
+								v-show="forwardScrollable"
 								class="button-slide forward"
 								variant="tertiary"
 								:title="t('spreed', 'Scroll forward')"
@@ -285,9 +298,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						</div>
 					</div>
 				</template>
-				<LoadingPlaceholder v-else-if="!eventsInitialised"
+				<LoadingPlaceholder
+					v-else-if="!eventsInitialised"
 					type="event-cards" />
-				<DashboardSection v-else
+				<DashboardSection
+					v-else
 					class="event-section--empty"
 					wide
 					:title="t('spreed', 'Schedule meetings')"
@@ -311,7 +326,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</div>
 			<div class="talk-dashboard__chats">
 				<div class="talk-dashboard__unread-mentions">
-					<DashboardSection v-if="filteredConversations.length > 0 || !conversationsInitialised"
+					<DashboardSection
+						v-if="filteredConversations.length > 0 || !conversationsInitialised"
 						:title="t('spreed', 'Unread mentions')">
 						<template #list>
 							<ConversationsListVirtual
@@ -320,7 +336,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								:loading="!conversationsInitialised" />
 						</template>
 					</DashboardSection>
-					<DashboardSection v-else
+					<DashboardSection
+						v-else
 						:title="t('spreed', 'Unread mentions')"
 						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')">
 						<template #image>
@@ -328,13 +345,16 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						</template>
 					</DashboardSection>
 				</div>
-				<div v-if="supportsUpcomingReminders"
+				<div
+					v-if="supportsUpcomingReminders"
 					class="talk-dashboard__upcoming-reminders">
-					<DashboardSection v-if="upcomingReminders.length > 0 || !remindersInitialised"
+					<DashboardSection
+						v-if="upcomingReminders.length > 0 || !remindersInitialised"
 						:title="t('spreed', 'Upcoming reminders')">
 						<template #list>
 							<ul v-if="remindersInitialised" class="upcoming-reminders-list">
-								<SearchMessageItem v-for="reminder in upcomingReminders"
+								<SearchMessageItem
+									v-for="reminder in upcomingReminders"
 									:key="reminder.messageId"
 									:message-id="reminder.messageId"
 									:title="reminder.actorDisplayName"
@@ -351,12 +371,14 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 									:timestamp="reminder.reminderTimestamp"
 									is-reminder />
 							</ul>
-							<LoadingPlaceholder v-else
+							<LoadingPlaceholder
+								v-else
 								class="upcoming-reminders__loading-placeholder"
 								type="conversations" />
 						</template>
 					</DashboardSection>
-					<DashboardSection v-else
+					<DashboardSection
+						v-else
 						:title="t('spreed', 'Message reminders')"
 						:description="t('spreed', 'Set a reminder on a message to be notified')">
 						<template #image>

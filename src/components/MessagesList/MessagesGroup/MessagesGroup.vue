@@ -6,7 +6,8 @@
 <template>
 	<li class="wrapper">
 		<div class="messages__avatar">
-			<AvatarWrapper :id="actorId"
+			<AvatarWrapper
+				:id="actorId"
 				:token="token"
 				:name="actorDisplayName"
 				:source="actorType"
@@ -18,7 +19,8 @@
 			<li class="messages__author" aria-level="4">
 				{{ actorInfo }}
 			</li>
-			<Message v-for="(message, index) of messages"
+			<Message
+				v-for="(message, index) of messages"
 				:key="message.id"
 				:message="message"
 				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"

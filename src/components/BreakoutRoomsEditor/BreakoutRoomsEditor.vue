@@ -4,10 +4,12 @@
 -->
 
 <template>
-	<NcModal :class="{ 'modal-mask__participants-step': isEditingParticipants }"
+	<NcModal
+		:class="{ 'modal-mask__participants-step': isEditingParticipants }"
 		:label-id="dialogHeaderId"
 		@close="$emit('close')">
-		<div class="breakout-rooms-editor"
+		<div
+			class="breakout-rooms-editor"
 			:class="{ 'breakout-rooms-editor__participants-step': isEditingParticipants }">
 			<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 				{{ modalTitle }}
@@ -18,7 +20,8 @@
 					<p v-if="isInvalidAmount" class="breakout-rooms-editor__error-hint">
 						{{ t('spreed', 'You can create from 1 to 20 breakout rooms.') }}
 					</p>
-					<NcInputField id="room-number"
+					<NcInputField
+						id="room-number"
 						ref="inputField"
 						v-model="amount"
 						class="breakout-rooms-editor__number-input"
@@ -28,19 +31,22 @@
 
 					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<fieldset>
-						<NcCheckboxRadioSwitch v-model="mode"
+						<NcCheckboxRadioSwitch
+							v-model="mode"
 							value="1"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Automatically assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch v-model="mode"
+						<NcCheckboxRadioSwitch
+							v-model="mode"
 							value="2"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Manually assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch v-model="mode"
+						<NcCheckboxRadioSwitch
+							v-model="mode"
 							value="3"
 							name="mode_radio"
 							type="radio">
@@ -49,13 +55,15 @@
 					</fieldset>
 				</div>
 				<div class="breakout-rooms-editor__buttons">
-					<NcButton v-if="mode === '2'"
+					<NcButton
+						v-if="mode === '2'"
 						variant="primary"
 						:disabled="isInvalidAmount"
 						@click="isEditingParticipants = true">
 						{{ t('spreed', 'Assign participants to rooms') }}
 					</NcButton>
-					<NcButton v-else
+					<NcButton
+						v-else
 						variant="primary"
 						:disabled="isInvalidAmount"
 						@click="handleCreateRooms">
@@ -64,7 +72,8 @@
 				</div>
 			</template>
 			<template v-else>
-				<BreakoutRoomsParticipantsEditor :token="token"
+				<BreakoutRoomsParticipantsEditor
+					:token="token"
 					:room-number="amount"
 					@close="$emit('close')"
 					@back="isEditingParticipants = false"

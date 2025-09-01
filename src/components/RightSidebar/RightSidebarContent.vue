@@ -193,12 +193,14 @@ function handleHeaderClick() {
 </script>
 
 <template>
-	<div class="content"
+	<div
+		class="content"
 		:class="{ ['content--' + mode]: state === 'default' }">
 		<template v-if="state === 'default'">
 			<div v-if="isUser" class="content__actions">
 				<NcActions v-if="profileActions.length" force-menu>
-					<NcActionLink v-for="action in profileActions"
+					<NcActionLink
+						v-for="action in profileActions"
 						:key="action.id"
 						class="content__profile-action"
 						:icon="action.icon"
@@ -207,7 +209,8 @@ function handleHeaderClick() {
 						{{ action.title }}
 					</NcActionLink>
 				</NcActions>
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					:title="t('spreed', 'Search messages')"
 					:aria-label="t('spreed', 'Search messages')"
 					@click="emit('update:state', 'search')">
@@ -220,10 +223,12 @@ function handleHeaderClick() {
 			<div class="content__scroller animated">
 				<!-- User / conversation avatar image -->
 				<div class="content__image-wrapper animated">
-					<div v-if="iconClass"
+					<div
+						v-if="iconClass"
 						class="content__image animated icon"
 						:class="iconClass" />
-					<img v-else
+					<img
+						v-else
 						class="content__image animated"
 						:src="avatarUrl"
 						:alt="conversation.displayName"
@@ -232,20 +237,24 @@ function handleHeaderClick() {
 				</div>
 				<!-- User / conversation profile information -->
 				<div class="content__header animated">
-					<NcAppSidebarHeader class="content__name content__name--has-actions"
+					<NcAppSidebarHeader
+						class="content__name content__name--has-actions"
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
 						:title="sidebarTitle"
 						@click="handleHeaderClick" />
-					<div v-if="mode !== 'compact' && profileInfo"
+					<div
+						v-if="mode !== 'compact' && profileInfo"
 						class="content__info">
-						<span v-for="row in profileInformation"
+						<span
+							v-for="row in profileInformation"
 							:key="row.key"
 							class="content__info-row">
 							<component :is="row.icon" :size="16" />
 							{{ row.label }}
 						</span>
-						<LocalTime v-if="profileInfo.timezone"
+						<LocalTime
+							v-if="profileInfo.timezone"
 							class="content__info-row"
 							:timezone="profileInfo.timezone">
 							<template #icon>
@@ -255,11 +264,13 @@ function handleHeaderClick() {
 					</div>
 				</div>
 			</div>
-			<div v-if="mode !== 'compact' && mutualEventsInformation.length"
+			<div
+				v-if="mode !== 'compact' && mutualEventsInformation.length"
 				class="content__events">
 				<NcAppNavigationCaption :name="t('spreed', 'Upcoming meetings')" />
 				<ul class="content__events-list">
-					<CalendarEventSmall v-for="event in mutualEventsInformation"
+					<CalendarEventSmall
+						v-for="event in mutualEventsInformation"
 						:key="event.uri"
 						:name="event.name"
 						:start="event.start"
@@ -272,7 +283,8 @@ function handleHeaderClick() {
 		<!-- Search messages in this conversation -->
 		<template v-else-if="isUser">
 			<div class="content__header content__header--row">
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					:title="t('spreed', 'Back')"
 					:aria-label="t('spreed', 'Back')"
 					@click="emit('update:state', 'default')">
@@ -281,7 +293,8 @@ function handleHeaderClick() {
 					</template>
 				</NcButton>
 
-				<NcAppSidebarHeader class="content__name"
+				<NcAppSidebarHeader
+					class="content__name"
 					:name="sidebarTitle"
 					:title="sidebarTitle" />
 			</div>

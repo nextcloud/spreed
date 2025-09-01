@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<audio ref="audioPlayer"
+	<audio
+		ref="audioPlayer"
 		class="audio-player"
 		controls
 		:src="fileURL"

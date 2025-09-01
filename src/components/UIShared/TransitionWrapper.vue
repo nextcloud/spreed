@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<TransitionGroup v-if="group"
+	<TransitionGroup
+		v-if="group"
 		tag="span"
 		class="transition-group"
 		:name="name">
 		<slot />
 	</TransitionGroup>
-	<Transition v-else
+	<Transition
+		v-else
 		:name="name">
 		<slot />
 	</Transition>

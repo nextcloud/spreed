@@ -23,7 +23,8 @@
 			container=".conversation-ban__settings">
 			<div class="conversation-ban__content">
 				<ul v-if="banList.length" class="conversation-ban__list">
-					<BannedItem v-for="ban in banList"
+					<BannedItem
+						v-for="ban in banList"
 						:key="ban.id"
 						:ban="ban"
 						@unban-participant="handleUnban(ban.id)" />

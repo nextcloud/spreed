@@ -315,13 +315,15 @@ async function submitNewMeeting() {
 
 <template>
 	<div v-if="conversation">
-		<NcPopover :container="container"
+		<NcPopover
+			:container="container"
 			:popper-hide-triggers="hideTriggers"
 			:no-focus-trap="!canScheduleMeeting && upcomingEvents.length === 0"
 			popup-role="dialog"
 			close-on-click-outside>
 			<template #trigger>
-				<NcButton class="upcoming-meeting"
+				<NcButton
+					class="upcoming-meeting"
 					:title="t('spreed', 'Upcoming meetings')"
 					:aria-label="t('spreed', 'Upcoming meetings')">
 					<template #icon>
@@ -338,7 +340,8 @@ async function submitNewMeeting() {
 			<template #default>
 				<template v-if="!loading && upcomingEvents.length">
 					<ul class="calendar-events__list">
-						<CalendarEventSmall v-for="event in upcomingEvents"
+						<CalendarEventSmall
+							v-for="event in upcomingEvents"
 							:key="event.uri"
 							:name="event.summary"
 							:start="event.start"
@@ -369,29 +372,34 @@ async function submitNewMeeting() {
 		</NcPopover>
 
 		<template v-if="canScheduleMeeting">
-			<NcDialog id="calendar-meeting"
+			<NcDialog
+				id="calendar-meeting"
 				v-model:open="isFormOpen"
 				class="calendar-meeting"
 				:name="t('spreed', 'Schedule a meeting')"
 				size="normal"
 				close-on-click-outside
 				:container="container">
-				<NcTextField v-model="newMeetingTitle"
+				<NcTextField
+					v-model="newMeetingTitle"
 					:label="t('spreed', 'Meeting title')"
 					label-visible />
-				<NcTextArea v-model="newMeetingDescription"
+				<NcTextArea
+					v-model="newMeetingDescription"
 					:label="t('spreed', 'Description')"
 					resize="vertical"
 					label-visible />
 				<div class="calendar-meeting__flex-wrapper">
-					<NcDateTimePickerNative id="schedule_meeting_input"
+					<NcDateTimePickerNative
+						id="schedule_meeting_input"
 						v-model="selectedDateTimeStart"
 						:class="{ 'invalid-time': invalid === 'start' }"
 						:min="new Date()"
 						:step="300"
 						:label="t('spreed', 'From')"
 						type="datetime-local" />
-					<NcDateTimePickerNative id="schedule_meeting_input"
+					<NcDateTimePickerNative
+						id="schedule_meeting_input"
 						v-model="selectedDateTimeEnd"
 						:class="{ 'invalid-time': invalid === 'end' }"
 						:min="new Date()"
@@ -399,7 +407,8 @@ async function submitNewMeeting() {
 						:label="t('spreed', 'To')"
 						type="datetime-local" />
 				</div>
-				<NcSelect id="schedule_meeting_select"
+				<NcSelect
+					id="schedule_meeting_select"
 					v-model="selectedCalendar"
 					:options="calendarOptions"
 					:input-label="t('spreed', 'Calendar')">
@@ -415,7 +424,8 @@ async function submitNewMeeting() {
 				<h5 v-if="!isOneToOneConversation" class="calendar-meeting__header">
 					{{ t('spreed', 'Attendees') }}
 				</h5>
-				<div v-if="!participantsInitialised"
+				<div
+					v-if="!participantsInitialised"
 					class="calendar-meeting--loading">
 					<NcLoadingIcon />
 					{{ t('spreed', 'Loading …') }}
@@ -440,7 +450,8 @@ async function submitNewMeeting() {
 					<p v-if="invalidHint" class="calendar-meeting__invalid-hint">
 						{{ invalidHint }}
 					</p>
-					<NcButton variant="primary"
+					<NcButton
+						variant="primary"
 						:disabled="!selectedCalendar || submitting || !!invalid"
 						@click="submitNewMeeting">
 						<template #icon>
@@ -452,7 +463,8 @@ async function submitNewMeeting() {
 				</template>
 			</NcDialog>
 
-			<NcDialog v-if="isSelectorOpen"
+			<NcDialog
+				v-if="isSelectorOpen"
 				v-model:open="isSelectorOpen"
 				:name="t('spreed', 'Add attendees')"
 				class="calendar-meeting"
@@ -465,24 +477,28 @@ async function submitNewMeeting() {
 					:placeholder-text="t('spreed', 'Search participants')"
 					@abort-search="searchText = ''" />
 				<!-- Selected results -->
-				<TransitionWrapper v-if="selectedAttendeeIds.length"
+				<TransitionWrapper
+					v-if="selectedAttendeeIds.length"
 					class="calendar-meeting__attendees-selected"
 					name="zoom"
 					tag="div"
 					group>
-					<ContactSelectionBubble v-for="participant in selectedParticipants"
+					<ContactSelectionBubble
+						v-for="participant in selectedParticipants"
 						:key="participant.actorType + participant.actorId"
 						:participant="participant"
 						@update="removeSelectedParticipant" />
 				</TransitionWrapper>
 				<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
-					<SelectableParticipant v-for="participant in filteredParticipants"
+					<SelectableParticipant
+						v-for="participant in filteredParticipants"
 						:key="participant.attendeeId"
 						v-model:checked="selectedAttendeeIds"
 						:participant="participant"
 						@update:checked="checkSelection" />
 				</ul>
-				<NcEmptyContent v-else
+				<NcEmptyContent
+					v-else
 					class="calendar-meeting__empty-content"
 					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
 					<template #icon>

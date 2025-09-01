@@ -4,15 +4,18 @@
 -->
 
 <template>
-	<div :id="screenContainerId"
+	<div
+		:id="screenContainerId"
 		class="screenContainer"
 		@dblclick.capture="onDoubleClick">
-		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
+		<video
+			v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
 			ref="screen"
 			:disablePictureInPicture="!isBig ? 'true' : 'false'"
 			class="screen"
 			:class="screenClass" />
-		<VideoBottomBar v-if="isBig"
+		<VideoBottomBar
+			v-if="isBig"
 			:token="token"
 			:shared-data="sharedData"
 			is-big

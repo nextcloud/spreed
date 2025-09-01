@@ -10,7 +10,8 @@
 		</p>
 
 		<ul v-if="bots.length">
-			<li v-for="bot in bots"
+			<li
+				v-for="bot in bots"
 				:key="bot.id"
 				class="bots-settings__item">
 				<div class="bots-settings__item-info">
@@ -22,7 +23,8 @@
 					</span>
 				</div>
 				<div v-if="isLoading[bot.id]" class="bots-settings__item-loader icon icon-loading-small" />
-				<NcButton class="bots-settings__item-button"
+				<NcButton
+					class="bots-settings__item-button"
 					:variant="bot.state ? 'primary' : 'secondary'"
 					:disabled="isBotLocked(bot) || isLoading[bot.id]"
 					@click="toggleBotState(bot)">

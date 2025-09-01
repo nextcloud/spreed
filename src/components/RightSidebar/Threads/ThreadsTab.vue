@@ -46,7 +46,8 @@ function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation })
 
 <template>
 	<ul class="threads-tab__list">
-		<ThreadItem v-for="thread of threadsInformation"
+		<ThreadItem
+			v-for="thread of threadsInformation"
 			:key="`thread_${thread.thread.id}`"
 			:thread="thread" />
 	</ul>

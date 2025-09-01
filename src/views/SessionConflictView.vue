@@ -9,7 +9,8 @@ import EmptyView from '../components/EmptyView.vue'
 </script>
 
 <template>
-	<EmptyView :name="t('spreed', 'Duplicate session')"
+	<EmptyView
+		:name="t('spreed', 'Duplicate session')"
 		:description="t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.')">
 		<template #icon>
 			<!-- TODO: use information-slab-symbol after update to MDI 7 -->

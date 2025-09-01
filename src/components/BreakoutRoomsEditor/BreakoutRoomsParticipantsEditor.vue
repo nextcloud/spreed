@@ -6,20 +6,24 @@
 <template>
 	<div class="participants-editor">
 		<ul class="participants-editor__scroller">
-			<BreakoutRoomItem key="unassigned"
+			<BreakoutRoomItem
+				key="unassigned"
 				class="participants-editor__section"
 				:name="t('spreed', 'Unassigned participants')">
-				<SelectableParticipant v-for="participant in unassignedParticipants"
+				<SelectableParticipant
+					v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
 					v-model:checked="selectedParticipants"
 					:value="participant.attendeeId"
 					:participant="participant" />
 			</BreakoutRoomItem>
-			<BreakoutRoomItem v-for="(item, index) in assignments"
+			<BreakoutRoomItem
+				v-for="(item, index) in assignments"
 				:key="index"
 				class="participants-editor__section"
 				:name="roomName(index)">
-				<SelectableParticipant v-for="attendeeId in item"
+				<SelectableParticipant
+					v-for="attendeeId in item"
 					:key="attendeeId"
 					v-model:checked="selectedParticipants"
 					:value="assignments"
@@ -27,7 +31,8 @@
 			</BreakoutRoomItem>
 		</ul>
 		<div class="participants-editor__buttons">
-			<NcButton v-if="breakoutRoomsConfigured"
+			<NcButton
+				v-if="breakoutRoomsConfigured"
 				class="delete"
 				:title="deleteButtonLabel"
 				:aria-label="deleteButtonLabel"
@@ -38,7 +43,8 @@
 				</template>
 				{{ deleteButtonLabel }}
 			</NcButton>
-			<NcButton v-if="!isReorganizingAttendees"
+			<NcButton
+				v-if="!isReorganizingAttendees"
 				variant="tertiary"
 				@click="goBack">
 				<template #icon>
@@ -52,11 +58,13 @@
 				</template>
 				{{ resetButtonLabel }}
 			</NcButton>
-			<NcActions v-if="hasSelected"
+			<NcActions
+				v-if="hasSelected"
 				variant="primary"
 				container=".participants-editor__buttons"
 				:menu-name="t('spreed', 'Assign')">
-				<NcActionButton v-for="(item, index) in assignments"
+				<NcActionButton
+					v-for="(item, index) in assignments"
 					:key="index"
 					close-after-click
 					@click="assignAttendees(index)">
@@ -66,13 +74,15 @@
 					{{ roomName(index) }}
 				</NcActionButton>
 			</NcActions>
-			<NcButton :disabled="!hasAssigned"
+			<NcButton
+				:disabled="!hasAssigned"
 				:variant="hasUnassigned ? 'secondary' : 'primary'"
 				@click="handleSubmit">
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
-		<NcDialog v-if="showDialog"
+		<NcDialog
+			v-if="showDialog"
 			v-model:open="showDialog"
 			:name="t('spreed', 'Delete breakout rooms')"
 			:message="dialogMessage"

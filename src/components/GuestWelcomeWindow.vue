@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcModal no-close
+	<NcModal
+		no-close
 		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		size="small">
@@ -20,7 +21,8 @@
 			</p>
 
 			<label for="textField">{{ t('spreed', 'Enter your name') }}</label>
-			<NcTextField id="textField"
+			<NcTextField
+				id="textField"
 				v-model="guestUserName"
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
@@ -28,7 +30,8 @@
 				label-outside
 				@keydown.enter="handleChooseUserName" />
 
-			<NcButton class="submit-button"
+			<NcButton
+				class="submit-button"
 				variant="primary"
 				:disabled="invalidGuestUsername"
 				@click="handleChooseUserName">
@@ -42,7 +45,8 @@
 
 			<div class="login-info">
 				<span> {{ t('spreed', 'Do you already have an account?') }}</span>
-				<NcButton variant="secondary"
+				<NcButton
+					variant="secondary"
 					:href="getLoginUrl()">
 					{{ t('spreed', 'Log in') }}
 				</NcButton>

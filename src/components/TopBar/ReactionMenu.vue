@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcActions variant="tertiary"
+	<NcActions
+		variant="tertiary"
 		:title="t('spreed', 'Send a reaction')"
 		:aria-label="t('spreed', 'Send a reaction')"
 		class="reaction">
@@ -12,9 +13,11 @@
 			<IconEmoticonOutline :size="20" />
 		</template>
 
-		<NcActionButtonGroup class="reaction__group"
+		<NcActionButtonGroup
+			class="reaction__group"
 			:style="{ '--reactions-in-single-row': reactionsInSingleRow }">
-			<NcActionButton v-for="(reaction, index) in supportedReactions"
+			<NcActionButton
+				v-for="(reaction, index) in supportedReactions"
 				:key="index"
 				:aria-label="t('spreed', 'React with {reaction}', { reaction })"
 				class="reaction__button"

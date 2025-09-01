@@ -5,10 +5,12 @@
 
 <template>
 	<div v-if="isInFile" class="talk-sidebar-callview">
-		<TopBar v-if="showCallView"
+		<TopBar
+			v-if="showCallView"
 			:is-in-call="true"
 			:is-sidebar="true" />
-		<CallView v-if="showCallView"
+		<CallView
+			v-if="showCallView"
 			:token="token"
 			:is-sidebar="true" />
 	</div>

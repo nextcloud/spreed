@@ -3,7 +3,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<VueDraggableResizable v-if="!isCollapsed"
+	<VueDraggableResizable
+		v-if="!isCollapsed"
 		ref="presenterOverlay"
 		parent
 		class="presenter-overlay"
@@ -14,7 +15,8 @@
 		:y="10"
 		@dragging="isDragging = true"
 		@dragstop="isDragging = false">
-		<LocalVideo v-if="isLocalPresenter"
+		<LocalVideo
+			v-if="isLocalPresenter"
 			class="presenter-overlay__video"
 			:token="token"
 			:local-media-model="localMediaModel"
@@ -23,7 +25,8 @@
 			un-selectable
 			hide-bottom-bar
 			@click-presenter="$emit('click')" />
-		<VideoVue v-else
+		<VideoVue
+			v-else
 			:token="token"
 			:class="{ dragging: isDragging }"
 			class="presenter-overlay__video"
@@ -36,7 +39,8 @@
 	</VueDraggableResizable>
 
 	<!-- presenter button when presenter overlay is collapsed -->
-	<NcButton v-else
+	<NcButton
+		v-else
 		:aria-label="t('spreed', 'Show presenter')"
 		:title="t('spreed', 'Show presenter')"
 		class="presenter-overlay--collapsed"

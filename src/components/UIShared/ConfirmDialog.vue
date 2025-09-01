@@ -52,7 +52,8 @@ function onClosing(result: unknown) {
 </script>
 
 <template>
-	<NcDialog :name="name"
+	<NcDialog
+		:name="name"
 		:message="message"
 		:container="container"
 		:size="size"

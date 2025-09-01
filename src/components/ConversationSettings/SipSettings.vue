@@ -10,7 +10,8 @@
 		</h4>
 
 		<div>
-			<NcCheckboxRadioSwitch :model-value="hasSIPEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="hasSIPEnabled"
 				type="switch"
 				aria-describedby="sip_settings_hint"
 				:disabled="isSipLoading"
@@ -19,7 +20,8 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasSIPEnabled">
-			<NcCheckboxRadioSwitch :model-value="noPinRequired"
+			<NcCheckboxRadioSwitch
+				:model-value="noPinRequired"
 				type="switch"
 				:disabled="isSipLoading || !hasSIPEnabled"
 				@update:model-value="toggleSetting('nopin')">

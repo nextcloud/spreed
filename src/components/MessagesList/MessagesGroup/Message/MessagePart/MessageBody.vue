@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div ref="messageMain"
+	<div
+		ref="messageMain"
 		class="message-main">
 		<p
 			v-if="isThreadStarterMessage"
@@ -13,7 +14,8 @@
 			{{ threadTitle }}
 		</p>
 		<!-- System or deleted message body content -->
-		<div v-if="isSystemMessage || isDeletedMessage"
+		<div
+			v-if="isSystemMessage || isDeletedMessage"
 			class="message-main__text"
 			:class="{
 				'system-message': isSystemMessage && !showJoinCallButton,
@@ -22,7 +24,8 @@
 			}">
 			<!-- Message content / text -->
 			<IconCancel v-if="isDeletedMessage" :size="16" />
-			<NcRichText :text="renderedMessage"
+			<NcRichText
+				:text="renderedMessage"
 				:arguments="richParameters"
 				autolink
 				dir="auto"
@@ -30,18 +33,21 @@
 
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" class="call-button" />
-			<ConversationActionsShortcut v-else-if="showConversationActionsShortcut"
+			<ConversationActionsShortcut
+				v-else-if="showConversationActionsShortcut"
 				:token="message.token"
 				:object-type="conversation.objectType"
 				:is-highlighted="isLastMessage" />
-			<Poll v-else-if="showResultsButton"
+			<Poll
+				v-else-if="showResultsButton"
 				:token="message.token"
 				show-as-button
 				v-bind="message.messageParameters.poll" />
 		</div>
 
 		<!-- Normal message body content -->
-		<div v-else
+		<div
+			v-else
 			class="message-main__text markdown-message"
 			:class="{ 'message-highlighted': isNewPollMessage }"
 			@mouseover="handleMarkdownMouseOver"
@@ -50,7 +56,8 @@
 			<Quote v-if="showQuote" :message="message.parent" />
 
 			<!-- Message content / text -->
-			<NcRichText :text="renderedMessage"
+			<NcRichText
+				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{ 'single-emoji': isSingleEmoji }"
 				autolink
@@ -62,7 +69,8 @@
 				@interact-todo="handleInteraction" />
 
 			<!-- Additional controls -->
-			<NcButton v-if="containsCodeBlocks"
+			<NcButton
+				v-if="containsCodeBlocks"
 				v-show="currentCodeBlock !== null"
 				class="message-copy-code"
 				variant="tertiary"
@@ -82,7 +90,8 @@
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
-			<div v-if="message.sendingFailure"
+			<div
+				v-if="message.sendingFailure"
 				:title="sendingErrorIconTitle"
 				class="message-status sending-failed"
 				:class="{ 'retry-option': sendingErrorCanRetry }"
@@ -92,7 +101,8 @@
 				@focus="showReloadButton = true"
 				@mouseleave="showReloadButton = false"
 				@blur="showReloadButton = false">
-				<NcButton v-if="sendingErrorCanRetry && showReloadButton"
+				<NcButton
+					v-if="sendingErrorCanRetry && showReloadButton"
 					size="small"
 					:aria-label="sendingErrorIconTitle"
 					@click="handleRetry">
@@ -102,23 +112,27 @@
 				</NcButton>
 				<IconAlertCircleOutline v-else :size="16" />
 			</div>
-			<div v-else-if="showLoadingIcon"
+			<div
+				v-else-if="showLoadingIcon"
 				:title="loadingIconTitle"
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTitle" />
-			<div v-else-if="readInfo.showCommonReadIcon"
+			<div
+				v-else-if="readInfo.showCommonReadIcon"
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
 				:aria-label="readInfo.commonReadIconTitle">
 				<IconCheckAll :size="16" />
 			</div>
-			<div v-else-if="readInfo.showSentIcon"
+			<div
+				v-else-if="readInfo.showSentIcon"
 				:title="readInfo.sentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.sentIconTitle">
 				<IconCheck :size="16" />
 			</div>
-			<div v-else-if="readInfo.showSilentIcon"
+			<div
+				v-else-if="readInfo.showSilentIcon"
 				:title="readInfo.silentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.silentIconTitle">

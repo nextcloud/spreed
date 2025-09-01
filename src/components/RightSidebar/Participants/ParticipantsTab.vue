@@ -6,7 +6,8 @@
 <template>
 	<div ref="wrapper" class="wrapper">
 		<div class="search-form">
-			<SearchBox v-if="canSearch"
+			<SearchBox
+				v-if="canSearch"
 				ref="searchBox"
 				v-model:value="searchText"
 				v-model:is-focused="isFocused"
@@ -16,25 +17,29 @@
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abort-search="abortSearch" />
-			<div v-if="showSearchBoxDescription"
+			<div
+				v-if="showSearchBoxDescription"
 				:id="searchBoxDescriptionId"
 				:title="searchBoxDescription"
 				class="search-form__description">
 				<IconInformationOutline :size="20" />
 				<span class="hidden-visually">{{ searchBoxDescription }}</span>
 			</div>
-			<DialpadPanel v-if="canAddPhones"
+			<DialpadPanel
+				v-if="canAddPhones"
 				v-model:value="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
 		</div>
 
-		<SelectPhoneNumber v-if="canAddPhones"
+		<SelectPhoneNumber
+			v-if="canAddPhones"
 			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
 			@select="addParticipants" />
 
-		<ParticipantsListVirtual v-if="!isSearching"
+		<ParticipantsListVirtual
+			v-if="!isSearching"
 			:key="token"
 			class="h-100"
 			:participants="participants"
@@ -42,20 +47,23 @@
 
 		<div v-else class="scroller h-100">
 			<template v-if="isOneToOneConversation">
-				<NcNoteCard type="info"
+				<NcNoteCard
+					type="info"
 					:text="t('spreed', 'A new group conversation with selected participant will be created')" />
 			</template>
 			<template v-else>
 				<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
 
-				<ParticipantsList v-if="filteredParticipants.length"
+				<ParticipantsList
+					v-if="filteredParticipants.length"
 					class="known-results"
 					:items="filteredParticipants"
 					:loading="!participantsInitialised" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 
-			<ParticipantsSearchResults v-if="canAdd"
+			<ParticipantsSearchResults
+				v-if="canAdd"
 				class="search-results"
 				:token="token"
 				:search-results="searchResults"

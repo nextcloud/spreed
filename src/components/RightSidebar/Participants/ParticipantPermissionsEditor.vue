@@ -5,7 +5,8 @@
 
 <template>
 	<div class="wrapper">
-		<PermissionEditor :display-name="displayName"
+		<PermissionEditor
+			:display-name="displayName"
 			:permissions="permissions"
 			@close="$emit('close')"
 			@submit="handleSubmitPermissions" />

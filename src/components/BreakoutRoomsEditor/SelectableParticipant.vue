@@ -5,7 +5,8 @@
 
 <template>
 	<label class="selectable-participant" :data-nav-id="participantNavigationId">
-		<input v-model="modelProxy"
+		<input
+			v-model="modelProxy"
 			:value="value"
 			:aria-label="participantAriaLabel"
 			:disabled="isLocked"
@@ -13,7 +14,8 @@
 			class="selectable-participant__checkbox"
 			@keydown.enter.stop.prevent="handleEnter">
 		<!-- Participant's avatar -->
-		<AvatarWrapper :id="actorId"
+		<AvatarWrapper
+			:id="actorId"
 			:token="participant.roomToken ?? 'new'"
 			:name="computedName"
 			:source="actorType"
@@ -26,7 +28,8 @@
 			<span class="selectable-participant__content-name">
 				{{ computedName }}
 			</span>
-			<span v-if="participantStatus"
+			<span
+				v-if="participantStatus"
 				class="selectable-participant__content-subname">
 				{{ participantStatus }}
 			</span>

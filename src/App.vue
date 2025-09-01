@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcContent :class="{ 'icon-loading': loading, 'in-call': isInCall }"
+	<NcContent
+		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk">
 		<LeftSidebar v-if="getUserId" ref="leftSidebar" />
 		<NcAppContent>

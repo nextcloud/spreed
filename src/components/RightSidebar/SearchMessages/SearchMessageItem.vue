@@ -82,7 +82,8 @@ function handleResultClick() {
 </script>
 
 <template>
-	<NcListItem :data-nav-id="`message_${messageId}`"
+	<NcListItem
+		:data-nav-id="`message_${messageId}`"
 		:name="name"
 		:to="to"
 		:active="active"
@@ -90,13 +91,15 @@ function handleResultClick() {
 		force-menu
 		@click="handleResultClick">
 		<template #icon>
-			<AvatarWrapper v-if="!isReminder || isOneToOneConversation"
+			<AvatarWrapper
+				v-if="!isReminder || isOneToOneConversation"
 				:id="actorId"
 				:name="title"
 				:source="actorType"
 				disable-menu
 				:token="token" />
-			<ConversationIcon v-else
+			<ConversationIcon
+				v-else
 				:item="conversation"
 				hide-user-status />
 		</template>
@@ -104,7 +107,8 @@ function handleResultClick() {
 			{{ richSubline }}
 		</template>
 		<template v-if="isReminder" #actions>
-			<NcActionButton close-after-click
+			<NcActionButton
+				close-after-click
 				@click.stop="dashboardStore.removeReminder(token, messageId)">
 				<template #icon>
 					<CloseCircleOutline :size="20" />
@@ -113,7 +117,8 @@ function handleResultClick() {
 			</NcActionButton>
 		</template>
 		<template #details>
-			<NcDateTime :timestamp="timestamp * 1000"
+			<NcDateTime
+				:timestamp="timestamp * 1000"
 				class="search-results__date"
 				relative-time="narrow"
 				ignore-seconds />

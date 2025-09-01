@@ -104,20 +104,24 @@ async function showConfirmationDialog() {
 </script>
 
 <template>
-	<div v-if="isShown"
+	<div
+		v-if="isShown"
 		class="conversation-actions"
 		:class="{ 'conversation-actions--highlighted': props.isHighlighted }">
 		<p>{{ descriptionLabel }}</p>
-		<div v-if="isModerator"
+		<div
+			v-if="isModerator"
 			class="conversation-actions__buttons">
-			<NcButton variant="error"
+			<NcButton
+				variant="error"
 				@click="showConfirmationDialog">
 				<template #icon>
 					<IconTrashCanOutline />
 				</template>
 				{{ t('spreed', 'Delete now') }}
 			</NcButton>
-			<NcButton v-if="supportsArchive"
+			<NcButton
+				v-if="supportsArchive"
 				variant="secondary"
 				@click="resetObjectConversation">
 				<template #icon>

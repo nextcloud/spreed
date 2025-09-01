@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<section v-if="!hasSignalingServers || trialAccount.length !== 0"
+	<section
+		v-if="!hasSignalingServers || trialAccount.length !== 0"
 		id="hosted_signaling_server"
 		class="hosted-signaling section">
 		<h2>
@@ -17,7 +18,8 @@
 		</p>
 
 		<template v-if="!trialAccount.status">
-			<NcTextField v-model="hostedHPBNextcloudUrl"
+			<NcTextField
+				v-model="hostedHPBNextcloudUrl"
 				class="form__textfield"
 				name="hosted_hpb_nextcloud_url"
 				placeholder="https://cloud.example.org/"
@@ -25,7 +27,8 @@
 				:label="t('spreed', 'URL of this Nextcloud instance')"
 				label-visible />
 
-			<NcTextField v-model="hostedHPBFullName"
+			<NcTextField
+				v-model="hostedHPBFullName"
 				class="form__textfield"
 				name="full_name"
 				placeholder="Jane Doe"
@@ -33,7 +36,8 @@
 				:label="t('spreed', 'Full name of the user requesting the trial')"
 				label-visible />
 
-			<NcTextField v-model="hostedHPBEmail"
+			<NcTextField
+				v-model="hostedHPBEmail"
 				class="form__textfield"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
@@ -41,7 +45,8 @@
 				:label="t('spreed', 'Email of the user')"
 				label-visible />
 
-			<NcSelect v-model="hostedHPBLanguage"
+			<NcSelect
+				v-model="hostedHPBLanguage"
 				input-id="hosted_hpb_language_input"
 				:input-label=" t('spreed', 'Language')"
 				class="form__select"
@@ -55,7 +60,8 @@
 				track-by="code"
 				no-wrap />
 
-			<NcSelect v-model="hostedHPBCountry"
+			<NcSelect
+				v-model="hostedHPBCountry"
 				input-id="hosted_hpb_country_input"
 				:input-label=" t('spreed', 'Country')"
 				class="form__select"
@@ -69,7 +75,8 @@
 				track-by="code"
 				no-wrap />
 
-			<NcButton class="additional-top-margin"
+			<NcButton
+				class="additional-top-margin"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
@@ -118,12 +125,14 @@
 					</tr>
 				</tbody>
 			</table>
-			<p v-if="requestError !== ''"
+			<p
+				v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
 			</p>
 
-			<NcButton variant="error"
+			<NcButton
+				variant="error"
 				class="additional-top-margin"
 				:disabled="loading"
 				@click="deleteAccount">

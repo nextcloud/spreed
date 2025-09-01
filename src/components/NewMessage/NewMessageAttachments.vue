@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcActions ref="attachmentsMenu"
+	<NcActions
+		ref="attachmentsMenu"
 		:disabled="disabled"
 		:force-menu="true"
 		:aria-label="t('spreed', 'Share files to the conversation')"
@@ -13,7 +14,8 @@
 			<IconPlus :size="20" />
 		</template>
 
-		<NcActionButton v-if="canUploadFiles"
+		<NcActionButton
+			v-if="canUploadFiles"
 			close-after-click
 			@click="$emit('openFileUpload')">
 			<template #icon>
@@ -23,7 +25,8 @@
 		</NcActionButton>
 
 		<template v-if="canShareFiles">
-			<NcActionButton close-after-click
+			<NcActionButton
+				close-after-click
 				@click="$emit('handleFileShare')">
 				<template #icon>
 					<IconFolder :size="20" />
@@ -31,7 +34,8 @@
 				{{ shareFromNextcloudLabel }}
 			</NcActionButton>
 
-			<NcActionButton v-for="(provider, index) in fileTemplateOptions"
+			<NcActionButton
+				v-for="(provider, index) in fileTemplateOptions"
 				:key="index"
 				close-after-click
 				:icon="provider.iconClass"
@@ -43,7 +47,8 @@
 			</NcActionButton>
 		</template>
 
-		<NcActionButton v-if="canCreatePoll"
+		<NcActionButton
+			v-if="canCreatePoll"
 			close-after-click
 			@click="showPollEditor">
 			<template #icon>
@@ -62,7 +67,8 @@
 			{{ t('spreed', 'Create a thread') }}
 		</NcActionButton>
 
-		<NcActionButton close-after-click
+		<NcActionButton
+			close-after-click
 			@click="showSmartPicker">
 			<template #icon>
 				<NcIconSvgWrapper :svg="IconSmartPicker" :size="20" />

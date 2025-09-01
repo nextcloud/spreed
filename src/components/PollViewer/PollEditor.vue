@@ -4,11 +4,13 @@
 -->
 
 <template>
-	<NcDialog :name="dialogName"
+	<NcDialog
+		:name="dialogName"
 		:close-on-click-outside="!isFilled"
 		:container="container"
 		@update:open="emit('close')">
-		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
+		<NcButton
+			v-if="supportPollDrafts && isOpenedFromDraft"
 			class="poll-editor__back-button"
 			variant="tertiary"
 			:title="t('spreed', 'Back')"
@@ -25,7 +27,8 @@
 		<div class="poll-editor__wrapper">
 			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
 			<!--native file picker, hidden -->
-			<input id="poll-upload"
+			<input
+				id="poll-upload"
 				ref="pollImport"
 				type="file"
 				class="hidden-visually"
@@ -50,13 +53,16 @@
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Answers') }}
 		</p>
-		<div v-for="(option, index) in pollForm.options"
+		<div
+			v-for="(option, index) in pollForm.options"
 			:key="index"
 			class="poll-editor__option">
-			<NcTextField ref="pollOption"
+			<NcTextField
+				ref="pollOption"
 				v-model="pollForm.options[index]"
 				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
-			<NcButton v-if="pollForm.options.length > 2"
+			<NcButton
+				v-if="pollForm.options.length > 2"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Delete poll option')"
 				@click="deleteOption(index)">

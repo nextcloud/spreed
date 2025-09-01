@@ -5,7 +5,8 @@
 <template>
 	<div class="buttons-bar">
 		<div class="network-connection-state">
-			<NcPopover v-if="qualityWarningTooltip"
+			<NcPopover
+				v-if="qualityWarningTooltip"
 				:boundary="boundaryElement"
 				:aria-label="qualityWarningAriaLabel"
 				trigger="hover"
@@ -13,7 +14,8 @@
 				no-focus-trap
 				:shown="showQualityWarningTooltip">
 				<template #trigger>
-					<NcButton id="quality_warning_button"
+					<NcButton
+						id="quality_warning_button"
 						variant="tertiary-no-background"
 						class="trigger"
 						:aria-label="qualityWarningAriaLabel"
@@ -26,13 +28,15 @@
 				<div class="hint">
 					<span>{{ qualityWarningTooltip.content }}</span>
 					<div class="hint__actions">
-						<NcButton v-if="qualityWarningTooltip.action"
+						<NcButton
+							v-if="qualityWarningTooltip.action"
 							variant="primary"
 							class="hint__button"
 							@click="executeQualityWarningTooltipAction">
 							{{ qualityWarningTooltip.actionLabel }}
 						</NcButton>
-						<NcButton v-if="!isQualityWarningTooltipDismissed"
+						<NcButton
+							v-if="!isQualityWarningTooltipDismissed"
 							variant="tertiary"
 							class="hint__button"
 							@click="dismissQualityWarningTooltip">
@@ -43,13 +47,15 @@
 			</NcPopover>
 		</div>
 
-		<LocalAudioControlButton :token="token"
+		<LocalAudioControlButton
+			:token="token"
 			:conversation="conversation"
 			:model="model"
 			:show-devices="!isSidebar"
 			variant="tertiary" />
 
-		<LocalVideoControlButton :token="token"
+		<LocalVideoControlButton
+			:token="token"
 			:conversation="conversation"
 			:model="model"
 			:show-devices="!isSidebar"
@@ -65,7 +71,8 @@
 			</template>
 		</NcButton>
 
-		<NcActions v-if="!isSidebar && isScreensharing"
+		<NcActions
+			v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
 			v-model:open="screenSharingMenuOpen"
 			:title="screenSharingButtonTitle"
@@ -92,7 +99,8 @@
 				{{ t('spreed', 'Stop screensharing') }}
 			</NcActionButton>
 		</NcActions>
-		<NcButton v-else-if="!isSidebar"
+		<NcButton
+			v-else-if="!isSidebar"
 			:title="screenSharingButtonTitle"
 			variant="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"

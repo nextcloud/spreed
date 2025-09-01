@@ -7,7 +7,8 @@
 	<div ref="wrapper" class="set-contacts">
 		<!-- Search -->
 		<div class="set-contacts__form">
-			<NcTextField ref="setContacts"
+			<NcTextField
+				ref="setContacts"
 				v-model="searchText"
 				v-intersection-observer="visibilityChanged"
 				type="text"
@@ -24,31 +25,36 @@
 					<Close :size="20" />
 				</template>
 			</NcTextField>
-			<DialpadPanel v-if="canModerateSipDialOut"
+			<DialpadPanel
+				v-if="canModerateSipDialOut"
 				v-model:value="searchText"
 				container=".set-contacts__form"
 				@submit="addParticipantPhone" />
 		</div>
 
 		<!-- Selected results -->
-		<TransitionWrapper v-if="hasSelectedParticipants"
+		<TransitionWrapper
+			v-if="hasSelectedParticipants"
 			class="selected-participants"
 			name="zoom"
 			tag="div"
 			group>
-			<ContactSelectionBubble v-for="participant in selectedParticipants"
+			<ContactSelectionBubble
+				v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
 				:participant="participant"
 				@update="updateSelectedParticipants" />
 		</TransitionWrapper>
 
 		<!-- Search results -->
-		<SelectPhoneNumber v-if="canModerateSipDialOut"
+		<SelectPhoneNumber
+			v-if="canModerateSipDialOut"
 			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
 			@select="addParticipantPhone" />
-		<ParticipantsSearchResults :search-results="searchResults"
+		<ParticipantsSearchResults
+			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			scrollable

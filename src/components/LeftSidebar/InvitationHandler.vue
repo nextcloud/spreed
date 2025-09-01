@@ -14,7 +14,8 @@
 				{{ t('spreed', 'Join conversations from remote Nextcloud servers') }}
 			</p>
 			<ul v-if="invitationsLoadedCount" class="inbox__list">
-				<li v-for="(item, id) in invitations"
+				<li
+					v-for="(item, id) in invitations"
 					:key="`invitation_${id}`"
 					class="inbox__item">
 					<ConversationIcon :item="item" hide-user-status />
@@ -22,12 +23,14 @@
 						<span class="inbox__item-desc__name">
 							{{ item.roomName }}
 						</span>
-						<NcRichText class="inbox__item-desc__subname"
+						<NcRichText
+							class="inbox__item-desc__subname"
 							:text="t('spreed', 'From {user} at {remoteServer}', { remoteServer: item.remoteServer })"
 							:arguments="getRichParameters(item)"
 							:reference-limit="0" />
 					</div>
-					<NcButton variant="tertiary"
+					<NcButton
+						variant="tertiary"
 						class="inbox__item-button"
 						:aria-label="t('spreed', 'Decline invitation')"
 						:title="t('spreed', 'Decline invitation')"
@@ -38,7 +41,8 @@
 							<CancelIcon v-else :size="20" />
 						</template>
 					</NcButton>
-					<NcButton variant="primary"
+					<NcButton
+						variant="primary"
 						class="inbox__item-button"
 						:aria-label="t('spreed', 'Accept invitation')"
 						:title="t('spreed', 'Accept invitation')"

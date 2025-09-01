@@ -55,9 +55,11 @@ function clearConnectionFailedError() {
 </script>
 
 <template>
-	<NcModal :label-id="connectionFailedDialogId"
+	<NcModal
+		:label-id="connectionFailedDialogId"
 		@close="clearConnectionFailedError">
-		<NcEmptyContent :name="t('spreed', 'Connection failed')"
+		<NcEmptyContent
+			:name="t('spreed', 'Connection failed')"
 			:description="message">
 			<template #icon>
 				<IconAlertOctagonOutline />

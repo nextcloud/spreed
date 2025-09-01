@@ -4,9 +4,11 @@
 -->
 
 <template>
-	<div ref="transcript"
+	<div
+		ref="transcript"
 		class="transcript">
-		<TranscriptBlock v-for="item in transcriptBlocks"
+		<TranscriptBlock
+			v-for="item in transcriptBlocks"
 			ref="transcriptBlocks"
 			:key="item.id"
 			:token="token"

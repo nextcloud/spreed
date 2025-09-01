@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcModal v-if="id"
+	<NcModal
+		v-if="id"
 		size="small"
 		:label-id="dialogHeaderId"
 		@close="dismissModal">
@@ -21,7 +22,8 @@
 
 			<!-- options -->
 			<div v-if="modalPage === 'voting'" class="poll-modal__options">
-				<NcCheckboxRadioSwitch v-for="(option, index) in poll.options"
+				<NcCheckboxRadioSwitch
+					v-for="(option, index) in poll.options"
 					:key="'option-' + index"
 					v-model="checked"
 					:value="index.toString()"
@@ -33,7 +35,8 @@
 
 			<!-- results -->
 			<div v-else-if="modalPage === 'results'" class="results__options">
-				<div v-for="(option, index) in poll.options"
+				<div
+					v-for="(option, index) in poll.options"
 					:key="index"
 					class="results__option">
 					<div class="results__option-title">
@@ -42,9 +45,11 @@
 							{{ votePercentage[index] + '%' }}
 						</p>
 					</div>
-					<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+					<div
+						v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
 						class="results__option__details">
-						<PollVotersDetails v-if="poll.details"
+						<PollVotersDetails
+							v-if="poll.details"
 							:token="token"
 							:details="getFilteredDetails(index)" />
 						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
@@ -52,7 +57,8 @@
 							{{ t('spreed', 'You voted for this option') }}
 						</p>
 					</div>
-					<NcProgressBar v-if="hasVotesToDisplay"
+					<NcProgressBar
+						v-if="hasVotesToDisplay"
 						class="results__option-progress"
 						:value="votePercentage[index]"
 						size="medium" />
@@ -61,14 +67,16 @@
 
 			<div v-if="isPollOpen" class="poll-modal__actions">
 				<!-- Submit vote button-->
-				<NcButton v-if="modalPage === 'voting'"
+				<NcButton
+					v-if="modalPage === 'voting'"
 					variant="primary"
 					:disabled="disabled"
 					@click="submitVote">
 					{{ t('spreed', 'Submit vote') }}
 				</NcButton>
 				<!-- Vote again-->
-				<NcButton v-else
+				<NcButton
+					v-else
 					variant="secondary"
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}

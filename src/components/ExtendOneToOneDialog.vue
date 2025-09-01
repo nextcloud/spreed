@@ -72,11 +72,13 @@ async function extendOneToOneConversation() {
 </script>
 
 <template>
-	<NcPopover :container="container"
+	<NcPopover
+		:container="container"
 		popup-role="dialog"
 		close-on-click-outside>
 		<template #trigger>
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				:title="t('spreed', 'Start a group conversation')"
 				:aria-label="t('spreed', 'Start a group conversation')">
 				<template #icon>
@@ -94,7 +96,8 @@ async function extendOneToOneConversation() {
 					class="start-group__contacts"
 					:token="token"
 					only-users />
-				<NcButton class="start-group__action"
+				<NcButton
+					class="start-group__action"
 					variant="primary"
 					:disabled="!selectedParticipants.length"
 					@click="extendOneToOneConversation">

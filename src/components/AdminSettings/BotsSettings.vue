@@ -29,14 +29,17 @@
 				</div>
 			</li>
 
-			<li v-for="bot in botsExtended"
+			<li
+				v-for="bot in botsExtended"
 				:key="bot.id"
 				class="bots-settings__item">
 				<div class="state">
-					<span class="state__icon"
+					<span
+						class="state__icon"
 						:aria-label="bot.state_icon_label"
 						:title="bot.state_icon_label">
-						<component :is="bot.state_icon_component"
+						<component
+							:is="bot.state_icon_component"
 							:fill-color="bot.state_icon_color" />
 					</span>
 				</div>
@@ -47,7 +50,8 @@
 					{{ bot.description }}
 				</div>
 				<div :id="`last_error_bot_${bot.id}`" class="last-error">
-					<NcPopover v-if="bot.last_error_message"
+					<NcPopover
+						v-if="bot.last_error_message"
 						container="#bots_settings"
 						no-focus-trap>
 						<template #trigger>
@@ -68,7 +72,8 @@
 			</li>
 		</ul>
 
-		<NcButton variant="primary"
+		<NcButton
+			variant="primary"
 			href="https://nextcloud-talk.readthedocs.io/en/latest/bot-list/"
 			target="_blank"
 			rel="noreferrer nofollow">

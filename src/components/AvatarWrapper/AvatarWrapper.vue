@@ -12,7 +12,8 @@
 		<div v-else-if="isBot" class="avatar bot">
 			>_
 		</div>
-		<img v-else-if="isFederatedUser && token"
+		<img
+			v-else-if="isFederatedUser && token"
 			:key="avatarUrl"
 			:src="avatarUrl"
 			:width="size"
@@ -20,7 +21,8 @@
 			:alt="name"
 			class="avatar icon"
 			@error="failed = true">
-		<NcAvatar v-else
+		<NcAvatar
+			v-else
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
 			:user="id"
 			:display-name="name"
@@ -32,14 +34,16 @@
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
 		<!-- Override user status for federated users -->
-		<span v-if="showUserStatus && isFederatedUser"
+		<span
+			v-if="showUserStatus && isFederatedUser"
 			class="avatar-wrapper__user-status"
 			role="img"
 			aria-hidden="false"
 			:aria-label="t('spreed', 'Federated user')">
 			<WebIcon :size="14" />
 		</span>
-		<NcLoadingIcon v-if="loading"
+		<NcLoadingIcon
+			v-if="loading"
 			:size="size / 2"
 			class="loading-avatar" />
 	</div>

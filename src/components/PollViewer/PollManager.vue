@@ -79,14 +79,16 @@ function openPollEditor(payload: Events['poll-editor-open']) {
 <template>
 	<div>
 		<!-- Poll creation dialog -->
-		<PollEditor v-if="showPollEditor"
+		<PollEditor
+			v-if="showPollEditor"
 			ref="pollEditorRef"
 			:token="token"
 			:can-create-poll-drafts="canCreatePollDrafts"
 			:container="container"
 			@close="showPollEditor = false" />
 		<!-- Poll drafts dialog -->
-		<PollDraftHandler v-if="canCreatePollDrafts && showPollDraftHandler"
+		<PollDraftHandler
+			v-if="canCreatePollDrafts && showPollDraftHandler"
 			:token="token"
 			:container="container"
 			:editor-opened="showPollEditor"

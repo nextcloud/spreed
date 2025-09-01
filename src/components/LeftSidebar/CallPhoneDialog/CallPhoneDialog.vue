@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcDialog :open="modal"
+	<NcDialog
+		:open="modal"
 		:name="t('spreed', 'Call a phone number')"
 		class="call-phone"
 		size="normal"
@@ -12,7 +13,8 @@
 		@update:open="closeModal">
 		<template v-if="!loading">
 			<div class="call-phone__form">
-				<NcTextField ref="textField"
+				<NcTextField
+					ref="textField"
 					v-model="searchText"
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"

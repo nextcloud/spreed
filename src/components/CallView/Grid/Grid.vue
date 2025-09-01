@@ -5,17 +5,20 @@
 
 <template>
 	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, transparent: isLessThanTwoVideos }">
-		<NcButton v-if="isStripe && !isRecording"
+		<NcButton
+			v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			variant="tertiary-no-background"
 			:title="stripeButtonTitle"
 			:aria-label="stripeButtonTitle"
 			@click="handleClickStripeCollapse">
 			<template #icon>
-				<IconChevronDown v-if="stripeOpen"
+				<IconChevronDown
+					v-if="stripeOpen"
 					fill-color="#ffffff"
 					:size="20" />
-				<IconChevronUp v-else
+				<IconChevronUp
+					v-else
 					fill-color="#ffffff"
 					:size="20" />
 			</template>
@@ -23,18 +26,21 @@
 		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
-					<NcButton v-if="hasPreviousPage && gridWidth > 0"
+					<NcButton
+						v-if="hasPreviousPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
 						<template #icon>
-							<IconChevronLeft class="bidirectional-icon"
+							<IconChevronLeft
+								class="bidirectional-icon"
 								fill-color="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
-					<div ref="grid"
+					<div
+						ref="grid"
 						class="grid"
 						:class="{ stripe: isStripe }"
 						:style="gridStyle"
@@ -60,12 +66,14 @@
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
-							<div v-for="key in displayedVideos"
+							<div
+								v-for="key in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
 								:class="{ 'dev-mode-screenshot': screenshotMode }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
-								<VideoBottomBar :has-shadow="false"
+								<VideoBottomBar
+									:has-shadow="false"
 									:model="placeholderModel(key)"
 									:shared-data="placeholderSharedData(key)"
 									:token="token"
@@ -75,7 +83,8 @@
 								Dev mode on ;-)
 							</h1>
 						</template>
-						<LocalVideo v-if="!isStripe && !isRecording"
+						<LocalVideo
+							v-if="!isStripe && !isRecording"
 							ref="localVideo"
 							class="video"
 							is-grid
@@ -85,19 +94,22 @@
 							:local-call-participant-model="localCallParticipantModel"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<NcButton v-if="hasNextPage && gridWidth > 0"
+					<NcButton
+						v-if="hasNextPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
 						<template #icon>
-							<IconChevronRight class="bidirectional-icon"
+							<IconChevronRight
+								class="bidirectional-icon"
 								fill-color="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
 				</div>
-				<LocalVideo v-if="isStripe && !isRecording"
+				<LocalVideo
+					v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
 					:class="{ 'local-video--highlighted': isLessThanTwoVideos }"
@@ -109,12 +121,14 @@
 					@click-video="handleClickLocalVideo" />
 
 				<template v-if="devMode">
-					<NcButton variant="tertiary"
+					<NcButton
+						variant="tertiary"
 						class="dev-mode__toggle"
 						aria-label="Toggle screenshot mode"
 						@click="screenshotMode = !screenshotMode">
 						<template #icon>
-							<IconChevronLeft v-if="!screenshotMode"
+							<IconChevronLeft
+								v-if="!screenshotMode"
 								class="bidirectional-icon"
 								fill-color="#00FF41"
 								:size="20" />

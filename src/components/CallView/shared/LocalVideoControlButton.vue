@@ -5,7 +5,8 @@
 
 <template>
 	<div class="local-video-control-wrapper">
-		<NcButton :title="videoButtonTitle"
+		<NcButton
+			:title="videoButtonTitle"
 			:variant="variant"
 			:aria-label="videoButtonAriaLabel"
 			:class="{
@@ -20,7 +21,8 @@
 			</template>
 		</NcButton>
 
-		<NcActions v-if="showDevices"
+		<NcActions
+			v-if="showDevices"
 			:disabled="!isVideoAvailable || !isVideoAllowed"
 			class="video-selector-button"
 			@open="updateDevices">
@@ -28,7 +30,8 @@
 				<IconChevronUp :size="16" />
 			</template>
 			<NcActionCaption :name="t('spreed', 'Select a video device')" />
-			<NcActionButton v-for="device in videoDevices"
+			<NcActionButton
+				v-for="device in videoDevices"
 				:key="device.deviceId ?? 'none'"
 				type="radio"
 				:model-value="videoInputId"

@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<NcDialog class="drafts"
+	<NcDialog
+		class="drafts"
 		:name="t('spreed', 'Poll drafts')"
 		:container="container"
 		size="normal"
 		close-on-click-outside
 		@update:open="emit('close')">
-		<EmptyView v-if="!pollDrafts.length"
+		<EmptyView
+			v-if="!pollDrafts.length"
 			class="drafts__empty"
 			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
 			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
@@ -20,7 +22,8 @@
 			</template>
 		</EmptyView>
 		<div v-else class="drafts__wrapper">
-			<Poll v-for="item in pollDrafts"
+			<Poll
+				v-for="item in pollDrafts"
 				:id="item.id.toString()"
 				:key="item.id"
 				:token="token"

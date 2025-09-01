@@ -5,11 +5,13 @@
 
 <template>
 	<div class="wrapper">
-		<NewMessageTypingIndicator v-if="showTypingStatus"
+		<NewMessageTypingIndicator
+			v-if="showTypingStatus"
 			:token="token" />
 
 		<!--native file picker, hidden -->
-		<input id="file-upload"
+		<input
+			id="file-upload"
 			ref="fileUploadInput"
 			multiple
 			type="file"
@@ -18,10 +20,12 @@
 			class="hidden-visually"
 			@change="handleFileInput">
 
-		<form class="new-message-form"
+		<form
+			class="new-message-form"
 			@submit.prevent>
 			<!-- Attachments menu -->
-			<NewMessageAttachments v-if="showAttachmentsMenu"
+			<NewMessageAttachments
+				v-if="showAttachmentsMenu"
 				:token="token"
 				:disabled="disabled"
 				:can-upload-files="canUploadFiles"
@@ -35,18 +39,21 @@
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
-				<NewMessageAbsenceInfo v-if="!dialog && userAbsence"
+				<NewMessageAbsenceInfo
+					v-if="!dialog && userAbsence"
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
 				<NewMessageChatSummary v-if="!dialog && showChatSummary" />
 
 				<div class="new-message-form__emoji-picker">
-					<NcEmojiPicker v-if="!disabled"
+					<NcEmojiPicker
+						v-if="!disabled"
 						keep-open
 						:set-return-focus="getContenteditable"
 						@select="addEmoji">
-						<NcButton :disabled="disabled"
+						<NcButton
+							:disabled="disabled"
 							variant="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
@@ -56,7 +63,8 @@
 						</NcButton>
 					</NcEmojiPicker>
 					<!-- Disabled emoji picker placeholder button -->
-					<NcButton v-else
+					<NcButton
+						v-else
 						variant="tertiary"
 						:aria-label="t('spreed', 'Add emoji')"
 						:disabled="true">
@@ -66,12 +74,14 @@
 					</NcButton>
 				</div>
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
-					<Quote :message="messageToEdit ?? parentMessage"
+					<Quote
+						:message="messageToEdit ?? parentMessage"
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>
 				<!-- mention editing hint -->
-				<NcNoteCard v-if="showMentionEditHint"
+				<NcNoteCard
+					v-if="showMentionEditHint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 				<NcTextField
@@ -83,7 +93,8 @@
 					:disabled="disabled"
 					show-trailing-button
 					@trailing-button-click="setCreateThread(false)" />
-				<NcRichContenteditable ref="richContenteditable"
+				<NcRichContenteditable
+					ref="richContenteditable"
 					:key="container"
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorTitle }"
@@ -106,13 +117,15 @@
 			</div>
 
 			<!-- Silent chat -->
-			<NcActions v-if="showSilentToggle"
+			<NcActions
+				v-if="showSilentToggle"
 				force-menu
 				:primary="silentChat">
 				<template #icon>
 					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
-				<NcActionButton close-after-click
+				<NcActionButton
+					close-after-click
 					:model-value="silentChat"
 					:description="silentSendInfo"
 					@click="toggleSilentChat">
@@ -124,14 +137,16 @@
 			</NcActions>
 
 			<!-- Audio recorder -->
-			<NewMessageAudioRecorder v-if="showAudioRecorder"
+			<NewMessageAudioRecorder
+				v-if="showAudioRecorder"
 				:disabled="disabled"
 				@recording="handleRecording"
 				@audio-file="handleAudioFile" />
 
 			<!-- Edit -->
 			<template v-else-if="messageToEdit">
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					type="submit"
 					:title="t('spreed', 'Cancel editing')"
 					:aria-label="t('spreed', 'Cancel editing')"
@@ -140,7 +155,8 @@
 						<IconClose :size="20" />
 					</template>
 				</NcButton>
-				<NcButton :disabled="disabledEdit"
+				<NcButton
+					:disabled="disabledEdit"
 					variant="tertiary"
 					type="submit"
 					:title="t('spreed', 'Edit message')"
@@ -154,7 +170,8 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcButton :disabled="disabled"
+				<NcButton
+					:disabled="disabled"
 					variant="tertiary"
 					type="submit"
 					:title="sendMessageLabel"
@@ -169,7 +186,8 @@
 		</form>
 
 		<!-- New file creation dialog -->
-		<NewMessageNewFileDialog v-if="showNewFileDialog !== -1"
+		<NewMessageNewFileDialog
+			v-if="showNewFileDialog !== -1"
 			:token="token"
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />

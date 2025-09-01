@@ -6,7 +6,8 @@
 <template>
 	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms-actions">
 		<div class="breakout-rooms-actions__row">
-			<NcButton v-if="breakoutRoomsNotStarted && canModerate"
+			<NcButton
+				v-if="breakoutRoomsNotStarted && canModerate"
 				:title="startLabelTitle"
 				:aria-label="startLabel"
 				variant="primary"
@@ -18,7 +19,8 @@
 				</template>
 				{{ startLabel }}
 			</NcButton>
-			<NcButton v-else-if="canModerate"
+			<NcButton
+				v-else-if="canModerate"
 				:title="stopLabel"
 				:aria-label="stopLabel"
 				variant="error"
@@ -31,7 +33,8 @@
 			</NcButton>
 		</div>
 		<div class="breakout-rooms-actions__row">
-			<NcButton v-if="canModerate && !isInBreakoutRoom"
+			<NcButton
+				v-if="canModerate && !isInBreakoutRoom"
 				:title="sendMessageLabel"
 				:aria-label="sendMessageLabel"
 				variant="secondary"
@@ -42,7 +45,8 @@
 				</template>
 				{{ sendMessageLabel }}
 			</NcButton>
-			<NcButton v-if="isInBreakoutRoom"
+			<NcButton
+				v-if="isInBreakoutRoom"
 				:title="backToMainRoomLabel"
 				:aria-label="backToMainRoomLabel"
 				:wide="true"
@@ -53,7 +57,8 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
-			<NcButton v-else-if="!canModerate"
+			<NcButton
+				v-else-if="!canModerate"
 				:title="backToBreakoutRoomLabel"
 				:aria-label="backToBreakoutRoomLabel"
 				:wide="true"
@@ -65,7 +70,8 @@
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>
 			<NcActions v-if="canModerate" class="right">
-				<NcActionButton v-if="canModerate && isInBreakoutRoom"
+				<NcActionButton
+					v-if="canModerate && isInBreakoutRoom"
 					:aria-label="sendMessageLabel"
 					@click="isSendMessageDialogOpened = true">
 					<template #icon>
@@ -73,7 +79,8 @@
 					</template>
 					{{ sendMessageLabel }}
 				</NcActionButton>
-				<NcActionButton v-if="canModerate"
+				<NcActionButton
+					v-if="canModerate"
 					:aria-label="manageBreakoutRoomsTitle"
 					@click="openParticipantsEditor">
 					<template #icon>
@@ -85,14 +92,16 @@
 		</div>
 
 		<!-- Participants editor -->
-		<NcModal v-if="showParticipantsEditor"
+		<NcModal
+			v-if="showParticipantsEditor"
 			:label-id="dialogHeaderId"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
 				<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 					{{ manageBreakoutRoomsTitle }}
 				</h2>
-				<BreakoutRoomsParticipantsEditor :token="mainToken"
+				<BreakoutRoomsParticipantsEditor
+					:token="mainToken"
 					:breakout-rooms="breakoutRooms"
 					:is-creating-rooms="false"
 					@close="closeParticipantsEditor" />
@@ -100,7 +109,8 @@
 		</NcModal>
 
 		<!-- Send message dialog -->
-		<SendMessageDialog v-if="isSendMessageDialogOpened"
+		<SendMessageDialog
+			v-if="isSendMessageDialogOpened"
 			:token="mainToken"
 			:dialog-title="t('spreed', 'Send a message to all breakout rooms')"
 			:broadcast="true"

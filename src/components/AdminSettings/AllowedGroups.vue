@@ -17,7 +17,8 @@
 		</p>
 
 		<div class="grid">
-			<NcSelect v-model="allowedGroups"
+			<NcSelect
+				v-model="allowedGroups"
 				input-id="allow_groups_use_talk"
 				:input-label="t('spreed', 'Limit using Talk')"
 				name="allow_groups_use_talk"
@@ -35,13 +36,15 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-			<NcButton variant="primary"
+			<NcButton
+				variant="primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
 			</NcButton>
 
-			<NcSelect v-model="canStartConversations"
+			<NcSelect
+				v-model="canStartConversations"
 				input-id="allow_groups_start_conversation"
 				:input-label="t('spreed', 'Limit creating a public and group conversation')"
 				name="allow_groups_start_conversation"
@@ -59,13 +62,15 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-			<NcButton variant="primary"
+			<NcButton
+				variant="primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
 			</NcButton>
 
-			<NcSelect v-model="startCalls"
+			<NcSelect
+				v-model="startCalls"
 				input-id="start_calls"
 				:input-label="t('spreed', 'Limit starting a call')"
 				name="allow_groups_start_calls"

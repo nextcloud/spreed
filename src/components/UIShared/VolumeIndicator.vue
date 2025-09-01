@@ -4,25 +4,30 @@
 -->
 
 <template>
-	<span class="volume-indicator-wrapper"
+	<span
+		class="volume-indicator-wrapper"
 		:style="{ height: size + 'px', width: size + 'px' }"
 		:class="{ overload: hasOverload }">
-		<span class="volume-indicator volume-indicator-primary"
+		<span
+			class="volume-indicator volume-indicator-primary"
 			:style="{ height: iconPrimaryHeight + 'px' }">
 			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
-			<NcIconSvgWrapper v-else
+			<NcIconSvgWrapper
+				v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"
 				:style="{ color: primaryColor }" />
 		</span>
 
-		<span v-if="audioPreviewAvailable"
+		<span
+			v-if="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
 			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
-			<NcIconSvgWrapper v-else
+			<NcIconSvgWrapper
+				v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
 				:size="size"

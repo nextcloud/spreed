@@ -123,7 +123,8 @@ async function changeLanguage(language: LanguageOption) {
 			{{ t('spreed', 'Language') }}
 		</h4>
 
-		<NcSelect id="live_transcription_settings_language_id"
+		<NcSelect
+			id="live_transcription_settings_language_id"
 			v-model="selectedOption"
 			:input-label="inputLabel"
 			:placeholder="placeholder"

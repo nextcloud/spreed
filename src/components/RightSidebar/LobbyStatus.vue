@@ -53,7 +53,8 @@ async function disableLobby() {
 			{{ t('spreed', 'Import email participants') }}
 		</NcButton>
 
-		<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
+		<ImportEmailsDialog
+			v-if="isImportEmailsDialogOpen"
 			:token="token"
 			@close="isImportEmailsDialogOpen = false" />
 	</div>

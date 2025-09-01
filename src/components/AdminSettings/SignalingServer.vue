@@ -5,7 +5,8 @@
 
 <template>
 	<li class="signaling-server">
-		<NcTextField ref="signaling_server"
+		<NcTextField
+			ref="signaling_server"
 			v-model="signalingServer"
 			class="signaling-server__textfield"
 			name="signaling_server"
@@ -13,13 +14,15 @@
 			:disabled="loading"
 			:label="t('spreed', 'High-performance backend URL')" />
 
-		<NcCheckboxRadioSwitch :model-value="verify"
+		<NcCheckboxRadioSwitch
+			:model-value="verify"
 			class="signaling-server__checkbox"
 			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcButton v-show="!loading"
+		<NcButton
+			v-show="!loading"
 			variant="tertiary"
 			:title="t('spreed', 'Delete this server')"
 			:aria-label="t('spreed', 'Delete this server')"
@@ -36,7 +39,8 @@
 			<IconCheck v-else :size="20" fill-color="var(--color-border-success)" />
 			{{ connectionState }}
 
-			<NcButton v-if="server && checked"
+			<NcButton
+				v-if="server && checked"
 				variant="tertiary"
 				:title="t('spreed', 'Test this server')"
 				:aria-label="t('spreed', 'Test this server')"
@@ -48,7 +52,8 @@
 		</span>
 
 		<ul v-if="signalingTestInfo.length" class="test-connection-data">
-			<li v-for="(row, idx) in signalingTestInfo"
+			<li
+				v-for="(row, idx) in signalingTestInfo"
 				:key="idx"
 				class="test-connection-data__item">
 				<span class="test-connection-data__caption">

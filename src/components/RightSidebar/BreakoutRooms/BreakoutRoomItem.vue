@@ -4,12 +4,14 @@
 -->
 
 <template>
-	<li :key="roomName"
+	<li
+		:key="roomName"
 		class="breakout-room-item"
 		@mouseenter="elementHoveredOrFocused = true"
 		@mouseleave="elementHoveredOrFocused = false">
 		<div class="breakout-room-item__wrapper">
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				:aria-label="toggleParticipantsListLabel"
 				@focus="elementHoveredOrFocused = true"
 				@blur="elementHoveredOrFocused = false"
@@ -27,10 +29,12 @@
 				<NcButton v-if="showJoinButton" @click="joinRoom">
 					{{ t('spreed', 'Join') }}
 				</NcButton>
-				<NcActions v-if="canModerate"
+				<NcActions
+					v-if="canModerate"
 					:inline="showAssistanceButton ? 1 : 0"
 					:force-menu="!showAssistanceButton">
-					<NcActionButton v-if="showAssistanceButton"
+					<NcActionButton
+						v-if="showAssistanceButton"
 						@click="dismissRequestAssistance">
 						<template #icon>
 							<IconHandBackLeftOutline :size="18" />
@@ -45,7 +49,8 @@
 					</NcActionButton>
 				</NcActions>
 				<!-- Send message dialog -->
-				<SendMessageDialog v-if="isDialogOpened"
+				<SendMessageDialog
+					v-if="isDialogOpened"
 					:dialog-title="dialogTitle"
 					:token="roomToken"
 					@submit="sentMessageToRoom"

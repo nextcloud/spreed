@@ -8,7 +8,8 @@
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<h3 v-if="!compact" v-html="displayNameLabel" />
 
-		<NcButton v-if="!isEditingUsername && !compact"
+		<NcButton
+			v-if="!isEditingUsername && !compact"
 			@click="toggleEdit">
 			{{ t('spreed', 'Edit display name') }}
 			<template #icon>

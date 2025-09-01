@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcAppSidebar v-if="isSidebarAvailable"
+	<NcAppSidebar
+		v-if="isSidebarAvailable"
 		ref="sidebar"
 		v-model:active="activeTab"
 		:open="opened"
@@ -22,7 +23,8 @@
 			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<template #info>
-			<RightSidebarContent ref="sidebarContent"
+			<RightSidebarContent
+				ref="sidebarContent"
 				:is-user="!!getUserId"
 				:mode="CONTENT_MODES[contentModeIndex]"
 				:state="contentState"
@@ -33,15 +35,18 @@
 			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="contentState === 'search'"
+		<NcAppSidebarTab
+			v-if="contentState === 'search'"
 			id="search-messages"
 			key="search-messages"
 			:order="0"
 			:name="t('spreed', 'Search messages')">
-			<SearchMessagesTab :is-active="activeTab === 'search-messages'"
+			<SearchMessagesTab
+				:is-active="activeTab === 'search-messages'"
 				@close="handleUpdateState('default')" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-else-if="contentState === 'threads'"
+		<NcAppSidebarTab
+			v-else-if="contentState === 'threads'"
 			id="threads"
 			key="threads"
 			:order="0"
@@ -49,7 +54,8 @@
 			<ThreadsTab @close="handleUpdateState('default')" />
 		</NcAppSidebarTab>
 		<template v-else>
-			<NcAppSidebarTab v-if="isInCall"
+			<NcAppSidebarTab
+				v-if="isInCall"
 				id="chat"
 				key="chat"
 				:order="1"
@@ -59,7 +65,8 @@
 				</template>
 				<ChatView :is-visible="opened" is-sidebar />
 			</NcAppSidebarTab>
-			<NcAppSidebarTab v-if="showParticipantsTab"
+			<NcAppSidebarTab
+				v-if="showParticipantsTab"
 				id="participants"
 				key="participants"
 				ref="participantsTab"
@@ -72,7 +79,8 @@
 					:can-search="canSearchParticipants"
 					:can-add="canAddParticipants" />
 			</NcAppSidebarTab>
-			<NcAppSidebarTab v-if="showBreakoutRoomsTab"
+			<NcAppSidebarTab
+				v-if="showBreakoutRoomsTab"
 				id="breakout-rooms"
 				key="breakout-rooms"
 				ref="breakout-rooms"
@@ -81,11 +89,13 @@
 				<template #icon>
 					<IconDotsCircle :size="20" />
 				</template>
-				<BreakoutRoomsTab :main-token="mainConversationToken"
+				<BreakoutRoomsTab
+					:main-token="mainConversationToken"
 					:main-conversation="mainConversation"
 					:is-active="activeTab === 'breakout-rooms'" />
 			</NcAppSidebarTab>
-			<NcAppSidebarTab v-if="showDetailsTab"
+			<NcAppSidebarTab
+				v-if="showDetailsTab"
 				id="details-tab"
 				key="details-tab"
 				:order="4"
@@ -106,7 +116,8 @@
 					</div>
 				</div>
 			</NcAppSidebarTab>
-			<NcAppSidebarTab v-if="showSharedItemsTab"
+			<NcAppSidebarTab
+				v-if="showSharedItemsTab"
 				id="shared-items"
 				key="shared-items"
 				ref="sharedItemsTab"

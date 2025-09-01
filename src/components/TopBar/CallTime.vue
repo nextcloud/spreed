@@ -10,7 +10,8 @@
 		:no-focus-trap="!isShowRecordingControls"
 		:triggers="[]">
 		<template #trigger>
-			<NcButton :disabled="isButtonDisabled"
+			<NcButton
+				:disabled="isButtonDisabled"
 				:wide="true"
 				:title="recordingButtonTitle"
 				variant="tertiary"
@@ -37,7 +38,8 @@
 		<!--Moderator's buttons-->
 		<template v-if="isShowRecordingControls">
 			<hr v-if="isCallDurationHintShown" class="solid">
-			<NcButton v-if="isStartingRecording"
+			<NcButton
+				v-if="isStartingRecording"
 				variant="tertiary-no-background"
 				:wide="true"
 				@click="stopRecording">
@@ -46,7 +48,8 @@
 				</template>
 				{{ t('spreed', 'Cancel recording start') }}
 			</NcButton>
-			<NcButton v-else
+			<NcButton
+				v-else
 				variant="tertiary-no-background"
 				:wide="true"
 				@click="stopRecording">

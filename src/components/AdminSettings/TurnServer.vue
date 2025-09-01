@@ -5,7 +5,8 @@
 
 <template>
 	<li class="turn-server">
-		<NcSelect v-model="turnSchemes"
+		<NcSelect
+			v-model="turnSchemes"
 			class="turn-server__select"
 			name="turn_schemes"
 			:disabled="loading"
@@ -17,7 +18,8 @@
 			track-by="value"
 			no-wrap />
 
-		<NcTextField ref="turn_server"
+		<NcTextField
+			ref="turn_server"
 			v-model="turnServer"
 			name="turn_server"
 			placeholder="turnserver:port"
@@ -27,7 +29,8 @@
 			:disabled="loading"
 			:label="t('spreed', 'TURN server URL')" />
 
-		<NcPasswordField ref="turn_secret"
+		<NcPasswordField
+			ref="turn_secret"
 			v-model="turnSecret"
 			name="turn_secret"
 			as-text
@@ -36,7 +39,8 @@
 			:disabled="loading"
 			:label="t('spreed', 'TURN server secret')" />
 
-		<NcSelect v-model="turnProtocols"
+		<NcSelect
+			v-model="turnProtocols"
 			class="turn-server__select"
 			name="turn_protocols"
 			:disabled="loading"
@@ -48,7 +52,8 @@
 			track-by="value"
 			no-wrap />
 
-		<NcButton v-show="!loading"
+		<NcButton
+			v-show="!loading"
 			variant="tertiary"
 			:aria-label="testResult"
 			:disabled="!testAvailable"
@@ -60,7 +65,8 @@
 				<IconPulse v-else />
 			</template>
 		</NcButton>
-		<NcButton v-show="!loading"
+		<NcButton
+			v-show="!loading"
 			variant="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">

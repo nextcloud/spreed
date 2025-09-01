@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcListItem ref="listItem"
+	<NcListItem
+		ref="listItem"
 		:key="item.token"
 		:name="item.displayName"
 		:title="item.displayName"
@@ -25,7 +26,8 @@
 		@click="onClick"
 		@update:menu-open="handleActionsMenuOpen">
 		<template #icon>
-			<ConversationIcon :item="item"
+			<ConversationIcon
+				:item="item"
 				:hide-favorite="compact"
 				:hide-call="compact"
 				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
@@ -41,11 +43,13 @@
 		</template>
 		<template v-if="!compact && !item.isSensitive" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
-				<span v-if="conversationInformation.actor"
+				<span
+					v-if="conversationInformation.actor"
 					class="conversation__subname-actor">
 					{{ conversationInformation.actor }}
 				</span>
-				<component :is="conversationInformation.icon"
+				<component
+					:is="conversationInformation.icon"
 					v-if="conversationInformation.icon"
 					class="conversation__subname-icon"
 					:size="16" />
@@ -56,7 +60,8 @@
 		</template>
 		<template v-if="!isSearchResult" #actions>
 			<template v-if="submenu === null">
-				<NcActionButton v-if="canFavorite"
+				<NcActionButton
+					v-if="canFavorite"
 					key="toggle-favorite"
 					close-after-click
 					@click="toggleFavoriteConversation">
@@ -81,7 +86,8 @@
 					{{ labelRead }}
 				</NcActionButton>
 
-				<NcActionButton key="show-notifications"
+				<NcActionButton
+					key="show-notifications"
 					is-menu
 					@click="submenu = 'notifications'">
 					<template #icon>
@@ -97,7 +103,8 @@
 					{{ t('spreed', 'Conversation settings') }}
 				</NcActionButton>
 
-				<NcActionButton v-if="supportsArchive"
+				<NcActionButton
+					v-if="supportsArchive"
 					key="toggle-archive"
 					close-after-click
 					@click="toggleArchiveConversation">
@@ -108,7 +115,8 @@
 					{{ labelArchive }}
 				</NcActionButton>
 
-				<NcActionButton v-if="item.canLeaveConversation"
+				<NcActionButton
+					v-if="item.canLeaveConversation"
 					key="leave-conversation"
 					close-after-click
 					@click="isLeaveDialogOpen = true">
@@ -118,7 +126,8 @@
 					{{ t('spreed', 'Leave conversation') }}
 				</NcActionButton>
 
-				<NcActionButton v-if="item.canDeleteConversation"
+				<NcActionButton
+					v-if="item.canDeleteConversation"
 					key="delete-conversation"
 					close-after-click
 					class="critical"
@@ -142,7 +151,8 @@
 
 				<NcActionSeparator />
 
-				<NcActionButton v-for="level in notificationLevels"
+				<NcActionButton
+					v-for="level in notificationLevels"
 					:key="level.value"
 					:model-value="notificationLevel"
 					:value="level.value.toString()"
@@ -218,7 +228,8 @@
 
 		<!-- confirmation required to leave / delete conversation -->
 		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
-			<NcDialog v-if="isLeaveDialogOpen"
+			<NcDialog
+				v-if="isLeaveDialogOpen"
 				v-model:open="isLeaveDialogOpen"
 				:name="t('spreed', 'Leave conversation')">
 				<template #default>
@@ -239,7 +250,8 @@
 					</NcButton>
 				</template>
 			</NcDialog>
-			<NcDialog v-if="isDeleteDialogOpen"
+			<NcDialog
+				v-if="isDeleteDialogOpen"
 				v-model:open="isDeleteDialogOpen"
 				:name="t('spreed', 'Delete conversation')"
 				:message="dialogDeleteMessage">

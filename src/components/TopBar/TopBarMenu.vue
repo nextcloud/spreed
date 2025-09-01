@@ -5,7 +5,8 @@
 
 <template>
 	<div class="top-bar-menu">
-		<NcActions v-if="!isSidebar"
+		<NcActions
+			v-if="!isSidebar"
 			force-menu
 			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
@@ -18,7 +19,8 @@
 			<template v-if="isInCall && canFullModerate">
 				<!-- Moderator actions -->
 				<template v-if="!isOneToOneConversation">
-					<NcActionButton close-after-click
+					<NcActionButton
+						close-after-click
 						@click="forceMuteOthers">
 						<template #icon>
 							<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
@@ -29,7 +31,8 @@
 
 				<!-- Call recording -->
 				<template v-if="canModerateRecording">
-					<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
+					<NcActionButton
+						v-if="!isRecording && !isStartingRecording && isInCall"
 						close-after-click
 						@click="startRecording">
 						<template #icon>
@@ -39,7 +42,8 @@
 						</template>
 						{{ t('spreed', 'Start recording') }}
 					</NcActionButton>
-					<NcActionButton v-else-if="isStartingRecording && isInCall"
+					<NcActionButton
+						v-else-if="isStartingRecording && isInCall"
 						close-after-click
 						@click="stopRecording">
 						<template #icon>
@@ -47,7 +51,8 @@
 						</template>
 						{{ t('spreed', 'Cancel recording start') }}
 					</NcActionButton>
-					<NcActionButton v-else-if="isRecording && isInCall"
+					<NcActionButton
+						v-else-if="isRecording && isInCall"
 						close-after-click
 						@click="stopRecording">
 						<template #icon>
@@ -61,7 +66,8 @@
 			</template>
 
 			<!-- Go to file -->
-			<NcActionLink v-if="isFileConversation"
+			<NcActionLink
+				v-if="isFileConversation"
 				target="_blank"
 				rel="noopener noreferrer"
 				:href="linkToFile">
@@ -72,7 +78,8 @@
 			</NcActionLink>
 
 			<!-- Device settings -->
-			<NcActionButton v-if="isInCall"
+			<NcActionButton
+				v-if="isInCall"
 				close-after-click
 				@click="showMediaSettingsDialog">
 				<template #icon>
@@ -82,7 +89,8 @@
 			</NcActionButton>
 
 			<!-- Breakout rooms -->
-			<NcActionButton v-if="canConfigureBreakoutRooms"
+			<NcActionButton
+				v-if="canConfigureBreakoutRooms"
 				close-after-click
 				@click="$emit('openBreakoutRoomsEditor')">
 				<template #icon>
@@ -91,7 +99,8 @@
 				{{ t('spreed', 'Set up breakout rooms') }}
 			</NcActionButton>
 
-			<NcActionLink v-if="isInCall && canDownloadCallParticipants"
+			<NcActionLink
+				v-if="isInCall && canDownloadCallParticipants"
 				:href="downloadCallParticipantsLink"
 				target="_blank">
 				<template #icon>
@@ -100,7 +109,8 @@
 				{{ t('spreed', 'Download attendance list') }}
 			</NcActionLink>
 			<!-- Fullscreen -->
-			<NcActionButton v-if="!isInCall"
+			<NcActionButton
+				v-if="!isInCall"
 				:aria-label="t('spreed', 'Toggle full screen')"
 				close-after-click
 				@click="toggleFullscreen">
@@ -112,7 +122,8 @@
 			</NcActionButton>
 
 			<!-- Conversation settings -->
-			<NcActionButton close-after-click
+			<NcActionButton
+				close-after-click
 				@click="openConversationSettings">
 				<template #icon>
 					<IconCogOutline :size="20" />
@@ -121,7 +132,8 @@
 			</NcActionButton>
 		</NcActions>
 
-		<NcButton v-else
+		<NcButton
+			v-else
 			class="top-bar__icon-wrapper"
 			:aria-label="t('spreed', 'Check devices')"
 			:title="t('spreed', 'Check devices')"

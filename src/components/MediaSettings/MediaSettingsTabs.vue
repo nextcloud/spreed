@@ -89,7 +89,8 @@ function handleTabsAfterClosed() {
 <template>
 	<div class="tabs">
 		<div class="tab-list" role="tablist">
-			<NcButton v-for="tab in tabs"
+			<NcButton
+				v-for="tab in tabs"
 				:id="getRefId('tab', tab.id)"
 				:key="tab.id"
 				role="tab"
@@ -104,11 +105,13 @@ function handleTabsAfterClosed() {
 			</NcButton>
 		</div>
 
-		<TransitionExpand :show="isOpen"
+		<TransitionExpand
+			:show="isOpen"
 			direction="vertical"
 			@after-leave="handleTabsAfterClosed">
 			<div class="tab-panels-container">
-				<div v-for="tab in tabs"
+				<div
+					v-for="tab in tabs"
 					:id="getRefId('panel', tab.id)"
 					:key="tab.id"
 					class="tab-panel"

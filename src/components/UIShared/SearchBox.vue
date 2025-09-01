@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcTextField ref="searchConversations"
+	<NcTextField
+		ref="searchConversations"
 		v-model="modelValue"
 		:aria-label="placeholderText"
 		:aria-describedby="ariaDescribedby"

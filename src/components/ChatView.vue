@@ -4,14 +4,16 @@
 -->
 
 <template>
-	<div class="chatView"
+	<div
+		class="chatView"
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
 		<GuestWelcomeWindow v-if="showGuestWelcomeWindow" :token="token" />
 		<div class="messages-list-dragover-wrapper">
 			<TransitionWrapper name="slide-up" mode="out-in">
-				<NcEmptyContent v-show="isDraggingOver"
+				<NcEmptyContent
+					v-show="isDraggingOver"
 					:name="dropHintText"
 					class="dragover">
 					<template #icon>
@@ -31,7 +33,8 @@
 
 		<div class="scroll-to-bottom">
 			<TransitionWrapper name="fade">
-				<NcButton v-show="!isChatScrolledToBottom && !isLoadingChat"
+				<NcButton
+					v-show="!isChatScrolledToBottom && !isLoadingChat"
 					variant="secondary"
 					:aria-label="t('spreed', 'Scroll to bottom')"
 					:title="t('spreed', 'Scroll to bottom')"
@@ -45,7 +48,8 @@
 		</div>
 
 		<!-- Input field -->
-		<NewMessage role="region"
+		<NewMessage
+			role="region"
 			:token="token"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />

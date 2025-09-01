@@ -5,7 +5,8 @@
 
 <template>
 	<div>
-		<NcTextField ref="conversationName"
+		<NcTextField
+			ref="conversationName"
 			v-model="conversationName"
 			:placeholder="t('spreed', 'Enter a name for this conversation')"
 			:label="t('spreed', 'Name')"
@@ -15,7 +16,8 @@
 		<span v-if="nameErrorLabel" class="new-group-conversation__error">
 			{{ nameErrorLabel }}
 		</span>
-		<NcTextArea v-model="conversationDescription"
+		<NcTextArea
+			v-model="conversationDescription"
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
 			:label="t('spreed', 'Description')"
 			:error="!!descriptionErrorLabel"
@@ -29,7 +31,8 @@
 			<label class="avatar-editor__label">
 				{{ t('spreed', 'Picture') }}
 			</label>
-			<ConversationAvatarEditor ref="conversationAvatar"
+			<ConversationAvatarEditor
+				ref="conversationAvatar"
 				:conversation="newConversation"
 				controlled
 				editable
@@ -39,17 +42,20 @@
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
 		</label>
-		<NcCheckboxRadioSwitch v-model="isPublic"
+		<NcCheckboxRadioSwitch
+			v-model="isPublic"
 			type="switch">
 			{{ t('spreed', 'Allow guests to join via link') }}
 		</NcCheckboxRadioSwitch>
 		<div class="new-group-conversation__wrapper">
-			<NcCheckboxRadioSwitch v-model="hasPassword"
+			<NcCheckboxRadioSwitch
+				v-model="hasPassword"
 				type="switch"
 				:disabled="!isPublic || forcePasswordProtection">
 				<span class="checkbox__label">{{ t('spreed', 'Password protection') }}</span>
 			</NcCheckboxRadioSwitch>
-			<NcPasswordField v-if="hasPassword"
+			<NcPasswordField
+				v-if="hasPassword"
 				v-model="passwordValue"
 				autocomplete="new-password"
 				check-password-strength

@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div class="wrapper"
+	<div
+		class="wrapper"
 		:class="{ 'wrapper--big': isBig }"
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
@@ -16,7 +17,8 @@
 
 		<div v-if="!isSidebar" class="bottom-bar">
 			<TransitionWrapper name="fade">
-				<div v-show="showParticipantName"
+				<div
+					v-show="showParticipantName"
 					class="participant-name"
 					:class="{
 						'participant-name--active': isCurrentlyActive,
@@ -26,12 +28,14 @@
 				</div>
 			</TransitionWrapper>
 
-			<TransitionWrapper v-if="!isScreen"
+			<TransitionWrapper
+				v-if="!isScreen"
 				v-show="showVideoOverlay"
 				class="media-indicators"
 				name="fade"
 				group>
-				<NcButton v-if="showAudioIndicator"
+				<NcButton
+					v-if="showAudioIndicator"
 					:title="audioButtonTitle"
 					:aria-label="audioButtonTitle"
 					class="audioIndicator"
@@ -44,7 +48,8 @@
 					</template>
 				</NcButton>
 
-				<NcButton v-if="showVideoIndicator"
+				<NcButton
+					v-if="showVideoIndicator"
 					:title="videoButtonTitle"
 					:aria-label="videoButtonTitle"
 					class="videoIndicator"
@@ -56,7 +61,8 @@
 					</template>
 				</NcButton>
 
-				<NcButton v-if="showScreenSharingIndicator"
+				<NcButton
+					v-if="showScreenSharingIndicator"
 					:title="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
@@ -68,13 +74,15 @@
 					</template>
 				</NcButton>
 
-				<div v-if="connectionStateFailedNoRestart"
+				<div
+					v-if="connectionStateFailedNoRestart"
 					class="status-indicator iceFailedIndicator">
 					<IconAlertCircleOutline :size="20" />
 				</div>
 			</TransitionWrapper>
 
-			<NcButton v-if="showStopFollowingButton"
+			<NcButton
+				v-if="showStopFollowingButton"
 				class="following-button"
 				variant="tertiary"
 				@click="handleStopFollowing">

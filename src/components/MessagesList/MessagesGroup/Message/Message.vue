@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<li :id="`message_${message.id}`"
+	<li
+		:id="`message_${message.id}`"
 		ref="message"
 		:data-message-id="message.id"
 		:data-seen="seen"
@@ -16,19 +17,22 @@
 		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div :class="{
+		<div
+			:class="{
 				'normal-message-body': !isSystemMessage && !isDeletedMessage,
 				system: isSystemMessage,
 				'combined-system': isCombinedSystemMessage,
 			}"
 			class="message-body">
-			<MessageBody :rich-parameters="richParameters"
+			<MessageBody
+				:rich-parameters="richParameters"
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
 				:read-info="readInfo">
 				<!-- reactions buttons and popover with details -->
-				<Reactions v-if="Object.keys(message.reactions).length"
+				<Reactions
+					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
 					:can-react="canReact"
@@ -39,7 +43,8 @@
 
 		<!-- Message actions -->
 		<div class="message-body__scroll">
-			<MessageButtonsBar v-if="showMessageButtonsBar"
+			<MessageButtonsBar
+				v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
 				v-model:is-emoji-picker-open="isEmojiPickerOpen"
@@ -55,9 +60,11 @@
 				@reply="handleReply"
 				@edit="handleEdit"
 				@delete="handleDelete" />
-			<div v-else-if="showCombinedSystemMessageToggle"
+			<div
+				v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					:aria-label="t('spreed', 'Show or collapse system messages')"
 					:title="t('spreed', 'Show or collapse system messages')"
 					@click="toggleCombinedSystemMessage">
@@ -69,22 +76,26 @@
 			</div>
 		</div>
 
-		<MessageForwarder v-if="isForwarderOpen"
+		<MessageForwarder
+			v-if="isForwarderOpen"
 			:id="message.id"
 			:token="message.token"
 			@close="isForwarderOpen = false" />
 
-		<MessageTranslateDialog v-if="isTranslationAvailable && isTranslateDialogOpen"
+		<MessageTranslateDialog
+			v-if="isTranslationAvailable && isTranslateDialogOpen"
 			:message="message.message"
 			:rich-parameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
 
-		<div v-if="isLastReadMessage"
+		<div
+			v-if="isLastReadMessage"
 			v-intersection-observer="lastReadMessageVisibilityChanged"
 			class="message-unread-marker">
 			<div class="message-unread-marker__wrapper">
 				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
-				<NcButton v-if="shouldShowSummaryOption"
+				<NcButton
+					v-if="shouldShowSummaryOption"
 					:disabled="loading"
 					@click="generateSummary">
 					<template #icon>

@@ -17,31 +17,37 @@
 				</p>
 			</div>
 			<div class="basic-settings">
-				<div v-show="!enabled"
+				<div
+					v-show="!enabled"
 					class="add-part-wrapper">
 					<IconPlus class="icon" :size="20" />
-					<NcSelect label="displayName"
+					<NcSelect
+						label="displayName"
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="options"
 						@update:model-value="clickAddPart">
 						<template #option="option">
-							<img class="icon-multiselect-service"
+							<img
+								class="icon-multiselect-service"
 								:src="option.iconUrl"
 								alt="">
 							{{ option.displayName }}
 						</template>
 					</NcSelect>
 				</div>
-				<div v-show="parts.length > 0"
+				<div
+					v-show="parts.length > 0"
 					class="enable-switch-line">
-					<NcCheckboxRadioSwitch :model-value="enabled"
+					<NcCheckboxRadioSwitch
+						:model-value="enabled"
 						type="switch"
 						@update:model-value="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
-					<NcButton v-if="enabled"
+					<NcButton
+						v-if="enabled"
 						variant="tertiary"
 						:title="t('spreed', 'Show Matterbridge log')"
 						:aria-label="t('spreed', 'Show Matterbridge log')"
@@ -56,7 +62,8 @@
 						size="normal"
 						container=".matterbridge-settings"
 						close-on-click-outside>
-						<NcTextArea :model-value="processLog"
+						<NcTextArea
+							:model-value="processLog"
 							class="log-content"
 							:label="t('spreed', 'Log content')"
 							:rows="29"
@@ -66,7 +73,8 @@
 				</div>
 			</div>
 			<ul>
-				<BridgePart v-for="(part, i) in parts"
+				<BridgePart
+					v-for="(part, i) in parts"
 					:key="part.type + i"
 					:num="i + 1"
 					:part="part"
