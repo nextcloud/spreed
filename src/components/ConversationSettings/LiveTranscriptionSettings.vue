@@ -40,7 +40,7 @@ const placeholder = computed(() => {
 	}
 
 	if (!languageOptions.value.length) {
-		return t('spreed', 'Loading languages')
+		return t('spreed', 'Loading languages …')
 	}
 
 	if (conversation.value.liveTranscriptionLanguageId && !selectedOption.value) {
