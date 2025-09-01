@@ -108,6 +108,7 @@ const off = EventBus.off.bind(EventBus)
  * OVERRIDING OF ORIGINAL MITT FUNCTION
  * Remove an event handler for the given type.
  * If `handler` is omitted, all handlers of the given type are removed.
+ *
  * @param type Type of event to unregister `handler` from (`'*'` to remove a wildcard handler)
  * @param [handler] Handler function to remove
  */

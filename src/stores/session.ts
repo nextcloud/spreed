@@ -188,7 +188,7 @@ export const useSessionStore = defineStore('session', {
 		 *
 		 * @param token - Conversation token
 		 * @param users - Users payload from signaling message
-		 * @return {boolean} whether list has unknown sessions mapped to attendees list
+		 * @return whether list has unknown sessions mapped to attendees list
 		 */
 		updateSessions(token: string, users: SignalingSessionPayload[]): boolean {
 			let hasUnknownSessions = false

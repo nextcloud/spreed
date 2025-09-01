@@ -7,7 +7,8 @@
 	<div class="message-forwarder">
 		<!-- First step of the flow: selection of the room to which forward the
 		message to -->
-		<RoomSelector v-if="!showForwardedConfirmation"
+		<RoomSelector
+			v-if="!showForwardedConfirmation"
 			show-postable-only
 			allow-federation
 			:dialog-title="dialogTitle"
@@ -18,7 +19,8 @@
 		<!-- Second step of the flow: confirmation modal that gives the user
 		the possibility to directly route to the conversation to which the
 		message has been forwarded -->
-		<NcDialog v-else
+		<NcDialog
+			v-else
 			:name="dialogTitle"
 			close-on-click-outside
 			@update:open="handleClose">

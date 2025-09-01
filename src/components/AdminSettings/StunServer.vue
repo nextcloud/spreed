@@ -9,7 +9,8 @@
 		<div class="stun-server__wrapper">
 			<label :for="`stun_server_${index}`">stun:</label>
 
-			<NcTextField ref="stun_server"
+			<NcTextField
+				ref="stun_server"
 				v-model="stunServer"
 				:input-id="`stun_server_${index}`"
 				name="stun_server"
@@ -20,12 +21,14 @@
 				label-outside />
 		</div>
 
-		<IconAlertCircleOutline v-show="!isValidServer"
+		<IconAlertCircleOutline
+			v-show="!isValidServer"
 			class="stun-server__alert"
 			:title="t('spreed', 'The server address is invalid')"
 			fill-color="var(--color-border-error)" />
 
-		<NcButton v-show="!loading"
+		<NcButton
+			v-show="!loading"
 			variant="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">

@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcListItem :name="computedName"
+	<NcListItem
+		:name="computedName"
 		:data-nav-id="participantNavigationId"
 		class="participant"
 		:class="{ 'participant--offline': isOffline }"
@@ -14,7 +15,8 @@
 		force-menu>
 		<!-- Participant's avatar -->
 		<template #icon>
-			<AvatarWrapper :id="participant.actorId"
+			<AvatarWrapper
+				:id="participant.actorId"
 				:token="token"
 				:name="displayName"
 				:source="participant.actorType"
@@ -38,7 +40,8 @@
 
 		<template v-if="statusMessage" #subname>
 			<!-- Second line: participant status message if applicable -->
-			<span class="participant__status"
+			<span
+				class="participant__status"
 				:class="{ 'participant__status--highlighted': isParticipantSpeaking }"
 				:title="statusMessage">
 				{{ statusMessage }}
@@ -48,7 +51,8 @@
 		<template #extra-actions>
 			<!-- Phone participant dial action -->
 			<template v-if="isInCall && canBeModerated && isPhoneActor">
-				<NcButton v-if="!participant.inCall"
+				<NcButton
+					v-if="!participant.inCall"
 					variant="success"
 					:aria-label="t('spreed', 'Dial out phone')"
 					:title="t('spreed', 'Dial out phone')"
@@ -59,7 +63,8 @@
 					</template>
 				</NcButton>
 				<template v-else>
-					<NcButton variant="error"
+					<NcButton
+						variant="error"
 						:aria-label="t('spreed', 'Hang up phone')"
 						:title="t('spreed', 'Hang up phone')"
 						:disabled="disabled"
@@ -68,7 +73,8 @@
 							<IconPhoneHangupOutline :size="20" />
 						</template>
 					</NcButton>
-					<DialpadPanel :disabled="disabled"
+					<DialpadPanel
+						:disabled="disabled"
 						container="#tab-participants"
 						dialing
 						@dial-type="dialType" />
@@ -76,7 +82,8 @@
 			</template>
 
 			<!-- Call state icon -->
-			<component :is="callIcon.icon"
+			<component
+				:is="callIcon.icon"
 				v-else-if="callIcon"
 				class="participant__call-state"
 				:title="callIcon.title"
@@ -84,7 +91,8 @@
 
 			<!-- Grant or revoke lobby permissions (inline button) -->
 			<template v-if="showToggleLobbyAction">
-				<NcButton v-if="canSkipLobby"
+				<NcButton
+					v-if="canSkipLobby"
 					variant="tertiary"
 					:title="t('spreed', 'Move back to lobby')"
 					:aria-label="t('spreed', 'Move back to lobby')"
@@ -93,7 +101,8 @@
 						<IconAccountMinusOutline :size="20" />
 					</template>
 				</NcButton>
-				<NcButton v-else
+				<NcButton
+					v-else
 					variant="tertiary"
 					:title="t('spreed', 'Move to conversation')"
 					:aria-label="t('spreed', 'Move to conversation')"
@@ -118,7 +127,8 @@
 				{{ attendeePin }}
 			</NcActionText>
 			<!-- Grant or revoke moderator permissions -->
-			<NcActionButton v-if="canBeDemoted"
+			<NcActionButton
+				v-if="canBeDemoted"
 				key="demote-moderator"
 				close-after-click
 				@click="demoteFromModerator">
@@ -127,7 +137,8 @@
 				</template>
 				{{ t('spreed', 'Demote from moderator') }}
 			</NcActionButton>
-			<NcActionButton v-else-if="canBePromoted"
+			<NcActionButton
+				v-else-if="canBePromoted"
 				key="promote-moderator"
 				close-after-click
 				@click="promoteToModerator">
@@ -136,7 +147,8 @@
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
-			<NcActionButton v-if="canBeModerated && isEmailActor"
+			<NcActionButton
+				v-if="canBeModerated && isEmailActor"
 				key="resend-invitation"
 				close-after-click
 				@click="resendInvitation">
@@ -145,7 +157,8 @@
 				</template>
 				{{ t('spreed', 'Resend invitation') }}
 			</NcActionButton>
-			<NcActionButton v-if="canSendCallNotification"
+			<NcActionButton
+				v-if="canSendCallNotification"
 				key="send-call-notification"
 				close-after-click
 				@click="sendCallNotification">
@@ -155,7 +168,8 @@
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
 			<template v-if="canBeModerated && isPhoneActor">
-				<NcActionButton v-if="!conversation.hasCall && !isInCall && !participant.callId"
+				<NcActionButton
+					v-if="!conversation.hasCall && !isInCall && !participant.callId"
 					key="dial-out-phone-number"
 					close-after-click
 					@click="dialOutPhoneNumber">
@@ -165,7 +179,8 @@
 					{{ t('spreed', 'Dial out phone number') }}
 				</NcActionButton>
 				<template v-else-if="isInCall && participant.callId">
-					<NcActionButton v-if="phoneMuteState === 'hold'"
+					<NcActionButton
+						v-if="phoneMuteState === 'hold'"
 						key="resume-call-phone-number"
 						close-after-click
 						@click="unmutePhoneNumber">
@@ -175,7 +190,8 @@
 						{{ t('spreed', 'Resume call for phone number') }}
 					</NcActionButton>
 					<template v-else>
-						<NcActionButton key="hold-call-phone-number"
+						<NcActionButton
+							key="hold-call-phone-number"
 							close-after-click
 							@click="holdPhoneNumber">
 							<template #icon>
@@ -183,7 +199,8 @@
 							</template>
 							{{ t('spreed', 'Put phone number on hold') }}
 						</NcActionButton>
-						<NcActionButton v-if="phoneMuteState === 'muted'"
+						<NcActionButton
+							v-if="phoneMuteState === 'muted'"
 							key="unmute-call-phone-number"
 							close-after-click
 							@click="unmutePhoneNumber">
@@ -192,7 +209,8 @@
 							</template>
 							{{ t('spreed', 'Unmute phone number') }}
 						</NcActionButton>
-						<NcActionButton v-else
+						<NcActionButton
+							v-else
 							key="mute-call-phone-number"
 							close-after-click
 							@click="mutePhoneNumber">
@@ -203,7 +221,8 @@
 						</NcActionButton>
 					</template>
 				</template>
-				<NcActionButton key="copy-phone-number"
+				<NcActionButton
+					key="copy-phone-number"
 					close-after-click
 					@click="copyPhoneNumber">
 					<template #icon>
@@ -217,7 +236,8 @@
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
-				<NcActionButton v-if="hasNonDefaultPermissions"
+				<NcActionButton
+					v-if="hasNonDefaultPermissions"
 					key="reset-permissions"
 					close-after-click
 					@click="applyDefaultPermissions">
@@ -226,7 +246,8 @@
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</NcActionButton>
-				<NcActionButton key="grant-all-permissions"
+				<NcActionButton
+					key="grant-all-permissions"
 					close-after-click
 					@click="grantAllPermissions">
 					<template #icon>
@@ -234,7 +255,8 @@
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</NcActionButton>
-				<NcActionButton key="remove-all-permissions"
+				<NcActionButton
+					key="remove-all-permissions"
 					close-after-click
 					@click="removeAllPermissions">
 					<template #icon>
@@ -242,7 +264,8 @@
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</NcActionButton>
-				<NcActionButton key="edit-permissions"
+				<NcActionButton
+					key="edit-permissions"
 					close-after-click
 					@click="permissionsEditor = true">
 					<template #icon>
@@ -255,7 +278,8 @@
 			<NcActionSeparator v-if="showPermissionsOptions && canBeModerated" />
 
 			<!-- Remove -->
-			<NcActionButton v-if="canBeModerated"
+			<NcActionButton
+				v-if="canBeModerated"
 				key="remove-participant"
 				class="critical"
 				close-after-click
@@ -268,7 +292,8 @@
 		</template>
 
 		<template #extra>
-			<ParticipantPermissionsEditor v-if="showPermissionsOptions && permissionsEditor"
+			<ParticipantPermissionsEditor
+				v-if="showPermissionsOptions && permissionsEditor"
 				:actor-id="participant.actorId"
 				close-after-click
 				:participant="participant"
@@ -276,7 +301,8 @@
 				@close="permissionsEditor = false" />
 
 			<!-- Confirmation required to remove participant -->
-			<NcDialog v-if="canBeModerated && isRemoveDialogOpen"
+			<NcDialog
+				v-if="canBeModerated && isRemoveDialogOpen"
 				v-model:open="isRemoveDialogOpen"
 				:name="removeParticipantLabel">
 				<p> {{ removeDialogMessage }} </p>
@@ -285,7 +311,8 @@
 						{{ t('spreed', 'Also ban from this conversation') }}
 					</NcCheckboxRadioSwitch>
 					<template v-if="isBanParticipant">
-						<NcTextArea v-if="isBanParticipant"
+						<NcTextArea
+							v-if="isBanParticipant"
 							v-model="internalNote"
 							class="participant-dialog__input"
 							resize="vertical"
@@ -578,7 +605,7 @@ export default {
 				return null
 			} else if (this.isHandRaised) {
 				return { icon: IconHandBackLeft, size: 18, title: t('spreed', 'Raised their hand') }
-			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
+			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
 				return { icon: IconVideoOutline, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {
 				return { icon: IconPhoneDialOutline, size: 20, title: t('spreed', 'Joined via phone') }

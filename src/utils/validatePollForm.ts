@@ -9,6 +9,7 @@ const REQUIRED_KEYS = ['question', 'options', 'resultMode', 'maxVotes'] as const
 
 /**
  * Type guard for options array
+ *
  * @param payload payload to check
  */
 function isStringArray(payload: unknown): payload is string[] {
@@ -18,6 +19,7 @@ function isStringArray(payload: unknown): payload is string[] {
 /**
  * Parses a given JSON object and validates with required poll form object.
  * Throws an error if parsed object doesn't match
+ *
  * @param jsonObject The object to validate
  */
 function validatePollForm(jsonObject: unknown): requiredPollParams {

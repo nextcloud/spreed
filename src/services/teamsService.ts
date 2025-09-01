@@ -11,7 +11,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Get teams (circles) for a current user
  */
-const getTeams = async (): getTeamsProbeResponse => {
+async function getTeams(): getTeamsProbeResponse {
 	return axios.get(generateOcsUrl('/apps/circles/probecircles'))
 }
 

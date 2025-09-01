@@ -61,38 +61,43 @@ function emitUserStatusUpdated(participant) {
 	}
 }
 
-const state = () => ({
-	attendees: {
-	},
-	peers: {
-	},
-	phones: {
-	},
-	inCall: {
-	},
-	joiningCall: {
-	},
-	connecting: {
-	},
-	connectionFailed: {
-	},
-	typing: {
-	},
-	speaking: {
-	},
-	// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
-	participantRaisedHands: {
-	},
-	initialised: {
-	},
-	/**
-	 * Stores the cancel function returned by `cancelableFetchParticipants`,
-	 * which allows to cancel the previous request for participants
-	 * when quickly switching to a new conversation.
-	 */
-	cancelFetchParticipants: null,
-	speakingInterval: null,
-})
+/**
+ *
+ */
+function state() {
+	return {
+		attendees: {
+		},
+		peers: {
+		},
+		phones: {
+		},
+		inCall: {
+		},
+		joiningCall: {
+		},
+		connecting: {
+		},
+		connectionFailed: {
+		},
+		typing: {
+		},
+		speaking: {
+		},
+		// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
+		participantRaisedHands: {
+		},
+		initialised: {
+		},
+		/**
+		 * Stores the cancel function returned by `cancelableFetchParticipants`,
+		 * which allows to cancel the previous request for participants
+		 * when quickly switching to a new conversation.
+		 */
+		cancelFetchParticipants: null,
+		speakingInterval: null,
+	}
+}
 
 const getters = {
 	isInCall: (state) => (token) => {
@@ -254,7 +259,7 @@ const getters = {
 	},
 	getPeer: (state) => (token, sessionId, userId) => {
 		if (state.peers[token]) {
-			if (Object.prototype.hasOwnProperty.call(state.peers[token], sessionId)) {
+			if (Object.hasOwn(state.peers[token], sessionId)) {
 				return state.peers[token][sessionId]
 			}
 		}
@@ -315,7 +320,7 @@ const mutations = {
 
 	updateParticipant(state, { token, attendeeId, updatedData }) {
 		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			state.attendees[token][attendeeId] = Object.assign({}, state.attendees[token][attendeeId], updatedData)
+			state.attendees[token][attendeeId] = { ...state.attendees[token][attendeeId], ...updatedData }
 		} else {
 			console.error('Error while updating the participant')
 		}
@@ -1128,9 +1133,9 @@ const actions = {
 	 * Grant all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
 	 */
 	async grantAllPermissionsToParticipant(context, { token, attendeeId }) {
 		await grantAllPermissionsToParticipant(token, attendeeId)
@@ -1145,9 +1150,9 @@ const actions = {
 	 * Remove all permissions for a given participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
 	 */
 	async removeAllPermissionsFromParticipant(context, { token, attendeeId }) {
 		await removeAllPermissionsFromParticipant(token, attendeeId)
@@ -1163,11 +1168,11 @@ const actions = {
 	 * participant.
 	 *
 	 * @param {object} context - the context object.
-	 * @param {object} root0 - the arguments object.
-	 * @param {string} root0.token - the conversation token.
-	 * @param {string} root0.attendeeId - the participant-s attendeeId.
-	 * @param {'set'|'add'|'remove'} [root0.method] permissions update method
-	 * @param {number} root0.permissions - bitwise combination of the permissions.
+	 * @param {object} payload - the arguments object.
+	 * @param {string} payload.token - the conversation token.
+	 * @param {string} payload.attendeeId - the participant-s attendeeId.
+	 * @param {'set'|'add'|'remove'} [payload.method] permissions update method
+	 * @param {number} payload.permissions - bitwise combination of the permissions.
 	 */
 	async setPermissions(context, { token, attendeeId, method, permissions }) {
 		await setPermissions(token, attendeeId, method, permissions)

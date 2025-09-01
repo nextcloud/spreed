@@ -13,11 +13,13 @@
 			{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}
 		</p>
 
-		<TransitionWrapper name="fade"
+		<TransitionWrapper
+			name="fade"
 			class="stun-servers"
 			tag="ul"
 			group>
-			<StunServer v-for="(server, index) in servers"
+			<StunServer
+				v-for="(server, index) in servers"
 				:key="`server${index}`"
 				v-model:server="servers[index]"
 				:index="index"
@@ -26,7 +28,8 @@
 				@update:server="debounceUpdateServers" />
 		</TransitionWrapper>
 
-		<NcButton class="additional-top-margin"
+		<NcButton
+			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
 			<template #icon>

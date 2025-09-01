@@ -92,6 +92,7 @@ export default function MediaDevicesManager() {
 	 * Safari:
 	 * - does not support audio output selection: https://bugs.webkit.org/show_bug.cgi?id=216641
 	 * - does not support AudioContext#setSinkId
+	 *
 	 * @return {boolean} true if supported, false otherwise.
 	 */
 	this.isAudioOutputSelectSupported = !!(new Audio().setSinkId)

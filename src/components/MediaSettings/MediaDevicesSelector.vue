@@ -73,6 +73,7 @@ const deviceSelectedOption = computed<NcSelectOption | null>({
 
 /**
  * Update deviceId if passes required checks
+ *
  * @param deviceId selected NcSelect option to update with
  */
 function updateDeviceId(deviceId: NcSelectOption['id']) {
@@ -101,12 +102,14 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 
 <template>
 	<div class="media-devices-selector">
-		<component :is="deviceIcon"
+		<component
+			:is="deviceIcon"
 			class="media-devices-selector__icon"
 			title=""
 			:size="20" />
 
-		<NcSelect v-model="deviceSelectedOption"
+		<NcSelect
+			v-model="deviceSelectedOption"
 			:input-id="`device-selector-${props.kind}`"
 			:options="deviceOptions"
 			label="label"

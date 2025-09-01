@@ -43,6 +43,7 @@ export const useSoundsStore = defineStore('sounds', {
 	actions: {
 		/**
 		 * Set play sounds option (on server for user or in browser storage for guest)
+		 *
 		 * @param {boolean} value whether sounds should be played
 		 */
 		async setShouldPlaySounds(value) {

@@ -18,7 +18,8 @@ const props = defineProps<{
 
 <template>
 	<li class="calendar-event">
-		<a class="calendar-event__item"
+		<a
+			class="calendar-event__item"
 			:class="{ 'calendar-event__item--thumb': !href }"
 			:href="href"
 			:title="t('spreed', 'Open Calendar')"

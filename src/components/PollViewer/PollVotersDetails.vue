@@ -6,11 +6,13 @@
 <template>
 	<NcPopover class="poll-voters-details" trigger="hover">
 		<template #trigger>
-			<NcButton variant="tertiary-no-background"
+			<NcButton
+				variant="tertiary-no-background"
 				:aria-label="t('spreed', 'Voted participants')"
 				class="poll-voters-details__button">
 				<template #icon>
-					<AvatarWrapper v-for="(item, index) in details.slice(0, 8)"
+					<AvatarWrapper
+						v-for="(item, index) in details.slice(0, 8)"
 						:id="item.actorId"
 						:key="index"
 						:token="token"
@@ -24,10 +26,12 @@
 			</NcButton>
 		</template>
 		<div class="poll-voters-details__popover" tabindex="0">
-			<div v-for="(item, index) in details"
+			<div
+				v-for="(item, index) in details"
 				:key="index"
 				class="poll-voters-details__list-item">
-				<AvatarWrapper :id="item.actorId"
+				<AvatarWrapper
+					:id="item.actorId"
 					:token="token"
 					:name="item.actorDisplayName.trim()"
 					:source="item.actorType"

@@ -87,49 +87,54 @@ function isMessageVisible(messageId) {
 	return element !== null && element.offsetParent !== null
 }
 
-const state = () => ({
+/**
+ *
+ */
+function state() {
+	return {
 	/**
 	 * Map of conversation token to message list
 	 */
-	messages: {},
+		messages: {},
 
-	/**
-	 * Cached last read message id for display.
-	 */
-	visualLastReadMessageId: {},
+		/**
+		 * Cached last read message id for display.
+		 */
+		visualLastReadMessageId: {},
 
-	/**
-	 * Loaded messages history parts of a conversation
-	 *
-	 * The messages list can still be empty due to message expiration,
-	 * but if we ever loaded the history, we need to show an empty content
-	 * instead of the loading animation
-	 */
-	loadedMessages: {},
+		/**
+		 * Loaded messages history parts of a conversation
+		 *
+		 * The messages list can still be empty due to message expiration,
+		 * but if we ever loaded the history, we need to show an empty content
+		 * instead of the loading animation
+		 */
+		loadedMessages: {},
 
-	/**
-	 * Stores the cancel function returned by `cancelableFetchMessages`,
-	 * which allows to cancel the previous request for old messages
-	 * when quickly switching to a new conversation.
-	 */
-	cancelFetchMessages: null,
-	/**
-	 * Stores the cancel function returned by `cancelableGetMessageContext`,
-	 * which allows to cancel the previous request for the context messages
-	 * when quickly switching to another conversation.
-	 */
-	cancelGetMessageContext: null,
-	/**
-	 * Stores the cancel function returned by `cancelablePollNewMessages`,
-	 * which allows to cancel the previous long polling request for new
-	 * messages before making another one.
-	 */
-	cancelPollNewMessages: {},
-	/**
-	 * Array of temporary message id to cancel function for the "postNewMessage" action
-	 */
-	cancelPostNewMessage: {},
-})
+		/**
+		 * Stores the cancel function returned by `cancelableFetchMessages`,
+		 * which allows to cancel the previous request for old messages
+		 * when quickly switching to a new conversation.
+		 */
+		cancelFetchMessages: null,
+		/**
+		 * Stores the cancel function returned by `cancelableGetMessageContext`,
+		 * which allows to cancel the previous request for the context messages
+		 * when quickly switching to another conversation.
+		 */
+		cancelGetMessageContext: null,
+		/**
+		 * Stores the cancel function returned by `cancelablePollNewMessages`,
+		 * which allows to cancel the previous long polling request for new
+		 * messages before making another one.
+		 */
+		cancelPollNewMessages: {},
+		/**
+		 * Array of temporary message id to cancel function for the "postNewMessage" action
+		 */
+		cancelPostNewMessage: {},
+	}
+}
 
 const getters = {
 	isMessagesListPopulated: (state) => (token) => {
@@ -511,7 +516,7 @@ const actions = {
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
+						context.commit('addMessage', { token, message: { ...storedMessage, parent: message.parent } })
 					})
 			}
 
@@ -520,7 +525,7 @@ const actions = {
 				context.getters.messagesList(token)
 					.filter((storedMessage) => storedMessage.threadId === message.threadId)
 					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { isThread: true }) })
+						context.commit('addMessage', { token, message: { ...storedMessage, isThread: true } })
 					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
@@ -619,7 +624,7 @@ const actions = {
 	 * @param {string} payload.placeholder Placeholder message until deleting finished
 	 */
 	async deleteMessage(context, { token, id, placeholder }) {
-		const message = Object.assign({}, context.getters.message(token, id))
+		const message = { ...context.getters.message(token, id) }
 		context.commit('markMessageAsDeleting', { token, id, placeholder })
 
 		try {
@@ -644,7 +649,7 @@ const actions = {
 	 */
 	async editMessage(context, { token, messageId, updatedMessage }) {
 		EventBus.emit('editing-message-processing', { messageId, value: true })
-		const message = Object.assign({}, context.getters.message(token, messageId))
+		const message = { ...context.getters.message(token, messageId) }
 		context.commit('addMessage', {
 			token,
 			message: { ...message, message: updatedMessage },
@@ -825,7 +830,7 @@ const actions = {
 	 * @param {number} data.threadId Thread id to fetch messages for;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
-	 * @param {number} [data.lookIntoFuture=0] direction of message fetch
+	 * @param {number} [data.lookIntoFuture] direction of message fetch
 	 */
 	async fetchMessages(context, {
 		token,

@@ -143,6 +143,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Start tracking device events (audio and video)
+	 *
 	 * @public
 	 */
 	function initializeDevices() {
@@ -177,6 +178,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Force enumerate devices (audio and video)
+	 *
 	 * @public
 	 */
 	function updateDevices() {
@@ -185,6 +187,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Update preference counters for devices (audio and video)
+	 *
 	 * @param {string} kind the kind of the input stream to update ('audioinput', 'audiooutput' or 'videoinput')
 	 * @public
 	 */
@@ -194,6 +197,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Stop tracking device events (audio and video)
+	 *
 	 * @public
 	 */
 	function stopDevices() {
@@ -211,6 +215,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Set audio stream, start listening speaking events
+	 *
 	 * @param {MediaStream|null} stream audio stream
 	 */
 	function setAudioStream(stream) {
@@ -304,6 +309,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Set video stream and virtual background, attach to <video> element
+	 *
 	 * @param {MediaStream|null} stream video stream
 	 */
 	function setVideoStream(stream) {

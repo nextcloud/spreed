@@ -41,7 +41,8 @@ const RATCHET_WINDOW_SIZE = 8
  */
 export class Context {
 	/**
-	 * @param {Object} options
+	 * @param {object} options
+	 * @param options.sharedKey
 	 */
 	constructor({ sharedKey = false } = {}) {
 		// An array (ring) of keys that we use for sending and receiving.
@@ -58,8 +59,9 @@ export class Context {
 	/**
 	 * Derives the different subkeys and starts using them for encryption or
 	 * decryption.
+	 *
 	 * @param {Uint8Array|false} key bytes. Pass false to disable.
-	 * @param {Number} keyIndex
+	 * @param {number} keyIndex
 	 */
 	async setKey(key, keyIndex = -1) {
 		let newKey = false
@@ -80,8 +82,9 @@ export class Context {
 	/**
 	 * Sets a set of keys and resets the sendCount.
 	 * decryption.
-	 * @param {Object} keys set of keys.
-	 * @param {Number} keyIndex optional
+	 *
+	 * @param {object} keys set of keys.
+	 * @param {number} keyIndex optional
 	 * @private
 	 */
 	_setKeys(keys, keyIndex = -1) {
@@ -206,8 +209,9 @@ export class Context {
 	 *
 	 * @param {RTCEncodedVideoFrame|RTCEncodedAudioFrame} encodedFrame - Encoded video frame.
 	 * @param {number} keyIndex - the index of the decryption data in _cryptoKeyRing array.
+	 * @param initialKey
 	 * @param {number} ratchetCount - the number of retries after ratcheting the key.
-	 * @returns {Promise<RTCEncodedVideoFrame|RTCEncodedAudioFrame>} - The decrypted frame.
+	 * @return {Promise<RTCEncodedVideoFrame|RTCEncodedAudioFrame>} - The decrypted frame.
 	 * @private
 	 */
 	async _decryptFrame(
@@ -306,13 +310,16 @@ export class Context {
 	 * There is no XOR with a salt. Note that this IV leaks the SSRC to the receiver but since this is
 	 * randomly generated and SFUs may not rewrite this is considered acceptable.
 	 * The SSRC is used to allow demultiplexing multiple streams with the same key, as described in
-	 *   https://tools.ietf.org/html/rfc3711#section-4.1.1
+	 * https://tools.ietf.org/html/rfc3711#section-4.1.1
 	 * The RTP timestamp is 32 bits and advances by the codec clock rate (90khz for video, 48khz for
 	 * opus audio) every second. For video it rolls over roughly every 13 hours.
 	 * The send counter will advance at the frame rate (30fps for video, 50fps for 20ms opus audio)
 	 * every second. It will take a long time to roll over.
 	 *
 	 * See also https://developer.mozilla.org/en-US/docs/Web/API/AesGcmParams
+	 *
+	 * @param synchronizationSource
+	 * @param timestamp
 	 */
 	_makeIV(synchronizationSource, timestamp) {
 		const iv = new ArrayBuffer(IV_LENGTH)

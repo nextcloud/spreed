@@ -5,6 +5,7 @@
 
 /**
  * Finds indexes of largest remainders to distribute quota
+ *
  * @param array array of numbers to compare
  */
 function getLargestIndexes(array: number[]) {
@@ -26,6 +27,7 @@ function getLargestIndexes(array: number[]) {
 
 /**
  * Provide percentage distribution closest to 100 by method of largest remainder
+ *
  * @param votes array of given votes
  * @param total amount of votes
  */

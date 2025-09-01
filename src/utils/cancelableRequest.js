@@ -13,7 +13,7 @@ import axios from '@nextcloud/axios'
  * `object.request`: the api request funtion with the cancel token associated to it.
  * `object.cancel`: the cancel function, when call it's going to delete the request.
  */
-const CancelableRequest = function(request) {
+function CancelableRequest(request) {
 	/**
 	 * Generate an axios cancel token
 	 */
@@ -30,7 +30,7 @@ const CancelableRequest = function(request) {
 	const fetch = async function(data, options) {
 		return request(
 			data,
-			Object.assign({ cancelToken: source.token }, options),
+			{ cancelToken: source.token, ...options },
 		)
 	}
 	return {

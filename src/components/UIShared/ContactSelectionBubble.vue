@@ -49,12 +49,14 @@ const removeLabel = computed(() => t('spreed', 'Remove participant {name}', { na
 </script>
 
 <template>
-	<NcChip :text="computedName"
+	<NcChip
+		:text="computedName"
 		:aria-label-close="removeLabel"
 		:no-close="isLocked"
 		@close="emit('update', participant)">
 		<template #icon>
-			<AvatarWrapper :id="actorId"
+			<AvatarWrapper
+				:id="actorId"
 				:token="token"
 				:name="computedName"
 				:source="actorType"

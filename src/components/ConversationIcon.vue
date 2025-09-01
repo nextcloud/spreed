@@ -4,15 +4,18 @@
 -->
 
 <template>
-	<div class="conversation-icon"
+	<div
+		class="conversation-icon"
 		:style="{ '--icon-size': `${size}px` }"
 		:class="[themeClass, { offline: offline }]">
 		<template v-if="!isOneToOne">
-			<div v-if="iconClass"
+			<div
+				v-if="iconClass"
 				class="avatar icon"
 				:class="iconClass" />
 			<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
-			<img v-else
+			<img
+				v-else
 				:key="avatarUrl"
 				:src="avatarUrl"
 				:width="size"
@@ -20,7 +23,8 @@
 				:alt="item.displayName"
 				class="avatar icon"
 				@error="onError">
-			<span v-if="!hideUserStatus && conversationType"
+			<span
+				v-if="!hideUserStatus && conversationType"
 				class="conversation-icon__type"
 				role="img"
 				aria-hidden="false"
@@ -31,7 +35,8 @@
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
 		<!-- TODO: Check if props update support in NcAvatar is more performant -->
-		<NcAvatar v-else
+		<NcAvatar
+			v-else
 			:key="item.token + (isDarkTheme ? '-dark' : '-light')"
 			:size="size"
 			:user="item.name"

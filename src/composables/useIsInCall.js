@@ -47,6 +47,7 @@ function useIsInCallComposable() {
 
 /**
  * Shared composable to check whether the user joined the call of the current token in this PHP session or not
+ *
  * @return {import('vue').ComputedRef<boolean>}
  */
 export const useIsInCall = createSharedComposable(useIsInCallComposable)

@@ -13,7 +13,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {number} messageId The id of selected message
  * @return {object} The axios response
  */
-const getMessageReminder = async function(token, messageId) {
+async function getMessageReminder(token, messageId) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/reminder', {
 		token,
 		messageId,
@@ -28,7 +28,7 @@ const getMessageReminder = async function(token, messageId) {
  * @param {number} timestamp The timestamp of reminder (in seconds)
  * @return {object} The axios response
  */
-const setMessageReminder = async function(token, messageId, timestamp) {
+async function setMessageReminder(token, messageId, timestamp) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/reminder', {
 		token,
 		messageId,
@@ -42,7 +42,7 @@ const setMessageReminder = async function(token, messageId, timestamp) {
  * @param {number} messageId The id of selected message
  * @return {object} The axios response
  */
-const removeMessageReminder = async function(token, messageId) {
+async function removeMessageReminder(token, messageId) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/reminder', {
 		token,
 		messageId,
@@ -53,7 +53,7 @@ const removeMessageReminder = async function(token, messageId) {
  * Fetches reminders list of all conversations
  *
  */
-const getUpcomingReminders = async function() {
+async function getUpcomingReminders() {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/upcoming-reminders'))
 }
 

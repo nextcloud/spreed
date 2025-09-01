@@ -19,11 +19,11 @@ import adapter from 'webrtc-adapter'
  * @param {HTMLVideoElement|null} el The video element where to attach the stream.
  *                                   If null, a new element will be created.
  * @param {object} [options] Options
- * @param {boolean} [options.autoplay=true] Autoplay the video
- * @param {boolean} [options.mirror=false] Mirror the video (horizontal flip)
- * @param {boolean} [options.muted=false] Mute the audio
- * @param {boolean} [options.audio=false] Only use audio
- * @param {boolean} [options.disableContextMenu=false] Disable the context menu
+ * @param {boolean} [options.autoplay] Autoplay the video
+ * @param {boolean} [options.mirror] Mirror the video (horizontal flip)
+ * @param {boolean} [options.muted] Mute the audio
+ * @param {boolean} [options.audio] Only use audio
+ * @param {boolean} [options.disableContextMenu] Disable the context menu
  */
 export default function attachmediastream(stream, el, options) {
 	let item

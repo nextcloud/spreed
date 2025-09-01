@@ -15,7 +15,7 @@
  * @param {ClipboardEvent} event native event
  * @return {ClipboardContent}
  */
-const fetchClipboardContent = function(event) {
+function fetchClipboardContent(event) {
 	const clipboardData = event.clipboardData
 
 	if (!clipboardData) {

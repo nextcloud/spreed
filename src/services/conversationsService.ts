@@ -61,6 +61,7 @@ import { hasTalkFeature } from './CapabilitiesManager.ts'
 
 /**
  * Fetches all conversations from the server.
+ *
  * @param params parameters
  * @param [options] Axios request options
  */
@@ -73,6 +74,7 @@ async function fetchConversations(params: getAllConversationsParams, options?: A
 
 /**
  * Fetches a conversation from the server.
+ *
  * @param token The token of the conversation to be fetched.
  */
 async function fetchConversation(token: string): getSingleConversationResponse {
@@ -81,6 +83,7 @@ async function fetchConversation(token: string): getSingleConversationResponse {
 
 /**
  * Fetch listed conversations
+ *
  * @param searchTerm The string that will be used in the search query.
  * @param [options] Axios request options
  */
@@ -102,6 +105,7 @@ async function fetchNoteToSelfConversation(): getNoteToSelfConversationResponse 
 
 /**
  * Create a new conversation (with params available in legacy API only).
+ *
  * @param params legacy API params
  * @param params.roomType Type of the room
  * @param params.roomName Name of the room
@@ -125,14 +129,16 @@ async function createLegacyConversation({ roomType, roomName, password, objectTy
 
 /**
  * Create a new conversation (with params available with 'conversation-creation-all' capability)
+ *
  * @param params API params
  */
-const createConversation = async function(params: createConversationParams): createConversationResponse {
+async function createConversation(params: createConversationParams): createConversationResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), params)
 }
 
 /**
  * Set a conversation's password
+ *
  * @param token the conversation's token
  * @param password the password to be set
  */
@@ -144,6 +150,7 @@ async function setConversationPassword(token: string, password: setConversationP
 
 /**
  * Set a conversation's name
+ *
  * @param token the conversation's token
  * @param roomName the name to be set (max 255 characters)
  */
@@ -155,6 +162,7 @@ async function setConversationName(token: string, roomName: setConversationNameP
 
 /**
  * Set a conversation's description
+ *
  * @param token the conversation's token
  * @param description the description to be set (max 500 characters)
  */
@@ -166,6 +174,7 @@ async function setConversationDescription(token: string, description: setConvers
 
 /**
  * Delete a conversation.
+ *
  * @param token The token of the conversation to be deleted.
  */
 async function deleteConversation(token: string): deleteConversationResponse {
@@ -174,6 +183,7 @@ async function deleteConversation(token: string): deleteConversationResponse {
 
 /**
  * Detach a conversation from an object and it becomes a "normal" conversation.
+ *
  * @param token The token of the conversation to be deleted.
  */
 async function unbindConversationFromObject(token: string): unbindConversationFromObjectResponse {
@@ -182,6 +192,7 @@ async function unbindConversationFromObject(token: string): unbindConversationFr
 
 /**
  * Add a conversation to the favorites
+ *
  * @param token The token of the conversation to be favorites
  */
 async function addToFavorites(token: string): addConversationToFavoritesResponse {
@@ -190,6 +201,7 @@ async function addToFavorites(token: string): addConversationToFavoritesResponse
 
 /**
  * Remove a conversation from the favorites
+ *
  * @param token The token of the conversation to be removed from favorites
  */
 async function removeFromFavorites(token: string): removeConversationFromFavoritesResponse {
@@ -198,6 +210,7 @@ async function removeFromFavorites(token: string): removeConversationFromFavorit
 
 /**
  * Mark a conversation as important
+ *
  * @param token The conversation token of the conversation to be favorites
  */
 async function markAsImportant(token: string): markConversationAsImportantResponse {
@@ -206,6 +219,7 @@ async function markAsImportant(token: string): markConversationAsImportantRespon
 
 /**
  * Unmark an important conversation
+ *
  * @param token The token of the conversation to be removed from favorites
  */
 async function markAsUnimportant(token: string): markConversationAsUnimportantResponse {
@@ -214,6 +228,7 @@ async function markAsUnimportant(token: string): markConversationAsUnimportantRe
 
 /**
  * Mark a conversation as important
+ *
  * @param token The token of the conversation to be favorites
  */
 async function markAsSensitive(token: string): markConversationAsSensitiveResponse {
@@ -222,6 +237,7 @@ async function markAsSensitive(token: string): markConversationAsSensitiveRespon
 
 /**
  * Remove a conversation from the favorites
+ *
  * @param token The token of the conversation to be removed from favorites
  */
 async function markAsInsensitive(token: string): markConversationAsInsensitiveResponse {
@@ -230,6 +246,7 @@ async function markAsInsensitive(token: string): markConversationAsInsensitiveRe
 
 /**
  * Add a conversation to the archive
+ *
  * @param token The token of the conversation to be archived
  */
 async function archiveConversation(token: string): archiveConversationResponse {
@@ -238,6 +255,7 @@ async function archiveConversation(token: string): archiveConversationResponse {
 
 /**
  * Restore a conversation from the archive
+ *
  * @param token The token of the conversation to be removed from archive
  */
 async function unarchiveConversation(token: string): unarchiveConversationResponse {
@@ -246,6 +264,7 @@ async function unarchiveConversation(token: string): unarchiveConversationRespon
 
 /**
  * Set notification level
+ *
  * @param token The token of the conversation to change the notification level
  * @param level The notification level to set.
  */
@@ -255,6 +274,7 @@ async function setNotificationLevel(token: string, level: setConversationNotifyL
 
 /**
  * Set call notifications
+ *
  * @param token The token of the conversation to change the call notification level
  * @param level The call notification level.
  */
@@ -264,6 +284,7 @@ async function setNotificationCalls(token: string, level: setConversationNotifyC
 
 /**
  * Make the conversation public
+ *
  * @param token The token of the conversation to be removed from favorites
  * @param password The password to set for the conversation (optional, only if force password is enabled)
  */
@@ -276,6 +297,7 @@ async function makeConversationPublic(token: string, password: makeConversationP
 
 /**
  * Make the conversation private
+ *
  * @param token The token of the conversation to be removed from favorites
  */
 async function makeConversationPrivate(token: string): makeConversationPrivateResponse {
@@ -284,6 +306,7 @@ async function makeConversationPrivate(token: string): makeConversationPrivateRe
 
 /**
  * Change the SIP enabled
+ *
  * @param token The token of the conversation to be modified
  * @param state The new SIP state to set
  */
@@ -295,6 +318,7 @@ async function setSIPEnabled(token: string, state: setConversationSipParams['sta
 
 /**
  * Change the recording consent per conversation
+ *
  * @param token The token of the conversation to be modified
  * @param recordingConsent The new recording consent state to set
  */
@@ -306,6 +330,7 @@ async function setRecordingConsent(token: string, recordingConsent: setConversat
 
 /**
  * Change the lobby state
+ *
  * @param token The token of the conversation to be modified
  * @param state The new lobby state to set
  * @param timer The UNIX timestamp (in seconds) to set, if any
@@ -319,6 +344,7 @@ async function changeLobbyState(token: string, state: setConversationLobbyParams
 
 /**
  * Change the read-only state
+ *
  * @param token The token of the conversation to be modified
  * @param state The new read-only state to set
  */
@@ -330,6 +356,7 @@ async function changeReadOnlyState(token: string, state: setConversationReadonly
 
 /**
  * Change the listable scope
+ *
  * @param token The token of the conversation to be modified
  * @param scope The new listable scope to set
  */
@@ -341,6 +368,7 @@ async function changeListable(token: string, scope: setConversationListableParam
 
 /**
  * Set mention permissions to allow or disallow mentioning @all for non-moderators
+ *
  * @param token The token of the conversation to be modified
  * @param mentionPermissions The mention permissions to set
  */
@@ -352,6 +380,7 @@ async function setMentionPermissions(token: string, mentionPermissions: setConve
 
 /**
  * Set the default permissions for participants in a conversation.
+ *
  * @param token conversation token
  * @param permissions the type of permission to be granted. Valid values are
  * any sums of 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE',
@@ -366,6 +395,7 @@ async function setConversationPermissions(token: string, permissions: setConvers
 /**
  * Set the default permissions for participants in a call. These will be reset
  * to default once the call has ended.
+ *
  * @param token conversation token
  * @param permissions the type of permission to be granted. Valid values are
  * any sums of 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE',
@@ -379,6 +409,7 @@ async function setCallPermissions(token: string, permissions: setConversationPer
 
 /**
  * Set the message expiration
+ *
  * @param token conversation token
  * @param seconds the seconds for the message expiration, 0 to disable
  */

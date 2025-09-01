@@ -15,7 +15,8 @@
 				{{ installedVersion }}
 			</p>
 
-			<NcCheckboxRadioSwitch :model-value="isEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="isEnabled"
 				@update:model-value="saveMatterbridgeEnabled">
 				{{ t('spreed', 'Enable Matterbridge integration') }}
 			</NcCheckboxRadioSwitch>
@@ -32,7 +33,8 @@
 				{{ errorText }}
 			</p>
 
-			<NcButton :disabled="isInstalling"
+			<NcButton
+				:disabled="isInstalling"
 				@click="enableMatterbridgeApp">
 				<template v-if="isInstalling" #icon>
 					<NcLoadingIcon :size="20" />

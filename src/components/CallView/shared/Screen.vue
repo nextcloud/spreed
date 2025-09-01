@@ -4,15 +4,18 @@
 -->
 
 <template>
-	<div :id="screenContainerId"
+	<div
+		:id="screenContainerId"
 		class="screenContainer"
 		@dblclick.capture="onDoubleClick">
-		<video v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
+		<video
+			v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
 			ref="screen"
 			:disablePictureInPicture="!isBig ? 'true' : 'false'"
 			class="screen"
 			:class="screenClass" />
-		<VideoBottomBar v-if="isBig"
+		<VideoBottomBar
+			v-if="isBig"
 			:token="token"
 			:shared-data="sharedData"
 			is-big
@@ -117,6 +120,7 @@ export default {
 
 		/**
 		 * Overriding method to handle double click event on screen share
+		 *
 		 * @param event Double click event
 		 */
 		function onDoubleClick(event) {
@@ -197,11 +201,11 @@ export default {
 
 	watch: {
 
-		'localMediaModel.attributes.localScreen'(localScreen) {
+		'localMediaModel.attributes.localScreen': function(localScreen) {
 			this._setScreen(localScreen)
 		},
 
-		'callParticipantModel.attributes.screen'(screen) {
+		'callParticipantModel.attributes.screen': function(screen) {
 			this._setScreen(screen)
 		},
 

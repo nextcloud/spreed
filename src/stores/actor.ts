@@ -79,6 +79,8 @@ export const useActorStore = defineStore('actor', () => {
 	 * Check if the message is from the current actor
 	 *
 	 * @param payload object to check for
+	 * @param payload.actorId
+	 * @param payload.actorType
 	 */
 	function checkIfSelfIsActor(payload: { actorId?: string, actorType?: string }) {
 		return payload.actorId === actorId.value

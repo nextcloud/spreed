@@ -9,12 +9,14 @@
 			{{ t('spreed', 'Edit the default permissions for participants in this conversation. These settings do not affect moderators.') }}
 		</div>
 
-		<NcNoteCard type="warning"
+		<NcNoteCard
+			type="warning"
 			:text="t('spreed', 'Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.')" />
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch v-model="radioValue"
+			<NcCheckboxRadioSwitch
+				v-model="radioValue"
 				:disabled="loading"
 				value="all"
 				name="permission_radio"
@@ -30,7 +32,8 @@
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch v-model="radioValue"
+			<NcCheckboxRadioSwitch
+				v-model="radioValue"
 				value="restricted"
 				:disabled="loading"
 				name="permission_radio"
@@ -46,7 +49,8 @@
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
-			<NcCheckboxRadioSwitch v-model="radioValue"
+			<NcCheckboxRadioSwitch
+				v-model="radioValue"
 				value="advanced"
 				:disabled="loading"
 				name="permission_radio"
@@ -56,7 +60,8 @@
 			</NcCheckboxRadioSwitch>
 
 			<!-- Edit advanced permissions -->
-			<NcButton v-show="showEditButton"
+			<NcButton
+				v-show="showEditButton"
 				class="edit-button"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Edit permissions')"
@@ -66,7 +71,8 @@
 				</template>
 			</NcButton>
 		</div>
-		<PermissionEditor v-if="showPermissionsEditor"
+		<PermissionEditor
+			v-if="showPermissionsEditor"
 			:conversation-name="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"

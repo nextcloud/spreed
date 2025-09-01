@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcModal size="large"
+	<NcModal
+		size="large"
 		:label-id="dialogHeaderId"
 		@close="$emit('close')">
 		<div class="shared-items-browser">
@@ -13,7 +14,8 @@
 			</h2>
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
-					<NcButton v-if="sharedItems[type]"
+					<NcButton
+						v-if="sharedItems[type]"
 						:key="type"
 						:class="{ active: activeTab === type }"
 						variant="tertiary"
@@ -24,7 +26,8 @@
 			</div>
 
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
-				<SharedItems :type="activeTab"
+				<SharedItems
+					:type="activeTab"
 					:token="token"
 					:items="sharedItems[activeTab]" />
 			</div>

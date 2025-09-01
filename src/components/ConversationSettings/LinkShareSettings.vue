@@ -13,7 +13,8 @@
 			<p v-if="hasBreakoutRooms" class="app-settings-section__hint">
 				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
 			</p>
-			<NcCheckboxRadioSwitch :model-value="isSharedPublicly"
+			<NcCheckboxRadioSwitch
+				:model-value="isSharedPublicly"
 				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
@@ -22,7 +23,8 @@
 			</NcCheckboxRadioSwitch>
 
 			<template v-if="isSharedPublicly">
-				<NcCheckboxRadioSwitch v-if="!forcePasswordProtection"
+				<NcCheckboxRadioSwitch
+					v-if="!forcePasswordProtection"
 					:model-value="isPasswordProtectionChecked"
 					:disabled="isSaving"
 					type="switch"
@@ -34,7 +36,8 @@
 					<p v-if="isPasswordProtectionChecked" class="app-settings-section__hint">
 						{{ t('spreed', 'This conversation is password-protected. Guests need password to join') }}
 					</p>
-					<NcNoteCard v-else-if="!isSaving"
+					<NcNoteCard
+						v-else-if="!isSaving"
 						type="warning">
 						{{ t('spreed', 'Password protection is needed for public conversations') }}
 						<NcButton class="warning__button" variant="primary" @click="enforcePassword">
@@ -44,7 +47,8 @@
 				</template>
 
 				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
-					<NcPasswordField ref="passwordField"
+					<NcPasswordField
+						ref="passwordField"
 						v-model="password"
 						autocomplete="new-password"
 						check-password-strength
@@ -54,7 +58,8 @@
 						:label="t('spreed', 'Enter new password')"
 						@valid="isValid = true"
 						@invalid="isValid = false" />
-					<NcButton :disabled="isSaving || !isValid"
+					<NcButton
+						:disabled="isSaving || !isValid"
 						variant="primary"
 						type="submit"
 						class="password-form__button">
@@ -63,7 +68,8 @@
 						</template>
 						{{ t('spreed', 'Save password') }}
 					</NcButton>
-					<NcButton v-if="password"
+					<NcButton
+						v-if="password"
 						variant="tertiary"
 						:aria-label="t('spreed', 'Copy password')"
 						:title="t('spreed', 'Copy password')"
@@ -85,14 +91,16 @@
 		</p>
 
 		<div class="app-settings-subsection__buttons">
-			<NcButton ref="copyLinkButton"
+			<NcButton
+				ref="copyLinkButton"
 				@click="handleCopyLink">
 				<template #icon>
 					<IconClipboardTextOutline />
 				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcButton>
-			<NcButton v-if="isSharedPublicly && canModerate"
+			<NcButton
+				v-if="isSharedPublicly && canModerate"
 				:disabled="isSendingInvitations"
 				@click="handleResendInvitations">
 				<template #icon>

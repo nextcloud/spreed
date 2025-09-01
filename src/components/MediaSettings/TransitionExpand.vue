@@ -16,7 +16,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-	<Transition :name="`expand-${direction}`"
+	<Transition
+		:name="`expand-${direction}`"
 		@after-enter="emit('after-enter')"
 		@after-leave="emit('after-leave')">
 		<div v-show="show" class="expand-wrapper">

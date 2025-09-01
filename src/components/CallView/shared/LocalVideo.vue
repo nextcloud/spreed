@@ -4,41 +4,49 @@
 -->
 
 <template>
-	<div ref="videoContainer"
+	<div
+		ref="videoContainer"
 		class="localVideoContainer"
 		:class="videoContainerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('clickVideo')">
-		<img v-if="screenshotModeUrl"
+		<img
+			v-if="screenshotModeUrl"
 			class="dev-mode-video--self videoWrapper"
 			alt="dev-mode-video--self"
 			:src="screenshotModeUrl">
 
-		<div v-show="!screenshotModeUrl && localMediaModel.attributes.videoEnabled"
+		<div
+			v-show="!screenshotModeUrl && localMediaModel.attributes.videoEnabled"
 			class="videoWrapper"
 			:style="videoWrapperStyle">
-			<video id="localVideo"
+			<video
+				id="localVideo"
 				ref="video"
 				disablePictureInPicture="true"
 				:class="fitVideo ? 'video--fit' : 'video--fill'"
 				class="video"
 				@playing="updateVideoAspectRatio" />
-			<IconAccountOffOutline v-if="isPresenterOverlay && mouseover"
+			<IconAccountOffOutline
+				v-if="isPresenterOverlay && mouseover"
 				class="presenter-icon__hide"
 				:aria-label="t('spreed', 'Hide presenter video')"
 				:title="t('spreed', 'Hide presenter video')"
 				:size="32"
 				@click="$emit('clickPresenter')" />
-			<NcLoadingIcon v-if="isNotConnected"
+			<NcLoadingIcon
+				v-if="isNotConnected"
 				:size="avatarSize / 2"
 				class="video-loading" />
 		</div>
 		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
-			<VideoBackground v-if="isGrid || isStripe"
+			<VideoBackground
+				v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
-			<AvatarWrapper :id="userId"
+			<AvatarWrapper
+				:id="userId"
 				:token="token"
 				:name="displayName"
 				:source="actorStore.actorType"
@@ -49,7 +57,8 @@
 		</div>
 
 		<div class="bottom-bar">
-			<NcButton v-if="isBig"
+			<NcButton
+				v-if="isBig"
 				variant="tertiary"
 				class="bottom-bar__button"
 				@click="handleStopFollowing">
@@ -263,7 +272,7 @@ export default {
 			},
 		},
 
-		'localMediaModel.attributes.localStream'(localStream) {
+		'localMediaModel.attributes.localStream': function(localStream) {
 			this._setLocalStream(localStream)
 		},
 

@@ -17,12 +17,14 @@ const isMobile = useIsMobile()
 </script>
 
 <template>
-	<div class="dashboard-section"
+	<div
+		class="dashboard-section"
 		:class="{
 			'dashboard-section--wide': wide && !isSmallMobile,
 			'dashboard-section--list': $slots.list,
 		}">
-		<div v-if="!isSmallMobile"
+		<div
+			v-if="!isSmallMobile"
 			class="dashboard-section__bar"
 			:class="{
 				'dashboard-section__bar--narrow': $slots.list || isMobile,

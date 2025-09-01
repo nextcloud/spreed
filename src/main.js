@@ -46,7 +46,10 @@ window.store = store
 // Setup OCA.Files.Sidebar to be used by the viewer
 window.OCA.Files = {}
 
-const Sidebar = function() {
+/**
+ *
+ */
+function Sidebar() {
 	this.state = {
 		file: '',
 	}
@@ -58,7 +61,12 @@ const Sidebar = function() {
 	})
 }
 
-const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
+/**
+ *
+ * @param sidebarElement
+ * @param resolve
+ */
+function waitForSidebarToBeOpen(sidebarElement, resolve) {
 	if ('ontransitionend' in sidebarElement) {
 		const resolveOnceSidebarWidthHasChanged = (event) => {
 			if (!['min-width', 'width', 'max-width', 'margin-right'].includes(event.propertyName)) {

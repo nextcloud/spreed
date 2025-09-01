@@ -30,7 +30,13 @@ onBeforeUnmount(() => {
 	EventBus.off('route-change', onRouteChange)
 })
 
-const onRouteChange = ({ from, to }: { from: RouteLocation, to: RouteLocation }): void => {
+/**
+ *
+ * @param payload
+ * @param payload.from
+ * @param payload.to
+ */
+function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }): void {
 	if (to.name !== 'conversation' || from.params.token !== to.params.token || (from.query.threadId !== to.query.threadId && isInCall.value)) {
 		emit('close')
 	}
@@ -40,7 +46,8 @@ const onRouteChange = ({ from, to }: { from: RouteLocation, to: RouteLocation })
 
 <template>
 	<ul class="threads-tab__list">
-		<ThreadItem v-for="thread of threadsInformation"
+		<ThreadItem
+			v-for="thread of threadsInformation"
 			:key="`thread_${thread.thread.id}`"
 			:thread="thread" />
 	</ul>

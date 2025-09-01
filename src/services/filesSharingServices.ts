@@ -16,6 +16,7 @@ import { SHARE } from '../constants.ts'
 
 /**
  * Appends a file as a message to the messages list
+ *
  * @param payload The function payload
  * @param payload.path The file path from the user's root directory
  * @param payload.shareWith The conversation's token
@@ -41,6 +42,7 @@ async function getFileTemplates(): getFileTemplatesListResponse {
 
 /**
  * Create a new file from the template
+ *
  * @param payload Function payload
  * @param payload.filePath Path of the new file
  * @param payload.templatePath Source path of the template file

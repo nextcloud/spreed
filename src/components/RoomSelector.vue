@@ -4,14 +4,16 @@
 -->
 
 <template>
-	<NcDialog :name="dialogTitle"
+	<NcDialog
+		:name="dialogTitle"
 		close-on-click-outside
 		@update:open="close">
 		<template #default>
 			<p v-if="dialogSubtitle" class="selector__subtitle">
 				{{ dialogSubtitle }}
 			</p>
-			<NcTextField v-model="searchText"
+			<NcTextField
+				v-model="searchText"
 				trailing-button-icon="close"
 				class="selector__search"
 				:label="t('spreed', 'Search conversations or users')"
@@ -23,7 +25,8 @@
 			</NcTextField>
 
 			<!-- Conversations list-->
-			<ConversationsSearchListVirtual v-if="loading || availableRooms.length > 0"
+			<ConversationsSearchListVirtual
+				v-if="loading || availableRooms.length > 0"
 				:conversations="availableRooms"
 				:loading="loading"
 				class="selector__list"
@@ -36,7 +39,8 @@
 		</template>
 
 		<template #actions>
-			<NcButton v-if="!loading && availableRooms.length > 0"
+			<NcButton
+				v-if="!loading && availableRooms.length > 0"
 				class="selector__action"
 				variant="primary"
 				:disabled="!selectedRoom"

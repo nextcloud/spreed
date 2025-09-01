@@ -29,7 +29,7 @@ function newRTCPeerConnection() {
 				return
 			}
 
-			if (!Object.prototype.hasOwnProperty.call(this._listeners, type)) {
+			if (!Object.hasOwn(this._listeners, type)) {
 				this._listeners[type] = [listener]
 			} else {
 				this._listeners[type].push(listener)

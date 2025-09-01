@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<NcPopover id="dial-popover"
+	<NcPopover
+		id="dial-popover"
 		ref="popover"
 		popover-base-class="dial-popover"
 		:container="container"
 		@show="prefillCode">
 		<template #trigger>
-			<NcButton :disabled="disabled"
+			<NcButton
+				:disabled="disabled"
 				:aria-label="t('spreed', 'Open dialpad')"
 				:title="t('spreed', 'Open dialpad')">
 				<template #icon>
@@ -19,11 +21,13 @@
 			</NcButton>
 		</template>
 
-		<div ref="panel"
+		<div
+			ref="panel"
 			class="dial-panel"
 			tabindex="0"
 			@keydown.capture="handleKeyDown">
-			<NcSelect v-if="!dialing"
+			<NcSelect
+				v-if="!dialing"
 				ref="regionSelect"
 				v-model="region"
 				class="dial-panel__select"
@@ -46,14 +50,16 @@
 				</template>
 			</NcSelect>
 
-			<NcButton v-for="button in buttons"
+			<NcButton
+				v-for="button in buttons"
 				:key="button.value"
 				class="dial-panel__button"
 				@click="handlePad(button.value)">
 				{{ button.label }}
 			</NcButton>
 
-			<NcButton v-if="!dialing"
+			<NcButton
+				v-if="!dialing"
 				class="dial-panel__button"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Delete')"

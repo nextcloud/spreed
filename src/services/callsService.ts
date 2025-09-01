@@ -37,7 +37,7 @@ import {
  * @param silentFor List of participants that should not receive a notification about the call
  * @return The actual flags based on the available media
  */
-const joinCall = async function(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: string[]): Promise<void> {
+async function joinCall(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: string[]): Promise<void> {
 	return signalingJoinCall(token, flags, silent, recordingConsent, silentFor)
 }
 
@@ -47,7 +47,7 @@ const joinCall = async function(token: string, flags: number, silent: boolean, r
  * @param token The token of the call to be left
  * @param all Whether to end the meeting for all
  */
-const leaveCall = async function(token: string, all: boolean = false) {
+async function leaveCall(token: string, all: boolean = false) {
 	try {
 		await signalingLeaveCall(token, all)
 	} catch (error) {
@@ -55,7 +55,12 @@ const leaveCall = async function(token: string, all: boolean = false) {
 	}
 }
 
-const fetchPeers = async function(token: string, options: object): fetchPeersResponse {
+/**
+ *
+ * @param token
+ * @param options
+ */
+async function fetchPeers(token: string, options: object): fetchPeersResponse {
 	return await axios.get(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), options)
 }
 
@@ -65,7 +70,7 @@ const fetchPeers = async function(token: string, options: object): fetchPeersRes
  * @param token The token of the conversation
  * @param attendeeId The attendee id to call to via SIP
  */
-const callSIPDialOut = async function(token: string, attendeeId: number): callSIPDialOutResponse {
+async function callSIPDialOut(token: string, attendeeId: number): callSIPDialOutResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/dialout/{attendeeId}', { token, attendeeId }))
 }
 
@@ -74,7 +79,7 @@ const callSIPDialOut = async function(token: string, attendeeId: number): callSI
  *
  * @param sessionId Session id of receiver
  */
-const callSIPHangupPhone = async function(sessionId: string) {
+async function callSIPHangupPhone(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'hangup' })
 }
 
@@ -83,7 +88,7 @@ const callSIPHangupPhone = async function(sessionId: string) {
  *
  * @param sessionId Session id of receiver
  */
-const callSIPMutePhone = async function(sessionId: string) {
+async function callSIPMutePhone(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE })
 }
 
@@ -92,7 +97,7 @@ const callSIPMutePhone = async function(sessionId: string) {
  *
  * @param sessionId Session id of receiver
  */
-const callSIPUnmutePhone = async function(sessionId: string) {
+async function callSIPUnmutePhone(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.NONE })
 }
 
@@ -101,7 +106,7 @@ const callSIPUnmutePhone = async function(sessionId: string) {
  *
  * @param sessionId Session id of receiver
  */
-const callSIPHoldPhone = async function(sessionId: string) {
+async function callSIPHoldPhone(sessionId: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'mute', audio: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER })
 }
 
@@ -111,7 +116,7 @@ const callSIPHoldPhone = async function(sessionId: string) {
  * @param sessionId Session id of receiver
  * @param digit DTMF digit to send
  */
-const callSIPSendDTMF = async function(sessionId: string, digit: string) {
+async function callSIPSendDTMF(sessionId: string, digit: string) {
 	await callSIPSendCallMessage(sessionId, { type: 'dtmf', digit })
 }
 
@@ -121,7 +126,7 @@ const callSIPSendDTMF = async function(sessionId: string, digit: string) {
  * @param sessionId Session id of receiver
  * @param data Payload for message to be sent
  */
-const callSIPSendCallMessage = async function(sessionId: string, data: CallSIPSendCallMessagePayload) {
+async function callSIPSendCallMessage(sessionId: string, data: CallSIPSendCallMessagePayload) {
 	if (!sessionId) {
 		console.debug('Session ID has not been provided')
 		return

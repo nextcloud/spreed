@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div ref="scroller"
+	<div
+		ref="scroller"
 		class="scroller messages-list__scroller"
 		:class="{
 			'scroller--chatScrolledToBottom': isChatScrolledToBottom,
@@ -13,12 +14,14 @@
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<template v-if="isInitialisingMessages">
-			<LoadingPlaceholder type="messages"
+			<LoadingPlaceholder
+				type="messages"
 				class="messages-list__placeholder"
 				:count="15" />
 		</template>
 
-		<NcEmptyContent v-else-if="showEmptyContent"
+		<NcEmptyContent
+			v-else-if="showEmptyContent"
 			class="messages-list__empty-content"
 			:name="t('spreed', 'No messages')"
 			:description="t('spreed', 'All messages have expired or have been deleted.')">
@@ -44,7 +47,8 @@
 				</div>
 			</TransitionWrapper>
 
-			<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
+			<ul
+				v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
 				:key="`section_${dateTimestamp}`"
 				:ref="`dateGroup-${token}`"
 				:data-date-timestamp="dateTimestamp"
@@ -57,7 +61,8 @@
 						role="heading"
 						aria-level="3" />
 				</li>
-				<component :is="messagesGroupComponent[group.type]"
+				<component
+					:is="messagesGroupComponent[group.type]"
 					v-for="group in list"
 					:key="group.id"
 					:token="token"
@@ -623,9 +628,9 @@ export default {
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
+		 *
 		 * @param {object} data the wrapping object
 		 * @param {boolean} data.skipHeightCheck whether to fetch messages without checking the height
-		 *
 		 */
 		async handleScroll({ skipHeightCheck = false } = {}) {
 			if (!this.$refs.scroller) {
@@ -851,6 +856,7 @@ export default {
 
 		/**
 		 * Scrolls to the bottom of the list.
+		 *
 		 * @param {object} options Options for scrolling
 		 * @param {boolean} [options.smooth] 'smooth' scrolling to the bottom ('auto' by default)
 		 * @param {boolean} [options.force] force scrolling to the bottom (otherwise check for current position)

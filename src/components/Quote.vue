@@ -104,6 +104,8 @@ const shortenedQuoteMessage = computed(() => {
 /**
  * Check whether message to quote (parent) existing on server
  * Otherwise server returns ['id' => (int)$parentId, 'deleted' => true]
+ *
+ * @param message
  */
 function isExistingMessage(message: ChatMessage | DeletedParentMessage): message is ChatMessage {
 	return 'messageType' in message
@@ -141,7 +143,8 @@ function handleQuoteClick() {
 </script>
 
 <template>
-	<component :is="component.tag"
+	<component
+		:is="component.tag"
 		:to="component.link"
 		class="quote"
 		:class="{ 'quote--own-message': isOwnMessageQuoted }"
@@ -165,12 +168,14 @@ function handleQuoteClick() {
 		</span>
 
 		<span class="quote__main">
-			<span v-if="isExistingMessage(message)"
+			<span
+				v-if="isExistingMessage(message)"
 				class="quote__main-author"
 				role="heading"
 				aria-level="4">
 				<IconPencilOutline v-if="editMessage" :size="16" />
-				<AvatarWrapper v-else-if="!(isFileShare || isObjectShare)"
+				<AvatarWrapper
+					v-else-if="!(isFileShare || isObjectShare)"
 					:id="message.actorId"
 					:token="message.token"
 					:name="actorDisplayName"
@@ -192,7 +197,8 @@ function handleQuoteClick() {
 			</span>
 		</span>
 
-		<NcButton v-if="canCancel"
+		<NcButton
+			v-if="canCancel"
 			class="quote__button"
 			variant="tertiary"
 			:title="t('spreed', 'Cancel quote')"

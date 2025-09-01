@@ -5,7 +5,8 @@
 
 <template>
 	<div v-if="canModerate">
-		<NcCheckboxRadioSwitch :model-value="mentionPermissions === MENTION_PERMISSIONS.EVERYONE"
+		<NcCheckboxRadioSwitch
+			:model-value="mentionPermissions === MENTION_PERMISSIONS.EVERYONE"
 			:disabled="isMentionPermissionsLoading"
 			type="switch"
 			@update:model-value="toggleMentionPermissions">

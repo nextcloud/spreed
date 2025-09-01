@@ -12,7 +12,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {number} serverId the index in the list of configured recording
  *        servers
  */
-const getWelcomeMessage = async (serverId) => {
+async function getWelcomeMessage(serverId) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/recording/welcome/{serverId}', { serverId }))
 }
 
@@ -22,7 +22,7 @@ const getWelcomeMessage = async (serverId) => {
  * @param {string} token conversation token
  * @param {number} callRecording the type of the recording being started (@see constants CALL.RECORDING.*)
  */
-const startCallRecording = async (token, callRecording) => {
+async function startCallRecording(token, callRecording) {
 	await axios.post(
 		generateOcsUrl('apps/spreed/api/v1/recording/{token}', { token }),
 		{
@@ -36,7 +36,7 @@ const startCallRecording = async (token, callRecording) => {
  *
  * @param {string} token conversation token
  */
-const stopCallRecording = async (token) => {
+async function stopCallRecording(token) {
 	await axios.delete(generateOcsUrl('apps/spreed/api/v1/recording/{token}', { token }))
 }
 

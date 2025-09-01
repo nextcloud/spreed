@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<a class="deck-card"
+	<a
+		class="deck-card"
 		:class="{ wide: wide }"
 		:href="link"
 		:aria-label="deckCardAriaLabel"

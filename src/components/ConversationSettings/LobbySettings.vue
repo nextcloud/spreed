@@ -6,10 +6,12 @@
 <template>
 	<div>
 		<div class="app-settings-subsection">
-			<NcNoteCard v-if="hasCall && !hasLobbyEnabled"
+			<NcNoteCard
+				v-if="hasCall && !hasLobbyEnabled"
 				type="warning"
 				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
-			<NcCheckboxRadioSwitch :model-value="hasLobbyEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="hasLobbyEnabled"
 				type="switch"
 				:disabled="isLobbyStateLoading"
 				@update:model-value="toggleLobby">
@@ -17,13 +19,15 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasLobbyEnabled" class="app-settings-subsection">
-			<form :disabled="lobbyTimerFieldDisabled"
+			<form
+				:disabled="lobbyTimerFieldDisabled"
 				@submit.prevent="saveLobbyTimer">
 				<span class="icon-calendar-dark" />
 				<div>
 					<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 				</div>
-				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
+				<NcDateTimePicker
+					id="moderation_settings_lobby_timer_field"
 					v-model="lobbyTimer"
 					aria-describedby="moderation_settings_lobby_timer_hint"
 					:default-value="defaultLobbyTimer"
@@ -59,7 +63,8 @@
 				{{ t('spreed', 'Import email participants') }}
 			</NcButton>
 
-			<ImportEmailsDialog v-if="isImportEmailsDialogOpen"
+			<ImportEmailsDialog
+				v-if="isImportEmailsDialogOpen"
 				:token="token"
 				container=".import-email-participants"
 				@close="isImportEmailsDialogOpen = false" />

@@ -4,27 +4,32 @@
 -->
 
 <template>
-	<NcAppSettingsDialog id="conversation-settings-container"
+	<NcAppSettingsDialog
+		id="conversation-settings-container"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
 		:open="showSettings"
 		show-navigation
 		@update:open="handleHideSettings">
-		<NcAppSettingsSection id="basic-info"
+		<NcAppSettingsSection
+			id="basic-info"
 			:name="t('spreed', 'Basic Info')">
-			<BasicInfo :conversation="conversation"
+			<BasicInfo
+				:conversation="conversation"
 				:can-full-moderate="canFullModerate" />
 		</NcAppSettingsSection>
 
 		<template v-if="!isBreakoutRoom">
 			<!-- Notifications settings and devices preview screen -->
-			<NcAppSettingsSection v-if="!isNoteToSelf && !isOneToOneFormer"
+			<NcAppSettingsSection
+				v-if="!isNoteToSelf && !isOneToOneFormer"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
 				<NotificationsSettings v-if="!isGuest" :conversation="conversation" />
 			</NcAppSettingsSection>
 
-			<NcAppSettingsSection id="conversation-settings"
+			<NcAppSettingsSection
+				id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
 				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
@@ -35,7 +40,8 @@
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
-			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
+			<NcAppSettingsSection
+				v-if="canFullModerate && !isNoteToSelf"
 				id="meeting"
 				:name="meetingHeader">
 				<LobbySettings :token="token" />
@@ -43,42 +49,48 @@
 			</NcAppSettingsSection>
 
 			<!-- Conversation permissions -->
-			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
+			<NcAppSettingsSection
+				v-if="canFullModerate && !isNoteToSelf"
 				id="permissions"
 				:name="t('spreed', 'Permissions')">
 				<ConversationPermissionsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Live transcription -->
-			<NcAppSettingsSection v-if="canConfigureLiveTranscription"
+			<NcAppSettingsSection
+				v-if="canConfigureLiveTranscription"
 				id="live-transcription"
 				:name="t('spreed', 'Live transcription')">
 				<LiveTranscriptionSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Breakout rooms -->
-			<NcAppSettingsSection v-if="canConfigureBreakoutRooms"
+			<NcAppSettingsSection
+				v-if="canConfigureBreakoutRooms"
 				id="breakout-rooms"
 				:name="t('spreed', 'Breakout Rooms')">
 				<BreakoutRoomsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Matterbridge settings -->
-			<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
+			<NcAppSettingsSection
+				v-if="canFullModerate && matterbridgeEnabled"
 				id="matterbridge"
 				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
 			</NcAppSettingsSection>
 
 			<!-- Bots settings -->
-			<NcAppSettingsSection v-if="selfIsOwnerOrModerator && supportBotsV1"
+			<NcAppSettingsSection
+				v-if="selfIsOwnerOrModerator && supportBotsV1"
 				id="bots"
 				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Destructive actions -->
-			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
+			<NcAppSettingsSection
+				v-if="canLeaveConversation || canDeleteConversation"
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
 				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
@@ -89,13 +101,15 @@
 					<p class="app-settings-section__hint">
 						{{ t('spreed', 'Archived conversations are hidden from the conversation list by default. However, they will still appear when you search for the conversation name or access a list of archived conversations.') }}
 					</p>
-					<NcCheckboxRadioSwitch type="switch"
+					<NcCheckboxRadioSwitch
+						type="switch"
 						:model-value="isArchived"
 						@update:model-value="toggleArchiveConversation">
 						{{ t('spreed', 'Archive conversation') }}
 					</NcCheckboxRadioSwitch>
 				</template>
-				<DangerZone :conversation="conversation"
+				<DangerZone
+					:conversation="conversation"
 					:can-leave-conversation="canLeaveConversation"
 					:can-delete-conversation="canDeleteConversation" />
 			</NcAppSettingsSection>
@@ -283,6 +297,7 @@ export default {
 
 		/**
 		 * Opens ConversationSettingsDialog
+		 *
 		 * @param payload event payload
 		 * @param payload.token conversation token
 		 */

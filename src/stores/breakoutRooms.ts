@@ -63,7 +63,6 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 		 *
 		 * @param token the parent room token;
 		 * @param conversationOrArray a single conversation or an array of conversations.
-		 *
 		 */
 		processConversations(token: string, conversationOrArray: Conversation | Conversation[]) {
 			const conversations = Array.isArray(conversationOrArray) ? conversationOrArray : [conversationOrArray]

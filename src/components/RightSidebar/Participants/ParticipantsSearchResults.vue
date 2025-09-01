@@ -7,7 +7,8 @@
 	<div class="participants-search-results" :class="{ scrollable: scrollable }">
 		<template v-if="addableUsers.length !== 0">
 			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
-			<ParticipantsList :items="addableUsers"
+			<ParticipantsList
+				:items="addableUsers"
 				is-search-result
 				@click="handleClickParticipant" />
 		</template>
@@ -15,21 +16,24 @@
 		<template v-if="!onlyUsers">
 			<template v-if="addableGroups.length !== 0">
 				<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
-				<ParticipantsList :items="addableGroups"
+				<ParticipantsList
+					:items="addableGroups"
 					is-search-result
 					@click="handleClickParticipant" />
 			</template>
 
 			<template v-if="addableEmails.length !== 0">
 				<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
-				<ParticipantsList :items="addableEmails"
+				<ParticipantsList
+					:items="addableEmails"
 					is-search-result
 					@click="handleClickParticipant" />
 			</template>
 
 			<template v-if="addableCircles.length !== 0">
 				<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
-				<ParticipantsList :items="addableCircles"
+				<ParticipantsList
+					:items="addableCircles"
 					is-search-result
 					@click="handleClickParticipant" />
 			</template>
@@ -38,7 +42,8 @@
 			<template v-if="integrations.length !== 0">
 				<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
 				<ul>
-					<NcButton v-for="(integration, index) in integrations"
+					<NcButton
+						v-for="(integration, index) in integrations"
 						:key="'integration' + index"
 						variant="tertiary-no-background"
 						@click="runIntegration(integration)">
@@ -53,7 +58,8 @@
 
 			<template v-if="addableRemotes.length !== 0">
 				<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
-				<ParticipantsList :items="addableRemotes"
+				<ParticipantsList
+					:items="addableRemotes"
 					is-search-result
 					@click="handleClickParticipant" />
 			</template>
@@ -69,7 +75,8 @@
 					<IconAccountSearchOutline />
 				</template>
 			</NcEmptyContent>
-			<NcButton v-else-if="displaySearchHint"
+			<NcButton
+				v-else-if="displaySearchHint"
 				class="participants-search-results__hint"
 				variant="tertiary"
 				@click="handleClickHint">

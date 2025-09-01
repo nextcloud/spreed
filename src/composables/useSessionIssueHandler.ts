@@ -36,6 +36,7 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 
 	/**
 	 * Reload page/app with the new URL
+	 *
 	 * @param url - new URL
 	 */
 	function redirectTo(url: string) {
@@ -59,6 +60,7 @@ export function useSessionIssueHandler(): DeepReadonly<Ref<boolean>> {
 	/**
 	 * Mark session conflict as pending and wait for user input to resolve
 	 * Pending conflict should not send 'leave' requests to signaling server / webserver
+	 *
 	 * @param token - conversation token
 	 */
 	async function handleSessionConflict(token: string) {

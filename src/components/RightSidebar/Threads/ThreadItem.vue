@@ -90,6 +90,7 @@ const threadNotificationLabel = computed(() => notificationLevels.find((l) => l.
 
 /**
  * Resets the submenu when the actions menu is closed
+ *
  * @param open - actions menu state
  */
 function handleActionsMenuOpen(open: boolean) {
@@ -100,7 +101,8 @@ function handleActionsMenuOpen(open: boolean) {
 </script>
 
 <template>
-	<NcListItem :data-nav-id="`thread_${thread.thread.id}`"
+	<NcListItem
+		:data-nav-id="`thread_${thread.thread.id}`"
 		class="thread"
 		:name="thread.thread.title"
 		:to="to"
@@ -151,7 +153,8 @@ function handleActionsMenuOpen(open: boolean) {
 
 				<NcActionSeparator />
 
-				<NcActionButton v-for="level in notificationLevels"
+				<NcActionButton
+					v-for="level in notificationLevels"
 					:key="level.value"
 					:model-value="thread.attendee.notificationLevel.toString()"
 					:value="level.value.toString()"

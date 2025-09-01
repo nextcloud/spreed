@@ -9,7 +9,8 @@
 			<div v-if="!conversation" class="emptycontent room-not-joined">
 				<div class="icon icon-talk" />
 				<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-				<NcButton variant="primary"
+				<NcButton
+					variant="primary"
 					class="button-centered"
 					:disabled="joiningConversation"
 					@click="joinConversation">

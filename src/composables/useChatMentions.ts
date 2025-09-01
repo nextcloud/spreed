@@ -35,6 +35,7 @@ const userDataTokenMap = ref<UserDataTokenMap>({})
 
 /**
  * Provides autoComplete fallback and cached mention object for NcRichContenteditable
+ *
  * @param token conversation token
  */
 export function useChatMentions(token: Ref<string>): ReturnType {
@@ -45,6 +46,7 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 
 	/**
 	 * Prepare and cache search results
+	 *
 	 * @param possibleMention mention object from API response
 	 * @param token conversation token
 	 * @param isDarkTheme whether current theme is dark
@@ -105,6 +107,7 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 
 	/**
 	 * Prepare and cache search results
+	 *
 	 * @param token conversation token
 	 * @param search search string
 	 * @param isDarkTheme whether current theme is dark

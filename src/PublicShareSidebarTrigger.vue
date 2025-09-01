@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcHeaderButton id="talk-sidebar-trigger"
+	<NcHeaderButton
+		id="talk-sidebar-trigger"
 		:title="ariaLabel"
 		:aria-label="ariaLabel"
 		@click="emit('click')">

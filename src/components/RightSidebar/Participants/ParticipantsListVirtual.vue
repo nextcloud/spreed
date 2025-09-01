@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<RecycleScroller ref="scroller"
+	<RecycleScroller
+		ref="scroller"
 		item-tag="ul"
 		:items="participants"
 		:item-size="PARTICIPANT_ITEM_SIZE"

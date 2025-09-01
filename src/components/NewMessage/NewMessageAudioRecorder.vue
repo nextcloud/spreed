@@ -5,7 +5,8 @@
 
 <template>
 	<div class="audio-recorder">
-		<NcButton v-if="!isRecording"
+		<NcButton
+			v-if="!isRecording"
 			:title="startRecordingTitle"
 			:aria-label="startRecordingTitle"
 			variant="tertiary"
@@ -16,7 +17,8 @@
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
-			<NcButton variant="error"
+			<NcButton
+				variant="error"
 				:title="abortRecordingTitle"
 				:aria-label="abortRecordingTitle"
 				@click="abortRecording">
@@ -29,7 +31,8 @@
 				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
-			<NcButton variant="success"
+			<NcButton
+				variant="success"
 				:title="stopRecordingTitle"
 				:aria-label="stopRecordingTitle"
 				:class="{ 'audio-recorder__trigger--recording': isRecording }"

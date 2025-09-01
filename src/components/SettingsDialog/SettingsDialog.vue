@@ -9,7 +9,8 @@
 		:name="t('spreed', 'Talk settings')"
 		show-navigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
-		<NcAppSettingsSection v-for="{ id, name, element } in customSettingsSections"
+		<NcAppSettingsSection
+			v-for="{ id, name, element } in customSettingsSections"
 			:id="id"
 			:key="id"
 			:name="name"
@@ -17,30 +18,35 @@
 			<component :is="element" />
 		</NcAppSettingsSection>
 
-		<NcAppSettingsSection id="devices"
+		<NcAppSettingsSection
+			id="devices"
 			:name="t('spreed', 'Devices')"
 			class="app-settings-section">
-			<NcButton variant="secondary"
+			<NcButton
+				variant="secondary"
 				@click="openMediaSettings">
 				<template #icon>
 					<IconMicrophoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
-			<NcCheckboxRadioSwitch v-if="supportStartWithoutMedia"
+			<NcCheckboxRadioSwitch
+				v-if="supportStartWithoutMedia"
 				:model-value="startWithoutMediaEnabled"
 				:disabled="mediaLoading"
 				type="switch"
 				@update:model-value="toggleStartWithoutMedia">
 				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-if="supportDefaultBlurVirtualBackground"
+			<NcCheckboxRadioSwitch
+				v-if="supportDefaultBlurVirtualBackground"
 				type="switch"
 				:model-value="settingsStore.blurVirtualBackgroundEnabled"
 				@update:model-value="setBlurVirtualBackgroundEnabled">
 				{{ t('spreed', 'Enable blur background by default for all conversations') }}
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-if="!isGuest"
+			<NcCheckboxRadioSwitch
+				v-if="!isGuest"
 				type="switch"
 				:model-value="hideMediaSettings"
 				@update:model-value="setHideMediaSettings">
@@ -50,7 +56,8 @@
 				{{ t('spreed', 'Preview screen will still be shown if recording consent is required') }}
 			</p>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection v-if="!isGuest"
+		<NcAppSettingsSection
+			v-if="!isGuest"
 			id="attachments"
 			:name="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
@@ -61,17 +68,20 @@
 				<p class="app-settings-section__input" @click="showFilePicker">
 					{{ attachmentFolder }}
 				</p>
-				<NcButton variant="primary"
+				<NcButton
+					variant="primary"
 					@click="showFilePicker">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
 			</div>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection v-if="!isGuest && supportConversationsListStyle"
+		<NcAppSettingsSection
+			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
 			:name="t('spreed', 'Appearance')"
 			class="app-settings-section">
-			<NcCheckboxRadioSwitch id="conversations_list_style"
+			<NcCheckboxRadioSwitch
+				id="conversations_list_style"
 				:model-value="conversationsListStyle"
 				:disabled="appearanceLoading"
 				type="switch"
@@ -80,11 +90,13 @@
 				{{ t('spreed', 'Show conversations list in compact mode') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection v-if="!isGuest"
+		<NcAppSettingsSection
+			v-if="!isGuest"
 			id="privacy"
 			:name="t('spreed', 'Privacy')"
 			class="app-settings-section">
-			<NcCheckboxRadioSwitch id="read_status_privacy"
+			<NcCheckboxRadioSwitch
+				id="read_status_privacy"
 				:model-value="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
@@ -92,7 +104,8 @@
 				@update:model-value="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-if="supportTypingStatus"
+			<NcCheckboxRadioSwitch
+				v-if="supportTypingStatus"
 				id="typing_status_privacy"
 				:model-value="typingStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
@@ -102,10 +115,12 @@
 				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection id="sounds"
+		<NcAppSettingsSection
+			id="sounds"
 			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
-			<NcCheckboxRadioSwitch id="play_sounds"
+			<NcCheckboxRadioSwitch
+				id="play_sounds"
 				:model-value="shouldPlaySounds"
 				:disabled="playSoundsLoading"
 				type="switch"
@@ -115,18 +130,21 @@
 			</NcCheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
-			<a :href="settingsUrl"
+			<a
+				:href="settingsUrl"
 				target="_blank"
 				rel="noreferrer nofollow"
 				class="external">
 				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
 			</a>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection id="performance"
+		<NcAppSettingsSection
+			id="performance"
 			:name="t('spreed', 'Performance')"
 			class="app-settings-section">
 			<template v-if="serverSupportsBackgroundBlurred">
-				<NcCheckboxRadioSwitch id="blur-call-background"
+				<NcCheckboxRadioSwitch
+					id="blur-call-background"
 					:model-value="isBackgroundBlurred === 'yes'"
 					:indeterminate="isBackgroundBlurred === ''"
 					type="checkbox"
@@ -134,14 +152,16 @@
 					disabled>
 					{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 				</NcCheckboxRadioSwitch>
-				<a :href="themingUrl"
+				<a
+					:href="themingUrl"
 					target="_blank"
 					rel="noreferrer nofollow"
 					class="external">
 					{{ t('spreed', 'Background blur for Nextcloud instance can be adjusted in the theming settings.') }} ↗
 				</a>
 			</template>
-			<NcCheckboxRadioSwitch v-else
+			<NcCheckboxRadioSwitch
+				v-else
 				id="blur-call-background"
 				:model-value="isBackgroundBlurred !== 'false'"
 				type="switch"
@@ -150,7 +170,8 @@
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection v-if="!disableKeyboardShortcuts"
+		<NcAppSettingsSection
+			v-if="!disableKeyboardShortcuts"
 			id="shortcuts"
 			:name="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
@@ -462,6 +483,7 @@ export default {
 
 		/**
 		 * Fallback method for versions before v29.0.4
+		 *
 		 * @param {boolean} value whether background should be blurred
 		 */
 		toggleBackgroundBlurred(value) {

@@ -4,12 +4,14 @@
 -->
 
 <template>
-	<NcDialog ref="dialog"
+	<NcDialog
+		ref="dialog"
 		:name="dialogTitle"
 		close-on-click-outside
 		size="normal"
 		@update:open="$emit('close')">
-		<NewMessage ref="newMessage"
+		<NewMessage
+			ref="newMessage"
 			role="region"
 			class="send-message-dialog"
 			:token="token"

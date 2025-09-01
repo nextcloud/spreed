@@ -14,7 +14,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param token The token of the conversation.
  * @param search The string that will be used in the search query.
  */
-const searchPossibleMentions = async function(token: string, search: string): getMentionsResponse {
+async function searchPossibleMentions(token: string, search: string): getMentionsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/mentions', { token }), {
 		params: {
 			search,

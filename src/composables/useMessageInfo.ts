@@ -19,6 +19,8 @@ import { useConversationInfo } from './useConversationInfo.ts'
 
 /**
  * Check whether ref's value is not undefined
+ *
+ * @param item
  */
 function isDefinedRef<T>(item: Ref<T | undefined>): item is Ref<T> {
 	return item.value !== undefined

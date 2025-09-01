@@ -6,7 +6,8 @@
 <!-- FIXME COPY FROM apps/files/src/components/TemplatePreview.vue should be deduplicated -->
 <template>
 	<li class="template-picker__item">
-		<input :id="id"
+		<input
+			:id="id"
 			:checked="checked"
 			type="radio"
 			class="radio"
@@ -14,9 +15,11 @@
 			@change="onCheck">
 
 		<label :for="id" class="template-picker__label">
-			<div class="template-picker__preview"
+			<div
+				class="template-picker__preview"
 				:class="failedPreview ? 'template-picker__preview--failed' : ''">
-				<img class="template-picker__image"
+				<img
+					class="template-picker__image"
 					:src="realPreviewUrl"
 					alt=""
 					draggable="false"
@@ -34,7 +37,11 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { generateUrl } from '@nextcloud/router'
 
-const encodeFilePath = function(path) {
+/**
+ *
+ * @param path
+ */
+function encodeFilePath(path) {
 	const pathSections = (path.startsWith('/') ? path : `/${path}`).split('/')
 	let relativePath = ''
 	pathSections.forEach((section) => {
@@ -45,11 +52,17 @@ const encodeFilePath = function(path) {
 	return relativePath
 }
 
-const isPublic = function() {
+/**
+ *
+ */
+function isPublic() {
 	return !getCurrentUser()
 }
 
-const getToken = function() {
+/**
+ *
+ */
+function getToken() {
 	return document.getElementById('sharingToken') && document.getElementById('sharingToken').value
 }
 

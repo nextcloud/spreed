@@ -114,7 +114,8 @@ const isSensitive = computed({
 			{{ t('spreed', 'Notifications') }}
 		</h4>
 
-		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
+		<NcCheckboxRadioSwitch
+			v-for="level in notificationLevels"
 			:key="level.value"
 			:model-value="notificationLevel"
 			:value="level.value.toString()"
@@ -128,7 +129,8 @@ const isSensitive = computed({
 			</span>
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
+		<NcCheckboxRadioSwitch
+			v-if="showCallNotificationSettings"
 			id="notification_calls"
 			v-model="notifyCalls"
 			:disabled="loading.calls"
@@ -136,7 +138,8 @@ const isSensitive = computed({
 			{{ t('spreed', 'Notify about calls in this conversation') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch v-if="supportImportantConversations"
+		<NcCheckboxRadioSwitch
+			v-if="supportImportantConversations"
 			id="important"
 			v-model="isImportant"
 			:disabled="loading.important"
@@ -149,7 +152,8 @@ const isSensitive = computed({
 			{{ t('spreed', '"Do not disturb" user status is ignored for important conversations') }}
 		</p>
 
-		<NcCheckboxRadioSwitch v-if="supportSensitiveConversations"
+		<NcCheckboxRadioSwitch
+			v-if="supportSensitiveConversations"
 			id="sensitive"
 			v-model="isSensitive"
 			:disabled="loading.sensitive"

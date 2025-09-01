@@ -7,7 +7,8 @@
 <template>
 	<NcNoteCard type="info" class="absence-reminder">
 		<template #icon>
-			<AvatarWrapper :id="userAbsence.userId"
+			<AvatarWrapper
+				:id="userAbsence.userId"
 				:token="token"
 				:name="displayName"
 				source="users"
@@ -20,14 +21,16 @@
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
 			<p>{{ t('spreed', 'Replacement:') }}</p>
-			<NcUserBubble :key="isDarkTheme ? 'dark' : 'light'"
+			<NcUserBubble
+				:key="isDarkTheme ? 'dark' : 'light'"
 				class="absence-reminder__replacement__bubble"
 				:title="t('spreed', 'Open conversation')"
 				:display-name="userAbsence.replacementUserDisplayName"
 				:user="userAbsence.replacementUserId"
 				@click="openConversationWithReplacementUser" />
 		</div>
-		<NcButton v-if="userAbsenceMessage && isTextMoreThanOneLine"
+		<NcButton
+			v-if="userAbsenceMessage && isTextMoreThanOneLine"
 			class="absence-reminder__button"
 			variant="tertiary"
 			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"

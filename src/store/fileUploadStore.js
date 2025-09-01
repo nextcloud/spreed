@@ -28,15 +28,20 @@ import {
 } from '../utils/fileUpload.js'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
-const state = () => ({
-	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
-	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
-	uploads: {},
-	currentUploadId: undefined,
-	localUrls: {},
-	fileTemplatesInitialised: false,
-	fileTemplates: [],
-})
+/**
+ *
+ */
+function state() {
+	return {
+		attachmentFolder: loadState('spreed', 'attachment_folder', ''),
+		attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
+		uploads: {},
+		currentUploadId: undefined,
+		localUrls: {},
+		fileTemplatesInitialised: false,
+		fileTemplates: [],
+	}
+}
 
 const getters = {
 

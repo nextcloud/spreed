@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<NcModal v-if="showModal"
+	<NcModal
+		v-if="showModal"
 		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		@close="handleDismiss">
-		<div class="upload-editor"
+		<div
+			class="upload-editor"
 			@dragover.prevent="handleDragOver"
 			@dragleave.prevent="handleDragLeave"
 			@drop.prevent="handleDropFiles">
@@ -19,13 +21,15 @@
 					{{ t('spreed', 'Upload from device') }}
 				</h2>
 				<!--native file picker, hidden -->
-				<input id="file-upload"
+				<input
+					id="file-upload"
 					ref="fileUploadInput"
 					multiple
 					type="file"
 					class="hidden-visually"
 					@change="handleFileInput">
-				<TransitionWrapper class="upload-editor__previews"
+				<TransitionWrapper
+					class="upload-editor__previews"
 					:class="{ 'dragging-over': isDraggingOver }"
 					name="fade"
 					tag="div"
@@ -50,7 +54,8 @@
 				</TransitionWrapper>
 			</template>
 			<template v-else>
-				<AudioPlayer :name="voiceMessageName"
+				<AudioPlayer
+					:name="voiceMessageName"
 					:local-url="voiceMessageLocalURL" />
 			</template>
 			<div v-if="!supportMediaCaption" class="upload-editor__actions">
@@ -61,7 +66,8 @@
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>
-			<NewMessage v-else
+			<NewMessage
+				v-else
 				ref="newMessage"
 				role="region"
 				class="upload-editor__textfield"

@@ -8,7 +8,8 @@
 		<p class="breakout-rooms-settings__hint">
 			{{ hintText }}
 		</p>
-		<NcButton variant="secondary"
+		<NcButton
+			variant="secondary"
 			@click="openBreakoutRoomsEditor">
 			<template #icon>
 				<IconDotsCircle :size="20" />
@@ -17,7 +18,8 @@
 		</NcButton>
 	</div>
 	<!-- Breakout rooms editor -->
-	<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+	<BreakoutRoomsEditor
+		v-if="showBreakoutRoomsEditor"
 		:token="token"
 		@close="showBreakoutRoomsEditor = false" />
 </template>

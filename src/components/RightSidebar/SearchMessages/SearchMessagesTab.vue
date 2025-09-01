@@ -106,7 +106,13 @@ onBeforeUnmount(() => {
 	abortSearch()
 })
 
-const onRouteChange = ({ from, to }: { from: RouteLocation, to: RouteLocation }): void => {
+/**
+ *
+ * @param payload
+ * @param payload.from
+ * @param payload.to
+ */
+function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }): void {
 	if (to.name !== 'conversation' || from.params.token !== to.params.token || (to.hash && isInCall.value)) {
 		abortSearch()
 		emit('close')
@@ -157,7 +163,7 @@ type SearchMessageCancelableRequest = {
 }
 
 /**
- * @param [isNew=true] Is it a new search (search parameters changed)?
+ * @param [isNew] Is it a new search (search parameters changed)?
  * Fetch the search results from the server
  */
 async function fetchSearchResults(isNew = true): Promise<void> {
@@ -245,7 +251,8 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 		<div class="search-form">
 			<div class="search-form__main">
 				<div class="search-form__search-box-wrapper">
-					<SearchBox ref="searchBox"
+					<SearchBox
+						ref="searchBox"
 						v-model:value="searchText"
 						v-model:is-focused="isFocused"
 						:placeholder-text="t('spreed', 'Search messages …')" />
@@ -261,14 +268,16 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 				</div>
 				<TransitionWrapper name="radial-reveal">
 					<div v-show="searchDetailsOpened" class="search-form__search-detail">
-						<NcSelectUsers v-model="fromUser"
+						<NcSelectUsers
+							v-model="fromUser"
 							class="search-form__search-detail__from-user"
 							:aria-label-combobox="t('spreed', 'From User')"
 							:placeholder="t('spreed', 'From User')"
 							:loading="!participantsInitialised"
 							:options="participants" />
 						<div class="search-form__search-detail__date-picker-wrapper">
-							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
+							<NcDateTimePickerNative
+								id="search-form__search-detail__date-picker--since"
 								v-model="sinceDate"
 								class="search-form__search-detail__date-picker"
 								type="date"
@@ -276,7 +285,8 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 								:max="new Date()"
 								:aria-label="t('spreed', 'Since')"
 								:label="t('spreed', 'Since')" />
-							<NcDateTimePickerNative id="search-form__search-detail__date-picker--until"
+							<NcDateTimePickerNative
+								id="search-form__search-detail__date-picker--until"
 								v-model="untilDate"
 								class="search-form__search-detail__date-picker"
 								type="date"
@@ -288,20 +298,24 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					</div>
 				</TransitionWrapper>
 				<TransitionWrapper name="fade">
-					<div v-show="hasFilter && !searchDetailsOpened"
+					<div
+						v-show="hasFilter && !searchDetailsOpened"
 						class="search-form__search-bubbles">
-						<NcChip v-if="fromUser"
+						<NcChip
+							v-if="fromUser"
 							variant="tertiary"
 							:text="fromUser.displayName"
 							@close="fromUser = undefined">
 							<template #icon>
-								<NcAvatar :size="24"
+								<NcAvatar
+									:size="24"
 									:user="fromUser.id"
 									:display-name="fromUser.displayName"
 									hide-status />
 							</template>
 						</NcChip>
-						<NcChip v-if="sinceDate"
+						<NcChip
+							v-if="sinceDate"
 							variant="tertiary"
 							:text="t('spreed', 'Since') + ' ' + sinceDate?.toLocaleDateString()"
 							@close="sinceDate = null">
@@ -309,7 +323,8 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 								<IconCalendarRangeOutline :size="15" />
 							</template>
 						</NcChip>
-						<NcChip v-if="untilDate"
+						<NcChip
+							v-if="untilDate"
 							variant="tertiary"
 							:text="t('spreed', 'Until') + ' ' + untilDate?.toLocaleDateString()"
 							@close="untilDate = null">
@@ -323,7 +338,8 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 		</div>
 		<div class="search-results">
 			<template v-if="searchResults.length !== 0">
-				<SearchMessageItem v-for="item of searchResults"
+				<SearchMessageItem
+					v-for="item of searchResults"
 					:key="`message_${item.attributes.messageId}`"
 					:message-id="+item.attributes.messageId"
 					:title="item.title"
@@ -334,7 +350,8 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					:timestamp="+item.attributes.timestamp"
 					:to="item.to" />
 			</template>
-			<NcEmptyContent v-else-if="!isFetchingResults && searchText.trim().length !== 0"
+			<NcEmptyContent
+				v-else-if="!isFetchingResults && searchText.trim().length !== 0"
 				class="search-results__empty"
 				:name="t('spreed', 'No results found')">
 				<template #icon>

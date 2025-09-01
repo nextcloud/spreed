@@ -32,6 +32,9 @@ type ProcessChatBlocksOptions = {
 /**
  * Check, if two sets intersect with each other
  * Same complexity and result as !Set.prototype.isDisjointFrom()
+ *
+ * @param parentBlock
+ * @param childBlock
  */
 function checkIfIntersect(parentBlock: Set<number>, childBlock: Set<number>): boolean {
 	for (const id of childBlock) {
@@ -45,6 +48,8 @@ function checkIfIntersect(parentBlock: Set<number>, childBlock: Set<number>): bo
 /**
  * Return an array of only numeric ids from given set
  * (temporary messages have a string id)
+ *
+ * @param block
  */
 function filterNumericIds(block: Set<number | string>): number[] {
 	return Array.from(block).filter((id): id is number => Number.isInteger(id))
@@ -61,6 +66,11 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Returns list of messages, belonging to current context
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	function getMessagesList(
 		token: string,
@@ -89,6 +99,10 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Returns list of messages from given set
+	 *
+	 * @param token
+	 * @param block
+	 * @param threadId
 	 */
 	function prepareMessagesList(token: string, block: Set<number>, threadId?: number): ChatMessage[] {
 		return Array.from(block).sort((a, b) => a - b)
@@ -112,6 +126,11 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Returns whether message is known in any of blocks (then it exists in store)
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	function hasMessage(
 		token: string,
@@ -133,6 +152,11 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Returns first known message id, belonging to current context. Defaults to given messageId
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	function getFirstKnownId(
 		token: string,
@@ -161,6 +185,11 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Returns last known message id, belonging to current context. Defaults to given messageId
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	function getLastKnownId(
 		token: string,
@@ -189,6 +218,10 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
+	 *
+	 * @param token
+	 * @param messages
+	 * @param options
 	 */
 	function processChatBlocks(token: string, messages: ChatMessage[], options?: ProcessChatBlocksOptions): void {
 		const threadIdSetsToUpdate: IdMap<Set<number>> = {}
@@ -238,6 +271,11 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
+	 *
+	 * @param token
+	 * @param threadId
+	 * @param threadMessagesSet
+	 * @param options
 	 */
 	function processThreadBlocks(token: string, threadId: string | number, threadMessagesSet: Set<number>, options?: ProcessChatBlocksOptions): void {
 		if (!threadBlocks[token]) {
@@ -259,6 +297,9 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Check, if blocks are intersecting with each other, and merge them in this case
 	 * Otherwise, sort them to expected position (sorted by max id in set)
+	 *
+	 * @param blocks
+	 * @param unsortedBlock
 	 */
 	function mergeAndSortChatBlocks(blocks: Set<number>[] | undefined, unsortedBlock: Set<number>): Set<number>[] {
 		if (!blocks || blocks.length === 0) {
@@ -298,6 +339,9 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Check, if child block is intersecting with parent, and extend parent in this case
 	 * Returns true if parent was extended, false otherwise
+	 *
+	 * @param parentBlock
+	 * @param childBlock
 	 */
 	function tryMergeBlocks(parentBlock: Set<number>, childBlock: Set<number>): boolean {
 		if (checkIfIntersect(parentBlock, childBlock)) {
@@ -313,6 +357,9 @@ export const useChatStore = defineStore('chat', () => {
 	/**
 	 * Adds the message id to the main chat block
 	 * (It is expected to appear in most recent one)
+	 *
+	 * @param token
+	 * @param message
 	 */
 	function addMessageToChatBlocks(token: string, message: ChatMessage) {
 		if (!chatBlocks[token]) {
@@ -336,6 +383,9 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Removes one or more message ids from all chat blocks
+	 *
+	 * @param token
+	 * @param messageIds
 	 */
 	function removeMessagesFromChatBlocks(token: string, messageIds: number | number[]) {
 		if (!chatBlocks[token]) {
@@ -380,6 +430,9 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Clears the messages entry from the store for the given token starting from defined id
+	 *
+	 * @param token
+	 * @param idToDelete
 	 */
 	function clearMessagesHistory(token: string, idToDelete: number) {
 		if (!chatBlocks[token]) {
@@ -431,6 +484,8 @@ export const useChatStore = defineStore('chat', () => {
 
 	/**
 	 * Clears the store for the given token
+	 *
+	 * @param token
 	 */
 	function purgeChatStore(token: string) {
 		delete chatBlocks[token]

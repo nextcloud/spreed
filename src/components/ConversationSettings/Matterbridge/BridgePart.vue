@@ -10,7 +10,8 @@
 			<h4 class="part__heading">
 				{{ type.name }}
 			</h4>
-			<NcActions class="actions"
+			<NcActions
+				class="actions"
 				:container="container"
 				:inline="editable ? 1 : 0"
 				placement="bottom">
@@ -35,7 +36,8 @@
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<div v-for="(field, key) in displayedFields"
+		<div
+			v-for="(field, key) in displayedFields"
 			:key="key"
 			class="field">
 			<!-- TODO: do not mutate prop `part` directly -->

@@ -5,7 +5,8 @@
 
 <template>
 	<span ref="mention" class="mention">
-		<NcUserBubble v-if="size"
+		<NcUserBubble
+			v-if="size"
 			:key="isDarkTheme ? 'dark' : 'light'"
 			:display-name="name"
 			:avatar-image="avatarUrl"

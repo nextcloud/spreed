@@ -13,10 +13,12 @@
 				{{ t('spreed', 'You are currently waiting in the lobby') }}
 			</p>
 
-			<p v-if="lobbyTimer"
+			<p
+				v-if="lobbyTimer"
 				class="lobby__countdown">
 				{{ message }}
-				<span v-if="relativeDate"
+				<span
+					v-if="relativeDate"
 					class="lobby__countdown relative-timestamp"
 					:title="startTime">
 					- {{ relativeDate }}
@@ -24,7 +26,8 @@
 			</p>
 
 			<div class="lobby__description">
-				<NcRichText :text="conversation.description"
+				<NcRichText
+					:text="conversation.description"
 					dir="auto"
 					autolink
 					use-extended-markdown />

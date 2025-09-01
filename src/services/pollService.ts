@@ -31,7 +31,7 @@ type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraf
  * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  */
-const createPoll = async ({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollResponse => {
+async function createPoll({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {
 		question,
 		options,
@@ -49,7 +49,7 @@ const createPoll = async ({ token, question, options, resultMode, maxVotes }: cr
  * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  */
-const createPollDraft = async ({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollDraftResponse => {
+async function createPollDraft({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollDraftResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {
 		question,
 		options,
@@ -68,7 +68,7 @@ const createPollDraft = async ({ token, question, options, resultMode, maxVotes 
  * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  */
-const updatePollDraft = async ({ token, pollId, question, options, resultMode, maxVotes }: updatePollDraftPayload): updatePollDraftResponse => {
+async function updatePollDraft({ token, pollId, question, options, resultMode, maxVotes }: updatePollDraftPayload): updatePollDraftResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}/draft/{pollId}', { token, pollId }), {
 		question,
 		options,
@@ -80,7 +80,7 @@ const updatePollDraft = async ({ token, pollId, question, options, resultMode, m
 /**
  * @param token The conversation token
  */
-const getPollDrafts = async (token: string): getPollDraftsResponse => {
+async function getPollDrafts(token: string): getPollDraftsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/poll/{token}/drafts', { token }))
 }
 
@@ -88,7 +88,7 @@ const getPollDrafts = async (token: string): getPollDraftsResponse => {
  * @param token The conversation token
  * @param pollId Id of the poll
  */
-const getPollData = async (token: string, pollId: string): getPollResponse => {
+async function getPollData(token: string, pollId: string): getPollResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
 }
 
@@ -97,7 +97,7 @@ const getPollData = async (token: string, pollId: string): getPollResponse => {
  * @param pollId Id of the poll
  * @param optionIds Indexes of options the participant votes for
  */
-const submitVote = async (token: string, pollId: string, optionIds: votePollParams['optionIds']): votePollResponse => {
+async function submitVote(token: string, pollId: string, optionIds: votePollParams['optionIds']): votePollResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }), {
 		optionIds,
 	} as votePollParams)
@@ -107,14 +107,14 @@ const submitVote = async (token: string, pollId: string, optionIds: votePollPara
  * @param token The conversation token
  * @param pollId Id of the poll
  */
-const endPoll = async (token: string, pollId: string): closePollResponse => {
+async function endPoll(token: string, pollId: string): closePollResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
 }
 /**
  * @param token The conversation token
  * @param pollId Id of the poll draft
  */
-const deletePollDraft = async (token: string, pollId: string): deletePollDraftResponse => {
+async function deletePollDraft(token: string, pollId: string): deletePollDraftResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
 }
 

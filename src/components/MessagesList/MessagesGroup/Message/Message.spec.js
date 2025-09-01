@@ -515,7 +515,9 @@ describe('Message.vue', () => {
 	describe('delete action', () => {
 		test('deletes message', async () => {
 			let resolveDeleteMessage
-			const deleteMessage = vi.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
+			const deleteMessage = vi.fn().mockReturnValue(new Promise((resolve, reject) => {
+				resolveDeleteMessage = resolve
+			}))
 			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
 			store = createStore(testStoreConfig)
 

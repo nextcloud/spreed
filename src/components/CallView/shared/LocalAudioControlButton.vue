@@ -5,7 +5,8 @@
 
 <template>
 	<div class="local-audio-control-wrapper">
-		<NcPopover ref="popover"
+		<NcPopover
+			ref="popover"
 			:boundary="boundaryElement"
 			:show-triggers="[]"
 			:hide-triggers="['click']"
@@ -13,7 +14,8 @@
 			no-focus-trap
 			:shown="popupShown">
 			<template #trigger>
-				<NcButton :title="audioButtonTitle"
+				<NcButton
+					:title="audioButtonTitle"
 					:variant="variant"
 					:aria-label="audioButtonAriaLabel"
 					:class="{
@@ -37,7 +39,8 @@
 			</div>
 		</NcPopover>
 
-		<NcActions v-if="showDevices"
+		<NcActions
+			v-if="showDevices"
 			:disabled="!isAudioAvailable || !isAudioAllowed"
 			class="audio-selector-button"
 			@open="updateDevices">
@@ -45,7 +48,8 @@
 				<IconChevronUp :size="16" />
 			</template>
 			<NcActionCaption :name="t('spreed', 'Select a microphone')" />
-			<NcActionButton v-for="device in audioInputDevices"
+			<NcActionButton
+				v-for="device in audioInputDevices"
 				:key="device.deviceId ?? 'none'"
 				type="radio"
 				:model-value="audioInputId"
@@ -57,7 +61,8 @@
 			<template v-if="audioOutputSupported">
 				<NcActionSeparator />
 				<NcActionCaption :name="t('spreed', 'Select a speaker')" />
-				<NcActionButton v-for="device in audioOutputDevices"
+				<NcActionButton
+					v-for="device in audioOutputDevices"
 					:key="device.deviceId ?? 'none'"
 					type="radio"
 					:model-value="audioOutputId"
@@ -172,6 +177,7 @@ export default {
 
 		/**
 		 * Check if component is visible and not obstructed by others
+		 *
 		 * @param element HTML element
 		 */
 		function isVisible(element) {

@@ -15,17 +15,21 @@
 				<Location wide v-bind="item.messageParameters.object" />
 			</div>
 
-			<DeckCard v-else-if="isDeckCard"
+			<DeckCard
+				v-else-if="isDeckCard"
 				wide
 				v-bind="item.messageParameters.object" />
 
-			<Poll v-else-if="isPoll"
+			<Poll
+				v-else-if="isPoll"
 				:token="token"
 				v-bind="item.messageParameters.object" />
 
-			<div v-else-if="isOther"
+			<div
+				v-else-if="isOther"
 				class="shared-items__other">
-				<a v-if="item.messageParameters.object?.link"
+				<a
+					v-if="item.messageParameters.object?.link"
 					:href="item.messageParameters.object.link"
 					target="_blank">
 					{{ item.messageParameters.object.name }}
@@ -35,7 +39,8 @@
 				</p>
 			</div>
 
-			<FilePreview v-else
+			<FilePreview
+				v-else
 				:token="token"
 				:small-preview="!isMedia"
 				:row-layout="!isMedia"

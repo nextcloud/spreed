@@ -9,7 +9,8 @@ import EmptyView from '../components/EmptyView.vue'
 </script>
 
 <template>
-	<EmptyView :name="t('spreed', 'You do not have permissions to access this conversation.')"
+	<EmptyView
+		:name="t('spreed', 'You do not have permissions to access this conversation.')"
 		:description="t('spreed', 'Join a different conversation or start a new one.')">
 		<template #icon>
 			<IconOctagonOutline />

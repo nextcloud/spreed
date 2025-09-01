@@ -9,7 +9,8 @@
 	<h4 class="app-settings-section__subtitle">
 		{{ t('spreed', 'Name') }}
 	</h4>
-	<EditableTextField :editable="canFullModerate && !isEventConversation"
+	<EditableTextField
+		:editable="canFullModerate && !isEventConversation"
 		:initial-text="conversationName"
 		:editing="isEditingName"
 		:loading="isNameLoading"
@@ -22,7 +23,8 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Description') }}
 		</h4>
-		<EditableTextField :editable="canFullModerate && !isEventConversation"
+		<EditableTextField
+			:editable="canFullModerate && !isEventConversation"
 			:initial-text="description"
 			:editing="isEditingDescription"
 			:loading="isDescriptionLoading"
@@ -38,7 +40,8 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Picture') }}
 		</h4>
-		<ConversationAvatarEditor :conversation="conversation"
+		<ConversationAvatarEditor
+			:conversation="conversation"
 			:editable="canFullModerate" />
 	</template>
 </template>

@@ -28,6 +28,7 @@ const customSettingsSections: Ref<TalkSettingsSection[]> = ref([])
 
 /**
  * Register a custom settings section
+ *
  * @param section - Settings section
  */
 function registerSection(section: TalkSettingsSection) {
@@ -36,6 +37,7 @@ function registerSection(section: TalkSettingsSection) {
 
 /**
  * Unregister a custom settings section
+ *
  * @param id - Section ID
  */
 function unregisterSection(id: string) {

@@ -4,11 +4,13 @@
 -->
 
 <template>
-	<NcDialog :name="dialogName"
+	<NcDialog
+		:name="dialogName"
 		:close-on-click-outside="!isFilled"
 		:container="container"
 		@update:open="emit('close')">
-		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
+		<NcButton
+			v-if="supportPollDrafts && isOpenedFromDraft"
 			class="poll-editor__back-button"
 			variant="tertiary"
 			:title="t('spreed', 'Back')"
@@ -25,7 +27,8 @@
 		<div class="poll-editor__wrapper">
 			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
 			<!--native file picker, hidden -->
-			<input id="poll-upload"
+			<input
+				id="poll-upload"
 				ref="pollImport"
 				type="file"
 				class="hidden-visually"
@@ -50,13 +53,16 @@
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Answers') }}
 		</p>
-		<div v-for="(option, index) in pollForm.options"
+		<div
+			v-for="(option, index) in pollForm.options"
 			:key="index"
 			class="poll-editor__option">
-			<NcTextField ref="pollOption"
+			<NcTextField
+				ref="pollOption"
 				v-model="pollForm.options[index]"
 				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
-			<NcButton v-if="pollForm.options.length > 2"
+			<NcButton
+				v-if="pollForm.options.length > 2"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Delete poll option')"
 				@click="deleteOption(index)">
@@ -204,6 +210,7 @@ const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
 /**
  * Remove a previously added option
+ *
  * @param index option index
  */
 function deleteOption(index: number) {
@@ -250,6 +257,7 @@ async function handleSubmit() {
 
 /**
  * Pre-fills form from the draft
+ *
  * @param id poll draft ID
  * @param fromDrafts whether editor was opened from drafts handler
  * @param action required action ('fill' from draft or 'edit' draft)
@@ -288,6 +296,7 @@ function triggerImport() {
 
 /**
  * Validate imported file and insert data into form fields
+ *
  * @param event import event
  */
 function importPoll(event: Event) {
@@ -312,6 +321,7 @@ function importPoll(event: Event) {
 
 /**
  * Insert data into form fields
+ *
  * @param payload data to fill with
  */
 function fillPollForm(payload: requiredPollParams) {

@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcButton :disabled="disabled"
+	<NcButton
+		:disabled="disabled"
 		class="media-devices-speaker-test-button"
 		:title="buttonLabel"
 		:aria-label="buttonLabel"
@@ -12,7 +13,8 @@
 		@click="playTestSound">
 		<template #icon>
 			<div class="equalizer">
-				<div v-for="bar in equalizerBars"
+				<div
+					v-for="bar in equalizerBars"
 					:key="bar.key"
 					class="equalizer__bar"
 					:class="{ 'equalizer__bar--active': isPlayingTestSound }"

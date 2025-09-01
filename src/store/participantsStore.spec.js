@@ -817,9 +817,7 @@ describe('participantsStore', () => {
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
 
-			actorStore.setCurrentParticipant(Object.assign({}, participantData, {
-				attendeeId: 1,
-			}))
+			actorStore.setCurrentParticipant({ ...participantData, attendeeId: 1 })
 
 			testStoreConfig.actions.addConversation = vi.fn().mockImplementation((context) => {
 				// needed for the updateSessionId call which requires this
@@ -852,7 +850,7 @@ describe('participantsStore', () => {
 
 		test('force join conversation', async () => {
 			store = createStore(testStoreConfig)
-			const updatedParticipantData = Object.assign({}, participantData, { sessionId: 'another-session-id' })
+			const updatedParticipantData = { ...participantData, sessionId: 'another-session-id' }
 			const response = generateOCSResponse({ payload: updatedParticipantData })
 			joinConversation.mockResolvedValue(response)
 

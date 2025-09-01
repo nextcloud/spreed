@@ -10,18 +10,21 @@
 			{{ t('spreed', 'Recording backend') }}
 		</h2>
 
-		<NcNoteCard v-if="!hasSignalingServers"
+		<NcNoteCard
+			v-if="!hasSignalingServers"
 			type="warning"
 			:text="t('spreed', 'Recording backend configuration is only possible with a High-performance backend.')" />
 
 		<template v-else>
 			<NcNoteCard v-if="showUploadLimitWarning" type="warning" :text="uploadLimitWarning" />
 
-			<TransitionWrapper v-if="servers.length"
+			<TransitionWrapper
+				v-if="servers.length"
 				name="fade"
 				tag="ul"
 				group>
-				<RecordingServer v-for="(server, index) in servers"
+				<RecordingServer
+					v-for="(server, index) in servers"
 					:key="`server${index}`"
 					v-model:server="servers[index].server"
 					v-model:verify="servers[index].verify"
@@ -32,7 +35,8 @@
 					@update:verify="debounceUpdateServers" />
 			</TransitionWrapper>
 
-			<NcButton v-else
+			<NcButton
+				v-else
 				class="additional-top-margin"
 				:disabled="loading"
 				@click="newServer">
@@ -43,7 +47,8 @@
 				{{ t('spreed', 'Add a new recording backend server') }}
 			</NcButton>
 
-			<NcPasswordField v-model="secret"
+			<NcPasswordField
+				v-model="secret"
 				class="form__textfield additional-top-margin"
 				name="recording_secret"
 				as-text
@@ -77,7 +82,8 @@
 				<h3>{{ t('spreed', 'Recording transcription') }}</h3>
 
 				<!-- FIXME hidden until transcription quality is appropriate -->
-				<NcCheckboxRadioSwitch v-if="false"
+				<NcCheckboxRadioSwitch
+					v-if="false"
 					v-model="recordingTranscriptionEnabled"
 					type="switch"
 					:disabled="loading"
@@ -85,7 +91,8 @@
 					{{ t('spreed', 'Automatically transcribe call recordings with a transcription provider') }}
 				</NcCheckboxRadioSwitch>
 
-				<NcCheckboxRadioSwitch v-model="recordingSummaryEnabled"
+				<NcCheckboxRadioSwitch
+					v-model="recordingSummaryEnabled"
 					type="switch"
 					:disabled="loading"
 					@update:model-value="setRecordingSummary">

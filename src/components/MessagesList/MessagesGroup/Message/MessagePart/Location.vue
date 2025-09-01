@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<a :href="mapLink"
+	<a
+		:href="mapLink"
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"
 		:class="{ wide: wide }"
 		:aria-label="linkAriaLabel">
-		<LMap :zoom="previewZoom"
+		<LMap
+			:zoom="previewZoom"
 			:center="center"
 			:options="{
 				scrollWheelZoom: false,
@@ -20,14 +22,16 @@
 			}"
 			@scroll.prevent="">
 			<LTileLayer :url="url" />
-			<LControlAttribution position="bottomright"
+			<LControlAttribution
+				position="bottomright"
 				:prefix="attribution" />
 			<LMarker :lat-lng="center">
-				<LTooltip :options="{
-					direction: 'top',
-					permanent: 'true',
-					offset: [-16, -14],
-				}">
+				<LTooltip
+					:options="{
+						direction: 'top',
+						permanent: 'true',
+						offset: [-16, -14],
+					}">
 					{{ name }}
 				</LTooltip>
 			</LMarker>

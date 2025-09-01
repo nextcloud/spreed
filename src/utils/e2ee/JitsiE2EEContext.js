@@ -27,7 +27,9 @@ const kJitsiE2EE = Symbol('kJitsiE2EE')
 export default class E2EEcontext {
 	/**
 	 * Build a new E2EE context instance, which will be used in a given conference.
-	 * @param {boolean} [options.sharedKey] - whether there is a uniques key shared amoung all participants.
+	 *
+	 * @param payload
+	 * @param [payload.sharedKey] - whether there is a uniques key shared amoung all participants.
 	 */
 	constructor({ sharedKey } = {}) {
 		this._worker = new Worker()
@@ -134,7 +136,7 @@ export default class E2EEcontext {
 	 *
 	 * @param {string} participantId - the ID of the participant who's key we are setting.
 	 * @param {Uint8Array | boolean} key - they key for the given participant.
-	 * @param {Number} keyIndex - the key index.
+	 * @param {number} keyIndex - the key index.
 	 */
 	setKey(participantId, key, keyIndex) {
 		this._worker.postMessage({

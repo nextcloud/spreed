@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcButton v-if="showStartCallButton"
+	<NcButton
+		v-if="showStartCallButton"
 		:title="startCallTitle"
 		:aria-label="startCallLabel"
 		:disabled="startCallButtonDisabled || loading || isJoiningCall"
@@ -22,7 +23,8 @@
 		</template>
 	</NcButton>
 
-	<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
+	<NcButton
+		v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 		:aria-label="endCallLabel"
 		class="leave-call"
 		variant="error"
@@ -36,7 +38,8 @@
 			{{ endCallLabel }}
 		</template>
 	</NcButton>
-	<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
+	<NcButton
+		v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 		:aria-label="leaveCallLabel"
 		class="leave-call"
 		:variant="isScreensharing ? 'tertiary' : 'error'"
@@ -50,7 +53,8 @@
 			{{ leaveCallLabel }}
 		</template>
 	</NcButton>
-	<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
+	<NcActions
+		v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 		class="leave-call leave-call-actions--split"
 		:disabled="loading"
 		force-name
@@ -61,14 +65,16 @@
 		<template #icon>
 			<IconChevronUp :size="20" />
 		</template>
-		<NcActionButton v-if="isBreakoutRoom"
+		<NcActionButton
+			v-if="isBreakoutRoom"
 			@click="switchToParentRoom">
 			<template #icon>
 				<IconArrowLeft class="bidirectional-icon" :size="20" />
 			</template>
 			{{ backToMainRoomLabel }}
 		</NcActionButton>
-		<NcActionButton class="leave-call-button--split"
+		<NcActionButton
+			class="leave-call-button--split"
 			@click="leaveCall(false)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />

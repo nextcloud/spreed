@@ -9,7 +9,8 @@
 
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
-		<NcSelect v-model="defaultGroupNotification"
+		<NcSelect
+			v-model="defaultGroupNotification"
 			class="default-group-notification"
 			input-id="default_group_notification_input"
 			:input-label="t('spreed', 'Default group notification')"
@@ -25,14 +26,16 @@
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
-		<NcCheckboxRadioSwitch :model-value="isConversationsFilesChecked"
+		<NcCheckboxRadioSwitch
+			:model-value="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
 			type="switch"
 			@update:model-value="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch :model-value="isConversationsFilesPublicSharesChecked"
+		<NcCheckboxRadioSwitch
+			:model-value="isConversationsFilesPublicSharesChecked"
 			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
 			type="switch"
 			@update:model-value="saveConversationsFilesPublicShares">
@@ -45,17 +48,20 @@
 				<small>{{ t('spreed', 'Beta') }}</small>
 			</h3>
 
-			<NcCheckboxRadioSwitch v-model="isE2EECallsEnabled"
+			<NcCheckboxRadioSwitch
+				v-model="isE2EECallsEnabled"
 				type="switch"
 				:disabled="loading || !canEnableE2EECalls"
 				@update:model-value="updateE2EECallsEnabled">
 				{{ t('spreed', 'Enable encryption') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcNoteCard v-if="!canEnableE2EECalls"
+			<NcNoteCard
+				v-if="!canEnableE2EECalls"
 				type="warning"
 				:text="t('spreed', 'End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge.')" />
-			<NcNoteCard v-else
+			<NcNoteCard
+				v-else
 				type="warning"
 				:text="t('spreed', 'Mobile clients do not support end-to-end encrypted calls at the moment.')" />
 		</template>

@@ -8,7 +8,8 @@
 		<span class="poll-card__header poll-card__header--draft">
 			<IconPoll class="poll-card__header-icon" :size="20" />
 			<span class="poll-card__header-name">{{ name }}</span>
-			<NcButton v-if="canEditPollDraft"
+			<NcButton
+				v-if="canEditPollDraft"
 				variant="tertiary"
 				:title="t('spreed', 'Edit poll draft')"
 				:aria-label="t('spreed', 'Edit poll draft')"
@@ -17,7 +18,8 @@
 					<IconPencilOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				:title="t('spreed', 'Delete poll draft')"
 				:aria-label="t('spreed', 'Delete poll draft')"
 				@click.stop="deleteDraft">
@@ -30,7 +32,8 @@
 			{{ pollFooterText }}
 		</span>
 	</div>
-	<a v-else-if="!showAsButton"
+	<a
+		v-else-if="!showAsButton"
 		v-intersection-observer="getPollData"
 		:aria-label="t('spreed', 'Poll')"
 		class="poll-card"
@@ -46,7 +49,8 @@
 	</a>
 
 	<!-- Poll results button in system message -->
-	<NcButton v-else
+	<NcButton
+		v-else
 		class="poll-closed"
 		variant="secondary"
 		@click="openPoll">

@@ -86,7 +86,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the output track to get
 	 */
 	function getOutputTrack(trackId = 'default') {
-		if (!Object.prototype.hasOwnProperty.call(this._outputTracks, trackId)) {
+		if (!Object.hasOwn(this._outputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -97,7 +97,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the output track slot to add
 	 */
 	function _addOutputTrackSlot(trackId = 'default') {
-		if (Object.prototype.hasOwnProperty.call(this._outputTracks, trackId)) {
+		if (Object.hasOwn(this._outputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -108,7 +108,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the output track slot to remove
 	 */
 	function _removeOutputTrackSlot(trackId = 'default') {
-		if (!Object.prototype.hasOwnProperty.call(this._outputTracks, trackId)) {
+		if (!Object.hasOwn(this._outputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -130,7 +130,7 @@ export default (function() {
 	 * @param {MediaStreamTrack|null} track the track to set
 	 */
 	function _setOutputTrack(trackId, track) {
-		if (!Object.prototype.hasOwnProperty.call(this._outputTracks, trackId)) {
+		if (!Object.hasOwn(this._outputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -200,7 +200,7 @@ export default (function() {
 	 * @param {boolean} enabled the enabled state of the output track
 	 */
 	function _setOutputTrackEnabled(trackId, enabled) {
-		if (!Object.prototype.hasOwnProperty.call(this._outputTracks, trackId)) {
+		if (!Object.hasOwn(this._outputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 

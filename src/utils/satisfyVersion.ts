@@ -6,6 +6,7 @@
 /**
  * Checks if given version satisfy requirements (newer than)
  * Versions are expected to have format like '29.1.4.3'
+ *
  * @param version given version
  * @param requirement version to compare against
  */

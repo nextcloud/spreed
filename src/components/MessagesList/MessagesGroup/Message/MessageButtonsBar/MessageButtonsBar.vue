@@ -6,7 +6,8 @@
 <template>
 	<div v-click-outside="handleClickOutside">
 		<template v-if="!isReactionsMenuOpen">
-			<NcButton v-if="canReact"
+			<NcButton
+				v-if="canReact"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				:title="t('spreed', 'Add a reaction to this message')"
@@ -15,7 +16,8 @@
 					<IconEmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="canReply"
+			<NcButton
+				v-if="canReply"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
@@ -24,7 +26,8 @@
 					<IconArrowLeftTop :size="20" />
 				</template>
 			</NcButton>
-			<NcActions :force-menu="true"
+			<NcActions
+				:force-menu="true"
 				placement="bottom-end"
 				:boundaries-element="boundariesElement"
 				@open="onMenuOpen"
@@ -33,12 +36,14 @@
 					<!-- Message timestamp -->
 					<NcActionText>
 						<template #icon>
-							<span v-if="readInfo.showCommonReadIcon"
+							<span
+								v-if="readInfo.showCommonReadIcon"
 								:title="readInfo.commonReadIconTitle"
 								:aria-label="readInfo.commonReadIconTitle">
 								<IconCheckAll :size="16" />
 							</span>
-							<span v-else-if="readInfo.showSentIcon"
+							<span
+								v-else-if="readInfo.showSentIcon"
 								:title="readInfo.sentIconTitle"
 								:aria-label="readInfo.sentIconTitle">
 								<IconCheck :size="16" />
@@ -48,7 +53,8 @@
 						{{ messageDateTime }}
 					</NcActionText>
 					<!-- Edited message timestamp -->
-					<NcActionText v-if="message.lastEditTimestamp"
+					<NcActionText
+						v-if="message.lastEditTimestamp"
 						class="edit-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
@@ -132,7 +138,8 @@
 							</template>
 							{{ t('spreed', 'Go to file') }}
 						</NcActionLink>
-						<NcActionLink v-if="!hideDownloadOption"
+						<NcActionLink
+							v-if="!hideDownloadOption"
 							:href="linkToFileDownload"
 							:download="messageFile.name"
 							close-after-click>
@@ -243,7 +250,8 @@
 					<!-- Custom DateTime picker for the reminder -->
 					<NcActionSeparator />
 
-					<NcActionInput v-model="customReminderDateTime"
+					<NcActionInput
+						v-model="customReminderDateTime"
 						type="datetime-local"
 						is-native-picker
 						:min="new Date()">
@@ -267,14 +275,16 @@
 		</template>
 
 		<template v-else>
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
 					<IconArrowLeft class="bidirectional-icon" :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-for="emoji in frequentlyUsedEmojis"
+			<NcButton
+				v-for="emoji in frequentlyUsedEmojis"
 				:key="emoji"
 				variant="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji })"
@@ -284,12 +294,14 @@
 				</template>
 			</NcButton>
 
-			<NcEmojiPicker :boundary="boundariesElement"
+			<NcEmojiPicker
+				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<NcButton variant="tertiary"
+				<NcButton
+					variant="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<IconPlus :size="20" />

@@ -84,7 +84,7 @@ EventBus.on('signaling-recording-status-changed', ([token, status]) => {
  * we loop over the localStorage entries and add the matching ones to the
  * BrowserStorage
  */
-const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
+function migrateDirectLocalStorageToNextcloudBrowserStorage() {
 	if (BrowserStorage.getItem('localStorageMigrated') !== null) {
 		return
 	}

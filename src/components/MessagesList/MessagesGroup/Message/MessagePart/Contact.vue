@@ -4,11 +4,13 @@
 -->
 
 <template>
-	<a class="contact"
+	<a
+		class="contact"
 		:href="link"
 		:aria-label="contactAriaLabel"
 		target="_blank">
-		<img v-if="contactPhotoFromBase64"
+		<img
+			v-if="contactPhotoFromBase64"
 			:class="{
 				contact__image: contactHasPhoto,
 				contact__icon: !contactHasPhoto,

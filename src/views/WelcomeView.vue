@@ -66,7 +66,8 @@ watchEffect(async () => {
 
 <template>
 	<TalkDashboard v-if="supportsTalkDashboard" />
-	<EmptyView v-else
+	<EmptyView
+		v-else
 		:name="text.name"
 		:description="text.description">
 		<template #icon>

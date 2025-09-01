@@ -16,7 +16,11 @@ import IconMusicNoteOutline from 'vue-material-design-icons/MusicNoteOutline.vue
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import { MESSAGE } from '../constants.ts'
 
-export const getMessageIcon = (lastMessage: Conversation['lastMessage']): ComponentPublicInstance | null => {
+/**
+ *
+ * @param lastMessage
+ */
+export function getMessageIcon(lastMessage: Conversation['lastMessage']): ComponentPublicInstance | null {
 	if (!lastMessage || Array.isArray(lastMessage)) {
 		return null
 	}

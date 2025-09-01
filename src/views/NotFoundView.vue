@@ -10,7 +10,8 @@ import EmptyView from '../components/EmptyView.vue'
 </script>
 
 <template>
-	<EmptyView :name="t('spreed', 'The conversation does not exist')"
+	<EmptyView
+		:name="t('spreed', 'The conversation does not exist')"
 		:description="t('spreed', 'Join a conversation or start a new one!')">
 		<template #icon>
 			<IconMagnify />

@@ -189,7 +189,7 @@ describe('Reactions.vue', () => {
 			reactionsProps.showControls = true
 			const wrapper = mountReactions(reactionsProps)
 
-			const response = generateOCSResponse({ payload: Object.assign({}, reactionsStored, { '❤️': [{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' }] }) })
+			const response = generateOCSResponse({ payload: { ...reactionsStored, '❤️': [{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' }] } })
 			addReactionToMessage.mockResolvedValue(response)
 			// Act
 			const emojiPicker = wrapper.findComponent(NcEmojiPicker)

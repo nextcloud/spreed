@@ -44,6 +44,8 @@ const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('G
 
 /**
  * Check whether caught error is from OCS API
+ *
+ * @param exception
  */
 function isAxiosErrorResponse(exception: unknown): exception is AxiosError<string> {
 	return exception !== null && typeof exception === 'object' && 'response' in exception
@@ -185,6 +187,8 @@ export function useGetMessagesProvider() {
 
 	/**
 	 * Parse hash string to get message id
+	 *
+	 * @param hash
 	 */
 	function getMessageIdFromHash(hash?: string): number | null {
 		return (hash && hash.startsWith('#message_')) ? parseInt(hash.slice(9), 10) : null
@@ -212,6 +216,10 @@ export function useGetMessagesProvider() {
 
 	/**
 	 * Handle route changes to initialize chat or thread, and focus given message
+	 *
+	 * @param payload
+	 * @param payload.from
+	 * @param payload.to
 	 */
 	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
 		// Reset blocker for fetching old messages
@@ -241,6 +249,10 @@ export function useGetMessagesProvider() {
 
 	/**
 	 * Update contextMessageId to the last message in the conversation
+	 *
+	 * @param token
+	 * @param messageId
+	 * @param threadId
 	 */
 	async function checkContextAndFocusMessage(token: string, messageId: number, threadId: number) {
 		if (!chatStore.hasMessage(token, { messageId, threadId })) {
@@ -270,6 +282,7 @@ export function useGetMessagesProvider() {
 
 	/**
 	 * Initialize chat context borders and start fetching messages
+	 *
 	 * @param token token of conversation where a method was called
 	 */
 	async function handleStartGettingMessagesPreconditions(token: string) {
@@ -315,6 +328,7 @@ export function useGetMessagesProvider() {
 	/**
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
+	 *
 	 * @param token token of conversation where a method was called
 	 * @param messageId context messageId
 	 * @param threadId context thread id
@@ -361,6 +375,8 @@ export function useGetMessagesProvider() {
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
 	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	async function getOldMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatBeginningReached.value) {
@@ -402,6 +418,8 @@ export function useGetMessagesProvider() {
 	 * @param token token of conversation where a method was called
 	 * @param includeLastKnown Include or exclude the last known message in the response
 	 * @param payload Optional payload to pass additional parameters (messageId, threadId)
+	 * @param payload.messageId
+	 * @param payload.threadId
 	 */
 	async function getNewMessages(token: string, includeLastKnown: boolean, payload?: { messageId?: number, threadId?: number }) {
 		if (isChatEndReached.value) {
@@ -446,6 +464,7 @@ export function useGetMessagesProvider() {
 	/**
 	 * Fetches the messages of a conversation given the conversation token.
 	 * Creates a long polling request for new messages.
+	 *
 	 * @param token token of conversation where a method was called
 	 */
 	async function pollNewMessages(token: string) {

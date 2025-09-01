@@ -75,6 +75,7 @@ export function useViewer(fileAPI) {
 
 	/**
 	 * Map object to be used by Viewer
+	 *
 	 * @param {object} file file object (from Files API or Talk API)
 	 */
 	function generateViewerObject(file) {

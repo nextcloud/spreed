@@ -5,13 +5,15 @@
 
 <template>
 	<div>
-		<NcSelect :model-value="currentRoom"
+		<NcSelect
+			:model-value="currentRoom"
 			:options="roomOptions"
 			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
 			@update:model-value="newValue => emitEvents(currentMode.id, newValue.token)" />
 
-		<NcSelect :model-value="currentMode"
+		<NcSelect
+			:model-value="currentMode"
 			:options="modeOptions"
 			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"

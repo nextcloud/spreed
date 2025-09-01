@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div class="empty-call-view"
+	<div
+		class="empty-call-view"
 		:class="{
 			'empty-call-view--sidebar': isSidebar,
 			'empty-call-view--small': isSmall,
@@ -16,7 +17,8 @@
 			<p v-if="message" class="emptycontent-additional">
 				{{ message }}
 			</p>
-			<NcButton v-if="showLink"
+			<NcButton
+				v-if="showLink"
 				variant="primary"
 				@click.stop="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}

@@ -43,6 +43,7 @@ const emit = defineEmits<{
 
 /**
  * Emit result, if any (for spawnDialog callback)
+ *
  * @param result callback result
  */
 function onClosing(result: unknown) {
@@ -51,7 +52,8 @@ function onClosing(result: unknown) {
 </script>
 
 <template>
-	<NcDialog :name="name"
+	<NcDialog
+		:name="name"
 		:message="message"
 		:container="container"
 		:size="size"

@@ -6,7 +6,11 @@ import type { ChatMessage } from '../types/index.ts'
  */
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 
-export const getItemTypeFromMessage = function(message: ChatMessage): string {
+/**
+ *
+ * @param message
+ */
+export function getItemTypeFromMessage(message: ChatMessage): string {
 	if (message.messageParameters?.object) {
 		if (message.messageParameters.object.type === 'geo-location') {
 			return SHARED_ITEM.TYPES.LOCATION

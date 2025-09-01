@@ -156,13 +156,15 @@ function handleJoin({ call }: { call: boolean }) {
 </script>
 
 <template>
-	<div class="event-card"
+	<div
+		class="event-card"
 		:class="{
 			'event-card--highlighted': isToday,
 			'event-card--in-call': hasCall,
 		}">
 		<h4 class="title">
-			<span v-for="calendar in props.eventRoom.calendars"
+			<span
+				v-for="calendar in props.eventRoom.calendars"
 				:key="calendar.principalUri"
 				class="calendar-badge"
 				:style="{ backgroundColor: calendar.calendarColor ?? usernameToColor(calendar.principalUri).color }" />
@@ -178,11 +180,13 @@ function handleJoin({ call }: { call: boolean }) {
 			</template>
 		</p>
 		<span class="event-card__room secondary_text">
-			<NcChip variant="tertiary"
+			<NcChip
+				variant="tertiary"
 				:text="roomLabel"
 				no-close>
 				<template #icon>
-					<ConversationIcon :item="conversation"
+					<ConversationIcon
+						:item="conversation"
 						hide-user-status
 						:size="20" />
 				</template>
@@ -190,12 +194,14 @@ function handleJoin({ call }: { call: boolean }) {
 		</span>
 		<span class="event-card__description">{{ props.eventRoom.eventDescription }}</span>
 		<template v-if="attachmentInfo">
-			<a class="event-card__attachment"
+			<a
+				class="event-card__attachment"
 				role="link"
 				:href="attachmentInfo.url"
 				:title="t('spreed', 'View attachment')"
 				target="_blank">
-				<img class="file-preview__image"
+				<img
+					class="file-preview__image"
 					:alt="attachmentInfo.label"
 					:src="attachmentInfo.icon">
 				<span> {{ attachmentInfo.label }} </span>
@@ -208,7 +214,8 @@ function handleJoin({ call }: { call: boolean }) {
 			<span v-if="invitesLabel && !hasCall" class="secondary_text">
 				{{ invitesLabel }}
 			</span>
-			<NcButton v-if="(hasCall && !isInCall)"
+			<NcButton
+				v-if="(hasCall && !isInCall)"
 				variant="primary"
 				@click="handleJoin({ call: true })">
 				<template #icon>
@@ -218,14 +225,16 @@ function handleJoin({ call }: { call: boolean }) {
 			</NcButton>
 		</span>
 		<span class="event-card__invitation-info hovered">
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				@click="handleJoin({ call: false })">
 				<template #icon>
 					<NcIconSvgWrapper :svg="IconTalk" :size="20" />
 				</template>
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
-			<NcButton variant="tertiary"
+			<NcButton
+				variant="tertiary"
 				:href="props.eventRoom.eventLink"
 				target="_blank"
 				:title="t('spreed', 'View event on Calendar')"

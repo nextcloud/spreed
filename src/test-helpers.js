@@ -77,9 +77,9 @@ function findNcListItems(wrapper, text) {
 /**
  *
  * @param {object} data response from the server
- * @param {object} [data.headers = {}] headers of response
- * @param {object} [data.payload = {}] payload of response
- * @param {number} [data.status = 200] status code of response
+ * @param {object} [data.headers] headers of response
+ * @param {object} [data.payload] payload of response
+ * @param {number} [data.status] status code of response
  * @return {object}
  */
 function generateOCSResponse({ headers = {}, payload = {}, status = 200 }) {
@@ -108,8 +108,8 @@ function generateOCSResponse({ headers = {}, payload = {}, status = 200 }) {
 /**
  *
  * @param {object} data response from the server
- * @param {object} [data.headers = {}] headers of response
- * @param {object} [data.payload = {}] payload of response
+ * @param {object} [data.headers] headers of response
+ * @param {object} [data.payload] payload of response
  * @param {number} data.status status code of response
  * @return {object}
  */

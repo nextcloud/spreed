@@ -75,6 +75,9 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 
 	/**
 	 * Patch participants list from signaling messages (joined/changed)
+	 *
+	 * @param payload
+	 * @param payload."0" - users list
 	 */
 	function handleUsersUpdated([users]: [SignalingSessionPayload[]]) {
 		if (sessionStore.updateSessions(token.value, users)) {
@@ -86,6 +89,9 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 
 	/**
 	 * Check if current user permission has been changed from signaling messages
+	 *
+	 * @param payload
+	 * @param payload."0" - users list
 	 */
 	async function checkCurrentUserPermissions([users]: [StandaloneSignalingUpdateSession[]]) {
 		// TODO: move logic to sessionStore once experimental flag is dropped
@@ -108,6 +114,9 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 
 	/**
 	 * Patch participants list from signaling messages (left)
+	 *
+	 * @param payload
+	 * @param payload."0" - users list
 	 */
 	function handleUsersLeft([sessionIds]: [StandaloneSignalingLeaveSession[]]) {
 		sessionStore.updateSessionsLeft(token.value, sessionIds)

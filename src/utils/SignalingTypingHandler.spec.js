@@ -92,7 +92,7 @@ describe('SignalingTypingHandler', () => {
 			this._handlers = {}
 
 			this.on = vi.fn((event, handler) => {
-				if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
+				if (!Object.hasOwn(this._handlers, event)) {
 					this._handlers[event] = [handler]
 				} else {
 					this._handlers[event].push(handler)

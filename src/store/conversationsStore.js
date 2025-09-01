@@ -122,11 +122,16 @@ function emitUserStatusUpdated(conversation) {
 	})
 }
 
-const state = () => ({
-	conversations: {
-	},
-	conversationsInitialised: false,
-})
+/**
+ *
+ */
+function state() {
+	return {
+		conversations: {
+		},
+		conversationsInitialised: false,
+	}
+}
 
 const getters = {
 	conversations: (state) => state.conversations,
@@ -165,7 +170,7 @@ const getters = {
 	 * @return {Function} The callback function returning the conversation object
 	 */
 	conversation: (state) => (token) => state.conversations[token],
-	dummyConversation: (state) => Object.assign({}, DUMMY_CONVERSATION),
+	dummyConversation: (state) => ({ ...DUMMY_CONVERSATION }),
 	isModerator: (state, getters) => {
 		const conversation = getters.conversation(tokenStore.token)
 		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
@@ -546,7 +551,7 @@ const actions = {
 		}
 
 		try {
-			const conversation = Object.assign({}, getters.conversation(token))
+			const conversation = { ...getters.conversation(token) }
 			if (allowGuests) {
 				await makeConversationPublic(token, password)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
@@ -577,7 +582,7 @@ const actions = {
 				await addToFavorites(token)
 			}
 
-			const conversation = Object.assign({}, getters.conversations[token], { isFavorite: !isFavorite })
+			const conversation = { ...getters.conversations[token], isFavorite: !isFavorite }
 
 			commit('addConversation', conversation)
 		} catch (error) {
@@ -657,7 +662,7 @@ const actions = {
 
 		try {
 			await setConversationName(token, name)
-			const conversation = Object.assign({}, getters.conversations[token], { displayName: name })
+			const conversation = { ...getters.conversations[token], displayName: name }
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while setting a name for conversation: ', error)
@@ -698,7 +703,7 @@ const actions = {
 		}
 		try {
 			await changeReadOnlyState(token, readOnly)
-			const conversation = Object.assign({}, getters.conversations[token], { readOnly })
+			const conversation = { ...getters.conversations[token], readOnly }
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while updating read-only state: ', error)
@@ -712,7 +717,7 @@ const actions = {
 
 		try {
 			await changeListable(token, listable)
-			const conversation = Object.assign({}, getters.conversations[token], { listable })
+			const conversation = { ...getters.conversations[token], listable }
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while updating listable state: ', error)
@@ -736,7 +741,7 @@ const actions = {
 
 		try {
 			await setSIPEnabled(token, state)
-			const conversation = Object.assign({}, getters.conversations[token], { sipEnabled: state })
+			const conversation = { ...getters.conversations[token], sipEnabled: state }
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the SIP state for conversation: ', error)
@@ -750,7 +755,7 @@ const actions = {
 
 		try {
 			await setRecordingConsent(token, state)
-			const conversation = Object.assign({}, getters.conversations[token], { recordingConsent: state })
+			const conversation = { ...getters.conversations[token], recordingConsent: state }
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the recording consent state for conversation: ', error)
@@ -762,7 +767,7 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token], properties)
+		const conversation = { ...getters.conversations[token], ...properties }
 
 		commit('addConversation', conversation)
 	},
@@ -785,7 +790,7 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token], { lastCommonReadMessage })
+		const conversation = { ...getters.conversations[token], lastCommonReadMessage }
 
 		commit('addConversation', conversation)
 	},
@@ -795,9 +800,7 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token], {
-			lastActivity: convertToUnix(Date.now()),
-		})
+		const conversation = { ...getters.conversations[token], lastActivity: convertToUnix(Date.now()) }
 
 		commit('addConversation', conversation)
 	},
@@ -829,7 +832,7 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token])
+		const conversation = { ...getters.conversations[token] }
 		if (conversation.lastMessage?.id === parseInt(messageId, 10)
 			|| conversation.lastMessage?.timestamp >= convertToUnix(new Date(notification.datetime))) {
 			// Already updated from other source, skipping
@@ -906,13 +909,14 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token], {
+		const conversation = {
+			...getters.conversations[token],
 			hasCall: true,
 			callFlag: PARTICIPANT.CALL_FLAG.WITH_VIDEO,
 			activeSince,
 			lastActivity: activeSince,
 			callStartTime: activeSince,
-		})
+		}
 
 		// Inaccurate but best effort from here on:
 		const lastMessage = {

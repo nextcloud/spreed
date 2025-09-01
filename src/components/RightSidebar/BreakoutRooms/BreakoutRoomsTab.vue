@@ -6,22 +6,26 @@
 <template>
 	<div class="breakout-rooms">
 		<!-- Actions -->
-		<BreakoutRoomsActions :main-token="mainToken"
+		<BreakoutRoomsActions
+			:main-token="mainToken"
 			:main-conversation="mainConversation"
 			:breakout-rooms="breakoutRooms"
 			:breakout-rooms-configured="breakoutRoomsConfigured" />
 		<!-- Breakout rooms list -->
 		<ul v-if="showBreakoutRoomsList">
-			<BreakoutRoomItem v-for="breakoutRoom in breakoutRooms"
+			<BreakoutRoomItem
+				v-for="breakoutRoom in breakoutRooms"
 				:key="breakoutRoom.token"
 				:breakout-room="breakoutRoom"
 				:main-conversation="mainConversation">
-				<Participant v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
+				<Participant
+					v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
 					:key="participant.actorId"
 					:participant="participant" />
 			</BreakoutRoomItem>
 		</ul>
-		<NcEmptyContent v-else
+		<NcEmptyContent
+			v-else
 			class="breakout-rooms__empty-content"
 			:name="t('spreed', 'Breakout rooms are not started')">
 			<template #icon>

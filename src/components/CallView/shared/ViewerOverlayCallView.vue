@@ -7,11 +7,14 @@
 	<div ref="ghost" class="viewer-overlay-ghost">
 		<Teleport to="body">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
-			<div class="viewer-overlay app-talk"
+			<div
+				class="viewer-overlay app-talk"
 				:style="computedStyle">
-				<div class="viewer-overlay__collapse"
+				<div
+					class="viewer-overlay__collapse"
 					:class="{ collapsed: isCollapsed }">
-					<NcButton variant="secondary"
+					<NcButton
+						variant="secondary"
 						class="viewer-overlay__button"
 						:aria-label="
 							isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')
@@ -25,12 +28,14 @@
 				</div>
 
 				<TransitionWrapper name="slide-down">
-					<div v-show="!isCollapsed"
+					<div
+						v-show="!isCollapsed"
 						class="viewer-overlay__video-container"
 						tabindex="0"
 						@click="maximize">
 						<div class="video-overlay__top-bar">
-							<NcButton variant="secondary"
+							<NcButton
+								variant="secondary"
 								class="viewer-overlay__button"
 								:aria-label="t('spreed', 'Expand')"
 								@click.stop="maximize">
@@ -41,17 +46,20 @@
 						</div>
 
 						<!-- local screen -->
-						<Screen v-if="showLocalScreen"
+						<Screen
+							v-if="showLocalScreen"
 							:token="token"
 							:local-media-model="localModel"
 							:shared-data="localSharedData" />
 						<!-- remote screen -->
-						<Screen v-else-if="model && screens[model.attributes.peerId]"
+						<Screen
+							v-else-if="model && screens[model.attributes.peerId]"
 							:token="token"
 							:call-participant-model="model"
 							:shared-data="sharedData" />
 
-						<VideoVue v-else-if="model"
+						<VideoVue
+							v-else-if="model"
 							class="viewer-overlay__video"
 							:token="token"
 							:model="model"
@@ -65,7 +73,8 @@
 
 						<EmptyCallView v-else is-small />
 
-						<LocalVideo v-if="localModel.attributes.videoEnabled"
+						<LocalVideo
+							v-if="localModel.attributes.videoEnabled"
 							class="viewer-overlay__local-video"
 							:token="token"
 							:show-controls="false"
@@ -75,13 +84,15 @@
 							un-selectable />
 
 						<div class="viewer-overlay__bottom-bar">
-							<LocalAudioControlButton class="viewer-overlay__button"
+							<LocalAudioControlButton
+								class="viewer-overlay__button"
 								:token="token"
 								:conversation="conversation"
 								:model="localModel"
 								variant="secondary"
 								disable-keyboard-shortcuts />
-							<LocalVideoControlButton class="viewer-overlay__button"
+							<LocalVideoControlButton
+								class="viewer-overlay__button"
 								:token="token"
 								:conversation="conversation"
 								:model="localModel"

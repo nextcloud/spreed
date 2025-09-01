@@ -42,6 +42,7 @@ function generateTokenMap() {
 
 /**
  * Patch token map with new / updated remote conversation
+ *
  * @param conversation conversation object from join response
  */
 function patchTokenMap(conversation: Conversation) {
@@ -59,6 +60,7 @@ export function getTalkVersion(): string {
 
 /**
  * Check whether the feature is presented (in case of federation - on both servers)
+ *
  * @param token conversation token
  * @param feature feature capability in string format
  */
@@ -76,6 +78,7 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
 
 /**
  * Get an according config value from local or remote capabilities
+ *
  * @param token conversation token
  * @param key1 top-level key (e.g. 'attachments')
  * @param key2 second-level key (e.g. 'allowed')
@@ -97,6 +100,7 @@ export function getTalkConfig<
 
 /**
  * Returns capability for specified token (if already matches from one of remote servers)
+ *
  * @param token token of the conversation
  */
 function getRemoteCapability(token: string): RemoteCapability | null {
@@ -116,6 +120,7 @@ function getRemoteCapability(token: string): RemoteCapability | null {
 
 /**
  * Compares talk hash from remote instance and fetch new capabilities if it doesn't match
+ *
  * @param joinRoomResponse server response
  */
 export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
@@ -158,6 +163,7 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 
 /**
  * Fetch new capabilities if remote server is not yet known
+ *
  * @param acceptShareResponse server response
  */
 export async function setRemoteCapabilitiesIfEmpty(acceptShareResponse: Awaited<acceptShareResponse>): Promise<void> {
@@ -183,6 +189,7 @@ export async function setRemoteCapabilitiesIfEmpty(acceptShareResponse: Awaited<
 
 /**
  * Deep comparison of remote capabilities, whether there are actual changes that require reload
+ *
  * @param newObject new remote capabilities
  * @param oldObject old remote capabilities
  */
@@ -193,6 +200,7 @@ function checkRemoteCapabilitiesHasChanged(newObject: Capabilities['spreed'], ol
 
 	/**
 	 * Returns remote config without local-only properties
+	 *
 	 * @param object remote capabilities object
 	 */
 	function getStrippedCapabilities(object: Capabilities['spreed']): { config: Partial<Config>, features: string[] } {

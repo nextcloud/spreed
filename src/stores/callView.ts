@@ -119,6 +119,7 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Switches off grid mode and closes the stripe.
 		 * Remembers the call view state for after the end of the presentation.
+		 *
 		 * @param token current conversation token.
 		 */
 		startPresentation(token: string) {
@@ -136,6 +137,7 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Restores call view state from before starting the presentation,
 		 * given that the last state was not cleared manually.
+		 *
 		 * @param token current conversation token.
 		 */
 		stopPresentation(token: string) {
@@ -153,6 +155,7 @@ export const useCallViewStore = defineStore('callView', {
 		/**
 		 * Checks the time difference between the current time and the call end time.
 		 * Then, disable the CallButton for the remaining time until 10 seconds after the call ends.
+		 *
 		 * @param timestamp timestamp of callEnded message (in seconds)
 		 */
 		setCallHasJustEnded(timestamp: number) {
@@ -172,6 +175,7 @@ export const useCallViewStore = defineStore('callView', {
 		},
 
 		/**
+		 * @param token
 		 * @throws error if live transcription could not be enabled.
 		 */
 		async enableLiveTranscription(token: string) {
@@ -187,6 +191,7 @@ export const useCallViewStore = defineStore('callView', {
 		},
 
 		/**
+		 * @param token
 		 * @throws error if live transcription could not be enabled.
 		 */
 		async disableLiveTranscription(token: string) {

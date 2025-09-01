@@ -6,7 +6,8 @@
 <template>
 	<div v-if="modal">
 		<!-- New group form -->
-		<NcModal v-show="page !== 2"
+		<NcModal
+			v-show="page !== 2"
 			class="new-group-conversation"
 			:close-on-click-outside="!isFilled"
 			:label-id="dialogHeaderPrepId"
@@ -17,7 +18,8 @@
 
 			<div class="new-group-conversation__main">
 				<!-- First page -->
-				<NewConversationSetupPage v-show="page === 0"
+				<NewConversationSetupPage
+					v-show="page === 0"
 					ref="setupPage"
 					v-model:new-conversation="newConversation"
 					v-model:password="password"
@@ -28,7 +30,8 @@
 					@is-password-valid="setIsPasswordValid" />
 
 				<!-- Second page -->
-				<NewConversationContactsPage v-if="page === 1"
+				<NewConversationContactsPage
+					v-if="page === 1"
 					v-model:selected-participants="selectedParticipants"
 					class="new-group-conversation__content"
 					:can-moderate-sip-dial-out="canModerateSipDialOut" />
@@ -38,13 +41,15 @@
 				placement are rendered depending on the current page -->
 			<div class="new-group-conversation__footer">
 				<!-- First page -->
-				<NcButton v-if="page === 0 && conversationName"
+				<NcButton
+					v-if="page === 0 && conversationName"
 					:disabled="disabled"
 					variant="tertiary"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
-				<NcButton v-if="page === 0"
+				<NcButton
+					v-if="page === 0"
 					variant="primary"
 					:disabled="disabled"
 					class="new-group-conversation__button"
@@ -52,12 +57,14 @@
 					{{ t('spreed', 'Add participants') }}
 				</NcButton>
 				<!-- Second page -->
-				<NcButton v-if="page === 1"
+				<NcButton
+					v-if="page === 1"
 					variant="tertiary"
 					@click="switchToPage(0)">
 					{{ t('spreed', 'Back') }}
 				</NcButton>
-				<NcButton v-if="page === 1"
+				<NcButton
+					v-if="page === 1"
 					variant="primary"
 					class="new-group-conversation__button"
 					@click="handleCreateConversation">
@@ -67,7 +74,8 @@
 		</NcModal>
 
 		<!-- Third page : this is the confirmation page-->
-		<NcModal v-if="page === 2"
+		<NcModal
+			v-if="page === 2"
 			:label-id="dialogHeaderResId"
 			@close="closeModal">
 			<NcEmptyContent>
@@ -84,14 +92,16 @@
 				</template>
 
 				<template #action>
-					<NcButton v-if="!error && success && isPublic"
+					<NcButton
+						v-if="!error && success && isPublic"
 						id="copy-link"
 						ref="copyLink"
 						variant="secondary"
 						@click="onClickCopyLink">
 						{{ t('spreed', 'Copy link') }}
 					</NcButton>
-					<NcButton v-if="!error && success && isPublic && newConversation.hasPassword"
+					<NcButton
+						v-if="!error && success && isPublic && newConversation.hasPassword"
 						id="copy-password"
 						variant="secondary"
 						@click="onClickCopyPassword">
@@ -178,7 +188,7 @@ export default {
 	data() {
 		return {
 			modal: false,
-			newConversation: Object.assign({}, NEW_CONVERSATION),
+			newConversation: { ...NEW_CONVERSATION },
 			page: 0,
 			isLoading: true,
 			success: false,
@@ -266,7 +276,7 @@ export default {
 		 */
 		closeModal() {
 			this.modal = false
-			this.newConversation = Object.assign({}, NEW_CONVERSATION)
+			this.newConversation = { ...NEW_CONVERSATION }
 			this.page = 0
 			this.isLoading = true
 			this.success = false

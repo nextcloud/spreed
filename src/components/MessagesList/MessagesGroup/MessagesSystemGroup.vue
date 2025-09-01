@@ -5,11 +5,13 @@
 
 <template>
 	<li class="wrapper wrapper--system">
-		<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
+		<div
+			v-for="messagesCollapsed in messagesGroupedBySystemMessage"
 			:key="messagesCollapsed.id"
 			class="messages-group__system">
 			<ul v-if="messagesCollapsed.messages?.length > 1" class="messages">
-				<Message is-combined-system-message
+				<Message
+					is-combined-system-message
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
 					:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
@@ -17,10 +19,12 @@
 					:message="createCombinedSystemMessage(messagesCollapsed)"
 					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
 			</ul>
-			<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
+			<ul
+				v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
 				class="messages"
 				:class="{ 'messages--collapsed': messagesCollapsed.messages?.length > 1 }">
-				<Message v-for="message in messagesCollapsed.messages"
+				<Message
+					v-for="message in messagesCollapsed.messages"
 					:key="message.id"
 					:message="message"
 					:is-collapsed-system-message="messagesCollapsed.messages?.length > 1"

@@ -106,9 +106,9 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
-		 * @param {Type} type type of shared item
-		 * @param {Message[]} messages message with shared items
+		 * @param token conversation token
+		 * @param type type of shared item
+		 * @param messages message with shared items
 		 */
 		addSharedItemsFromMessages(token: string, type: string, messages: SharedItems[keyof SharedItems][]) {
 			this.checkForExistence(token, type)
@@ -176,7 +176,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {Token} token conversation token
+		 * @param token conversation token
 		 */
 		async getSharedItemsOverview(token: string) {
 			if (this.overviewLoaded[token]) {

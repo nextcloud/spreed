@@ -4,15 +4,18 @@
 -->
 
 <template>
-	<TransitionWrapper class="toaster"
+	<TransitionWrapper
+		class="toaster"
 		name="toast"
 		tag="ul"
 		group>
-		<li v-for="toast in toasts"
+		<li
+			v-for="toast in toasts"
 			:key="toast.seed"
 			class="toast"
 			:style="styled(toast.name, toast.seed)">
-			<img v-if="toast.reactionURL"
+			<img
+				v-if="toast.reactionURL"
 				class="toast__reaction-img"
 				:src="toast.reactionURL"
 				:alt="toast.reaction"

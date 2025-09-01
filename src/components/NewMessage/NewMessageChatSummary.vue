@@ -10,7 +10,8 @@
 			<NcLoadingIcon v-if="loading" />
 			<IconCreation v-else />
 		</template>
-		<NcButton v-if="isTextMoreThanOneLine"
+		<NcButton
+			v-if="isTextMoreThanOneLine"
 			class="chat-summary__button"
 			variant="tertiary"
 			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
@@ -30,12 +31,14 @@
 			<p class="chat-summary__caption">
 				{{ t('spreed', 'Summary is AI generated and might contain mistakes') }}
 			</p>
-			<p ref="chatSummaryRef"
+			<p
+				ref="chatSummaryRef"
 				class="chat-summary__message"
 				:class="{ 'chat-summary__message--collapsed': collapsed }">{{ chatSummaryMessage }}</p>
 		</template>
 		<div class="chat-summary__actions">
-			<NcButton v-if="loading"
+			<NcButton
+				v-if="loading"
 				class="chat-summary__action"
 				variant="primary"
 				:disabled="cancelling"
@@ -45,7 +48,8 @@
 				</template>
 				{{ t('spreed', 'Cancel') }}
 			</NcButton>
-			<NcButton v-else-if="chatSummaryMessage"
+			<NcButton
+				v-else-if="chatSummaryMessage"
 				class="chat-summary__action"
 				variant="primary"
 				@click="dismissSummary">

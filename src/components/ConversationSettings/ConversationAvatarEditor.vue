@@ -7,19 +7,22 @@
 	<section id="vue-avatar-section">
 		<div class="avatar__container">
 			<div v-if="!showCropper" class="avatar__preview">
-				<div v-if="emojiAvatar"
+				<div
+					v-if="emojiAvatar"
 					class="avatar__preview-emoji"
 					:class="themeClass"
 					:style="{ 'background-color': backgroundColor }">
 					{{ emojiAvatar }}
 				</div>
-				<ConversationIcon v-else-if="!loading"
+				<ConversationIcon
+					v-else-if="!loading"
 					:item="conversation"
 					:size="AVATAR.SIZE.EXTRA_LARGE"
 					hide-user-status />
 				<div v-else class="icon-loading" />
 			</div>
-			<VueCropper v-show="showCropper"
+			<VueCropper
+				v-show="showCropper"
 				ref="cropper"
 				class="avatar__cropper"
 				v-bind="cropperOptions" />
@@ -28,18 +31,21 @@
 					<!-- Set emoji as avatar -->
 					<template v-if="!showCropper">
 						<NcEmojiPicker :per-line="5" container="#vue-avatar-section" @select="setEmoji">
-							<NcButton :title="t('spreed', 'Set emoji as conversation picture')"
+							<NcButton
+								:title="t('spreed', 'Set emoji as conversation picture')"
 								:aria-label="t('spreed', 'Set emoji as conversation picture')">
 								<template #icon>
 									<IconEmoticonOutline :size="20" />
 								</template>
 							</NcButton>
 						</NcEmojiPicker>
-						<NcColorPicker v-if="emojiAvatar"
+						<NcColorPicker
+							v-if="emojiAvatar"
 							v-model="backgroundColor"
 							advanced-fields
 							container="#vue-avatar-section">
-							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
+							<NcButton
+								:title="t('spreed', 'Set background color for conversation picture')"
 								:aria-label="t('spreed', 'Set background color for conversation picture')">
 								<template #icon>
 									<IconPaletteOutline :size="20" />
@@ -49,14 +55,16 @@
 					</template>
 
 					<!-- Set picture as avatar -->
-					<NcButton :title="t('spreed', 'Upload conversation picture')"
+					<NcButton
+						:title="t('spreed', 'Upload conversation picture')"
 						:aria-label="t('spreed', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
 							<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 						</template>
 					</NcButton>
-					<NcButton :title="t('spreed', 'Choose conversation picture from files')"
+					<NcButton
+						:title="t('spreed', 'Choose conversation picture from files')"
 						:aria-label="t('spreed', 'Choose conversation picture from files')"
 						@click="showFilePicker">
 						<template #icon>
@@ -65,7 +73,8 @@
 					</NcButton>
 
 					<!-- Remove existing avatar -->
-					<NcButton v-if="hasAvatar"
+					<NcButton
+						v-if="hasAvatar"
 						:title="t('spreed', 'Remove conversation picture')"
 						:aria-label="t('spreed', 'Remove conversation picture')"
 						@click="removeAvatar">
@@ -77,7 +86,8 @@
 				<span class="avatar__warning">
 					{{ t('spreed', 'The file must be a PNG or JPG') }}
 				</span>
-				<input :id="inputId"
+				<input
+					:id="inputId"
 					ref="input"
 					type="file"
 					:accept="validMimeTypes.join(',')"
@@ -86,7 +96,8 @@
 					<NcButton @click="cancel">
 						{{ t('spreed', 'Cancel') }}
 					</NcButton>
-					<NcButton v-if="!controlled"
+					<NcButton
+						v-if="!controlled"
 						variant="primary"
 						@click="saveAvatar">
 						{{ t('spreed', 'Set picture') }}

@@ -75,7 +75,7 @@ function Base(settings) {
 
 Signaling.Base = Base
 Signaling.Base.prototype.on = function(ev, handler) {
-	if (!Object.prototype.hasOwnProperty.call(this.handlers, ev)) {
+	if (!Object.hasOwn(this.handlers, ev)) {
 		this.handlers[ev] = [handler]
 	} else {
 		this.handlers[ev].push(handler)
@@ -94,7 +94,7 @@ Signaling.Base.prototype.on = function(ev, handler) {
 }
 
 Signaling.Base.prototype.off = function(ev, handler) {
-	if (!Object.prototype.hasOwnProperty.call(this.handlers, ev)) {
+	if (!Object.hasOwn(this.handlers, ev)) {
 		return
 	}
 
@@ -196,7 +196,13 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch((reason) => { reject(reason) })
+			this.updateCallFlags(this.currentCallToken, flags)
+				.then(() => {
+					resolve()
+				})
+				.catch((reason) => {
+					reject(reason)
+				})
 		} else {
 			resolve()
 		}
@@ -206,7 +212,13 @@ Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch((reason) => { reject(reason) })
+			this.leaveCall(this.currentCallToken)
+				.then(() => {
+					resolve()
+				})
+				.catch((reason) => {
+					reject(reason)
+				})
 			this._resetCurrentCallParameters()
 		} else {
 			resolve()
@@ -751,7 +763,7 @@ Signaling.Standalone.prototype.connect = function() {
 			console.debug('Received', data)
 		}
 		const id = data.id
-		if (id && Object.prototype.hasOwnProperty.call(this.callbacks, id)) {
+		if (id && Object.hasOwn(this.callbacks, id)) {
 			const cb = this.callbacks[id]
 			delete this.callbacks[id]
 			cb(data)

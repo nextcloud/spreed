@@ -16,35 +16,35 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Enable live transcription
  *
- * @param {string} token conversation token
+ * @param token conversation token
  */
-const enableLiveTranscription = async function(token: string): liveTranscriptionEnableResponse {
+async function enableLiveTranscription(token: string): liveTranscriptionEnableResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
 }
 
 /**
  * Disable live transcription
  *
- * @param {string} token conversation token
+ * @param token conversation token
  */
-const disableLiveTranscription = async function(token: string): liveTranscriptionDisableResponse {
+async function disableLiveTranscription(token: string): liveTranscriptionDisableResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
 }
 
 /**
  * Get available languages for live transcriptions
  */
-const getLiveTranscriptionLanguages = async function(): liveTranscriptionGetAvailableLanguagesResponse {
+async function getLiveTranscriptionLanguages(): liveTranscriptionGetAvailableLanguagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/languages'))
 }
 
 /**
  * Set language for live transcription
  *
- * @param {string} token conversation token
- * @param {string} languageId the ID of the language
+ * @param token conversation token
+ * @param languageId the ID of the language
  */
-const setLiveTranscriptionLanguage = async function(token: string, languageId: string): liveTranscriptionSetLanguageResponse {
+async function setLiveTranscriptionLanguage(token: string, languageId: string): liveTranscriptionSetLanguageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}/language', { token }), {
 		languageId,
 	})

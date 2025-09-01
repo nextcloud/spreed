@@ -4,13 +4,15 @@
 -->
 
 <template>
-	<NcDialog :name="t('spreed', 'Reactions')"
+	<NcDialog
+		:name="t('spreed', 'Reactions')"
 		close-on-click-outside
 		@update:open="closeModal">
 		<div class="reactions__modal">
 			<template v-if="Object.keys(reactionsOverview).length > 0">
 				<div class="reactions-list__navigation">
-					<NcButton v-for="reaction in reactionsMenu"
+					<NcButton
+						v-for="reaction in reactionsMenu"
 						:key="reaction"
 						:class="{ active: reactionFilter === reaction, 'all-reactions__button': reaction === '♡' }"
 						variant="tertiary"
@@ -23,10 +25,12 @@
 					</NcButton>
 				</div>
 				<ul class="reactions-list__scrollable">
-					<li v-for="item in reactionsOverview[reactionFilter]"
+					<li
+						v-for="item in reactionsOverview[reactionFilter]"
 						:key="item.actorId + item.actorType"
 						class="reactions-item">
-						<AvatarWrapper :id="item.actorId"
+						<AvatarWrapper
+							:id="item.actorId"
 							:token="token"
 							:name="item.actorDisplayName"
 							:source="item.actorType"

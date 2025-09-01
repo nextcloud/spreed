@@ -21,7 +21,7 @@ import BrowserStorage from './BrowserStorage.js'
  *
  * @param path The name of the folder
  */
-const setAttachmentFolder = async function(path: string): setUserSettingsResponse {
+async function setAttachmentFolder(path: string): setUserSettingsResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 		key: 'attachment_folder',
 		value: path,
@@ -33,7 +33,7 @@ const setAttachmentFolder = async function(path: string): setUserSettingsRespons
  *
  * @param privacy The selected value, either 0 or 1
  */
-const setReadStatusPrivacy = async function(privacy: number): setUserSettingsResponse {
+async function setReadStatusPrivacy(privacy: number): setUserSettingsResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 		key: 'read_status_privacy',
 		value: privacy,
@@ -45,7 +45,7 @@ const setReadStatusPrivacy = async function(privacy: number): setUserSettingsRes
  *
  * @param privacy The selected value, either 0 or 1
  */
-const setTypingStatusPrivacy = async function(privacy: number): setUserSettingsResponse {
+async function setTypingStatusPrivacy(privacy: number): setUserSettingsResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 		key: 'typing_privacy',
 		value: privacy,
@@ -60,7 +60,7 @@ const setTypingStatusPrivacy = async function(privacy: number): setUserSettingsR
  * @param payload.sharedSecret The shared secret which is used by the SIP server to authenticate
  * @param payload.dialInInfo The dial-in Information displayed in the email and sidebar
  */
-const setSIPSettings = async function({ sipGroups, sharedSecret, dialInInfo }: setSipSettingsParams): setSipSettingsResponse {
+async function setSIPSettings({ sipGroups, sharedSecret, dialInInfo }: setSipSettingsParams): setSipSettingsResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/sip'), {
 		sipGroups,
 		sharedSecret,
@@ -68,7 +68,12 @@ const setSIPSettings = async function({ sipGroups, sharedSecret, dialInInfo }: s
 	} as setSipSettingsParams)
 }
 
-const setPlaySounds = async function(hasUserAccount: boolean, value: 'yes' | 'no') {
+/**
+ *
+ * @param hasUserAccount
+ * @param value
+ */
+async function setPlaySounds(hasUserAccount: boolean, value: 'yes' | 'no') {
 	if (hasUserAccount) {
 		return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 			key: 'play_sounds',
@@ -79,15 +84,27 @@ const setPlaySounds = async function(hasUserAccount: boolean, value: 'yes' | 'no
 	}
 }
 
-const setStartWithoutMedia = async function(value: boolean) {
+/**
+ *
+ * @param value
+ */
+async function setStartWithoutMedia(value: boolean) {
 	return setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
 }
 
-const setBlurVirtualBackground = async function(value: boolean) {
+/**
+ *
+ * @param value
+ */
+async function setBlurVirtualBackground(value: boolean) {
 	return setUserConfig('spreed', 'blur_virtual_background', value ? 'yes' : 'no')
 }
 
-const setConversationsListStyle = async function(value: string) {
+/**
+ *
+ * @param value
+ */
+async function setConversationsListStyle(value: string) {
 	return setUserConfig('spreed', 'conversations_list_style', value)
 }
 
@@ -98,7 +115,7 @@ const setConversationsListStyle = async function(value: string) {
  * @param configKey - key of the config to set
  * @param configValue - value to set
  */
-const setUserConfig = async function(appId: string, configKey: string, configValue: string): UserPreferencesResponse {
+async function setUserConfig(appId: string, configKey: string, configValue: string): UserPreferencesResponse {
 	return axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/{appId}/{configKey}', { appId, configKey }), {
 		configValue,
 	} as UserPreferencesParams)

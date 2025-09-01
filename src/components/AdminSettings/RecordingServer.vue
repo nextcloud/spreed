@@ -6,7 +6,8 @@
 
 <template>
 	<li class="recording-server">
-		<NcTextField ref="recording_server"
+		<NcTextField
+			ref="recording_server"
 			v-model="recordingServer"
 			class="recording-server__textfield"
 			name="recording_server"
@@ -14,13 +15,15 @@
 			:disabled="loading"
 			:label="t('spreed', 'Recording backend URL')" />
 
-		<NcCheckboxRadioSwitch :model-value="verify"
+		<NcCheckboxRadioSwitch
+			:model-value="verify"
 			class="recording-server__checkbox"
 			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcButton v-show="!loading"
+		<NcButton
+			v-show="!loading"
 			variant="tertiary"
 			:title="t('spreed', 'Delete this server')"
 			:aria-label="t('spreed', 'Delete this server')"
@@ -37,7 +40,8 @@
 			{{ connectionState }}
 		</span>
 
-		<NcButton v-if="server && checked"
+		<NcButton
+			v-if="server && checked"
 			variant="tertiary"
 			:title="t('spreed', 'Test this server')"
 			:aria-label="t('spreed', 'Test this server')"

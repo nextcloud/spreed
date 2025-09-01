@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<div class="top-bar"
+	<div
+		class="top-bar"
 		:class="{
 			'top-bar--sidebar': isSidebar,
 			'top-bar--in-call': isInCall,
@@ -22,7 +23,8 @@
 				v-show="currentThread"
 				class="top-bar__icon-back bidirectional-icon"
 				:size="20" />
-			<ConversationIcon :key="conversation.token"
+			<ConversationIcon
+				:key="conversation.token"
 				:offline="isOffline"
 				:item="conversation"
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
@@ -63,7 +65,8 @@
 				<template #icon>
 					<component :is="notificationLevelIcons[threadNotification]" :size="20" />
 				</template>
-				<NcActionButton v-for="level in notificationLevels"
+				<NcActionButton
+					v-for="level in notificationLevels"
 					:key="level.value"
 					:model-value="threadNotification.toString()"
 					:value="level.value.toString()"
@@ -79,37 +82,44 @@
 			</NcActions>
 		</div>
 
-		<div v-else
+		<div
+			v-else
 			class="top-bar__wrapper"
 			:data-theme-dark="isInCall ? true : undefined">
 			<!-- conversation header -->
-			<a role="button"
+			<a
+				role="button"
 				class="conversation-header"
 				@click="openConversationSettings">
-				<div class="conversation-header__text"
+				<div
+					class="conversation-header__text"
 					:class="{ 'conversation-header__text--offline': isOffline }">
 					<p class="title">
 						{{ conversation.displayName }}
 					</p>
-					<p v-if="showUserStatusAsDescription"
+					<p
+						v-if="showUserStatusAsDescription"
 						class="description"
 						:class="{ 'description__in-chat': !isInCall }">
 						{{ statusMessage }}
 					</p>
-					<NcPopover v-if="conversation.description"
+					<NcPopover
+						v-if="conversation.description"
 						no-focus-trap
 						:delay="500"
 						:boundary="boundaryElement"
 						:popper-triggers="['hover']"
 						:triggers="['hover']">
 						<template #trigger="{ attrs }">
-							<p v-bind="attrs"
+							<p
+								v-bind="attrs"
 								class="description"
 								:class="{ 'description__in-chat': !isInCall }">
 								{{ conversation.description }}
 							</p>
 						</template>
-						<NcRichText class="description__popover"
+						<NcRichText
+							class="description__popover"
 							:text="conversation.description"
 							use-extended-markdown />
 					</NcPopover>
@@ -122,11 +132,13 @@
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
 			<!-- Call time -->
-			<CallTime v-if="isInCall"
+			<CallTime
+				v-if="isInCall"
 				:start="conversation.callStartTime" />
 
 			<!-- Participants counter -->
-			<NcButton v-if="isInCall && isModeratorOrUser"
+			<NcButton
+				v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
 				variant="tertiary"
@@ -139,11 +151,13 @@
 					{{ participantsInCall }}
 				</template>
 			</NcButton>
-			<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
+			<ExtendOneToOneDialog
+				v-else-if="!isSidebar && canExtendOneToOneConversation"
 				:token="token" />
 
 			<!-- TopBar menu -->
-			<TopBarMenu :token="token"
+			<TopBarMenu
+				:token="token"
 				:show-actions="!isSidebar"
 				:is-sidebar="isSidebar"
 				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
@@ -151,7 +165,8 @@
 			<CallButton v-if="!isInCall" shrink-on-mobile />
 
 			<!-- Breakout rooms editor -->
-			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			<BreakoutRoomsEditor
+				v-if="showBreakoutRoomsEditor"
 				:token="token"
 				@close="showBreakoutRoomsEditor = false" />
 		</div>

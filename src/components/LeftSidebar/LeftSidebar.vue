@@ -7,9 +7,11 @@
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<template #search>
 			<div class="new-conversation">
-				<div class="conversations-search"
+				<div
+					class="conversations-search"
 					:class="{ 'conversations-search--expanded': isSearching }">
-					<SearchBox ref="searchBox"
+					<SearchBox
+						ref="searchBox"
 						v-model:value="searchText"
 						v-model:is-focused="isFocused"
 						:list-ref="[scroller, searchResults]"
@@ -19,7 +21,8 @@
 
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
-					<NcActions v-show="searchText === ''"
+					<NcActions
+						v-show="searchText === ''"
 						:variant="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
@@ -28,7 +31,8 @@
 						</template>
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
-						<NcActionButton close-after-click
+						<NcActionButton
+							close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
 							@click="handleFilter('mentions')">
@@ -38,7 +42,8 @@
 							{{ t('spreed', 'Unread mentions') }}
 						</NcActionButton>
 
-						<NcActionButton close-after-click
+						<NcActionButton
+							close-after-click
 							type="checkbox"
 							:model-value="filters.includes('unread')"
 							@click="handleFilter('unread')">
@@ -48,7 +53,8 @@
 							{{ t('spreed', 'Unread messages') }}
 						</NcActionButton>
 
-						<NcActionButton close-after-click
+						<NcActionButton
+							close-after-click
 							type="checkbox"
 							:model-value="filters.includes('events')"
 							@click="handleFilter('events')">
@@ -58,7 +64,8 @@
 							{{ t('spreed', 'Meeting conversations') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="isFiltered"
+						<NcActionButton
+							v-if="isFiltered"
 							close-after-click
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
@@ -72,13 +79,15 @@
 
 				<!-- Actions -->
 				<TransitionWrapper name="radial-reveal">
-					<NcActions v-show="searchText === ''"
+					<NcActions
+						v-show="searchText === ''"
 						class="actions"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
 							<IconChatPlusOutline :size="20" />
 						</template>
-						<NcActionButton v-if="canStartConversations"
+						<NcActionButton
+							v-if="canStartConversations"
 							close-after-click
 							@click="showModalNewConversation">
 							<template #icon>
@@ -87,7 +96,8 @@
 							{{ t('spreed', 'Create a new conversation') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="canNoteToSelf && !hasNoteToSelf"
+						<NcActionButton
+							v-if="canNoteToSelf && !hasNoteToSelf"
 							close-after-click
 							@click="restoreNoteToSelfConversation">
 							<template #icon>
@@ -96,7 +106,8 @@
 							{{ t('spreed', 'New personal note') }}
 						</NcActionButton>
 
-						<NcActionButton close-after-click
+						<NcActionButton
+							close-after-click
 							@click="showModalListConversations">
 							<template #icon>
 								<IconFormatListBulleted :size="20" />
@@ -104,7 +115,8 @@
 							{{ t('spreed', 'Join open conversations') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="canModerateSipDialOut"
+						<NcActionButton
+							v-if="canModerateSipDialOut"
 							close-after-click
 							@click="showModalCallPhoneDialog">
 							<template #icon>
@@ -127,11 +139,13 @@
 				<!-- New Pending Invitations dialog -->
 				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
 			</div>
-			<TransitionWrapper class="conversations__filters"
+			<TransitionWrapper
+				class="conversations__filters"
 				name="zoom"
 				tag="div"
 				group>
-				<NcChip v-for="filter in filters"
+				<NcChip
+					v-for="filter in filters"
 					:key="filter"
 					:text="FILTER_LABELS[filter]"
 					@close="handleFilter(filter)" />
@@ -159,7 +173,8 @@
 						class="navigation-caption"
 						:name="showArchived ? t('spreed', 'Archived conversations') : t('spreed', 'Followed threads')" />
 				</template>
-				<NcAppNavigationItem v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
+				<NcAppNavigationItem
+					v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
 					class="navigation-item"
 					:name="t('spreed', 'Followed threads')"
 					@click.prevent="showThreadsList = true; showArchived = false">
@@ -167,7 +182,8 @@
 						<IconForumOutline :size="20" />
 					</template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem v-if="pendingInvitationsCount && !isSearching && !showArchived && !showThreadsList"
+				<NcAppNavigationItem
+					v-if="pendingInvitationsCount && !isSearching && !showArchived && !showThreadsList"
 					class="navigation-item"
 					:name="t('spreed', 'Pending invitations')"
 					@click.prevent="showInvitationHandler">
@@ -184,7 +200,8 @@
 		<template #list>
 			<!-- Conversations List -->
 			<template v-if="!isSearching">
-				<NcEmptyContent v-if="showEmptyContent"
+				<NcEmptyContent
+					v-if="showEmptyContent"
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
@@ -218,7 +235,8 @@
 					:compact="isCompact"
 					class="scroller"
 					@scroll="debounceHandleScroll" />
-				<NcButton v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
+				<NcButton
+					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
@@ -227,7 +245,8 @@
 			</template>
 
 			<!-- Search results -->
-			<SearchConversationsResults v-else
+			<SearchConversationsResults
+				v-else
 				ref="searchResults"
 				class="scroller"
 				:search-text="searchText"

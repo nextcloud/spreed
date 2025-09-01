@@ -5,7 +5,8 @@
 
 <template>
 	<div class="background-editor">
-		<button key="clear"
+		<button
+			key="clear"
 			class="background-editor__element"
 			:class="{ 'background-editor__element--selected': selectedBackground === 'none' }"
 			@click="handleSelectBackground('none')">
@@ -15,7 +16,8 @@
 				t('spreed', 'None')
 			}}
 		</button>
-		<button key="blur"
+		<button
+			key="blur"
 			class="background-editor__element"
 			:class="{ 'background-editor__element--selected': selectedBackground === 'blur' }"
 			@click="handleSelectBackground('blur')">
@@ -24,19 +26,22 @@
 		</button>
 		<template v-if="predefinedBackgrounds?.length">
 			<template v-if="canUploadBackgrounds">
-				<button class="background-editor__element"
+				<button
+					class="background-editor__element"
 					@click="clickImportInput">
 					<NcIconSvgWrapper :svg="IconFileUpload" :size="20" inline />
 					{{ t('spreed', 'Upload') }}
 				</button>
-				<button class="background-editor__element"
+				<button
+					class="background-editor__element"
 					:class="{ 'background-editor__element--selected': isCustomBackground }"
 					@click="showFilePicker">
 					<IconFolder :size="20" />
 					{{ t('spreed', 'Files') }}
 				</button>
 			</template>
-			<button v-for="path in predefinedBackgroundsURLs"
+			<button
+				v-for="path in predefinedBackgroundsURLs"
 				:key="path"
 				:aria-label="ariaLabelForPredefinedBackground(path)"
 				:title="ariaLabelForPredefinedBackground(path)"
@@ -46,13 +51,15 @@
 					'background-image': 'url(' + path + ')',
 				}"
 				@click="handleSelectBackground(path)">
-				<IconCheckBold v-if="selectedBackground === path"
+				<IconCheckBold
+					v-if="selectedBackground === path"
 					:size="40"
 					fill-color="#fff" />
 			</button>
 		</template>
 		<!--native file picker, hidden -->
-		<input id="custom-background-file"
+		<input
+			id="custom-background-file"
 			ref="fileUploadInput"
 			class="hidden-visually"
 			multiple

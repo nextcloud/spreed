@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcListItem :key="item.token"
+	<NcListItem
+		:key="item.token"
 		:name="item.displayName"
 		:title="item.displayName"
 		:active="item.token === selectedRoom?.token"
@@ -17,11 +18,13 @@
 		</template>
 		<template v-if="conversationInformation.message" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
-				<span v-if="conversationInformation.actor"
+				<span
+					v-if="conversationInformation.actor"
 					class="conversation__subname-actor">
 					{{ conversationInformation.actor }}
 				</span>
-				<component :is="conversationInformation.icon"
+				<component
+					:is="conversationInformation.icon"
 					v-if="conversationInformation.icon"
 					class="conversation__subname-icon"
 					:size="16" />

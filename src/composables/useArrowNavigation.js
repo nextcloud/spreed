@@ -22,7 +22,7 @@ const focusableCondition = 'a, button, input, select, textarea, [tabindex]:not([
  * @param {import('vue').Ref | HTMLElement} listElementRef component ref to mount navigation
  * @param {import('vue').Ref} defaultElementRef component ref to return focus to // Vue component
  * @param {object} options navigation options
- * @param {boolean} [options.confirmEnter=false] flag to confirm Enter click
+ * @param {boolean} [options.confirmEnter] flag to confirm Enter click
  */
 export function useArrowNavigation(listElementRef, defaultElementRef, options = { confirmEnter: false }) {
 	const listRef = ref(null)

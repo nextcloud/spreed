@@ -7,7 +7,8 @@
 	<div v-show="showIndicatorMessage" class="indicator">
 		<div class="indicator__wrapper">
 			<div class="indicator__avatars">
-				<AvatarWrapper v-for="(participant, index) in visibleParticipants"
+				<AvatarWrapper
+					v-for="(participant, index) in visibleParticipants"
 					:id="participant.actorId"
 					:key="index"
 					:token="token"

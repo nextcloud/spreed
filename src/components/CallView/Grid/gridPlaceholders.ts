@@ -7,6 +7,7 @@ import { generateFilePath } from '@nextcloud/router'
 
 /**
  * Mock participant image for placeholders
+ *
  * @param i index
  */
 export function placeholderImage(i: number) {
@@ -15,6 +16,7 @@ export function placeholderImage(i: number) {
 
 /**
  * Mock participant name for placeholders
+ *
  * @param i index
  * @param showKey show key next to the name
  */
@@ -44,6 +46,7 @@ export function placeholderName(i: number, showKey: boolean = false): string {
 
 /**
  * Mock participant model for placeholders
+ *
  * @param i index
  */
 export function placeholderModel(i: number) {

@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<RoomSelector v-if="modal"
+	<RoomSelector
+		v-if="modal"
 		list-open-conversations
 		show-postable-only
 		:dialog-title="dialogTitle"

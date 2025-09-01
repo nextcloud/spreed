@@ -27,7 +27,7 @@ function convertToUnix(time: number | Date): number {
  * Calculates the stopwatch string given the time (ms)
  *
  * @param time the time in ms
- * @param [condensed=false] the format of string to show
+ * @param [condensed] the format of string to show
  */
 function formattedTime(time: number, condensed: boolean = false): string {
 	if (!time) {

@@ -5,19 +5,22 @@
 
 <template>
 	<section id="signaling_server" class="signaling-servers section">
-		<NcNoteCard v-if="!serversProxy.length"
+		<NcNoteCard
+			v-if="!serversProxy.length"
 			type="warning"
 			:heading="t('spreed', 'Nextcloud Talk setup not complete')">
 			{{ t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.') }}
 			{{ t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.') }}
 
-			<NcButton v-if="props.hasValidSubscription"
+			<NcButton
+				v-if="props.hasValidSubscription"
 				variant="primary"
 				class="additional-top-margin"
 				href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">
 				{{ t('spreed', 'Nextcloud portal') }} ↗
 			</NcButton>
-			<NcButton v-else
+			<NcButton
+				v-else
 				variant="primary"
 				class="additional-top-margin"
 				href="https://nextcloud-talk.readthedocs.io/en/latest/quick-install/">
@@ -33,12 +36,14 @@
 			{{ t('spreed', 'The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices.') }}
 		</p>
 
-		<NcNoteCard v-if="serversProxy.length && !isCacheConfigured"
+		<NcNoteCard
+			v-if="serversProxy.length && !isCacheConfigured"
 			type="warning"
 			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend.')" />
 
 		<ul v-if="serversProxy.length">
-			<SignalingServer v-for="(server, index) in serversProxy"
+			<SignalingServer
+				v-for="(server, index) in serversProxy"
 				:key="index"
 				v-model:server="server.server"
 				v-model:verify="server.verify"
@@ -49,7 +54,8 @@
 				@update:verify="debounceUpdateServers" />
 		</ul>
 
-		<NcButton v-if="!serversProxy.length || isClusteredMode"
+		<NcButton
+			v-if="!serversProxy.length || isClusteredMode"
 			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
@@ -60,7 +66,8 @@
 			{{ t('spreed', 'Add High-performance backend server') }}
 		</NcButton>
 
-		<NcPasswordField v-if="serversProxy.length"
+		<NcPasswordField
+			v-if="serversProxy.length"
 			v-model="secretProxy"
 			class="form__textfield additional-top-margin"
 			name="signaling_secret"
@@ -72,7 +79,8 @@
 			@update:model-value="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">
-			<NcCheckboxRadioSwitch v-model="showWarningProxy"
+			<NcCheckboxRadioSwitch
+				v-model="showWarningProxy"
 				type="switch"
 				class="additional-top-margin"
 				:disabled="loading"
@@ -152,6 +160,7 @@ onBeforeUnmount(() => {
 
 /**
  * Removes HPB server from the list
+ *
  * @param index index of server (remnant from clustered setup, should be always 0)
  */
 function removeServer(index: number) {
@@ -168,6 +177,7 @@ function newServer() {
 
 /**
  * Update hideWarning value on server
+ *
  * @param showWarning new value
  */
 function updateHideWarning(showWarning: boolean) {

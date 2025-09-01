@@ -17,7 +17,7 @@ let sharedContext
  * Retrieves the participant {@code Context}, creating it if necessary.
  *
  * @param {string} participantId - The participant whose context we need.
- * @returns {Object} The context.
+ * @return {object} The context.
  */
 function getParticipantContext(participantId) {
 	if (sharedContext) {
@@ -34,10 +34,10 @@ function getParticipantContext(participantId) {
 /**
  * Sets an encode / decode transform.
  *
- * @param {Object} context - The participant context where the transform will be applied.
+ * @param {object} context - The participant context where the transform will be applied.
  * @param {string} operation - Encode / decode.
- * @param {Object} readableStream - Readable stream part.
- * @param {Object} writableStream - Writable stream part.
+ * @param {object} readableStream - Readable stream part.
+ * @param {object} writableStream - Writable stream part.
  */
 function handleTransform(context, operation, readableStream, writableStream) {
 	if (operation === 'encode' || operation === 'decode') {

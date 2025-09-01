@@ -5,7 +5,8 @@
 
 <template>
 	<div v-if="reactionsCount && reactionsSorted" class="reactions-wrapper">
-		<NcPopover v-for="reaction in reactionsSorted"
+		<NcPopover
+			v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
 			no-focus-trap
@@ -13,7 +14,8 @@
 			:popper-triggers="['hover']"
 			@after-show="fetchReactions">
 			<template #trigger>
-				<NcButton :variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
+				<NcButton
+					:variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
 					class="reaction-button--trigger"
 					size="small"
 					@click="handleReactionClick(reaction)">
@@ -26,7 +28,8 @@
 					<span v-if="reactionsCount(reaction) === 4">
 						{{ remainingReactionsLabel(reaction) }}
 					</span>
-					<a v-else-if="reactionsCount(reaction) > 4"
+					<a
+						v-else-if="reactionsCount(reaction) > 4"
 						class="more-reactions-button"
 						role="button"
 						tabindex="0"
@@ -41,7 +44,8 @@
 		</NcPopover>
 
 		<!-- all reactions button -->
-		<NcButton v-if="showControls"
+		<NcButton
+			v-if="showControls"
 			size="small"
 			:title="t('spreed', 'Show all reactions')"
 			:aria-label="t('spreed', 'Show all reactions')"
@@ -51,12 +55,14 @@
 		<span v-else class="reaction-button--thumbnail" />
 
 		<!-- More reactions picker -->
-		<NcEmojiPicker v-if="canReact && showControls"
+		<NcEmojiPicker
+			v-if="canReact && showControls"
 			:per-line="5"
 			@select="handleReactionClick"
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">
-			<NcButton size="small"
+			<NcButton
+				size="small"
 				class="reaction-button--trigger"
 				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
@@ -66,7 +72,8 @@
 		<span v-else-if="canReact" class="reaction-button--thumbnail" />
 
 		<!-- all reactions modal-->
-		<ReactionsList v-if="showAllReactions"
+		<ReactionsList
+			v-if="showAllReactions"
 			:token="token"
 			:detailed-reactions="detailedReactions"
 			:reactions-sorted="reactionsSorted"

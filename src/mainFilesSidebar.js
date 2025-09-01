@@ -30,17 +30,27 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 const router = createMemoryRouter()
 
-const newCallView = () => createApp(FilesSidebarCallViewApp)
-	.use(store)
-	.use(pinia)
-	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
+/**
+ *
+ */
+function newCallView() {
+	return createApp(FilesSidebarCallViewApp)
+		.use(store)
+		.use(pinia)
+		.use(router)
+		.use(NextcloudGlobalsVuePlugin)
+}
 
-const newTab = () => createApp(FilesSidebarTabApp)
-	.use(store)
-	.use(pinia)
-	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
+/**
+ *
+ */
+function newTab() {
+	return createApp(FilesSidebarTabApp)
+		.use(store)
+		.use(pinia)
+		.use(router)
+		.use(NextcloudGlobalsVuePlugin)
+}
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = reactive({})

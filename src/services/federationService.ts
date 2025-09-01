@@ -14,7 +14,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @param [options] Axios request options
  */
-const getShares = async function(options?: AxiosRequestConfig): getSharesResponse {
+async function getShares(options?: AxiosRequestConfig): getSharesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/federation/invitation'), options)
 }
 
@@ -24,7 +24,7 @@ const getShares = async function(options?: AxiosRequestConfig): getSharesRespons
  * @param id invitation id;
  * @param [options] Axios request options
  */
-const acceptShare = async function(id: string | number, options?: AxiosRequestConfig): acceptShareResponse {
+async function acceptShare(id: string | number, options?: AxiosRequestConfig): acceptShareResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }), {}, options)
 }
 
@@ -34,7 +34,7 @@ const acceptShare = async function(id: string | number, options?: AxiosRequestCo
  * @param id invitation id;
  * @param [options] Axios request options
  */
-const rejectShare = async function(id: string | number, options?: AxiosRequestConfig): rejectShareResponse {
+async function rejectShare(id: string | number, options?: AxiosRequestConfig): rejectShareResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }), options)
 }
 
@@ -44,7 +44,7 @@ const rejectShare = async function(id: string | number, options?: AxiosRequestCo
  * @param token local conversation token;
  * @param [options] Axios request options
  */
-const getRemoteCapabilities = async function(token: string, options?: AxiosRequestConfig): getCapabilitiesResponse {
+async function getRemoteCapabilities(token: string, options?: AxiosRequestConfig): getCapabilitiesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}/capabilities', { token }), options)
 }
 

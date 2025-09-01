@@ -55,6 +55,7 @@ function triggerImport() {
 
 /**
  * Validate imported file and insert data into form fields
+ *
  * @param event import event
  */
 function importList(event: Event) {
@@ -69,6 +70,7 @@ function importList(event: Event) {
 
 /**
  * Verify imported file and show results
+ *
  * @param file file to upload
  */
 async function testList(file: File) {
@@ -86,6 +88,7 @@ async function testList(file: File) {
 
 /**
  * Verify imported file and add participants
+ *
  * @param file file to upload
  */
 async function submitList(file: File | null) {
@@ -105,14 +108,16 @@ async function submitList(file: File | null) {
 </script>
 
 <template>
-	<NcDialog class="import-list"
+	<NcDialog
+		class="import-list"
 		:name="t('spreed', 'Import email participants')"
 		size="normal"
 		close-on-click-outside
 		:container="container"
 		@update:open="emit('close')">
 		<!--native file picker, hidden -->
-		<input id="list-upload"
+		<input
+			id="list-upload"
 			ref="listImport"
 			type="file"
 			class="hidden-visually"
@@ -120,7 +125,8 @@ async function submitList(file: File | null) {
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<div class="import-list__hint" v-html="importListDescription" />
 		<div class="import-list__wrapper">
-			<NcTextField class="import-list__input"
+			<NcTextField
+				class="import-list__input"
 				:model-value="importedFile?.name ?? ''"
 				:placeholder="t('spreed', 'Import a file')"
 				disabled />
@@ -143,7 +149,8 @@ async function submitList(file: File | null) {
 				</p>
 			</template>
 			<template v-else-if="uploadResult">
-				<p class="import-list__caption"
+				<p
+					class="import-list__caption"
 					:class="[uploadResultCaption.class]">
 					{{ uploadResultCaption.label }}
 				</p>
@@ -163,7 +170,8 @@ async function submitList(file: File | null) {
 		</div>
 
 		<template #actions>
-			<NcButton variant="primary"
+			<NcButton
+				variant="primary"
 				:disabled="!uploadResult"
 				@click="submitList(importedFile)">
 				{{ t('spreed', 'Send invitations') }}

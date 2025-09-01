@@ -91,7 +91,7 @@ liveTranscriptionStore.loadLiveTranscriptionLanguages().catch(() => {
 /**
  * Set the live transcription language from the given option
  *
- * @param {object} language the option with the language to set
+ * @param language the option with the language to set
  */
 async function changeLanguage(language: LanguageOption) {
 	languageBeingChanged.value = true
@@ -123,7 +123,8 @@ async function changeLanguage(language: LanguageOption) {
 			{{ t('spreed', 'Language') }}
 		</h4>
 
-		<NcSelect id="live_transcription_settings_language_id"
+		<NcSelect
+			id="live_transcription_settings_language_id"
 			v-model="selectedOption"
 			:input-label="inputLabel"
 			:placeholder="placeholder"

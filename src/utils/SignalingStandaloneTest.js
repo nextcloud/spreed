@@ -192,6 +192,7 @@ class StandaloneTest {
 
 /**
  * Returns test instance
+ *
  * @param {object} settings signaling settings
  * @param {string} url HPB server URL
  */

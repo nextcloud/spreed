@@ -14,7 +14,8 @@
 			{{ t('spreed', 'Federated chats and calls work already. Attachment handling is coming in a future version.') }}
 		</p>
 
-		<NcCheckboxRadioSwitch :model-value="isFederationEnabled"
+		<NcCheckboxRadioSwitch
+			:model-value="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
 			@update:model-value="saveFederationEnabled">
@@ -24,21 +25,24 @@
 		<template v-if="isFederationEnabled">
 			<h3>{{ t('spreed', 'Permissions') }}</h3>
 
-			<NcCheckboxRadioSwitch :model-value="isFederationIncomingEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationIncomingEnabled">
 				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch :model-value="isFederationOutgoingEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationOutgoingEnabled">
 				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch :model-value="isFederationOnlyTrustedServersEnabled"
+			<NcCheckboxRadioSwitch
+				:model-value="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationOnlyTrustedServersEnabled">
@@ -54,7 +58,8 @@
 			</p>
 
 			<div class="form">
-				<NcSelect v-model="allowedGroups"
+				<NcSelect
+					v-model="allowedGroups"
 					input-id="allow_groups_invite_federated"
 					:input-label="t('spreed', 'Groups allowed to invite federated users')"
 					name="allow_groups_invite_federated"
@@ -73,7 +78,8 @@
 					no-wrap
 					@search-change="debounceSearchGroup" />
 
-				<NcButton variant="primary"
+				<NcButton
+					variant="primary"
 					:disabled="loading"
 					@click="saveAllowedGroups">
 					{{ saveLabelAllowedGroups }}

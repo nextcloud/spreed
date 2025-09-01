@@ -40,6 +40,8 @@ export default class Deferred {
 
 	/**
 	 * Rejects the promise after the given timeout.
+	 *
+	 * @param ms
 	 */
 	setRejectTimeout(ms) {
 		this._timeout = setTimeout(() => {

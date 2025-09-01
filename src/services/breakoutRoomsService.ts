@@ -34,7 +34,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param attendeeMap A JSON-encoded map of attendeeId => room number (0 based)
  * (Only considered when the mode is "manual")
  */
-const configureBreakoutRooms = async function(token: string, mode: 0 | 1 | 2 | 3, amount: number, attendeeMap?: string): configureBreakoutRoomsResponse {
+async function configureBreakoutRooms(token: string, mode: 0 | 1 | 2 | 3, amount: number, attendeeMap?: string): configureBreakoutRoomsResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}', { token }), {
 		mode,
 		amount,
@@ -48,7 +48,7 @@ const configureBreakoutRooms = async function(token: string, mode: 0 | 1 | 2 | 3
  * @param token the breakout room token
  * @param attendeeMap A JSON-encoded map of attendeeId => room number (0 based)
  */
-const reorganizeAttendees = async function(token: string, attendeeMap: string): reorganizeAttendeesResponse {
+async function reorganizeAttendees(token: string, attendeeMap: string): reorganizeAttendeesResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/attendees', { token }), {
 		attendeeMap,
 	} as reorganizeAttendeesParams)
@@ -59,7 +59,7 @@ const reorganizeAttendees = async function(token: string, attendeeMap: string): 
  *
  * @param token The conversation token
  */
-const deleteBreakoutRooms = async function(token: string): deleteBreakoutRoomsResponse {
+async function deleteBreakoutRooms(token: string): deleteBreakoutRoomsResponse {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}', { token }))
 }
 
@@ -68,21 +68,21 @@ const deleteBreakoutRooms = async function(token: string): deleteBreakoutRoomsRe
  *
  * @param token The conversation token
  */
-const getBreakoutRooms = async function(token: string): getBreakoutRoomsResponse {
+async function getBreakoutRooms(token: string): getBreakoutRoomsResponse {
 	return axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms', { token }))
 }
 
 /**
  * @param token The conversation token
  */
-const startBreakoutRooms = async function(token: string): startBreakoutRoomsResponse {
+async function startBreakoutRooms(token: string): startBreakoutRoomsResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/rooms', { token }))
 }
 
 /**
  * @param token The conversation token
  */
-const stopBreakoutRooms = async function(token: string): stopBreakoutRoomsResponse {
+async function stopBreakoutRooms(token: string): stopBreakoutRoomsResponse {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/rooms', { token }))
 }
 
@@ -90,7 +90,7 @@ const stopBreakoutRooms = async function(token: string): stopBreakoutRoomsRespon
  * @param token the conversation token
  * @param message The message to be posted
  */
-const broadcastMessageToBreakoutRooms = async function(token: string, message: string): broadcastChatMessageResponse {
+async function broadcastMessageToBreakoutRooms(token: string, message: string): broadcastChatMessageResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/broadcast', { token }), {
 		message,
 	} as broadcastChatMessageParams)
@@ -99,7 +99,7 @@ const broadcastMessageToBreakoutRooms = async function(token: string, message: s
 /**
  * @param token the conversation token
  */
-const fetchBreakoutRoomsParticipants = async function(token: string): getBreakoutRoomsParticipantsResponse {
+async function fetchBreakoutRoomsParticipants(token: string): getBreakoutRoomsParticipantsResponse {
 	return axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms/participants', { token }))
 }
 
@@ -108,7 +108,7 @@ const fetchBreakoutRoomsParticipants = async function(token: string): getBreakou
  *
  * @param token the breakout room token
  */
-const requestAssistance = async function(token: string): requestAssistanceResponse {
+async function requestAssistance(token: string): requestAssistanceResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/request-assistance', { token }))
 }
 
@@ -117,7 +117,7 @@ const requestAssistance = async function(token: string): requestAssistanceRespon
  *
  * @param token the breakout room token
  */
-const dismissRequestAssistance = async function(token: string): resetRequestAssistanceResponse {
+async function dismissRequestAssistance(token: string): resetRequestAssistanceResponse {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/request-assistance', { token }))
 }
 
@@ -128,7 +128,7 @@ const dismissRequestAssistance = async function(token: string): resetRequestAssi
  * @param token Conversation token of the parent room hosting the breakout rooms
  * @param target Conversation token of the target breakout room
  */
-const switchToBreakoutRoom = async function(token: string, target: string): switchToBreakoutRoomResponse {
+async function switchToBreakoutRoom(token: string, target: string): switchToBreakoutRoomResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/switch', { token }), {
 		target,
 	} as switchToBreakoutRoomParams)

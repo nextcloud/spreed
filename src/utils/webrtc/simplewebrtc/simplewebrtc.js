@@ -51,7 +51,7 @@ export default function SimpleWebRTC(opts) {
 
 	// set our config from options
 	for (item in options) {
-		if (Object.prototype.hasOwnProperty.call(options, item)) {
+		if (Object.hasOwn(options, item)) {
 			this.config[item] = options[item]
 		}
 	}
