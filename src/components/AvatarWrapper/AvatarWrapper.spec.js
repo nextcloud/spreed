@@ -83,7 +83,7 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.props('displayName')).toBe(USER_NAME)
 			expect(avatar.props('hideStatus')).toBe(false)
 			expect(avatar.props('verboseStatus')).toBe(true)
-			expect(avatar.props('preloadedUserStatus')).toBe(PRELOADED_USER_STATUS)
+			expect(avatar.props('preloadedUserStatus')).toStrictEqual(PRELOADED_USER_STATUS)
 			expect(avatar.props('size')).toBe(AVATAR.SIZE.DEFAULT)
 		})
 	})

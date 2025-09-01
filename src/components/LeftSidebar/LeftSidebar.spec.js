@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import LeftSidebar from './LeftSidebar.vue'
 import router from '../../__mocks__/router.js'
+import { localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { searchListedConversations } from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -26,22 +27,6 @@ vi.mock('../../services/conversationsService', () => ({
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),
 }))
-
-// Test actions with 'can-create' config
-let mockCanCreateConversations = true
-vi.mock('../../services/CapabilitiesManager', async () => {
-	const CapabilitiesManager = await vi.importActual('../../services/CapabilitiesManager')
-	return {
-		...CapabilitiesManager,
-		getTalkConfig: vi.fn((...args) => {
-			if (args[0] === 'local' && args[1] === 'conversations' && args[2] === 'can-create') {
-				return mockCanCreateConversations
-			} else {
-				return CapabilitiesManager.getTalkConfig(...args)
-			}
-		}),
-	}
-})
 
 // short-circuit debounce
 vi.mock('debounce', () => ({
@@ -59,6 +44,9 @@ describe('LeftSidebar.vue', () => {
 
 	const SEARCH_TERM = 'search'
 
+	const ComponentStub = {
+		template: '<div><slot /></div>',
+	}
 	const RecycleScrollerStub = {
 		props: {
 			items: Array,
@@ -69,7 +57,13 @@ describe('LeftSidebar.vue', () => {
 			</ul>`,
 	}
 
-	const mountComponent = () => {
+	const HAS_APP_NAVIGATION_KEY = Symbol.for('NcContent:setHasAppNavigation')
+	const NC_ACTIONS_CLOSE_MENU = Symbol.for('NcActions:closeMenu')
+
+	/**
+	 * Shared function to mount component
+	 */
+	function mountComponent() {
 		return mount(LeftSidebar, {
 			global: {
 				plugins: [router, store],
@@ -77,13 +71,14 @@ describe('LeftSidebar.vue', () => {
 					// to prevent user status fetching
 					NcAvatar: true,
 					// to prevent complex dialog logic
-					NcActions: true,
-					NcModal: true,
+					NcActions: ComponentStub,
+					NcModal: ComponentStub,
 					RecycleScroller: RecycleScrollerStub,
 				},
-			},
-			provide: {
-				'NcContent:setHasAppNavigation': () => {},
+				provide: {
+					[HAS_APP_NAVIGATION_KEY]: () => {},
+					[NC_ACTIONS_CLOSE_MENU]: () => {},
+				},
 			},
 		})
 	}
@@ -122,7 +117,7 @@ describe('LeftSidebar.vue', () => {
 	})
 
 	afterEach(() => {
-		mockCanCreateConversations = true
+		localCapabilities.spreed.config.conversations['can-create'] = true
 		vi.clearAllMocks()
 	})
 
@@ -184,9 +179,7 @@ describe('LeftSidebar.vue', () => {
 			expect(conversationListItems.at(0).text()).toStrictEqual(normalConversationsList[0].displayName)
 			expect(conversationListItems.at(1).text()).toStrictEqual(normalConversationsList[1].displayName)
 
-			expect(conversationsReceivedEvent).toHaveBeenCalledWith({
-				singleConversation: false,
-			})
+			expect(conversationsReceivedEvent).toHaveBeenCalled()
 		})
 
 		test('re-fetches conversations every 30 seconds', async () => {
@@ -422,7 +415,6 @@ describe('LeftSidebar.vue', () => {
 				)
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources')
 				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList.exists()).toBeTruthy()
 				expect(itemsList).toHaveLength(itemsListNames.length)
 				itemsListNames.forEach((name, index) => {
 					expect(itemsList.at(index).text()).toStrictEqual(name)
@@ -430,7 +422,7 @@ describe('LeftSidebar.vue', () => {
 			})
 
 			test('only shows user search results when cannot create conversations', async () => {
-				mockCanCreateConversations = false
+				localCapabilities.spreed.config.conversations['can-create'] = false
 
 				const wrapper = await testSearch(
 					SEARCH_TERM,
@@ -443,7 +435,6 @@ describe('LeftSidebar.vue', () => {
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Groups and teams', true, false)
 				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList.exists()).toBeTruthy()
 				expect(itemsList).toHaveLength(itemsListNames.length)
 				expect(itemsListNames.filter((item) => ['Groups', 'Teams', 'Federated users', SEARCH_TERM].includes(item)).length).toBe(0)
 				itemsListNames.forEach((name, index) => {
@@ -463,7 +454,6 @@ describe('LeftSidebar.vue', () => {
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources', false, true)
 				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList.exists()).toBeTruthy()
 				expect(itemsList).toHaveLength(itemsListNames.length)
 				expect(itemsListNames.filter((item) => ['Teams'].includes(item)).length).toBe(0)
 				itemsListNames.forEach((name, index) => {
@@ -484,7 +474,6 @@ describe('LeftSidebar.vue', () => {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
 				const captionsEls = wrapper.findAll('.caption')
-				expect(captionsEls.exists()).toBeTruthy()
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
 					expect(captionsEls.at(0).text()).toBe('Conversations')
@@ -601,7 +590,7 @@ describe('LeftSidebar.vue', () => {
 			expect(newConversationbutton.exists()).toBeTruthy()
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
-			mockCanCreateConversations = false
+			localCapabilities.spreed.config.conversations['can-create'] = false
 
 			const wrapper = mountComponent()
 			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')

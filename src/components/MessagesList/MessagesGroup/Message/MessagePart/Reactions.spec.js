@@ -4,7 +4,7 @@
  */
 
 import { showError } from '@nextcloud/dialogs'
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -13,7 +13,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import Reactions from './Reactions.vue'
-import { ATTENDEE } from '../../../../../constants.ts'
+import router from '../../../../../__mocks__/router.js'
 import {
 	addReactionToMessage,
 	getReactionsDetails,
@@ -103,20 +103,30 @@ describe('Reactions.vue', () => {
 		reactionsStore.resetReactions(token, messageId)
 	})
 
+	const ComponentTriggerStub = {
+		template: '<div><slot name="trigger" /></div>',
+	}
+
+	/**
+	 * Shared function to mount component
+	 */
+	function mountReactions(props) {
+		return mount(Reactions, {
+			global: {
+				plugins: [router, store],
+				stubs: {
+					NcEmojiPicker: ComponentTriggerStub,
+					NcPopover: ComponentTriggerStub,
+				},
+			},
+			props,
+		})
+	}
+
 	describe('reactions buttons', () => {
 		test('shows reaction buttons with count and emoji picker', async () => {
 			// Arrange
-			const wrapper = shallowMount(Reactions, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcPopover,
-					},
-				},
-				props: reactionsProps,
-
-			})
-
+			const wrapper = mountReactions(reactionsProps)
 			// Assert
 			const reactionButtons = wrapper.findAllComponents(NcPopover)
 			expect(reactionButtons).toHaveLength(3)
@@ -131,16 +141,7 @@ describe('Reactions.vue', () => {
 		test('shows reaction buttons with count but without emoji picker when no react permission', () => {
 			// Arrange
 			reactionsProps.canReact = false
-			const wrapper = shallowMount(Reactions, {
-				global: {
-					plugins: [store],
-					stubs: {
-						NcPopover,
-					},
-				},
-				props: reactionsProps,
-
-			})
+			const wrapper = mountReactions(reactionsProps)
 			const reactionButtons = wrapper.findAllComponents(NcButton)
 			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
 			// Act
@@ -171,24 +172,13 @@ describe('Reactions.vue', () => {
 			})
 			testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 			store = createStore(testStoreConfig)
-			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				global: {
-					plugins: [store],
-					stubs: {
-						NcEmojiPicker,
-						NcPopover,
-					},
-				},
-
-			})
+			const wrapper = mountReactions(reactionsProps)
 
 			// Assert
 			const reactionButtons = wrapper.findAllComponents(NcPopover)
 			expect(reactionButtons).toHaveLength(0)
 			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
 			expect(emojiPicker.exists()).toBeFalsy()
-			expect(emojiPicker.vm).toBeUndefined()
 		})
 
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
@@ -196,19 +186,8 @@ describe('Reactions.vue', () => {
 			vi.spyOn(reactionsStore, 'addReactionToMessage')
 			vuexStore.dispatch('processMessage', { token, message })
 
-			const wrapper = shallowMount(Reactions, {
-				props: {
-					...reactionsProps,
-					showControls: true,
-				},
-				global: {
-					plugins: [store],
-					stubs: {
-						NcEmojiPicker,
-					},
-				},
-
-			})
+			reactionsProps.showControls = true
+			const wrapper = mountReactions(reactionsProps)
 
 			const response = generateOCSResponse({ payload: Object.assign({}, reactionsStored, { '❤️': [{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' }] }) })
 			addReactionToMessage.mockResolvedValue(response)
@@ -232,17 +211,8 @@ describe('Reactions.vue', () => {
 
 			vuexStore.dispatch('processMessage', { token, message })
 
-			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				global: {
-					plugins: [store],
-					stubs: {
-						NcEmojiPicker,
-						NcPopover,
-					},
-				},
+			const wrapper = mountReactions(reactionsProps)
 
-			})
 			const addedReaction = {
 				...reactionsStored,
 				'🎄': [...reactionsStored['🎄'], { actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' }],
@@ -282,16 +252,8 @@ describe('Reactions.vue', () => {
 			console.debug = vi.fn()
 			vi.spyOn(reactionsStore, 'fetchReactions')
 
-			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				global: {
-					plugins: [store],
-					stubs: {
-						NcPopover,
-					},
-				},
+			const wrapper = mountReactions(reactionsProps)
 
-			})
 			const response = generateOCSResponse({ payload: reactionsStored })
 			getReactionsDetails.mockResolvedValue(response)
 

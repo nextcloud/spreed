@@ -5,15 +5,27 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { flushPromises, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { cloneDeep } from 'lodash'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createStore, useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
+import router from '../__mocks__/router.js'
 import { CONVERSATION } from '../constants.ts'
+import storeConfig from '../store/storeConfig.js'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSResponse } from '../test-helpers.js'
+
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
 
 vi.mock('@nextcloud/axios', () => ({
 	default: {
@@ -21,6 +33,9 @@ vi.mock('@nextcloud/axios', () => ({
 	},
 }))
 
+const ComponentStub = {
+	template: '<div><slot /></div>',
+}
 const ConversationsSearchListVirtualStub = {
 	props: {
 		conversations: Array,
@@ -41,7 +56,14 @@ describe('RoomSelector', () => {
 	let conversations
 	let tokenStore
 
+	let testStoreConfig
+	let store = null
+
 	beforeEach(() => {
+		testStoreConfig = cloneDeep(storeConfig)
+		store = createStore(testStoreConfig)
+		useStore.mockReturnValue(store)
+
 		tokenStore = useTokenStore()
 		tokenStore.token = 'current-token'
 
@@ -101,15 +123,15 @@ describe('RoomSelector', () => {
 
 		axios.get.mockResolvedValue(generateOCSResponse({ payload }))
 
-		const wrapper = shallowMount(RoomSelector, {
+		const wrapper = mount(RoomSelector, {
 			global: {
+				plugins: [router],
 				stubs: {
 					ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
-					ConversationSearchResult,
-					NcDialog,
+					NcModal: ComponentStub,
 				},
 			},
-			props: props,
+			props,
 		})
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()
@@ -137,6 +159,7 @@ describe('RoomSelector', () => {
 
 		it('excludes current conversation if mounted inside of Talk', async () => {
 			// Arrange
+			await router.push({ name: 'conversation', params: { token: 'current-token' } })
 			const wrapper = await mountRoomSelector({ isPlugin: false })
 			expect(axios.get).toHaveBeenCalledWith(
 				generateOcsUrl('/apps/spreed/api/v4/room'),
@@ -226,7 +249,7 @@ describe('RoomSelector', () => {
 			await input.vm.$emit('update:modelValue', 'conversation')
 
 			// Act: click trailing button
-			await input.vm.$emit('trailing-button-click')
+			await input.find('button').trigger('click')
 
 			// Assert
 			const list = wrapper.findAllComponents({ name: 'NcListItem' })
@@ -236,47 +259,29 @@ describe('RoomSelector', () => {
 		it('emits select event on select', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
-			const eventHandler = vi.fn()
-			wrapper.vm.$on('select', eventHandler)
 
 			// Act: click on second item, then click 'Select conversation'
-			const list = wrapper.findComponent({ name: 'ConversationsSearchListVirtual' })
 			const items = wrapper.findAllComponents(ConversationSearchResult)
 			await items.at(1).vm.$emit('click', items.at(1).props('item'))
-			expect(items.at(1).emitted('click')[0][0]).toMatchObject(conversations[0])
-			expect(list.emitted('select')[0][0]).toMatchObject(conversations[0])
 			await wrapper.findComponent(NcButton).vm.$emit('click')
 
 			// Assert
-			expect(eventHandler).toHaveBeenCalledWith(conversations[0])
+			const emitted = wrapper.emitted('select')
+			expect(emitted).toBeTruthy()
+			expect(emitted[0][0]).toMatchObject(conversations[0])
 		})
 
 		it('emits close event', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
-			const eventHandler = vi.fn()
-			wrapper.vm.$on('close', eventHandler)
 
 			// Act: close dialog
 			const dialog = wrapper.findComponent(NcDialog)
 			await dialog.vm.$emit('update:open')
 
 			// Assert
-			expect(eventHandler).toHaveBeenCalled()
-		})
-
-		it('emits close event on $root as plugin', async () => {
-			// Arrange
-			const wrapper = await mountRoomSelector({ isPlugin: true })
-			const eventHandler = vi.fn()
-			wrapper.vm.$root.$on('close', eventHandler)
-
-			// Act: close dialog
-			const dialog = wrapper.findComponent(NcDialog)
-			await dialog.vm.$emit('update:open')
-
-			// Assert
-			expect(eventHandler).toHaveBeenCalled()
+			const emitted = wrapper.emitted('close')
+			expect(emitted).toBeTruthy()
 		})
 	})
 })

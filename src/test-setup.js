@@ -26,6 +26,10 @@ vi.mock('@nextcloud/dialogs', () => ({
 	TOAST_PERMANENT_TIMEOUT: -1,
 }))
 
+vi.mock('@nextcloud/files/dav', () => ({
+	defaultRemoteURL: () => 'https://nextcloud.local/remote.php/dav',
+}))
+
 vi.mock('@nextcloud/initial-state', () => ({
 	loadState: vi.fn().mockImplementation((app, key, fallback) => {
 		return fallback

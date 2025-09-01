@@ -12,12 +12,6 @@ export default defineConfig({
 	assetsInclude: ['**/*.tflite', '**/*.wasm'],
 	test: {
 		include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
-		exclude: [
-			// TODO: migrate to Vue 3
-			'src/components/**',
-			// FIXME: broken after Vue 3 migration
-			'src/store/fileUploadStore.spec.js',
-		],
 		server: {
 			deps: {
 				// Allow importing CSS from dependencies

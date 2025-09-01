@@ -4,21 +4,42 @@
  */
 
 import { cloneDeep } from 'lodash'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionText from '@nextcloud/vue/components/NcActionText'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcListItem from '@nextcloud/vue/components/NcListItem'
 
 // helpers
 /**
  *
  * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionButton
  * @param {string | Array<string>} text or array of possible texts to look for NcButtons
- * @return {import('@vue/test-utils').Wrapper}
+ * @return {import('@vue/test-utils').Wrapper | import('@vue/test-utils').ErrorWrapper}
  */
 function findNcActionButton(wrapper, text) {
-	const actionButtons = wrapper.findAllComponents({ name: 'NcActionButton' })
+	const actionButtons = wrapper.findAllComponents(NcActionButton)
 	const items = (Array.isArray(text))
 		? actionButtons.filter((actionButton) => text.includes(actionButton.text()))
 		: actionButtons.filter((actionButton) => actionButton.text() === text)
-	if (!items.exists()) {
-		return items
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
+	}
+	return items[0]
+}
+
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionText
+ * @param {string | Array<string>} text or array of possible texts to look for
+ * @return {import('@vue/test-utils').Wrapper | import('@vue/test-utils').ErrorWrapper}
+ */
+function findNcActionText(wrapper, text) {
+	const actionTexts = wrapper.findAllComponents(NcActionText)
+	const items = (Array.isArray(text))
+		? actionTexts.filter((actionText) => text.includes(actionText.text()))
+		: actionTexts.filter((actionText) => actionText.text() === text || actionText.text().includes(text))
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
 	}
 	return items[0]
 }
@@ -30,12 +51,12 @@ function findNcActionButton(wrapper, text) {
  * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcButton(wrapper, text) {
-	const buttons = wrapper.findAllComponents({ name: 'NcButton' })
+	const buttons = wrapper.findAllComponents(NcButton)
 	const items = (Array.isArray(text))
 		? buttons.filter((button) => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
 		: buttons.filter((button) => button.text() === text || button.vm.ariaLabel === text)
-	if (!items.exists()) {
-		return items
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
 	}
 	return items[0]
 }
@@ -47,7 +68,7 @@ function findNcButton(wrapper, text) {
  * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcListItems(wrapper, text) {
-	const listItems = wrapper.findAllComponents({ name: 'NcListItem' })
+	const listItems = wrapper.findAllComponents(NcListItem)
 	return (Array.isArray(text))
 		? listItems.filter((listItem) => text.includes(listItem.vm.name))
 		: listItems.filter((listItem) => listItem.vm.name === text)
@@ -114,6 +135,7 @@ function generateOCSErrorResponse({ headers = {}, payload = {}, status }) {
 
 export {
 	findNcActionButton,
+	findNcActionText,
 	findNcButton,
 	findNcListItems,
 	generateOCSErrorResponse,

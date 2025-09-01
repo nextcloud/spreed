@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -97,7 +97,7 @@ describe('VideoVue.vue', () => {
 		 * async).
 		 */
 		function setupWrapper() {
-			wrapper = shallowMount(VideoVue, {
+			wrapper = mount(VideoVue, {
 				global: { plugins: [store] },
 				props: {
 					model: callParticipantModel,

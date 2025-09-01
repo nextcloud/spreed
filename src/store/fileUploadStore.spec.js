@@ -8,6 +8,7 @@ import { getUploader } from '@nextcloud/upload'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { ref } from 'vue'
 import { createStore } from 'vuex'
 import { getDavClient } from '../services/DavClient.ts'
 import { shareFile } from '../services/filesSharingServices.ts'
@@ -15,6 +16,11 @@ import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
+
+const getThreadMock = ref(0)
+vi.mock('../composables/useGetThreadId.ts', () => ({
+	useGetThreadId: vi.fn(() => getThreadMock),
+}))
 
 vi.mock('../services/DavClient.ts', () => ({
 	getDavClient: vi.fn(),
@@ -72,7 +78,7 @@ describe('fileUploadStore', () => {
 			storeConfig.getters.getAttachmentFolder = vi.fn().mockReturnValue(() => '/Talk')
 			store = createStore(storeConfig)
 			getDavClient.mockReturnValue(client)
-			// getUploader.mockReturnValue({ upload: uploadMock })
+			getUploader.mockReturnValue({ upload: uploadMock })
 			console.error = vi.fn()
 		})
 
@@ -338,7 +344,7 @@ describe('fileUploadStore', () => {
 			const uploads = store.getters.getInitialisedUploads('upload-id1')
 			expect(uploads).toHaveLength(1)
 
-			expect(uploads[0][1].file).toBe(files[0])
+			expect(uploads[0][1].file).toStrictEqual(files[0])
 		})
 
 		test('discard an entire upload', async () => {
