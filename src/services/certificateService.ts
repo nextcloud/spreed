@@ -12,7 +12,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @param host The host to check the certificate
  */
-const getCertificateExpiration = async (host: certificateExpirationParams['host']): certificateExpirationResponse => {
+async function getCertificateExpiration(host: certificateExpirationParams['host']): certificateExpirationResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/certificate/expiration'), {
 		params: {
 			host,
@@ -26,7 +26,7 @@ const getCertificateExpiration = async (host: certificateExpirationParams['host'
  * @param host The host to check the certificate
  * @return {boolean} true if the certificate is valid, false otherwise
  */
-const isCertificateValid = async (host: certificateExpirationParams['host']): Promise<boolean> => {
+async function isCertificateValid(host: certificateExpirationParams['host']): Promise<boolean> {
 	try {
 		const response = await getCertificateExpiration(host)
 

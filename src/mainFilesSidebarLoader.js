@@ -9,7 +9,10 @@ import FilesSidebarCallView from './views/FilesSidebarCallView.js'
 
 import './init.js'
 
-const isEnabled = function(fileInfo) {
+/**
+ *
+ */
+function isEnabled(fileInfo) {
 	if (fileInfo && !fileInfo.isDirectory()) {
 		return true
 	}

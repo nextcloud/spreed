@@ -12,7 +12,7 @@ const suffixRegex = / \(\d+\)$/
  * @param {string} path path
  * @return {string} file extension including the dot
  */
-const getFileExtension = function(path) {
+function getFileExtension(path) {
 	return path.match(extensionRegex)?.[0] ?? ''
 }
 
@@ -22,7 +22,7 @@ const getFileExtension = function(path) {
  * @param {string} path path
  * @return {number} file suffix excluding the parenthesis
  */
-const getFileSuffix = function(path) {
+function getFileSuffix(path) {
 	return parseInt(path.replace(extensionRegex, '')
 		.match(suffixRegex)?.[0]?.match(/\d+/)?.[0] ?? 1)
 }
@@ -33,7 +33,7 @@ const getFileSuffix = function(path) {
  * @param {string} path path
  * @return {string} extracted file name
  */
-const extractFileName = function(path) {
+function extractFileName(path) {
 	return path
 	// If there is a file extension, remove it from the path string
 		.replace(extensionRegex, '')
@@ -47,7 +47,7 @@ const extractFileName = function(path) {
  * @param {string} path path
  * @return {string} file name prompt
  */
-const getFileNamePrompt = function(path) {
+function getFileNamePrompt(path) {
 	return extractFileName(path) + getFileExtension(path)
 }
 
@@ -62,7 +62,7 @@ const getFileNamePrompt = function(path) {
  * @param {number} knownSuffix The suffix to start looking from
  * @return {object} The unique path and suffix
  */
-const findUniquePath = async function(client, userRoot, path, knownSuffix) {
+async function findUniquePath(client, userRoot, path, knownSuffix) {
 	// Return the input path if it doesn't exist in the destination folder
 	if (!knownSuffix && await client.exists(userRoot + path) === false) {
 		return { uniquePath: path, suffix: getFileSuffix(path) }
@@ -88,7 +88,7 @@ const findUniquePath = async function(client, userRoot, path, knownSuffix) {
  * @param {Array} uploads The array of uploads to share
  * @return {boolean} Whether array includes duplicates or not
  */
-const hasDuplicateUploadNames = function(uploads) {
+function hasDuplicateUploadNames(uploads) {
 	const uploadNames = uploads.map(([_index, { file }]) => {
 		return getFileNamePrompt(file.newName || file.name)
 	})

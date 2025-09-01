@@ -6,11 +6,17 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-const getTranslationLanguages = async function(options) {
+/**
+ *
+ */
+async function getTranslationLanguages(options) {
 	return axios.get(generateOcsUrl('/translation/languages'), options)
 }
 
-const translateText = async function(text, fromLanguage, toLanguage, options) {
+/**
+ *
+ */
+async function translateText(text, fromLanguage, toLanguage, options) {
 	return axios.post(generateOcsUrl('/translation/translate'), {
 		text,
 		fromLanguage,

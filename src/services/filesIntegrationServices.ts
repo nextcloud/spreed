@@ -20,7 +20,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param fileId The file id to get the conversation for
  * @param [options] Axios request options
  */
-const getFileConversation = async function(fileId: number, options?: AxiosRequestConfig): getRoomDataByFileIdResponse {
+async function getFileConversation(fileId: number, options?: AxiosRequestConfig): getRoomDataByFileIdResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/file/{fileId}', { fileId }), options)
 }
 
@@ -30,7 +30,7 @@ const getFileConversation = async function(fileId: number, options?: AxiosReques
  * @param shareToken the token of the share
  * @param [options] Axios request options
  */
-const getPublicShareConversationData = async function(shareToken: string, options?: AxiosRequestConfig): getRoomDataByShareTokenResponse {
+async function getPublicShareConversationData(shareToken: string, options?: AxiosRequestConfig): getRoomDataByShareTokenResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/publicshare/{shareToken}', { shareToken }), options)
 }
 
@@ -40,7 +40,7 @@ const getPublicShareConversationData = async function(shareToken: string, option
  * @param shareToken the token of the share
  * @param [options] Axios request options
  */
-const getPublicShareAuthConversationToken = async function(shareToken: createVideoVerificationRoomParams['shareToken'], options?: AxiosRequestConfig): createVideoVerificationRoomResponse {
+async function getPublicShareAuthConversationToken(shareToken: createVideoVerificationRoomParams['shareToken'], options?: AxiosRequestConfig): createVideoVerificationRoomResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/publicshareauth'), { shareToken } as createVideoVerificationRoomParams, options)
 }
 

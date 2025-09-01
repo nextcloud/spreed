@@ -106,7 +106,10 @@ onBeforeUnmount(() => {
 	abortSearch()
 })
 
-const onRouteChange = ({ from, to }: { from: RouteLocation, to: RouteLocation }): void => {
+/**
+ *
+ */
+function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }): void {
 	if (to.name !== 'conversation' || from.params.token !== to.params.token || (to.hash && isInCall.value)) {
 		abortSearch()
 		emit('close')

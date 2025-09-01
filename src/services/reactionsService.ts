@@ -15,13 +15,19 @@ import type {
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-const addReactionToMessage = async function(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options?: AxiosRequestConfig): addReactionResponse {
+/**
+ *
+ */
+async function addReactionToMessage(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options?: AxiosRequestConfig): addReactionResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
 		reaction: selectedEmoji,
 	} as addReactionParams, options)
 }
 
-const removeReactionFromMessage = async function(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig): deleteReactionResponse {
+/**
+ *
+ */
+async function removeReactionFromMessage(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig): deleteReactionResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
 		...options,
 		params: {
@@ -30,7 +36,10 @@ const removeReactionFromMessage = async function(token: string, messageId: numbe
 	})
 }
 
-const getReactionsDetails = async function(token: string, messageId: number, options?: AxiosRequestConfig): getReactionsResponse {
+/**
+ *
+ */
+async function getReactionsDetails(token: string, messageId: number, options?: AxiosRequestConfig): getReactionsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), options)
 }
 

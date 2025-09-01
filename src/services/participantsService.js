@@ -29,7 +29,7 @@ const PERMISSIONS = PARTICIPANT.PERMISSIONS
  * @param {boolean} data.forceJoin whether to force join;
  * @param {options} options request options;
  */
-const joinConversation = async ({ token, forceJoin = false }, options) => {
+async function joinConversation({ token, forceJoin = false }, options) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {
 		force: forceJoin,
 	}, options)
@@ -56,7 +56,7 @@ const joinConversation = async ({ token, forceJoin = false }, options) => {
  *
  * @param {string} token The conversation token;
  */
-const rejoinConversation = async (token) => {
+async function rejoinConversation(token) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }))
 }
 
@@ -65,7 +65,7 @@ const rejoinConversation = async (token) => {
  *
  * @param {string} token The conversation token;
  */
-const leaveConversation = async function(token) {
+async function leaveConversation(token) {
 	try {
 		// FIXME Signaling should not be synchronous
 		await signalingLeaveConversation(token)
@@ -83,7 +83,7 @@ const leaveConversation = async function(token) {
  *
  * @param {string} token The conversation token;
  */
-const leaveConversationSync = function(token) {
+function leaveConversationSync(token) {
 	axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }))
 }
 
@@ -94,7 +94,7 @@ const leaveConversationSync = function(token) {
  * @param {string} newParticipant the id of the new participant
  * @param {string} source the source Source of the participant as returned by the autocomplete suggestion endpoint (default is users)
  */
-const addParticipant = async function(token, newParticipant, source) {
+async function addParticipant(token, newParticipant, source) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants', { token }), {
 		newParticipant,
 		source,
@@ -107,12 +107,15 @@ const addParticipant = async function(token, newParticipant, source) {
  *
  * @param {string} token The conversation token;
  */
-const removeCurrentUserFromConversation = async function(token) {
+async function removeCurrentUserFromConversation(token) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/self', { token }))
 	return response
 }
 
-const removeAttendeeFromConversation = async function(token, attendeeId) {
+/**
+ *
+ */
+async function removeAttendeeFromConversation(token, attendeeId) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees', { token }), {
 		params: {
 			attendeeId,
@@ -121,19 +124,28 @@ const removeAttendeeFromConversation = async function(token, attendeeId) {
 	return response
 }
 
-const promoteToModerator = async (token, options) => {
+/**
+ *
+ */
+async function promoteToModerator(token, options) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), options)
 	return response
 }
 
-const demoteFromModerator = async (token, options) => {
+/**
+ *
+ */
+async function demoteFromModerator(token, options) {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/moderators', { token }), {
 		params: options,
 	})
 	return response
 }
 
-const fetchParticipants = async (token, options) => {
+/**
+ *
+ */
+async function fetchParticipants(token, options) {
 	options = options || {}
 	options.params = options.params || {}
 	options.params.includeStatus = true
@@ -141,7 +153,10 @@ const fetchParticipants = async (token, options) => {
 	return response
 }
 
-const setGuestUserName = async (token, userName) => {
+/**
+ *
+ */
+async function setGuestUserName(token, userName) {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest/{token}/name', { token }), {
 		displayName: userName,
 	})
@@ -155,7 +170,7 @@ const setGuestUserName = async (token, userName) => {
  * @param {string} token conversation token
  * @param {number|null} [attendeeId] attendee id to target, or null for all
  */
-const resendInvitations = async (token, attendeeId = null) => {
+async function resendInvitations(token, attendeeId = null) {
 	await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/resend-invitations', { token }), {
 		attendeeId,
 	})
@@ -168,7 +183,7 @@ const resendInvitations = async (token, attendeeId = null) => {
  * @param {boolean} testRun whether to perform a verification only
  * @return {import('../types/index.ts').importEmailsResponse}
  */
-const importEmails = async (token, file, testRun = false) => {
+async function importEmails(token, file, testRun = false) {
 	let data = {
 		file,
 	}
@@ -194,7 +209,7 @@ const importEmails = async (token, file, testRun = false) => {
  * @param {string} token The conversation token;
  * @param {number} state Session state;
  */
-const setSessionState = async (token, state) => {
+async function setSessionState(token, state) {
 	return axios.put(
 		generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/state', { token }),
 		{ state },
@@ -207,7 +222,7 @@ const setSessionState = async (token, state) => {
  * @param {string} token conversation token
  * @param {number} attendeeId attendee id to target
  */
-const sendCallNotification = async (token, { attendeeId }) => {
+async function sendCallNotification(token, { attendeeId }) {
 	await axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/ring/{attendeeId}', { token, attendeeId }))
 }
 
@@ -217,7 +232,7 @@ const sendCallNotification = async (token, { attendeeId }) => {
  * @param {string} token conversation token
  * @param {number} attendeeId attendee id to target
  */
-const grantAllPermissionsToParticipant = async (token, attendeeId) => {
+async function grantAllPermissionsToParticipant(token, attendeeId) {
 	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }), {
 		attendeeId,
 		method: 'set',
@@ -231,7 +246,7 @@ const grantAllPermissionsToParticipant = async (token, attendeeId) => {
  * @param {string} token conversation token
  * @param {number} attendeeId attendee id to target
  */
-const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
+async function removeAllPermissionsFromParticipant(token, attendeeId) {
 	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }), {
 		attendeeId,
 		method: 'set',
@@ -249,7 +264,7 @@ const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
  * any sums of 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE',
  * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
  */
-const setPermissions = async (token, attendeeId, method = 'set', permission) => {
+async function setPermissions(token, attendeeId, method = 'set', permission) {
 	await axios.put(
 		generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
 		{
@@ -265,7 +280,7 @@ const setPermissions = async (token, attendeeId, method = 'set', permission) => 
  *
  * @param {boolean} typing whether the current participant is typing.
  */
-const setTyping = (typing) => {
+function setTyping(typing) {
 	signalingSetTyping(typing)
 }
 

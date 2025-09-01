@@ -87,49 +87,54 @@ function isMessageVisible(messageId) {
 	return element !== null && element.offsetParent !== null
 }
 
-const state = () => ({
+/**
+ *
+ */
+function state() {
+	return {
 	/**
 	 * Map of conversation token to message list
 	 */
-	messages: {},
+		messages: {},
 
-	/**
-	 * Cached last read message id for display.
-	 */
-	visualLastReadMessageId: {},
+		/**
+		 * Cached last read message id for display.
+		 */
+		visualLastReadMessageId: {},
 
-	/**
-	 * Loaded messages history parts of a conversation
-	 *
-	 * The messages list can still be empty due to message expiration,
-	 * but if we ever loaded the history, we need to show an empty content
-	 * instead of the loading animation
-	 */
-	loadedMessages: {},
+		/**
+		 * Loaded messages history parts of a conversation
+		 *
+		 * The messages list can still be empty due to message expiration,
+		 * but if we ever loaded the history, we need to show an empty content
+		 * instead of the loading animation
+		 */
+		loadedMessages: {},
 
-	/**
-	 * Stores the cancel function returned by `cancelableFetchMessages`,
-	 * which allows to cancel the previous request for old messages
-	 * when quickly switching to a new conversation.
-	 */
-	cancelFetchMessages: null,
-	/**
-	 * Stores the cancel function returned by `cancelableGetMessageContext`,
-	 * which allows to cancel the previous request for the context messages
-	 * when quickly switching to another conversation.
-	 */
-	cancelGetMessageContext: null,
-	/**
-	 * Stores the cancel function returned by `cancelablePollNewMessages`,
-	 * which allows to cancel the previous long polling request for new
-	 * messages before making another one.
-	 */
-	cancelPollNewMessages: {},
-	/**
-	 * Array of temporary message id to cancel function for the "postNewMessage" action
-	 */
-	cancelPostNewMessage: {},
-})
+		/**
+		 * Stores the cancel function returned by `cancelableFetchMessages`,
+		 * which allows to cancel the previous request for old messages
+		 * when quickly switching to a new conversation.
+		 */
+		cancelFetchMessages: null,
+		/**
+		 * Stores the cancel function returned by `cancelableGetMessageContext`,
+		 * which allows to cancel the previous request for the context messages
+		 * when quickly switching to another conversation.
+		 */
+		cancelGetMessageContext: null,
+		/**
+		 * Stores the cancel function returned by `cancelablePollNewMessages`,
+		 * which allows to cancel the previous long polling request for new
+		 * messages before making another one.
+		 */
+		cancelPollNewMessages: {},
+		/**
+		 * Array of temporary message id to cancel function for the "postNewMessage" action
+		 */
+		cancelPostNewMessage: {},
+	}
+}
 
 const getters = {
 	isMessagesListPopulated: (state) => (token) => {

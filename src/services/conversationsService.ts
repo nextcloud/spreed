@@ -127,7 +127,7 @@ async function createLegacyConversation({ roomType, roomName, password, objectTy
  * Create a new conversation (with params available with 'conversation-creation-all' capability)
  * @param params API params
  */
-const createConversation = async function(params: createConversationParams): createConversationResponse {
+async function createConversation(params: createConversationParams): createConversationResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), params)
 }
 

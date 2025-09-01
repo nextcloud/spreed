@@ -45,7 +45,7 @@ type SearchPayload = {
  * @param [payload.forceTypes] Whether to force some types to be included in query
  * @param [options] Axios request options
  */
-const autocompleteQuery = async function({
+async function autocompleteQuery({
 	searchText,
 	token = 'new',
 	onlyUsers = false,
@@ -72,19 +72,31 @@ const autocompleteQuery = async function({
 	})
 }
 
-const getUserProfile = async function(userId: string, options?: AxiosRequestConfig): UserProfileResponse {
+/**
+ *
+ */
+async function getUserProfile(userId: string, options?: AxiosRequestConfig): UserProfileResponse {
 	return axios.get(generateOcsUrl('profile/{userId}', { userId }), options)
 }
 
-const getTaskById = async function(id: number, options?: AxiosRequestConfig): TaskProcessingResponse {
+/**
+ *
+ */
+async function getTaskById(id: number, options?: AxiosRequestConfig): TaskProcessingResponse {
 	return axios.get(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-const deleteTaskById = async function(id: number, options?: AxiosRequestConfig): Promise<null> {
+/**
+ *
+ */
+async function deleteTaskById(id: number, options?: AxiosRequestConfig): Promise<null> {
 	return axios.delete(generateOcsUrl('taskprocessing/task/{id}', { id }), options)
 }
 
-const searchMessages = async function(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
+/**
+ *
+ */
+async function searchMessages(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
 	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {
 		...options,
 		params,

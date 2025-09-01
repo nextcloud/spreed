@@ -16,7 +16,7 @@ import {
  * @param {string} enabled state of the bridge
  * @param {string} parts parts of the bridge, where it has to connect
  */
-const editBridge = async function(token, enabled, parts) {
+async function editBridge(token, enabled, parts) {
 	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1/bridge/{token}', { token }), {
 		token,
 		enabled,
@@ -30,7 +30,7 @@ const editBridge = async function(token, enabled, parts) {
  *
  * @param {token} token the conversation token.
  */
-const getBridge = async function(token) {
+async function getBridge(token) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/bridge/{token}', { token }))
 	return response
 }
@@ -40,7 +40,7 @@ const getBridge = async function(token) {
  *
  * @param {token} token the conversation token.
  */
-const getBridgeProcessState = async function(token) {
+async function getBridgeProcessState(token) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/bridge/{token}/process', { token }))
 	return response
 }
@@ -48,17 +48,23 @@ const getBridgeProcessState = async function(token) {
 /**
  * Ask to stop all bridges (and kill all related processes)
  */
-const stopAllBridges = async function() {
+async function stopAllBridges() {
 	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1/bridge'))
 	return response
 }
 
-const enableMatterbridgeApp = async function() {
+/**
+ *
+ */
+async function enableMatterbridgeApp() {
 	const response = await axios.post(generateUrl('settings/apps/enable/talk_matterbridge'))
 	return response
 }
 
-const getMatterbridgeVersion = async function() {
+/**
+ *
+ */
+async function getMatterbridgeVersion() {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/bridge/version'))
 	return response
 }

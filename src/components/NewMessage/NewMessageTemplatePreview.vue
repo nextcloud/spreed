@@ -34,7 +34,10 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { generateUrl } from '@nextcloud/router'
 
-const encodeFilePath = function(path) {
+/**
+ *
+ */
+function encodeFilePath(path) {
 	const pathSections = (path.startsWith('/') ? path : `/${path}`).split('/')
 	let relativePath = ''
 	pathSections.forEach((section) => {
@@ -45,11 +48,17 @@ const encodeFilePath = function(path) {
 	return relativePath
 }
 
-const isPublic = function() {
+/**
+ *
+ */
+function isPublic() {
 	return !getCurrentUser()
 }
 
-const getToken = function() {
+/**
+ *
+ */
+function getToken() {
 	return document.getElementById('sharingToken') && document.getElementById('sharingToken').value
 }
 

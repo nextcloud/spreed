@@ -11,7 +11,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 /**
  * Get information about available bots for this instance
  */
-const getAllBots = async function(): getBotsAdminResponse {
+async function getAllBots(): getBotsAdminResponse {
 	return axios.get(generateOcsUrl('/apps/spreed/api/v1/bot/admin'))
 }
 
@@ -20,7 +20,7 @@ const getAllBots = async function(): getBotsAdminResponse {
  *
  * @param token The conversation token
  */
-const getConversationBots = async function(token: string): getBotsResponse {
+async function getConversationBots(token: string): getBotsResponse {
 	return axios.get(generateOcsUrl('/apps/spreed/api/v1/bot/{token}', { token }))
 }
 
@@ -30,7 +30,7 @@ const getConversationBots = async function(token: string): getBotsResponse {
  * @param token The conversation token
  * @param id The bot id
  */
-const enableBotForConversation = async function(token: string, id: Bot['id']): enableBotResponse {
+async function enableBotForConversation(token: string, id: Bot['id']): enableBotResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/bot/{token}/{id}', { token, id }))
 }
 
@@ -40,7 +40,7 @@ const enableBotForConversation = async function(token: string, id: Bot['id']): e
  * @param token The conversation token
  * @param id The bot id
  */
-const disableBotForConversation = async function(token: string, id: Bot['id']): disableBotResponse {
+async function disableBotForConversation(token: string, id: Bot['id']): disableBotResponse {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/bot/{token}/{id}', { token, id }))
 }
 

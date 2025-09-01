@@ -6,7 +6,10 @@ import { readableNumber } from './readableNumber.ts'
 
 const timersPool: Record<string, number> = {}
 
-const getReadable = (time: number) => {
+/**
+ *
+ */
+function getReadable(time: number) {
 	if (isNaN(time)) {
 		return '--.-- ms'
 	}

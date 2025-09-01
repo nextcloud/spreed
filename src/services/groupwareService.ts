@@ -19,7 +19,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * Get upcoming events for a given conversation within the next 31 days.
  * @param location conversation's absolute URL
  */
-const getUpcomingEvents = async (location: string): UpcomingEventsResponse => {
+async function getUpcomingEvents(location: string): UpcomingEventsResponse {
 	return axios.get(generateOcsUrl('/apps/dav/api/v1/events/upcoming'), {
 		params: {
 			location,
@@ -31,7 +31,7 @@ const getUpcomingEvents = async (location: string): UpcomingEventsResponse => {
  * Get absence information for a user (in a given 1-1 conversation).
  * @param userId user id
  */
-const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
+async function getUserAbsence(userId: string): OutOfOfficeResponse {
 	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
 }
 
@@ -40,7 +40,7 @@ const getUserAbsence = async (userId: string): OutOfOfficeResponse => {
  *
  * @param token The conversation token
  */
-const getMutualEvents = async function(token: string): getMutualEventsResponse {
+async function getMutualEvents(token: string): getMutualEventsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}/mutual-events', { token }))
 }
 
@@ -57,7 +57,7 @@ const getMutualEvents = async function(token: string): getMutualEventsResponse {
  * @param payload.attendeeIds List of attendee ids to invite (null - everyone, [] - only actor)
  * @param [options] Axios request options
  */
-const scheduleMeeting = async function(token: string, { calendarUri, start, end, title, description, attendeeIds }: scheduleMeetingParams, options?: AxiosRequestConfig): scheduleMeetingResponse {
+async function scheduleMeeting(token: string, { calendarUri, start, end, title, description, attendeeIds }: scheduleMeetingParams, options?: AxiosRequestConfig): scheduleMeetingResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/meeting', { token }), {
 		calendarUri,
 		start,

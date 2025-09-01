@@ -11,7 +11,7 @@
  * @param mediatype a MIME type string
  * @param base64Token an optional base64 token if non-textual data is given
  */
-const convertToDataURI = function(payload: string, mediatype: string = 'text/plain;charset=US-ASCII', base64Token: string = ''): string {
+function convertToDataURI(payload: string, mediatype: string = 'text/plain;charset=US-ASCII', base64Token: string = ''): string {
 	return 'data:' + mediatype + base64Token + ',' + encodeURIComponent(payload)
 }
 
@@ -20,7 +20,7 @@ const convertToDataURI = function(payload: string, mediatype: string = 'text/pla
  *
  * @param payload JS object to convert
  */
-const convertToJSONDataURI = function(payload: object): string {
+function convertToJSONDataURI(payload: object): string {
 	return convertToDataURI(JSON.stringify(payload, null, 2), 'application/json;charset=utf-8')
 }
 

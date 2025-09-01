@@ -61,38 +61,43 @@ function emitUserStatusUpdated(participant) {
 	}
 }
 
-const state = () => ({
-	attendees: {
-	},
-	peers: {
-	},
-	phones: {
-	},
-	inCall: {
-	},
-	joiningCall: {
-	},
-	connecting: {
-	},
-	connectionFailed: {
-	},
-	typing: {
-	},
-	speaking: {
-	},
-	// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
-	participantRaisedHands: {
-	},
-	initialised: {
-	},
-	/**
-	 * Stores the cancel function returned by `cancelableFetchParticipants`,
-	 * which allows to cancel the previous request for participants
-	 * when quickly switching to a new conversation.
-	 */
-	cancelFetchParticipants: null,
-	speakingInterval: null,
-})
+/**
+ *
+ */
+function state() {
+	return {
+		attendees: {
+		},
+		peers: {
+		},
+		phones: {
+		},
+		inCall: {
+		},
+		joiningCall: {
+		},
+		connecting: {
+		},
+		connectionFailed: {
+		},
+		typing: {
+		},
+		speaking: {
+		},
+		// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
+		participantRaisedHands: {
+		},
+		initialised: {
+		},
+		/**
+		 * Stores the cancel function returned by `cancelableFetchParticipants`,
+		 * which allows to cancel the previous request for participants
+		 * when quickly switching to a new conversation.
+		 */
+		cancelFetchParticipants: null,
+		speakingInterval: null,
+	}
+}
 
 const getters = {
 	isInCall: (state) => (token) => {

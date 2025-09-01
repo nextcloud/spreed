@@ -6,7 +6,10 @@
 /* global chrome */
 
 // getScreenMedia helper by @HenrikJoreteg
-const getUserMedia = function(constraints, callback) {
+/**
+ *
+ */
+function getUserMedia(constraints, callback) {
 	if (!window.navigator || !window.navigator.mediaDevices || !window.navigator.mediaDevices.getUserMedia) {
 		const error = new Error('MediaStreamError')
 		error.name = 'NotSupportedError'

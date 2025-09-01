@@ -43,7 +43,10 @@ watch(isInCall, (value) => {
 	}
 })
 
-const showInternalWarning = () => {
+/**
+ *
+ */
+function showInternalWarning() {
 	if (isGroupConversation.value) {
 		show.value = true
 	}

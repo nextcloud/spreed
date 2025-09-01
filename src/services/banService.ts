@@ -20,7 +20,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param token - the conversation token
  * @param [options] - Axios request options
  */
-const getConversationBans = async function(token: string, options?: AxiosRequestConfig): getBansResponse {
+async function getConversationBans(token: string, options?: AxiosRequestConfig): getBansResponse {
 	return axios.get(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }), options)
 }
 
@@ -31,7 +31,7 @@ const getConversationBans = async function(token: string, options?: AxiosRequest
  * @param payload - banned actor information
  * @param [options] - Axios request options
  */
-const banActor = async function(token: string, payload: banActorParams, options?: AxiosRequestConfig): banActorResponse {
+async function banActor(token: string, payload: banActorParams, options?: AxiosRequestConfig): banActorResponse {
 	return axios.post(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }), payload, options)
 }
 
@@ -42,7 +42,7 @@ const banActor = async function(token: string, payload: banActorParams, options?
  * @param banId - ban id
  * @param [options] - Axios request options
  */
-const unbanActor = async function(token: string, banId: number, options?: AxiosRequestConfig): unbanActorResponse {
+async function unbanActor(token: string, banId: number, options?: AxiosRequestConfig): unbanActorResponse {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/ban/{token}/{banId}', { token, banId }), options)
 }
 

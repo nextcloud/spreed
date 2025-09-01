@@ -12,7 +12,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * Get the list of rooms that have events
  *
  */
-const getDashboardEventRooms = async function(): getDashboardEventRoomsResponse {
+async function getDashboardEventRooms(): getDashboardEventRoomsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v4/dashboard/events'))
 }
 

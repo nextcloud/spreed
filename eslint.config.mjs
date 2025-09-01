@@ -46,7 +46,6 @@ export default [
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
-			'antfu/top-level-function': 'off', // non-fixable
 			'jsdoc/check-param-names': 'off', // need to respect JS
 			'jsdoc/check-tag-names': 'off', // need to respect JS
 			'jsdoc/check-types': 'off', // need to respect JS

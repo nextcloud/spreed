@@ -21,7 +21,10 @@ const clients: Record<string, DavClient> = {}
 
 const getClientKey = (headers: object) => JSON.stringify(headers)
 
-const getClient = (headers: object = {}) => {
+/**
+ *
+ */
+function getClient(headers: object = {}) {
 	const clientKey = getClientKey(headers)
 	if (clients[clientKey]) {
 		return clients[clientKey]
@@ -41,14 +44,14 @@ const getClient = (headers: object = {}) => {
  * Initializes the client for use in the user-view
  * If already connected, returns existing (see upstream)
  */
-const initializeCalDavClient = async () => {
+async function initializeCalDavClient() {
 	await getClient().connect({ enableCalDAV: true })
 }
 
 /**
  * Returns the current User Principal
  */
-const getDavCurrentUserPrincipal = (): DavPrincipal => {
+function getDavCurrentUserPrincipal(): DavPrincipal {
 	return getClient().currentUserPrincipal
 }
 
@@ -61,15 +64,21 @@ const getDavCalendarHome = (headers?: object): DavCalendarHome => getClient(head
 /**
  * Get personal calendars for a user
  */
-const getPersonalCalendars = async function(): Promise<DavCalendar[]> {
+async function getPersonalCalendars(): Promise<DavCalendar[]> {
 	return getDavCalendarHome().findAllCalendars()
 }
 
-const convertUrlToUri = (url: string): string => {
+/**
+ *
+ */
+function convertUrlToUri(url: string): string {
 	return url.replace(/\/$/gi, '').split('/').pop() || url
 }
 
-const getDefaultCalendarUri = () => {
+/**
+ *
+ */
+function getDefaultCalendarUri() {
 	return convertUrlToUri(getDavCurrentUserPrincipal().scheduleDefaultCalendarUrl)
 }
 
