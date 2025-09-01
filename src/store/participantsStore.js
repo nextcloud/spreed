@@ -259,7 +259,7 @@ const getters = {
 	},
 	getPeer: (state) => (token, sessionId, userId) => {
 		if (state.peers[token]) {
-			if (Object.prototype.hasOwnProperty.call(state.peers[token], sessionId)) {
+			if (Object.hasOwn(state.peers[token], sessionId)) {
 				return state.peers[token][sessionId]
 			}
 		}

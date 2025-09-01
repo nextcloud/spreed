@@ -35,7 +35,7 @@ export default (function() {
 	 * @param {Function} handler the handler function to register
 	 */
 	function on(event, handler) {
-		if (!Object.prototype.hasOwnProperty.call(this._handlers, event)) {
+		if (!Object.hasOwn(this._handlers, event)) {
 			this._handlers[event] = [handler]
 		} else {
 			this._handlers[event].push(handler)

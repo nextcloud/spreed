@@ -64,7 +64,7 @@ export default (function() {
 	 *        source
 	 */
 	function connectTrackSource(inputTrackId, trackSource, outputTrackId = 'default') {
-		if (!Object.prototype.hasOwnProperty.call(this._inputTracks, inputTrackId)) {
+		if (!Object.hasOwn(this._inputTracks, inputTrackId)) {
 			throw new Error('Invalid input track id: ' + inputTrackId)
 		}
 
@@ -119,7 +119,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the input track to get
 	 */
 	function getInputTrack(trackId = 'default') {
-		if (!Object.prototype.hasOwnProperty.call(this._inputTracks, trackId)) {
+		if (!Object.hasOwn(this._inputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -130,7 +130,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the input slot to add
 	 */
 	function _addInputTrackSlot(trackId = 'default') {
-		if (Object.prototype.hasOwnProperty.call(this._inputTracks, trackId)) {
+		if (Object.hasOwn(this._inputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -141,7 +141,7 @@ export default (function() {
 	 * @param {string|number} trackId the id of the input slot to remove
 	 */
 	function _removeInputTrackSlot(trackId = 'default') {
-		if (!Object.prototype.hasOwnProperty.call(this._inputTracks, trackId)) {
+		if (!Object.hasOwn(this._inputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -187,7 +187,7 @@ export default (function() {
 	 * @param {MediaStreamTrack|null} track the track to set
 	 */
 	function _setInputTrack(trackId, track) {
-		if (!Object.prototype.hasOwnProperty.call(this._inputTracks, trackId)) {
+		if (!Object.hasOwn(this._inputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 
@@ -204,7 +204,7 @@ export default (function() {
 	 * @param {boolean} enabled the enabled state of the input track
 	 */
 	function _setInputTrackEnabled(trackId, enabled) {
-		if (!Object.prototype.hasOwnProperty.call(this._inputTracks, trackId)) {
+		if (!Object.hasOwn(this._inputTracks, trackId)) {
 			throw new Error('Invalid track id: ' + trackId)
 		}
 

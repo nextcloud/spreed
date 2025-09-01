@@ -242,7 +242,7 @@ function sendCurrentStateWithRepetition(timeout) {
  */
 function userHasStreams(user) {
 	let flags = user
-	if (Object.prototype.hasOwnProperty.call(flags, 'inCall')) {
+	if (Object.hasOwn(flags, 'inCall')) {
 		flags = flags.inCall
 	}
 	flags = flags || PARTICIPANT.CALL_FLAG.DISCONNECTED
@@ -436,7 +436,7 @@ function usersInCallChanged(signaling, users) {
 	selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 	let sessionId
 	for (sessionId in users) {
-		if (!Object.prototype.hasOwnProperty.call(users, sessionId)) {
+		if (!Object.hasOwn(users, sessionId)) {
 			continue
 		}
 		const user = users[sessionId]
@@ -1232,7 +1232,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			peer.pc.getStats(track).then(function(stats) {
 				let result = false
 				stats.forEach(function(statsReport) {
-					if (result || statsReport.mediaType !== mediaType || !Object.prototype.hasOwnProperty.call(statsReport, 'bytesReceived')) {
+					if (result || statsReport.mediaType !== mediaType || !Object.hasOwn(statsReport, 'bytesReceived')) {
 						return
 					}
 
@@ -1666,7 +1666,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	webrtc.on('localScreenAdded', function() {
 		const currentSessionId = signaling.getSessionId()
 		for (const sessionId in usersInCallMapping) {
-			if (!Object.prototype.hasOwnProperty.call(usersInCallMapping, sessionId)) {
+			if (!Object.hasOwn(usersInCallMapping, sessionId)) {
 				continue
 			} else if (!usersInCallMapping[sessionId].inCall) {
 				continue
