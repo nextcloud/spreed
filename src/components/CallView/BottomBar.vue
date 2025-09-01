@@ -279,9 +279,9 @@ useHotKey('r', toggleHandRaised)
 				:disabled="isLiveTranscriptionLoading"
 				@click="toggleLiveTranscription">
 				<template #icon>
-					<IconSubtitlesOutline v-if="!isLiveTranscriptionLoading"
+					<NcLoadingIcon v-if="isLiveTranscriptionLoading"
 						:size="20" />
-					<NcLoadingIcon v-else
+					<IconSubtitlesOutline v-else
 						:size="20" />
 				</template>
 			</NcButton>
