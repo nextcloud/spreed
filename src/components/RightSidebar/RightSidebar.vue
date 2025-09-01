@@ -113,7 +113,7 @@
 				:order="5"
 				:name="t('spreed', 'Shared items')">
 				<template #icon>
-					<NcIconSvgWrapper :svg="IconPermMediaOutline" :size="20" />
+					<NcIconSvgWrapper :svg="IconPermMediaOutline" :size="20" inline />
 				</template>
 				<SharedItemsTab :active="activeTab === 'shared-items'" @update:state="handleUpdateState" />
 			</NcAppSidebarTab>

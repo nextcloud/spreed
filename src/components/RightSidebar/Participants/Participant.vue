@@ -712,6 +712,9 @@ export default {
 		canBeDemoted() {
 			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
+				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
 		canBePromoted() {
