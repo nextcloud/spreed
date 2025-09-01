@@ -41,8 +41,6 @@ export default [
 		rules: {
 			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
 			'@nextcloud-l10n/non-breaking-space-vue': 'off', // changes translation strings
-			'@stylistic/array-bracket-newline': 'off', // changes array formatting
-			'@stylistic/max-statements-per-line': 'off', // non-fixable
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable

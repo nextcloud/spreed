@@ -578,7 +578,7 @@ export default {
 				return null
 			} else if (this.isHandRaised) {
 				return { icon: IconHandBackLeft, size: 18, title: t('spreed', 'Raised their hand') }
-			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
+			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
 				return { icon: IconVideoOutline, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {
 				return { icon: IconPhoneDialOutline, size: 20, title: t('spreed', 'Joined via phone') }

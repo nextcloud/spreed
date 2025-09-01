@@ -196,7 +196,13 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.updateCallFlags(this.currentCallToken, flags).then(() => { resolve() }).catch((reason) => { reject(reason) })
+			this.updateCallFlags(this.currentCallToken, flags)
+				.then(() => {
+					resolve()
+				})
+				.catch((reason) => {
+					reject(reason)
+				})
 		} else {
 			resolve()
 		}
@@ -206,7 +212,13 @@ Signaling.Base.prototype.updateCurrentCallFlags = function(flags) {
 Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
-			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch((reason) => { reject(reason) })
+			this.leaveCall(this.currentCallToken)
+				.then(() => {
+					resolve()
+				})
+				.catch((reason) => {
+					reject(reason)
+				})
 			this._resetCurrentCallParameters()
 		} else {
 			resolve()

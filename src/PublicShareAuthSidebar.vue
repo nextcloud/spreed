@@ -104,7 +104,9 @@ export default {
 		conversation(conversation) {
 			if (!conversation) {
 				this.isWaitingToClose = true
-				window.setTimeout(() => { this.isWaitingToClose = false }, 5000)
+				window.setTimeout(() => {
+					this.isWaitingToClose = false
+				}, 5000)
 			}
 		},
 	},

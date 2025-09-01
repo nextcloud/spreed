@@ -335,7 +335,7 @@ LocalMedia.prototype.stopScreenShare = function() {
 	const self = this
 
 	this.localScreens.forEach(function(stream) {
-		stream.getTracks().forEach(function(track) { track.stop() })
+		stream.getTracks().forEach((track) => track.stop())
 		self._removeStream(stream)
 	})
 }

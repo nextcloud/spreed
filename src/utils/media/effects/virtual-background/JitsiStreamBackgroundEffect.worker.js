@@ -45,11 +45,19 @@ async function makeTFLite(isSimd) {
 		switch (isSimd) {
 			case true:
 				self.wasmUrl = withSIMD.split('/').pop()
-				self.tflite = await createTFLiteSIMDModule({ locateFile: (path) => { return self.wasmUrl } })
+				self.tflite = await createTFLiteSIMDModule({
+					locateFile: (path) => {
+						return self.wasmUrl
+					},
+				})
 				break
 			case false:
 				self.wasmUrl = withoutSIMD.split('/').pop()
-				self.tflite = await createTFLiteModule({ locateFile: (path) => { return self.wasmUrl } })
+				self.tflite = await createTFLiteModule({
+					locateFile: (path) => {
+						return self.wasmUrl
+					},
+				})
 				break
 			default:
 				return
