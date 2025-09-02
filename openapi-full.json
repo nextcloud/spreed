@@ -639,6 +639,13 @@
                             },
                             "isThread": {
                                 "type": "boolean"
+                            },
+                            "threadTitle": {
+                                "type": "string"
+                            },
+                            "threadReplies": {
+                                "type": "integer",
+                                "format": "int64"
                             }
                         }
                     }
