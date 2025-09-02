@@ -43,7 +43,7 @@ import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 
 declare module 'vue' {
 	interface TypeRefs {
-		chunks: undefined | Array<HTMLDivElement>
+		chunks: undefined | Array<HTMLSpanElement>
 	}
 
 	interface ComponentCustomProperties {
