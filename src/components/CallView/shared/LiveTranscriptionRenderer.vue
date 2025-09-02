@@ -171,7 +171,7 @@ export default {
 			}
 
 			for (let i = 0; i < this.$refs.transcriptBlocks.length; i++) {
-				this.$refs.transcriptBlocks[i].resetLines()
+				this.$refs.transcriptBlocks[i].reset()
 			}
 
 			this.$refs.transcript.scrollTo({
@@ -291,6 +291,13 @@ export default {
 			}
 
 			const lastScrolledToBlockLineBoundaries = this.$refs.transcriptBlocks![this.lastScrolledToBlockAndLine.block].getLineBoundaries()
+
+			// Fix line number if last chunk was replaced with a shorter text
+			// that uses less lines.
+			if (this.lastScrolledToBlockAndLine.line >= lastScrolledToBlockLineBoundaries.length) {
+				this.lastScrolledToBlockAndLine.line = lastScrolledToBlockLineBoundaries.length - 1
+			}
+
 			if (this.lastScrolledToBlockAndLine.line < lastScrolledToBlockLineBoundaries.length - 1) {
 				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block, this.lastScrolledToBlockAndLine.line + 1)
 
