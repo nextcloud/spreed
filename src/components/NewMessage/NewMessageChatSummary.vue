@@ -5,58 +5,54 @@
 
 <!-- eslint-disable vue/multiline-html-element-content-newline -->
 <template>
-	<NcNoteCard type="info" class="chat-summary">
-		<template #icon>
-			<NcLoadingIcon v-if="loading" />
-			<IconCreation v-else />
-		</template>
-		<NcButton
-			v-if="isTextMoreThanOneLine"
-			class="chat-summary__button"
-			variant="tertiary"
-			:title="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
-			:aria-label="!collapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
-			@click="toggleCollapsed">
-			<template #icon>
-				<IconChevronUp class="icon" :class="{ 'icon--reverted': !collapsed }" :size="20" />
-			</template>
-		</NcButton>
-		<template v-if="loading">
-			<p class="chat-summary__caption">
-				{{ t('spreed', 'Generating summary of unread messages …') }}
-			</p>
-			<p>{{ t('spreed', 'This might take a moment') }}</p>
-		</template>
-		<template v-else>
-			<p class="chat-summary__caption">
-				{{ t('spreed', 'Summary is AI generated and might contain mistakes') }}
-			</p>
-			<p
-				ref="chatSummaryRef"
-				class="chat-summary__message"
-				:class="{ 'chat-summary__message--collapsed': collapsed }">{{ chatSummaryMessage }}</p>
-		</template>
-		<div class="chat-summary__actions">
-			<NcButton
-				v-if="loading"
-				class="chat-summary__action"
-				variant="primary"
-				:disabled="cancelling"
-				@click="cancelSummary">
-				<template v-if="cancelling" #icon>
-					<NcLoadingIcon />
-				</template>
-				{{ t('spreed', 'Cancel') }}
-			</NcButton>
-			<NcButton
-				v-else-if="chatSummaryMessage"
-				class="chat-summary__action"
-				variant="primary"
-				@click="dismissSummary">
-				{{ t('spreed', 'Dismiss') }}
-			</NcButton>
+	<NcAssistantContent class="chat-summary">
+		<div class="chat-summary__container">
+			<NcAssistantIcon class="chat-summary__icon" />
+
+			<div class="chat-summary__content">
+				<div class="chat-summary__header">
+					<p class="chat-summary__caption">
+						{{ chatSummaryCaption }}
+					</p>
+					<NcButton
+						v-if="loading"
+						variant="tertiary"
+						:disabled="cancelling"
+						@click="cancelSummary">
+						{{ t('spreed', 'Cancel') }}
+					</NcButton>
+					<NcButton
+						v-else-if="chatSummaryMessage"
+						variant="tertiary"
+						@click="dismissSummary">
+						{{ t('spreed', 'Dismiss') }}
+					</NcButton>
+					<NcButton
+						v-if="isTextMoreThanOneLine"
+						variant="tertiary"
+						:title="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
+						:aria-label="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
+						@click="toggleCollapsed">
+						<template #icon>
+							<IconUnfoldMoreHorizontal v-if="collapsed" :size="20" />
+							<IconUnfoldLessHorizontal v-else :size="20" />
+						</template>
+					</NcButton>
+				</div>
+
+				<p v-if="loading">
+					{{ t('spreed', 'This might take a moment') }}
+				</p>
+				<p
+					v-else
+					ref="chatSummaryRef"
+					class="chat-summary__message"
+					:class="{ 'chat-summary__message--collapsed': collapsed }">
+					{{ chatSummaryMessage }}
+				</p>
+			</div>
 		</div>
-	</NcNoteCard>
+	</NcAssistantContent>
 </template>
 
 <script setup lang="ts">
@@ -64,13 +60,12 @@ import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import NcAssistantContent from '@nextcloud/vue/components/NcAssistantContent'
+import NcAssistantIcon from '@nextcloud/vue/components/NcAssistantIcon'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import IconCreation from 'vue-material-design-icons/Creation.vue' // Filled as in Assistant app icon
+import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
+import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
@@ -85,19 +80,23 @@ type TaskProcessingCancelableRequest = {
 let getTaskInterval: NodeJS.Timeout | undefined
 const cancelGetTask: Record<string, TaskProcessingCancelableRequest['cancel']> = {}
 
-const chatSummaryRef = ref(null)
+const chatSummaryRef = useTemplateRef<HTMLParagraphElement>('chatSummaryRef')
 const collapsed = ref(true)
 const isTextMoreThanOneLine = ref(false)
 
 const loading = ref(true)
 const cancelling = ref(false)
 
-const store = useStore()
 const chatExtrasStore = useChatExtrasStore()
 
 const token = useGetToken()
 
 const chatSummaryMessage = ref('')
+const chatSummaryCaption = computed(() => {
+	return loading.value
+		? t('spreed', 'Generating summary of unread messages …')
+		: t('spreed', 'Summary is AI generated and might contain mistakes')
+})
 
 watch(chatSummaryMessage, () => {
 	nextTick(() => {
@@ -230,8 +229,11 @@ function toggleCollapsed() {
  *
  */
 function setIsTextMoreThanOneLine() {
-	// @ts-expect-error: template ref typing
-	isTextMoreThanOneLine.value = chatSummaryRef.value?.scrollHeight > chatSummaryRef.value?.clientHeight
+	if (!chatSummaryRef.value) {
+		return
+	}
+	isTextMoreThanOneLine.value = chatSummaryRef.value.scrollHeight > chatSummaryRef.value.clientHeight
+	collapsed.value = !isTextMoreThanOneLine.value
 }
 </script>
 
@@ -239,17 +241,36 @@ function setIsTextMoreThanOneLine() {
 @import '../../assets/variables';
 
 .chat-summary {
-	// Override NcNoteCard styles
-	margin: 0 calc(var(--default-grid-baseline) * 4) calc(var(--default-grid-baseline) * 2) !important;
-	padding: calc(var(--default-grid-baseline) * 2) !important;
-	& > :deep(div) {
-		width: 100%;
+	margin-block: 0 calc(var(--default-grid-baseline) * 2);
+	margin-inline: calc(var(--default-grid-baseline) * 4);
+
+	&__container {
+		display: flex;
+		gap: var(--default-grid-baseline);
+		align-items: flex-start;
+	}
+
+	&__icon {
+		flex-shrink: 0;
+		align-self: flex-start;
+	}
+
+	&__content {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--default-grid-baseline);
+	}
+
+	&__header {
+		display: flex;
+		gap: var(--default-grid-baseline);
+		align-items: center;
 	}
 
 	&__caption {
 		font-weight: bold;
-		margin: var(--default-grid-baseline) var(--default-clickable-area);
-		margin-inline-start: 0;
+		margin-inline-end: auto;
 	}
 
 	&__message {
@@ -264,28 +285,6 @@ function setIsTextMoreThanOneLine() {
 			display: -webkit-box;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
-		}
-	}
-
-	&__actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: var(--default-grid-baseline);
-		z-index: 1;
-	}
-
-	&__button {
-		position: absolute !important;
-		top: var(--default-grid-baseline);
-		inset-inline-end: calc(5 * var(--default-grid-baseline));
-		z-index: 1;
-
-		& .icon {
-			transition: $transition;
-
-			&--reverted {
-				transform: rotate(180deg);
-			}
 		}
 	}
 }

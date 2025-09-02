@@ -94,16 +94,12 @@
 			class="message-unread-marker">
 			<div class="message-unread-marker__wrapper">
 				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
-				<NcButton
+				<NcAssistantButton
 					v-if="shouldShowSummaryOption"
 					:disabled="loading"
 					@click="generateSummary">
-					<template #icon>
-						<NcLoadingIcon v-if="loading" />
-						<IconCreation v-else />
-					</template>
 					{{ t('spreed', 'Generate summary') }}
-				</NcButton>
+				</NcAssistantButton>
 			</div>
 		</div>
 	</li>
@@ -113,9 +109,8 @@
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
+import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconCreation from 'vue-material-design-icons/Creation.vue' // Filled as in Assistant app icon
 import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
@@ -144,15 +139,14 @@ export default {
 	name: 'Message',
 
 	components: {
-		IconCreation,
 		IconUnfoldLessHorizontal,
 		IconUnfoldMoreHorizontal,
 		MessageBody,
 		MessageButtonsBar,
 		MessageForwarder,
 		MessageTranslateDialog,
+		NcAssistantButton,
 		NcButton,
-		NcLoadingIcon,
 		Reactions,
 	},
 
