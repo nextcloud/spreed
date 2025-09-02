@@ -66,6 +66,11 @@ interface Chunk {
 	languageId: string
 }
 
+interface ChunkElementData {
+	message: string
+	languageId: string
+}
+
 export default {
 	name: 'TranscriptBlock',
 
@@ -167,7 +172,7 @@ export default {
 		},
 
 		chunksWithSeparator() {
-			const chunksWithSeparator = [] as Array<Chunk>
+			const chunksWithSeparator = [] as Array<ChunkElementData>
 
 			if (!this.chunks.length) {
 				return chunksWithSeparator
