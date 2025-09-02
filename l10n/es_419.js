@@ -43,6 +43,7 @@ OC.L10N.register(
     "Pending" : "Pendiente",
     "Error" : "Error",
     "Blocked" : "Bloqueado",
+    "Never" : "Nunca",
     "Language" : "Idioma",
     "Country" : "País",
     "Status" : "Estatus",

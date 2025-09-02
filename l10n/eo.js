@@ -272,6 +272,7 @@ OC.L10N.register(
     "Error" : "Eraro",
     "Blocked" : "Barita",
     "Expired" : "Senvalidiĝis",
+    "Never" : "Neniam",
     "Language" : "Lingvo",
     "Country" : "Lando",
     "Status" : "Stato",
