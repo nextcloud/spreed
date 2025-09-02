@@ -129,7 +129,10 @@ export default {
 	data() {
 		return {
 			AVATAR,
-			lines: [] as Array<{ lastChunkIndex: number }>,
+			lines: [] as Array<{
+				firstChunkIndex: number
+				lastChunkIndex: number
+			}>,
 		}
 	},
 
@@ -211,10 +214,30 @@ export default {
 			this.lines = []
 		},
 
+		removeLastChunkFromLines() {
+			if (!this.lines.length) {
+				return
+			}
+
+			const lastKnownChunkIndex = this.lines.at(-1)!.lastChunkIndex
+
+			while (this.lines.length && this.lines.at(-1)!.firstChunkIndex === this.lines.at(-1)!.lastChunkIndex) {
+				this.lines.splice(-1, 1)
+			}
+
+			if (this.lines.length && this.lines.at(-1)!.lastChunkIndex === lastKnownChunkIndex) {
+				this.lines.at(-1)!.lastChunkIndex--
+			}
+		},
+
 		updateLines() {
 			if (!this.$refs.chunks || !this.$refs.chunks.length) {
 				return
 			}
+
+			// Remove information of last chunk to regenerate it, as it could
+			// have been updated and thus its lines could have changed.
+			this.removeLastChunkFromLines()
 
 			if (!this.lines.length) {
 				const firstChunkClientRectsLength = this.$refs.chunks[0].getClientRects().length
@@ -223,6 +246,7 @@ export default {
 				// rectangles each rectangle will be in its own line.
 				for (let i = 0; i < firstChunkClientRectsLength; i++) {
 					this.lines.push({
+						firstChunkIndex: 0,
 						lastChunkIndex: 0,
 					})
 				}
@@ -249,6 +273,7 @@ export default {
 					this.lines.at(-1)!.lastChunkIndex = i
 				} else {
 					this.lines.push({
+						firstChunkIndex: i,
 						lastChunkIndex: i,
 					})
 				}
@@ -257,6 +282,7 @@ export default {
 				// line.
 				for (let j = 1; j < nextChunkElementClientRects.length; j++) {
 					this.lines.push({
+						firstChunkIndex: i,
 						lastChunkIndex: i,
 					})
 				}
