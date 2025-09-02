@@ -346,6 +346,11 @@ export default {
 
 		this.resizeObserver = new ResizeObserver(this.updateSize)
 		this.resizeObserver.observe(this.$refs.scroller)
+
+		// Scroll to bottom when joining / leaving the call -> remounting component
+		if (!this.isInitialisingMessages) {
+			this.scrollToBottom({ smooth: false, force: true })
+		}
 	},
 
 	beforeUnmount() {
