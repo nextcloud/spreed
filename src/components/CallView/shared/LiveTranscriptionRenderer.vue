@@ -237,10 +237,12 @@ export default {
 				lastTranscriptBlock = transcriptBlock
 			}
 
-			lastTranscriptBlock.chunks.push({
+			const newTranscriptChunk = {
 				message,
 				languageId,
-			})
+			}
+
+			lastTranscriptBlock.chunks.push(newTranscriptChunk)
 
 			this.$nextTick(() => {
 				this.scrollToBottomLineByLine()
