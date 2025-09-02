@@ -107,6 +107,7 @@ class ThreadService {
 			->leftJoin('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
+			->andWhere($query->expr()->neq('a.notification_level', $query->createNamedParameter(Participant::NOTIFY_NEVER)))
 			// FIXME ORDER BY last_activity and subscription moment of the user for better sorting?
 			->orderBy('t.last_activity', 'DESC')
 			->setMaxResults($limit);
