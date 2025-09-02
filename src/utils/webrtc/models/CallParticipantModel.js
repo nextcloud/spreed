@@ -420,7 +420,7 @@ CallParticipantModel.prototype = {
 			return
 		}
 
-		this._trigger('transcript', [data.message, data.languageId])
+		this._trigger('transcript', [data.message, data.languageId, data.final])
 	},
 
 }

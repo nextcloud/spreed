@@ -213,8 +213,10 @@ export default {
 		 * @param message the transcribed message.
 		 * @param languageId the ID of the language of the transcribed
 		 *        message.
+		 * @param final true if the transcript will not be updated afterwards,
+		 *        false otherwise.
 		 */
-		handleTranscript(model: CallParticipantModel, message: string, languageId: string) {
+		handleTranscript(model: CallParticipantModel, message: string, languageId: string, final: boolean) {
 			let lastTranscriptBlock = this.transcriptBlocks.at(-1)
 
 			const messageIsRightToLeft = this.liveTranscriptionLanguages[languageId]?.metadata.rtl || false
@@ -236,9 +238,15 @@ export default {
 			const newTranscriptChunk = {
 				message,
 				languageId,
+				final,
 			}
 
-			lastTranscriptBlock.chunks.push(newTranscriptChunk)
+			const lastTranscriptChunk = lastTranscriptBlock.chunks.at(-1)
+			if (!lastTranscriptChunk || lastTranscriptChunk.final) {
+				lastTranscriptBlock.chunks.push(newTranscriptChunk)
+			} else {
+				lastTranscriptBlock.chunks.splice(-1, 1, newTranscriptChunk)
+			}
 
 			this.$nextTick(() => {
 				this.scrollToBottomLineByLine()
