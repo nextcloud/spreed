@@ -64,6 +64,7 @@ interface CallParticipantModel {
 interface Chunk {
 	message: string
 	languageId: string
+	final: boolean
 }
 
 interface ChunkElementData {
