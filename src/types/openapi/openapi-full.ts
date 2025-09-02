@@ -2417,6 +2417,9 @@ export type components = {
             /** Format: int64 */
             threadId?: number;
             isThread?: boolean;
+            threadTitle?: string;
+            /** Format: int64 */
+            threadReplies?: number;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];

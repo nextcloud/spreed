@@ -166,12 +166,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($threadId);
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
 		} catch (DoesNotExistException) {
-			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($thread->getRoomId() !== $this->room->getId()) {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -214,12 +210,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($threadId);
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
 		} catch (DoesNotExistException) {
-			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($thread->getRoomId() !== $this->room->getId()) {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -314,8 +306,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			$list[] = [
 				'thread' => $thread->toArray($room),
 				'attendee' => $attendee->jsonSerialize(),
-				'first' => $firstMessage?->toArray($this->getResponseFormat(), true),
-				'last' => $lastMessage?->toArray($this->getResponseFormat(), true),
+				'first' => $firstMessage?->toArray($this->getResponseFormat(), $thread),
+				'last' => $lastMessage?->toArray($this->getResponseFormat(), $thread),
 			];
 		}
 
@@ -366,7 +358,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($messageId);
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $messageId);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}

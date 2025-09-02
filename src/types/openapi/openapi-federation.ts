@@ -259,6 +259,9 @@ export type components = {
             /** Format: int64 */
             threadId?: number;
             isThread?: boolean;
+            threadTitle?: string;
+            /** Format: int64 */
+            threadReplies?: number;
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         FederationInvite: {

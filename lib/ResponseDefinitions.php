@@ -121,6 +121,8 @@ namespace OCA\Talk;
  *     silent?: bool,
  *     threadId?: int,
  *     isThread?: bool,
+ *     threadTitle?: string,
+ *     threadReplies?: int,
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage

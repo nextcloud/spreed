@@ -462,6 +462,6 @@ class RoomFormatter {
 			return null;
 		}
 
-		return $message->toArray($responseFormat);
+		return $message->toArray($responseFormat, null);
 	}
 }
