@@ -25,10 +25,11 @@ class ThreadMapper extends QBMapper {
 	}
 
 	/**
+	 * @param non-negative-int $roomId
 	 * @param non-negative-int $threadId
 	 * @throws DoesNotExistException
 	 */
-	public function findById(int $threadId): Thread {
+	public function findById(int $roomId, int $threadId): Thread {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -36,9 +37,37 @@ class ThreadMapper extends QBMapper {
 				'id',
 				$query->createNamedParameter($threadId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT,
+			))
+			->andWhere($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
+				IQueryBuilder::PARAM_INT,
 			));
 
 		return $this->findEntity($query);
+	}
+
+	/**
+	 * @param non-negative-int $roomId
+	 * @param list<non-negative-int> $threadIds
+	 * @return list<Thread>
+	 */
+	public function findByIds(int $roomId, array $threadIds): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->in(
+				'id',
+				$query->createNamedParameter($threadIds, IQueryBuilder::PARAM_INT_ARRAY),
+				IQueryBuilder::PARAM_INT,
+			))
+			->andWhere($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
+				IQueryBuilder::PARAM_INT,
+			));
+
+		return $this->findEntities($query);
 	}
 
 	/**

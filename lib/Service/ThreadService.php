@@ -46,11 +46,26 @@ class ThreadService {
 	}
 
 	/**
+	 * @param non-negative-int $roomId
 	 * @param non-negative-int $threadId
 	 * @throws DoesNotExistException
 	 */
-	public function findByThreadId(int $threadId): Thread {
-		return $this->threadMapper->findById($threadId);
+	public function findByThreadId(int $roomId, int $threadId): Thread {
+		return $this->threadMapper->findById($roomId, $threadId);
+	}
+
+	/**
+	 * @param non-negative-int $roomId
+	 * @param list<non-negative-int> $threadId
+	 * @return array<int, Thread> Map with thread id as key
+	 */
+	public function findByThreadIds(int $roomId, array $threadIds): array {
+		$threads = $this->threadMapper->findByIds($roomId, $threadIds);
+		$result = [];
+		foreach ($threads as $thread) {
+			$result[$thread->getId()] = $thread;
+		}
+		return $result;
 	}
 
 	/**
@@ -211,27 +226,6 @@ class ThreadService {
 	public function deleteByRoom(Room $room): void {
 		$this->threadMapper->deleteByRoomId($room->getId());
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());
-	}
-
-	public function validateThreadIds(int $roomId, array $potentialThreadIds): array {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('id')
-			->from('talk_threads')
-			->where($query->expr()->in(
-				'id',
-				$query->createNamedParameter($potentialThreadIds, IQueryBuilder::PARAM_INT_ARRAY),
-			))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
-
-		$ids = [];
-
-		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
-			$ids[] = (int)$row['id'];
-		}
-		$result->closeCursor();
-
-		return $ids;
 	}
 
 	public function validateThread(int $roomId, int $potentialThreadId): bool {

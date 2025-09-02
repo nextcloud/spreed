@@ -184,7 +184,7 @@ class Message {
 	 * @psalm-param 'json'|'xml' $format
 	 * @return TalkChatMessage
 	 */
-	public function toArray(string $format, ?bool $isThread = null): array {
+	public function toArray(string $format, ?Thread $thread): array {
 		$expireDate = $this->getComment()->getExpireDate();
 
 		$reactions = $this->getComment()->getReactions();
@@ -215,8 +215,10 @@ class Message {
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
 			'threadId' => $threadId,
 		];
-		if ($isThread === true) {
+		if ($thread !== null) {
 			$data['isThread'] = true;
+			$data['threadTitle'] = $thread->getName();
+			$data['threadReplies'] = $thread->getNumReplies();
 		}
 
 		if ($this->lastEditActorType && $this->lastEditActorId && $this->lastEditTimestamp) {
