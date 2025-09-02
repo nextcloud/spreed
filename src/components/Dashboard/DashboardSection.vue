@@ -100,6 +100,7 @@ const isMobile = useIsMobile()
 	&__title {
 		font-size: 1.25rem;
 		font-weight: bold;
+		overflow-wrap: break-word;
 	}
 
 	&__subtitle {

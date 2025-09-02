@@ -372,7 +372,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard-wrapper {
 	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
-	width: calc(100vw - 300px - var(--body-container-margin) * 2); // 300px for the left sidebar and body container margins
+	width: min(100%, calc(100vw - 300px - var(--body-container-margin) * 2)); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
@@ -390,13 +390,13 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 		.talk-dashboard__chats {
 			grid-template-columns: 1fr;
-			gap: calc(var(--default-grid-baseline) * 6);
+			gap: calc(var(--default-grid-baseline) * 5);
 		}
 	}
 }
 
 .talk-dashboard__menu {
-	margin-bottom: calc(var(--default-grid-baseline) * 5);
+	margin-bottom: calc(var(--default-grid-baseline) * 4);
 }
 
 .talk-dashboard__header {
@@ -411,14 +411,12 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	gap: calc(var(--default-grid-baseline) * 3);
 	padding-block: var(--default-grid-baseline);
 	flex-wrap: wrap;
-	justify-content: space-evenly;
+	flex-direction: row;
 
 	:deep(.button-vue),
 	:deep(.v-popper--theme-dropdown) {
 		height: var(--header-menu-item-height);
 		border-radius: var(--border-radius-large);
-		flex: 1;
-		width: 100%;
 	}
 
 	:deep(.button-vue) {
@@ -540,8 +538,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @media screen and (max-width: $breakpoint-mobile-small) {
 	.talk-dashboard__actions {
 		:deep(.button-vue),
-		:deep(.v-popper--theme-dropdown) {
-			flex: initial;
+		& > div {
+			width: 100%;
 		}
 
 		:deep(.button-vue) {
