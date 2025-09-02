@@ -20,7 +20,9 @@
 			<p class="transcript-block__author">
 				{{ actorInfo }}
 			</p>
-			<p class="transcript-block__chunks">
+			<p
+				ref="chunksWrapper"
+				class="transcript-block__chunks">
 				<span
 					v-for="(item, index) in chunksWithSeparator"
 					ref="chunks"
@@ -43,6 +45,7 @@ import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 
 declare module 'vue' {
 	interface TypeRefs {
+		chunksWrapper: HTMLParagraphElement
 		chunks: undefined | Array<HTMLSpanElement>
 	}
 
@@ -129,6 +132,7 @@ export default {
 	data() {
 		return {
 			AVATAR,
+			resizeObserver: null as null | ResizeObserver,
 			lines: [] as Array<{
 				firstChunkIndex: number
 				lastChunkIndex: number
@@ -209,9 +213,33 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.resizeObserver = new ResizeObserver(this.handleChunksWrapperResize)
+		this.resizeObserver.observe(this.$refs.chunksWrapper)
+	},
+
+	beforeUnmount() {
+		this.resizeObserver!.disconnect()
+	},
+
 	methods: {
-		resetLines() {
+		reset() {
 			this.lines = []
+
+			this.$refs.chunksWrapper!.style.removeProperty('min-height')
+		},
+
+		handleChunksWrapperResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
+			if (!this.$refs.chunksWrapper) {
+				return
+			}
+
+			const height = parseFloat(window.getComputedStyle(this.$refs.chunksWrapper).getPropertyValue('height'))
+			const minHeight = parseFloat(window.getComputedStyle(this.$refs.chunksWrapper).getPropertyValue('min-height'))
+
+			if (height > minHeight || Number.isNaN(minHeight)) {
+				this.$refs.chunksWrapper.style.setProperty('min-height', `${height}px`)
+			}
 		},
 
 		removeLastChunkFromLines() {
