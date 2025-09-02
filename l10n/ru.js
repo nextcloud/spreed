@@ -1275,6 +1275,8 @@ OC.L10N.register(
     "Open calendar" : "Открыть Календарь",
     "Unread mentions" : "Непрочитанные упоминания",
     "Upcoming reminders" : "Предстоящие напоминания",
+    "Message reminders" : "Напоминания о сообщениях",
+    "Set a reminder on a message to be notified" : "Установите напоминание о сообщении, чтобы получать уведомления",
     "Start a group conversation" : "Начать групповое обсуждение",
     "Create conversation" : "Создать обсуждение",
     "Enter your name" : "Введите ваше имя",

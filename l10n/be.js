@@ -318,7 +318,6 @@ OC.L10N.register(
     "Save password" : "Захаваць пароль",
     "Copy password" : "Скапіяваць пароль",
     "Languages could not be loaded" : "Не ўдалося загрузіць мовы",
-    "Loading languages" : "Загрузка моў",
     "Invalid language" : "Памылковая мова",
     "Default language (English)" : "Прадвызначаная мова (Англійская)",
     "Lock conversation" : "Заблакіраваць размову",

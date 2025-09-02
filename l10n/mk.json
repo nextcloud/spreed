@@ -548,6 +548,8 @@
     "Created at" : "Создадено на",
     "Expires at" : "Истекува на",
     "Limits" : "Ограничувања",
+    "Yes" : "Да",
+    "No" : "Не",
     "_%n user_::_%n users_" : ["1 корисник","%n корисници"],
     "Installed version: {version}" : "Инсталирана верзија: {version}",
     "Downloading …" : "Преземање ...",
