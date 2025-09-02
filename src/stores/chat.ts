@@ -115,7 +115,7 @@ export const useChatStore = defineStore('chat', () => {
 				if (message && !isHiddenSystemMessage(message)
 					&& (threadId
 						? threadId === message.threadId
-						: (!message.isThread || message.id === message.threadId)
+						: (!message.isThread || message.id === message.threadId || message.id.toString().startsWith('temp-'))
 					)
 				) {
 					acc.push(message)

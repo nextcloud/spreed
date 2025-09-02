@@ -307,7 +307,12 @@ export default {
 		},
 
 		isThreadStarterMessage() {
-			return !this.threadId && this.message.isThread && this.message.id === this.message.threadId
+			if (this.threadId || !this.message.isThread) {
+				return false
+			}
+
+			return this.message.id === this.message.threadId
+				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
 		},
 
 		threadInfo() {
