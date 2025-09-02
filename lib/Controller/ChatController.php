@@ -182,7 +182,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), (int)$comment->getTopmostParentId());
+			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
 		} catch (DoesNotExistException) {
 			$thread = null;
 		}
@@ -682,7 +683,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->sharePreloader->preloadShares($comments);
-		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
+		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId() ?: (int)$comment->getId(), $comments);
 		$threads = $this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds);
 
 		$i = 0;
@@ -984,7 +985,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$this->messageParser->parseMessage($message);
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), (int)$comment->getTopmostParentId());
+			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
 		} catch (DoesNotExistException) {
 			$thread = null;
 		}
@@ -1107,7 +1109,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$this->messageParser->parseMessage($parseMessage);
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), (int)$comment->getTopmostParentId());
+			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
 		} catch (DoesNotExistException) {
 			$thread = null;
 		}
@@ -1626,7 +1629,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
 		$this->sharePreloader->preloadShares($comments);
-		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId(), $comments);
+		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId() ?: (int)$comment->getId(), $comments);
 		$threads = $this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds);
 
 		$messages = [];
@@ -1646,7 +1649,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				continue;
 			}
 
-			$threadId = (int)$comment->getTopmostParentId();
+			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
 			$messages[$comment->getId()] = $message->toArray($this->getResponseFormat(), $threads[$threadId] ?? null);
 		}
 
