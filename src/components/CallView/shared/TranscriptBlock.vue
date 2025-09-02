@@ -229,13 +229,6 @@ export default {
 			for (let i = lastKnownChunkIndex + 1; i < this.$refs.chunks.length; i++) {
 				const nextChunkElement = this.$refs.chunks[i]
 
-				// Separators are inline rather than inline-block, so they have
-				// different top and bottom boundaries and they should not be
-				// taken into account.
-				if (nextChunkElement.classList.contains('separator')) {
-					continue
-				}
-
 				const nextChunkElementClientRects = nextChunkElement.getClientRects()
 				const nextChunkElementTop = nextChunkElementClientRects[0].top
 
