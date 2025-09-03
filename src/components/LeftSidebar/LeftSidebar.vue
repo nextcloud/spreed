@@ -220,12 +220,15 @@
 						</NcButton>
 					</template>
 				</NcEmptyContent>
-				<ul v-if="supportThreads && showThreadsList" class="threads-tab__list">
-					<ThreadItem
-						v-for="thread of followedThreads"
-						:key="`thread_${thread.thread.id}`"
-						:thread="thread" />
-				</ul>
+				<template v-if="showThreadsList">
+					<LoadingPlaceholder v-if="!followedThreadsInitialised" type="conversations" />
+					<ul v-else class="threads-tab__list">
+						<ThreadItem
+							v-for="thread of followedThreads"
+							:key="`thread_${thread.thread.id}`"
+							:thread="thread" />
+					</ul>
+				</template>
 				<ConversationsListVirtual
 					v-else
 					v-show="filteredConversationsList.length > 0"
@@ -324,6 +327,7 @@ import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
+import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
@@ -378,6 +382,7 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
+		LoadingPlaceholder,
 		ThreadItem,
 		CallPhoneDialog,
 		InvitationHandler,
@@ -544,7 +549,11 @@ export default {
 		},
 
 		followedThreads() {
-			return this.chatExtrasStore.getSubscribedThreadsList
+			return this.chatExtrasStore.getFollowedThreadsList
+		},
+
+		followedThreadsInitialised() {
+			return this.chatExtrasStore.followedThreadsInitialised
 		},
 
 		isSearching() {
@@ -575,7 +584,7 @@ export default {
 
 		showEmptyContent() {
 			return (this.conversationsInitialised && !this.filteredConversationsList.length)
-				|| (this.showThreadsList && !this.followedThreads.length)
+				|| (this.showThreadsList && this.followedThreadsInitialised && !this.followedThreads.length)
 		},
 	},
 
@@ -590,7 +599,7 @@ export default {
 			if (value) {
 				// Refresh a list
 				// FIXME requests should be paginated with offset
-				this.chatExtrasStore.fetchSubscribedThreadsList()
+				this.chatExtrasStore.fetchFollowedThreadsList()
 			}
 		},
 	},

@@ -24,7 +24,8 @@ import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
 	threads: Record<string, Record<number, ThreadInfo>>
-	subscribedThreads: Set<number>
+	followedThreads: Set<number>
+	followedThreadsInitialised: boolean
 	threadTitle: Record<string, string>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
@@ -41,7 +42,8 @@ type State = {
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
 		threads: {},
-		subscribedThreads: new Set(),
+		followedThreads: new Set(),
+		followedThreadsInitialised: false,
 		threadTitle: {},
 		parentToReply: {},
 		chatInput: {},
@@ -67,10 +69,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
-		getSubscribedThreadsList: (state): ThreadInfo[] => {
+		getFollowedThreadsList: (state): ThreadInfo[] => {
+			if (!state.followedThreadsInitialised) {
+				return []
+			}
+
 			return Object.keys(state.threads)
 				.flatMap((token) => Object.values(state.threads[token] ?? {}))
-				.filter((threadInfo) => state.subscribedThreads.has(threadInfo.thread.id))
+				.filter((threadInfo) => state.followedThreads.has(threadInfo.thread.id))
 				.sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
 		},
 
@@ -157,13 +163,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param offset thread offset to start fetch with
 		 */
-		async fetchSubscribedThreadsList(offset?: number) {
+		async fetchFollowedThreadsList(offset?: number) {
 			try {
 				const response = await getSubscribedThreads({ offset })
 				response.data.ocs.data.forEach((threadInfo) => {
-					this.subscribedThreads.add(threadInfo.thread.id)
+					this.followedThreads.add(threadInfo.thread.id)
 					this.addThread(threadInfo.thread.roomToken, threadInfo)
 				})
+				this.followedThreadsInitialised = true
 			} catch (error) {
 				console.error('Error fetching threads:', error)
 			}
