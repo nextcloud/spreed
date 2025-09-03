@@ -153,15 +153,7 @@ export default {
 <style lang="scss" scoped>
 // Overwrite NcListItem styles
 :deep(.list-item) {
-	overflow: hidden;
 	outline-offset: -2px;
-
-	.avatardiv .avatardiv__user-status {
-		inset-inline-end: -2px !important;
-		bottom: -2px !important;
-		min-height: 11px !important;
-		min-width: 11px !important;
-	}
 }
 
 /* Overwrite NcListItem styles for compact view */
