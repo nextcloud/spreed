@@ -185,10 +185,11 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	 * @param int $threadId The thread ID to get the info for
 	 * @psalm-param non-negative-int $threadId
 	 * @param string $threadTitle New thread title, must not be empty
-	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'permission'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
 	 *
 	 * 200: Thread renamed successfully
 	 * 400: When the provided title is empty
+	 * 403: Not allowed, either not the original author or not a moderator
 	 * 404: Thread not found
 	 */
 	#[FederationSupported]
@@ -215,11 +216,25 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
 
-		# FIXME Only allow for moderator and original author
+		$attendee = $this->participant->getAttendee();
+		$isOwnMessage = false;
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$threadId);
+			$isOwnMessage = $comment->getActorType() === $attendee->getActorType()
+				&& $comment->getActorId() === $attendee->getActorId();
+		} catch (NotFoundException) {
+			// Root message expired, only moderators can edit
+		}
+
+		if (!$isOwnMessage
+			&& !$this->participant->hasModeratorPermissions(false)) {
+			// Actor is not a moderator or not the owner of the message
+			return new DataResponse(['error' => 'permission'], Http::STATUS_FORBIDDEN);
+		}
 
 		try {
 			$this->threadService->renameThread($thread, $threadTitle);
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			return new DataResponse(['error' => 'title'], Http::STATUS_BAD_REQUEST);
 		}
 

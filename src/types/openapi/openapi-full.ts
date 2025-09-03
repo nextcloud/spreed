@@ -11573,6 +11573,23 @@ export interface operations {
                     };
                 };
             };
+            /** @description Not allowed, either not the original author or not a moderator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "permission";
+                            };
+                        };
+                    };
+                };
+            };
             /** @description Thread not found */
             404: {
                 headers: {
