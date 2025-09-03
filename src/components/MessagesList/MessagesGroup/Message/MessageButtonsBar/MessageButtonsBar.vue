@@ -149,7 +149,7 @@
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
-					<template v-if="showThreadControls">
+					<template v-if="isThreadStarterMessage">
 						<NcActionSeparator />
 						<NcActionButton
 							close-after-click
@@ -158,6 +158,16 @@
 								<IconForumOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Go to thread') }}
+						</NcActionButton>
+						<NcActionButton
+							v-if="isModeratorOrOwner"
+							key="edit-thread"
+							close-after-click
+							@click.stop="renameThread">
+							<template #icon>
+								<IconPencilOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Edit thread details') }}
 						</NcActionButton>
 					</template>
 					<NcActionButton
@@ -359,6 +369,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../con
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
@@ -465,6 +476,7 @@ export default {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const actorStore = useActorStore()
+		const chatExtrasStore = useChatExtrasStore()
 		const threadId = useGetThreadId()
 
 		const {
@@ -495,6 +507,7 @@ export default {
 			isConversationReadOnly,
 			isConversationModifiable,
 			actorStore,
+			chatExtrasStore,
 			threadId,
 		}
 	},
@@ -658,11 +671,15 @@ export default {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 		},
 
-		showThreadControls() {
+		isThreadStarterMessage() {
 			return this.supportThreads
 				&& !this.threadId
 				&& this.message.isThread
-				&& this.message.id !== this.message.threadId
+				&& this.message.id === this.message.threadId
+		},
+
+		isModeratorOrOwner() {
+			return this.isCurrentUserOwnMessage || this.$store.getters.isModerator
 		},
 	},
 
@@ -829,6 +846,10 @@ export default {
 				console.error(error)
 				showError(t('spreed', 'Error occurred when creating a reminder'))
 			}
+		},
+
+		async renameThread() {
+			await this.chatExtrasStore.renameThread(this.message.token, this.message.threadId)
 		},
 
 		editMessage() {

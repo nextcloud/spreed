@@ -9,14 +9,18 @@ import type {
 	ThreadInfo,
 } from '../types/index.ts'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { defineStore } from 'pinia'
+import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import {
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
+	renameThread,
 	setThreadNotificationLevel,
 	summarizeChat,
 } from '../services/messagesService.ts'
@@ -119,7 +123,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param token - conversation token
 		 * @param thread - thread information
 		 */
-		async addThread(token: string, thread: ThreadInfo) {
+		addThread(token: string, thread: ThreadInfo) {
 			if (!this.threads[token]) {
 				this.threads[token] = {}
 			}
@@ -224,14 +228,52 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param token - conversation token
 		 * @param threadId - thread id to update
-		 * @param newValue - updated information
+		 * @param threadTitle - thread title to set
 		 */
-		async updateThreadName(token: string, threadId: number, newValue: string) {
+		async updateThreadTitle(token: string, threadId: number, threadTitle: string) {
 			if (!this.threads[token] || !this.threads[token][threadId]) {
 				return
 			}
 
-			this.threads[token][threadId].thread.title = newValue
+			this.threads[token][threadId].thread.title = threadTitle
+		},
+
+		/**
+		 * Rename a thread on a server and update store
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to update
+		 */
+		async renameThread(token: string, threadId: number) {
+			const newThreadTitle = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'Edit thread details'),
+				isForm: true,
+				inputProps: {
+					value: this.threads[token][threadId].thread.title,
+					label: t('spreed', 'Thread title'),
+				},
+				buttons: [
+					{
+						label: t('spreed', 'Dismiss'),
+						callback: () => undefined,
+					},
+					{
+						label: t('spreed', 'Save'),
+						variant: 'primary',
+						callback: () => true,
+					},
+				],
+			})
+
+			if (newThreadTitle && typeof newThreadTitle === 'string') {
+				try {
+					const response = await renameThread(token, threadId, newThreadTitle)
+					this.addThread(token, response.data.ocs.data)
+				} catch (e) {
+					showError(t('spreed', 'Failed to rename the thread'))
+					console.error(e)
+				}
+			}
 		},
 
 		/**

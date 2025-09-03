@@ -4,7 +4,9 @@
 -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 // FIXME use real types from @nextcloud/vue
 type ClassType = string | Record<string, boolean | undefined>
@@ -34,12 +36,24 @@ type NcDialogProps = {
 	noClose?: boolean
 	outTransition?: boolean
 }
+type NcInputFieldProps = {
+	disabled?: boolean
+	error?: boolean
+	id?: string
+	value?: string
+	label?: string
+	labelOutside?: boolean
+	placeholder?: string
+	showTrailingButton?: boolean
+}
 
-const props = defineProps<NcDialogProps>()
+const props = defineProps<NcDialogProps & { inputProps: NcInputFieldProps }>()
 
 const emit = defineEmits<{
 	(event: 'close', value?: unknown): void
 }>()
+
+const inputValue = ref(props.inputProps.value ?? '')
 
 /**
  * Emit result, if any (for spawnDialog callback)
@@ -47,7 +61,20 @@ const emit = defineEmits<{
  * @param result callback result
  */
 function onClosing(result: unknown) {
-	emit('close', result)
+	if (props.isForm && props.inputProps) {
+		onSubmit(inputValue.value)
+	} else {
+		emit('close', result)
+	}
+}
+
+/**
+ * Emit submitted new input value (for spawnDialog callback)
+ *
+ * @param value new value
+ */
+function onSubmit(value: string) {
+	emit('close', value)
 }
 </script>
 
@@ -58,5 +85,14 @@ function onClosing(result: unknown) {
 		:container="container"
 		:size="size"
 		:buttons="buttons"
-		@closing="onClosing" />
+		@closing="onClosing">
+		<template v-if="isForm && inputProps">
+			<NcTextField
+				v-model="inputValue"
+				:label="inputProps.label"
+				:disabled="inputProps.disabled"
+				:show-trailing-button="inputProps.showTrailingButton"
+				@keydown.enter="onSubmit(inputValue)" />
+		</template>
+	</NcDialog>
 </template>
