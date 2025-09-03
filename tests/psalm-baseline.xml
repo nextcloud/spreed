@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.12.1@e71404b0465be25cf7f8a631b298c01c5ddd864f">
+<files psalm-version="6.13.1@1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -59,6 +59,15 @@
     <NullArgument>
       <code><![CDATA[null]]></code>
     </NullArgument>
+  </file>
+  <file src="lib/Controller/TempAvatarController.php">
+    <MissingDependency>
+      <code><![CDATA[\OCP\Image]]></code>
+    </MissingDependency>
+    <UndefinedClass>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[NotSquareException]]></code>
+    </UndefinedClass>
   </file>
   <file src="lib/Federation/Authenticator.php">
     <NoInterfaceProperties>
@@ -132,6 +141,7 @@
   </file>
   <file src="lib/Service/AvatarService.php">
     <MissingDependency>
+      <code><![CDATA[\OCP\Image]]></code>
       <code><![CDATA[\OCP\Image]]></code>
     </MissingDependency>
   </file>
