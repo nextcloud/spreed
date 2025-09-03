@@ -94,7 +94,7 @@ export default {
 	max-width: 30%;
 	margin-inline-end: 8px;
 
-	& &__button,
+	& &__button.button-vue:has(.button-vue__text:empty),
 	&__button :deep(.button-vue__icon) {
 		min-height: auto;
 		height: auto;
@@ -109,7 +109,7 @@ export default {
 	&__popover {
 		padding: 8px;
 		max-height: 400px;
-		overflow-y: scroll;
+		overflow-y: auto;
 	}
 
 	&__display-name {
