@@ -47,6 +47,30 @@ Feature: chat-4/threads
       | room | users         | participant1 | user_added           | {actor} added you              | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
+  Scenario: Non moderators can only rename their own threads
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room" with 201
+    And user "participant2" sends thread "Thread 2" with message "Message 2" to room "room" with 201
+    Then user "participant1" sees the following recent threads in room "room" with 200
+      | t.id      | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 2 | Thread 2 | 0            | 0             | 0                   | Message 2    | NULL        |
+      | Message 1 | Thread 1 | 0            | 0             | 0                   | Message 1    | NULL        |
+    And user "participant2" renames thread "Thread 1" to "No permissions" in room "room" with 403
+    And user "participant2" renames thread "Thread 2" to "My own thread" in room "room" with 200
+    Then user "participant1" sees the following recent threads in room "room" with 200
+      | t.id      | t.title       | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 2 | My own thread | 0            | 0             | 0                   | Message 2    | NULL        |
+      | Message 1 | Thread 1      | 0            | 0             | 0                   | Message 1    | NULL        |
+    And user "participant1" renames thread "Thread 1" to "Moderator thread" in room "room" with 200
+    And user "participant1" renames thread "Thread 2" to "User thread" in room "room" with 200
+    Then user "participant1" sees the following recent threads in room "room" with 200
+      | t.id      | t.title          | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 2 | User thread      | 0            | 0             | 0                   | Message 2    | NULL        |
+      | Message 1 | Moderator thread | 0            | 0             | 0                   | Message 1    | NULL        |
+
   Scenario: Responding without replying does not trigger a notification
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
