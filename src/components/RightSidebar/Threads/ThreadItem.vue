@@ -12,6 +12,7 @@ import type {
 import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcDateTime from '@nextcloud/vue/components/NcDateTime'
@@ -22,8 +23,10 @@ import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconCommentAlertOutline from 'vue-material-design-icons/CommentAlertOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { PARTICIPANT } from '../../../constants.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
@@ -46,7 +49,9 @@ const notificationLevels = [
 
 const router = useRouter()
 const route = useRoute()
+const store = useStore()
 
+const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
 
 const submenu = ref<string | null>(null)
@@ -87,6 +92,24 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 })
 
 const threadNotificationLabel = computed(() => notificationLevels.find((l) => l.value === thread.attendee.notificationLevel)?.label)
+
+const isModeratorOrOwner = computed(() => {
+	if (thread.first?.actorId === actorStore.actorId && thread.first?.actorType === actorStore.actorType) {
+		return true
+	}
+
+	const conversation = store.getters.conversation(thread.thread.roomToken)
+	return conversation?.participantType === PARTICIPANT.TYPE.OWNER
+		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR
+		|| conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+})
+
+/**
+ * Renames the thread
+ */
+async function renameThreadTitle() {
+	await chatExtrasStore.renameThread(thread.thread.roomToken, thread.thread.id)
+}
 
 /**
  * Resets the submenu when the actions menu is closed
@@ -129,6 +152,16 @@ function handleActionsMenuOpen(open: boolean) {
 		</template>
 		<template #actions>
 			<template v-if="submenu === null">
+				<NcActionButton
+					v-if="isModeratorOrOwner"
+					key="rename-thread"
+					close-after-click
+					@click="renameThreadTitle">
+					<template #icon>
+						<IconPencilOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Edit thread details') }}
+				</NcActionButton>
 				<NcActionButton
 					key="show-notifications"
 					is-menu

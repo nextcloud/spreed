@@ -80,6 +80,22 @@
 					{{ level.label }}
 				</NcActionButton>
 			</NcActions>
+
+			<NcActions
+				v-if="isModeratorOrOwner"
+				:aria-label="t('spreed', 'Thread actions')"
+				:title="t('spreed', 'Thread actions')"
+				force-menu>
+				<NcActionButton
+					key="rename-thread"
+					close-after-click
+					@click="renameThreadTitle">
+					<template #icon>
+						<IconPencilOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Edit thread details') }}
+				</NcActionButton>
+			</NcActions>
 		</div>
 
 		<div
@@ -188,6 +204,7 @@ import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
@@ -230,6 +247,7 @@ export default {
 	name: 'TopBar',
 
 	components: {
+		IconPencilOutline,
 		// Components
 		AvatarWrapper,
 		BreakoutRoomsEditor,
@@ -320,6 +338,11 @@ export default {
 		canExtendOneToOneConversation() {
 			return canStartConversations && supportConversationCreationAll && this.isOneToOneConversation
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
+		isModeratorOrOwner() {
+			return this.$store.getters.isModerator
+				|| (this.currentThread.first?.actorId === this.actorStore.actorId && this.currentThread.first?.actorType === this.actorStore.actorType)
 		},
 
 		isModeratorOrUser() {
@@ -419,6 +442,10 @@ export default {
 			} else {
 				this.openConversationSettings()
 			}
+		},
+
+		async renameThreadTitle() {
+			await this.chatExtrasStore.renameThread(this.token, this.threadId)
 		},
 
 		openConversationSettings() {
