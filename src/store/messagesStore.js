@@ -534,7 +534,7 @@ const actions = {
 			}
 
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
-				chatExtrasStore.updateThreadName(token, message.threadId, message.messageParameters.title.name)
+				chatExtrasStore.updateThreadTitle(token, message.threadId, message.messageParameters.title.name)
 			}
 
 			// Quit processing

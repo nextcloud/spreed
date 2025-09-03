@@ -17,6 +17,7 @@ import {
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
+	renameThread,
 	setThreadNotificationLevel,
 	summarizeChat,
 } from '../services/messagesService.ts'
@@ -119,7 +120,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param token - conversation token
 		 * @param thread - thread information
 		 */
-		async addThread(token: string, thread: ThreadInfo) {
+		addThread(token: string, thread: ThreadInfo) {
 			if (!this.threads[token]) {
 				this.threads[token] = {}
 			}
@@ -224,14 +225,26 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param token - conversation token
 		 * @param threadId - thread id to update
-		 * @param newValue - updated information
+		 * @param threadTitle - thread title to set
 		 */
-		async updateThreadName(token: string, threadId: number, newValue: string) {
+		async updateThreadTitle(token: string, threadId: number, threadTitle: string) {
 			if (!this.threads[token] || !this.threads[token][threadId]) {
 				return
 			}
 
-			this.threads[token][threadId].thread.title = newValue
+			this.threads[token][threadId].thread.title = threadTitle
+		},
+
+		/**
+		 * Rename a thread on a server and update store
+		 *
+		 * @param token - conversation token
+		 * @param threadId - thread id to update
+		 * @param threadTitle - thread title to set
+		 */
+		async renameThread(token: string, threadId: number, threadTitle: string) {
+			const response = await renameThread(token, threadId, threadTitle)
+			this.addThread(token, response.data.ocs.data)
 		},
 
 		/**

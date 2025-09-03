@@ -23,6 +23,8 @@ import type {
 	postRichObjectResponse,
 	receiveMessagesParams,
 	receiveMessagesResponse,
+	renameThreadParams,
+	renameThreadResponse,
 	setReadMarkerParams,
 	setReadMarkerResponse,
 	setThreadNotificationLevelParams,
@@ -316,6 +318,20 @@ async function setThreadNotificationLevel(token: string, messageId: number, leve
 	} as setThreadNotificationLevelParams, options)
 }
 
+/**
+ * Fetch a thread for given conversation and thread id
+ *
+ * @param token the conversation token
+ * @param threadId The thread id to retrieve data
+ * @param threadTitle The new thread title
+ * @param [options] Axios request options
+ */
+async function renameThread(token: string, threadId: number, threadTitle: string, options?: AxiosRequestConfig): renameThreadResponse {
+	return axios.put(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{threadId}', { token, threadId }), {
+		threadTitle,
+	} as renameThreadParams, options)
+}
+
 export {
 	clearConversationHistory,
 	deleteMessage,
@@ -328,6 +344,7 @@ export {
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
+	renameThread,
 	setConversationUnread,
 	setThreadNotificationLevel,
 	summarizeChat,

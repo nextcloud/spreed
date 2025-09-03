@@ -277,6 +277,8 @@ export type getSubscribedThreadsResponse = ApiResponse<operations['thread-get-su
 export type getThreadResponse = ApiResponse<operations['thread-get-thread']['responses'][200]['content']['application/json']>
 export type setThreadNotificationLevelParams = operations['thread-set-notification-level']['requestBody']['content']['application/json']
 export type setThreadNotificationLevelResponse = ApiResponse<operations['thread-set-notification-level']['responses'][200]['content']['application/json']>
+export type renameThreadParams = operations['thread-rename-thread']['requestBody']['content']['application/json']
+export type renameThreadResponse = ApiResponse<operations['thread-rename-thread']['responses'][200]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
