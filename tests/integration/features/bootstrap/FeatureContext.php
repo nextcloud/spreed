@@ -2647,6 +2647,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
 		$includeLastEdit = in_array('lastEditActorId', $formData->getRow(0), true);
 		$includeMessageType = in_array('messageType', $formData->getRow(0), true);
+		$includeThreadTitle = in_array('threadTitle', $formData->getRow(0), true);
+		$includeThreadReplies = in_array('threadReplies', $formData->getRow(0), true);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2707,9 +2709,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$messages[$i]['message']
 				);
 			}
+
+			if (isset($messages[$i]['threadTitle']) && $messages[$i]['threadTitle'] === 'NULL') {
+				$messages[$i]['threadTitle'] = null;
+			}
+
+			if (isset($messages[$i]['threadReplies'])) {
+				if ($messages[$i]['threadReplies'] !== 'NULL') {
+					$messages[$i]['threadReplies'] = (int)$messages[$i]['threadReplies'];
+				} else {
+					$messages[$i]['threadReplies'] = null;
+				}
+			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType) {
+		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType, $includeThreadTitle, $includeThreadReplies) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2751,6 +2765,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (($message['lastEditActorType'] ?? '') === 'guests') {
 					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
+			}
+
+			if ($includeThreadTitle) {
+				$data['threadTitle'] = $message['threadTitle'] ?? null;
+			}
+			if ($includeThreadReplies) {
+				$data['threadReplies'] = $message['threadReplies'] ?? null;
 			}
 
 			return $data;

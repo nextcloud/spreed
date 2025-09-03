@@ -24,9 +24,9 @@ Feature: chat-4/threads
       | t.id      | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | Thread 1 | 1            |  Message 1-1  | 0                   | Message 1    | Message 1-1 |
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadTitle | threadReplies |
+      | room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     | Thread 1    | 1             |
+      | room | users     | participant1 | participant1-displayname | Message 1   | []                |               | Thread 1    | 1             |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                        | silent | messageParameters |
       | room | users         | participant1 | thread_created       | You created thread {title} | true   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"title":{"type":"highlight","id":THREAD_ID(Thread 1),"name":"Thread 1"}} |
