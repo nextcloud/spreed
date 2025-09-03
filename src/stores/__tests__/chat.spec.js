@@ -7,6 +7,8 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createStore, useStore } from 'vuex'
 import storeConfig from '../../store/storeConfig.js'
+import { generateOCSResponse } from '../../test-helpers.js'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 import { useChatStore } from '../chat.ts'
 
 vi.mock('vuex', async () => {
@@ -16,6 +18,26 @@ vi.mock('vuex', async () => {
 		useStore: vi.fn(),
 	}
 })
+
+vi.mock('../../services/messagesService', () => ({
+	getSingleThreadForConversation: vi.fn((roomToken, id) => {
+		return generateOCSResponse({
+			payload: {
+				thread: {
+					id,
+					roomToken,
+					title: 'title',
+					lastMessageId: id,
+					lastActivity: convertToUnix(Date.now()),
+					numReplies: 0,
+				},
+				attendee: { notificationLevel: 0 },
+				first: null,
+				last: null,
+			},
+		})
+	}),
+}))
 
 describe('chatStore', () => {
 	const TOKEN = 'XXTOKENXX'

@@ -521,12 +521,6 @@ const actions = {
 			}
 
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_CREATED) {
-				// Check existing messages for having a threadId flag, and update them
-				context.getters.messagesList(token)
-					.filter((storedMessage) => storedMessage.threadId === message.threadId)
-					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: { ...storedMessage, isThread: true } })
-					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
 					chatExtrasStore.fetchSingleThread(token, message.threadId)
@@ -534,7 +528,7 @@ const actions = {
 			}
 
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
-				chatExtrasStore.updateThreadTitle(token, message.threadId, message.messageParameters.title.name)
+				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
 			}
 
 			// Quit processing
@@ -588,16 +582,25 @@ const actions = {
 		// Update threads
 		if (message.isThread) {
 			const thread = chatExtrasStore.getThread(token, message.threadId)
-			if (thread && thread.thread.lastMessageId < message.id) {
-				chatExtrasStore.updateThread(message.token, message.threadId, {
+
+			if (!thread) {
+				chatExtrasStore.fetchSingleThread(token, message.threadId)
+			} else if (thread.thread.title !== message.threadTitle
+				|| thread.thread.numReplies !== message.threadReplies
+				|| thread.thread.lastMessageId < message.id) {
+				const updatePayload = {
 					thread: {
 						...thread.thread,
-						lastMessageId: message.id,
-						lastActivity: message.timestamp,
-						numReplies: thread.thread.numReplies + 1,
+						title: message.threadTitle,
+						numReplies: message.threadReplies,
 					},
-					last: message,
-				})
+				}
+				if (thread && thread.thread.lastMessageId < message.id) {
+					updatePayload.thread.lastMessageId = message.id
+					updatePayload.thread.lastActivity = message.timestamp
+					updatePayload.last = message
+				}
+				chatExtrasStore.updateThread(message.token, message.threadId, updatePayload)
 			}
 		}
 
