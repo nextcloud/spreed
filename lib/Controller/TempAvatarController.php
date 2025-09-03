@@ -82,7 +82,7 @@ class TempAvatarController extends OCSController {
 
 			if (!$image->valid()) {
 				return new DataResponse(
-					['data' => ['message' => $this->l->t('Invalid image')]],
+					['message' => $this->l->t('Invalid image')],
 					Http::STATUS_BAD_REQUEST
 				);
 			}
@@ -90,7 +90,7 @@ class TempAvatarController extends OCSController {
 			$mimeType = $image->mimeType();
 			if ($mimeType !== 'image/jpeg' && $mimeType !== 'image/png') {
 				return new DataResponse(
-					['data' => ['message' => $this->l->t('Unknown filetype')]],
+					['message' => $this->l->t('Unknown filetype')],
 					Http::STATUS_BAD_REQUEST
 				);
 			}
