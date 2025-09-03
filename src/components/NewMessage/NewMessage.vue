@@ -91,14 +91,16 @@
 					class="new-message-form__thread-title"
 					:label="t('spreed', 'Thread title')"
 					:disabled="disabled"
+					:error="!!errorTitle"
+					:title="errorTitle"
 					show-trailing-button
 					@trailing-button-click="setCreateThread(false)" />
 				<NcRichContenteditable
 					ref="richContenteditable"
 					:key="container"
 					v-model="text"
-					:class="{ 'new-message-form__input-rich--required': errorTitle }"
-					:title="errorTitle"
+					:class="{ 'new-message-form__input-rich--required': errorMessage }"
+					:title="errorMessage"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -350,6 +352,7 @@ export default {
 		return {
 			text: '',
 			errorTitle: '',
+			errorMessage: '',
 			silentChat: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
@@ -551,13 +554,17 @@ export default {
 		},
 
 		text(newValue) {
-			this.errorTitle = ''
+			this.errorMessage = ''
 			if (this.currentUploadId && !this.upload) {
 				return
 			} else if (this.dialog && this.broadcast) {
 				return
 			}
 			this.debouncedUpdateChatInput(newValue)
+		},
+
+		threadTitle(newValue) {
+			this.errorTitle = ''
 		},
 
 		messageToEdit(newValue) {
@@ -729,10 +736,20 @@ export default {
 
 			if (this.hasText) {
 				this.text = parseSpecialSymbols(this.text)
-			} else if (this.threadCreating && !this.hasText) {
-				// TRANSLATORS Error indicator: do not allow to create a thread without a message text
-				this.errorTitle = t('spreed', 'Message text is required')
-				return
+			}
+
+			if (this.threadCreating) {
+				if (!this.threadTitle) {
+					// TRANSLATORS Error indicator: do not allow to create a thread without a thread title
+					this.errorTitle = t('spreed', 'Thread title is required')
+				}
+				if (!this.hasText) {
+					// TRANSLATORS Error indicator: do not allow to create a thread without a message text
+					this.errorMessage = t('spreed', 'Message text is required')
+				}
+				if (this.errorTitle || this.errorMessage) {
+					return
+				}
 			}
 
 			// Clear input content from store
@@ -743,7 +760,7 @@ export default {
 				const message = this.text.trim()
 				// Substitute thread title with message text, if missing
 				const threadTitle = this.threadCreating
-					? this.threadTitle.trim() || this.text.trim()
+					? this.threadTitle.trim()
 					: undefined
 
 				const temporaryMessage = this.createTemporaryMessage({
