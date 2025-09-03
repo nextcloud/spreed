@@ -71,6 +71,10 @@ interface ChunkElementData {
 	languageId: string
 }
 
+export type {
+	Chunk,
+}
+
 export default {
 	name: 'TranscriptBlock',
 

@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import type { PropType } from 'vue'
+import type { Chunk } from './TranscriptBlock.vue'
 
 import TranscriptBlock from './TranscriptBlock.vue'
 import { useLiveTranscriptionStore } from '../../../stores/liveTranscription.ts'
@@ -47,11 +48,6 @@ interface CallParticipantModel {
 	on: (event: string, handler: (model: CallParticipantModel, ...args: any[]) => void) => void
 	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	off: (event: string, handler: (model: CallParticipantModel, ...args: any[]) => void) => void
-}
-
-interface Chunk {
-	message: string
-	languageId: string
 }
 
 interface TranscriptBlockData {
