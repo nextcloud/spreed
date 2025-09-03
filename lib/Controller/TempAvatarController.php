@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\Files\Filesystem;
 use OC\NotSquareException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Files\IFilenameValidator;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -28,6 +28,7 @@ class TempAvatarController extends OCSController {
 		private IAvatarManager $avatarManager,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private IFilenameValidator $filenameValidator,
 		private string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -56,7 +57,7 @@ class TempAvatarController extends OCSController {
 		if (
 			$files['error'][0] === 0
 			&& is_uploaded_file($files['tmp_name'][0])
-			&& !Filesystem::isFileBlacklisted($files['tmp_name'][0])
+			&& $this->filenameValidator->isFilenameValid($files['tmp_name'][0])
 		) {
 			if ($files['size'][0] > 20 * 1024 * 1024) {
 				return new DataResponse(

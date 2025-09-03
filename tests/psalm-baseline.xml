@@ -60,11 +60,6 @@
       <code><![CDATA[null]]></code>
     </NullArgument>
   </file>
-  <file src="lib/Controller/TempAvatarController.php">
-    <UndefinedClass>
-      <code><![CDATA[Filesystem]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Federation/Authenticator.php">
     <NoInterfaceProperties>
       <code><![CDATA[$this->request->server]]></code>
@@ -139,9 +134,6 @@
     <MissingDependency>
       <code><![CDATA[\OCP\Image]]></code>
     </MissingDependency>
-    <UndefinedClass>
-      <code><![CDATA[Filesystem]]></code>
-    </UndefinedClass>
   </file>
   <file src="lib/Service/RecordingService.php">
     <LessSpecificReturnStatement>

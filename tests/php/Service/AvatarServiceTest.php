@@ -13,6 +13,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\RoomService;
 use OCP\Files\IAppData;
+use OCP\Files\IFilenameValidator;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -33,6 +34,7 @@ class AvatarServiceTest extends TestCase {
 	protected RoomService&MockObject $roomService;
 	protected IAvatarManager&MockObject $avatarManager;
 	protected EmojiService $emojiService;
+	protected IFilenameValidator $filenameValidator;
 	protected ?AvatarService $service = null;
 
 	public function setUp(): void {
@@ -45,6 +47,7 @@ class AvatarServiceTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->avatarManager = $this->createMock(IAvatarManager::class);
 		$this->emojiService = Server::get(EmojiService::class);
+		$this->filenameValidator = Server::get(IFilenameValidator::class);
 		$this->service = new AvatarService(
 			$this->appData,
 			$this->l,
@@ -53,6 +56,7 @@ class AvatarServiceTest extends TestCase {
 			$this->roomService,
 			$this->avatarManager,
 			$this->emojiService,
+			$this->filenameValidator,
 		);
 	}
 
