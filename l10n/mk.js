@@ -710,6 +710,7 @@ OC.L10N.register(
     "Error while accessing microphone" : "Грешка при пристап до микрофон",
     "Access to camera is only possible with HTTPS" : "Пристап до камерата е возможен само преку безбедноска врска HTTPS",
     "Invalid path selected" : "Избрана невалидна патека",
+    "Blur" : "Замаглување",
     "Upload" : "Прикачи",
     "Files" : "Датотеки",
     "Message sent" : "Пораката е испратена",
