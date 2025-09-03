@@ -1004,6 +1004,9 @@ export default {
 				&& to.name === 'conversation'
 				&& from.params.token === to.params.token) {
 				// this is triggered when the hash in the URL changes
+				if (!to.query?.threadId) {
+					this.showThreadsList = false
+				}
 				return
 			}
 			if (from.name === 'conversation') {
@@ -1013,7 +1016,6 @@ export default {
 				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
-				this.showThreadsList = false
 				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
