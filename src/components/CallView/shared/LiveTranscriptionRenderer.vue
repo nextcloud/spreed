@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import type { PropType } from 'vue'
+import type { Chunk } from './TranscriptBlock.vue'
 
 import TranscriptBlock from './TranscriptBlock.vue'
 import { useLiveTranscriptionStore } from '../../../stores/liveTranscription.ts'
@@ -47,11 +48,6 @@ interface CallParticipantModel {
 	on: (event: string, handler: (model: CallParticipantModel, ...args: any[]) => void) => void
 	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	off: (event: string, handler: (model: CallParticipantModel, ...args: any[]) => void) => void
-}
-
-interface Chunk {
-	message: string
-	languageId: string
 }
 
 interface TranscriptBlockData {
@@ -175,7 +171,7 @@ export default {
 			}
 
 			for (let i = 0; i < this.$refs.transcriptBlocks.length; i++) {
-				this.$refs.transcriptBlocks[i].resetLines()
+				this.$refs.transcriptBlocks[i].reset()
 			}
 
 			this.$refs.transcript.scrollTo({
@@ -217,8 +213,10 @@ export default {
 		 * @param message the transcribed message.
 		 * @param languageId the ID of the language of the transcribed
 		 *        message.
+		 * @param final true if the transcript will not be updated afterwards,
+		 *        false otherwise.
 		 */
-		handleTranscript(model: CallParticipantModel, message: string, languageId: string) {
+		handleTranscript(model: CallParticipantModel, message: string, languageId: string, final: boolean) {
 			let lastTranscriptBlock = this.transcriptBlocks.at(-1)
 
 			const messageIsRightToLeft = this.liveTranscriptionLanguages[languageId]?.metadata.rtl || false
@@ -237,10 +235,18 @@ export default {
 				lastTranscriptBlock = transcriptBlock
 			}
 
-			lastTranscriptBlock.chunks.push({
+			const newTranscriptChunk = {
 				message,
 				languageId,
-			})
+				final,
+			}
+
+			const lastTranscriptChunk = lastTranscriptBlock.chunks.at(-1)
+			if (!lastTranscriptChunk || lastTranscriptChunk.final) {
+				lastTranscriptBlock.chunks.push(newTranscriptChunk)
+			} else {
+				lastTranscriptBlock.chunks.splice(-1, 1, newTranscriptChunk)
+			}
 
 			this.$nextTick(() => {
 				this.scrollToBottomLineByLine()
@@ -285,6 +291,13 @@ export default {
 			}
 
 			const lastScrolledToBlockLineBoundaries = this.$refs.transcriptBlocks![this.lastScrolledToBlockAndLine.block].getLineBoundaries()
+
+			// Fix line number if last chunk was replaced with a shorter text
+			// that uses less lines.
+			if (this.lastScrolledToBlockAndLine.line >= lastScrolledToBlockLineBoundaries.length) {
+				this.lastScrolledToBlockAndLine.line = lastScrolledToBlockLineBoundaries.length - 1
+			}
+
 			if (this.lastScrolledToBlockAndLine.line < lastScrolledToBlockLineBoundaries.length - 1) {
 				this.scrollToBlockAndLine(this.lastScrolledToBlockAndLine.block, this.lastScrolledToBlockAndLine.line + 1)
 
