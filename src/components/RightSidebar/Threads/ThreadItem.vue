@@ -204,7 +204,7 @@ function handleActionsMenuOpen(open: boolean) {
 		<template #details>
 			<span class="thread__details">
 				<span class="thread__details-replies">
-					<IconArrowLeftTop :size="16" />
+					<IconArrowLeftTop class="bidirectional-icon" :size="16" />
 					{{ thread.thread.numReplies }}
 				</span>
 				<NcDateTime

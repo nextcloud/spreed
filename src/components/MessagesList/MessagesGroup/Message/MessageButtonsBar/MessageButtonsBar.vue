@@ -23,7 +23,7 @@
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
 				<template #icon>
-					<IconArrowLeftTop :size="20" />
+					<IconArrowLeftTop class="bidirectional-icon" :size="20" />
 				</template>
 			</NcButton>
 			<NcActions
@@ -186,7 +186,7 @@
 						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
-							<IconArrowRightTop :size="20" />
+							<IconArrowRightTop class="bidirectional-icon" :size="20" />
 						</template>
 						{{ t('spreed', 'Forward message') }}
 					</NcActionButton>
