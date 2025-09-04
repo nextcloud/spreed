@@ -54,11 +54,11 @@ jobs:
           - test-suite: 'federation'
             php-versions: '8.2'
             host-db: 'oci'
-            host-server-versions: 'master'
+            host-server-versions: 'stable32'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'main'
-            host-circles-versions: 'master'
-            host-notifications-versions: 'master'
+            host-circles-versions: 'stable32'
+            host-notifications-versions: 'stable32'
             remote-db: 'mysql'
             remote-server-versions: 'stable31'
             remote-spreed-versions: 'stable31'
@@ -68,11 +68,11 @@ jobs:
           - test-suite: 'federation'
             php-versions: '8.2'
             host-db: 'pgsql'
-            host-server-versions: 'master'
+            host-server-versions: 'stable32'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'main'
-            host-circles-versions: 'master'
-            host-notifications-versions: 'master'
+            host-circles-versions: 'stable32'
+            host-notifications-versions: 'stable32'
             remote-db: 'mysql'
             remote-server-versions: 'stable31'
             remote-spreed-versions: 'stable31'
@@ -88,11 +88,11 @@ jobs:
             host-circles-versions: 'stable31'
             host-notifications-versions: 'stable31'
             remote-db: 'mysql'
-            remote-server-versions: 'master'
+            remote-server-versions: 'stable32'
             remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
             remote-guests-versions: 'main'
-            remote-circles-versions: 'master'
-            remote-notifications-versions: 'master'
+            remote-circles-versions: 'stable32'
+            remote-notifications-versions: 'stable32'
 
     services:
       oracle:

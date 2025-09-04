@@ -69,10 +69,10 @@ jobs:
           - 'sharing-3'
           - 'sharing-4'
         php-versions: ['8.3']
-        server-versions: ['master']
+        server-versions: ['stable32']
         guests-versions: ['main']
-        circles-versions: ['master']
-        notifications-versions: ['master']
+        circles-versions: ['stable32']
+        notifications-versions: ['stable32']
 
     services:
       postgres:

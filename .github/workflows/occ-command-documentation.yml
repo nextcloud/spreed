@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8.2']
-        server-versions: ['master']
+        server-versions: ['stable32']
 
     steps:
       - name: Set app env
