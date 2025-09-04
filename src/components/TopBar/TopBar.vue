@@ -40,14 +40,11 @@
 			<IconChevronRight class="bidirectional-icon" :size="20" />
 
 			<span class="conversation-header">
-				<AvatarWrapper
-					:id="currentThread.first.actorId"
-					:token="token"
-					:name="currentThread.first.actorDisplayName"
-					:source="currentThread.first.actorType"
-					:size="AVATAR.SIZE.DEFAULT"
-					disable-menu
-					disable-tooltip />
+				<div
+					class="conversation-header__thread-icon"
+					:style="{ '--color-thread-icon': usernameToColor(currentThread.thread.title).color }">
+					<IconForumOutline :size="20" />
+				</div>
 				<div class="conversation-header__text">
 					<p class="title">
 						{{ currentThread.thread.title }}
@@ -192,6 +189,7 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -204,8 +202,8 @@ import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
-import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -222,8 +220,6 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
-import { parseToSimpleMessage } from '../../utils/textParse.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -247,9 +243,9 @@ export default {
 	name: 'TopBar',
 
 	components: {
+		IconForumOutline,
 		IconPencilOutline,
 		// Components
-		AvatarWrapper,
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
 		CallButton,
@@ -432,6 +428,8 @@ export default {
 	methods: {
 		t,
 		n,
+		usernameToColor,
+
 		openSidebar(activeTab) {
 			this.sidebarStore.showSidebar({ activeTab })
 		},
@@ -552,6 +550,7 @@ export default {
 .conversation-header {
 	position: relative;
 	display: flex;
+	align-items: center;
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
@@ -584,6 +583,19 @@ export default {
 		&__in-chat {
 			color: var(--color-text-maxcontrast);
 		}
+	}
+
+	&__thread-icon {
+		--mixed-color: color-mix(in srgb, var(--color-thread-icon), var(--color-main-background) 40%);
+		flex-shrink: 0;
+		width: var(--default-clickable-area);
+		height: var(--default-clickable-area);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+		color: var(--color-main-text);
+		background-color: var(--mixed-color, var(--color-thread-icon));
 	}
 }
 
