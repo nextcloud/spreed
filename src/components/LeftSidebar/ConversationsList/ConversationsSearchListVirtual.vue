@@ -23,10 +23,11 @@
 import { RecycleScroller } from 'vue-virtual-scroller'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationSearchResult from './ConversationSearchResult.vue'
+import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-const CONVERSATION_ITEM_SIZE = 66
+const CONVERSATION_ITEM_SIZE = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2
 
 export default {
 	name: 'ConversationsSearchListVirtual',
