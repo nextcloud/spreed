@@ -19,6 +19,8 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'silent'
 	| 'threadId'
 	| 'isThread'
+	| 'threadTitle'
+	| 'threadReplies'
 > & {
 	uploadId: string
 	index: number
@@ -62,6 +64,8 @@ export function prepareTemporaryMessage({
 	parent,
 	silent = false,
 	threadId,
+	threadTitle,
+	threadReplies,
 	isThread,
 }: PrepareTemporaryMessagePayload): ChatMessage {
 	const date = new Date()
@@ -102,7 +106,9 @@ export function prepareTemporaryMessage({
 		actorType,
 		actorDisplayName,
 		silent,
-		threadId: threadId || undefined,
+		threadId,
+		threadTitle,
+		threadReplies,
 		isThread,
 	}
 }
