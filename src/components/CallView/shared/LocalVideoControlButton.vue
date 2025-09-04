@@ -235,15 +235,16 @@ export default {
 	border-end-start-radius: 2px;
 }
 
-.video-control-button {
-	border-start-end-radius: 2px;
-	border-end-end-radius: 2px;
-}
-
 .local-video-control-wrapper {
 	display: flex;
 	align-items: center;
 	gap: 1px;
+
+	// Overwriting NcButton styles
+	.video-control-button {
+		border-start-end-radius: 2px;
+		border-end-end-radius: 2px;
+	}
 }
 
 // Overwriting NcActionButton styles
