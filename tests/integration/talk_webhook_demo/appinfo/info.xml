@@ -10,7 +10,7 @@
 	<summary><![CDATA[Copy of old "Call summary bot"]]></summary>
 	<description><![CDATA[Version of the call summary bot before it was migrated to the new events]]></description>
 
-	<version>22.0.0</version>
+	<version>23.0.0</version>
 	<licence>agpl</licence>
 
 	<author>Joas Schilling</author>
@@ -19,7 +19,7 @@
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 
 	<dependencies>
-		<nextcloud min-version="32" max-version="32" />
+		<nextcloud min-version="33" max-version="33" />
 	</dependencies>
 
 	<repair-steps>

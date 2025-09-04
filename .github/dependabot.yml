@@ -14,6 +14,22 @@ updates:
     timezone: Europe/Berlin
 
 - package-ecosystem: composer
+  target-branch: stable32
+  directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
+
+- package-ecosystem: composer
   target-branch: stable31
   directory: "/"
   commit-message:
@@ -31,22 +47,6 @@ updates:
 
 - package-ecosystem: composer
   target-branch: stable30
-  directory: "/"
-  commit-message:
-    prefix: "build"
-    include: "scope"
-  versioning-strategy: "increase"
-  ignore:
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Berlin
-
-- package-ecosystem: composer
-  target-branch: stable29
   directory: "/"
   commit-message:
     prefix: "build"
@@ -107,6 +107,22 @@ updates:
     timezone: Europe/Berlin
 
 - package-ecosystem: npm
+  target-branch: stable32
+  directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+- package-ecosystem: npm
   target-branch: stable31
   directory: "/"
   commit-message:
@@ -124,22 +140,6 @@ updates:
 
 - package-ecosystem: npm
   target-branch: stable30
-  directory: "/"
-  commit-message:
-    prefix: "build"
-    include: "scope"
-  versioning-strategy: "increase"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Berlin
-  ignore:
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-
-- package-ecosystem: npm
-  target-branch: stable29
   directory: "/"
   commit-message:
     prefix: "build"
