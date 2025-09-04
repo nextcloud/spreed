@@ -521,12 +521,6 @@ const actions = {
 			}
 
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_CREATED) {
-				// Check existing messages for having a threadId flag, and update them
-				context.getters.messagesList(token)
-					.filter((storedMessage) => storedMessage.threadId === message.threadId)
-					.forEach((storedMessage) => {
-						context.commit('addMessage', { token, message: { ...storedMessage, isThread: true } })
-					})
 				// Fetch thread data in case it doesn't exist in the store yet
 				if (!chatExtrasStore.getThread(token, message.threadId)) {
 					chatExtrasStore.fetchSingleThread(token, message.threadId)
@@ -534,7 +528,7 @@ const actions = {
 			}
 
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
-				chatExtrasStore.updateThreadTitle(token, message.threadId, message.messageParameters.title.name)
+				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
 			}
 
 			// Quit processing
@@ -588,16 +582,25 @@ const actions = {
 		// Update threads
 		if (message.isThread) {
 			const thread = chatExtrasStore.getThread(token, message.threadId)
-			if (thread && thread.thread.lastMessageId < message.id) {
-				chatExtrasStore.updateThread(message.token, message.threadId, {
+
+			if (!thread) {
+				chatExtrasStore.fetchSingleThread(token, message.threadId)
+			} else if (thread.thread.title !== message.threadTitle
+				|| thread.thread.numReplies !== message.threadReplies
+				|| thread.thread.lastMessageId < message.id) {
+				const updatePayload = {
 					thread: {
 						...thread.thread,
-						lastMessageId: message.id,
-						lastActivity: message.timestamp,
-						numReplies: thread.thread.numReplies + 1,
+						title: message.threadTitle,
+						numReplies: message.threadReplies,
 					},
-					last: message,
-				})
+				}
+				if (thread && thread.thread.lastMessageId < message.id) {
+					updatePayload.thread.lastMessageId = message.id
+					updatePayload.thread.lastActivity = message.timestamp
+					updatePayload.last = message
+				}
+				chatExtrasStore.updateThread(message.token, message.threadId, updatePayload)
 			}
 		}
 
@@ -1193,10 +1196,9 @@ const actions = {
 	 * @param {object} data Passed in parameters
 	 * @param {string} data.token token of the conversation
 	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
-	 * @param {object} data.threadTitle if given, creates a thread with that title
 	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, { token, temporaryMessage, threadTitle, options }) {
+	async postNewMessage(context, { token, temporaryMessage, options }) {
 		context.dispatch('addTemporaryMessage', { token, message: temporaryMessage })
 
 		const { request, cancel } = CancelableRequest(postNewMessage)
@@ -1225,9 +1227,9 @@ const actions = {
 				actorDisplayName: temporaryMessage.actorDisplayName,
 				referenceId: temporaryMessage.referenceId,
 				replyTo: temporaryMessage.parent?.id,
-				// FIXME threadId: temporaryMessage.threadId, PR #15645
+				threadId: temporaryMessage.threadId,
 				silent: temporaryMessage.silent,
-				threadTitle,
+				threadTitle: temporaryMessage.threadTitle,
 			}, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })

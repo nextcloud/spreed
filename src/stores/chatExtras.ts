@@ -40,6 +40,8 @@ type State = {
 	chatSummary: Record<string, Record<number, ChatTask>>
 }
 
+const pendingFetchSingleThreadRequests = new Set<number>()
+
 /**
  * Store for conversation extra chat features apart from messages
  */
@@ -138,11 +140,19 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param threadId - thread id to fetch
 		 */
 		async fetchSingleThread(token: string, threadId: number) {
+			if (pendingFetchSingleThreadRequests.has(threadId)) {
+				// A request for this thread is already pending
+				return
+			}
+
 			try {
+				pendingFetchSingleThreadRequests.add(threadId)
 				const response = await getSingleThreadForConversation(token, threadId)
 				this.addThread(token, response.data.ocs.data)
 			} catch (error) {
 				console.error('Error fetching thread:', error)
+			} finally {
+				pendingFetchSingleThreadRequests.delete(threadId)
 			}
 		},
 

@@ -139,7 +139,8 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
  * @param payload.referenceId A reference id to identify the message later again
  * @param payload.replyTo The message id to be replied to
  * @param payload.silent whether the message should trigger a notifications
- * @param payload.threadTitle
+ * @param payload.threadId The thread id to post the message in
+ * @param payload.threadTitle The thread title to set when creating a new thread
  * @param [options] Axios request options
  */
 async function postNewMessage({
@@ -149,6 +150,7 @@ async function postNewMessage({
 	referenceId,
 	replyTo,
 	silent,
+	threadId,
 	threadTitle,
 }: postNewMessageParams & { token: string }, options?: AxiosRequestConfig): postNewMessageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
@@ -157,6 +159,7 @@ async function postNewMessage({
 		referenceId,
 		replyTo,
 		silent,
+		threadId,
 		threadTitle,
 	} as postNewMessageParams, options)
 }

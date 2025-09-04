@@ -45,6 +45,8 @@ describe('prepareTemporaryMessage', () => {
 		silent: false,
 		threadId: undefined,
 		isThread: undefined,
+		threadReplies: undefined,
+		threadTitle: undefined,
 	}
 
 	const parent = {
