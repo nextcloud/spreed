@@ -10,6 +10,7 @@ import type {
 } from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -22,9 +23,8 @@ import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
-import IconCommentAlertOutline from 'vue-material-design-icons/CommentAlertOutline.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
@@ -133,16 +133,11 @@ function handleActionsMenuOpen(open: boolean) {
 		force-menu
 		@update:menu-open="handleActionsMenuOpen">
 		<template #icon>
-			<AvatarWrapper
-				v-if="thread.first"
-				:id="thread.first.actorId"
-				:name="thread.first.actorDisplayName"
-				:source="thread.first.actorType"
-				disable-menu
-				:token="thread.thread.roomToken" />
-			<IconCommentAlertOutline
-				v-else
-				:size="20" />
+			<div
+				class="thread__icon"
+				:style="{ '--color-thread-icon': usernameToColor(thread.thread.title).color }">
+				<IconForumOutline :size="20" />
+			</div>
 		</template>
 		<template #name>
 			<span>{{ thread.thread.title }}</span>
@@ -227,6 +222,18 @@ function handleActionsMenuOpen(open: boolean) {
 
 	:deep(.list-item-content__subname) {
 		color: var(--color-main-text);
+	}
+
+	&__icon {
+		--mixed-color: color-mix(in srgb, var(--color-thread-icon), var(--color-main-background) 40%);
+		width: var(--default-clickable-area);
+		height: var(--default-clickable-area);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+		color: var(--color-main-text);
+		background-color: var(--mixed-color, var(--color-thread-icon));
 	}
 
 	&__details {
