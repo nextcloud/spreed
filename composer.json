@@ -39,7 +39,7 @@
 		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations"
 	},
 	"require-dev": {
-		"nextcloud/ocp": "dev-master"
+		"nextcloud/ocp": "dev-stable32"
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
