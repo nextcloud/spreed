@@ -101,7 +101,7 @@ class ThreadService {
 		$limit = min(100, max(1, $limit));
 
 		$query = $this->connection->getQueryBuilder();
-		$query->select('a.*', 't.*')
+		$query->select('a.*', 't.last_message_id', 't.num_replies', 't.last_activity', 't.name')
 			->selectAlias('t.id', 't_id')
 			->from('talk_thread_attendees', 'a')
 			->leftJoin('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
