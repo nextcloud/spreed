@@ -131,7 +131,12 @@ export default function SimpleWebRTC(opts) {
 		} else if (message.type === 'transcript') {
 			// "transcript" will be received from the transcription service,
 			// which will not have a Peer object.
-			self.emit('transcript', { id: message.speakerSessionId, message: message.message, languageId: message.langId })
+			self.emit('transcript', {
+				id: message.speakerSessionId,
+				message: message.message,
+				languageId: message.langId,
+				final: message.final !== undefined ? message.final : true,
+			})
 		} else if (peers.length) {
 			peers.forEach(function(peer) {
 				if (message.sid && !self.connection.hasFeature('mcu')) {

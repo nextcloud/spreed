@@ -20,7 +20,9 @@
 			<p class="transcript-block__author">
 				{{ actorInfo }}
 			</p>
-			<p class="transcript-block__chunks">
+			<p
+				ref="chunksWrapper"
+				class="transcript-block__chunks">
 				<span
 					v-for="(item, index) in chunksWithSeparator"
 					ref="chunks"
@@ -43,7 +45,8 @@ import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 
 declare module 'vue' {
 	interface TypeRefs {
-		chunks: undefined | Array<HTMLDivElement>
+		chunksWrapper: HTMLParagraphElement
+		chunks: undefined | Array<HTMLSpanElement>
 	}
 
 	interface ComponentCustomProperties {
@@ -64,6 +67,16 @@ interface CallParticipantModel {
 interface Chunk {
 	message: string
 	languageId: string
+	final: boolean
+}
+
+interface ChunkElementData {
+	message: string
+	languageId: string
+}
+
+export type {
+	Chunk,
 }
 
 export default {
@@ -119,7 +132,11 @@ export default {
 	data() {
 		return {
 			AVATAR,
-			lines: [] as Array<{ lastChunkIndex: number }>,
+			resizeObserver: null as null | ResizeObserver,
+			lines: [] as Array<{
+				firstChunkIndex: number
+				lastChunkIndex: number
+			}>,
 		}
 	},
 
@@ -167,7 +184,7 @@ export default {
 		},
 
 		chunksWithSeparator() {
-			const chunksWithSeparator = [] as Array<Chunk>
+			const chunksWithSeparator = [] as Array<ChunkElementData>
 
 			if (!this.chunks.length) {
 				return chunksWithSeparator
@@ -196,15 +213,59 @@ export default {
 		},
 	},
 
+	mounted() {
+		this.resizeObserver = new ResizeObserver(this.handleChunksWrapperResize)
+		this.resizeObserver.observe(this.$refs.chunksWrapper)
+	},
+
+	beforeUnmount() {
+		this.resizeObserver!.disconnect()
+	},
+
 	methods: {
-		resetLines() {
+		reset() {
 			this.lines = []
+
+			this.$refs.chunksWrapper!.style.removeProperty('min-height')
+		},
+
+		handleChunksWrapperResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
+			if (!this.$refs.chunksWrapper) {
+				return
+			}
+
+			const height = parseFloat(window.getComputedStyle(this.$refs.chunksWrapper).getPropertyValue('height'))
+			const minHeight = parseFloat(window.getComputedStyle(this.$refs.chunksWrapper).getPropertyValue('min-height'))
+
+			if (height > minHeight || Number.isNaN(minHeight)) {
+				this.$refs.chunksWrapper.style.setProperty('min-height', `${height}px`)
+			}
+		},
+
+		removeLastChunkFromLines() {
+			if (!this.lines.length) {
+				return
+			}
+
+			const lastKnownChunkIndex = this.lines.at(-1)!.lastChunkIndex
+
+			while (this.lines.length && this.lines.at(-1)!.firstChunkIndex === this.lines.at(-1)!.lastChunkIndex) {
+				this.lines.splice(-1, 1)
+			}
+
+			if (this.lines.length && this.lines.at(-1)!.lastChunkIndex === lastKnownChunkIndex) {
+				this.lines.at(-1)!.lastChunkIndex--
+			}
 		},
 
 		updateLines() {
 			if (!this.$refs.chunks || !this.$refs.chunks.length) {
 				return
 			}
+
+			// Remove information of last chunk to regenerate it, as it could
+			// have been updated and thus its lines could have changed.
+			this.removeLastChunkFromLines()
 
 			if (!this.lines.length) {
 				const firstChunkClientRectsLength = this.$refs.chunks[0].getClientRects().length
@@ -213,6 +274,7 @@ export default {
 				// rectangles each rectangle will be in its own line.
 				for (let i = 0; i < firstChunkClientRectsLength; i++) {
 					this.lines.push({
+						firstChunkIndex: 0,
 						lastChunkIndex: 0,
 					})
 				}
@@ -229,13 +291,6 @@ export default {
 			for (let i = lastKnownChunkIndex + 1; i < this.$refs.chunks.length; i++) {
 				const nextChunkElement = this.$refs.chunks[i]
 
-				// Separators are inline rather than inline-block, so they have
-				// different top and bottom boundaries and they should not be
-				// taken into account.
-				if (nextChunkElement.classList.contains('separator')) {
-					continue
-				}
-
 				const nextChunkElementClientRects = nextChunkElement.getClientRects()
 				const nextChunkElementTop = nextChunkElementClientRects[0].top
 
@@ -246,6 +301,7 @@ export default {
 					this.lines.at(-1)!.lastChunkIndex = i
 				} else {
 					this.lines.push({
+						firstChunkIndex: i,
 						lastChunkIndex: i,
 					})
 				}
@@ -254,6 +310,7 @@ export default {
 				// line.
 				for (let j = 1; j < nextChunkElementClientRects.length; j++) {
 					this.lines.push({
+						firstChunkIndex: i,
 						lastChunkIndex: i,
 					})
 				}
