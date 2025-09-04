@@ -38,10 +38,11 @@ async function isCertificateValid(host: certificateExpirationParams['host']): Pr
 			return false
 		} else if (expiration < 0) {
 			console.error('Certificate of', host, 'expired')
+			return false
 		} else {
 			console.info('Certificate of', host, 'is valid for', expiration, 'days')
+			return true
 		}
-		return expiration > 0
 	} catch (error) {
 		console.error(error)
 		return false
