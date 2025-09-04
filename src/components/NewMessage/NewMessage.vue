@@ -757,17 +757,27 @@ export default {
 			this.chatExtrasStore.removeChatInput(this.token)
 
 			if (this.hasText || (this.dialog && this.upload)) {
-				const message = this.text.trim()
-				// Substitute thread title with message text, if missing
-				const threadTitle = this.threadCreating
-					? this.threadTitle.trim()
-					: undefined
-
-				const temporaryMessage = this.createTemporaryMessage({
-					message,
+				const temporaryMessagePayload = {
+					message: this.text.trim(),
 					token: this.token,
 					silent: this.silentChat,
-				})
+				}
+
+				if (this.threadId) {
+					temporaryMessagePayload.threadId = this.threadId
+					temporaryMessagePayload.isThread = true
+				}
+				if (this.parentMessage) {
+					temporaryMessagePayload.parent = this.parentMessage
+				}
+				if (this.threadCreating) {
+					// Substitute thread title with message text, if missing
+					temporaryMessagePayload.threadTitle = this.threadTitle.trim()
+					temporaryMessagePayload.threadReplies = 0
+					temporaryMessagePayload.isThread = true
+				}
+
+				const temporaryMessage = this.createTemporaryMessage(temporaryMessagePayload)
 				this.text = ''
 				this.chatExtrasStore.removeThreadTitle(this.token)
 
@@ -779,24 +789,24 @@ export default {
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage, threadTitle)
-					: await this.postMessage(this.token, temporaryMessage, threadTitle)
+					? await this.submitMessage(this.token, temporaryMessage)
+					: await this.postMessage(this.token, temporaryMessage)
 				this.resetTypingIndicator()
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(token, temporaryMessage, threadTitle) {
+		async postMessage(token, temporaryMessage) {
 			try {
-				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, threadTitle })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
 		// Broadcast message to all breakout rooms
-		async submitMessage(token, temporaryMessage, threadTitle) {
-			this.$emit('submit', { token, temporaryMessage, threadTitle })
+		async submitMessage(token, temporaryMessage) {
+			this.$emit('submit', { token, temporaryMessage })
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
