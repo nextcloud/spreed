@@ -321,15 +321,16 @@ export default {
 	border-end-start-radius: 2px;
 }
 
-.audio-control-button {
-	border-start-end-radius: 2px;
-	border-end-end-radius: 2px;
-}
-
 .local-audio-control-wrapper {
 	display: flex;
 	align-items: center;
 	gap: 1px;
+
+	// Overwriting NcButton styles
+	.audio-control-button {
+		border-start-end-radius: 2px;
+		border-end-end-radius: 2px;
+	}
 }
 
 // Overwriting NcActionButton styles
