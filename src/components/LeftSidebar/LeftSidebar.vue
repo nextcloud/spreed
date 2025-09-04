@@ -164,7 +164,7 @@
 					<NcAppNavigationItem
 						class="navigation-item"
 						:name="t('spreed', 'Back to conversations')"
-						@click.prevent="showThreadsList = false; showArchived = false">
+						@click.prevent="handleBackToConversations">
 						<template #icon>
 							<IconArrowLeft class="bidirectional-icon" :size="20" />
 						</template>
@@ -177,7 +177,7 @@
 					v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
 					class="navigation-item"
 					:name="t('spreed', 'Followed threads')"
-					@click.prevent="showThreadsList = true; showArchived = false">
+					@click.prevent="handleShowThreadsList">
 					<template #icon>
 						<IconForumOutline :size="20" />
 					</template>
@@ -488,6 +488,7 @@ export default {
 			isCurrentTabLeader: false,
 			isFocused: false,
 			isNavigating: false,
+			fallbackConversationToken: null,
 		}
 	},
 
@@ -1004,6 +1005,10 @@ export default {
 				&& to.name === 'conversation'
 				&& from.params.token === to.params.token) {
 				// this is triggered when the hash in the URL changes
+				if (!to.query?.threadId) {
+					this.showThreadsList = false
+					this.fallbackConversationToken = null
+				}
 				return
 			}
 			if (from.name === 'conversation') {
@@ -1013,7 +1018,6 @@ export default {
 				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
-				this.showThreadsList = false
 				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
@@ -1039,6 +1043,24 @@ export default {
 			if (this.$route.name === 'root') {
 				event.preventDefault()
 				EventBus.emit('refresh-talk-dashboard')
+			}
+		},
+
+		handleShowThreadsList() {
+			this.showThreadsList = true
+			this.showArchived = false
+			this.fallbackConversationToken = this.$route.params?.token
+		},
+
+		handleBackToConversations() {
+			this.showThreadsList = false
+			this.showArchived = false
+			if (this.fallbackConversationToken) {
+				this.$router.push({
+					name: 'conversation',
+					params: { token: this.fallbackConversationToken },
+				}).catch((err) => console.debug(`Error while pushing the fallback conversation's route: ${err}`))
+				this.fallbackConversationToken = null
 			}
 		},
 	},
