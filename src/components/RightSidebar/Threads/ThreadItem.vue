@@ -225,15 +225,15 @@ function handleActionsMenuOpen(open: boolean) {
 	}
 
 	&__icon {
-		--mixed-color: color-mix(in srgb, var(--color-thread-icon), var(--color-main-background) 40%);
+		--mixed-color: color-mix(in srgb, var(--color-thread-icon) 10%, var(--color-main-background));
 		width: var(--default-clickable-area);
 		height: var(--default-clickable-area);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		border-radius: 50%;
-		color: var(--color-main-text);
-		background-color: var(--mixed-color, var(--color-thread-icon));
+		color: var(--color-thread-icon);
+		background-color: var(--mixed-color, var(--color-background-dark));
 	}
 
 	&__details {
