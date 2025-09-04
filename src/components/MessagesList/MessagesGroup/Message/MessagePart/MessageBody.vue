@@ -148,7 +148,7 @@
 				size="small"
 				@click="handleThreadClick">
 				<template #icon>
-					<IconArrowLeftTop :size="16" />
+					<IconArrowLeftTop class="bidirectional-icon" :size="16" />
 				</template>
 				{{ threadNumReplies }}
 			</NcButton>
