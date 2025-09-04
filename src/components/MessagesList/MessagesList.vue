@@ -41,7 +41,7 @@
 						:aria-label="t('spreed', 'Back')"
 						@click="threadId = 0">
 						<template #icon>
-							<IconArrowLeft :size="20" />
+							<IconArrowLeft class="bidirectional-icon" :size="20" />
 						</template>
 					</NcButton>
 				</div>
