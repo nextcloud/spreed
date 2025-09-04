@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0-rc.1 – 2025-09-04
+### Added
+- feat(hosted-hpb): Support setting the TURN and STUN server if included
+  [#15700](https://github.com/nextcloud/spreed/issues/15700)
+- feat(assistant): Use new assistant theming
+  [#15773](https://github.com/nextcloud/spreed/issues/15773)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(threads): Allow renaming a thread
+  [#15779](https://github.com/nextcloud/spreed/issues/15779)
+- fix(threads): Hide ignored threads from "Followed threads" list
+  [#15781](https://github.com/nextcloud/spreed/issues/15781)
+- fix(threads): Don't create threads without a title
+  [#15790](https://github.com/nextcloud/spreed/issues/15790)
+- fix(threads): Show temporary message as a thread already
+  [#15800](https://github.com/nextcloud/spreed/issues/15800)
+- fix(calls): Scroll chat to bottom when joining a call
+  [#15774](https://github.com/nextcloud/spreed/issues/15774)
+
 ## 22.0.0-beta.2 – 2025-08-29
 ### Added
 - feat(calls): Implement live-transcriptions when the ExApp is available
