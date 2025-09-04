@@ -22,6 +22,7 @@ import {
 	editMessage,
 	fetchMessages,
 	getMessageContext,
+	getSingleThreadForConversation,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
@@ -41,6 +42,7 @@ vi.mock('../services/messagesService', () => ({
 	editMessage: vi.fn(),
 	updateLastReadMessage: vi.fn(),
 	fetchMessages: vi.fn(),
+	getSingleThreadForConversation: vi.fn(),
 	getMessageContext: vi.fn(),
 	pollNewMessages: vi.fn(),
 	postNewMessage: vi.fn(),
@@ -1042,7 +1044,15 @@ describe('messagesStore', () => {
 				},
 				payload: messagesContext,
 			})
+			const getThreadResponse = generateOCSResponse({
+				payload: {
+					thread: { id: 3 },
+					first: messagesContext[0],
+					last: messagesContext[1],
+				},
+			})
 			getMessageContext.mockResolvedValueOnce(responseContext)
+			getSingleThreadForConversation.mockResolvedValueOnce(getThreadResponse)
 
 			const responseFetch = generateOCSResponse({
 				headers: {
