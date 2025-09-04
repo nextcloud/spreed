@@ -328,6 +328,10 @@ useHotKey('r', toggleHandRaised)
 	justify-content: space-between;
 	padding: 0 calc(var(--default-grid-baseline) * 2);
 	z-index: 10;
+
+	:deep(.button-vue--tertiary) {
+		background-color: var(--color-primary-light);
+	}
 }
 
 .bottom-bar-call-controls {
@@ -335,9 +339,5 @@ useHotKey('r', toggleHandRaised)
 	align-items: center;
 	flex-direction: row;
 	gap: var(--default-grid-baseline);
-}
-
-:deep(.button-vue--tertiary) {
-	background-color: var(--color-primary-light);
 }
 </style>
