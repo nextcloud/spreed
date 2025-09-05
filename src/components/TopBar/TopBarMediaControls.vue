@@ -430,7 +430,6 @@ export default {
 						break
 					case 'PERMISSION_DENIED':
 					case 'NotAllowedError':
-					case 'CEF_GETSCREENMEDIA_CANCELED': // Experimental, may go away in the future.
 						break
 					case 'FF52_REQUIRED':
 						showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
