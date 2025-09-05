@@ -972,7 +972,7 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch, commit }, { modifiedSince, includeLastMessage = 1 }) {
+	async fetchConversations({ dispatch, commit }, { modifiedSince, includeLastMessage = true }) {
 		const talkHashStore = useTalkHashStore()
 		const federationStore = useFederationStore()
 		try {
@@ -980,7 +980,7 @@ const actions = {
 			modifiedSince = modifiedSince || 0
 			const response = await fetchConversations({
 				modifiedSince,
-				includeStatus: 1,
+				includeStatus: true,
 				includeLastMessage,
 			})
 			talkHashStore.updateTalkVersionHash(response)
