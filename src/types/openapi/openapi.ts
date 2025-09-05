@@ -2424,7 +2424,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Theme used for background */
-                darkTheme?: 0 | 1;
+                darkTheme?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
@@ -3818,7 +3818,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description whether to also terminate the call for all participants */
-                all?: 0 | 1;
+                all?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
@@ -5791,11 +5791,11 @@ export interface operations {
                 /** @description When the user status should not be automatically set to online set to 1 (default 0) */
                 noStatusUpdate?: 0 | 1;
                 /** @description Include the user status */
-                includeStatus?: 0 | 1;
+                includeStatus?: boolean;
                 /** @description Filter rooms modified after a timestamp */
                 modifiedSince?: number;
                 /** @description Include the last message, clients should opt-out when only rendering a compact list */
-                includeLastMessage?: 0 | 1;
+                includeLastMessage?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -6906,7 +6906,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
+                includeStatus?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
@@ -7069,7 +7069,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
+                includeStatus?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -10592,7 +10592,7 @@ export interface operations {
                 /** @description Maximum number of results */
                 limit?: number;
                 /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
+                includeStatus?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */

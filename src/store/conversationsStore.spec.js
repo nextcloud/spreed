@@ -289,7 +289,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', {})
 
-			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1, includeLastMessage: 1 })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: true, includeLastMessage: true })
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
@@ -338,7 +338,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', { })
 
-			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1, includeLastMessage: 1 })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: true, includeLastMessage: true })
 			// conversationsList is actual to the response
 			expect(store.getters.conversationsList).toEqual([newConversation, oldConversation])
 			// Only old conversation with new activity should be actually replaced with new objects
@@ -558,7 +558,7 @@ describe('conversationsStore', () => {
 			store.dispatch('fetchConversations', { })
 			await flushPromises()
 
-			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: 1, includeLastMessage: 1 })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince: 0, includeStatus: true, includeLastMessage: true })
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
@@ -599,7 +599,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('fetchConversations', { modifiedSince })
 
-			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince, includeStatus: 1, includeLastMessage: 1 })
+			expect(fetchConversations).toHaveBeenCalledWith({ modifiedSince, includeStatus: true, includeLastMessage: true })
 			// conversations are actual to the response
 			expect(store.state.conversationsStore.conversations).toEqual({
 				[newConversation1.token]: newConversation1,
