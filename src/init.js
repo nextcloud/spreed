@@ -80,50 +80,17 @@ EventBus.on('signaling-recording-status-changed', ([token, status]) => {
 /**
  * Migrate localStorage to @nextcloud/browser-storage
  *
- * In order to preserve the user settings while migrating to the abstraction,
- * we loop over the localStorage entries and add the matching ones to the
- * BrowserStorage
+ * We assume migration is done from now on, so we remove the migration flag
+ * REMOVE: in stable 33+
  */
 function migrateDirectLocalStorageToNextcloudBrowserStorage() {
-	if (BrowserStorage.getItem('localStorageMigrated') !== null) {
-		return
+	if (BrowserStorage.getItem('localStorageMigrated')) {
+		BrowserStorage.removeItem('localStorageMigrated')
 	}
-
-	const deprecatedKeys = [
-		'audioDisabled_',
-		'videoDisabled_',
-		'virtualBackgroundEnabled_',
-		'virtualBackgroundType_',
-		'virtualBackgroundBlurStrength_',
-		'virtualBackgroundUrl_',
-	]
-
-	Object.keys(localStorage).forEach((key) => {
-		if (deprecatedKeys.some((deprecatedKey) => key.startsWith(deprecatedKey))) {
-			console.debug('Migrating localStorage key to BrowserStorage: %s', key)
-			BrowserStorage.setItem(key, localStorage.getItem(key))
-			localStorage.removeItem(key)
-
-			if (key.startsWith('virtualBackgroundEnabled_')) {
-				// Before Talk 17 there was only a boolean
-				// `virtualBackgroundEnabled_{token}` (stored as string).
-				// Now we also need to have a type and the default type
-				// is "none". So when migrating the data for
-				// conversations the user had previously enabled the
-				// background blur we also add the type with value blur.
-				const typeKey = key.replace('virtualBackgroundEnabled_', 'virtualBackgroundType_')
-				if (localStorage.getItem(typeKey) === null) {
-					BrowserStorage.setItem(typeKey, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-				}
-			}
-		}
-	})
-
-	BrowserStorage.setItem('localStorageMigrated', 'done')
 }
-
 /**
  * Clean up some deprecated (no longer in use) keys from @nextcloud/browser-storage
+ * REMOVE: in stable 33+
  */
 function cleanOutdatedBrowserStorageKeys() {
 	const deprecatedKeys = [
