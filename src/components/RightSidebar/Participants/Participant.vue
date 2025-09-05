@@ -17,6 +17,7 @@
 		<template #icon>
 			<AvatarWrapper
 				:id="participant.actorId"
+				:key="participant.attendeeId"
 				:token="token"
 				:name="displayName"
 				:source="participant.actorType"
@@ -809,6 +810,16 @@ export default {
 	},
 
 	watch: {
+		attendeeId() {
+			// Reset state when the participant data changes (in virtual scroller)
+			this.permissionsEditor = false
+			this.isRemoveDialogOpen = false
+			this.isBanParticipant = false
+			this.internalNote = ''
+			this.disabled = false
+			this.isLoading = false
+		},
+
 		phoneCallStatus(value) {
 			if (!value || !(value === 'ringing' || value === 'accepted')) {
 				this.disabled = false
