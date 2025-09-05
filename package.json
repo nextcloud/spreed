@@ -103,6 +103,7 @@
     "openapi-typescript": "^7.9.1",
     "regenerator-runtime": "^0.14.1",
     "stylelint-use-logical": "^2.1.2",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4",
     "wasm-check": "^2.1.2",
     "webpack-bundle-analyzer": "^4.10.2",
