@@ -263,8 +263,8 @@ class CapabilitiesTest extends TestCase {
 		$user->method('getQuota')
 			->willReturn($quota);
 
-		$this->taskProcessingManager->method('getAvailableTaskTypes')
-			->willReturn([TextToTextSummary::ID => true]);
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')
+			->willReturn([TextToTextSummary::ID]);
 
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
@@ -509,8 +509,8 @@ class CapabilitiesTest extends TestCase {
 	public function testCapabilitiesTranslationsTaskProviders(): void {
 		$capabilities = $this->getCapabilities();
 
-		$this->taskProcessingManager->method('getAvailableTaskTypes')
-			->willReturn([TextToTextTranslate::ID => true]);
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')
+			->willReturn([TextToTextTranslate::ID]);
 
 		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
 		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-task-providers']);
@@ -519,8 +519,8 @@ class CapabilitiesTest extends TestCase {
 	public function testSummaryTaskProviders(): void {
 		$capabilities = $this->getCapabilities();
 
-		$this->taskProcessingManager->method('getAvailableTaskTypes')
-			->willReturn([TextToTextFormalization::ID => true]);
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')
+			->willReturn([TextToTextFormalization::ID]);
 
 		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
 		$this->assertNotContains('chat-summary-api', $data['spreed']['features']);
