@@ -1217,7 +1217,7 @@ const actions = {
 			// New message should be appended to the most recent block without gaps
 			const chatStore = useChatStore()
 			const conversation = context.rootGetters.conversation(token)
-			const conversationLastMessageId = (conversation && 'id' in conversation.lastMessage)
+			const conversationLastMessageId = (conversation?.lastMessage && 'id' in conversation.lastMessage)
 				? conversation.lastMessage.id
 				: chatStore.getLastKnownId(token, { threadId: temporaryMessage.threadId })
 
