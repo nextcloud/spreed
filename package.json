@@ -100,6 +100,7 @@
     "esbuild-loader": "^4.3.0",
     "globals": "^16.2.0",
     "jsdom": "^26.1.0",
+    "mini-css-extract-plugin": "^2.9.4",
     "openapi-typescript": "^7.8.0",
     "regenerator-runtime": "^0.14.1",
     "stylelint-use-logical": "^2.1.2",
