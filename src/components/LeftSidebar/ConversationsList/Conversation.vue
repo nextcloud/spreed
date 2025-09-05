@@ -6,7 +6,6 @@
 <template>
 	<NcListItem
 		ref="listItem"
-		:key="item.token"
 		:name="item.displayName"
 		:title="item.displayName"
 		:data-nav-id="`conversation_${item.token}`"
@@ -27,6 +26,7 @@
 		@update:menu-open="handleActionsMenuOpen">
 		<template #icon>
 			<ConversationIcon
+				:key="item.token"
 				:item="item"
 				:hide-favorite="compact"
 				:hide-call="compact"
