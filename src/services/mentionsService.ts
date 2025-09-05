@@ -18,7 +18,7 @@ async function searchPossibleMentions(token: string, search: string): getMention
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/mentions', { token }), {
 		params: {
 			search,
-			includeStatus: 1,
+			includeStatus: true,
 		} as getMentionsParams,
 	})
 }
