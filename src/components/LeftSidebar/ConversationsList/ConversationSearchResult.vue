@@ -5,7 +5,6 @@
 
 <template>
 	<NcListItem
-		:key="item.token"
 		:name="item.displayName"
 		:title="item.displayName"
 		:active="item.token === selectedRoom?.token"
@@ -14,7 +13,11 @@
 		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
-			<ConversationIcon :item="item" :hide-favorite="!item?.attendeeId" :hide-call="!item?.attendeeId" />
+			<ConversationIcon
+				:key="item.token"
+				:item="item"
+				:hide-favorite="!item?.attendeeId"
+				:hide-call="!item?.attendeeId" />
 		</template>
 		<template v-if="conversationInformation.message" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
