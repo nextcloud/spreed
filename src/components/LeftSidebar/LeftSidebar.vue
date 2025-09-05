@@ -932,7 +932,6 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				this.abortSearch()
-				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.showArchived = this.$store.getters.conversation(to.params.token)?.isArchived ?? false
 				this.scrollToConversation(to.params.token)
 			}
