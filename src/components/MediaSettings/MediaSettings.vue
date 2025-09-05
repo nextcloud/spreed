@@ -381,7 +381,6 @@ export default {
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
-			model: localMediaModel,
 			tabs,
 			dialogHeaderId,
 			supportStartWithoutMedia,
@@ -731,7 +730,7 @@ export default {
 				BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
 				this.audioOn = false
 			}
-			this.audioDeviceStateChanged = !this.audioDeviceStateChanged
+			this.audioDeviceStateChanged = true
 		},
 
 		toggleVideo() {
@@ -742,7 +741,7 @@ export default {
 				BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
 			}
-			this.videoDeviceStateChanged = !this.videoDeviceStateChanged
+			this.videoDeviceStateChanged = true
 		},
 
 		setNotifyCall(value) {
@@ -757,11 +756,21 @@ export default {
 			if (this.updatedBackground) {
 				this.handleUpdateBackground(this.updatedBackground)
 			}
-			if (this.audioDeviceStateChanged) {
-				emit('local-audio-control-button:toggle-audio')
+
+			if (this.audioDeviceStateChanged && this.isInCall) {
+				if (this.audioOn) {
+					localMediaModel.enableAudio()
+				} else {
+					localMediaModel.disableAudio()
+				}
 			}
-			if (this.videoDeviceStateChanged) {
-				emit('local-video-control-button:toggle-video')
+
+			if (this.videoDeviceStateChanged && this.isInCall) {
+				if (this.videoOn) {
+					localMediaModel.enableVideo()
+				} else {
+					localMediaModel.disableVideo()
+				}
 			}
 
 			this.close()
@@ -874,6 +883,7 @@ export default {
 
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
+			this.audioDeviceStateChanged = true
 			this.updatePreferences('audioinput')
 		},
 
@@ -884,6 +894,7 @@ export default {
 
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
+			this.videoDeviceStateChanged = true
 			this.updatePreferences('videoinput')
 		},
 
