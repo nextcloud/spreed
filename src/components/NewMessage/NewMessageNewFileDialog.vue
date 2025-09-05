@@ -173,7 +173,7 @@ export default {
 
 	mounted() {
 		this.$nextTick(() => {
-			this.$refs.textField.$refs.inputField.$refs.input.select()
+			this.$refs.textField.select()
 		})
 	},
 
