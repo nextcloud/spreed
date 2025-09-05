@@ -157,8 +157,8 @@ class RecordingService {
 			return;
 		}
 
-		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
-		if (!isset($supportedTaskTypes[AudioToText::ID])) {
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(AudioToText::ID, $supportedTaskTypeIds, true)) {
 			$this->logger->error('Can not transcribe call recording as no Audio2Text task provider is available');
 			return;
 		}
@@ -258,8 +258,8 @@ class RecordingService {
 			return;
 		}
 
-		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
-		if (!isset($supportedTaskTypes[TextToTextSummary::ID])) {
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(TextToTextSummary::ID, $supportedTaskTypeIds, true)) {
 			$this->logger->error('Can not summarize call recording as no TextToTextSummary task provider is available');
 			return;
 		}

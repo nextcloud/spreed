@@ -556,8 +556,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	): DataResponse {
 		$fromMessageId = max(0, $fromMessageId);
 
-		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
-		if (!isset($supportedTaskTypes[TextToTextSummary::ID])) {
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(TextToTextSummary::ID, $supportedTaskTypeIds, true)) {
 			return new DataResponse([
 				'error' => ChatSummaryException::REASON_AI_ERROR,
 			], Http::STATUS_BAD_REQUEST);
