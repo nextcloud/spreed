@@ -785,6 +785,7 @@ OC.L10N.register(
     "Leave call" : "Anruf verlassen",
     "Navigating away from the page will leave the call in {conversation}" : "Bei verlassen der Seite, wird der Anruf in {conversation} beendet",
     "Stay in call" : "Beim Anruf bleiben",
+    "Error occurred when getting the conversation information" : "Fehler beim Abrufen der Unterhaltungsinformationen ",
     "Discuss this file" : "Diese Datei besprechen",
     "Share this file with others to discuss it" : "Teilen Sie diese Datei mit anderen, um sie zu besprechen.",
     "Share this file" : "Diese Datei teilen",

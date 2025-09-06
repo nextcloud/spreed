@@ -785,6 +785,7 @@ OC.L10N.register(
     "Leave call" : "Lämna samtalet",
     "Navigating away from the page will leave the call in {conversation}" : "Navigera bort från sidan kommer att lämna samtalet {conversation}",
     "Stay in call" : "Stanna i samtal",
+    "Error occurred when getting the conversation information" : "Ett fel uppstod vid hämtning av konversationsinformationen",
     "Discuss this file" : "Diskutera den här filen",
     "Share this file with others to discuss it" : "Dela den här filen med andra för att diskutera",
     "Share this file" : "Dela den här filen",
