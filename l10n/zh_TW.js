@@ -785,6 +785,7 @@ OC.L10N.register(
     "Leave call" : "離開通話",
     "Navigating away from the page will leave the call in {conversation}" : "離開頁面也將離開 {conversation} 中的通話",
     "Stay in call" : "留在通話中",
+    "Error occurred when getting the conversation information" : "取得對話資訊時發生錯誤",
     "Discuss this file" : "討論此檔案",
     "Share this file with others to discuss it" : "與其他人分享此檔案並進行討論",
     "Share this file" : "分享此檔案",
