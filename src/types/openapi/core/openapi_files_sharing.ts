@@ -713,9 +713,9 @@ export interface operations {
                 /** @description Height of the preview */
                 y?: number;
                 /** @description Whether to not crop the preview */
-                a?: 0 | 1;
+                a?: boolean;
                 /** @description Whether to fallback to the mime icon if no preview is available */
-                mimeFallback?: 0 | 1;
+                mimeFallback?: boolean;
             };
             header?: {
                 "x-nc-preview"?: string;
@@ -1168,7 +1168,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Include tags in the share */
-                include_tags?: 0 | 1;
+                include_tags?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -1732,7 +1732,7 @@ export interface operations {
                 /** @description Limit to specific share types */
                 shareType?: (number | number[]) | null;
                 /** @description If a global lookup should be performed too */
-                lookup?: 0 | 1;
+                lookup?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */

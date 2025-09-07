@@ -2234,7 +2234,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Rewrite URLs to absolute ones */
-                absolute?: 0 | 1;
+                absolute?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -2286,7 +2286,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Rewrite URLs to absolute ones */
-                absolute?: 0 | 1;
+                absolute?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -4712,7 +4712,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Fallback to guest avatar if not found */
-                guestFallback?: 0 | 1;
+                guestFallback?: boolean;
             };
             header?: never;
             path: {
@@ -4766,7 +4766,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Fallback to guest avatar if not found */
-                guestFallback?: 0 | 1;
+                guestFallback?: boolean;
             };
             header?: never;
             path: {
@@ -4909,7 +4909,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Return dark avatar */
-                darkTheme?: 0 | 1 | null;
+                darkTheme?: boolean | null;
             };
             header?: never;
             path: {
@@ -5095,13 +5095,13 @@ export interface operations {
                 /** @description Height of the preview. A height of -1 will use the original image height. */
                 y?: number;
                 /** @description Preserve the aspect ratio */
-                a?: 0 | 1;
+                a?: boolean;
                 /** @description Force returning an icon */
-                forceIcon?: 0 | 1;
+                forceIcon?: boolean;
                 /** @description How to crop the image */
                 mode?: "fill" | "cover";
                 /** @description Whether to fallback to the mime icon if no preview is available */
-                mimeFallback?: 0 | 1;
+                mimeFallback?: boolean;
             };
             header?: never;
             path?: never;
@@ -5176,13 +5176,13 @@ export interface operations {
                 /** @description Height of the preview. A height of -1 will use the original image height. */
                 y?: number;
                 /** @description Preserve the aspect ratio */
-                a?: 0 | 1;
+                a?: boolean;
                 /** @description Force returning an icon */
-                forceIcon?: 0 | 1;
+                forceIcon?: boolean;
                 /** @description How to crop the image */
                 mode?: "fill" | "cover";
                 /** @description Whether to fallback to the mime icon if no preview is available */
-                mimeFallback?: 0 | 1;
+                mimeFallback?: boolean;
             };
             header?: never;
             path?: never;
