@@ -11,7 +11,7 @@
 		:item-size="PARTICIPANT_ITEM_SIZE"
 		key-field="attendeeId">
 		<template #default="{ item }">
-			<Participant :key="item.attendeeId" :participant="item" />
+			<Participant :participant="item" />
 		</template>
 		<template v-if="loading" #after>
 			<LoadingPlaceholder type="participants" :count="dummyParticipants" />

@@ -218,7 +218,6 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 		<template #default="{ item }">
 			<Conversation
 				v-if="item.type === 'conversation'"
-				:key="`conversation_${item.id}`"
 				:ref="`conversation-${item.object.token}`"
 				:item="item.object"
 				:compact="isCompact"
@@ -238,7 +237,6 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 			</NcListItem>
 			<Conversation
 				v-else-if="item.type === 'open_conversation'"
-				:key="`open-conversation_${item.id}`"
 				:item="item.object"
 				is-search-result
 				:compact="isCompact"
@@ -257,13 +255,14 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 				:hint="item.hint" />
 			<NcListItem
 				v-else-if="item.type === 'user'"
-				:key="`user_${item.id}`"
 				:data-nav-id="`user_${item.id}`"
 				:name="item.object.label"
 				:compact="isCompact"
 				@click="emit('create-and-join-conversation', item.object)">
 				<template #icon>
-					<AvatarWrapper v-bind="item.icon" />
+					<AvatarWrapper
+						:key="`user_${item.id}`"
+						v-bind="item.icon" />
 				</template>
 				<template v-if="!isCompact" #subname>
 					{{ t('spreed', 'New private conversation') }}
@@ -271,13 +270,15 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 			</NcListItem>
 			<NcListItem
 				v-else-if="item.type === 'group'"
-				:key="`group_${item.id}`"
 				:data-nav-id="`group_${item.id}`"
 				:name="item.object.label"
 				:compact="isCompact"
 				@click="emit('create-and-join-conversation', item.object)">
 				<template #icon>
-					<ConversationIcon :item="item.icon" :size="iconSize" />
+					<ConversationIcon
+						:key="`group_${item.id}`"
+						:item="item.icon"
+						:size="iconSize" />
 				</template>
 				<template v-if="!isCompact" #subname>
 					{{ t('spreed', 'New group conversation') }}
@@ -285,13 +286,15 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 			</NcListItem>
 			<NcListItem
 				v-else-if="item.type === 'circle'"
-				:key="`circle_${item.id}`"
 				:data-nav-id="`circle_${item.id}`"
 				:name="item.object.label"
 				:compact="isCompact"
 				@click="emit('create-and-join-conversation', item.object)">
 				<template #icon>
-					<ConversationIcon :item="item.icon" :size="iconSize" />
+					<ConversationIcon
+						:key="`circle_${item.id}`"
+						:item="item.icon"
+						:size="iconSize" />
 				</template>
 				<template v-if="!isCompact" #subname>
 					{{ t('spreed', 'New group conversation') }}
@@ -299,13 +302,14 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 			</NcListItem>
 			<NcListItem
 				v-else-if="item.type === 'federated'"
-				:key="`federated_${item.id}`"
 				:data-nav-id="`federated_${item.id}`"
 				:name="item.object.label"
 				:compact="isCompact"
 				@click="emit('create-and-join-conversation', item.object)">
 				<template #icon>
-					<AvatarWrapper v-bind="item.icon" />
+					<AvatarWrapper
+						:key="`federated_${item.id}`"
+						v-bind="item.icon" />
 				</template>
 				<template v-if="!isCompact" #subname>
 					{{ t('spreed', 'New group conversation') }}
