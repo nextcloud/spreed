@@ -51,6 +51,7 @@ class RoomFormatter {
 		protected UserConverter $userConverter,
 		protected IL10N $l10n,
 		protected ?string $userId,
+		protected ThreadService $threadService,
 	) {
 	}
 
@@ -457,11 +458,18 @@ class RoomFormatter {
 		}
 
 		$now = $this->timeFactory->getDateTime();
-		$expireDate = $message->getComment()->getExpireDate();
+		$expireDate = $message->getComment()?->getExpireDate();
 		if ($expireDate instanceof \DateTime && $expireDate < $now) {
 			return null;
 		}
 
-		return $message->toArray($responseFormat, null);
+		$threadId = (int)$lastMessage->getTopmostParentId() ?: (int)$lastMessage->getId();
+		try {
+			$thread = $this->threadService->findByThreadId($room->getId(), $threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
+
+		return $message->toArray($responseFormat, $thread);
 	}
 }
