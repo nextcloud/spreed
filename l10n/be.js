@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Other activities" : "Іншая актыўнасць",
     "Guest" : "Госць",
+    "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Цяпер у размовах адлюстроўваюцца будучыя званкі з прывязаных падзей календара і замены пры адсутнасці.",
     "Message deleted by author" : "Паведамленне выдалена аўтарам",
     "Missed call" : "Прапушчаны выклік",
     "File is too big" : "Файл занадта вялікі",
@@ -380,6 +381,7 @@ OC.L10N.register(
     "Send message" : "Адправіць паведамленне",
     "Send without notification" : "Адправіць без апавяшчэння",
     "Cancel editing" : "Скасаваць рэдагаванне",
+    "Replacement:" : "Замена:",
     "Upload from device" : "Запампаваць з прылады",
     "Dismiss recording" : "Адхіліць запіс",
     "New file" : "Новы файл",
