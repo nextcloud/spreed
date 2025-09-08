@@ -36,7 +36,9 @@ class DeckPluginLoader implements IEventListener {
 
 		if (str_starts_with($this->request->getPathInfo(), '/apps/deck')) {
 			Util::addScript('spreed', 'talk-collections');
+
 			Util::addScript('spreed', 'talk-deck');
+			Util::addStyle('spreed', 'talk-deck');
 		}
 	}
 }

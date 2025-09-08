@@ -140,7 +140,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 */
 	#[\Override]
 	public function load(): void {
-		Util::addStyle('spreed', 'icons');
+		Util::addStyle('spreed', 'talk-icons');
 	}
 
 	#[\Override]

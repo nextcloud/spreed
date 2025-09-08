@@ -23,7 +23,8 @@
 # PHP Dev server output (integration tests)
 /tests/integration/phpserver*.log
 
-# Compiled javascript
+# Compiled frontend assets
+/css
 /js
 
 # VScode settings

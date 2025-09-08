@@ -7,4 +7,5 @@ declare(strict_types=1);
  */
 
 \OCP\Util::addScript('spreed', 'talk-recording');
-style('spreed', 'icons');
+\OCP\Util::addStyle('spreed', 'talk-recording');
+style('spreed', 'talk-icons');
