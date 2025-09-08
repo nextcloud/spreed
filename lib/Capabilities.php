@@ -352,11 +352,11 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['call']['can-enable-sip'] = $this->talkConfig->canUserEnableSIP($user);
 		}
 
-		$supportedTaskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
-		if (isset($supportedTaskTypes[TextToTextSummary::ID])) {
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (in_array(TextToTextSummary::ID, $supportedTaskTypeIds, true)) {
 			$capabilities['features'][] = 'chat-summary-api';
 		}
-		if (isset($supportedTaskTypes[TextToTextTranslate::ID])) {
+		if (in_array(TextToTextTranslate::ID, $supportedTaskTypeIds, true)) {
 			$capabilities['config']['chat']['has-translation-task-providers'] = true;
 		}
 
