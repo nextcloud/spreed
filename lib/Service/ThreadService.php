@@ -56,7 +56,7 @@ class ThreadService {
 
 	/**
 	 * @param non-negative-int $roomId
-	 * @param list<non-negative-int> $threadId
+	 * @param list<non-negative-int> $threadIds
 	 * @return array<int, Thread> Map with thread id as key
 	 */
 	public function findByThreadIds(int $roomId, array $threadIds): array {
@@ -64,6 +64,19 @@ class ThreadService {
 		$result = [];
 		foreach ($threads as $thread) {
 			$result[$thread->getId()] = $thread;
+		}
+		return $result;
+	}
+
+	/**
+	 * @param list<non-negative-int> $threadIds
+	 * @return array<int, Thread> Map with room id as key
+	 */
+	public function preloadThreads(array $threadIds): array {
+		$threads = $this->threadMapper->getForIds($threadIds);
+		$result = [];
+		foreach ($threads as $thread) {
+			$result[$thread->getRoomId()] = $thread;
 		}
 		return $result;
 	}
