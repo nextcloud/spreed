@@ -219,12 +219,15 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 			}
 
 			searchResults.value = searchResults.value.concat(entries.map((entry: UnifiedSearchResultEntry) => {
+				const threadId = (entry.attributes.threadId !== entry.attributes.messageId) ? entry.attributes.threadId : undefined
+
 				return {
 					...entry,
 					to: {
 						name: 'conversation',
 						hash: `#message_${entry.attributes.messageId}`,
 						params: { token: entry.attributes.conversation },
+						query: { threadId },
 					},
 				}
 			}))
