@@ -271,7 +271,10 @@ export default {
 
 	computed: {
 		promotedParticipantModel() {
-			return this.forcePromotedModel ?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
+			// Ensure at least one participant is always promoted to show in autopilot
+			return this.forcePromotedModel
+				?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
+				?? this.callParticipantModels[0]
 		},
 
 		callParticipantModels() {
@@ -699,14 +702,20 @@ export default {
 		},
 
 		_setPromotedParticipant() {
-			Object.values(this.sharedDatas).forEach((sharedData) => {
-				sharedData.promoted = false
-			})
+			let promotedPeerId = null
 
 			if (!this.screenSharingActive && this.speakers.length) {
-				this.sharedDatas[this.speakers[0].id].promoted = true
+				promotedPeerId = this.speakers[0].id
 			} else if (this.shownRemoteScreenPeerId && this.sharedDatas[this.shownRemoteScreenPeerId]) {
-				this.sharedDatas[this.shownRemoteScreenPeerId].promoted = true
+				promotedPeerId = this.shownRemoteScreenPeerId
+			}
+
+			// Ensure at least one participant is always promoted to show in autopilot
+			if (promotedPeerId && this.sharedDatas[promotedPeerId]) {
+				Object.keys(this.sharedDatas).forEach((peerId) => {
+					this.sharedDatas[peerId].promoted = false
+				})
+				this.sharedDatas[promotedPeerId].promoted = true
 			}
 
 			this.adjustSimulcastQuality()
