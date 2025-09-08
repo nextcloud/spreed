@@ -95,6 +95,7 @@ export type AutocompleteResponse = ApiResponse<operationsCore['auto_complete-get
 type MessageSearchResultAttributes = {
 	conversation: string
 	messageId: string
+	threadId: string
 	actorType: string
 	actorId: string
 	timestamp: string
