@@ -32,5 +32,6 @@ class RegisterOperationsListener implements IEventListener {
 
 		$event->registerOperation($this->operation);
 		Util::addScript('spreed', 'talk-flow');
+		Util::addStyle('spreed', 'talk-flow');
 	}
 }
