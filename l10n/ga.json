@@ -783,6 +783,7 @@
     "Leave call" : "Fág glaoch",
     "Navigating away from the page will leave the call in {conversation}" : "Má sheolann tú amach ón leathanach fágfar an glao i {conversation}",
     "Stay in call" : "Fan ar glaoch",
+    "Error occurred when getting the conversation information" : "Tharla earráid agus faisnéis an chomhrá á fáil",
     "Discuss this file" : "Pléigh an comhad seo",
     "Share this file with others to discuss it" : "Roinn an comhad seo le daoine eile chun é a phlé",
     "Share this file" : "Roinn an comhad seo",
