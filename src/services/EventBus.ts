@@ -28,7 +28,7 @@ export type Events = {
 	'editing-message': void
 	'editing-message-processing': { messageId: number, value: boolean }
 	'focus-chat-input': void
-	'focus-message': number // TODO: listener method can receive ...[messageId, smooth, highlightAnimation]
+	'focus-message': { messageId: number, smooth?: boolean, highlight?: boolean }
 	'forbidden-route': { error: string }
 	'joined-conversation': { token: string }
 	'poll-drafts-open': { token: string, selector?: string }

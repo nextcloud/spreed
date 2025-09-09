@@ -565,20 +565,20 @@ export default {
 			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
-				this.focusMessage(focusMessageId, false)
+				this.focusMessage({ messageId: focusMessageId, smooth: false, highlight: true })
 				return
 			}
 
 			if (this.visualLastReadMessageId) {
 				// scroll to last read message if visible in the current pages
-				isFocused = this.focusMessage(this.visualLastReadMessageId, false, false)
+				isFocused = this.focusMessage({ messageId: this.visualLastReadMessageId, smooth: false, highlight: false })
 			}
 
 			if (!isFocused) {
 				// Safeguard 1: scroll to first visible message before the read marker
 				const fallbackLastReadMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, this.visualLastReadMessageId)
 				if (fallbackLastReadMessageId) {
-					isFocused = this.focusMessage(fallbackLastReadMessageId, false, false)
+					isFocused = this.focusMessage({ messageId: fallbackLastReadMessageId, smooth: false, highlight: false })
 				}
 
 				if (!isFocused) {
@@ -909,12 +909,13 @@ export default {
 		/**
 		 * Temporarily highlight the given message id with a fade out effect.
 		 *
-		 * @param {number} messageId message id
-		 * @param {boolean} smooth true to smooth scroll, false to jump directly
-		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
+		 * @param payload function payload
+		 * @param payload.messageId message id
+		 * @param payload.smooth true to smooth scroll, false to jump directly
+		 * @param payload.highlight true to highlight and set focus to the message
 		 * @return {boolean} true if element was found, false otherwise
 		 */
-		focusMessage(messageId, smooth = true, highlightAnimation = true) {
+		focusMessage({ messageId, smooth = true, highlight = true }) {
 			const element = document.getElementById(`message_${messageId}`)
 			if (!element) {
 				// Message id doesn't exist
@@ -963,7 +964,7 @@ export default {
 
 			this.checkChatNotScrollable()
 
-			if (highlightAnimation && scrollElement === element) {
+			if (highlight && scrollElement === element) {
 				// element is visible, highlight it
 				element.classList.add('message--highlighted')
 			}
