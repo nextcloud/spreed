@@ -2795,6 +2795,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($result['attributes.conversation'])) {
 				$result['attributes.conversation'] = self::$identifierToToken[$result['attributes.conversation']];
 			}
+			if (isset($result['attributes.threadId'])) {
+				$result['attributes.threadId'] = self::$titleToThreadId[$result['attributes.threadId']];
+			}
 			if (isset($result['attributes.messageId'])) {
 				$result['attributes.messageId'] = self::$textToMessageId[$result['attributes.messageId']];
 			}
@@ -2814,6 +2817,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($actual['attributes']['messageId'])) {
 				$compare['attributes.messageId'] = $actual['attributes']['messageId'];
+			}
+			if (isset($actual['attributes']['threadId'])) {
+				$compare['attributes.threadId'] = $actual['attributes']['threadId'];
 			}
 			return $compare;
 		}, $results));

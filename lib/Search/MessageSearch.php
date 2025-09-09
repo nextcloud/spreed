@@ -19,7 +19,9 @@ use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IL10N;
@@ -50,6 +52,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		protected IL10N $l,
 		protected Config $talkConfig,
 		protected IUserSession $userSession,
+		protected ThreadService $threadService,
 	) {
 	}
 
@@ -282,6 +285,12 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			}
 		}
 
+		$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+		try {
+			$thread = $this->threadService->findByThreadId($room->getId(), $threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
 		$entry = new SearchResultEntry(
 			$iconUrl,
 			str_replace(
@@ -290,13 +299,18 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				$subline
 			),
 			$messageStr,
-			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $comment->getId(),
+			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()])
+				. ($thread !== null ? '?threadId=' . $thread->getId() : '')
+				. '#message_' . $comment->getId(),
 			'icon-talk', // $iconClass,
 			true
 		);
 
 		$entry->addAttribute('conversation', $room->getToken());
 		$entry->addAttribute('messageId', $comment->getId());
+		if ($thread !== null) {
+			$entry->addAttribute('threadId', (string)$thread->getId());
+		}
 		$entry->addAttribute('actorType', $comment->getActorType());
 		$entry->addAttribute('actorId', $comment->getActorId());
 		$entry->addAttribute('timestamp', '' . $comment->getCreationDateTime()->getTimestamp());
