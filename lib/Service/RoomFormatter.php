@@ -14,6 +14,7 @@ use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -67,6 +68,7 @@ class RoomFormatter {
 		bool $isSIPBridgeRequest = false,
 		bool $isListingBreakoutRooms = false,
 		bool $skipLastMessage = false,
+		?Thread $thread = null,
 	): array {
 		return $this->formatRoomV4(
 			$responseFormat,
@@ -77,6 +79,7 @@ class RoomFormatter {
 			$isSIPBridgeRequest,
 			$isListingBreakoutRooms,
 			$skipLastMessage,
+			$thread,
 		);
 	}
 
@@ -93,6 +96,7 @@ class RoomFormatter {
 		bool $isSIPBridgeRequest,
 		bool $isListingBreakoutRooms,
 		bool $skipLastMessage,
+		?Thread $thread = null,
 	): array {
 		$roomData = [
 			'id' => $room->getId(),
@@ -398,12 +402,13 @@ class RoomFormatter {
 
 		$skipLastMessage = $skipLastMessage || $attendee->isSensitive();
 		$lastMessage = $skipLastMessage ? null : $room->getLastMessage();
-		if (!$room->isFederatedConversation() && $lastMessage instanceof IComment) {
+		if ($lastMessage instanceof IComment && !$room->isFederatedConversation()) {
 			$lastMessageData = $this->formatLastMessage(
 				$responseFormat,
 				$room,
 				$currentParticipant,
 				$lastMessage,
+				$thread,
 			);
 			if ($lastMessageData !== null) {
 				$roomData['lastMessage'] = $lastMessageData;
@@ -449,6 +454,7 @@ class RoomFormatter {
 		Room $room,
 		Participant $participant,
 		IComment $lastMessage,
+		?Thread $thread = null,
 	): ?array {
 		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
 		$this->messageParser->parseMessage($message, true);
@@ -461,13 +467,6 @@ class RoomFormatter {
 		$expireDate = $message->getComment()?->getExpireDate();
 		if ($expireDate instanceof \DateTime && $expireDate < $now) {
 			return null;
-		}
-
-		$threadId = (int)$lastMessage->getTopmostParentId() ?: (int)$lastMessage->getId();
-		try {
-			$thread = $this->threadService->findByThreadId($room->getId(), $threadId);
-		} catch (DoesNotExistException) {
-			$thread = null;
 		}
 
 		return $message->toArray($responseFormat, $thread);
