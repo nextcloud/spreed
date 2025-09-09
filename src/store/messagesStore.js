@@ -1336,6 +1336,12 @@ const actions = {
 		message.token = targetToken
 		// Do not forward the message silently
 		message.silent = false
+		// Reset thread details
+		delete message.threadId
+		delete message.isThread
+		delete message.threadTitle
+		delete message.threadReplies
+
 		if (message.parent) {
 			delete message.parent
 		}
