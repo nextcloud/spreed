@@ -16,8 +16,8 @@
 			:class="{ 'top-bar__icon-wrapper--thread': !isInCall && currentThread }"
 			role="button"
 			:tabindex="0"
-			:title="t('spreed', 'Back')"
-			:aria-label="t('spreed', 'Back')"
+			:title="conversationIconLabel"
+			:aria-label="conversationIconLabel"
 			@click="handleClickAvatar">
 			<IconArrowLeft
 				v-show="currentThread"
@@ -371,6 +371,10 @@ export default {
 			// If second attendee is not currently in the room,
 			// or not invited yet to the room, show as offline
 			return !peer || peer.sessionIds.length === 0
+		},
+
+		conversationIconLabel() {
+			return this.currentThread ? t('spreed', 'Back') : t('spreed', 'Conversation settings')
 		},
 
 		participantsInCall() {
