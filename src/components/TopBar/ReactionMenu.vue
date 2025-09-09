@@ -117,10 +117,11 @@ export default {
 <style lang="scss" scoped>
 .reaction {
 	&__group {
+		// Override NcActionButtonGroup styles to fit reactions in a compact way
 		:deep(.nc-button-group-content) {
 			flex-wrap: wrap;
 			justify-content: flex-start;
-			gap: 0;
+			gap: 0 !important;
 			width: calc(var(--reactions-in-single-row) * var(--default-clickable-area))
 		}
 	}
