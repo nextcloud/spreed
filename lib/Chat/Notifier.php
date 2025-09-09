@@ -269,9 +269,9 @@ class Notifier {
 		}
 
 		// Handle participants that only subscribed with Participant::NOTIFY_ALWAYS to the thread, but not the conversation
-		$threadAttendeeIds = array_filter($threadAttendees, static function (ThreadAttendee $threadAttendee): int|bool {
-			return $threadAttendee->getNotificationLevel() === Participant::NOTIFY_ALWAYS ? $threadAttendee->getAttendeeId() : false;
-		});
+		$threadAttendeeIds = array_map(static fn (ThreadAttendee $threadAttendee): int => $threadAttendee->getAttendeeId(),
+			array_filter($threadAttendees, static fn (ThreadAttendee $threadAttendee): bool => $threadAttendee->getNotificationLevel() === Participant::NOTIFY_ALWAYS)
+		);
 		if (!empty($threadAttendeeIds)) {
 			$participantIds = array_map(static fn (Participant $participant): int => $participant->getAttendee()->getId(), $participants);
 			$missingParticipantIds = array_diff($threadAttendeeIds, $participantIds);
