@@ -427,17 +427,6 @@ export default {
 			},
 		},
 
-		unreadMessagesCounter(newValue, oldValue) {
-			if (!this.isInCall || this.opened) {
-				return
-			}
-
-			// new messages arrived
-			if (newValue > 0 && oldValue === 0 && !this.hasUnreadMentions) {
-				this.notifyUnreadMessages(t('spreed', 'You have new unread messages in the chat.'))
-			}
-		},
-
 		hasUnreadMentions(newValue) {
 			if (!this.isInCall || this.opened) {
 				return
