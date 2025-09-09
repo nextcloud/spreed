@@ -928,7 +928,8 @@ export default {
 			let scrollElement = element
 			if (this.isChatVisible && scrollElement.offsetParent === null) {
 				console.debug('Message to focus is hidden, scrolling to its nearest visible parent', messageId)
-				scrollElement = scrollElement.closest('ul[style="display: none;"]').parentElement
+				const closestParent = scrollElement.closest('ul[style="display: none;"]') ?? scrollElement.closest('ul')
+				scrollElement = closestParent.parentElement
 			}
 
 			console.debug('Scrolling to a focused message programmatically')
