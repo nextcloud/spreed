@@ -244,7 +244,7 @@ export function useGetMessagesProvider() {
 				: conversationLastMessageId.value
 		}
 
-		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, contextThreadId.value)
+		await checkContextAndFocusMessage(to.params.token, contextMessageId.value, contextThreadId.value, focusMessageId !== null)
 	}
 
 	/**
@@ -253,8 +253,9 @@ export function useGetMessagesProvider() {
 	 * @param token
 	 * @param messageId
 	 * @param threadId
+	 * @param highlight
 	 */
-	async function checkContextAndFocusMessage(token: string, messageId: number, threadId: number) {
+	async function checkContextAndFocusMessage(token: string, messageId: number, threadId: number, highlight: boolean = false) {
 		if (!chatStore.hasMessage(token, { messageId, threadId })) {
 			// message not found in the list, need to fetch it first
 			await getMessageContext(token, messageId, threadId)
@@ -268,7 +269,7 @@ export function useGetMessagesProvider() {
 		// need some delay (next tick is too short) to be able to run
 		// after the browser's native "scroll to anchor" from the hash
 		window.setTimeout(() => {
-			EventBus.emit('focus-message', messageId)
+			EventBus.emit('focus-message', { messageId, highlight })
 		}, 2)
 	}
 
@@ -316,7 +317,7 @@ export function useGetMessagesProvider() {
 				return
 			}
 		} else {
-			await checkContextAndFocusMessage(token, contextMessageId.value, contextThreadId.value)
+			await checkContextAndFocusMessage(token, contextMessageId.value, contextThreadId.value, focusMessageId !== null)
 		}
 
 		isInitialisingMessages.value = false

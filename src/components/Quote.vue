@@ -137,7 +137,7 @@ function handleQuoteClick() {
 
 	if (route.hash === hash.value) {
 		// Already on this message route, just trigger highlight
-		EventBus.emit('focus-message', message.id)
+		EventBus.emit('focus-message', { messageId: message.id })
 	}
 }
 </script>
