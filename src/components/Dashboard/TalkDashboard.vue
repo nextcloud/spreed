@@ -524,7 +524,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	flex-grow: 1;
 
 	&> div {
-		max-height: 360px;
+		max-height: 320px;
 	}
 }
 
@@ -540,7 +540,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard__conversations-list {
 	margin: var(--default-grid-baseline) 0;
-	height: 225px;
 	line-height: 20px;
 }
 
