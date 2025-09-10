@@ -76,7 +76,7 @@ const active = computed(() => {
 function handleResultClick() {
 	if (route.hash === '#message_' + props.messageId) {
 		// Already on this message route, just trigger highlight
-		EventBus.emit('focus-message', props.messageId)
+		EventBus.emit('focus-message', { messageId: props.messageId })
 	}
 }
 </script>
