@@ -110,6 +110,7 @@
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
+					:is-overlap="showFullPage"
 					:call-participant-models="callParticipantModels"
 					:screens="screens"
 					:local-media-model="localMediaModel"
@@ -863,7 +864,8 @@ export default {
 	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
 	--top-bar-height: 51px;
-	--bottom-bar-height: 56px;
+	--wrapper-padding: calc(var(--default-grid-baseline) * 2.5);
+	--bottom-bar-height: calc(var(--default-clickable-area) + var(--wrapper-padding) * 2);
 
 	&.call-container__blurred {
 		backdrop-filter: blur(25px);
@@ -878,13 +880,12 @@ export default {
 	width: 100%;
 	height: calc(100% - (var(--top-bar-height) + var(--bottom-bar-height)));
 	top: var(--top-bar-height);
-	bottom: var(--bottom-bar-height);
 	overflow: hidden;
 	display: flex;
 	justify-content: space-around;
 	align-items: flex-end;
 	flex-direction: column;
-	padding-inline: calc(var(--default-grid-baseline) * 2);
+	padding-inline: var(--wrapper-padding);
 
 	&.is-sidebar {
 		width: 100%;

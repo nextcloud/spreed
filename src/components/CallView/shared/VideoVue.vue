@@ -663,7 +663,7 @@ export default {
 	position: absolute;
 
 	&.one-to-one {
-		width: calc(100% - var(--grid-gap) * 2);
+		width: calc(100% - var(--wrapper-padding) * 2);
 	}
 
 	& .videoWrapper {

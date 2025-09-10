@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, transparent: isLessThanTwoVideos }">
+	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, overlap: isOverlap }">
 		<NcButton
 			v-if="isStripe && !isRecording"
 			class="stripe--collapse"
@@ -47,7 +47,7 @@
 						@mousemove="handleMovement"
 						@wheel="debounceHandleWheelEvent"
 						@keydown="handleMovement">
-						<template v-if="!devMode && (!isLessThanTwoVideos || !isStripe)">
+						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<VideoVue
 								v-for="callParticipantModel in displayedVideos"
@@ -112,7 +112,7 @@
 					v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
-					:class="{ 'local-video--highlighted': isLessThanTwoVideos }"
+					:class="{ 'local-video--highlighted': isLessThanTwoVideos && isStripe }"
 					:is-stripe="true"
 					:show-controls="false"
 					:token="token"
@@ -251,6 +251,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		isOverlap: {
+			type: Boolean,
+			default: false,
 		},
 
 		sharedDatas: {
@@ -969,10 +974,6 @@ export default {
 	width: 100%;
 }
 
-.grid-main-wrapper.transparent {
-	background: transparent;
-}
-
 .grid-main-wrapper.is-grid {
 	height: 100%;
 }
@@ -983,12 +984,6 @@ export default {
 	position: relative;
 	bottom: 0;
 	inset-inline-start: 0;
-
-	&:has(.stripe-wrapper) {
-		margin-top: var(--grid-gap);
-		bottom: var(--grid-gap);
-		padding-inline: var(--grid-gap);
-	}
 }
 
 .grid {
@@ -1120,7 +1115,7 @@ export default {
 
 .stripe--collapse {
 	position: absolute !important;
-	top: calc(-1 * var(--default-clickable-area));
+	top: calc(-1 * (var(--default-clickable-area) + var(--grid-gap)));
 	inset-inline-end: var(--navigation-position);
 }
 
@@ -1139,6 +1134,10 @@ export default {
 		}
 	}
 
+	.overlap & {
+		inset-inline-end: var(--grid-gap);
+	}
+
 	&:active {
 		/* needed again to override default active button style */
 		background: none;
@@ -1146,6 +1145,8 @@ export default {
 }
 
 .local-video--highlighted {
+	inset-block-end: var(--grid-gap);
+	inset-inline-end: var(--grid-gap);
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
