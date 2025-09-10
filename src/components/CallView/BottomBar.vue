@@ -322,11 +322,10 @@ useHotKey('r', toggleHandRaised)
 	position: absolute;
 	bottom: 0;
 	inset-inline: 0;
-	height: 56px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 calc(var(--default-grid-baseline) * 2);
+	padding: var(--wrapper-padding);
 	z-index: 10;
 
 	:deep(.button-vue--tertiary) {
