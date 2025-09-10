@@ -283,7 +283,7 @@ class Notifier {
 			}
 		}
 
-		$notification = $this->createNotification($chat, $comment, 'chat');
+		$notification = $this->createNotification($chat, $comment, 'chat', threadId: $threadId);
 		foreach ($participants as $participant) {
 			$attendeeId = $participant->getAttendee()->getId();
 			$shouldParticipantBeNotified = $this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers);
@@ -634,18 +634,24 @@ class Notifier {
 	 * Creates a notification for the given chat message comment and mentioned
 	 * user ID.
 	 */
-	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = [], ?IComment $reaction = null): INotification {
+	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = [], ?IComment $reaction = null, ?int $threadId = null): INotification {
 		$subjectData['userType'] = $reaction ? $reaction->getActorType() : $comment->getActorType();
 		$subjectData['userId'] = $reaction ? $reaction->getActorId() : $comment->getActorId();
+
+		$messageData = [
+			'commentId' => $comment->getId(),
+		];
+
+		if ($threadId !== null && $threadId !== 0) {
+			$messageData['threadId'] = $threadId;
+		}
 
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
 			->setObject('chat', $chat->getToken())
 			->setSubject($subject, $subjectData)
-			->setMessage($comment->getVerb(), [
-				'commentId' => $comment->getId(),
-			])
+			->setMessage($comment->getVerb(), $messageData)
 			->setDateTime($reaction ? $reaction->getCreationDateTime() : $comment->getCreationDateTime());
 
 		return $notification;

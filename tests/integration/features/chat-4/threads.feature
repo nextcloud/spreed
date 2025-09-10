@@ -89,9 +89,9 @@ Feature: chat-4/threads
       | Message 1 | Thread 1 | 2            | Message 1-2   | 1                   | Message 1    | Message 1-2 |
     And user "participant2" sends reply "Message 1-3" on thread "Thread 1" to room "room" with 201
     And user "participant1" has the following notifications
-      | app    | object_type | object_id        | subject                                                               |
-      | spreed | chat        | room/Message 1-3 | participant2-displayname sent a message in conversation room          |
-      | spreed | chat        | room/Message 1-2 | participant2-displayname replied to your message in conversation room |
+      | app    | object_type | object_id                 | subject                                                               |
+      | spreed | chat        | room/Message 1-3/Thread 1 | participant2-displayname sent a message in conversation room          |
+      | spreed | chat        | room/Message 1-2          | participant2-displayname replied to your message in conversation room |
 
   Scenario: Thread titles are trimmed
     Given user "participant1" creates room "room" (v4)
