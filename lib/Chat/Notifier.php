@@ -69,7 +69,7 @@ class Notifier {
 	 * @return string[] Users that were mentioned
 	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
-	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent, ?Participant $participant = null): array {
+	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent, ?Participant $participant = null, ?int $threadId = null): array {
 		$usersToNotify = $this->getUsersToNotify($chat, $comment, $alreadyNotifiedUsers, $participant);
 
 		if (!$usersToNotify) {
@@ -78,7 +78,7 @@ class Notifier {
 
 		$shouldFlush = false;
 		if (!$silent) {
-			$notification = $this->createNotification($chat, $comment, 'mention');
+			$notification = $this->createNotification($chat, $comment, 'mention', threadId: $threadId);
 			$parameters = $notification->getSubjectParameters();
 			$shouldFlush = $this->notificationManager->defer();
 		}
@@ -203,7 +203,7 @@ class Notifier {
 	 * @return array[] Actor that was replied to
 	 * @psalm-return array<int, array{id: string, type: string, reason: string}>
 	 */
-	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, bool $silent): array {
+	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, bool $silent, ?int $threadId = null): array {
 		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS && $replyTo->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 			// No reply notification when the replyTo-author was not a user or federated user
 			return [];
@@ -225,7 +225,7 @@ class Notifier {
 		}
 
 		if (!$silent) {
-			$notification = $this->createNotification($chat, $comment, 'reply');
+			$notification = $this->createNotification($chat, $comment, 'reply', threadId: $threadId);
 			$notification->setUser($replyTo->getActorId());
 			$notification->setPriorityNotification($shouldMentionedUserBeNotified === self::PRIORITY_IMPORTANT);
 			$this->notificationManager->notify($notification);
