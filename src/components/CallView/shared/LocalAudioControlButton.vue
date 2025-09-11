@@ -51,6 +51,7 @@
 			<NcActionButton
 				v-for="device in audioInputDevices"
 				:key="device.deviceId ?? 'none'"
+				class="audio-selector__action"
 				type="radio"
 				:model-value="audioInputId"
 				:value="device.deviceId"
@@ -64,6 +65,7 @@
 				<NcActionButton
 					v-for="device in audioOutputDevices"
 					:key="device.deviceId ?? 'none'"
+					class="audio-selector__action"
 					type="radio"
 					:model-value="audioOutputId"
 					:value="device.deviceId"
@@ -316,27 +318,29 @@ export default {
 	}
 }
 
-// Overwriting NcActionButton styles
-:deep(.action-button__longtext) {
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding: 0;
-	max-width: 350px;
-}
+.audio-selector__action {
+	// Overwriting NcActionButton styles
+	:deep(.action-button__longtext) {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0;
+		max-width: 350px;
+	}
 
-:deep(.action-button__longtext-wrapper) {
-	max-width: 350px;
-}
+	:deep(.action-button__longtext-wrapper) {
+		max-width: 350px;
+	}
 
-:deep(.action-button__icon) {
-	width: 0;
-	margin-inline-start: calc(var(--default-grid-baseline) * 3);
-}
+	:deep(.action-button__icon) {
+		width: 0;
+		margin-inline-start: calc(var(--default-grid-baseline) * 3);
+	}
 
-:deep(.action-button > span) {
-	height: var(--default-clickable-area);
+	:deep(.action-button > span) {
+		height: var(--default-clickable-area);
+	}
 }
 </style>
