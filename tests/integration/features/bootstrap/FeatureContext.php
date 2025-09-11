@@ -2845,6 +2845,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareThreadsResponse($formData, $results);
 	}
 
+	#[Then('/^user "([^"]*)" sees (\d+) number of subscribed threads with (\d+) offset(?: \((v1)\))?$/')]
+	public function userSeesNumberOfSubscribedThreads(string $user, int $limit, int $offset, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/subscribed-threads?limit=' . $limit . '&offset=' . $offset);
+		$this->assertStatusCode($this->response, 200);
+
+		$results = $this->getDataFromResponse($this->response);
+		$this->compareThreadsResponse($formData, $results);
+	}
+
 	#[Then('/^user "([^"]*)" creates thread "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userCreatesThreadInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
