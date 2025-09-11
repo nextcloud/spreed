@@ -3,53 +3,55 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<VueDraggableResizable
-		v-if="!isCollapsed"
-		ref="presenterOverlay"
-		parent
-		class="presenter-overlay"
-		:resizable="false"
-		:h="presenterOverlaySize"
-		:w="presenterOverlaySize"
-		:x="isDirectionRTL ? parentWidth - presenterOverlaySize - 10 : 10"
-		:y="10"
-		@dragging="isDragging = true"
-		@dragstop="isDragging = false">
-		<LocalVideo
-			v-if="isLocalPresenter"
-			class="presenter-overlay__video"
-			:token="token"
-			:local-media-model="localMediaModel"
-			:local-call-participant-model="model"
-			is-presenter-overlay
-			un-selectable
-			hide-bottom-bar
-			@click-presenter="$emit('click')" />
-		<VideoVue
-			v-else
-			:token="token"
-			:class="{ dragging: isDragging }"
-			class="presenter-overlay__video"
-			:model="model"
-			:shared-data="sharedData"
-			is-presenter-overlay
-			un-selectable
-			hide-bottom-bar
-			@click-presenter="$emit('click')" />
-	</VueDraggableResizable>
+	<div ref="presenterOverlayContainer" class="presenter-overlay__container">
+		<VueDraggableResizable
+			v-if="!isCollapsed"
+			ref="presenterOverlay"
+			parent
+			class="presenter-overlay"
+			:resizable="false"
+			:h="presenterOverlaySize"
+			:w="presenterOverlaySize"
+			:x="isDirectionRTL ? parentWidth - presenterOverlaySize - 10 : 10"
+			:y="10"
+			@dragging="isDragging = true"
+			@dragstop="isDragging = false">
+			<LocalVideo
+				v-if="isLocalPresenter"
+				class="presenter-overlay__video"
+				:token="token"
+				:local-media-model="localMediaModel"
+				:local-call-participant-model="model"
+				is-presenter-overlay
+				un-selectable
+				hide-bottom-bar
+				@click-presenter="$emit('click')" />
+			<VideoVue
+				v-else
+				:token="token"
+				:class="{ dragging: isDragging }"
+				class="presenter-overlay__video"
+				:model="model"
+				:shared-data="sharedData"
+				is-presenter-overlay
+				un-selectable
+				hide-bottom-bar
+				@click-presenter="$emit('click')" />
+		</VueDraggableResizable>
 
-	<!-- presenter button when presenter overlay is collapsed -->
-	<NcButton
-		v-else
-		:aria-label="t('spreed', 'Show presenter')"
-		:title="t('spreed', 'Show presenter')"
-		class="presenter-overlay--collapsed"
-		variant="tertiary-no-background"
-		@click="$emit('click')">
-		<template #icon>
-			<AccountBox fill-color="#ffffff" :size="20" />
-		</template>
-	</NcButton>
+		<!-- presenter button when presenter overlay is collapsed -->
+		<NcButton
+			v-else
+			:aria-label="t('spreed', 'Show presenter')"
+			:title="t('spreed', 'Show presenter')"
+			class="presenter-overlay--collapsed"
+			variant="tertiary-no-background"
+			@click="$emit('click')">
+			<template #icon>
+				<AccountBox fill-color="#ffffff" :size="20" />
+			</template>
+		</NcButton>
+	</div>
 </template>
 
 <script>
@@ -127,7 +129,7 @@ export default {
 
 	mounted() {
 		this.resizeObserver = new ResizeObserver(this.updateSize)
-		this.resizeObserver.observe(this.$refs.presenterOverlay.$el.parentElement)
+		this.resizeObserver.observe(this.$refs.presenterOverlayContainer)
 	},
 
 	beforeUnmount() {
@@ -139,8 +141,12 @@ export default {
 	methods: {
 		t,
 		updateSize() {
+			if (!this.$refs.presenterOverlay) {
+				// overlay is collapsed, do not process size update
+				return
+			}
 			// Size should be proportionate to the screen share size
-			const newSize = Math.round(this.$refs.presenterOverlay.$el.parentElement.clientWidth * 0.1)
+			const newSize = Math.round(this.$refs.presenterOverlayContainer.clientWidth * 0.1)
 			this.presenterOverlaySize = Math.min(Math.max(newSize, 100), 242)
 			// FIXME: inner method should be triggered to re-parent element
 			this.$refs.presenterOverlay.checkParentSize()
@@ -158,11 +164,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.presenter-overlay {
+.presenter-overlay__container {
 	position: absolute;
-	top: 0;
-	/* stylelint-disable-next-line csstools/use-logical */
-	left: 0;
+	inset: 0;
+
+	// Make container transparent to user events
+	pointer-events: none;
+
+	& > * {
+		pointer-events: auto;
+	}
 }
 
 .presenter-overlay__video {
