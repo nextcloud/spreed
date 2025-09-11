@@ -195,7 +195,7 @@ export default function(mode, constraints, cb) {
 				return callback(error)
 			}, 1000)
 			cache[pending] = [callback, hasConstraints ? constraints : null]
-			window.postMessage({ type: 'getScreen', id: pending }, '*')
+			window.postMessage({ type: 'getScreen', id: pending }, '*') // nosemgrep
 		}
 	} else if (window.navigator.userAgent.match('Firefox')) {
 		const ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10)

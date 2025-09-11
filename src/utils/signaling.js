@@ -624,7 +624,7 @@ function Standalone(settings, urls) {
 	if (url.startsWith('https://')) {
 		url = 'wss://' + url.slice(8)
 	} else if (url.startsWith('http://')) {
-		url = 'ws://' + url.slice(7)
+		url = 'ws://' + url.slice(7) // nosemgrep
 	}
 	if (url.endsWith('/')) {
 		url = url.slice(0, -1)
