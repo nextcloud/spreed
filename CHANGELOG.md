@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0-rc.2 – 2025-09-11
+### Fixed
+- fix(chat): send messages with reduced conversation data available
+  [#15836](https://github.com/nextcloud/spreed/pull/15836)
+- fix(call): restore participant videoframe after sharing a screen
+  [#15853](https://github.com/nextcloud/spreed/pull/15853)
+- fix(threads): navigate to thread messages from search results
+  [#15858](https://github.com/nextcloud/spreed/pull/15858)
+- fix(chat): forward thread messages to other conversations
+  [#15866](https://github.com/nextcloud/spreed/pull/15866)
+
 ## 22.0.0-rc.1 – 2025-09-04
 ### Added
 - feat(hosted-hpb): Support setting the TURN and STUN server if included
