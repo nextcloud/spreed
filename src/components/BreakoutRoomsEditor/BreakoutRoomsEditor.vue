@@ -143,7 +143,7 @@ export default {
 
 	watch: {
 		amount(value) {
-			this.isInvalidAmount = isNaN(value) || !this.$refs.inputField.$refs['input-key'].checkValidity()
+			this.isInvalidAmount = isNaN(value) || !this.$refs.inputField.$refs.input?.checkValidity()
 		},
 	},
 
