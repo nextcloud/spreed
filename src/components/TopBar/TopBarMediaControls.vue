@@ -431,23 +431,6 @@ export default {
 					case 'PERMISSION_DENIED':
 					case 'NotAllowedError':
 						break
-					case 'FF52_REQUIRED':
-						showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
-						break
-					case 'EXTENSION_UNAVAILABLE':
-						if (window.chrome) { // Chrome
-							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol'
-						}
-
-						if (extensionURL) {
-							const text = t('spreed', 'Screensharing extension is required to share your screen.')
-							const element = '<a href="' + extensionURL + '" target="_blank">' + escapeHtml(text) + '</a>'
-
-							showMessage(element, { isHTML: true })
-						} else {
-							showMessage(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
-						}
-						break
 					default:
 						showMessage(t('spreed', 'An error occurred while starting screensharing.'))
 						break
