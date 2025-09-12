@@ -28,11 +28,11 @@ export const debugTimer = {
 		timersPool[name] = performance.now()
 	},
 	end: (name: string, payload: unknown) => {
-		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
+		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload) // nosemgrep
 		delete timersPool[name]
 	},
 	tick: (name: string, payload: unknown) => {
-		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
+		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload) // nosemgrep
 		timersPool[name] = performance.now()
 	},
 }
