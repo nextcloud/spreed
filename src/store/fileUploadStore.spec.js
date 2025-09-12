@@ -5,7 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { getUploader } from '@nextcloud/upload'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue'
