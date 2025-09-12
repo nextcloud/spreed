@@ -49,6 +49,8 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
  * @param payload.silent
  * @param payload.threadId
  * @param payload.isThread
+ * @param payload.threadTitle
+ * @param payload.threadReplies
  */
 export function prepareTemporaryMessage({
 	message,
