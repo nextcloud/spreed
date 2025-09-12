@@ -26,6 +26,8 @@ use OCP\DB\Types;
  * @method string getActorId()
  * @method void setNotificationLevel(int $notificationLevel)
  * @method int getNotificationLevel()
+ * @method void setSubscribed(bool $subscribed)
+ * @method int getSubscribed()
  *
  * @psalm-import-type TalkThreadAttendee from ResponseDefinitions
  */
@@ -36,6 +38,7 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected int $notificationLevel = 0;
+	protected bool $subscribed = true;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -44,6 +47,7 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 		$this->addType('actorType', Types::STRING);
 		$this->addType('actorId', Types::STRING);
 		$this->addType('notificationLevel', Types::INTEGER);
+		$this->addType('subscribed', Types::BOOLEAN);
 	}
 
 	public static function createFromRow(array $row): ThreadAttendee {
@@ -65,6 +69,7 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 		$attendee->setNotificationLevel(Participant::NOTIFY_DEFAULT);
 		$attendee->setActorType($participant->getAttendee()->getActorType());
 		$attendee->setActorId($participant->getAttendee()->getActorId());
+		$attendee->setSubscribed(false);
 		return $attendee;
 	}
 
@@ -75,6 +80,7 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'notificationLevel' => min(3, max(0, $this->getNotificationLevel())),
+			'subscribed' => $this->getSubscribed() && $this->getNotificationLevel() !== Participant::NOTIFY_NEVER,
 		];
 	}
 }
