@@ -104,7 +104,7 @@ class ThreadService {
 		$query->select('a.*', 't.last_message_id', 't.num_replies', 't.last_activity', 't.name')
 			->selectAlias('t.id', 't_id')
 			->from('talk_thread_attendees', 'a')
-			->leftJoin('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
+			->join('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
 			->andWhere($query->expr()->neq('a.notification_level', $query->createNamedParameter(Participant::NOTIFY_NEVER)))
@@ -119,11 +119,6 @@ class ThreadService {
 		$results = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			if ($row['t_id'] === null) {
-				// Thread was deleted and this entry is useless, should clean up
-				continue;
-			}
-
 			$roomId = (int)$row['room_id'];
 			$results[$roomId][] = [
 				'thread' => Thread::createFromRow($row),

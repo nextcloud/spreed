@@ -189,3 +189,9 @@ Feature: chat-4/threads
       | Message 2 | room2   | Thread 2 | 1            | Message 2-1   | 0                   | Message 2    | Message 2-1 |
       | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
       | Message 3 | room2   | Thread 3 | 0            | 0             | 1                   | Message 3    | NULL        |
+    Then user "participant1" sees 1 number of subscribed threads with 0 offset
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 2 | room2   | Thread 2 | 1            | Message 2-1   | 0                   | Message 2    | Message 2-1 |
+    Then user "participant1" sees 1 number of subscribed threads with 1 offset
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
