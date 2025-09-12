@@ -3493,14 +3493,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$data = [];
 			if (isset($expectedNotification['object_id'])) {
 				if (str_contains($notification['object_id'], '/')) {
-					[$roomToken, $message] = explode('/', $notification['object_id']);
+					$parts = explode('/', $notification['object_id']);
+					$roomToken = $parts[0];
+					$message = $parts[1];
+
 					$messageText = self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
-
-					$messageText = str_replace($this->localServerUrl, '{$LOCAL_URL}', $messageText);
-					$messageText = str_replace($this->remoteServerUrl, '{$REMOTE_URL}', $messageText);
-
+					$messageText = str_replace([$this->localServerUrl, $this->remoteServerUrl], ['{$LOCAL_URL}', '{$REMOTE_URL}'], $messageText);
 					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . $messageText;
-				} elseif (strpos($expectedNotification['object_id'], 'INVITE_ID') !== false) {
+					if (isset($parts[2])) {
+						$data['object_id'] .= '/' . self::$threadIdToTitle[$parts[2]];
+					}
+				} elseif (str_contains($expectedNotification['object_id'], 'INVITE_ID')) {
 					$data['object_id'] = 'INVITE_ID(' . self::$inviteIdToRemote[$notification['object_id']] . ')';
 				} else {
 					[$roomToken,] = explode('/', $notification['object_id']);
