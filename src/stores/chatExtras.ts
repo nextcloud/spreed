@@ -14,6 +14,7 @@ import { t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { defineStore } from 'pinia'
 import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
+import { PARTICIPANT } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import {
@@ -201,6 +202,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		async setThreadNotificationLevel(token: string, messageId: number, level: number) {
 			try {
 				const response = await setThreadNotificationLevel(token, messageId, level)
+				// When unsubscribe from the thread, remove it from list of followed, add otherwise
+				if (response.data.ocs.data.attendee.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
+					this.followedThreads.delete(response.data.ocs.data.thread.id)
+				} else {
+					this.followedThreads.add(response.data.ocs.data.thread.id)
+				}
 				this.addThread(token, response.data.ocs.data)
 			} catch (error) {
 				console.error('Error updating thread notification level:', error)
