@@ -25,7 +25,7 @@ import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
-import { PARTICIPANT } from '../../../constants.ts'
+import { AVATAR, PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
@@ -136,7 +136,7 @@ function handleActionsMenuOpen(open: boolean) {
 			<div
 				class="thread__icon"
 				:style="{ '--color-thread-icon': usernameToColor(thread.thread.title).color }">
-				<IconForumOutline :size="20" />
+				<IconForumOutline :size="0.6 * AVATAR.SIZE.DEFAULT" />
 			</div>
 		</template>
 		<template #name>
@@ -226,8 +226,8 @@ function handleActionsMenuOpen(open: boolean) {
 
 	&__icon {
 		--mixed-color: color-mix(in srgb, var(--color-thread-icon) 10%, var(--color-main-background));
-		width: var(--default-clickable-area);
-		height: var(--default-clickable-area);
+		width: 40px; // AVATAR.SIZE.DEFAULT
+		height: 40px;
 		display: flex;
 		justify-content: center;
 		align-items: center;

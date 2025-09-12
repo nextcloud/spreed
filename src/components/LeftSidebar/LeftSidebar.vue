@@ -1117,6 +1117,10 @@ export default {
 	}
 }
 
+.threads-tab__list {
+	padding-inline: var(--default-grid-baseline);
+}
+
 .unread-mention-button {
 	position: absolute !important;
 	/* stylelint-disable-next-line csstools/use-logical */
