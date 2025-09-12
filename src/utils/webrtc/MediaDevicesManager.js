@@ -360,7 +360,7 @@ MediaDevicesManager.prototype = {
 	_removeDevice(removedDevice) {
 		const removedDeviceIndex = this.attributes.devices.findIndex((oldDevice) => oldDevice.deviceId === removedDevice.deviceId && oldDevice.kind === removedDevice.kind)
 		if (removedDeviceIndex >= 0) {
-			this.attributes.devices.splice(removedDeviceIndex, 1)
+			this.attributes.devices = this.attributes.devices.splice(removedDeviceIndex, 1)
 		}
 		if (removedDevice.kind === 'audioinput' && removedDevice.deviceId === this.attributes.audioInputId) {
 			this.attributes.audioInputId = undefined
@@ -417,7 +417,7 @@ MediaDevicesManager.prototype = {
 
 		// Always refresh the known device with the latest values.
 		this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId] = addedDevice
-		this.attributes.devices.push(addedDevice)
+		this.attributes.devices = [...this.attributes.devices, addedDevice]
 	},
 
 	/**
