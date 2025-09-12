@@ -57,6 +57,7 @@ import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { callSIPDialOut } from '../../../services/callsService.js'
 import { createPrivateConversation } from '../../../services/conversationsService.js'
+import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 
 export default {
@@ -127,11 +128,6 @@ export default {
 				await addParticipant(conversation.token, this.participantPhoneItem.id, this.participantPhoneItem.source)
 
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } })
-				await this.$store.dispatch('joinConversation', { token: conversation.token })
-
-				this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
-
-				this.closeModal()
 			} catch (exception) {
 				console.debug(exception)
 				showError(t('spreed', 'An error occurred while calling a phone number'))
@@ -139,7 +135,19 @@ export default {
 					this.$store.dispatch('deleteConversationFromServer', { token: conversation.token })
 				}
 				this.closeModal()
+
+				return
 			}
+
+			EventBus.once('joined-conversation', ({ token }) => {
+				if (conversation.token !== token) {
+					return
+				}
+
+				this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
+
+				this.closeModal()
+			})
 		},
 
 		async startPhoneCall(token, phoneNumber) {

@@ -224,7 +224,6 @@ export default {
 
 			if (this.token === this.$store.getters.getToken()) {
 				this.$router.push({ name: 'root' })
-				this.$store.dispatch('updateToken', '')
 			}
 
 			try {

@@ -22,6 +22,7 @@ import debounce from 'debounce'
 import { provide } from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
+import { showError } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -309,9 +310,8 @@ export default {
 					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
 					this.refreshCurrentConversation()
 				} else {
-					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed/not-found')
 					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-					this.$store.dispatch('updateToken', '')
 				}
 			}
 		})
@@ -340,12 +340,26 @@ export default {
 				return
 			}
 
+			if (from.name === 'conversation' && from.params.token !== to.params.token) {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+			}
+
 			/**
 			 * This runs whenever the new route is a conversation.
 			 */
-			if (to.name === 'conversation') {
-				// Update current token in the token store
-				this.$store.dispatch('updateToken', to.params.token)
+			if (to.name === 'conversation' && from.params.token !== to.params.token) {
+				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
+
+			next()
+		}
+
+		this.$router.afterEach((to, from) => {
+			/**
+			 * Update current token in the token store
+			 */
+			if (from.params.token !== to.params.token) {
+				this.$store.dispatch('updateToken', to.params.token ?? '')
 			}
 
 			/**
@@ -353,9 +367,7 @@ export default {
 			 * carries the from and to objects as payload
 			 */
 			EventBus.emit('route-change', { from, to })
-
-			next()
-		}
+		})
 
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
@@ -572,9 +584,16 @@ export default {
 					singleConversation: true,
 				})
 			} catch (exception) {
-				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
-				this.$store.dispatch('updateToken', '')
+				if (exception.response?.status === 404) {
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed/not-found')
+					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+				} else if (exception.response?.status === 403) {
+					console.info('Attendee/IP address is no longer authorized to participate (banned). Redirecting to /apps/spreed/forbidden')
+					this.$router.push({ name: 'forbidden', params: { skipLeaveWarning: true } })
+				} else {
+					console.error('Error getting room data', exception)
+					showError(t('spreed', 'Error occurred when getting the conversation information'))
+				}
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}
