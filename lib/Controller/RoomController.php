@@ -52,6 +52,7 @@ use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -66,6 +67,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
@@ -85,6 +87,7 @@ use OCP\Calendar\CalendarEventStatus;
 use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
+use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
@@ -149,6 +152,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected BanService $banService,
 		protected IURLGenerator $url,
 		protected IL10N $l,
+		protected ThreadService $threadService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -294,13 +298,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($includeLastMessage) {
 			$lastMessages = array_filter(array_map(static fn (Room $room) => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
+			$potentialThreads = array_map(static fn (IComment $lastMessage) => (int)$lastMessage->getTopmostParentId(), $lastMessages);
 			$this->sharePreloader->preloadShares($lastMessages);
+			$threads = $this->threadService->preloadThreads($potentialThreads);
 		}
 
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses, skipLastMessage: !$includeLastMessage);
+				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses, skipLastMessage: !$includeLastMessage, thread: $threads[$room->getId()] ?? null);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
 				// the user is not a participant anymore
@@ -530,6 +536,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		bool $isSIPBridgeRequest = false,
 		bool $isListingBreakoutRooms = false,
 		bool $skipLastMessage = false,
+		?Thread $thread = null,
 	): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
@@ -540,6 +547,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$isSIPBridgeRequest,
 			$isListingBreakoutRooms,
 			$skipLastMessage,
+			$thread,
 		);
 	}
 
