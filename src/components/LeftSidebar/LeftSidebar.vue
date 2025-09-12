@@ -227,6 +227,15 @@
 							v-for="thread of followedThreads"
 							:key="`thread_${thread.thread.id}`"
 							:thread="thread" />
+						<NcAppNavigationItem
+							v-if="!allFollowedThreadsReceived"
+							class="navigation-item"
+							:name="t('spreed', 'Show more threads')"
+							@click.prevent="loadMoreFollowedThreads">
+							<template #icon>
+								<IconForumOutline :size="20" />
+							</template>
+						</NcAppNavigationItem>
 					</ul>
 				</template>
 				<ConversationsListVirtual
@@ -557,6 +566,10 @@ export default {
 			return this.chatExtrasStore.followedThreadsInitialised
 		},
 
+		allFollowedThreadsReceived() {
+			return this.chatExtrasStore.allFollowedThreadsReceived
+		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
@@ -685,6 +698,10 @@ export default {
 	},
 
 	methods: {
+		loadMoreFollowedThreads() {
+			this.chatExtrasStore.fetchFollowedThreadsList(this.followedThreads.length)
+		},
+
 		t,
 		showModalNewConversation() {
 			this.$refs.newConversationDialog.showModal()
@@ -1119,6 +1136,10 @@ export default {
 
 .threads-tab__list {
 	padding-inline: var(--default-grid-baseline);
+
+	& > .navigation-item {
+		padding-inline: var(--default-grid-baseline);
+	}
 }
 
 .unread-mention-button {
