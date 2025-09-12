@@ -31,6 +31,7 @@ type State = {
 	threads: Record<string, Record<number, ThreadInfo>>
 	followedThreads: Set<number>
 	followedThreadsInitialised: boolean
+	allFollowedThreadsReceived: boolean
 	threadTitle: Record<string, string>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
@@ -41,6 +42,7 @@ type State = {
 	chatSummary: Record<string, Record<number, ChatTask>>
 }
 
+const FOLLOWED_THREADS_FETCH_LIMIT = 100
 const pendingFetchSingleThreadRequests = new Set<number>()
 
 /**
@@ -51,6 +53,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		threads: {},
 		followedThreads: new Set(),
 		followedThreadsInitialised: false,
+		allFollowedThreadsReceived: false,
 		threadTitle: {},
 		parentToReply: {},
 		chatInput: {},
@@ -180,12 +183,23 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		async fetchFollowedThreadsList(offset?: number) {
 			try {
-				const response = await getSubscribedThreads({ offset })
+				const response = await getSubscribedThreads({ limit: FOLLOWED_THREADS_FETCH_LIMIT, offset })
+
+				if (!offset) {
+					// Reset the list if no offset is given
+					this.followedThreads.clear()
+					this.allFollowedThreadsReceived = false
+				}
+
 				response.data.ocs.data.forEach((threadInfo) => {
 					this.followedThreads.add(threadInfo.thread.id)
 					this.addThread(threadInfo.thread.roomToken, threadInfo)
 				})
 				this.followedThreadsInitialised = true
+
+				if (response.data.ocs.data.length < FOLLOWED_THREADS_FETCH_LIMIT) {
+					this.allFollowedThreadsReceived = true
+				}
 			} catch (error) {
 				console.error('Error fetching threads:', error)
 			}
