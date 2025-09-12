@@ -422,8 +422,6 @@ export default {
 					return
 				}
 
-				let extensionURL = null
-
 				switch (err.name) {
 					case 'HTTPS_REQUIRED':
 						showMessage(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
