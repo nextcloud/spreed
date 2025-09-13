@@ -98,7 +98,7 @@
     "@vue/tsconfig": "^0.8.1",
     "babel-loader-exclude-node-modules-except": "^1.2.1",
     "esbuild-loader": "^4.3.0",
-    "globals": "^16.2.0",
+    "globals": "^16.4.0",
     "jsdom": "^26.1.0",
     "mini-css-extract-plugin": "^2.9.4",
     "openapi-typescript": "^7.9.1",
