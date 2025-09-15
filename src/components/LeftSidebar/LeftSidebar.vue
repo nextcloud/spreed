@@ -227,6 +227,15 @@
 							v-for="thread of followedThreads"
 							:key="`thread_${thread.thread.id}`"
 							:thread="thread" />
+						<NcAppNavigationItem
+							v-if="!allFollowedThreadsReceived"
+							class="navigation-item"
+							:name="t('spreed', 'Show more threads')"
+							@click.prevent="loadMoreFollowedThreads">
+							<template #icon>
+								<IconForumOutline :size="20" />
+							</template>
+						</NcAppNavigationItem>
 					</ul>
 				</template>
 				<ConversationsListVirtual
@@ -557,6 +566,10 @@ export default {
 			return this.chatExtrasStore.followedThreadsInitialised
 		},
 
+		allFollowedThreadsReceived() {
+			return this.chatExtrasStore.allFollowedThreadsReceived
+		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
@@ -599,7 +612,6 @@ export default {
 		showThreadsList(value) {
 			if (value) {
 				// Refresh a list
-				// FIXME requests should be paginated with offset
 				this.chatExtrasStore.fetchFollowedThreadsList()
 			}
 		},
@@ -685,6 +697,10 @@ export default {
 	},
 
 	methods: {
+		loadMoreFollowedThreads() {
+			this.chatExtrasStore.fetchFollowedThreadsList(this.followedThreads.length)
+		},
+
 		t,
 		showModalNewConversation() {
 			this.$refs.newConversationDialog.showModal()
@@ -1114,6 +1130,14 @@ export default {
 	:deep(.app-navigation-entry__name) {
 		padding-inline-start: calc(2 * var(--default-grid-baseline));
 		font-weight: 500;
+	}
+}
+
+.threads-tab__list {
+	padding-inline: var(--default-grid-baseline);
+
+	& > .navigation-item {
+		padding-inline: var(--default-grid-baseline);
 	}
 }
 
