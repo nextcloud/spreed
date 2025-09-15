@@ -26,6 +26,10 @@ vi.mock('@nextcloud/dialogs', () => ({
 	TOAST_PERMANENT_TIMEOUT: -1,
 }))
 
+vi.mock('@nextcloud/files', () => ({
+	validateFileName: vi.fn(),
+}))
+
 vi.mock('@nextcloud/files/dav', () => ({
 	defaultRemoteURL: () => 'https://nextcloud.local/remote.php/dav',
 }))

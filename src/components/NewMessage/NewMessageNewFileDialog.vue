@@ -42,7 +42,7 @@
 		<template #actions>
 			<NcButton
 				variant="primary"
-				:disabled="loading"
+				:disabled="loading || !!newFileError"
 				@click="handleCreateNewFile">
 				<template v-if="loading" #icon>
 					<NcLoadingIcon />
@@ -55,6 +55,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
+import { validateFilename } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
@@ -62,7 +63,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 import { useViewer } from '../../composables/useViewer.js'
-import { createNewFile, shareFile } from '../../services/filesSharingServices.ts'
+import { createNewFile } from '../../services/filesSharingServices.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
@@ -157,6 +158,16 @@ export default {
 			handler(value) {
 				this.newFileTitle = value.label + value.extension
 			},
+		},
+
+		newFileTitle(value) {
+			try {
+				validateFilename(value)
+				this.newFileError = ''
+			} catch (e) {
+				console.error(e)
+				this.newFileError = e.message
+			}
 		},
 
 		selectedTemplate: {
