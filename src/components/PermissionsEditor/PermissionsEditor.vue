@@ -64,11 +64,10 @@
 <script>
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { ref } from 'vue'
+import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
-import { useId } from '../../composables/useId.ts'
 import { PARTICIPANT } from '../../constants.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS

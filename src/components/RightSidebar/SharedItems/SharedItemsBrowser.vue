@@ -37,10 +37,10 @@
 
 <script>
 import debounce from 'debounce'
+import { useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import SharedItems from './SharedItems.vue'
-import { useId } from '../../../composables/useId.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
 import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.ts'
 
