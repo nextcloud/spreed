@@ -84,7 +84,7 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { ref } from 'vue'
+import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
@@ -93,7 +93,6 @@ import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FileP
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import NewMessage from './NewMessage.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { useId } from '../../composables/useId.ts'
 import { MESSAGE } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 

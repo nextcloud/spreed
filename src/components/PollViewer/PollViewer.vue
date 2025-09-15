@@ -125,7 +125,7 @@
 
 <script>
 import { n, t } from '@nextcloud/l10n'
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -141,7 +141,6 @@ import IconFileLockOutline from 'vue-material-design-icons/FileLockOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import PollVotersDetails from './PollVotersDetails.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
-import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
