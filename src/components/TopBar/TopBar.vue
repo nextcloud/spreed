@@ -13,14 +13,14 @@
 		}">
 		<a
 			class="top-bar__icon-wrapper"
-			:class="{ 'top-bar__icon-wrapper--thread': !isInCall && currentThread }"
+			:class="{ 'top-bar__icon-wrapper--thread': !isInCall && threadId }"
 			role="button"
 			:tabindex="0"
 			:title="conversationIconLabel"
 			:aria-label="conversationIconLabel"
 			@click="handleClickAvatar">
 			<IconArrowLeft
-				v-show="currentThread"
+				v-show="threadId"
 				class="top-bar__icon-back bidirectional-icon"
 				:size="20" />
 			<ConversationIcon
@@ -34,66 +34,7 @@
 				:hide-call="false" />
 		</a>
 
-		<div
-			v-if="!isInCall && currentThread"
-			class="top-bar__wrapper">
-			<IconChevronRight class="bidirectional-icon" :size="20" />
-
-			<span class="conversation-header">
-				<div
-					class="conversation-header__thread-icon"
-					:style="{ '--color-thread-icon': usernameToColor(currentThread.thread.title).color }">
-					<IconForumOutline :size="20" />
-				</div>
-				<div class="conversation-header__text">
-					<p class="title">
-						{{ currentThread.thread.title }}
-					</p>
-					<p class="description">
-						{{ n('spreed', '%n reply', '%n replies', currentThread.thread.numReplies) }}
-					</p>
-				</div>
-			</span>
-
-			<NcActions
-				:aria-label="t('spreed', 'Thread notifications')"
-				:title="t('spreed', 'Thread notifications')"
-				:variant="threadNotificationVariant">
-				<template #icon>
-					<component :is="notificationLevelIcons[threadNotification]" :size="20" />
-				</template>
-				<NcActionButton
-					v-for="level in notificationLevels"
-					:key="level.value"
-					:model-value="threadNotification.toString()"
-					:value="level.value.toString()"
-					:description="level.description"
-					type="radio"
-					close-after-click
-					@click="chatExtrasStore.setThreadNotificationLevel(token, threadId, level.value)">
-					<template #icon>
-						<component :is="notificationLevelIcons[level.value]" :size="20" />
-					</template>
-					{{ level.label }}
-				</NcActionButton>
-			</NcActions>
-
-			<NcActions
-				v-if="isModeratorOrOwner"
-				:aria-label="t('spreed', 'Thread actions')"
-				:title="t('spreed', 'Thread actions')"
-				force-menu>
-				<NcActionButton
-					key="rename-thread"
-					close-after-click
-					@click="renameThreadTitle">
-					<template #icon>
-						<IconPencilOutline :size="20" />
-					</template>
-					{{ t('spreed', 'Edit thread details') }}
-				</NcActionButton>
-			</NcActions>
-		</div>
+		<ThreadHeader v-if="!isInCall && threadId" class="top-bar__wrapper" />
 
 		<div
 			v-else
@@ -190,24 +131,17 @@
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
-import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
-import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
-import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
-import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import ExtendOneToOneDialog from '../ExtendOneToOneDialog.vue'
+import ThreadHeader from '../RightSidebar/Threads/ThreadHeader.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
 import TasksCounter from './TasksCounter.vue'
@@ -225,26 +159,10 @@ import { getStatusMessage } from '../../utils/userStatus.ts'
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
 
-const notificationLevelIcons = {
-	[PARTICIPANT.NOTIFY.DEFAULT]: IconBellOutline,
-	[PARTICIPANT.NOTIFY.ALWAYS]: IconBellRingOutline,
-	[PARTICIPANT.NOTIFY.MENTION]: IconBellOutline,
-	[PARTICIPANT.NOTIFY.NEVER]: IconBellOffOutline,
-}
-
-const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.DEFAULT, label: t('spreed', 'Default'), description: t('spreed', 'Follow conversation settings') },
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
-	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
-	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
-]
-
 export default {
 	name: 'TopBar',
 
 	components: {
-		IconForumOutline,
-		IconPencilOutline,
 		// Components
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
@@ -252,18 +170,16 @@ export default {
 		CallTime,
 		ConversationIcon,
 		ExtendOneToOneDialog,
-		NcActionButton,
-		NcActions,
 		NcButton,
 		NcPopover,
 		NcRichText,
 		TopBarMenu,
 		TasksCounter,
+		ThreadHeader,
 		// Icons
 		IconAccountMultipleOutline,
 		IconAccountMultiplePlusOutline,
 		IconArrowLeft,
-		IconChevronRight,
 	},
 
 	props: {
@@ -292,8 +208,6 @@ export default {
 			CONVERSATION,
 			threadId: useGetThreadId(),
 			token: useGetToken(),
-			notificationLevels,
-			notificationLevelIcons,
 		}
 	},
 
@@ -305,27 +219,6 @@ export default {
 	},
 
 	computed: {
-		currentThread() {
-			if (!this.threadId) {
-				return null
-			}
-			return this.chatExtrasStore.getThread(this.token, this.threadId)
-		},
-
-		threadNotification() {
-			if (this.currentThread) {
-				return this.currentThread.attendee.notificationLevel
-			}
-			return PARTICIPANT.NOTIFY.DEFAULT
-		},
-
-		threadNotificationVariant() {
-			if ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION].includes(this.currentThread?.attendee.notificationLevel)) {
-				return 'secondary'
-			}
-			return 'tertiary'
-		},
-
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
@@ -334,11 +227,6 @@ export default {
 		canExtendOneToOneConversation() {
 			return canStartConversations && supportConversationCreationAll && this.isOneToOneConversation
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		isModeratorOrOwner() {
-			return this.$store.getters.isModerator
-				|| (this.currentThread.first?.actorId === this.actorStore.actorId && this.currentThread.first?.actorType === this.actorStore.actorType)
 		},
 
 		isModeratorOrUser() {
@@ -374,7 +262,7 @@ export default {
 		},
 
 		conversationIconLabel() {
-			return this.currentThread ? t('spreed', 'Back') : t('spreed', 'Conversation settings')
+			return this.threadId ? t('spreed', 'Back') : t('spreed', 'Conversation settings')
 		},
 
 		participantsInCall() {
@@ -410,15 +298,6 @@ export default {
 				this.groupwareStore.getUpcomingEvents(value)
 			},
 		},
-
-		currentThread: {
-			immediate: true,
-			handler(value) {
-				if (this.threadId && value === undefined) {
-					this.chatExtrasStore.fetchSingleThread(this.token, this.threadId)
-				}
-			},
-		},
 	},
 
 	mounted() {
@@ -439,15 +318,11 @@ export default {
 		},
 
 		handleClickAvatar() {
-			if (this.currentThread) {
+			if (this.threadId) {
 				this.$router.replace({ query: {}, hash: '' })
 			} else {
 				this.openConversationSettings()
 			}
-		},
-
-		async renameThreadTitle() {
-			await this.chatExtrasStore.renameThread(this.token, this.threadId)
 		},
 
 		openConversationSettings() {
@@ -515,13 +390,6 @@ export default {
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
-}
-
-.thread-header {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	gap: var(--default-grid-baseline);
 }
 
 .top-bar__icon-wrapper {

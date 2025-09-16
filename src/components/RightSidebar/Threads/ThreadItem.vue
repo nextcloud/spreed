@@ -20,9 +20,7 @@ import NcDateTime from '@nextcloud/vue/components/NcDateTime'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowLeftTop from 'vue-material-design-icons/ArrowLeftTop.vue'
-import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
-import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import { AVATAR, PARTICIPANT } from '../../../constants.ts'
@@ -30,22 +28,9 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
+import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
 
 const { thread } = defineProps<{ thread: ThreadInfo }>()
-
-const notificationLevelIcons = {
-	[PARTICIPANT.NOTIFY.DEFAULT]: IconBellOutline,
-	[PARTICIPANT.NOTIFY.ALWAYS]: IconBellRingOutline,
-	[PARTICIPANT.NOTIFY.MENTION]: IconBellOutline,
-	[PARTICIPANT.NOTIFY.NEVER]: IconBellOffOutline,
-} as const
-
-const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.DEFAULT, label: t('spreed', 'Default'), description: t('spreed', 'Follow conversation settings') },
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), description: undefined },
-	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only'), description: undefined },
-	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off'), description: undefined },
-] as const
 
 const router = useRouter()
 const route = useRoute()
