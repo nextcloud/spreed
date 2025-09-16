@@ -362,9 +362,6 @@ OC.L10N.register(
     "Screensharing options" : "Opções de partilha de ecrã",
     "Enable screensharing" : "Ativar partilha de ecrã",
     "Screensharing requires the page to be loaded through HTTPS." : "A partilha de ecrã requer que a página seja carregada através de HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Partilhar o seu ecrã no Firefox apenas funciona com versão 52 ou mais recente. ",
-    "Screensharing extension is required to share your screen." : "Extensão de partilha de ecrã é necessária para partilhar o seu ecrã.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use um browser diferente como o Firefox ou o Chrome para partilhar o seu ecrã.",
     "An error occurred while starting screensharing." : "Ocorreu um erro enquanto iniciava a partilha de ecrã.",
     "Download attendance list" : "Transferir lista de presenças",
     "Keep" : "Manter",
@@ -401,6 +398,9 @@ OC.L10N.register(
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
-    "Close" : "Fechar"
+    "Close" : "Fechar",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Partilhar o seu ecrã no Firefox apenas funciona com versão 52 ou mais recente. ",
+    "Screensharing extension is required to share your screen." : "Extensão de partilha de ecrã é necessária para partilhar o seu ecrã.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use um browser diferente como o Firefox ou o Chrome para partilhar o seu ecrã."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

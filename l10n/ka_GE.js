@@ -126,9 +126,6 @@ OC.L10N.register(
     "Screensharing options" : "ეკრანების გაზიარების პარამეტრები",
     "Enable screensharing" : "ეკრანების გაზიარების ნების დართვა",
     "Screensharing requires the page to be loaded through HTTPS." : "ეკრანების გაზიარება საჭიროებს გვერდის HTTPS პროტოკოლით ჩატვირთვას.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "ეკრანის გაზიარება მოქმედია Firefox-ის მხოლოდ 52 ვერსიით ან უფრო ახლით.",
-    "Screensharing extension is required to share your screen." : "ეკრანების გასაზიარებლად საჭიროა გაფართოება.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "ეკრანის გასაზიარებლად გამოიყენეთ სხვა ბრაუზერი, Firefox-ი ან Chrome-ი.",
     "An error occurred while starting screensharing." : "ეკრანის გაზიარებისას წარმოიშვა შეცდომა.",
     "Show your screen" : "თქვენი ეკრანის ჩვენება",
     "Stop screensharing" : "ეკრანის გაზიარების გათიშვა",
@@ -159,6 +156,9 @@ OC.L10N.register(
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "_%n day ago_::_%n days ago_" : ["%n დღის წინ","%n დღის წინ"],
-    "Close" : "დახურვა"
+    "Close" : "დახურვა",
+    "Sharing your screen only works with Firefox version 52 or newer." : "ეკრანის გაზიარება მოქმედია Firefox-ის მხოლოდ 52 ვერსიით ან უფრო ახლით.",
+    "Screensharing extension is required to share your screen." : "ეკრანების გასაზიარებლად საჭიროა გაფართოება.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "ეკრანის გასაზიარებლად გამოიყენეთ სხვა ბრაუზერი, Firefox-ი ან Chrome-ი."
 },
 "nplurals=2; plural=(n!=1);");

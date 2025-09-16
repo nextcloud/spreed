@@ -793,7 +793,6 @@ OC.L10N.register(
     "Disable background blur" : "Dezactivează blurarea fundalului",
     "Disable screenshare" : "Dezactivează partajarea ecranului",
     "Screen sharing is not supported by your browser." : "Partajarea ecranului nu e posibilă în acest browser.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Folosiți un alt browser precum Firefox și Chrome pentru partajarea ecranului.",
     "An error occurred while starting screensharing." : "Eroare la partajarea ecranului.",
     "Show your screen" : "Prezentați ecranul",
     "Stop screensharing" : "Oprește partajarea ecranului",
@@ -899,6 +898,7 @@ OC.L10N.register(
     "Close" : "Închide",
     "Choose devices" : "Selectați dispozitivele",
     "Blur background" : "Blurează fundalul",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Folosiți un alt browser precum Firefox și Chrome pentru partajarea ecranului.",
     "An error happened when trying to share your file" : "Eroare la încercarea de partajare a fișierului",
     "Failed to join the conversation. Try to reload the page." : "Eroare la încercarea de participare la conversație. Încercați să reîncărcați pagina. "
 },

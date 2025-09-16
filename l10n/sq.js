@@ -245,9 +245,6 @@ OC.L10N.register(
     "Search" : "Kërko",
     "More actions" : "Më tepër veprime ",
     "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
-    "Screensharing extension is required to share your screen." : "Zgjerim i ndarja së Ekranit është i nevojshëm për të ndarë ekranin tuaj.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Ju lutem përdorni një browser tjetër si Firefox ose Chrome për të ndarë ekranin tuaj.",
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
     "Show your screen" : "Shfaq ekranin tënd",
     "Stop screensharing" : "Ndalo ndarjen e ekranit",
@@ -278,6 +275,9 @@ OC.L10N.register(
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
-    "Close" : "Mbylleni"
+    "Close" : "Mbylleni",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
+    "Screensharing extension is required to share your screen." : "Zgjerim i ndarja së Ekranit është i nevojshëm për të ndarë ekranin tuaj.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Ju lutem përdorni një browser tjetër si Firefox ose Chrome për të ndarë ekranin tuaj."
 },
 "nplurals=2; plural=(n != 1);");
