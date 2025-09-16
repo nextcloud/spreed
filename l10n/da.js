@@ -755,9 +755,6 @@ OC.L10N.register(
     "Screen sharing is not supported by your browser." : "Skærmdeling er ikke understøttet af din browser.",
     "Screen sharing requires the page to be loaded through HTTPS." : "Skærmdeling kræver at siden er hentet over HTTPS.",
     "Screensharing requires the page to be loaded through HTTPS." : "Skærmdeling kræver at siden bliver vist gennem HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Skærmdeling virker kun med Firefox version 52 eller nyere.",
-    "Screensharing extension is required to share your screen." : "En skærmdeling udvidelse er påkrævet for at dele din skærm.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Brug venligst en anden browser som Firefox og Chrome for at dele din skærm.",
     "An error occurred while starting screensharing." : "Der opstod en fejl da du prøvede at dele skærm.",
     "Show your screen" : "Vis din skærm",
     "Stop screensharing" : "Stop skærmdeling",
@@ -844,6 +841,9 @@ OC.L10N.register(
     "Yesterday" : "I går",
     "_%n day ago_::_%n days ago_" : ["%n dag siden","%n dage siden"],
     "Close" : "Luk",
-    "Choose devices" : "Vælg enheder"
+    "Choose devices" : "Vælg enheder",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Skærmdeling virker kun med Firefox version 52 eller nyere.",
+    "Screensharing extension is required to share your screen." : "En skærmdeling udvidelse er påkrævet for at dele din skærm.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Brug venligst en anden browser som Firefox og Chrome for at dele din skærm."
 },
 "nplurals=2; plural=(n != 1);");

@@ -118,9 +118,6 @@
     "Screensharing options" : "Opciones de compartir pantalla",
     "Enable screensharing" : "Habilitar compartir pantalla",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
-    "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
     "Show your screen" : "Mostrar tu pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
@@ -149,6 +146,9 @@
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Close" : "Cerrar"
+    "Close" : "Cerrar",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
+    "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
