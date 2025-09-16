@@ -74,6 +74,7 @@ import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
+import { useGetThreadId } from '../composables/useGetThreadId.ts'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
@@ -117,6 +118,7 @@ export default {
 		return {
 			IconFileUpload,
 			token: useGetToken(),
+			threadId: useGetThreadId(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 		}
@@ -213,7 +215,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId })
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId })
 		},
 
 		scrollToBottom() {
