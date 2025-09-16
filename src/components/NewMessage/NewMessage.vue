@@ -965,7 +965,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = this.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId, rename, isVoiceMessage })
 		},
 
 		preserveSelectionRange() {
