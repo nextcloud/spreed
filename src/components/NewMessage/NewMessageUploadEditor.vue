@@ -92,6 +92,7 @@ import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/Audio
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import NewMessage from './NewMessage.vue'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { MESSAGE } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -119,6 +120,7 @@ export default {
 			isDraggingOver,
 			dialogHeaderId,
 			token: useGetToken(),
+			threadId: useGetThreadId(),
 		}
 	},
 
@@ -206,6 +208,7 @@ export default {
 					uploadId: this.currentUploadId,
 					caption: temporaryMessage.message,
 					options: {
+						threadId: temporaryMessage.threadId,
 						threadTitle: temporaryMessage.threadTitle,
 						silent: temporaryMessage.silent,
 					},
@@ -233,7 +236,7 @@ export default {
 
 		handleFileInput(event) {
 			const files = Object.values(event.target.files)
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
 			this.$refs.fileUploadInput.value = null
 		},
 
@@ -261,7 +264,7 @@ export default {
 			this.isDraggingOver = false
 
 			const files = Object.values(event.dataTransfer.files)
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
 		},
 	},
 }

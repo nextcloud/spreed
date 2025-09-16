@@ -227,11 +227,12 @@ const actions = {
 	 * @param {object} data the wrapping object;
 	 * @param {object} data.files the files to be processed
 	 * @param {string} data.token the conversation's token where to share the files
+	 * @param {string} data.threadId the thread id where to share the files
 	 * @param {number} data.uploadId a unique id for the upload operation indexing
 	 * @param {boolean} data.rename whether to rename the files (usually after pasting)
 	 * @param {boolean} data.isVoiceMessage whether the file is a voice recording
 	 */
-	initialiseUpload(context, { uploadId, token, files, rename = false, isVoiceMessage }) {
+	initialiseUpload(context, { uploadId, token, threadId, files, rename = false, isVoiceMessage }) {
 		// Set last upload id
 		context.commit('setCurrentUploadId', uploadId)
 		const { createTemporaryMessage } = useTemporaryMessage(context)
@@ -257,10 +258,12 @@ const actions = {
 			const temporaryMessage = createTemporaryMessage({
 				message: '{file}',
 				token,
+				threadId,
 				uploadId,
 				index,
 				file,
 				localUrl,
+				isThread: threadId ? true : undefined,
 				messageType: isVoiceMessage ? MESSAGE.TYPE.VOICE_MESSAGE : MESSAGE.TYPE.COMMENT,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
@@ -459,6 +462,7 @@ const actions = {
 				messageType !== MESSAGE.TYPE.COMMENT ? { messageType } : {},
 				caption && index === lastIndex ? { caption } : {},
 				options?.silent ? { silent: options.silent } : {},
+				options?.threadId ? { threadId: options.threadId } : {},
 				options?.threadTitle ? { threadTitle: options.threadTitle } : {},
 				parent ? { replyTo: parent.id } : {},
 			))
