@@ -34,16 +34,6 @@
 			<TransitionWrapper name="fade">
 				<div ref="scrollerLoader" class="scroller__loading">
 					<NcLoadingIcon v-if="loadingOldMessages" class="scroller__loading-element" :size="32" />
-					<!-- FIXME return from threaded view during the call -->
-					<NcButton
-						v-else-if="threadId && isInCall"
-						:title="t('spreed', 'Back')"
-						:aria-label="t('spreed', 'Back')"
-						@click="threadId = 0">
-						<template #icon>
-							<IconArrowLeft class="bidirectional-icon" :size="20" />
-						</template>
-					</NcButton>
 				</div>
 			</TransitionWrapper>
 
@@ -87,10 +77,8 @@
 import { n, t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { computed } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import StaticDateTime from '../UIShared/StaticDateTime.vue'
@@ -100,7 +88,6 @@ import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
-import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatStore } from '../../stores/chat.ts'
@@ -118,10 +105,8 @@ const messagesGroupComponent = {
 export default {
 	name: 'MessagesList',
 	components: {
-		IconArrowLeft,
 		IconMessageOutline,
 		LoadingPlaceholder,
-		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,
 		StaticDateTime,
@@ -175,7 +160,6 @@ export default {
 
 		return {
 			messagesGroupComponent,
-			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			chatStore: useChatStore(),
 			isChatVisible,

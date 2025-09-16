@@ -23,6 +23,9 @@
 					</template>
 				</NcEmptyContent>
 			</TransitionWrapper>
+
+			<ThreadHeader v-if="isSidebar && threadId" standalone />
+
 			<MessagesList
 				v-model:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 				role="region"
@@ -72,8 +75,10 @@ import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
+import ThreadHeader from './RightSidebar/Threads/ThreadHeader.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
+import { useGetThreadId } from '../composables/useGetThreadId.ts'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
@@ -86,6 +91,7 @@ export default {
 	name: 'ChatView',
 
 	components: {
+		ThreadHeader,
 		NcButton,
 		NcEmptyContent,
 		NcIconSvgWrapper,
@@ -117,6 +123,7 @@ export default {
 		return {
 			IconFileUpload,
 			token: useGetToken(),
+			threadId: useGetThreadId(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 		}
@@ -246,6 +253,7 @@ export default {
 	position: relative;
 	flex: 1 0;
 	display: flex;
+	flex-direction: column;
 	min-height: 0;
 }
 

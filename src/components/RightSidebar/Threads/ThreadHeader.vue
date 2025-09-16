@@ -4,8 +4,22 @@
 -->
 
 <template>
-	<div class="thread-header">
-		<IconChevronRight class="bidirectional-icon" :size="20" />
+	<div
+		class="thread-header"
+		:class="{ 'thread-header--standalone': standalone }">
+		<NcButton
+			v-if="standalone"
+			:title="t('spreed', 'Back')"
+			:aria-label="t('spreed', 'Back')"
+			@click="threadId = 0">
+			<template #icon>
+				<IconArrowLeft class="bidirectional-icon" :size="20" />
+			</template>
+		</NcButton>
+		<IconChevronRight
+			v-else
+			class="bidirectional-icon"
+			:size="20" />
 
 		<div v-if="currentThread" class="conversation-header">
 			<div
@@ -71,6 +85,8 @@ import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
@@ -80,6 +96,11 @@ import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
+
+const props = defineProps<{
+	/** Whether component is used outside TopBar */
+	standalone?: boolean
+}>()
 
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
@@ -123,6 +144,11 @@ async function renameThreadTitle() {
 	justify-content: flex-end;
 	width: 100%;
 	gap: var(--default-grid-baseline);
+
+	&--standalone {
+		padding: var(--default-grid-baseline);
+		border-bottom: 1px solid var(--color-border);
+	}
 }
 
 .conversation-header {
