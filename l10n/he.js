@@ -534,9 +534,6 @@ OC.L10N.register(
     "Screensharing options" : "אפשרויות שיתוף מסך",
     "Enable screensharing" : "הפעלת שיתוף מסך",
     "Screensharing requires the page to be loaded through HTTPS." : "לטובת שיתוף מסך יש לטעון את העמוד דרך HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "שיתוף מסך עובד עם Firefox בגרסה 52 ומעלה.",
-    "Screensharing extension is required to share your screen." : "נדרשת הרחבה לשיתוף המסך כדי לשתף את המסך.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "נא להשתמש בדפדפן אחר כגון Firefox או Chrome כדי לשתף את המסך שלך.",
     "An error occurred while starting screensharing." : "אירעה שגיאה בעת התחלת שיתוף המסך.",
     "Show your screen" : "הצגת המסך שלך",
     "Stop screensharing" : "הפסקת שיתוף המסך",
@@ -613,6 +610,9 @@ OC.L10N.register(
     "Yesterday" : "מחר",
     "_%n day ago_::_%n days ago_" : ["לפני %n יום","לפני %n ימים","לפני %n ימים","לפני %n ימים"],
     "Close" : "סגירה",
-    "Choose devices" : "בחירת התקנים"
+    "Choose devices" : "בחירת התקנים",
+    "Sharing your screen only works with Firefox version 52 or newer." : "שיתוף מסך עובד עם Firefox בגרסה 52 ומעלה.",
+    "Screensharing extension is required to share your screen." : "נדרשת הרחבה לשיתוף המסך כדי לשתף את המסך.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "נא להשתמש בדפדפן אחר כגון Firefox או Chrome כדי לשתף את המסך שלך."
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

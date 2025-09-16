@@ -506,9 +506,6 @@ OC.L10N.register(
     "Screensharing options" : "Ekrāna kopīgošanas iespējas",
     "Enable screensharing" : "Iespējot ekrāna kopīgošanu",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekrāna kopīgošanai ir nepieciešams lapu ielādēt ar HTTPS.",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Ekrāna koplietošana darbojas tikai ar Firefox 52. vai jaunāku versiju.",
-    "Screensharing extension is required to share your screen." : "Ir nepieciešams ekrāna kopīgošanas paplašinājums, lai kopīgotu savu ekrānu.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome, lai kopīgotu savu ekrānu.",
     "An error occurred while starting screensharing." : "Ekrāna kopīgošanas uzsākšanas laikā atgadījās kļūda.",
     "Show your screen" : "Rādīt savu ekrānu",
     "Stop screensharing" : "Apturēt ekrāna kopīgošanu",
@@ -563,6 +560,9 @@ OC.L10N.register(
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
     "_%n day ago_::_%n days ago_" : ["pirms %n dienām","pirms %n dienas","pirms %n dienām"],
-    "Close" : "Aizvērt"
+    "Close" : "Aizvērt",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Ekrāna koplietošana darbojas tikai ar Firefox 52. vai jaunāku versiju.",
+    "Screensharing extension is required to share your screen." : "Ir nepieciešams ekrāna kopīgošanas paplašinājums, lai kopīgotu savu ekrānu.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome, lai kopīgotu savu ekrānu."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
