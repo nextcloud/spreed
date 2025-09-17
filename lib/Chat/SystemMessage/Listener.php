@@ -443,19 +443,6 @@ class Listener implements IEventListener {
 				silent: true,
 				parent: $comment,
 			);
-		} else {
-			$threadId = (int)$comment->getTopmostParentId();
-			if ($threadId !== 0) {
-				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
-				if ($isThread) {
-					try {
-						// Add to subscribed threads list
-						$participant = $this->participantService->getParticipant($room, $this->getUserId());
-						$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
-					} catch (ParticipantNotFoundException) {
-					}
-				}
-			}
 		}
 	}
 
