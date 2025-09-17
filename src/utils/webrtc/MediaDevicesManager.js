@@ -4,6 +4,7 @@
  */
 
 import { t } from '@nextcloud/l10n'
+import { reactive } from 'vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	getFirstAvailableMediaDevice,
@@ -71,13 +72,13 @@ const LOCAL_STORAGE_NULL_DEVICE_ID = 'local-storage-null-device-id'
 export default function MediaDevicesManager() {
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		devices: [],
 
 		audioInputId: undefined,
 		audioOutputId: undefined,
 		videoInputId: undefined,
-	}
+	})
 
 	/**
 	 * Returns whether selecting of audio output device is supported or not.

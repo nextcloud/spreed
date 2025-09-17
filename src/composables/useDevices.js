@@ -5,12 +5,12 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
-import { callParticipantsAudioPlayer, mediaDevicesManager as mediaDevicesManagerInstance } from '../utils/webrtc/index.js'
+import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
 
 let videoElement = ref(null)
 
@@ -29,9 +29,8 @@ export const useDevices = createSharedComposable(function() {
 
 	const hark = ref(null)
 	const videoTrackToStream = ref(null)
-	const mediaDevicesManager = reactive(mediaDevicesManagerInstance)
 
-	window.OCA.Talk.mediaDevicesManager = mediaDevicesManagerInstance
+	window.OCA.Talk.mediaDevicesManager = mediaDevicesManager
 
 	// Public refs
 	const currentVolume = ref(-100)
