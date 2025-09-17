@@ -69,10 +69,11 @@ class ThreadService {
 	}
 
 	/**
+	 * @internal Warning: does not check room memberships
 	 * @param list<non-negative-int> $threadIds
 	 * @return array<int, Thread> Map with room id as key
 	 */
-	public function preloadThreads(array $threadIds): array {
+	public function preloadThreadsForConversationList(array $threadIds): array {
 		$threads = $this->threadMapper->getForIds($threadIds);
 		$result = [];
 		foreach ($threads as $thread) {
