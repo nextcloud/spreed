@@ -430,7 +430,7 @@ export default class JitsiStreamBackgroundEffect {
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer
 		const firstVideoTrack = this._stream.getVideoTracks()[0]
 		const { height, frameRate, width }
-            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._frameRate = parseInt(frameRate, 10)
 
@@ -469,7 +469,7 @@ export default class JitsiStreamBackgroundEffect {
 	updateInputStream() {
 		const firstVideoTrack = this._stream.getVideoTracks()[0]
 		const { frameRate }
-            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._frameRate = parseInt(frameRate, 10)
 

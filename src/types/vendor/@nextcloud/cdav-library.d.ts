@@ -6,11 +6,9 @@
 declare module '@nextcloud/cdav-library'
 
 declare class DavClient {
-
-	constructor(options: { rootUrl: string });
-	connect(options: { enableCalDAV: boolean }): Promise<void>;
+	constructor(options: { rootUrl: string })
+	connect(options: { enableCalDAV: boolean }): Promise<void>
 
 	currentUserPrincipal: DavPrincipal
 	calendarHomes: DavCalendarHome[]
-
 }
