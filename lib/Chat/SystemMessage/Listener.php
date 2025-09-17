@@ -424,9 +424,10 @@ class Listener implements IEventListener {
 			replyTo: $replyTo,
 			threadId: $threadId,
 		);
+		$messageId = (int)$comment->getId();
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
-			$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+			$thread = $this->threadService->createThread($room, $messageId, $threadTitle);
 			try {
 				// Add to subscribed threads list
 				$participant = $this->participantService->getParticipant($room, $this->getUserId());
@@ -437,11 +438,24 @@ class Listener implements IEventListener {
 			$this->sendSystemMessage(
 				$room,
 				'thread_created',
-				['thread' => (int)$comment->getId(), 'title' => $thread->getName()],
+				['thread' => $messageId, 'title' => $thread->getName()],
 				shouldSkipLastMessageUpdate: true,
 				silent: true,
 				parent: $comment,
 			);
+		} else {
+			$threadId = (int)$comment->getTopmostParentId();
+			if ($threadId !== 0) {
+				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
+				if ($isThread) {
+					try {
+						// Add to subscribed threads list
+						$participant = $this->participantService->getParticipant($room, $this->getUserId());
+						$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
+					} catch (ParticipantNotFoundException) {
+					}
+				}
+			}
 		}
 	}
 

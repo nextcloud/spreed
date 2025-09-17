@@ -207,7 +207,7 @@ class ThreadService {
 		$query->executeStatement();
 	}
 
-	public function updateLastMessageInfoAfterReply(int $threadId, int $lastMessageId): void {
+	public function updateLastMessageInfoAfterReply(int $threadId, int $lastMessageId): bool {
 		$dateTime = $this->timeFactory->getDateTime();
 
 		$query = $this->connection->getQueryBuilder();
@@ -216,7 +216,7 @@ class ThreadService {
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
 			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($query->expr()->eq('id', $query->createNamedParameter($threadId)));
-		$query->executeStatement();
+		return (bool)$query->executeStatement();
 	}
 
 	public function deleteByRoom(Room $room): void {
