@@ -198,13 +198,15 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 | `referenceId`  | string | A reference string to be able to identify the generated chat message again in a "get messages" request, should be a random sha256 (only available with `chat-reference-id` capability) |
 | `talkMetaData` | string | JSON encoded array of the meta data                                                                                                                                                    |
 
-    - `talkMetaData` array:
+### `talkMetaData` array
 
 | field         | type   | Description                                                                                                                                                             |
 |---------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment`                                                                  |
 | `caption`     | string | A caption message that should be shown together with the shared file (only available with `media-caption` capability)                                                   |
 | `replyTo`     | int    | The message ID this caption message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)         |
+| `threadId`    | int    | The thread ID this caption message is a response to without actually being a reply (so not sending a notification, only available with `threads` capability)            |
+| `threadTitle` | string | When not empty the message will start a new thread (only available with `threads` capability)                                                                           |
 | `silent`      | bool   | If sent silent the message will not create chat notifications even for mentions (only available with `media-caption` capability, yes `media-caption` not `silent-send`) |
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
