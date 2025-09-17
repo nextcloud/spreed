@@ -195,3 +195,48 @@ Feature: chat-4/threads
     Then user "participant1" sees 1 number of subscribed threads with 1 offset
       | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
+
+  Scenario: Reply with an attachment
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room1" with 201
+    When user "participant2" shares "welcome.txt" with room "room1"
+      | talkMetaData.caption      | Message 2 |
+      | talkMetaData.replyTo      | Message 1 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room1 | users     | participant2 | participant2-displayname | Message 2 | "IGNORE"          | Message 1     |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |               |
+    Then user "participant1" sees the following recent threads in room "room1" with 200
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 2     | 0                   | Message 1    | Message 2   |
+    And user "participant1" has the following notifications
+      | app    | object_type | object_id       | subject                                                                |
+      | spreed | chat        | room1/Message 2 | participant2-displayname replied to your message in conversation room1 |
+    Then user "participant2" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 2     | 0                   | Message 1    | Message 2   |
+
+  Scenario: Post a message with an attachment (not replying)
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room1" with 201
+    When user "participant2" shares "welcome.txt" with room "room1"
+      | talkMetaData.caption      | Message 2 |
+      | talkMetaData.threadId     | Message 1 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room1 | users     | participant2 | participant2-displayname | Message 2 | "IGNORE"          | Message 1     |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |               |
+    Then user "participant1" sees the following recent threads in room "room1" with 200
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 2     | 0                   | Message 1    | Message 2   |
+    And user "participant1" has the following notifications
+      | app | object_type | object_id | subject |
+    Then user "participant2" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 2     | 0                   | Message 1    | Message 2   |

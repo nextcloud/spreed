@@ -615,7 +615,7 @@ class SharingContext implements Context {
 				if ($key === 'expireDate' && $value !== 'invalid date') {
 					$value = date('Y-m-d', strtotime($value));
 				}
-				if ($key === 'talkMetaData.replyTo') {
+				if ($key === 'talkMetaData.replyTo' || $key === 'talkMetaData.threadId') {
 					$value = FeatureContext::getMessageIdForText($value);
 				}
 				if (str_starts_with($key, 'talkMetaData.')) {
