@@ -341,7 +341,9 @@ export default {
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
-		} = useDevices(video, false)
+			registerVideoElement,
+		} = useDevices()
+		registerVideoElement(video)
 
 		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value?.isAvailable())
 
