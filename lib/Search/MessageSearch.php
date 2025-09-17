@@ -285,12 +285,18 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			}
 		}
 
+		$urlParams = [
+			'token' => $room->getToken(),
+			'_fragment' => 'message_' . $id,
+		];
 		$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
 		try {
 			$thread = $this->threadService->findByThreadId($room->getId(), $threadId);
+			$urlParams['threadId'] = $thread->getId();
 		} catch (DoesNotExistException) {
 			$thread = null;
 		}
+
 		$entry = new SearchResultEntry(
 			$iconUrl,
 			str_replace(
@@ -299,9 +305,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				$subline
 			),
 			$messageStr,
-			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()])
-				. ($thread !== null ? '?threadId=' . $thread->getId() : '')
-				. '#message_' . $comment->getId(),
+			$this->url->linkToRouteAbsolute('spreed.Page.showCall', $urlParams),
 			'icon-talk', // $iconClass,
 			true
 		);

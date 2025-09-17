@@ -603,9 +603,14 @@ class Notifier implements INotifier {
 		];
 
 		// Set the link to the specific message
-		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()])
-			. (isset($messageParameters['threadId']) ? '?threadId=' . $messageParameters['threadId'] : '')
-			. '#message_' . $message->getMessageId());
+		$urlParams = [
+			'token' => $room->getToken(),
+			'_fragment' => 'message_' . $message->getMessageId(),
+		];
+		if (isset($messageParameters['threadId'])) {
+			$urlParams['threadId'] = $messageParameters['threadId'];
+		}
+		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', $urlParams));
 
 		$now = $this->timeFactory->getDateTime();
 		$expireDate = $message->getExpirationDateTime();
