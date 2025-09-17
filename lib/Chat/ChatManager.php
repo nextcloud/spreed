@@ -206,6 +206,20 @@ class ChatManager {
 				// Update last_message
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
+
+				if ($threadId !== 0) {
+					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId());
+					if ($isThread && $actorType === Attendee::ACTOR_USERS) {
+						try {
+							// Add to subscribed threads list
+							$participant = $this->participantService->getParticipant($chat, $actorId);
+							$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
+						} catch (ParticipantNotFoundException) {
+						}
+					} elseif (!$isThread) {
+						$threadId = 0;
+					}
+				}
 			}
 
 			if ($sendNotifications) {
@@ -429,8 +443,10 @@ class ChatManager {
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
 			if ($threadId !== 0) {
-				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
-				if ($participant instanceof Participant) {
+				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
+				if (!$isThread) {
+					$threadId = 0;
+				} elseif ($participant instanceof Participant) {
 					// Add to subscribed threads list
 					$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
 				}
