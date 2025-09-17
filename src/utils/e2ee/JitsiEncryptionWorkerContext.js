@@ -213,8 +213,8 @@ export class Context {
 	async _decryptFrame(
 		encodedFrame,
 		keyIndex,
-			initialKey = undefined,
-			ratchetCount = 0,
+		initialKey = undefined,
+		ratchetCount = 0,
 	) {
 		const { encryptionKey } = this._cryptoKeyRing[keyIndex]
 		let { material } = this._cryptoKeyRing[keyIndex]

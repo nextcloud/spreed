@@ -27,8 +27,7 @@ type Session = {
 	inCall: number | undefined
 }
 
-type SignalingSessionPayload =
-	| InternalSignalingSession
+type SignalingSessionPayload = InternalSignalingSession
 	| StandaloneSignalingJoinSession
 	| StandaloneSignalingUpdateSession
 
