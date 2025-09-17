@@ -278,7 +278,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->commonReadMessages = $this->participantService->getLastCommonReadChatMessageForMultipleRooms($roomIds);
 		}
 
-		$statuses = [];
+		$statuses = $threads = [];
 		if ($includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(function (Room $room) {
@@ -297,16 +297,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($includeLastMessage) {
-			$lastMessages = array_filter(array_map(static fn (Room $room) => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
-			$potentialThreads = array_map(static fn (IComment $lastMessage) => (int)$lastMessage->getTopmostParentId(), $lastMessages);
-			$this->sharePreloader->preloadShares($lastMessages);
-			$threads = $this->threadService->preloadThreads($potentialThreads);
+			$sharesInLastMessages = array_filter(array_map(static fn (Room $room): ?IComment => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
+			$this->sharePreloader->preloadShares($sharesInLastMessages);
+
+			$lastLocalMessages = array_filter(array_map(static fn (Room $room): ?IComment => !$room->isFederatedConversation() ? $room->getLastMessage() : null, $rooms));
+			$potentialThreads = array_map(static fn (IComment $lastMessage): int => (int)$lastMessage->getTopmostParentId() ?: (int)$lastMessage->getId(), $lastLocalMessages);
+			$threads = $this->threadService->preloadThreadsForConversationList($potentialThreads);
 		}
 
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses, skipLastMessage: !$includeLastMessage, thread: $threads[$room->getId()] ?? null);
+				$return[] = $this->formatRoom(
+					$room,
+					$this->participantService->getParticipant($room, $this->userId),
+					$statuses,
+					skipLastMessage: !$includeLastMessage,
+					thread: $threads[$room->getId()] ?? null
+				);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
 				// the user is not a participant anymore
