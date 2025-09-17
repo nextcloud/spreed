@@ -52,6 +52,7 @@ use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -66,6 +67,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
@@ -85,6 +87,7 @@ use OCP\Calendar\CalendarEventStatus;
 use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
+use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
@@ -149,6 +152,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected BanService $banService,
 		protected IURLGenerator $url,
 		protected IL10N $l,
+		protected ThreadService $threadService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -274,7 +278,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->commonReadMessages = $this->participantService->getLastCommonReadChatMessageForMultipleRooms($roomIds);
 		}
 
-		$statuses = [];
+		$statuses = $threads = [];
 		if ($includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(function (Room $room) {
@@ -293,14 +297,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($includeLastMessage) {
-			$lastMessages = array_filter(array_map(static fn (Room $room) => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
-			$this->sharePreloader->preloadShares($lastMessages);
+			$sharesInLastMessages = array_filter(array_map(static fn (Room $room): ?IComment => $room->getLastMessage()?->getVerb() === 'object_shared' ? $room->getLastMessage() : null, $rooms));
+			$this->sharePreloader->preloadShares($sharesInLastMessages);
+
+			$lastLocalMessages = array_filter(array_map(static fn (Room $room): ?IComment => !$room->isFederatedConversation() ? $room->getLastMessage() : null, $rooms));
+			$potentialThreads = array_map(static fn (IComment $lastMessage): int => (int)$lastMessage->getTopmostParentId() ?: (int)$lastMessage->getId(), $lastLocalMessages);
+			$threads = $this->threadService->preloadThreadsForConversationList($potentialThreads);
 		}
 
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses, skipLastMessage: !$includeLastMessage);
+				$return[] = $this->formatRoom(
+					$room,
+					$this->participantService->getParticipant($room, $this->userId),
+					$statuses,
+					skipLastMessage: !$includeLastMessage,
+					thread: $threads[$room->getId()] ?? null
+				);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
 				// the user is not a participant anymore
@@ -530,6 +544,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		bool $isSIPBridgeRequest = false,
 		bool $isListingBreakoutRooms = false,
 		bool $skipLastMessage = false,
+		?Thread $thread = null,
 	): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
@@ -540,6 +555,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$isSIPBridgeRequest,
 			$isListingBreakoutRooms,
 			$skipLastMessage,
+			$thread,
 		);
 	}
 
