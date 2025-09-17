@@ -207,17 +207,12 @@ MediaDevicesManager.prototype = {
 			const previousFirstAvailableVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList)
 
 			const removedDevices = this.attributes.devices.filter((oldDevice) => !devices.find((device) => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
-			const updatedDevices = devices.filter((device) => this.attributes.devices.find((oldDevice) => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
-			const addedDevices = devices.filter((device) => !this.attributes.devices.find((oldDevice) => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
-
 			removedDevices.forEach((removedDevice) => {
 				this._removeDevice(removedDevice)
 			})
-			updatedDevices.forEach((updatedDevice) => {
-				this._updateDevice(updatedDevice)
-			})
-			addedDevices.forEach((addedDevice) => {
-				this._addDevice(addedDevice)
+
+			devices.forEach((device) => {
+				this._updateOrAddDevice(device)
 			})
 
 			this._populatePreferences(devices)
@@ -371,8 +366,12 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	_updateDevice(updatedDevice) {
+	_updateOrAddDevice(updatedDevice) {
 		const oldDevice = this.attributes.devices.find((oldDevice) => oldDevice.deviceId === updatedDevice.deviceId && oldDevice.kind === updatedDevice.kind)
+		if (!oldDevice) {
+			this._addDevice(updatedDevice)
+			return
+		}
 
 		// Only update the label if it has a value, as it may have been
 		// removed if there is currently no active stream.
@@ -388,36 +387,36 @@ MediaDevicesManager.prototype = {
 	_addDevice(addedDevice) {
 		// Copy the device to add, as its properties are read only and
 		// thus they can not be updated later.
-		addedDevice = {
+		const newDevice = {
 			deviceId: addedDevice.deviceId,
 			groupId: addedDevice.groupId,
 			kind: addedDevice.kind,
 			label: addedDevice.label,
 		}
 
-		const knownDevice = this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId]
+		const knownDevice = this._knownDevices[newDevice.kind + '-' + newDevice.deviceId]
 		if (knownDevice) {
-			addedDevice.fallbackLabel = knownDevice.fallbackLabel
+			newDevice.fallbackLabel = knownDevice.fallbackLabel
 			// If the added device has a label keep it; otherwise use
 			// the previously known one, if any.
-			addedDevice.label = addedDevice.label ? addedDevice.label : knownDevice.label
+			newDevice.label = newDevice.label ? newDevice.label : knownDevice.label
 		} else {
 			// Generate a fallback label to be used when the actual label is
 			// not available.
-			if (addedDevice.deviceId === 'default' || addedDevice.deviceId === '') {
-				addedDevice.fallbackLabel = t('spreed', 'Default')
-			} else if (addedDevice.kind === 'audioinput') {
-				addedDevice.fallbackLabel = t('spreed', 'Microphone {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioinput' && device.deviceId !== '').length + 1 })
-			} else if (addedDevice.kind === 'videoinput') {
-				addedDevice.fallbackLabel = t('spreed', 'Camera {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'videoinput' && device.deviceId !== '').length + 1 })
-			} else if (addedDevice.kind === 'audiooutput') {
-				addedDevice.fallbackLabel = t('spreed', 'Speaker {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioutput' && device.deviceId !== '').length + 1 })
+			if (newDevice.deviceId === 'default' || newDevice.deviceId === '') {
+				newDevice.fallbackLabel = t('spreed', 'Default')
+			} else if (newDevice.kind === 'audioinput') {
+				newDevice.fallbackLabel = t('spreed', 'Microphone {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioinput' && device.deviceId !== '').length + 1 })
+			} else if (newDevice.kind === 'videoinput') {
+				newDevice.fallbackLabel = t('spreed', 'Camera {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'videoinput' && device.deviceId !== '').length + 1 })
+			} else if (newDevice.kind === 'audiooutput') {
+				newDevice.fallbackLabel = t('spreed', 'Speaker {number}', { number: Object.values(this._knownDevices).filter((device) => device.kind === 'audioutput' && device.deviceId !== '').length + 1 })
 			}
 		}
 
 		// Always refresh the known device with the latest values.
-		this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId] = addedDevice
-		this.attributes.devices = [...this.attributes.devices, addedDevice]
+		this._knownDevices[newDevice.kind + '-' + newDevice.deviceId] = newDevice
+		this.attributes.devices = [...this.attributes.devices, newDevice]
 	},
 
 	/**
